@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-09-20 21:00:00 +0200 (Thu, 20 Sep 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-09-22 12:00:00 +0200 (Sat, 22 Sep 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1365,8 +1365,8 @@ expands to 1 if there are at least two slots resp. at least one nontrivial slot.
 The collected IUSE flags (i.e. their union) of all available versions
 of the package, separated by spaces.
 The B<colliuse*> variant outputs USE_EXPAND variables separately, using
-B<FORMAT_BEFORE_IUSE_EXPAND_START>,
-B<FORMAT_BEFORE_IUSE_EXPAND_END> and B<FORMAT_AFTER_IUSE_EXPAND>
+B<FORMAT_BEFORE_COLL_EXPAND_START>,
+B<FORMAT_BEFORE_COLL_EXPAND_END> and B<FORMAT_AFTER_COLL_EXPAND>
 at the appropriate places.
 havecolliuse expands to 1 if colliuse is nonempty; this is faster than colliuse.
 .TP
@@ -2228,6 +2228,11 @@ These strings are printed before/after the set/unset USE flags of installed vers
 .BR FORMAT_BEFORE_USE_EXPAND_START ", " FORMAT_BEFORE_USE_EXPAND_END ", " FORMAT_AFTER_USE_EXPAND ", " FORMAT_BEFORE_IUSE_EXPAND_START ", " FORMAT_BEFORE_IUSE_EXPAND_END ", " FORMAT_AFTER_IUSE_EXPAND
 These strings are printed at the start/end or after B<USE_EXPAND> variables
 are output with B<use*> for installed or available versions, respectively.
+
+.TP
+.BR FORMAT_BEFORE_COLL_EXPAND_START ", " FORMAT_BEFORE_COLL_EXPAND_END ", " FORMAT_AFTER_COLL_EXPAND
+These strings are printed at the start/end or after B<USE_EXPAND> variables
+are output with B<colliuse*>.
 
 .TP
 .BR NOCOLORS " " (true / false)

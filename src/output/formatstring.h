@@ -212,7 +212,7 @@ class PrintFormat {
 		bool parse_variable(Node **rootnode, const std::string &varname, std::string *errtext) const ATTRIBUTE_NONNULL((2));
 		Node *parse_variable(const std::string &varname) const;
 
-		std::string iuse_expand(const IUseSet &iuse) const;
+		std::string iuse_expand(const IUseSet &iuse, bool coll) const;
 		std::string get_inst_use(const Package &package, InstVersion *i, bool expand) const ATTRIBUTE_NONNULL_;
 		void get_installed(Package *package, Node *root, bool mark) const ATTRIBUTE_NONNULL_;
 		void get_versions_versorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2, 3));
@@ -381,6 +381,7 @@ class PrintFormat {
 			color_virtualkey,  /**< Color for the virtual key */
 			before_use_start, before_use_end, after_use,
 			before_iuse_start, before_iuse_end, after_iuse,
+			before_coll_start, before_coll_end, after_coll,
 			before_set_use, after_set_use,
 			before_unset_use, after_unset_use;
 

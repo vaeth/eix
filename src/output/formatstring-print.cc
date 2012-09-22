@@ -104,7 +104,7 @@ class VersionVariables {
 };
 
 string
-PrintFormat::iuse_expand(const IUseSet &iuse) const
+PrintFormat::iuse_expand(const IUseSet &iuse, bool coll) const
 {
 	string ret;
 	map<string, string> expvars;
@@ -135,11 +135,11 @@ PrintFormat::iuse_expand(const IUseSet &iuse) const
 		if(!ret.empty()) {
 			ret.append(1, ' ');
 		}
-		ret.append(before_iuse_start);
+		ret.append(coll ? before_coll_start : before_iuse_start);
 		ret.append(it->first);
-		ret.append(before_iuse_end);
+		ret.append(coll ? before_coll_end : before_iuse_end);
 		ret.append(it->second);
-		ret.append(after_iuse);
+		ret.append(coll ? after_coll : after_iuse);
 	}
 	return ret;
 }
@@ -1055,7 +1055,7 @@ PrintFormat::PKG_HAVECOLLIUSE(Package *package) const
 string
 PrintFormat::PKG_COLLIUSES(Package *package) const
 {
-	return iuse_expand(package->iuse);
+	return iuse_expand(package->iuse, true);
 }
 
 string
@@ -1340,7 +1340,7 @@ PrintFormat::VER_USES(Package *package) const
 	if(version_variables->isinst) {
 		return get_inst_use(*package, version_variables->instver(), true);
 	}
-	return iuse_expand(version_variables->version()->iuse);
+	return iuse_expand(version_variables->version()->iuse, false);
 }
 
 string

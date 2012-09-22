@@ -1002,7 +1002,7 @@ AddOption(STRING, "COLOR_WORLD_SETS",
 	"It defines the color used for the name of world sets packages."));
 
 AddOption(STRING, "COLOR_CATEGORY",
-	"", _(
+	"%{COLOR_NORMAL}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the category of packages."));
 
@@ -1134,9 +1134,9 @@ AddOption(STRING, "COLOR_VERSION_IUSE",
 	"It defines the color used for printing IUSE for available versions."));
 
 AddOption(STRING, "COLOR_COLL_IUSE",
-	"%{COLOR_VERSION_IUSE}", _(
+	"black,1|38", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing IUSE for available packages."));
+	"It defines the color used for printing collected IUSE for packages."));
 
 AddOption(STRING, "COLOR_USE_EXPAND_START",
 	"%{COLOR_NORMAL}", _(
@@ -1616,7 +1616,7 @@ AddOption(STRING, "FORMAT_VERSION_IUSE",
 	"It is used for colored <use> in available versions; color is not reset."));
 
 AddOption(STRING, "FORMAT_COLLIUSE",
-	"(%{COLOR_VERSION_IUSE})%{?EIX_USE_EXPAND}<colliuse*>%{else}<colliuse>%{}", _(
+	"(%{COLOR_COLL_IUSE})%{?EIX_USE_EXPAND}<colliuse*>%{else}<colliuse>%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is used for colored <colliuse>; color is not reset."));
 
@@ -1939,13 +1939,13 @@ AddOption(STRING, "IVERSIONS_COMPACT",
 	"It defines the format for an installed version with important data and slot."));
 
 AddOption(STRING, "FORMAT_BEFORE_KEYWORDS",
-	"\\t\"", _(
+	"\\t(%{COLOR_NORMAL})\"", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before KEYWORDS string for a version is output\n"
 	"(with --versionlines and nonverbose)"));
 
 AddOption(STRING, "FORMAT_AFTER_KEYWORDS",
-	"\"", _(
+	"(%{COLOR_NORMAL})\"(%{COLOR_NORMAL_END})", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed after KEYWORDS string for a version is output.\n"
 	"(with --versionlines and nonverbose)"));
@@ -2209,7 +2209,7 @@ AddOption(STRING, "INORMAL",
 
 AddOption(STRING, "ICOMPACT",
 	"%{IVERSIONS_COMPACT}"
-	"@(%{COLOR_DATE})<date:FORMAT_SHORT_INSTALLATION_DATE>()"
+	"(%{COLOR_NORMAL})@(%{COLOR_DATE})<date:FORMAT_SHORT_INSTALLATION_DATE>()"
 	"{!last} {}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the compact format of installed versions."));
@@ -2244,9 +2244,9 @@ AddOption(STRING, "FORMAT_AVAILABLEVERSIONS",
 
 AddOption(STRING, "FORMAT_INST_USEFLAGS",
 	"{haveuse}"
-		"\\("
+		"(%{COLOR_NORMAL})\\("
 		"%{?EIX_USE_EXPAND}<use*>%{else}<use>%{}"
-		"\\)"
+		"(%{COLOR_NORMAL})\\)(%{COLOR_NORMAL_END})"
 	"{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for useflags in installed versions."));
@@ -2289,7 +2289,8 @@ AddOption(STRING, "FORMATLINE_INSTALLEDVERSIONS",
 	"It defines the format for a line with installed versions."));
 
 AddOption(STRING, "DIFF_FORMATLINE_INSTALLEDVERSIONS",
-	"{installed}%{INSTALLEDVERSIONS_COMPACT}; {}", _(
+	"{installed}%{INSTALLEDVERSIONS_COMPACT}"
+	"(%{COLOR_NORMAL});(%{COLOR_NORMAL_END}) {}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for eix-diff for installed versions."));
 
@@ -2306,7 +2307,7 @@ AddOption(STRING, "FORMAT_NAME",
 			"{world_sets}(%{COLOR_CATEGORY_WORLD_SETS})"
 			"{else}(%{COLOR_CATEGORY}){}"
 		"{}"
-	"{}<category>()/"
+	"{}<category>(%{COLOR_NORMAL})/"
 	"{marked}(%{COLOR_MARKED_NAME})"
 	"{else}"
 		"{world}(%{COLOR_WORLD})"
@@ -2320,11 +2321,11 @@ AddOption(STRING, "FORMAT_NAME",
 
 AddOption(STRING, "FORMAT_HEADER",
 	"{installed}"
-		"[{!*updn}"
+		"(%{COLOR_NORMAL})[{!*updn}"
 		"{upgrade}{*updn}%{TAG_UPGRADE}{}"
 		"{downgrade}{*updn}%{TAG_DOWNGRADE}{}"
 		"{!$updn}%{TAG_INSTALLED}{}"
-		"]"
+		"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})"
 	"{else}(%{COLOR_UNINST_TAG})%{STRING_PLAIN_UNINSTALLED}{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the normal header symbols."));
@@ -2337,31 +2338,33 @@ AddOption(STRING, "FORMAT_HEADER_VERBOSE",
 	"It defines the format for the verbose header symbols."));
 
 AddOption(STRING, "FORMAT_HEADER_COMPACT",
-	"["
+	"(%{COLOR_NORMAL})["
 	"{installed}"
 		"{!*updn}"
 		"{upgrade}{*updn}%{TAG_UPGRADE}{}"
 		"{downgrade}{*updn}%{TAG_DOWNGRADE}{}"
 		"{!$updn}%{TAG_INSTALLED}{}"
 	"{else}%{TAG_UNINSTALLED}{}"
-	"]", _(
+	"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the compact header symbols."));
 
 AddOption(STRING, "DIFF_FORMAT_HEADER_NEW",
-	"[{*better=\\ }{*stable=\\ }{!*updn}"
+	"(%{COLOR_NORMAL})[{*better=\\ }{*stable=\\ }{!*updn}"
 	"{havebest}%{TAG_STABILIZE}{!*better}{}"
 	"{upgrade}{*updn}%{TAG_UPGRADE}{}"
 	"{downgrade}{$updn}{!*stable}{}{*updn}%{TAG_DOWNGRADE}{}"
 	"{!$updn}%{TAG_NEW}{}"
-	"]<$better><$stable>"
+	"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})<$better><$stable>"
 	" (%{DIFF_COLOR_NEW})%{DIFF_STRING_NEW}()", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-new header symbols."));
 
 AddOption(STRING, "DIFF_FORMAT_HEADER_DELETE",
 	"{installed}"
-		"[(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}()]"
+		"(%{COLOR_NORMAL})["
+		"(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}"
+		"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})"
 	"{else}"
 		"   "
 	"{}"
@@ -2370,13 +2373,13 @@ AddOption(STRING, "DIFF_FORMAT_HEADER_DELETE",
 	"It defines the format for the diff-delete header symbols."));
 
 AddOption(STRING, "DIFF_FORMAT_HEADER_CHANGED",
-	"[{*better=\\ }{*up=\\ }{*down=\\ }"
+	"(%{COLOR_NORMAL})[{*better=\\ }{*up=\\ }{*down=\\ }"
 	"{havebest}{!oldhavebest}%{TAG_STABILIZE}{!*better}{}{}"
 	"{upgrade}{!*up}%{TAG_UPGRADE}{}"
 	"{downgrade}{!*down}%{TAG_DOWNGRADE}{}"
 	"{$up}{better}{!*up}%{TAG_BETTER}{}{}"
 	"{$down}{worse}{!*down}%{TAG_WORSE}{}{}"
-	"]<$better><$up><$down>"
+	"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})<$better><$up><$down>"
 	" (%{DIFF_COLOR_CHANGED})%{DIFF_STRING_CHANGED}()", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-changed header symbols."));
@@ -2471,7 +2474,7 @@ AddOption(STRING, "DIFF_FORMAT_CHANGED_VERSIONS",
 		"%{DIFF_FORMATLINE_INSTALLEDVERSIONS}"
 	"%{}"
 	"%{DIFF_FORMAT_OLDBEST_CHANGE}"
-	" -> "
+	" (%{COLOR_NORMAL})->(%{COLOR_NORMAL_END}) "
 	"%{DIFF_FORMAT_BEST_CHANGE}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the eix-diff format for changed versions."));
@@ -2517,12 +2520,14 @@ AddOption(STRING, "FORMATLINE_AVAILABLEVERSIONS",
 	"It defines the format for a line with installed versions."));
 
 AddOption(STRING, "DIFF_FORMATLINE_BEST",
-	"\\(%{DIFF_FORMAT_BEST}())", _(
+	"(%{COLOR_NORMAL})\\(%{DIFF_FORMAT_BEST}"
+	"(%{COLOR_NORMAL}))(%{COLOR_NORMAL_END})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the eix-diff line for the best versions/slots."));
 
 AddOption(STRING, "DIFF_FORMATLINE_CHANGED_VERSIONS",
-	"\\(%{DIFF_FORMAT_CHANGED_VERSIONS})", _(
+	"(%{COLOR_NORMAL})\\(%{DIFF_FORMAT_CHANGED_VERSIONS}"
+		"(%{COLOR_NORMAL}))(%{COLOR_NORMAL_END})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the eix-diff line for changed versions."));
 
@@ -2619,7 +2624,8 @@ AddOption(STRING, "FORMATLINE_LICENSES",
 	"It defines the format for a line with the package licenses."));
 
 AddOption(STRING, "DIFF_FORMATLINE",
-	"%{FORMAT_OVERLAYKEY}: <description>"
+	"%{FORMAT_OVERLAYKEY}"
+	"(%{COLOR_NORMAL}): <description>(%{COLOR_NORMAL_END})"
 	"%{FORMAT_FINISH}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for eix-diff after the versions."));
@@ -2639,7 +2645,7 @@ AddOption(STRING, "FORMAT_ALL",
 AddOption(STRING, "FORMAT_ALL_COMPACT",
 	"{*modus=compact}"
 	"%{FORMATLINE_NAME_COMPACT}"
-	" \\("
+	" (%{COLOR_NORMAL})\\((%{COLOR_NORMAL_END})"
 	"{havemarkedversion}(%{COLOR_MARKED_VERSION})<markedversions:VERSION>(); {}"
 	"{installed}"
 		"%{INSTALLEDVERSIONS_COMPACT}"
@@ -2647,7 +2653,7 @@ AddOption(STRING, "FORMAT_ALL_COMPACT",
 	"{else}"
 		"%{FORMAT_BEST_COMPACT}"
 	"{}"
-	"()\\): <description>"
+	"(%{COLOR_NORMAL})\\): <description>(%{COLOR_NORMAL_END})"
 	"%{FORMAT_FINISH}", _(
 	"This format is only used for delayed substitution in FORMAT_COMPACT.\n"
 	"It defines the format of the compact output of eix (option -c)."));
@@ -2789,20 +2795,34 @@ AddOption(STRING, "FORMAT_AFTER_IUSE_EXPAND",
 	"(%{COLOR_USE_EXPAND_START})\"(%{COLOR_USE_EXPAND_END})", _(
 	"This string is printed at the end of a USE_EXPAND iuse value."));
 
+AddOption(STRING, "FORMAT_BEFORE_COLL_EXPAND_START",
+	"(%{COLOR_USE_EXPAND_START})", _(
+	"This string is printed before the variable name of an USE_EXPAND collected\n"
+	"iuse value."));
+
+AddOption(STRING, "FORMAT_BEFORE_COLL_EXPAND_END",
+	"=\"(%{COLOR_COLL_IUSE})", _(
+	"This string is printed after the variable name of an USE_EXPAND collected\n"
+	"iuse value."));
+
+AddOption(STRING, "FORMAT_AFTER_COLL_EXPAND",
+	"(%{COLOR_USE_EXPAND_START})\"(%{COLOR_USE_EXPAND_END})", _(
+	"This string is printed at the end of a USE_EXPAND collected iuse value."));
+
 AddOption(STRING, "FORMAT_BEFORE_IUSE",
-	"\\t[", _(
+	"{!*colliuse}\\t(%{COLOR_NORMAL})[(%{COLOR_NORMAL_END})", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before IUSE data for a version is output.\n"
 	"(Normally, this is only used when --versionlines is active)"));
 
 AddOption(STRING, "FORMAT_AFTER_IUSE",
-	"()]", _(
+	"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed after IUSE data for a version is output.\n"
 	"(Normally, this is only used when --versionlines is active)"));
 
 AddOption(STRING, "FORMAT_BEFORE_COLL",
-	" (yellow,1)\\{\\{", _(
+	"{*colliuse} (yellow,1)\\{\\{", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before IUSE data for all versions is output.\n"
 	"(This is meant for printing after all versions in a line)"));

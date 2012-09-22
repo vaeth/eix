@@ -362,14 +362,14 @@ run_eix_diff(int argc, char *argv[])
 		new_file = rc["EIX_CACHEFILE"];
 	}
 
-	parseFormat(&format_new, "DIFF_FORMAT_NEW", &rc);
-	parseFormat(&format_delete, "DIFF_FORMAT_DELETE", &rc);
-	parseFormat(&format_changed, "DIFF_FORMAT_CHANGED", &rc);
-
 	format_for_new->setupResources(&rc);
 	format_for_new->slot_sorted = false;
 	format_for_new->style_version_lines = false;
 	format_for_new->setupColors();
+
+	parseFormat(&format_new, "DIFF_FORMAT_NEW", &rc);
+	parseFormat(&format_delete, "DIFF_FORMAT_DELETE", &rc);
+	parseFormat(&format_changed, "DIFF_FORMAT_CHANGED", &rc);
 
 	portagesettings = new PortageSettings(&rc, true, false);
 

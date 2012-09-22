@@ -277,6 +277,9 @@ PrintFormat::setupResources(EixRc *rc)
 	before_iuse_start = (*rc)["FORMAT_BEFORE_IUSE_EXPAND_START"];
 	before_iuse_end  = (*rc)["FORMAT_BEFORE_IUSE_EXPAND_END"];
 	after_iuse       = (*rc)["FORMAT_AFTER_IUSE_EXPAND"];
+	before_coll_start = (*rc)["FORMAT_BEFORE_COLL_EXPAND_START"];
+	before_coll_end  = (*rc)["FORMAT_BEFORE_COLL_EXPAND_END"];
+	after_coll       = (*rc)["FORMAT_AFTER_COLL_EXPAND"];
 	before_set_use   = (*rc)["FORMAT_BEFORE_SET_USE"];
 	after_set_use    = (*rc)["FORMAT_AFTER_SET_USE"];
 	before_unset_use = (*rc)["FORMAT_BEFORE_UNSET_USE"];
@@ -330,6 +333,9 @@ PrintFormat::setupColors()
 	parse_color(&before_iuse_start, use_color);
 	parse_color(&before_iuse_end, use_color);
 	parse_color(&after_iuse, use_color);
+	parse_color(&before_coll_start, use_color);
+	parse_color(&before_coll_end, use_color);
+	parse_color(&after_coll, use_color);
 	parse_color(&before_set_use, use_color);
 	parse_color(&after_set_use, use_color);
 	parse_color(&before_unset_use, use_color);
