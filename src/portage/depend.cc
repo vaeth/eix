@@ -53,7 +53,7 @@ subst_the_same(string &in, const string &from) {
 }
 
 void
-Depend::set(const string &depend, const string &rdepend, const string &pdepend, bool normspace)
+Depend::set(const string &depend, const string &rdepend, const string &pdepend, const string &hdepend, bool normspace)
 {
 	if(!use_depend) {
 		return;
@@ -61,10 +61,12 @@ Depend::set(const string &depend, const string &rdepend, const string &pdepend, 
 	m_depend = depend;
 	m_rdepend = rdepend;
 	m_pdepend = pdepend;
+	m_hdepend = hdepend;
 	if(normspace) {
 		trimall(&m_depend);
 		trimall(&m_rdepend);
 		trimall(&m_pdepend);
+		trimall(&m_hdepend);
 	}
 	subst_the_same(m_depend, m_rdepend) || \
 		subst_the_same(m_rdepend, m_depend);

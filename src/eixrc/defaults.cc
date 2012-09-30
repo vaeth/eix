@@ -295,7 +295,7 @@ AddOption(BOOLEAN, "CARE_RESTRICT_INSTALLED",
 
 AddOption(BOOLEAN, "DEP",
 	DEP_DEFAULT, _(
-	"If true, store/use DEPEND, RDEPEND, PDEPEND (e.g. shown with eix -lv).\n"
+	"If true, store/use {R,P,H,}DEPEND (e.g. shown with eix -lv).\n"
 	"Usage of DEP roughly doubles disk resp. memory requirements."));
 
 AddOption(STRING, "DEFAULT_FORMAT",
@@ -1595,6 +1595,11 @@ AddOption(STRING, "FORMAT_PDEPEND",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the PDEPEND output."));
 
+AddOption(STRING, "FORMAT_HDEPEND",
+	"(%{COLOR_DEPEND})<hdepend*>(%{COLOR_DEPEND_END})", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the HDEPEND output."));
+
 AddOption(STRING, "FORMAT_DEPEND_VERBOSE",
 	"%{FORMAT_DEPEND}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -1609,6 +1614,11 @@ AddOption(STRING, "FORMAT_PDEPEND_VERBOSE",
 	"%{FORMAT_PDEPEND}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the PDEPEND output with --verbose."));
+
+AddOption(STRING, "FORMAT_HDEPEND_VERBOSE",
+	"%{FORMAT_HDEPEND}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the HDEPEND output with --verbose."));
 
 AddOption(STRING, "FORMAT_VERSION_IUSE",
 	"(%{COLOR_VERSION_IUSE})%{?EIX_USE_EXPAND}<use*>%{else}<use>%{}", _(
@@ -1998,6 +2008,10 @@ AddOption(STRING, "FORMAT_DEPS_NORMAL",
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})PDEPEND:()   %{FORMAT_PDEPEND}"
 			"{}"
+			"{havehdepend}"
+				"%{FORMAT_VER_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})HDEPEND:()   %{FORMAT_HDEPEND}"
+			"{}"
 		"%{}"
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -2061,6 +2075,12 @@ AddOption(STRING, "FORMAT_DEPS_VERBOSE",
 				"(%{COLOR_AVAILABLE_TITLE})PDEPEND:()"
 				"%{?PRINT_ALWAYS}{havepdepend}%{}"
 				"   %{FORMAT_PDEPEND_VERBOSE}"
+			"{}"
+			"%{!PRINT_ALWAYS}{havehdepend}%{}"
+				"%{FORMAT_VER_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})HDEPEND:()"
+				"%{?PRINT_ALWAYS}{havehdepend}%{}"
+				"   %{FORMAT_HDEPEND_VERBOSE}"
 			"{}"
 		"%{}"
 	"%{}", _(

@@ -72,12 +72,17 @@ flat_get_keywords_slot_iuse_restrict(const string &filename, string *keywords, s
 	if(use_dep) {
 		skip_lines(1, &is, filename, error_callback);
 		getline(is, pdepend);
-		dep->set(depend, rdepend, pdepend, false);
 		skip_lines(2, &is, filename, error_callback);
 	} else {
 		skip_lines(4, &is, filename, error_callback);
 	}
 	getline(is, *props);
+	if(use_dep) {
+		string hdepend;
+		skip_lines(1, &is, filename, error_callback);
+		getline(is, hdepend);
+		dep->set(depend, rdepend, pdepend, hdepend, false);
+	}
 	is.close();
 }
 

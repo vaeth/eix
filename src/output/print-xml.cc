@@ -390,6 +390,9 @@ PrintXml::package(Package *pkg)
 			s = ver->depend.get_pdepend();
 			if(!s.empty())
 				cout << "\t\t\t\t<pdepend>" << escape_xmlstring(s) << "</pdepend>\n";
+			s = ver->depend.get_hdepend();
+			if(!s.empty())
+				cout << "\t\t\t\t<hdepend>" << escape_xmlstring(s) << "</hdepend>\n";
 		}
 		cout << "\t\t\t</version>\n";
 	}

@@ -391,11 +391,14 @@ parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettin
 			case O_DEPEND: USE_TEST;
 				*test |= PackageTest::DEPEND;
 				break;
+			case O_RDEPEND: USE_TEST;
+				*test |= PackageTest::RDEPEND;
+				break;
 			case O_PDEPEND: USE_TEST;
 				*test |= PackageTest::PDEPEND;
 				break;
-			case O_RDEPEND: USE_TEST;
-				*test |= PackageTest::RDEPEND;
+			case O_HDEPEND: USE_TEST;
+				*test |= PackageTest::HDEPEND;
 				break;
 			case O_DEPS: USE_TEST;
 				*test |= PackageTest::DEPS;

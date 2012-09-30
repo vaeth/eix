@@ -44,7 +44,7 @@ class PrintXml {
 
 	public:
 		typedef eix::UNumber XmlVersion;
-		static const XmlVersion current = 9;
+		static const XmlVersion current = 10;
 
 		void init(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir) ATTRIBUTE_NONNULL_
 		{

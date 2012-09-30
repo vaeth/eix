@@ -7,6 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+// #define SQLITE_ONLY_DEBUG
+
 #include <config.h>
 
 #ifdef WITH_SQLITE
@@ -85,7 +87,7 @@ sqlite_callback(void *NotUsed ATTRIBUTE_UNUSED, int argc, char **argv, char **az
     because the sqlite dataset is too short; the minimal dataset length
     for all mandatory data is stored in SqliteCache::maxindex.
 
-    The class TrueIndex and the static (and only) instance handle_trueindex
+    The class TrueIndex and the static (and only) instance *true_index
     is used to calculate the initial value of trueindex/maxindex
     at the first database access by first filling it with default parameters
     and - for the case that appropriate data is stored in azColName -
@@ -114,6 +116,7 @@ class TrueIndex : public map<string, vector<int>::size_type> {
 			DEPEND,
 			RDEPEND,
 			PDEPEND,
+			HDEPEND,
 			LAST
 		} Names;
 		vector<int> default_trueindex;
@@ -131,15 +134,16 @@ class TrueIndex : public map<string, vector<int>::size_type> {
 			mapinit( 1, NAME,        "portage_package_key");
 			mapinit( 3, DEPEND,      "DEPEND");
 			mapinit( 4, DESCRIPTION, "DESCRIPTION");
-			mapinit( 6, HOMEPAGE,    "HOMEPAGE");
-			mapinit( 8, IUSE,        "IUSE");
-			mapinit( 9, KEYWORDS,    "KEYWORDS");
-			mapinit(10, LICENSE,     "LICENSE");
-			mapinit(11, PDEPEND,     "PDEPEND");
-			mapinit(12, PROPERTIES,  "PROPERTIES");
-			mapinit(14, RDEPEND,     "RDEPEND");
-			mapinit(16, RESTRICT,    "RESTRICT");
-			mapinit(17, SLOT,        "SLOT");
+			mapinit( 6, HDEPEND,     "HDEPEND");
+			mapinit( 7, HOMEPAGE,    "HOMEPAGE");
+			mapinit( 9, IUSE,        "IUSE");
+			mapinit(10, KEYWORDS,    "KEYWORDS");
+			mapinit(11, LICENSE,     "LICENSE");
+			mapinit(12, PDEPEND,     "PDEPEND");
+			mapinit(13, PROPERTIES,  "PROPERTIES");
+			mapinit(15, RDEPEND,     "RDEPEND");
+			mapinit(17, RESTRICT,    "RESTRICT");
+			mapinit(18, SLOT,        "SLOT");
 		}
 
 		int calc(int argc, const char **azColName, vector<int> *trueindex) const ATTRIBUTE_NONNULL_
@@ -257,6 +261,7 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 		version->depend.set(TrueIndex::c_str(argv, &trueindex, TrueIndex::DEPEND),
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::RDEPEND),
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::PDEPEND),
+			TrueIndex::c_str(argv, &trueindex, TrueIndex::HDEPEND),
 			false);
 		pkg->addVersion(version);
 

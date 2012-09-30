@@ -335,6 +335,7 @@ class PrintFormat {
 		std::string VER_HAVEDEPEND(Package *package) const ATTRIBUTE_NONNULL_;
 		std::string VER_HAVERDEPEND(Package *package) const ATTRIBUTE_NONNULL_;
 		std::string VER_HAVEPDEPEND(Package *package) const ATTRIBUTE_NONNULL_;
+		std::string VER_HAVEHDEPEND(Package *package) const ATTRIBUTE_NONNULL_;
 		std::string VER_HAVEDEPS(Package *package) const ATTRIBUTE_NONNULL_;
 		std::string VER_DEPENDS(Package *package) const ATTRIBUTE_NONNULL_;
 		std::string VER_DEPEND(Package *package) const ATTRIBUTE_NONNULL_;
@@ -342,6 +343,8 @@ class PrintFormat {
 		std::string VER_RDEPEND(Package *package) const ATTRIBUTE_NONNULL_;
 		std::string VER_PDEPENDS(Package *package) const ATTRIBUTE_NONNULL_;
 		std::string VER_PDEPEND(Package *package) const ATTRIBUTE_NONNULL_;
+		std::string VER_HDEPENDS(Package *package) const ATTRIBUTE_NONNULL_;
+		std::string VER_HDEPEND(Package *package) const ATTRIBUTE_NONNULL_;
 		const MaskFlags *ver_maskflags() const ATTRIBUTE_PURE;
 		std::string VER_ISHARDMASKED(Package *package) const ATTRIBUTE_NONNULL_;
 		std::string VER_ISPROFILEMASKED(Package *package) const ATTRIBUTE_NONNULL_;

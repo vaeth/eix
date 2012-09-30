@@ -54,8 +54,9 @@ class DBHeader {
 
 		static const char *magic;
 
-		/** Current version of database-format. */
-		static const DBVersion current = 31;
+		/** Current version of database-format and what we accept */
+		static const DBVersion current = 32;
+		static const DBVersion accept[];
 
 		DBVersion version; /**< Version of the db. */
 		eix::Catsize  size; /**< Number of categories. */
@@ -78,7 +79,6 @@ class DBHeader {
 		ExtendedVersion::Overlay countOverlays() const
 		{ return ExtendedVersion::Overlay(overlays.size()); }
 
-		bool isCurrent() const
-		{ return version == DBHeader::current; }
+		bool isCurrent() const ATTRIBUTE_PURE;
 };
 #endif  // SRC_DATABASE_HEADER_H_

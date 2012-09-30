@@ -235,11 +235,12 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 		set_checking(&props, "PROPERTIES", ebuild);
 		set_checking(&iuse, "IUSE", ebuild, &ok);
 		if(Depend::use_depend) {
-			string depend, rdepend, pdepend;
+			string depend, rdepend, pdepend, hdepend;
 			set_checking(&depend, "DEPEND", ebuild);
 			set_checking(&rdepend, "RDEPEND", ebuild);
 			set_checking(&pdepend, "PDEPEND", ebuild);
-			version->depend.set(depend, rdepend, pdepend, true);
+			set_checking(&hdepend, "HDEPEND", ebuild);
+			version->depend.set(depend, rdepend, pdepend, hdepend, true);
 		}
 		if(read_onetime_info) {
 			set_checking(&(pkg->homepage), "HOMEPAGE",    ebuild, &ok);

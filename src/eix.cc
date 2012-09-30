@@ -212,10 +212,11 @@ dump_help()
 "    -s, --name              name (default)\n"
 "    -H, --homepage          homepage\n"
 "    -L, --license           license\n"
-"    --deps                  same as --depend --rdepend -pdepend\n"
+"    --deps                  same as --depend --rdepend -pdepend -hdepend\n"
 "    --depend                depend (needs DEP=true)\n"
 "    --rdepend               rdepend (needs DEP=true)\n"
 "    --pdepend               pdepend (needs DEP=true)\n"
+"    --hdepend               hdepend (needs DEP=true)\n"
 "    --set                   local package set name\n"
 "    --slot                  slot\n"
 "    --fullslot              slot with subslot\n"
@@ -442,6 +443,7 @@ EixOptionList::EixOptionList()
 	push_back(Option("depend",        O_DEPEND));
 	push_back(Option("rdepend",       O_RDEPEND));
 	push_back(Option("pdepend",       O_PDEPEND));
+	push_back(Option("hdepend",       O_HDEPEND));
 	push_back(Option("set",           O_SEARCH_SET));
 	push_back(Option("use",           'U'));
 	push_back(Option("installed-with-use",    O_INSTALLED_WITH_USE));

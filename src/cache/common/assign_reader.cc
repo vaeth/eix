@@ -95,7 +95,7 @@ assign_get_keywords_slot_iuse_restrict(const string &filename, string *keywords,
 	(*restr)    = (*cf)["RESTRICT"];
 	(*props)    = (*cf)["PROPERTIES"];
 	if(Depend::use_depend) {
-		dep->set((*cf)["DEPEND"], (*cf)["RDEPEND"], (*cf)["PDEPEND"], false);
+		dep->set((*cf)["DEPEND"], (*cf)["RDEPEND"], (*cf)["PDEPEND"], (*cf)["HDEPEND"], false);
 	}
 }
 

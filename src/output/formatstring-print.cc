@@ -501,6 +501,7 @@ class Scanner {
 			prop_ver("havedepend", &PrintFormat::VER_HAVEDEPEND);
 			prop_ver("haverdepend", &PrintFormat::VER_HAVERDEPEND);
 			prop_ver("havepdepend", &PrintFormat::VER_HAVEPDEPEND);
+			prop_ver("havehdepend", &PrintFormat::VER_HAVEHDEPEND);
 			prop_ver("havedeps", &PrintFormat::VER_HAVEDEPS);
 			prop_ver("depend*", &PrintFormat::VER_DEPENDS);
 			prop_ver("depend", &PrintFormat::VER_DEPEND);
@@ -508,6 +509,8 @@ class Scanner {
 			prop_ver("rdepend", &PrintFormat::VER_RDEPEND);
 			prop_ver("pdepend*", &PrintFormat::VER_PDEPENDS);
 			prop_ver("pdepend", &PrintFormat::VER_PDEPEND);
+			prop_ver("hdepend*", &PrintFormat::VER_HDEPENDS);
+			prop_ver("hdepend", &PrintFormat::VER_HDEPEND);
 			prop_ver("ishardmasked", &PrintFormat::VER_ISHARDMASKED);
 			prop_ver("isprofilemasked", &PrintFormat::VER_ISPROFILEMASKED);
 			prop_ver("ismasked", &PrintFormat::VER_ISMASKED);
@@ -1515,6 +1518,13 @@ PrintFormat::VER_HAVEPDEPEND(Package *package ATTRIBUTE_UNUSED) const
 }
 
 string
+PrintFormat::VER_HAVEHDEPEND(Package *package ATTRIBUTE_UNUSED) const
+{
+	UNUSED(package);
+	return IS_FALSE((unlikely(version_variables->isinst)) || version_variables->version()->depend.hdepend_empty());
+}
+
+string
 PrintFormat::VER_HAVEDEPS(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
@@ -1580,6 +1590,26 @@ PrintFormat::VER_PDEPEND(Package *package ATTRIBUTE_UNUSED) const
 		return STRING_EMPTY;
 	}
 	return version_variables->version()->depend.get_pdepend();
+}
+
+string
+PrintFormat::VER_HDEPENDS(Package *package ATTRIBUTE_UNUSED) const
+{
+	UNUSED(package);
+	if(unlikely(version_variables->isinst)) {
+		return STRING_EMPTY;
+	}
+	return version_variables->version()->depend.get_hdepend_brief();
+}
+
+string
+PrintFormat::VER_HDEPEND(Package *package ATTRIBUTE_UNUSED) const
+{
+	UNUSED(package);
+	if(unlikely(version_variables->isinst)) {
+		return STRING_EMPTY;
+	}
+	return version_variables->version()->depend.get_hdepend();
 }
 
 const MaskFlags *

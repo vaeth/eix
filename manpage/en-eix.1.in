@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-09-22 12:00:00 +0200 (Sat, 22 Sep 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-09-30 10:00:00 +0200 (Sun, 30 Sep 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -291,7 +291,7 @@ Only in this mode some additional information for each version is output.
 More precisely, depending on whether you have chosen B<--verbose> and
 depending on the state of the configuration variables
 B<VERSION_{IUSE,KEYWORDS,DEPS}_{NORMAL,VERBOSE}>,
-this can be the B<KEYWORDS>, B<IUSE>, B<DEPEND>, B<RDEPEND>, B<PDEPEND> data.
+this can be the B<KEYWORDS>, B<IUSE>, B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<HDEPEND> data.
 Note that if B<IUSE> is not printed per version then it is only collected
 for the whole package which can give the wrong impression, since often
 B<IUSE> changes dramatically with versions.
@@ -787,13 +787,13 @@ e.g. "@PACKAGE_URL@"
 .BR -L ", " --license
 e.g. "GPL-2"
 .TP
-.BR --deps ", " --depend ", " --rdepend ", " --pdepend
+.BR --deps ", " --depend ", " --rdepend ", " --pdepend ", " --hdepend
 This test can only be successful if B<DEP=true> is used
 (and if B<DEP=true> was used when the cachefile was created).
-It matches against B<DEPEND>, B<RDEPEND>, or B<DEPEND>
+It matches against B<DEPEND>, B<RDEPEND>, B<PDEPEND>, or B<HDEPEND>
 (or with B<--deps> any of those) of some version of the package.
 B<--deps> is the same as specifying all of
-B<--depend> B<--rdepend> B<--pdepend>.
+B<--depend> B<--rdepend> B<--pdepend> B<--hdepend>.
 Note that it is matched against the string without any interpretation or
 modification of the latter; only word separators become single spaces.
 In particular, the string to match against can look like
@@ -1273,16 +1273,16 @@ It returns 1 or empty depending on whether some or the corresponding B<RESTRICT>
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or empty depending on whether some or the corresponding B<PROPERTIES> attribute is set for the version.
 .TP
-.BR depend ", " rdepend ", " pdepend ", " depend* ", " rdepend* ", " pdepend*
+.BR depend ", " rdepend ", " pdepend ", " hdepend ", " depend* ", " rdepend* ", " pdepend* ", " hdepend*
 This must occur only in I<VARIABLE> in the context of version printing.
-It returns the respective B<DEPEND>, B<RDEPEND>, B<PDEPEND> string of an available package
+It returns the respective B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<HDEPEND> string of an available package
 (the string is shortened if possible if the variant with B<*> is used).
 This is empty unless  B<DEP=true> is set (now and if the cachefile was created).
 When printing installed versions (in contrast to available versions),
 these properties are not available (i.e. they are empty).
 The latter might change in a future release of eix.
 .TP
-.BR havedepend ", " haverdepend ", " havepdepend ", " havedeps
+.BR havedepend ", " haverdepend ", " havepdepend ", " havehdepend ", " havedeps
 This is like the above with the difference that only 1 is returned if the
 value of the corresponding string (resp. of at least one of these) is nonempty.
 .TP
@@ -1743,7 +1743,7 @@ and you can also combine it with an I<APPENDIX>.
 This is only recognized if I<APPENDIX> starts with one of the symbols B<,> or B<;>.
 In this case, B<APPENDIX> is appended to the content of B<VARIABLE> and in addition in front of all B<|> symbols within that content.
 (The B<APPENDIX> can be combined with the B<\\> and B<*> attributes.)
-B<APPENDIX> is taken as-is, and it may not contain the symbol B<}>.
+B<APPENDIX> is taken as-is, and it must not contain the symbol B<}>.
 The purpose of B<APPENDIX> is to make writing colors simpler.
 Example:
 
@@ -2182,7 +2182,7 @@ This is slower but more reliable, i.e. it will also find out whether restriction
 
 .TP
 .BR DEP " " (true / false)
-If true, store/use B<DEPEND>, B<RDEPEND>, B<PDEPEND> (e.g. shown with eix -lv).
+If true, store/use B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<HDEPEND> (e.g. shown with eix -lv).
 Usage of B<DEP> roughly doubles disk resp. memory requirements.
 
 .TP
@@ -2782,7 +2782,7 @@ The possible values for I<match_field> are B<name>, B<category>, B<category/name
 (or B<category-name>), B<description>, B<license>, B<homepage>, B<set>,
 B<slot>, B<installed-slot>, B<use> (or B<iuse>), B<with-use> (or B<installed-with-use>),
 B<without-use> (or B<installed-without-use>),
-B<deps>, B<depend>, B<rdepend>, B<pdepend>,
+B<deps>, B<depend>, B<rdepend>, B<pdepend>,, B<hdepend>,
 corresponding to the analogous command line option for the match field.
 .TP
 .BR DEFAULT_MATCH_ALGORITHM " " "(string list)"

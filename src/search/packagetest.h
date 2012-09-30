@@ -58,7 +58,8 @@ class PackageTest {
 			DEPEND        = 0x04000U,  /**< Search in DEPEND */
 			RDEPEND       = 0x08000U,  /**< Search in RDEPEND */
 			PDEPEND       = 0x10000U,  /**< Search in PDEPEND */
-			DEPS          = (DEPEND|RDEPEND|PDEPEND),
+			HDEPEND       = 0x20000U,  /**< Search in HDEPEND */
+			DEPS          = (DEPEND|RDEPEND|PDEPEND|HDEPEND),
 			ANY           = (NAME|DESCRIPTION|LICENSE|CATEGORY|CATEGORY_NAME|HOMEPAGE|IUSE|USE_ENABLED|USE_DISABLED|SLOT|FULLSLOT|INST_SLOT|INST_FULLSLOT|SET|DEPS);
 
 		enum MatchAlgorithm {

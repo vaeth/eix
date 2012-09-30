@@ -358,6 +358,11 @@ io::read_depend(Depend *dep, const DBHeader &hdr, FILE *fp, string *errtext)
 		if(unlikely(!io::read_hash_words(hdr.depend_hash, &(dep->m_pdepend), fp, errtext))) {
 			return false;
 		}
+		if(hdr.version == 31) {
+			dep->m_hdepend.clear();
+		} else if(unlikely(!io::read_hash_words(hdr.depend_hash, &(dep->m_hdepend), fp, errtext))) {
+			return false;
+		}
 	} else {
 		dep->clear();
 GCC_DIAG_OFF(sign-conversion)
@@ -376,7 +381,8 @@ io::write_depend(const Depend &dep, const DBHeader &hdr, FILE *fp, string *errte
 {
 	return (likely(io::write_hash_words(hdr.depend_hash, dep.m_depend, fp, errtext)) &&
 		likely(io::write_hash_words(hdr.depend_hash, dep.m_rdepend, fp, errtext)) &&
-		likely(io::write_hash_words(hdr.depend_hash, dep.m_pdepend, fp, errtext)));
+		likely(io::write_hash_words(hdr.depend_hash, dep.m_pdepend, fp, errtext)) &&
+		likely(io::write_hash_words(hdr.depend_hash, dep.m_hdepend, fp, errtext)));
 }
 
 bool
@@ -494,6 +500,7 @@ io::prep_header_hashs(DBHeader *hdr, const PackageTree &tree)
 					hdr->depend_hash.hash_words(dep.m_depend);
 					hdr->depend_hash.hash_words(dep.m_rdepend);
 					hdr->depend_hash.hash_words(dep.m_pdepend);
+					hdr->depend_hash.hash_words(dep.m_hdepend);
 				}
 			}
 		}

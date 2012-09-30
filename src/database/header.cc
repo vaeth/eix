@@ -31,7 +31,11 @@ const DBHeader::OverlayTest
 	DBHeader::OVTEST_NUMBER,
 	DBHeader::OVTEST_NOT_SAVED_PORTDIR,
 	DBHeader::OVTEST_ALL;
+
 const DBHeader::DBVersion DBHeader::current;
+
+/** Which version we do accept. The list must end with 0 */
+const DBHeader::DBVersion DBHeader::accept[] = { DBHeader::current, 31, 0 };
 
 const char *DBHeader::magic = "eix\n";
 
@@ -116,4 +120,15 @@ DBHeader::get_overlay_vector(set<ExtendedVersion::Overlay> *overlayset, const ch
 		find_overlay(&curr, name, portdir, curr, testmode); ++curr) {
 		overlayset->insert(curr);
 	}
+}
+
+bool
+DBHeader::isCurrent() const
+{
+	for(const DBVersion *acc(accept); *acc != 0; ++acc) {
+		if(version == *acc) {
+			return true;
+		}
+	}
+	return false;
 }

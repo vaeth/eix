@@ -2,12 +2,15 @@
 
 *eix-0.27.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Introduce APPENDIX for delayed substitution to simplify colors.
+	- Introduce %{var[,;]...} for delayed substitution to simplify colors.
 	- Fix colorscheme choice for eix-diff
 	- Introduce FORMAT_{BEFORE,AFTER}_COLL_EXPAND*
 	- Choose scheme 0 if COLORSCHEME{,_ALT} is too high.
 	- Fix/improve colorschemes
 	- Internal cleanup: remove code duplication in delayed substitution.
+	- Support HDEPEND (of >=portage-2.1.11.22 or >=portage-2.2.0_alpha133)
+	- New database and xml formats due to HDEPEND, but keep support
+	  for reading previous database format 31 of eix-0.27.1.
 
 *eix-0.27.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

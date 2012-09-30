@@ -70,6 +70,7 @@ const PackageTest::MatchField
 		PackageTest::DEPEND,
 		PackageTest::RDEPEND,
 		PackageTest::PDEPEND,
+		PackageTest::HDEPEND,
 		PackageTest::DEPS,
 		PackageTest::ANY;
 
@@ -245,6 +246,8 @@ init_match_field_map()
 	match_field_map["rdepend"]        = PackageTest::RDEPEND;
 	match_field_map["PDEPEND"]        = PackageTest::PDEPEND;
 	match_field_map["pdepend"]        = PackageTest::PDEPEND;
+	match_field_map["HDEPEND"]        = PackageTest::HDEPEND;
+	match_field_map["hdepend"]        = PackageTest::HDEPEND;
 }
 
 static map<string, PackageTest::MatchAlgorithm> *static_match_algorithm_map = NULLPTR;
@@ -476,6 +479,7 @@ PackageTest::stringMatch(Package *pkg) const
 		bool depend((field & DEPEND) != NONE);
 		bool rdepend((field & RDEPEND) != NONE);
 		bool pdepend((field & PDEPEND) != NONE);
+		bool hdepend((field & HDEPEND) != NONE);
 		for(Package::iterator it(pkg->begin());
 			likely(it != pkg->end()); ++it) {
 			const Depend &dep(it->depend);
@@ -489,6 +493,10 @@ PackageTest::stringMatch(Package *pkg) const
 			}
 			if(pdepend) {
 				if((*algorithm)(dep.get_pdepend().c_str(), pkg))
+				return true;
+			}
+			if(hdepend) {
+				if((*algorithm)(dep.get_hdepend().c_str(), pkg))
 				return true;
 			}
 		}

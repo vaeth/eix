@@ -208,3 +208,7 @@ depending on the configuration and the version data.
 
   The PDEPEND string
 
+- **<hdepend>** [..] **</hdepend>**
+
+  The HDEPEND string
+
