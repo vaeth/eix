@@ -992,7 +992,7 @@ AddOption(STRING, "COLOR_NAME",
 	"It defines the color used for the name of packages."));
 
 AddOption(STRING, "COLOR_WORLD",
-	"green,1", _(
+	"green,1|47,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the name of world packages."));
 
@@ -1027,7 +1027,7 @@ AddOption(STRING, "COLOR_UPGRADE_TEXT",
 	"It defines the color used for printing upgrade recommendation texts."));
 
 AddOption(STRING, "COLOR_DOWNGRADE_TEXT",
-	"blue,1|99,1", _(
+	"blue,1|135,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing downgrade recommendation texts."));
 
@@ -1054,12 +1054,12 @@ AddOption(STRING, "DIFF_COLOR_INST_STABILIZE",
 	"which have gained a stable version."));
 
 AddOption(STRING, "DIFF_COLOR_BETTER",
-	"yellow,1", _(
+	"%{DIFF_COLOR_CHANGED}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for \"better version\" tags (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_WORSE",
-	"red,1", _(
+	"%{DIFF_COLOR_DELETE}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for \"worse version\" tags (eix-diff)."));
 
@@ -1074,22 +1074,22 @@ AddOption(STRING, "DIFF_COLOR_NEW",
 	"It defines the color used for \"new package\" separators (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_DELETE",
-	"red,1", _(
+	"red,1|197,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for \"deleted package\" separators (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_CHANGED",
-	"yellow", _(
+	"yellow|226", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for \"changed package\" separators (eix-diff)."));
 
 AddOption(STRING, "COLOR_INST_TAG",
-	"%{COLOR_TITLE,1;inverse}", _(
+	"%{COLOR_STABLE,1;inverse}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for tagging installed packages."));
 
 AddOption(STRING, "COLOR_UNINST_TAG",
-	"%{COLOR_TITLE}", _(
+	"%{COLOR_STABLE}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for tagging uninstalled packages."));
 
@@ -1139,12 +1139,12 @@ AddOption(STRING, "COLOR_COLL_IUSE",
 	"It defines the color used for printing collected IUSE for packages."));
 
 AddOption(STRING, "COLOR_USE_EXPAND_START",
-	"%{COLOR_NORMAL}", _(
+	"|115", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing USE_EXPAND variables."));
 
 AddOption(STRING, "COLOR_USE_EXPAND_END",
-	"%{COLOR_NORMAL_END}", _(
+	"none|", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing end of USE_EXPAND variables."));
 
@@ -1184,11 +1184,11 @@ AddOption(STRING, "COLOR_MARKED_NAME",
 	"It defines the color used for printing a marked package name."));
 
 AddOption(STRING, "COLOR_OVERLAYKEY",
-	"cyan", _(
+	"cyan|87", _(
 	"Color for the overlaykey in version listings."));
 
 AddOption(STRING, "COLOR_VIRTUALKEY",
-	"purple", _(
+	"purple|170", _(
 	"Color for the overlaykey for virtual overlays in version listings."));
 
 AddOption(STRING, "COLOR_SLOTS",
@@ -2842,19 +2842,19 @@ AddOption(STRING, "FORMAT_AFTER_IUSE",
 	"(Normally, this is only used when --versionlines is active)"));
 
 AddOption(STRING, "FORMAT_BEFORE_COLL",
-	"{*colliuse} (yellow,1)\\{\\{", _(
+	"{*colliuse} (yellow,1|252)\\{", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before IUSE data for all versions is output.\n"
 	"(This is meant for printing after all versions in a line)"));
 
 AddOption(STRING, "FORMAT_AFTER_COLL",
-	"(yellow,1)\\}\\}()", _(
+	"(yellow,1|252)\\}()", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed after IUSE data for all versions is output.\n"
 	"(This is meant for printing after all versions in a line)"));
 
 AddOption(STRING, "FORMAT_BEFORE_COLL_SEP",
-	"\\n\\t(yellow,1)\\{\\{", _(
+	"\\n\\t(yellow,1|252)\\{", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before IUSE data for all versions is output.\n"
 	"(This is meant for printing in a separate line)"));
