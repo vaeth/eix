@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.27.3
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Minor fixes to colorscheme of eix-diff.
+
 *eix-0.27.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce %{var[,;]...} for delayed substitution to simplify colors.

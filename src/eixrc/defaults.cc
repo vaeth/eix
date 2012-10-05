@@ -1069,7 +1069,7 @@ AddOption(STRING, "DIFF_COLOR_NEW_TAG",
 	"It defines the color used for \"new package\" tags (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_NEW",
-	"%{COLOR_TITLE,1}", _(
+	"%{COLOR_STABLE,1}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for \"new package\" separators (eix-diff)."));
 
