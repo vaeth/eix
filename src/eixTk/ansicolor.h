@@ -13,6 +13,8 @@
 #include <ostream>
 #include <string>
 
+#include "eixTk/inttypes.h"
+
 class AnsiColor;
 
 /** A class for using ANSI color codes and marker
@@ -52,15 +54,20 @@ class AnsiColor {
 
 		static void AnsiPalette();
 
-		enum WhichPalette {
+		typedef uint8_t WhichPalette;
+
+		static const WhichPalette
 			PALETTE_NONE = 0,
-			PALETTE_F0   = 1,
-			PALETTE_F1   = 2,
-			PALETTE_F    = 3,
-			PALETTE_B    = 4,
-			PALETTE_ALL  = 7
-		};
-		static void PrintPalette(enum WhichPalette which);
+			PALETTE_D0   = 1,
+			PALETTE_D1   = 2,
+			PALETTE_D    = (PALETTE_D0|PALETTE_D1),
+			PALETTE_L0   = 4,
+			PALETTE_L1   = 8,
+			PALETTE_L    = (PALETTE_L0|PALETTE_L1),
+			PALETTE_B    = 16,
+			PALETTE_ALL  = (PALETTE_D|PALETTE_L|PALETTE_B);
+
+		static void PrintPalette(WhichPalette which);
 };
 
 inline static std::ostream&

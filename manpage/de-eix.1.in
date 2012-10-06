@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-09-30 10:00:00 +0200 (Sun, 30 Sep 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-10-07 12:00:00 +0200 (Sun, 07 Oct 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -240,9 +240,14 @@ Legt die 256-Farbpalette von Todd Larason fest (dem Author des 256-Farbsupports 
 Benutzen Sie diese Option, wenn ein Tool die Default-Palette umdefiniert hat.
 .TP
 .BR "--256" ", " "--256f" ", " "--256f0" ", " "--256f1" ", " "256b"
+Print the 256 color palettes (assuming it follows ansi color scheme) and exit.
+With B<--256d>/B<--256l> (B<--256d0>/B<--256l0>, B<--256d1>/B<--256l1>) only the foreground palettes with dark/light background
+(or only the normal or bright dark/light foreground palette, respectively) is printed.
+With B<--256b> only the background palette is printed.
+.BR "--256" ", " "--256f" ", " "--256f0" ", " "--256f1" ", " "256b"
 Ausgabe der 256-Farben-Paletten unter der Annahme, dass sie dem Ansi-Farbschema folgt; danach Programmende.
-Mit B<--256f> (B<--256f0>, B<--256f1>) werden nur die Vordergrund-Farbpaletten ausgegeben
-(bzw. nur die normale oder helle).
+Mit B<--256d>/B<--256l> (B<--256d0>/B<--256l0>, B<--256d1>/B<--256l1>) werden nur die Vordergrund-Farbpaletten mit dunklem/hellem Hintergrund ausgegeben
+(bzw. nur die normale oder fette Vordergrund-Farbpalette mit dunklem/hellen Hintergrund).
 Mit B<--256b> wird nur die Hintergrundfarbpalette ausgegeben.
 .TP
 .BI "--print-overlay-path " OVERLAY
@@ -2265,6 +2270,11 @@ für installierte bzw. verfügbare Versionen ausgegeben.
 Diese String werden zu Beginn/Ende bzw. nach B<USE_EXPAND>-Variablen bei B<colliuse*> ausgegeben.
 
 .TP
+.BR COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY ", " COLOR_KEYEND ", " COLOR_OVERLAYNAME ", " COLOR_OVERLAYNAMEEND ", " COLOR_NUMBERTEXT
+Diese Farben werden vor/nach normalen/virtualen Overlaynummern benutzt,
+zur Ausgabe der Overlays am Ende bzw. zur Ausgabe der Anzahl der Pakete.
+
+.TP
 .BR NOCOLORS " " (true / false)
 Keine Benutzung von Farbsequenzen.
 
@@ -2382,9 +2392,25 @@ B<COLORSCHEME> benutzt.
 .BR COLORSCHEME ", " COLORSCHEME_ALT " " (integer)
 Das benutzte Farbschema:
 Wenn es 0 ist, wird jeweils der erste I<COLORSTRING> von Farbspezifikationen benutzt;
-für höhere Zahlen wird ein entsprechend späterer I<COLORSTRING> benutzt
+für höhere Zahlen wird ein entsprechend späterer I<COLORSTRING> benutzt.
 Falls die Zahl zu hoch ist, wird der erste I<COLORSTRING> benutzt.
-Falls B<TERM_ALT> passt, wird stattdessen B<COLORSCHEME_ALT> benutzt.
+Falls B<TERM_ALT> passt, wird B<COLORSCHEME_ALT> anstelle von B<COLORSCHEME> ausgewertet.
+Der Defaultwert dieser Variablen hängt von der Variablen B<DARK> ab
+(die nur via verzögerter Ersetzung benutzt wird).
+
+Die Zahlen für die Default-Settings sind:
+
+0: Dunkles Basisschema (für schwarzen Hintergrund)
+
+1: Dunkles Schema für 256 Farben
+
+2: Helles Basisschema (für weißen Hintergrund)
+
+3: Helles Schema für 256 Farben
+
+Die Variablen B<BG0>, B<BG1>, B<BG2>, B<BG3> werden von den Defaults zur
+verzögerten Ersetzung berücksichtigt, um die Hintergrundfarbe der entsprechenden Schemata zu erzwingen.
+Der Wert "none" bedeutet, dass die Hintergrundfarbe nicht geändert wird.
 
 .TP
 .BR LEVENSHTEIN_DISTANCE " " (integer)

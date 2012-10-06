@@ -10,15 +10,28 @@
 #include <cstdio>
 
 #include "eixTk/ansicolor.h"
+#include "eixTk/eixint.h"
 #include "eixTk/i18n.h"
 
 typedef unsigned int CalcType;
 
+const AnsiColor::WhichPalette
+	AnsiColor::PALETTE_NONE,
+	AnsiColor::PALETTE_D0,
+	AnsiColor::PALETTE_D1,
+	AnsiColor::PALETTE_D,
+	AnsiColor::PALETTE_L0,
+	AnsiColor::PALETTE_L1,
+	AnsiColor::PALETTE_L,
+	AnsiColor::PALETTE_B,
+	AnsiColor::PALETTE_ALL;
+
 class Display {
 private:
-	bool foreground, bold, printed_palette;
+	bool bold, printed_palette;
+	eix::SignedBool foreground;
 
-	void output(CalcType color, CalcType fg, CalcType bg);
+	void output(CalcType color, CalcType fg, CalcType dark, CalcType light);
 
 	void syscol();
 
@@ -36,7 +49,7 @@ public:
 	Display()
 	{ printed_palette = false; }
 
-	void palette(bool f, bool b, const char *s);
+	void palette(eix::SignedBool f, bool b, const char *s);
 };
 
 void
@@ -52,24 +65,33 @@ Display::nl()
 }
 
 void
-Display::output(CalcType color, CalcType fg, CalcType bg)
+Display::output(CalcType color, CalcType fg, CalcType dark, CalcType light)
 {
 	printf("\x1B[%s38;5;%d;48;5;%dm%3d ",
 		(bold ? "1;" : ""),
 		static_cast<int>(foreground ? color : fg),
-		static_cast<int>(foreground ? bg : color),
+		static_cast<int>(foreground ? ((foreground > 0) ? dark : light) : color),
 		static_cast<int>(color));
 }
 
 void
 Display::syscol()
 {
-	CalcType fg(7), bg(238);
-	for(CalcType color(0); color < 16; fg = bg = 0, ++color) {
-		if(color == 8) {
-			resetnl();
+	CalcType fg(7), dark(238), light;
+	for(CalcType color(0); color < 16; fg = dark = 0, ++color) {
+		switch(color) {
+			case 3:
+			case 7:
+			case 11:
+			case 15:
+				light = 248;
+				break;
+			case 8:
+				resetnl();
+			default:
+				light = 7;
 		}
-		output(color, fg, bg);
+		output(color, fg, dark, light);
 	}
 	resetnl();
 	nl();
@@ -83,7 +105,8 @@ Display::cube(CalcType red_s, CalcType red_e)
 			for(CalcType blue(0); blue < 6; ++blue) {
 				output((16 + (red * 36) + (green * 6) + blue),
 					((((green * 4) + (red * 3) + (blue * 1) < 12)) ? 7 : 0),
-					(((green != 0) || (red != 0) || (blue > 2)) ? 0 : 238));
+					(((green != 0) || (red != 0) || (blue > 2)) ? 0 : 238),
+					((((green * 4) + (red * 3) + (blue * 1) > 26)) ? 244 : 7));
 			}
 			fputs(AnsiColor::reset(), stdout);
 			if(++red == red_e) {
@@ -106,22 +129,29 @@ Display::cube()
 void
 Display::ramp()
 {
-	CalcType fg(7), bg(238);
+	CalcType fg(7), dark(238), light(7);
 	for(CalcType color(232); color < 256; ++color) {
-		output(color, fg, bg);
-		if(color == 234) {
-			bg = 0;
-		}
-		if(color == 243) {
-			fg = 0;
-			resetnl();
+		output(color, fg, dark, light);
+		switch(color) {
+			case 234:
+				dark = 0;
+				break;
+			case 243:
+				fg = 0;
+				resetnl();
+				break;
+			case 247:
+				light = 244;
+				break;
+			default:
+				break;
 		}
 	}
 	resetnl();
 }
 
 void
-Display::palette(bool f, bool b, const char *s)
+Display::palette(eix::SignedBool f, bool b, const char *s)
 {
 	foreground = f;
 	bold = b;
@@ -139,16 +169,22 @@ Display::palette(bool f, bool b, const char *s)
 }
 
 void
-AnsiColor::PrintPalette(enum WhichPalette which)
+AnsiColor::PrintPalette(WhichPalette which)
 {
 	Display display;
-	if((which & PALETTE_F0) != PALETTE_NONE) {
-		display.palette(true, false, _("foreground, normal"));
+	if((which & PALETTE_L0) != PALETTE_NONE) {
+		display.palette(-1, false, _("light, normal"));
 	}
-	if((which & PALETTE_F1) != PALETTE_NONE) {
-		display.palette(true, true, _("foreground, bright"));
+	if((which & PALETTE_L1) != PALETTE_NONE) {
+		display.palette(-1, true, _("light, bright"));
+	}
+	if((which & PALETTE_D0) != PALETTE_NONE) {
+		display.palette(1, false, _("dark, normal"));
+	}
+	if((which & PALETTE_D1) != PALETTE_NONE) {
+		display.palette(1, true, _("dark, bright"));
 	}
 	if((which & PALETTE_B) != PALETTE_NONE) {
-		display.palette(false, false, _("background"));
+		display.palette(0, false, _("background"));
 	}
 }

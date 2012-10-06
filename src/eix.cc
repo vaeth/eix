@@ -112,9 +112,12 @@ dump_help()
 "     --print-overlay-data  print label and path of specified overlay\n"
 "     --is-current          check for valid cache-file\n"
 "     --256                 Print all ansi color palettes\n"
-"     --256f                Print ansi color palettes for foreground\n"
-"     --256f0               Print ansi color palette (normal)\n"
-"     --256f1               Print ansi color palette (bright)\n"
+"     --256d                Print ansi color palettes for foreground (dark)\n"
+"     --256d0               Print ansi color palette dark (normal)\n"
+"     --256d1               Print ansi color palette dark (bright)\n"
+"     --256l                Print ansi color palettes for foreground (light)\n"
+"     --256l0               Print ansi color palette light (normal)\n"
+"     --256l1               Print ansi color palette light (bright)\n"
 "     --256b                Print ansi color palette for background\n"
 "\n"
 "   Special:\n"
@@ -265,9 +268,12 @@ static struct LocalOptions {
 		ansi,
 		palette256,
 		palette256b,
-		palette256f,
-		palette256f0,
-		palette256f1,
+		palette256d,
+		palette256d0,
+		palette256d1,
+		palette256l,
+		palette256l0,
+		palette256l1,
 		be_quiet,
 		quick,
 		care,
@@ -307,9 +313,12 @@ EixOptionList::EixOptionList()
 	// Global options
 	push_back(Option("ansi",          O_ANSI,  Option::BOOLEAN_T,     &rc_options.ansi));
 	push_back(Option("256",           O_P256,  Option::BOOLEAN_T,     &rc_options.palette256));
-	push_back(Option("256f",          O_P256F, Option::BOOLEAN_T,     &rc_options.palette256f));
-	push_back(Option("256f0",         O_P256F0, Option::BOOLEAN_T,    &rc_options.palette256f0));
-	push_back(Option("256f1",         O_P256F1, Option::BOOLEAN_T,    &rc_options.palette256f1));
+	push_back(Option("256d",          O_P256D, Option::BOOLEAN_T,     &rc_options.palette256d));
+	push_back(Option("256d0",         O_P256D0, Option::BOOLEAN_T,    &rc_options.palette256d0));
+	push_back(Option("256d1",         O_P256D1, Option::BOOLEAN_T,    &rc_options.palette256d1));
+	push_back(Option("256l",          O_P256L, Option::BOOLEAN_T,     &rc_options.palette256l));
+	push_back(Option("256l0",         O_P256L0, Option::BOOLEAN_T,    &rc_options.palette256l0));
+	push_back(Option("256l1",         O_P256L1, Option::BOOLEAN_T,    &rc_options.palette256l1));
 	push_back(Option("256b",          O_P256B, Option::BOOLEAN_T,     &rc_options.palette256b));
 	push_back(Option("quiet",         'q',     Option::BOOLEAN,       &rc_options.be_quiet));
 	push_back(Option("quick",         'Q',     Option::BOOLEAN,       &rc_options.quick));
@@ -513,8 +522,12 @@ print_overlay_table(PrintFormat *fmt, DBHeader *header, vector<bool> *overlay_us
 			if(!((*overlay_used)[i-1]))
 				continue;
 		}
-		cout << fmt->overlay_keytext(i) << " ";
-		cout << header->getOverlay(i).human_readable() << "\n";
+		cout << fmt->overlay_keytext(i)
+			<< " "
+			<< fmt->color_overlayname
+			<< header->getOverlay(i).human_readable()
+			<< fmt->color_overlaynameend
+			<< "\n";
 		printed_overlay = true;
 	}
 	return printed_overlay;
@@ -623,15 +636,39 @@ run_eix(int argc, char** argv)
 		}
 	}
 
-	if(unlikely(rc_options.palette256
-		|| rc_options.palette256f ||  rc_options.palette256b
-		|| rc_options.palette256f0 || rc_options.palette256f1)) {
-		AnsiColor::PrintPalette(likely(rc_options.palette256) ? AnsiColor::PALETTE_ALL :
-			(likely(rc_options.palette256f) ? AnsiColor::PALETTE_F :
-			(likely(rc_options.palette256b) ? AnsiColor::PALETTE_B :
-			(likely(rc_options.palette256f0) ? AnsiColor::PALETTE_F0 :
-			AnsiColor::PALETTE_F1))));
-		return EXIT_SUCCESS;
+	// Print color palette if requested
+	{
+		AnsiColor::WhichPalette palette;
+		if(unlikely(rc_options.palette256)) {
+			palette = AnsiColor::PALETTE_ALL;
+		} else {
+			palette = (unlikely(rc_options.palette256b) ?
+				AnsiColor::PALETTE_B : AnsiColor::PALETTE_NONE);
+			if(unlikely(rc_options.palette256d)) {
+				palette |= AnsiColor::PALETTE_D;
+			} else {
+				if(unlikely(rc_options.palette256d0)) {
+					palette |= AnsiColor::PALETTE_D0;
+				}
+				if(unlikely(rc_options.palette256d1)) {
+					palette |= AnsiColor::PALETTE_D1;
+				}
+			}
+			if(unlikely(rc_options.palette256l)) {
+				palette |= AnsiColor::PALETTE_L;
+			} else {
+				if(unlikely(rc_options.palette256l0)) {
+					palette |= AnsiColor::PALETTE_L0;
+				}
+				if(unlikely(rc_options.palette256l1)) {
+					palette |= AnsiColor::PALETTE_L1;
+				}
+			}
+		}
+		if(unlikely(palette != AnsiColor::PALETTE_NONE)) {
+			AnsiColor::PrintPalette(palette);
+			return EXIT_SUCCESS;
+		}
 	}
 
 	bool only_printed;
@@ -912,6 +949,7 @@ run_eix(int argc, char** argv)
 			portagesettings["PORTDIR"]);
 		print_xml->start();
 	}
+	bool have_printed(false);
 	for(eix::ptr_list<Package>::iterator it(matches.begin());
 		likely(it != matches.end()); ++it) {
 		stability.set_stability(*it);
@@ -935,6 +973,7 @@ run_eix(int argc, char** argv)
 		}
 		if(overlay_mode != mode_list_used_renumbered) {
 			if(format->print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
+				have_printed = true;
 				++count;
 				if(unlikely(rc_options.brief || (rc_options.brief2 && count > 1))) {
 					break;
@@ -961,6 +1000,7 @@ run_eix(int argc, char** argv)
 		for(eix::ptr_list<Package>::iterator it(matches.begin());
 			likely(it != matches.end()); ++it) {
 			if(format->print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
+				have_printed = true;
 				++count;
 				if(unlikely(rc_options.brief || (rc_options.brief2 && count > 1))) {
 					break;
@@ -970,8 +1010,10 @@ run_eix(int argc, char** argv)
 	}
 	bool printed_overlay(false);
 	if(need_overlay_table) {
-		printed_overlay = print_overlay_table(format, &header,
-			(overlay_mode <= mode_list_used)? &overlay_used : NULLPTR);
+		if(print_overlay_table(format, &header,
+			(overlay_mode <= mode_list_used)? &overlay_used : NULLPTR)) {
+			printed_overlay = have_printed = true;
+		}
 	}
 	if(unlikely(print_xml != NULLPTR)) {
 		print_xml->finish();
@@ -985,6 +1027,8 @@ run_eix(int argc, char** argv)
 		eixrc.getBoolText("PRINT_COUNT_ALWAYS", "never"));
 	if(likely(print_count_always >= 0)) {
 		if(unlikely(count == 0)) {
+			have_printed = true;
+			cout << format->color_numbertext;
 			if(print_count_always) {
 				cout << eix::format(_("Found %s matches.\n"))
 					% eix::ptr_list<Package>::size_type(0);
@@ -993,17 +1037,25 @@ run_eix(int argc, char** argv)
 			}
 		} else if(unlikely(count == 1)) {
 			if(print_count_always) {
+				have_printed = true;
 				if(printed_overlay) {
 					cout << "\n";
 				}
-				cout << eix::format(_("Found %s match.\n"))
+				cout << format->color_numbertext <<
+					eix::format(_("Found %s match.\n"))
 					% eix::ptr_list<Package>::size_type(1);
 			}
 		} else {
-			if(printed_overlay)
+			have_printed = true;
+			if(printed_overlay) {
 				cout << "\n";
-			cout <<  eix::format(_("Found %s matches.\n")) % count;
+			}
+			cout << format->color_numbertext <<
+				eix::format(_("Found %s matches.\n")) % count;
 		}
+	}
+	if(have_printed) {
+		cout << format->color_end;
 	}
 
 	// Delete matches

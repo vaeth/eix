@@ -608,18 +608,43 @@ AddOption(STRING, "EXIT_STATUSLINE",
 	"If this is nonempty, it is used as the exit statusline.\n"
 	"An optional leading space in this string is ignored."));
 
+AddOption(STRING, "BG0",
+	"none", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the background color for color scheme 0. Use \"none\" for no change."));
+
+AddOption(STRING, "BG1",
+	"black", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the background color for color scheme 1. Use \"none\" for no change."));
+
+AddOption(STRING, "BG2",
+	"none", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the background color for color scheme 2. Use \"none\" for no change."));
+
+AddOption(STRING, "BG3",
+	"white", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the background color for color scheme 3. Use \"none\" for no change."));
+
 AddOption(STRING, "TERM_ALT",
 	"256 xterm", _(
 	"This is a list of regular expressions; if one of it matches TERM, then\n"
 	"COLORSCHEME_ALT is used instead of COLORSCHEME."));
 
+AddOption(BOOLEAN, "DARK",
+	"true", _(
+	"This variable is only used for delayed substitution in COLORSCHEME{,_ALT}.\n"
+	"If true, the \"dark\" color schemes (for black background) are selected."));
+
 AddOption(STRING, "COLORSCHEME",
-	"0", _(
+	"%{?DARK}0%{else}2%{}", _(
 	"If TERM_ALT does not match, this chooses the corresponding color of\n"
 	"color specifications (starting from 0)."));
 
 AddOption(STRING, "COLORSCHEME_ALT",
-	"1", _(
+	"%{?DARK}1%{else}3%{}", _(
 	"If TERM_ALT matches, this chooses the corresponding color of\n"
 	"color specifications (starting from 0)."));
 
@@ -986,18 +1011,23 @@ AddOption(STRING, "EAPI_REGEX",
 	"You might need to modify it according to the installed portage version.\n"
 	"Leave it empty if EAPI-suffixed ebuilds (GLEP 55) should be ignored."));
 
+AddOption(STRING, "COLOR_RESET",
+	";%{BG0}|;%{BG1}|;%{BG2}|;%{BG3}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the color used for default colors."));
+
 AddOption(STRING, "COLOR_NAME",
-	"default,1|253,1", _(
+	",1;%{BG0}|253,1;%{BG1}|,1;%{BG2}|232;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the name of packages."));
 
 AddOption(STRING, "COLOR_WORLD",
-	"green,1|47,1", _(
+	"green,1;%{BG0}|47,1;%{BG1}|green,1;%{BG2}|22,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the name of world packages."));
 
 AddOption(STRING, "COLOR_WORLD_SETS",
-	"yellow,1|214,1", _(
+	"yellow,1;%{BG0}|214,1;%{BG1}|blue,1;%{BG2}|33,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the name of world sets packages."));
 
@@ -1007,7 +1037,7 @@ AddOption(STRING, "COLOR_CATEGORY",
 	"It defines the color used for the category of packages."));
 
 AddOption(STRING, "COLOR_CATEGORY_SYSTEM",
-	"yellow|154,1", _(
+	"yellow;%{BG0}|154,1;%{BG1}|blue;%{BG2}|57,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the category of system packages."));
 
@@ -1022,12 +1052,12 @@ AddOption(STRING, "COLOR_CATEGORY_WORLD_SETS",
 	"It defines the color used for printing the category of world sets packages."));
 
 AddOption(STRING, "COLOR_UPGRADE_TEXT",
-	"cyan,1|87,1", _(
+	"cyan,1;%{BG0}|87,1;%{BG1}|blue,1;%{BG2}|21,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing upgrade recommendation texts."));
 
 AddOption(STRING, "COLOR_DOWNGRADE_TEXT",
-	"blue,1|135,1", _(
+	"blue,1;%{BG0}|135,1;%{BG1}|purple,1;%{BG2}|89,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing downgrade recommendation texts."));
 
@@ -1074,12 +1104,12 @@ AddOption(STRING, "DIFF_COLOR_NEW",
 	"It defines the color used for \"new package\" separators (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_DELETE",
-	"red,1|197,1", _(
+	"red,1;%{BG0}|197,1;%{BG1}|red,1;%{BG2}|197,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for \"deleted package\" separators (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_CHANGED",
-	"yellow|226", _(
+	"yellow;%{BG0}|226;%{BG1}|blue;%{BG2}|24;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for \"changed package\" separators (eix-diff)."));
 
@@ -1094,77 +1124,82 @@ AddOption(STRING, "COLOR_UNINST_TAG",
 	"It defines the color used for tagging uninstalled packages."));
 
 AddOption(STRING, "COLOR_DATE",
-	"purple,1|166", _(
+	"purple,1;%{BG0}|166;%{BG1}|purple,1;%{BG2}|130,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the date."));
 
 AddOption(STRING, "COLOR_DEPEND",
-	"none|248", _(
+	"none|248;%{BG1}|none|241,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color of the DEPEND output."));
 
 AddOption(STRING, "COLOR_DEPEND_END",
-	"none|", _(
+	"none|;%{BG1}|none|;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the end of color of the DEPEND output."));
 
 AddOption(STRING, "COLOR_NORMAL",
-	"|252", _(
+	";%{BG0}|252;%{BG1}|,1;%{BG2}|237,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing normal texts."));
 
 AddOption(STRING, "COLOR_NORMAL_END",
-	"none|", _(
+	"none|;%{BG1}|none|;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing end of normal texts."));
 
 AddOption(STRING, "COLOR_SET_USE",
-	"red,1|125,1", _(
+	"red,1;%{BG0}|125,1;%{BG1}|red,1;%{BG2}|125,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the set useflags."));
 
 AddOption(STRING, "COLOR_UNSET_USE",
-	"blue,1|33", _(
+	"blue,1;%{BG0}|33;%{BG1}|blue,1;%{BG2}|17;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the unset useflags."));
 
 AddOption(STRING, "COLOR_VERSION_IUSE",
-	"black,1|168", _(
+	"black,1;%{BG0}|168;%{BG1}|black,1;%{BG2}|168,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing IUSE for available versions."));
 
 AddOption(STRING, "COLOR_COLL_IUSE",
-	"black,1|38", _(
+	"black,1;%{BG0}|38;%{BG1}|black,1;%{BG2}|61,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing collected IUSE for packages."));
 
 AddOption(STRING, "COLOR_USE_EXPAND_START",
-	"|115", _(
+	";%{BG0}|115;%{BG1}|;%{BG2}|95,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing USE_EXPAND variables."));
 
 AddOption(STRING, "COLOR_USE_EXPAND_END",
-	"none|", _(
+	"none|;%{BG1}|none|;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing end of USE_EXPAND variables."));
 
+AddOption(STRING, "COLOR_USE_COLL",
+	"yellow,1;%{BG0}|252;%{BG1}|blue;%{BG2}|237,1;%{BG3}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing the braces around collected USE."));
+
 AddOption(STRING, "COLOR_INST_VERSION",
-	"green,1;blue|40,1;21", _(
+	"green,1;blue|40,1;21|black;green|232;46", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the version of installed packages."));
 
 AddOption(STRING, "COLOR_TITLE",
-	"green|34", _(
+	"green;%{BG0}|34;%{BG1}|;%{BG2}|240,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the title texts for packages."));
 
 AddOption(STRING, "COLOR_INST_TITLE",
-	"cyan|67", _(
+	"cyan;%{BG0}|67;%{BG1}|cyan,1;%{BG2}|67,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the title texts for installed versions."));
 
 AddOption(STRING, "COLOR_AVAILABLE_TITLE",
-	"purple|70", _(
+	"purple;%{BG0}|70;%{BG1}|purple;%{BG2}|65,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the title texts for available versions."));
 
@@ -1179,36 +1214,52 @@ AddOption(STRING, "COLOR_PACKAGESETS",
 	"It defines the color used for printing the package sets."));
 
 AddOption(STRING, "COLOR_MARKED_NAME",
-	"red,1;%{MARK_VERSIONS}|207,1;%{MARK_VERSIONS}", _(
+	"red,1;%{BG0};%{MARK_VERSIONS}|207,1;%{BG1};%{MARK_VERSIONS}|red,1;%{BG2};%{MARK_VERSIONS}|164,1;%{BG3};%{MARK_VERSIONS}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing a marked package name."));
 
 AddOption(STRING, "COLOR_OVERLAYKEY",
-	"cyan|87", _(
+	"cyan;%{BG0}|87;%{BG1}|cyan,1;%{BG2}|26,1;%{BG3}", _(
 	"Color for the overlaykey in version listings."));
 
 AddOption(STRING, "COLOR_VIRTUALKEY",
-	"purple|170", _(
+	"purple;%{BG0}|170;%{BG1}|purple,1;%{BG2}|92,1;%{BG3}", _(
 	"Color for the overlaykey for virtual overlays in version listings."));
 
+AddOption(STRING, "COLOR_KEYEND",
+	"%{COLOR_RESET}", _(
+	"Color after printing an overlay key."));
+
+AddOption(STRING, "COLOR_OVERLAYNAME",
+	"%{COLOR_NORMAL}", _(
+	"Color for printing an overlay name."));
+
+AddOption(STRING, "COLOR_OVERLAYNAMEEND",
+	"%{COLOR_RESET}", _(
+	"Color after printing an overlay name."));
+
+AddOption(STRING, "COLOR_NUMBERTEXT",
+	"%{COLOR_NORMAL}", _(
+	"Color for printing the number of packages."));
+
 AddOption(STRING, "COLOR_SLOTS",
-	"red,1|166,1", _(
+	"red,1;%{BG0}|166,1;%{BG1}|red,1;%{BG2}|166,1;%{BG3}", _(
 	"Color for slots. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_BINARY",
-	"blue,1|39,1", _(
+	"blue,1;%{BG0}|39,1;%{BG1}|blue,1;%{BG2}|39,1;%{BG3}", _(
 	"Color for versions with *.tbz2. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_RESTRICT",
-	"red|99", _(
+	"red;%{BG0}|99;%{BG1}|red;%{BG2}|53;%{BG3}", _(
 	"Color for the restriction tags. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_PROPERTIES",
-	"cyan|143", _(
+	"cyan;%{BG0}|143;%{BG1}|cyan,1;%{BG2}|57;%{BG3}", _(
 	"Color for the properties tags. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_KEYWORDS",
-	"cyan|73", _(
+	"cyan;%{BG0}|73;%{BG1}|cyan,1;%{BG2}|26;%{BG3}", _(
 	"Color for keywords. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_KEYWORDSS",
@@ -1283,22 +1334,22 @@ AddOption(STRING, "DIFF_CHAR_WORSE",
 	"It defines the character used for \"worse version\" tags (eix-diff)."));
 
 AddOption(STRING, "TAG_UPGRADE",
-	"(%{COLOR_UPGRADE})%{CHAR_UPGRADE}()", _(
+	"(%{COLOR_UPGRADE})%{CHAR_UPGRADE}(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the tag printed for upgrade recommendations."));
 
 AddOption(STRING, "TAG_DOWNGRADE",
-	"(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}()", _(
+	"(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the tag printed for downgrade recommendations."));
 
 AddOption(STRING, "TAG_INSTALLED",
-	"(%{COLOR_INST_TAG})%{CHAR_INSTALLED}()", _(
+	"(%{COLOR_INST_TAG})%{CHAR_INSTALLED}(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the tag printed for installed packages."));
 
 AddOption(STRING, "TAG_UNINSTALLED",
-	"(%{COLOR_UNINST_TAG})%{CHAR_UNINSTALLED}()", _(
+	"(%{COLOR_UNINST_TAG})%{CHAR_UNINSTALLED}(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the tag printed for uninstalled packages."));
 
@@ -1307,22 +1358,22 @@ AddOption(STRING, "TAG_STABILIZE",
 		"(%{DIFF_COLOR_INST_STABILIZE})%{DIFF_CHAR_INST_STABILIZE}"
 	"{else}"
 		"(%{DIFF_COLOR_UNINST_STABILIZE})%{DIFF_CHAR_UNINST_STABILIZE}"
-	"{}()", _(
+	"{}(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the tag for packages which have gained a stable version."));
 
 AddOption(STRING, "TAG_NEW",
-	"(%{DIFF_COLOR_NEW_TAG})%{DIFF_CHAR_NEW}()", _(
+	"(%{DIFF_COLOR_NEW_TAG})%{DIFF_CHAR_NEW}(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the tag printed for new packages (eix-diff)."));
 
 AddOption(STRING, "TAG_BETTER",
-	"(%{DIFF_COLOR_BETTER})%{DIFF_CHAR_BETTER}()", _(
+	"(%{DIFF_COLOR_BETTER})%{DIFF_CHAR_BETTER}(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the tag used for \"better version\" (eix-diff)."));
 
 AddOption(STRING, "TAG_WORSE",
-	"(%{DIFF_COLOR_WORSE})%{DIFF_CHAR_WORSE}()", _(
+	"(%{DIFF_COLOR_WORSE})%{DIFF_CHAR_WORSE}(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the tag used for \"worse version\" (eix-diff)."));
 
@@ -1354,14 +1405,14 @@ AddOption(STRING, "DIFF_STRING_CHANGED",
 AddOption(STRING, "FORMAT_NOBEST",
 	"%{FORMAT_COLOR_MASKED}"
 	"--"
-	"()", _(
+	"(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines what to print if no version number is printed."));
 
 AddOption(STRING, "FORMAT_NOBEST_CHANGE",
 	"%{FORMAT_COLOR_MASKED}"
 	"??"
-	"()", _(
+	"(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines what to print after \"->\" if there is no installable."));
 
@@ -1631,17 +1682,17 @@ AddOption(STRING, "FORMAT_COLLIUSE",
 	"It is used for colored <colliuse>; color is not reset."));
 
 AddOption(STRING, "FORMAT_KEYWORDS",
-	"(%{COLOR_KEYWORDS})<versionkeywords>()", _(
+	"(%{COLOR_KEYWORDS})<versionkeywords>(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is used for printing colored <keywords>; color is not reset."));
 
 AddOption(STRING, "FORMAT_KEYWORDSS",
-	"(%{COLOR_KEYWORDSS})<versionkeywords*>()", _(
+	"(%{COLOR_KEYWORDSS})<versionkeywords*>(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is used for printing colored <keywords*>; color is not reset."));
 
 AddOption(STRING, "FORMAT_KEYWORDS_EQUAL",
-	"{versionkeywords} (%{COLOR_KEYWORDSS})$\\{KEYWORDS\\}(){}", _(
+	"{versionkeywords} (%{COLOR_KEYWORDSS})$\\{KEYWORDS\\}(%{COLOR_RESET}){}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines what to output for KEYWORDS* if they equal KEYWORDS."));
 
@@ -1771,7 +1822,7 @@ AddOption(STRING, "FORMAT_RESTRICT",
 AddOption(STRING, "FORMAT_PROPRESTRICT",
 	"%{!NO_RESTRICTIONS}"
 		"{!*color}%{FORMAT_PROPERTIES}%{FORMAT_RESTRICT}"
-		"{$color}(){}"
+		"{$color}(%{COLOR_RESET}){}"
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the PROPERTIES and RESTRICT of a version\n"
@@ -1780,7 +1831,7 @@ AddOption(STRING, "FORMAT_PROPRESTRICT",
 AddOption(STRING, "FORMAT_BINARY",
 	"%{!NO_BINARY}"
 		"{isbinary}"
-			"<$sep>{!*sep}(%{COLOR_BINARY})%{TAG_BINARY}()"
+			"<$sep>{!*sep}(%{COLOR_BINARY})%{TAG_BINARY}(%{COLOR_RESET})"
 		"{}"
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -1788,7 +1839,7 @@ AddOption(STRING, "FORMAT_BINARY",
 	"and resets the color."));
 
 AddOption(STRING, "FORMAT_SLOT",
-	"(%{COLOR_SLOTS})\\(<slot>\\)()", _(
+	"(%{COLOR_SLOTS})\\(<slot>\\)(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the slot format printed for slotsorted versions."));
 
@@ -1814,7 +1865,7 @@ AddOption(STRING, "FORMAT_PVERSION",
 	"It should be follows by FORMAT_VERSION_END or FORMAT_VERSIONS_END."));
 
 AddOption(STRING, "FORMAT_VERSION_END",
-	"{$color}(){}", _(
+	"{$color}(%{COLOR_RESET}){}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It resets all colors/markers if the runtime variable $color was set."));
 
@@ -1822,7 +1873,7 @@ AddOption(STRING, "FORMAT_VERSIONO_END",
 	"%{?PRINT_SLOTS}"
 		"{issubslot}"
 			"%{?COLORED_SLOTS}"
-				"{$color}(){}"
+				"{$color}(%{COLOR_RESET}){}"
 				"{*color}"
 				"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<fullslot>"
 				"%{else}<$sep>{!*sep}(%{COLOR_SLOTS})\\(<fullslot>\\)%{}"
@@ -1841,7 +1892,7 @@ AddOption(STRING, "FORMAT_VERSIONS_END",
 	"%{?PRINT_SLOTS}"
 		"{isfullslot}"
 			"%{?COLORED_SLOTS}"
-				"{$color}(){}"
+				"{$color}(%{COLOR_RESET}){}"
 				"{*color}"
 				"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<fullslot>"
 				"%{else}<$sep>{!*sep}(%{COLOR_SLOTS})\\(<fullslot>\\)%{}"
@@ -1998,19 +2049,19 @@ AddOption(STRING, "FORMAT_DEPS_NORMAL",
 		"%{?VERSION_DEPS_NORMAL}"
 			"{havedepend}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})DEPEND:()    %{FORMAT_DEPEND}"
+				"(%{COLOR_AVAILABLE_TITLE})DEPEND:(%{COLOR_RESET})    %{FORMAT_DEPEND}"
 			"{}"
 			"{haverdepend}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})RDEPEND:()   %{FORMAT_RDEPEND}"
+				"(%{COLOR_AVAILABLE_TITLE})RDEPEND:(%{COLOR_RESET})   %{FORMAT_RDEPEND}"
 			"{}"
 			"{havepdepend}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})PDEPEND:()   %{FORMAT_PDEPEND}"
+				"(%{COLOR_AVAILABLE_TITLE})PDEPEND:(%{COLOR_RESET})   %{FORMAT_PDEPEND}"
 			"{}"
 			"{havehdepend}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})HDEPEND:()   %{FORMAT_HDEPEND}"
+				"(%{COLOR_AVAILABLE_TITLE})HDEPEND:(%{COLOR_RESET})   %{FORMAT_HDEPEND}"
 			"{}"
 		"%{}"
 	"%{}", _(
@@ -2022,19 +2073,19 @@ AddOption(STRING, "FORMAT_VERSION_KEYWORDS_VERBOSE",
 		"%{?VERSION_KEYWORDS_VERBOSE}"
 			"%{!PRINT_ALWAYS}{versionkeywords}%{}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})KEYWORDS:()"
+				"(%{COLOR_AVAILABLE_TITLE})KEYWORDS:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{versionkeywords}%{}"
-				"  %{FORMAT_KEYWORDS}()"
+				"  %{FORMAT_KEYWORDS}(%{COLOR_RESET})"
 			"{}"
 			"%{!PRINT_ALWAYS}{versionekeywords}%{}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})KEYWORDS*:()"
+				"(%{COLOR_AVAILABLE_TITLE})KEYWORDS*:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}"
 					"{!versionekeywords}"
 						"%{FORMAT_KEYWORDS_EQUAL}"
 					"{else}"
 				"%{}"
-				" %{FORMAT_KEYWORDSS}()"
+				" %{FORMAT_KEYWORDSS}(%{COLOR_RESET})"
 			"{}"
 		"%{}"
 	"%{}", _(
@@ -2046,9 +2097,9 @@ AddOption(STRING, "FORMAT_IUSE_VERBOSE",
 		"%{?VERSION_IUSE_VERBOSE}"
 			"%{!PRINT_ALWAYS}{haveuse}%{}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})IUSE:()"
+				"(%{COLOR_AVAILABLE_TITLE})IUSE:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{haveuse}%{}"
-				"      %{FORMAT_VERSION_IUSE}()"
+				"      %{FORMAT_VERSION_IUSE}(%{COLOR_RESET})"
 			"{}"
 		"%{}"
 	"%{}", _(
@@ -2060,25 +2111,25 @@ AddOption(STRING, "FORMAT_DEPS_VERBOSE",
 		"%{?VERSION_DEPS_VERBOSE}"
 			"%{!PRINT_ALWAYS}{havedepend}%{}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})DEPEND:()"
+				"(%{COLOR_AVAILABLE_TITLE})DEPEND:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{depend}%{}"
 				"    %{FORMAT_DEPEND_VERBOSE}"
 			"{}"
 			"%{!PRINT_ALWAYS}{haverdepend}%{}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})RDEPEND:()"
+				"(%{COLOR_AVAILABLE_TITLE})RDEPEND:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{haverdepend}%{}"
 				"   %{FORMAT_RDEPEND_VERBOSE}"
 			"{}"
 			"%{!PRINT_ALWAYS}{havepdepend}%{}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})PDEPEND:()"
+				"(%{COLOR_AVAILABLE_TITLE})PDEPEND:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{havepdepend}%{}"
 				"   %{FORMAT_PDEPEND_VERBOSE}"
 			"{}"
 			"%{!PRINT_ALWAYS}{havehdepend}%{}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})HDEPEND:()"
+				"(%{COLOR_AVAILABLE_TITLE})HDEPEND:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{havehdepend}%{}"
 				"   %{FORMAT_HDEPEND_VERBOSE}"
 			"{}"
@@ -2172,9 +2223,9 @@ AddOption(STRING, "FORMAT_COLL_SEP",
 
 AddOption(STRING, "FORMAT_COLL_VERBOSE",
 	"%{!PRINT_ALWAYS}{havecolliuse}%{}"
-		"\\n     (%{COLOR_TITLE})IUSE \\(all versions\\):()"
+		"\\n     (%{COLOR_TITLE})IUSE \\(all versions\\):(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{havecolliuse}%{}"
-		" %{FORMAT_COLLIUSE}()"
+		" %{FORMAT_COLLIUSE}(%{COLOR_RESET})"
 	"{}",  _(
 	"This variable is only used for delayed substitution.\n"
 	"It is the format for package IUSE in single-line verbose mode."));
@@ -2218,7 +2269,7 @@ AddOption(STRING, "FORMAT_COLL_IUSE_LIST",
 
 AddOption(STRING, "INORMAL",
 	"%{IVERSIONS_VERBOSE}"
-	"(%{COLOR_DATE})\\(<date:FORMAT_INSTALLATION_DATE>\\)()"
+	"(%{COLOR_DATE})\\(<date:FORMAT_INSTALLATION_DATE>\\)(%{COLOR_RESET})"
 	"%{FORMAT_INST_USEFLAGS}"
 	"{!last}"
 		"{versionlines}%{FORMAT_INST_LINESKIP}"
@@ -2229,20 +2280,20 @@ AddOption(STRING, "INORMAL",
 
 AddOption(STRING, "ICOMPACT",
 	"%{IVERSIONS_COMPACT}"
-	"(%{COLOR_NORMAL})@(%{COLOR_DATE})<date:FORMAT_SHORT_INSTALLATION_DATE>()"
+	"(%{COLOR_NORMAL})@(%{COLOR_DATE})<date:FORMAT_SHORT_INSTALLATION_DATE>(%{COLOR_RESET})"
 	"{!last} {}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the compact format of installed versions."));
 
 AddOption(STRING, "IVERBOSE",
-	"(%{COLOR_INST_TITLE})Version:()   "
-	"%{IVERSIONS_VERBOSE}()"
+	"(%{COLOR_INST_TITLE})Version:(%{COLOR_RESET})   "
+	"%{IVERSIONS_VERBOSE}(%{COLOR_RESET})"
 	"%{FORMAT_INST_LINESKIP}"
-	"(%{COLOR_INST_TITLE})Date:()      "
-	"(%{COLOR_DATE})<date:FORMAT_INSTALLATION_DATE>()"
+	"(%{COLOR_INST_TITLE})Date:(%{COLOR_RESET})      "
+	"(%{COLOR_DATE})<date:FORMAT_INSTALLATION_DATE>(%{COLOR_RESET})"
 	"{haveuse}"
 		"%{FORMAT_INST_LINESKIP}"
-		"(%{COLOR_INST_TITLE})USE:()       "
+		"(%{COLOR_INST_TITLE})USE:(%{COLOR_RESET})       "
 		"%{?EIX_USE_EXPAND}<use*>%{else}<use>%{}"
 	"{}"
 	"{!last}%{FORMAT_INST_LINESKIP}{}", _(
@@ -2297,7 +2348,7 @@ AddOption(STRING, "INSTALLEDVERSIONS",
 
 AddOption(STRING, "FORMATLINE_INSTALLEDVERSIONS",
 	"%{!PRINT_ALWAYS}{installed}%{}"
-		"     (%{COLOR_TITLE})Installed versions:()"
+		"     (%{COLOR_TITLE})Installed versions:(%{COLOR_RESET})"
 		"  "
 		"%{?PRINT_ALWAYS}{installed}%{}"
 			"%{INSTALLEDVERSIONS}"
@@ -2335,7 +2386,7 @@ AddOption(STRING, "FORMAT_NAME",
 			"{world_sets}(%{COLOR_WORLD_SETS})"
 			"{else}(%{COLOR_NAME}){}"
 		"{}"
-	"{}<name>()", _(
+	"{}<name>(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the printing the package name."));
 
@@ -2353,7 +2404,7 @@ AddOption(STRING, "FORMAT_HEADER",
 AddOption(STRING, "FORMAT_HEADER_VERBOSE",
 	"{installed}(%{COLOR_INST_TAG})%{STRING_PLAIN_INSTALLED}"
 	"{else}(%{COLOR_UNINST_TAG})%{STRING_PLAIN_UNINSTALLED}{}"
-	"()", _(
+	"(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the verbose header symbols."));
 
@@ -2376,7 +2427,7 @@ AddOption(STRING, "DIFF_FORMAT_HEADER_NEW",
 	"{downgrade}{$updn}{!*stable}{}{*updn}%{TAG_DOWNGRADE}{}"
 	"{!$updn}%{TAG_NEW}{}"
 	"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})<$better><$stable>"
-	" (%{DIFF_COLOR_NEW})%{DIFF_STRING_NEW}()", _(
+	" (%{DIFF_COLOR_NEW})%{DIFF_STRING_NEW}(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-new header symbols."));
 
@@ -2388,7 +2439,7 @@ AddOption(STRING, "DIFF_FORMAT_HEADER_DELETE",
 	"{else}"
 		"   "
 	"{}"
-	"   (%{DIFF_COLOR_DELETE})%{DIFF_STRING_DELETE}()", _(
+	"   (%{DIFF_COLOR_DELETE})%{DIFF_STRING_DELETE}(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-delete header symbols."));
 
@@ -2400,7 +2451,7 @@ AddOption(STRING, "DIFF_FORMAT_HEADER_CHANGED",
 	"{$up}{better}{!*up}%{TAG_BETTER}{}{}"
 	"{$down}{worse}{!*down}%{TAG_WORSE}{}{}"
 	"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})<$better><$up><$down>"
-	" (%{DIFF_COLOR_CHANGED})%{DIFF_STRING_CHANGED}()", _(
+	" (%{DIFF_COLOR_CHANGED})%{DIFF_STRING_CHANGED}(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-changed header symbols."));
 
@@ -2535,7 +2586,7 @@ AddOption(STRING, "DIFF_FORMATLINE_NAME_CHANGED",
 	"It defines the format for the diff-changed header."));
 
 AddOption(STRING, "FORMATLINE_AVAILABLEVERSIONS",
-	"     (%{COLOR_TITLE})Available versions:()  %{FORMAT_AVAILABLEVERSIONS}\\n", _(
+	"     (%{COLOR_TITLE})Available versions:(%{COLOR_RESET})  %{FORMAT_AVAILABLEVERSIONS}\\n", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with installed versions."));
 
@@ -2553,27 +2604,27 @@ AddOption(STRING, "DIFF_FORMATLINE_CHANGED_VERSIONS",
 
 AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
 	"%{!PRINT_ALWAYS}{havemarkedversion}%{}"
-		"     (%{COLOR_TITLE})Marked:()"
+		"     (%{COLOR_TITLE})Marked:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{havemarkedversion}%{}"
 		"              "
-		"(%{COLOR_MARKED_VERSION})<markedversions:VERSION>()"
+		"(%{COLOR_MARKED_VERSION})<markedversions:VERSION>(%{COLOR_RESET})"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with marked versions."));
 
 AddOption(STRING, "FORMATLINE_PACKAGESETS",
 	"%{!PRINT_ALWAYS}{%{PRINT_SETNAMES}}%{}"
-		"     (%{COLOR_TITLE})Package sets:()"
+		"     (%{COLOR_TITLE})Package sets:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{%{PRINT_SETNAMES}}%{}"
 		"        "
-		"(%{COLOR_PACKAGESETS})<%{PRINT_SETNAMES}>()"
+		"(%{COLOR_PACKAGESETS})<%{PRINT_SETNAMES}>(%{COLOR_RESET})"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with package sets."));
 
 AddOption(STRING, "FORMATLINE_HOMEPAGE",
 	"%{!PRINT_ALWAYS}{homepage}%{}"
-		"     (%{COLOR_TITLE})Homepage:()"
+		"     (%{COLOR_TITLE})Homepage:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{homepage}%{}"
 		"            "
 		"(%{COLOR_NORMAL})"
@@ -2585,7 +2636,7 @@ AddOption(STRING, "FORMATLINE_HOMEPAGE",
 
 AddOption(STRING, "FORMATLINE_BUGS",
 	"%{?PRINT_BUGS}"
-		"     (%{COLOR_TITLE})Find open bugs:()"
+		"     (%{COLOR_TITLE})Find open bugs:(%{COLOR_RESET})"
 		"      "
 		"(%{COLOR_NORMAL})"
 		"http://bugs.gentoo.org/buglist.cgi?quicksearch="
@@ -2597,7 +2648,7 @@ AddOption(STRING, "FORMATLINE_BUGS",
 
 AddOption(STRING, "FORMATLINE_DESCRIPTION",
 	"%{!PRINT_ALWAYS}{description}%{}"
-		"     (%{COLOR_TITLE})Description:()"
+		"     (%{COLOR_TITLE})Description:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{description}%{}"
 		"         "
 		"(%{COLOR_NORMAL})"
@@ -2609,7 +2660,7 @@ AddOption(STRING, "FORMATLINE_DESCRIPTION",
 
 AddOption(STRING, "FORMATLINE_BEST",
 	"%{!PRINT_ALWAYS}{havebest}%{}"
-		"     (%{COLOR_TITLE})Best versions/slot:()"
+		"     (%{COLOR_TITLE})Best versions/slot:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{havebest}%{}"
 		"  <bestslotversions:VSORT>"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
@@ -2618,22 +2669,22 @@ AddOption(STRING, "FORMATLINE_BEST",
 
 AddOption(STRING, "FORMATLINE_RECOMMEND",
 	"%{!PRINT_ALWAYS}{recommend}%{}"
-		"     (%{COLOR_TITLE})Recommendation:()"
+		"     (%{COLOR_TITLE})Recommendation:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{recommend}%{}"
 		"      "
-		"{upgrade}(%{COLOR_UPGRADE_TEXT})Upgrade()"
+		"{upgrade}(%{COLOR_UPGRADE_TEXT})Upgrade(%{COLOR_RESET})"
 			"{downgrade}"
 				" and "
 			"{}"
 		"{}"
-		"{downgrade}(%{COLOR_DOWNGRADE_TEXT})Downgrade(){}"
+		"{downgrade}(%{COLOR_DOWNGRADE_TEXT})Downgrade(%{COLOR_RESET}){}"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the up-/downgrade recommendations."));
 
 AddOption(STRING, "FORMATLINE_LICENSES",
 	"%{!PRINT_ALWAYS}{licenses}%{}"
-		"     (%{COLOR_TITLE})License:()"
+		"     (%{COLOR_TITLE})License:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{licenses}%{}"
 		"             "
 		"(%{COLOR_NORMAL})"
@@ -2666,7 +2717,7 @@ AddOption(STRING, "FORMAT_ALL_COMPACT",
 	"{*modus=compact}"
 	"%{FORMATLINE_NAME_COMPACT}"
 	" (%{COLOR_NORMAL})\\((%{COLOR_NORMAL_END})"
-	"{havemarkedversion}(%{COLOR_MARKED_VERSION})<markedversions:VERSION>(); {}"
+	"{havemarkedversion}(%{COLOR_MARKED_VERSION})<markedversions:VERSION>(%{COLOR_RESET}); {}"
 	"{installed}"
 		"%{INSTALLEDVERSIONS_COMPACT}"
 		"{recommend} -> %{FORMAT_BEST_CHANGE}{}"
@@ -2780,7 +2831,7 @@ AddOption(STRING, "FORMAT_BEFORE_SET_USE",
 	"This string is printed before each set USE flag of an installed version."));
 
 AddOption(STRING, "FORMAT_AFTER_SET_USE",
-	"()", _(
+	"(%{COLOR_RESET})", _(
 	"This string is printed after each set USE flag of an installed version."));
 
 AddOption(STRING, "FORMAT_BEFORE_UNSET_USE",
@@ -2788,7 +2839,7 @@ AddOption(STRING, "FORMAT_BEFORE_UNSET_USE",
 	"This string is printed before each unset USE flag of an installed version."));
 
 AddOption(STRING, "FORMAT_AFTER_UNSET_USE",
-	"()", _(
+	"(%{COLOR_RESET})", _(
 	"This string is printed after each unset USE flag of an installed version."));
 
 AddOption(STRING, "FORMAT_BEFORE_USE_EXPAND_START",
@@ -2842,19 +2893,19 @@ AddOption(STRING, "FORMAT_AFTER_IUSE",
 	"(Normally, this is only used when --versionlines is active)"));
 
 AddOption(STRING, "FORMAT_BEFORE_COLL",
-	"{*colliuse} (yellow,1|252)\\{", _(
+	"{*colliuse} (%{COLOR_USE_COLL})\\{", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before IUSE data for all versions is output.\n"
 	"(This is meant for printing after all versions in a line)"));
 
 AddOption(STRING, "FORMAT_AFTER_COLL",
-	"(yellow,1|252)\\}()", _(
+	"(%{COLOR_USE_COLL})\\}(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed after IUSE data for all versions is output.\n"
 	"(This is meant for printing after all versions in a line)"));
 
 AddOption(STRING, "FORMAT_BEFORE_COLL_SEP",
-	"\\n\\t(yellow,1|252)\\{", _(
+	"\\n\\t(%{COLOR_USE_COLL})\\{", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before IUSE data for all versions is output.\n"
 	"(This is meant for printing in a separate line)"));
@@ -2866,17 +2917,17 @@ AddOption(STRING, "FORMAT_AFTER_COLL_SEP",
 	"(This is meant for printing in a separate line)"));
 
 AddOption(STRING, "COLOR_MASKED",
-	"red|196", _(
+	"red;%{BG0}|196;%{BG1}|red;%{BG2}|196;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color for masked versions."));
 
 AddOption(STRING, "COLOR_UNSTABLE",
-	"yellow|190", _(
+	"yellow;%{BG0}|190;%{BG1}|blue;%{BG2}|21;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color for unstable versions."));
 
 AddOption(STRING, "COLOR_STABLE",
-	"green|46", _(
+	"green;%{BG0}|46;%{BG1}|;%{BG2}|58;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color for stable versions."));
 

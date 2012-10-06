@@ -418,6 +418,7 @@ run_eix_diff(int argc, char *argv[])
 	differ.changed_package = print_changed_package;
 
 	differ.diff(&old_tree, &new_tree);
+	cout << format_for_new->color_end;
 
 	delete varpkg_db;
 	delete portagesettings;

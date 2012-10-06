@@ -47,7 +47,7 @@ Options -b, -d, and -q are meant to be used in EIX_TEST_OBSOLETE_OPTS to
 specify the default behavior.
 
 If neither -c nor -C is used, then CHECK_INSTALLED_OVERLAYS is not modified.
-The (recommended) default for CHECK_INSTALLED_OVERLAYS is \"repository\" which
+The (recommended) default for CHECK_INSTALLED_OVERLAYS is "repository" which
 is much faster than CHECK_INSTALLED_OVERLAYS=true but works only reliable for
 packages installed with repository information (which is done by all recent
 portage versions).

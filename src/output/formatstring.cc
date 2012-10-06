@@ -236,7 +236,7 @@ PrintFormat::overlay_keytext(ExtendedVersion::Overlay overlay, bool plain) const
 			start = color_virtualkey + start;
 		else
 			start = color_overlaykey + start;
-		end.append(AnsiColor::reset());
+		end.append(color_keyend);
 	}
 	if(overlay) {
 		vector<ExtendedVersion::Overlay>::size_type index(overlay - 1);
@@ -269,6 +269,11 @@ PrintFormat::setupResources(EixRc *rc)
 	eix_rc = rc;
 	color_overlaykey = (*rc)["COLOR_OVERLAYKEY"];
 	color_virtualkey = (*rc)["COLOR_VIRTUALKEY"];
+	color_keyend     = (*rc)["COLOR_KEYEND"];
+	color_overlayname    = (*rc)["COLOR_OVERLAYNAME"];
+	color_overlaynameend = (*rc)["COLOR_OVERLAYNAMEEND"];
+	color_numbertext = (*rc)["COLOR_NUMBERTEXT"];
+	color_end.clear();
 
 	alpha_use        = rc->getBool("SORT_INST_USE_ALPHA");
 	before_use_start = (*rc)["FORMAT_BEFORE_USE_EXPAND_START"];
@@ -326,6 +331,11 @@ PrintFormat::setupColors()
 	if(use_color) {
 		colorstring(&color_overlaykey);
 		colorstring(&color_virtualkey);
+		colorstring(&color_keyend);
+		colorstring(&color_overlayname);
+		colorstring(&color_overlaynameend);
+		colorstring(&color_numbertext);
+		colorstring(&color_end);
 	}
 	parse_color(&before_use_start, use_color);
 	parse_color(&before_use_end, use_color);

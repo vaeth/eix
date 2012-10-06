@@ -2,7 +2,18 @@
 
 *eix-0.27.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- It is now possible to use eix colors with white background terminals:
+	  To use the light color schemes, set DARK=false (e.g. in /etc/eixrc);
+	  or set COLORSCHEME=2 or COLORSCHEME_ALT=3 for usage with ordinary
+	  or 256 colors, respectively; see the description of these variables
+	  in the eix manpage. The light schemes are not carefully designed:
+	  improvements or complete rework are welcome!
+	- Alternatively, you can force black background colors for the default
+	  or dark scheme with BG0=black or BG1=black, respectively.
+	  See the description of the COLORSCHEME variables in the eix manpage
 	- Minor fixes/improvements to dark colorscheme
+	- Introduce --256l{,0,1} and --256d{,0,1} (obsoletes --256f{,0,1}).
+	- Introduce COLOR_{KEYEND,OVERLAYNAME,OVERLAYNAMEEND,NUMBERTEXT}
 
 *eix-0.27.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

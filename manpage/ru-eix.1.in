@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-09-30 10:00:00 +0200 (Sun, 30 Sep 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-10-07 12:00:00 +0200 (Sun, 07 Oct 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -231,10 +231,10 @@ They are one-shot exclusive options, i.e. eix outputs only the required data and
 Define the 256 color palette suggested by Todd Larason (the author of the 256 color support for xterm).
 Use this if something some tool has redefined the default palette.
 .TP
-.BR "--256" ", " "--256f" ", " "--256f0" ", " "--256f1" ", " "256b"
+.BR "--256" ", " "--256d" ", " "--256d0" ", " "--256d1" ", " "--256l" ", " "--256l0" ", " "--256l1" ", " "256b"
 Print the 256 color palettes (assuming it follows ansi color scheme) and exit.
-With B<--256f> (B<--256f0>, B<--256f1>) only the foreground palettes
-(resp. only the normal or bright palette) is printed.
+With B<--256d>/B<--256l> (B<--256d0>/B<--256l0>, B<--256d1>/B<--256l1>) only the foreground palettes with dark/light background
+(or only the normal or bright dark/light foreground palette, respectively) is printed.
 With B<--256b> only the background palette is printed.
 .TP
 .BI "--print-overlay-path " OVERLAY
@@ -2233,6 +2233,11 @@ These strings are printed at the start/end or after B<USE_EXPAND> variables
 are output with B<colliuse*>.
 
 .TP
+.BR COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY ", " COLOR_KEYEND ", " COLOR_OVERLAYNAME ", " COLOR_OVERLAYNAMEEND ", " COLOR_NUMBERTEXT
+These colors are used before/after normal/virtual overlay keys,
+for printing the overlays at the end or when printing the number of packages.
+
+.TP
 .BR NOCOLORS " " (true / false)
 Do not use colors.
 
@@ -2342,7 +2347,23 @@ The color scheme to be used:
 If it is 0, then the first I<COLORSTRING> of each color specification is used;
 for higher numbers a correspondingly later I<COLORSTRING> is used.
 If the number is too high, the first I<COLORSTRING> is used.
-If B<TERM_ALT> matches, B<COLORSCHEME_ALT> is used instead.
+If B<TERM_ALT> matches, B<COLORSCHEME_ALT> is evaluated instead of B<COLORSCHEME>.
+The default values of these variables depend on the variable B<DARK>
+(which is only used by delayed substitution).
+
+The numbers in the default settings are:
+
+0: Dark basic scheme (for black background)
+
+1: Dark scheme for 256 colors
+
+2: Light basic scheme (for white background)
+
+3: Light scheme for 256 colors
+
+The variables B<BG0>, B<BG1>, B<BG2>, B<BG3> are honoured by the defaults with
+delayed substitution to force the background color for the corresponding schemes.
+Use "none" if the background color should not be forced.
 
 .TP
 .BR LEVENSHTEIN_DISTANCE " " (integer)
