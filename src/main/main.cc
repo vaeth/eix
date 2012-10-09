@@ -16,13 +16,13 @@
 #ifdef ENABLE_NLS
 #include <clocale>
 #endif
-#include <cstring>
 
 #include <string>
 
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringutils.h"
 #include "main/main.h"
 
 // You must define by a wrapper file - one or several of
@@ -151,32 +151,33 @@ inline static int run_program(int argc, char *argv[]) ATTRIBUTE_NONNULL_;
 inline static int
 run_program(int argc, char *argv[])
 {
+	const string program_lower(to_lower(program_name));
 #ifdef DIFF_BINARY
-	if(unlikely(strcasestr(program_name, "diff") != NULLPTR))
+	if(unlikely(program_lower.find("diff") != string::npos))
 		return run_eix_diff(argc, argv);
 #endif
 #ifdef UPDATE_BINARY
 #if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY) || defined(MASKED_BINARY) || defined(DROP_PERMISSIONS_BINARY)
-	if(unlikely(strcasestr(program_name, "update") != NULLPTR))
+	if(unlikely(program_lower.find("update") != string::npos))
 #endif
 		return run_eix_update(argc, argv);
 #endif
 #ifdef DROP_PERMISSIONS_BINARY
 #if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY) || defined(MASKED_BINARY)
-	if(likely((strcasestr(program_name, "drop") != NULLPTR) ||
-		(strcasestr(program_name, "perm") != NULLPTR)))
+	if(likely((program_lower.find("drop") != string::npos) ||
+		(program_lower.find("perm") != string::npos)))
 #endif
 		return run_eix_drop_permissions(argc, argv);
 #endif
 #ifdef MASKED_BINARY
 #if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY)
-	if(likely(strcasestr(program_name, "mask") != NULLPTR))
+	if(likely(program_lower.find("mask") != string::npos))
 #endif
 		return run_masked_packages(argc, argv);
 #endif
 #ifdef VERSIONSORT_BINARY
 #if defined(EIX_BINARY)
-	if(likely(strcasestr(program_name, "vers") != NULLPTR))
+	if(likely(program_lower.find("vers") != string::npos))
 #endif
 		return run_versionsort(argc, argv);
 #endif

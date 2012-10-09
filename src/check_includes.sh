@@ -87,7 +87,7 @@ Check '"eixTk/inttypes\.h"' -e uint8 -e uint16 -e uint32 -e uint64
 Check '"eixTk/likely\.h"' -e 'likely('
 Check '"eixTk/null\.h"' -e 'NULLPTR'
 Check '"eixTk/ptr_list\.h"' -e 'eix::ptr'
-Check '"eixTk/stringutils\.h"' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e is_numeric -e tolower -e trim -e StringHash -e escape_string
+Check '"eixTk/stringutils\.h"' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e is_numeric -e to_lower -e trim -e StringHash -e escape_string -e localeC
 Check '"eixTk/unused\.h"' -e '[^_]UNUSED' -e 'ATTRIBUTE_UNUSED'
 Check '"portage/basicversion\.h"' -e 'BasicVersion' -e 'BasicPart'
 

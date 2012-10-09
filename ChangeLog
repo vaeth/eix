@@ -14,6 +14,7 @@
 	- Minor fixes/improvements to dark colorscheme
 	- Introduce --256l{,0,1} and --256d{,0,1} (obsoletes --256f{,0,1}).
 	- Introduce COLOR_{KEYEND,OVERLAYNAME,OVERLAYNAMEEND,NUMBERTEXT}
+	- Avoid strcasestr(), see http://bugs.gentoo.org/show_bug.cgi?id=437706
 
 *eix-0.27.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
