@@ -674,14 +674,14 @@ run_eix(int argc, char** argv)
 	bool only_printed;
 
 	if(unlikely(rc_options.xml)) {
-		rc_options.pure_packages = true;
+		rc_options.pure_packages = format->no_color = true;
 		only_printed = false;
 	} else {
 		only_printed = eixrc.getBool("COUNT_ONLY_PRINTED");
 	}
 
 	if(unlikely(rc_options.only_names)) {
-		rc_options.pure_packages = true;
+		rc_options.pure_packages = format->no_color = true;
 		format->parseFormat("<category>/<name>\n", NULLPTR);
 	} else {
 		set_format();

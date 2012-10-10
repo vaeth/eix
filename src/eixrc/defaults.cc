@@ -55,6 +55,10 @@ AddOption(STRING, "EIX_TEST_OBSOLETE_OPTS",
 	"-d", _(
 	"This variable contains default options for the eix-test-obsolete script."));
 
+AddOption(STRING, "EIX_INSTALLED_AFTER",
+	"", _(
+	"This variable contains default arguments for the eix-installed-after script."));
+
 AddOption(PREFIXSTRING, "EIX_PREFIX",
 	EIX_PREFIX_DEFAULT, _(
 	"If this variable is set in the environment, then it is prefixed\n"

@@ -14,6 +14,11 @@
 . ./eix-functions.sh.in
 ReadFunctions
 
+# Prepend content of eix variable EIX_INSTALLED after to the arguments
+
+ReadVar EIX_INSTALLED_AFTER EIX_INSTALLED_AFTER
+eval "set -- ${EIX_INSTALLED_AFTER} \"\${@}\""
+
 # The following function outputs the usage of the script and then dies.
 
 Usage() {
@@ -29,13 +34,20 @@ Be aware that only packages in the eix database are considered.
 The argument can use shell pattern matching (* and ?; do not forget to quote
 them if you call this script from a shell); the first match is chosen.
 The :slot part can be omitted if the corresponding package has only one slot.
-(Options -l, -L, and -e have different rules).
+(Options -l and -L have different rules).
+The argument is not needed if option -f, -e or -F is used.
+
+The eix (or environment) variable EIX_INSTALLED_AFTER is prepended to the
+arguments; note that this variable is evaluated, so quote properly and be
+aware about security risks!
 
 The following options are available:
 
--f   Output full list of all packages (no further argument required)
--b   Output packages installed before (instead of after) the given package
--i   Include the given package (on the command line) in the output
+-i   Ignore all previous options (useful if EIX_INSTALLED_AFTER is set).
+-f   Output full list of all packages.
+-e TIME Use TIME as "install" date.
+     TIME is in seconds since epoch (see e.g. "date +%s")
+-F FILE Use the mtime of FILE as the "install" date.
 -l   Use /var/log/emerge.log to use the _first_ (instead of the last) install
      time of the given package. In this case, the argument must be a
      regular expression matching category/package-version.
@@ -45,10 +57,10 @@ The following options are available:
      You can use -a/-A to fix the time. Note also that -t or -T have no
      effect on the data in the log file.
 -L LOG As -l but use LOG instead of /var/log/emerge.log
--e   The argument is not category/package[:slot] but a time in the format
-     output by "date +%s" (i.e. the number of seconds since epoch).
--a SEC When using -l -L or -e, increase the actual match time by SEC seconds.
--A SEC When using -l -L or -e, decrease the actual match time by SEC seconds.
+-a SEC With -F, -l -L, or -e, increase the actual match time by SEC seconds.
+-A SEC With -F, -l -L, or -e, decrease the actual match time by SEC seconds.
+-b   Output packages installed before (instead of after) the given package
+-I   Include the given package (on the command line) in the output
 -S   When finding the starting package, choose the first matching slot
 -V   When finding the starting package, look for category/package-version
      instead of category/package:slot
@@ -67,33 +79,39 @@ The following options are available:
 
 # Parse the command line options:
 
-full=false
-epoch=false
-logfile=
-before=false
-date_output=
-output='NAMESLOT'
-input='NAMESLOT'
-including=false
-addtime=
-subtime=
+DefaultOpts() {
+	full=false
+	timefile=
+	epoch=
+	logfile=
+	before=false
+	date_output=
+	output='NAMESLOT'
+	input='NAMESLOT'
+	including=false
+	addtime=
+	subtime=
+}
+DefaultOpts
 OPTIND=1
-while getopts 'fblL:ea:A:dsv=SVitTh?' opt
+while getopts 'fF:lL:e:a:A:bdsv=SViItTh?' opt
 do	case ${opt} in
 	f)	full=:;;
-	b)	before=:;;
+	F)	timefile=${OPTARG};;
 	l)	logfile='/var/log/emerge.log';;
 	L)	logfile=${OPTARG};;
-	e)	epoch=:;;
+	e)	epoch=${OPTARG};;
 	a)	addtime=${OPTARG};;
 	A)	subtime=${OPTARG};;
+	b)	before=:;;
 	d)	date_output='\t<date:DATE_OUTPUT>';;
 	s)	output='NAMEASLOT';;
 	v)	output='NAMEVERSION';;
 	'=')	output='EQNAMEVERSION';;
 	S)	input='NAME';;
 	V)	input='NAMEVERSION';;
-	i)	including=:;;
+	i)	DefaultOpts;;
+	I)	including=:;;
 	t)	export USE_BUILD_TIME=true;;
 	T)	export USE_BUILD_TIME=false;;
 	*)	Usage 0;;
@@ -103,15 +121,20 @@ done
 
 # After the options there should be exactly one argument: ${match}
 
+if [ -n "${timefile}" ]
+then	epoch=`stat -c '%Y' -- "${timefile}" 2>/dev/null` || epoch=
+fi
+
+# "found" is our flag in the loop whether we already found our package.
+found=false
 if ${full}
 then	logfile=
 	before=false
-	epoch=false
-# "found" is our flag in the loop whether we already found our package.
+	epoch=
 	found=:
-else	[ ${#} -eq 1 ] || Usage
+elif [ -z "${epoch:++}" ]
+then	[ ${#} -eq 1 ] || Usage
 	match=${1}
-	found=false
 fi
 
 
@@ -122,13 +145,9 @@ then	test -r "${logfile}" || die "`eval_gettext 'cannot read ${logfile}'`"
 	epoch=`unset LC_ALL
 LC_COLLATE=C
 sed -ne "\\: Merging (${match}\\:\\:.*):{s/^\([0-9]*\).*/\\1/p
-q}" "${logfile}"` || epoch=
-	[ -n "${epoch:++}" ] || die "`eval_gettext \
+q}" "${logfile}"` && [ -n "${epoch:++}" ] || die "`eval_gettext \
 		'cannot find merge of ${match} in ${logfile}'`"
-	match=${epoch}
-	epoch=:
 fi
-
 
 # We will let eix output for each installed package (and then sort by time):
 #	date (in the format %s) TAB
@@ -142,18 +161,20 @@ fi
 # Output outputs the package (and date).
 # Both functions ignore empty lines.
 
+if [ -z "${epoch:++}" ]
+then
 Check() {
 	[ ${#} -ge 2 ] && case "${2}:" in
-	${match}:*) return 0;;
+	${match}:*)
+		return 0;;
 	esac
 	return 1
 }
-if ${epoch}
-then	[ -z "${addtime:++}" ] || match=`Expr "${match}" + "${addtime}"`
-	[ -z "${subtime:++}" ] || match=`Expr "${match}" - "${subtime}"`
-# With option -e (or -l or -L), we need a different Check function:
+else	[ -z "${addtime:++}" ] || epoch=`Expr "${epoch}" + "${addtime}"`
+	[ -z "${subtime:++}" ] || epoch=`Expr "${epoch}" - "${subtime}"`
+# With options -f, -e, -l, -L, we need a different Check function:
 Check() {
-	[ ${#} -ne 0 ] && [ "${1}" -ge "${match}" ]
+	[ ${#} -ne 0 ] && [ "${1}" -ge "${epoch}" ]
 }
 fi
 
@@ -184,6 +205,8 @@ Output() {
 # which should be output at the end of the LINE variable.
 # So we set VERSION_NEWLINE=
 #
+# We set NOCOLORS to avoid the "reset color string" at the very end.
+#
 # The name of the variables DATE_FORMAT, DATE_OUTPUT, NAME, and LINE
 # could also be any other unused name; it is only important that in LINE
 # resp. in the --format argument we use the corresponding variable names.
@@ -192,6 +215,7 @@ Output() {
 #
 # Note that all the following variables are automatically exported, since
 # they immediately preceed the command (the \ at the line-ends is crucial):
+NOCOLORS=: \
 VERSION_NEWLINE= \
 DATE_FORMAT='%s' \
 DATE_OUTPUT='%x %X' \

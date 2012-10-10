@@ -16,14 +16,16 @@ _eix_installed_after_arg() {
 }
 _arguments -s -S -A '-*' : \
 '(1 -)'{'-h','-\\?'}'[help]' \
-'(1 -b -L -l -a -A -i -e -S -V)-f[output full list of packages]' \
-'-b[output packages installed before (not after) the package]' \
-'-i[include the given package in the output]' \
-'(-L)-l[use /var/log/emerge.log to determine first install time]' \
-'(-l)-L+[LOG (use LOG to determine first install time)]:scan logfile:_files' \
-'-e[use date as argument, not a package name]' \
+'-I[include the given package in the output]' \
+'(1 -b -L -l -a -A -I -e -F -S -V)-f[output full list of packages]' \
+'(-f -L -e -F)-l[use /var/log/emerge.log to determine first install time]' \
+'(-f -l -e -F)-L+[LOG (use LOG to determine first install time)]:scan logfile:_files' \
+'(-f -l -L -F)-e+[TIME (use TIME as reference time)]:seconds since epoch: ' \
+'(-f -l -L -e)-F+[FILE (use mtime as reference time)]:file for mtime:_files' \
 '-a+[SEC (increase match for -l or -L or -e by SEC seconds)]:increase seconds: ' \
 '-A+[SEC (decrease match for -l or -L or -e by SEC seconds)]:decrease seconds: ' \
+'-b[output packages installed before (not after) the package]' \
+'-i[ignore all previous options]' \
 '-S[choose first matching slot]' \
 '-V[look for category/package-version, not category/package\:slot]' \
 '-d[output installation date after package]' \

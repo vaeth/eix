@@ -14,6 +14,9 @@
 	- Minor fixes/improvements to dark colorscheme
 	- Introduce --256l{,0,1} and --256d{,0,1} (obsoletes --256f{,0,1}).
 	- Introduce COLOR_{KEYEND,OVERLAYNAME,OVERLAYNAMEEND,NUMBERTEXT}
+	- eix-installed-after: New option -F File to use mtime for reference
+	- Introduce EIX_INSTALLED_AFTER to set default args; corresponding new
+	  eix-installed-after option -i to ignore. Previous -i is renamed to -I
 	- Avoid strcasestr(), see http://bugs.gentoo.org/show_bug.cgi?id=437706
 
 *eix-0.27.2
