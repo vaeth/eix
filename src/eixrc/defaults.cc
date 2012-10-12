@@ -1163,12 +1163,12 @@ AddOption(STRING, "COLOR_UNSET_USE",
 	"It defines the color used for printing the unset useflags."));
 
 AddOption(STRING, "COLOR_VERSION_IUSE",
-	"black,1;%{BG0}|168;%{BG1}|black,1;%{BG2}|168,1;%{BG3}", _(
+	"gray;%{BG0}|168;%{BG1}|gray;%{BG2}|168,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing IUSE for available versions."));
 
 AddOption(STRING, "COLOR_COLL_IUSE",
-	"black,1;%{BG0}|38;%{BG1}|black,1;%{BG2}|61,1;%{BG3}", _(
+	"gray;%{BG0}|38;%{BG1}|gray;%{BG2}|61,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing collected IUSE for packages."));
 
@@ -1188,7 +1188,7 @@ AddOption(STRING, "COLOR_USE_COLL",
 	"It defines the color used for printing the braces around collected USE."));
 
 AddOption(STRING, "COLOR_INST_VERSION",
-	"green,1;blue|40,1;21|black;green|232;46", _(
+	"green,1;blue|33,1;%{BG1}|black;green|30,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the version of installed packages."));
 
