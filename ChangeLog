@@ -9,12 +9,15 @@
 	  in the eix manpage. The light schemes are not carefully designed:
 	  improvements or complete rework are welcome!
 	- Alternatively, you can force black background colors for the default
-	  or dark scheme with BG0=black or BG1=black, respectively.
+	  scheme with BG0=black. (For the 256 color dark scheme, this is even
+	  the default since there were many complaints about its unreadability;
+	  use BG1=none for the previous behavior).
 	  See the description of the COLORSCHEME variables in the eix manpage
 	- At least the color scheme 0 should now work also with solarized.
 	- Minor fixes/improvements to dark colorscheme
 	- Introduce --256l{,0,1} and --256d{,0,1} (obsoletes --256f{,0,1}).
 	- Introduce COLOR_{KEYEND,OVERLAYNAME,OVERLAYNAMEEND,NUMBERTEXT}
+	- Extend TERM_ALT and TERM_STATUSLINE default somewhat
 	- eix-installed-after: New option -F File to use mtime for reference
 	- Introduce EIX_INSTALLED_AFTER to set default args; corresponding new
 	  eix-installed-after option -i to ignore. Previous -i is renamed to -I

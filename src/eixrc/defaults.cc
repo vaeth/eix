@@ -598,7 +598,7 @@ AddOption(STRING, "TERM",
 	"The current terminal. Usually this is set by the environment variable."));
 
 AddOption(STRING, "TERM_STATUSLINE",
-	"xterm screen rxvt aterm konsole gnome Eterm kterm interix", _(
+	"xterm screen rxvt aterm konsole gnome Eterm eterm kterm interix", _(
 	"If the beginning of TERM matches a word of this space-separated list,\n"
 	"it is assumed that the terminal supports a status line."));
 
@@ -633,7 +633,7 @@ AddOption(STRING, "BG3",
 	"It is the background color for color scheme 3. Use \"none\" for no change."));
 
 AddOption(STRING, "TERM_ALT",
-	"256 xterm", _(
+	"256 [aeEkx]term rxvt konsole gnome putty", _(
 	"This is a list of regular expressions; if one of it matches TERM, then\n"
 	"COLORSCHEME_ALT is used instead of COLORSCHEME."));
 
