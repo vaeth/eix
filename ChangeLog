@@ -4,6 +4,9 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Change COLOR_INST_VERSION to work with solarized. Thanks to khayyam:
 	  http://forums.gentoo.org/viewtopic.php?p=7167646
+	- Cosmetical fixes in the manpages
+	- Add unused default variables {UPDATE_,DROP_}PRINT_IUSE
+	  to formally complete *PRINT_IUSE references.
 
 *eix-0.27.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

@@ -515,13 +515,23 @@ AddOption(BOOLEAN, "PRINT_SLOTS",
 
 AddOption(BOOLEAN, "EIX_PRINT_IUSE",
 	"true", _(
-	"This variable is only used for delayed substitution.\n"
+	"This variable is only used for delayed substitution in PRINT_IUSE.\n"
 	"If false, no IUSE data is printed for eix. See also VERSION_IUSE_*"));
 
 AddOption(BOOLEAN, "DIFF_PRINT_IUSE",
 	"false", _(
-	"This variable is only used for delayed substitution.\n"
+	"This variable is only used for delayed substitution in PRINT_IUSE.\n"
 	"If false, no IUSE data is printed for eix-diff."));
+
+AddOption(BOOLEAN, "UPDATE_PRINT_IUSE",
+	"false", _(
+	"This variable is only used for delayed substitution in PRINT_IUSE.\n"
+	"It is unused by default."));
+
+AddOption(BOOLEAN, "DROP_PRINT_IUSE",
+	"false", _(
+	"This variable is only used for delayed substitution in PRINT_IUSE.\n"
+	"It is unused by default."));
 
 AddOption(BOOLEAN, "PRINT_IUSE",
 	"%{*PRINT_IUSE}", _(

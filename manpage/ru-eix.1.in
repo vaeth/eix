@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-10-07 12:00:00 +0200 (Sun, 07 Oct 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-10-21 18:30:00 +0200 (Sun, 21 Oct 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -2337,7 +2337,7 @@ If this is nonempty, it is used as the exit statusline.
 An optional leading space in this string is ignored.
 
 .TP
-.BR TERM_ALT " " (string list)
+.BR TERM_ALT " " "(string list)"
 This is a list of regular expressions; if one of it matches B<TERM>, then
 B<COLORSCHEME_ALT> is used instead of B<COLORSCHEME>.
 

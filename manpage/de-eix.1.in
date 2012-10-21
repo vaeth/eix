@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-10-07 12:00:00 +0200 (Sun, 07 Oct 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-10-21 18:30:00 +0200 (Sun, 21 Oct 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2383,7 +2383,7 @@ Falls dieser String nichtleer ist, wird er als Ende-Statuszeile benutzt.
 Ein optionales führendes Leerzeichen in diesem String wird ignoriert.
 
 .TP
-.BR TERM_ALT " " (string list)
+.BR TERM_ALT " " "(Stringliste)"
 Dies ist eine Liste regulärer Ausdrücke.
 Falls einer von ihnen auf B<TERM> passt, wird B<COLORSCHEME_ALT> statt
 B<COLORSCHEME> benutzt.
