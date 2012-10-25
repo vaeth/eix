@@ -321,9 +321,9 @@ VarDbPkg::readCategory(const char *category)
 	map<string, vector<InstVersion> >* category_installed;
 	installed[category] = category_installed = new map<string, vector<InstVersion> >;
 
-	struct dirent dircache, *package_entry;  /* current package dirent */
+	struct dirent *package_entry;  /* current package dirent */
 	/* Cycle through this category */
-	while(likely((readdir_r(dir_category, &dircache, &package_entry) == 0) && (package_entry != NULLPTR))) {
+	while(likely((package_entry = readdir(dir_category)) != NULLPTR)) {  // NOLINT(runtime/threadsafe_fn)
 		if(package_entry->d_name[0] == '.')
 			continue;  /* Don't want dot-stuff */
 		char **aux(ExplodeAtom::split( package_entry->d_name));

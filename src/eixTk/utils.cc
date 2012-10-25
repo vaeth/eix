@@ -46,8 +46,8 @@ scandir_cc(const string &dir, vector<string> *namelist, select_dirent select, bo
 	if(dirhandle == NULLPTR) {
 		return false;
 	}
-	struct dirent res, *d;
-	while(likely((readdir_r(dirhandle, &res, &d) == 0) && (d != NULLPTR))) {
+	struct dirent *d;
+	while(likely((d = readdir(dirhandle)) != NULLPTR)) {  // NOLINT(runtime/threadsafe_fn)
 		const char *name(d->d_name);
 		// Omit "." and ".." since we must not rely on their existence anyway
 		if(likely(strcmp(name, ".") && strcmp(name, "..") && (*select)(d))) {

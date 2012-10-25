@@ -7,6 +7,9 @@
 	- Cosmetical fixes in the manpages
 	- Add unused default variables {UPDATE_,DROP_}PRINT_IUSE
 	  to formally complete *PRINT_IUSE references.
+	- Use again readdir() instead of readdir_r() because of Solaris, see
+	  http://developer.berlios.de/bugs/?func=detailbug&bug_id=18768&
+	  group_id=11597 Thanks for alx_s for reporting.
 
 *eix-0.27.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
