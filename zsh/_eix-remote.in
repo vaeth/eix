@@ -1,4 +1,6 @@
 #compdef eix-remote
+local context state state_descr line
+typeset -A opt_args
 _arguments -s -S -A '-*' : \
 '(1 -)'{'-h','-\\?'}'[help]' \
 '-k[keep permissions]' \
@@ -9,4 +11,18 @@ _arguments -s -S -A '-*' : \
 '-v[verbose (default)]' \
 '-H[no status line update]' \
 '-q[quiet]' \
-'1:command:(update fetch add remove)'
+'1:commands:->cmds'
+local ret=$?
+case $state in
+cmds)
+	local cmds
+	cmds=(
+	'update:Fetch eix-caches and add them to the eix database'
+	'add:Add fetched eix-caches to the eix database'
+	'fetch:Fetch eix-caches'
+	'remove:remove temporarily added virtual overlays from eix database'
+	)
+	_describe -t commands 'command' cmds
+	ret=$?;;
+esac
+return ret

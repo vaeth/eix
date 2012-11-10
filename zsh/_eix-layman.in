@@ -1,4 +1,6 @@
 #compdef eix-layman
+local context state state_descr line
+typeset -A opt_args
 _arguments -s -S -A '-*' : \
 '(1 -)'{'-h','-\\?'}'[help]' \
 '*-a+[OVERLAY (add to list of layman overlays)]:add overlay:_files' \
@@ -8,4 +10,16 @@ _arguments -s -S -A '-*' : \
 '-v[verbose (default)]' \
 '-H[no status line update]' \
 '-q[quiet]' \
-'1:command:(add remove)'
+'*:commands:->cmds' && return
+local ret=$?
+case $state in
+cmds)
+	local cmds
+	cmds=(
+	'add:Add the local layman overlays to the eix database'
+	'remove:Remove the local layman overlays from the eix database'
+	)
+	_describe -t commands 'command' cmds
+	ret=$?;;
+esac
+return ret

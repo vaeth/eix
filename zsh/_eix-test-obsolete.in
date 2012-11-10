@@ -1,4 +1,6 @@
 #compdef eix-test-obsolete
+local context state state_descr line
+typeset -A opt_args
 _arguments -s -S -A '-*' : \
 '(1 -)'{'-h','-\\?'}'[help]' \
 '-c[use CHECK_INSTALLED_OVERLAYS=true]' \
@@ -7,4 +9,17 @@ _arguments -s -S -A '-*' : \
 '(1 -d -q)-b[instead of argument "brief"]' \
 '(1 -d -b)-q[instead of argument "quick"]' \
 '-H[no status line update]' \
-'1:mode:(detail brief quick)'
+'1:mode:->mode'
+local ret=$?
+case $state in
+mode)
+	local mode
+	mode=(
+	'detail:slow and very detailed output of redundant packages'
+	'brief:normal output of redundant packages'
+	'quick:quick and rather silent output of redundant packages'
+	)
+	_describe -t mode 'mode' mode
+	ret=$?;;
+esac
+return ret
