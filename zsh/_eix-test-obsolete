@@ -12,7 +12,7 @@ _arguments -s -S -A '-*' : \
 '1:mode:->mode'
 local ret=$?
 case $state in
-mode)
+(mode)
 	local mode
 	mode=(
 	'detail:slow and very detailed output of redundant packages'

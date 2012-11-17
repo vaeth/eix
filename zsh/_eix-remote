@@ -14,7 +14,7 @@ _arguments -s -S -A '-*' : \
 '1:commands:->cmds'
 local ret=$?
 case $state in
-cmds)
+(cmds)
 	local cmds
 	cmds=(
 	'update:Fetch eix-caches and add them to the eix database'

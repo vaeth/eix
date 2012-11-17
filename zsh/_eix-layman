@@ -10,10 +10,10 @@ _arguments -s -S -A '-*' : \
 '-v[verbose (default)]' \
 '-H[no status line update]' \
 '-q[quiet]' \
-'*:commands:->cmds' && return
+'*:commands:->cmds'
 local ret=$?
 case $state in
-cmds)
+(cmds)
 	local cmds
 	cmds=(
 	'add:Add the local layman overlays to the eix database'

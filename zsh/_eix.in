@@ -1,24 +1,10 @@
 #compdef eix eix-diff eix-update
-local -a service_opts local_functions
-local excl_opt stat
-local_functions=(_eix__vars)
-_eix__vars() {
-	compadd "${@}" -- ${(f)"$($service --known-vars)"}
-}
+local context state state_descr line
+typeset -A opt_args
 
-case $service in
-(*diff*)
-	:;;
-(*)
-	local_functions+=(_eix__overlay)
-_eix__overlay() {
-	local -aU o
-	o=($(PRINT_APPEND='' eix --print PORTDIR_OVERLAY 2>/dev/null))
-	o+=("$(PRINT_APPEND='' eix --print PORTDIR 2>/dev/null)")
-	o+=({0..$#o})
-	compadd "${@}" -- $o
-};;
-esac
+local service_opts excl_opt field installed ret
+local sets i j k c w is_or addarg eixopt portdir
+local -aU o
 
 # Options common to diff-eix and eix
 service_opts=(
@@ -34,10 +20,10 @@ case $service in
 '(--forcestatus '{'--nostatus)-H','-H)--nostatus'}'[do not update status line]'
 '(--nostatus -H)--forcestatus[force status line on non-terminal]'
 {'(--output)-o+','(-o)--output'}'[output to FILE]:output_file:_files'
-{'*--exclude-overlay','*-x+'}'[OVERLAY (exclude)]:exclude overlay:_eix__overlay'
+{'*--exclude-overlay','*-x+'}'[OVERLAY (exclude)]:exclude overlay:->overlay'
 {'*--add-overlay','*-a+'}'[OVERLAY (add)]:add overlay:_files -/'
-{'*--override-method','*-m+'}'[OVERLAY_MASK METHOD (override method)]:overlay mask to change method:_eix__overlay:cache method: '
-{'*--repo-name','*-r+'}'[OVERLAY REPO_NAME (set REPO_NAME for OVERLAY)]:overlay to change name:_eix__overlay:repo-name: '
+{'*--override-method','*-m+'}'[OVERLAY_MASK METHOD (override method)]:overlay mask to change method:->overlay:cache method: '
+{'*--repo-name','*-r+'}'[OVERLAY REPO_NAME (set REPO_NAME for OVERLAY)]:overlay to change name:->overlay:repo-name: '
 );;
 (*diff*)
 	excl_opt='(1 2 -)'
@@ -48,9 +34,9 @@ case $service in
 (*)
 	excl_opt='(* -)'
 	service_opts+=(
-"$excl_opt"'--print-overlay-path[OVERLAY (print path for OVERLAY)]:overlay for printing path:_eix__overlay'
-"$excl_opt"'--print-overlay-label[OVERLAY (print label for OVERLAY)]:overlay for printing label:_eix__overlay'
-"$excl_opt"'--print-overlay-data[OVERLAY (print label and path for OVERLAY)]:overlay for printing label and path:_eix__overlay'
+"$excl_opt"'--print-overlay-path[OVERLAY (print path for OVERLAY)]:overlay for printing path:->overlay'
+"$excl_opt"'--print-overlay-label[OVERLAY (print label for OVERLAY)]:overlay for printing label:->overlay'
+"$excl_opt"'--print-overlay-data[OVERLAY (print label and path for OVERLAY)]:overlay for printing label and path:->overlay'
 "$excl_opt"'--print-all-useflags[print all IUSE words]'
 "$excl_opt"'--print-all-keywords[print all KEYWORDS words]'
 "$excl_opt"'--print-all-slots[print all SLOT strings]'
@@ -118,11 +104,11 @@ case $service in
 '*--selected-set[test for @selected-set packages]'
 '*--binary[test for packages with .tbz2 file]'
 {'*--overlay','*-O'}'[test if package is in an overlay]'
-'*--in-overlay[OVERLAY (test for packages in OVERLAY)]:overlay for testing:_eix__overlay'
-'*--only-in-overlay[OVERLAY (test for packages only in OVERLAY)]:overlay (only) for testing:_eix__overlay'
+'*--in-overlay[OVERLAY (test for packages in OVERLAY)]:overlay for testing:->overlay'
+'*--only-in-overlay[OVERLAY (test for packages only in OVERLAY)]:overlay (only) for testing:->overlay'
 {'*--installed-overlay','*-J'}'[test if package is installed from an overlay]'
-'*--installed-from-overlay[OVERLAY (test for package installed from OVERLAY)]:overlay (installed) for testing:_eix__overlay'
-'*--installed-in-overlay[OVERLAY (test for package installed and in OVERLAY)]:overlay (installed and in) for testing:_eix__overlay'
+'*--installed-from-overlay[OVERLAY (test for package installed from OVERLAY)]:overlay (installed) for testing:->overlay'
+'*--installed-in-overlay[OVERLAY (test for package installed and in OVERLAY)]:overlay (installed and in) for testing:->overlay'
 '*--installed-in-some-overlay[test for package installed and in some overlay]'
 '*--restrict-fetch[test for RESTRICT=fetch packages]'
 '*--restrict-mirror[test for RESTRICT=mirror packages]'
@@ -168,10 +154,11 @@ case $service in
 {'*--regex','*-r'}'[pattern is regular expression]'
 )
 # find out search field and whether to check only installed packages
-	local field='' installed=''
+	field=
+	installed=
 	if (( CURRENT>2 ))
-	then	local i c w is_or=false
-		case $(PRINT_APPEND='' eix --print DEFAULT_IS_OR 2>/dev/null) in
+	then	is_or=false
+		case $(PRINT_APPEND= eix --print DEFAULT_IS_OR 2>/dev/null) in
 		([yY1:tT]*|[oO][nN]*)
 			is_or=:;;
 		esac
@@ -183,8 +170,8 @@ case $service in
 				((++i));;
 			(--not|--open|--close|---*|[!-])
 				if $is_or
-				then	field=''
-					installed=''
+				then	field=
+					installed=
 				fi;;
 			(--(multi-|)installed)
 				installed='installed';;
@@ -220,8 +207,8 @@ case $service in
 						fi;;
 					([\(\)!])
 						if $is_or
-						then	field=''
-							installed=''
+						then	field=
+							installed=
 						fi;;
 					([iI])
 						installed='installed';;
@@ -242,25 +229,41 @@ case $service in
 			esac
 		done
 	fi
-	local -a modes
-	modes=(${installed} ${field:-'package'})
+	: ${field:='package'}
+	i=(${installed} ${field})
 	service_opts+=(
-'*:'"$modes"':_eix__arg -- '"$modes"
-)
-	local_functions+=(_eix__arg)
-_eix__arg() {
-	local -a addarg
-	addarg=($@[0,(R)(--)])
-	shift $#addarg
-	local -a eixopt
+'*:'"$i"':->args'
+);;
+esac
+
+_arguments -s -S : \
+"$excl_opt"{'--help','-h'}'[help]' \
+"$excl_opt"{'--version','-v'}'[version]' \
+"$excl_opt"'--print[print expanded variable value]:variable:->vars' \
+"$excl_opt"'--dump[dump variables]' \
+"$excl_opt"'--dump-defaults[dump default values of variables]' \
+{'(--quiet)-q','(-q)--quiet'}'[no output]' \
+'(--forcecolor -F '{'--nocolor)-n','-n)--nocolor'}'[do not use colors in output]' \
+'(--nocolor -n '{'--forcecolor)-F','-F)--forcecolor'}'[force color on non-terminal]' \
+$service_opts
+ret=$?
+case $state in
+(vars)
+	compadd $@ -- ${(f)"$($service --known-vars)"}
+	ret=$?;;
+(overlay)
+	o=($(PRINT_APPEND= eix --print PORTDIR_OVERLAY 2>/dev/null))
+	o+=("$(PRINT_APPEND= eix --print PORTDIR 2>/dev/null)")
+	o+=({0..$#o})
+	compadd $@ -- $o
+	ret=$?;;
+(args)
+	addarg=($@ --)
 	eixopt=('-*')
-	if [[ $1 == installed ]]
-	then	shift
-		eixopt+=('-I')
-	fi
-	local -x NEWLINE=false CAREMODE=false QUICKMODE=true \
+	[[ -z $installed ]] || eixopt+=('-I')
+	local -x NEWLINE=false CAREMODE=false QUICKMODE=true FORCE_COLORS=false \
 		RESTRICT_INSTALLED=false USE_BUILD_TIME=false
-	case $1 in
+	case $field in
 	(category)
 		compadd $addarg $(eix $eixopt --format '<category>\n' 2>/dev/null);;
 	(name)
@@ -273,10 +276,9 @@ _eix__arg() {
 			compset -P '*/'
 			compadd $addarg $(eix $eixopt -PC "${IPREFIX%/}" --format '<name>\n' 2>/dev/null);;
 		(*)
-			local -a cat_name
-			cat_name=($(eix $eixopt --only-names 2>/dev/null))
-			compadd $addarg ${cat_name:t}
-			compadd $addarg[1,-2] -S '/' -- ${cat_name%%/*};;
+			i=($(eix $eixopt --only-names 2>/dev/null))
+			compadd $addarg ${i:t}
+			compadd $addarg[1,-2] -S '/' -- ${i%%/*};;
 		esac;;
 	(useflag)
 		compadd $addarg ${$(eix --print-all-useflags 2>/dev/null)##[()+-]#};;
@@ -287,12 +289,10 @@ _eix__arg() {
 	(homepage)
 		compadd $addarg $(eix $eixopt --format '<homepage>\n' 2>/dev/null);;
 	(set)
-		local -aU o
-		o=($(PRINT_APPEND='' eix --print PORTDIR_OVERLAY 2>/dev/null))
-		local i j k portdir="$(PRINT_APPEND='' eix --print PORTDIR 2>/dev/null)"
-		local -a sets
+		o=($(PRINT_APPEND= eix --print PORTDIR_OVERLAY 2>/dev/null))
+		portdir="$(PRINT_APPEND= eix --print PORTDIR 2>/dev/null)"
 		sets=()
-		for i in ${="$(PRINT_APPEND='' eix --print EIX_LOCAL_SETS 2>/dev/null)"}
+		for i in ${="$(PRINT_APPEND= eix --print EIX_LOCAL_SETS 2>/dev/null)"}
 		do	case $i in
 			(/*)
 				[[ -d $i ]] && sets+=($i);;
@@ -304,22 +304,10 @@ _eix__arg() {
 			(*)	[[ -d "$portdir$i" ]] && sets+=("$portdir$i");;
 			esac
 		done
-		(( $#sets )) && \
-			compadd $addarg ${${(f)"$(find -L $sets -type f -name '[!.]*' -print 2>/dev/null)"}:t};;
+		if (( $#sets ))
+		then	compadd $addarg ${${(f)"$(find -L $sets -type f -name '[!.]*' -print 2>/dev/null)"}:t}
+		fi;;
 	esac
-};;
+	ret=$?;;
 esac
-
-_arguments -s -S : \
-"$excl_opt"{'--help','-h'}'[help]' \
-"$excl_opt"{'--version','-v'}'[version]' \
-"$excl_opt"'--print[print expanded variable value]:variable:_eix__vars' \
-"$excl_opt"'--dump[dump variables]' \
-"$excl_opt"'--dump-defaults[dump default values of variables]' \
-{'(--quiet)-q','(-q)--quiet'}'[no output]' \
-'(--forcecolor -F '{'--nocolor)-n','-n)--nocolor'}'[do not use colors in output]' \
-'(--nocolor -n '{'--forcecolor)-F','-F)--forcecolor'}'[force color on non-terminal]' \
-$service_opts
-stat=$?
-unset -f $local_functions
-return stat
+return ret

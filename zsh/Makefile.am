@@ -1,15 +1,5 @@
 
-completioninput = \
-_eix.in \
-_eix-installed.in \
-_eix-installed-after.in \
-_eix-layman.in \
-_eix-remote.in \
-_eix-sync.in \
-_eix-test-obsolete.in
-
-completionoutput = \
-_eix \
+completionnogenerate = \
 _eix-installed \
 _eix-installed-after \
 _eix-layman \
@@ -17,9 +7,20 @@ _eix-remote \
 _eix-sync \
 _eix-test-obsolete
 
+completioninput = \
+_eix.in \
+$(completionnogenerate)
+
+completiongenerate = \
+_eix
+
+completionoutput = \
+$(completiongenerate) \
+$(completionnogenerate)
+
 EXTRA_DIST = $(completioninput)
 
-CLEANFILES = $(completionoutput)
+CLEANFILES = $(completiongenerate)
 
 if INSTALL_ZSH_COMPLETION
 noinst_DATA = $(completionoutput)

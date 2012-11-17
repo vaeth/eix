@@ -9,7 +9,7 @@ _arguments -s -S -A '-*' : \
 '*:packages:->packages'
 local ret=$?
 case $state in
-packages)
+(packages)
 	local packages
 	packages=(
 	'all:output all installed packages'

@@ -1,19 +1,6 @@
 #compdef eix-installed-after
-local stat
-_eix_installed_after_arg() {
-	local d
-	local -x NEWLINE=false CAREMODE=false QUICKMODE=true \
-		RESTRICT_INSTALLED=false USE_BUILD_TIME=false \
-		FORMAT='<installedversions:I>' I
-	if (( $words[(i)(-*[lLV]*)] < CURRENT ))
-	then	d='-version'
-		I='-<version>'
-	else	d='[:slot]'
-		I='{slots}:<slot>{}'
-	fi
-	I='<category>/<name>'"$I"'\n'
-	_wanted package expl 'category/package'"$d" compadd -- $(eix '-I*' 2>/dev/null)
-}
+local context state state_descr line
+typeset -A opt_args
 _arguments -s -S -A '-*' : \
 '(1 -)'{'-h','-\\?'}'[help]' \
 '-I[include the given package in the output]' \
@@ -34,7 +21,22 @@ _arguments -s -S -A '-*' : \
 '-\=[output \=category/package-version, not category/package\:slot]' \
 '-t[use build time independent of USE_BUILD_TIME]' \
 '-T[never use build time independent of USE_BUILD_TIME]' \
-'1:package: _eix_installed_after_arg'
-stat=$?
-unset -f _eix_installed_after_arg
-return stat
+'1:package:->package'
+local ret=$?
+case $state in
+(package)
+	local d
+	local -x NEWLINE=false CAREMODE=false QUICKMODE=true FORCE_COLORS=false \
+		RESTRICT_INSTALLED=false USE_BUILD_TIME=false \
+		FORMAT='<installedversions:I>' I
+	if (( $words[(i)(-*[lLV]*)] < CURRENT ))
+	then	d='-version'
+		I='-<version>'
+	else	d='[:slot]'
+		I='{slots}:<slot>{}'
+	fi
+	I='<category>/<name>'"$I"'\n'
+	_wanted package expl 'category/package'"$d" compadd -- $(eix '-I*' 2>/dev/null)
+	ret=$?;;
+esac
+return ret
