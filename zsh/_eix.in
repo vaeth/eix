@@ -156,13 +156,13 @@ case $service in
 # find out search field and whether to check only installed packages
 	field=
 	installed=
-	if (( CURRENT>2 ))
+	if ((CURRENT>2))
 	then	is_or=false
 		case $(PRINT_APPEND= eix --print DEFAULT_IS_OR 2>/dev/null) in
 		([yY1:tT]*|[oO][nN]*)
 			is_or=:;;
 		esac
-		for (( i=2 ; i<CURRENT ; ++i))
+		for ((i=2;i<CURRENT;++i))
 		do	case $words[$i] in
 			(--)
 				i=$CURRENT;;
@@ -198,10 +198,10 @@ case $service in
 				field='slot';;
 			(-[!-]*)
 				w=$words[$i]
-				for (( c=2 ; c<=$#w ; ++c ))
+				for ((c=2;c<=$#w;++c))
 				do	case $w[$c] in
 					([f])
-						if [[ $c = $#w ]]
+						if ((c==$#w))
 						then	((++i))
 						else	c=$#w
 						fi;;
@@ -304,7 +304,7 @@ case $state in
 			(*)	[[ -d "$portdir$i" ]] && sets+=("$portdir$i");;
 			esac
 		done
-		if (( $#sets ))
+		if (($#sets))
 		then	compadd $addarg ${${(f)"$(find -L $sets -type f -name '[!.]*' -print 2>/dev/null)"}:t}
 		fi;;
 	esac
