@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-11-25 15:30+0100\n"
+"POT-Creation-Date: 2012-11-25 16:20+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -2752,9 +2752,8 @@ msgstr ""
 
 #: src/eixrc/defaults.cc:390
 msgid ""
-"The default maximal levensthein distance for which a string is considered a "
-"match\n"
-"for the fuzzy match algorithm."
+"The default maximal levensthein distance for which a string is\n"
+"considered a match for the fuzzy match algorithm."
 msgstr ""
 "Der Default für den maximalen Levensthein-Abstand beim fuzzy\n"
 "Match-Algorithmus."
@@ -3175,7 +3174,6 @@ msgstr ""
 "COLORSCHEME2 statt COLORSCHEME0 benutzt."
 
 #: src/eixrc/defaults.cc:657
-#, fuzzy
 msgid ""
 "This is a list of regular expressions; if one of it matches TERM, then\n"
 "COLORSCHEME3 is used instead of COLORSCHEME0."
@@ -6074,53 +6072,53 @@ msgstr "Property %r wurde außerhalb eines Versionen-Zusammenhangs benutzt"
 msgid "Variable %r calls itself for printing"
 msgstr "Die Variable %r ruft sich selbst zum Drucken auf"
 
-#: src/output/formatstring.cc:464
+#: src/output/formatstring.cc:465
 msgid "Internal error: bad node for parse_colors."
 msgstr "Interner Fehler: bad node for parse_colors."
 
-#: src/output/formatstring.cc:534
+#: src/output/formatstring.cc:535
 msgid "'(' without closing ')'"
 msgstr "'(' ohne schließendes ')'"
 
-#: src/output/formatstring.cc:543
+#: src/output/formatstring.cc:544
 #, c-format
 msgid "Error while parsing color: %s"
 msgstr "Fehler beim Parsen der Farbe: %s"
 
-#: src/output/formatstring.cc:567
+#: src/output/formatstring.cc:568
 msgid "'<' without closing '>'"
 msgstr "'<' ohne schließendes '>'"
 
-#: src/output/formatstring.cc:637
+#: src/output/formatstring.cc:638
 msgid "No name of property/variable found after '{'."
 msgstr "Kein Name einer Property/Variablen nach '{' gefunden."
 
-#: src/output/formatstring.cc:641 src/output/formatstring.cc:662
-#: src/output/formatstring.cc:720
+#: src/output/formatstring.cc:642 src/output/formatstring.cc:663
+#: src/output/formatstring.cc:721
 msgid "Found '{' without closing '}'."
 msgstr " '{' ohne schließendes '}' gefunden."
 
-#: src/output/formatstring.cc:656
+#: src/output/formatstring.cc:657
 msgid "Unexpected symbol %r found after '{'."
 msgstr "Unerwartetes Symbol %r nach '{'."
 
-#: src/output/formatstring.cc:741
+#: src/output/formatstring.cc:742
 msgid "Found ELSE without IF."
 msgstr "ELSE ohne IF gefunden."
 
-#: src/output/formatstring.cc:768
+#: src/output/formatstring.cc:769
 msgid "Found FI without IF."
 msgstr "FI ohne IF gefunden."
 
-#: src/output/formatstring.cc:790
+#: src/output/formatstring.cc:791
 msgid "Check your syntax"
 msgstr "Bitte überprüfen Sie die Syntax"
 
-#: src/output/formatstring.cc:813
+#: src/output/formatstring.cc:814
 msgid "Bad state: undefined"
 msgstr "Unerlaubter Status: undefiniert"
 
-#: src/output/formatstring.cc:827
+#: src/output/formatstring.cc:828
 #, c-format
 msgid "Line %s, column %s: %s"
 msgstr "Zeile %s, Spalte %s: %s"

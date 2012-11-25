@@ -387,8 +387,8 @@ AddOption(STRING, "OVERLAYS_LIST",
 
 AddOption(INTEGER, "LEVENSHTEIN_DISTANCE",
 	LEVENSHTEIN_DISTANCE_DEFAULT, _(
-	"The default maximal levensthein distance for which a string is considered a match\n"
-	"for the fuzzy match algorithm."));
+	"The default maximal levensthein distance for which a string is\n"
+	"considered a match for the fuzzy match algorithm."));
 
 AddOption(BOOLEAN, "UPDATE_VERBOSE",
 	"false", _(

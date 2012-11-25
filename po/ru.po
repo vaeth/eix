@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-11-25 15:30+0100\n"
+"POT-Creation-Date: 2012-11-25 16:20+0100\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -2102,7 +2102,7 @@ msgstr "ошибка eix-update"
 #: src/eixTk/ansicolor.cc:144
 #, fuzzy
 msgid "Illegal color name %r in %r"
-msgstr "Неверное имя цвета %r"
+msgstr "Неверное имя цвета %r в %r"
 
 #: src/eixTk/ansicolor.cc:171
 msgid "More than two colors specified in %r"
@@ -2648,9 +2648,8 @@ msgstr ""
 
 #: src/eixrc/defaults.cc:390
 msgid ""
-"The default maximal levensthein distance for which a string is considered a "
-"match\n"
-"for the fuzzy match algorithm."
+"The default maximal levensthein distance for which a string is\n"
+"considered a match for the fuzzy match algorithm."
 msgstr ""
 
 #: src/eixrc/defaults.cc:395
@@ -5091,53 +5090,53 @@ msgstr "Свойство %r использовано вне контекста �
 msgid "Variable %r calls itself for printing"
 msgstr "Переменная %r вызывает себя для печати"
 
-#: src/output/formatstring.cc:464
+#: src/output/formatstring.cc:465
 msgid "Internal error: bad node for parse_colors."
 msgstr "Внутренняя ошибка: плохой узел для parse_colors."
 
-#: src/output/formatstring.cc:534
+#: src/output/formatstring.cc:535
 msgid "'(' without closing ')'"
 msgstr "'(' без закрывающего ')'"
 
-#: src/output/formatstring.cc:543
+#: src/output/formatstring.cc:544
 #, c-format
 msgid "Error while parsing color: %s"
 msgstr "Ошибка при обработке цвета: %s"
 
-#: src/output/formatstring.cc:567
+#: src/output/formatstring.cc:568
 msgid "'<' without closing '>'"
 msgstr "'<' без закрывающего '>'"
 
-#: src/output/formatstring.cc:637
+#: src/output/formatstring.cc:638
 msgid "No name of property/variable found after '{'."
 msgstr "Не найдено имя свойства/переменной после '{'."
 
-#: src/output/formatstring.cc:641 src/output/formatstring.cc:662
-#: src/output/formatstring.cc:720
+#: src/output/formatstring.cc:642 src/output/formatstring.cc:663
+#: src/output/formatstring.cc:721
 msgid "Found '{' without closing '}'."
 msgstr "Найден '{' без закрывающего '}'."
 
-#: src/output/formatstring.cc:656
+#: src/output/formatstring.cc:657
 msgid "Unexpected symbol %r found after '{'."
 msgstr "Неожиданный символ %r найден после '{'."
 
-#: src/output/formatstring.cc:741
+#: src/output/formatstring.cc:742
 msgid "Found ELSE without IF."
 msgstr "Найден ELSE без IF"
 
-#: src/output/formatstring.cc:768
+#: src/output/formatstring.cc:769
 msgid "Found FI without IF."
 msgstr "Найден FI без IF."
 
-#: src/output/formatstring.cc:790
+#: src/output/formatstring.cc:791
 msgid "Check your syntax"
 msgstr "Проверьте Ваш синтаксис"
 
-#: src/output/formatstring.cc:813
+#: src/output/formatstring.cc:814
 msgid "Bad state: undefined"
 msgstr "Плохое состояние: не определено"
 
-#: src/output/formatstring.cc:827
+#: src/output/formatstring.cc:828
 #, c-format
 msgid "Line %s, column %s: %s"
 msgstr "Строка %s, столбец %s: %s"
