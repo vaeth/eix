@@ -298,7 +298,6 @@ PrintFormat::setupResources(EixRc *rc)
 		for(vector<string>::const_iterator it(term_alt.begin());
 			it != term_alt.end(); ++it) {
 			if(Regex(it->c_str()).match(term)) {
-cerr << it->c_str();
 				schemenum = i;
 				break;
 			}

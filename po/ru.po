@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-11-25 16:20+0100\n"
+"POT-Creation-Date: 2012-11-25 20:33+0100\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -2180,35 +2180,35 @@ msgstr "отсутствует указатель формата"
 msgid "unknown format specifier '%%%s'"
 msgstr "неизвестный указатель формата '%%%s'"
 
-#: src/eixTk/stringutils.cc:428
+#: src/eixTk/stringutils.cc:432
 #, c-format
 msgid "flags should not start with a '+': %s"
 msgstr "флаги не должны начинаться с '+': %s"
 
-#: src/eixTk/stringutils.cc:469
+#: src/eixTk/stringutils.cc:473
 #, c-format
 msgid "Internal error: Storing required after finalizing"
 msgstr "Внутренняя ошибка: Требуется хранение после финализации"
 
-#: src/eixTk/stringutils.cc:479
+#: src/eixTk/stringutils.cc:483
 #, c-format
 msgid "Internal error: Hashing required after finalizing"
 msgstr "Внутренняя ошибка: Требуется хеширование после финализации"
 
-#: src/eixTk/stringutils.cc:483
+#: src/eixTk/stringutils.cc:487
 #, c-format
 msgid "Internal error: Hashing required in non-hash mode"
 msgstr "Внутренняя ошибка: Требуется хеширование в нехешевом режиме"
 
-#: src/eixTk/stringutils.cc:513
+#: src/eixTk/stringutils.cc:517
 msgid "Internal error: Index required before sorting."
 msgstr "Внутренняя ошибка: Требуется индекс перед сортировкой."
 
-#: src/eixTk/stringutils.cc:518
+#: src/eixTk/stringutils.cc:522
 msgid "Internal error: Trying to shortcut non-hashed string."
 msgstr "Внутренняя ошибка: Попытка создать ярлык на нехешированную строку."
 
-#: src/eixTk/stringutils.cc:528
+#: src/eixTk/stringutils.cc:532
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "База данных испорчена: требуется несуществующий хеш"
 
@@ -5090,53 +5090,53 @@ msgstr "Свойство %r использовано вне контекста �
 msgid "Variable %r calls itself for printing"
 msgstr "Переменная %r вызывает себя для печати"
 
-#: src/output/formatstring.cc:465
+#: src/output/formatstring.cc:464
 msgid "Internal error: bad node for parse_colors."
 msgstr "Внутренняя ошибка: плохой узел для parse_colors."
 
-#: src/output/formatstring.cc:535
+#: src/output/formatstring.cc:534
 msgid "'(' without closing ')'"
 msgstr "'(' без закрывающего ')'"
 
-#: src/output/formatstring.cc:544
+#: src/output/formatstring.cc:543
 #, c-format
 msgid "Error while parsing color: %s"
 msgstr "Ошибка при обработке цвета: %s"
 
-#: src/output/formatstring.cc:568
+#: src/output/formatstring.cc:567
 msgid "'<' without closing '>'"
 msgstr "'<' без закрывающего '>'"
 
-#: src/output/formatstring.cc:638
+#: src/output/formatstring.cc:637
 msgid "No name of property/variable found after '{'."
 msgstr "Не найдено имя свойства/переменной после '{'."
 
-#: src/output/formatstring.cc:642 src/output/formatstring.cc:663
-#: src/output/formatstring.cc:721
+#: src/output/formatstring.cc:641 src/output/formatstring.cc:662
+#: src/output/formatstring.cc:720
 msgid "Found '{' without closing '}'."
 msgstr "Найден '{' без закрывающего '}'."
 
-#: src/output/formatstring.cc:657
+#: src/output/formatstring.cc:656
 msgid "Unexpected symbol %r found after '{'."
 msgstr "Неожиданный символ %r найден после '{'."
 
-#: src/output/formatstring.cc:742
+#: src/output/formatstring.cc:741
 msgid "Found ELSE without IF."
 msgstr "Найден ELSE без IF"
 
-#: src/output/formatstring.cc:769
+#: src/output/formatstring.cc:768
 msgid "Found FI without IF."
 msgstr "Найден FI без IF."
 
-#: src/output/formatstring.cc:791
+#: src/output/formatstring.cc:790
 msgid "Check your syntax"
 msgstr "Проверьте Ваш синтаксис"
 
-#: src/output/formatstring.cc:814
+#: src/output/formatstring.cc:813
 msgid "Bad state: undefined"
 msgstr "Плохое состояние: не определено"
 
-#: src/output/formatstring.cc:828
+#: src/output/formatstring.cc:827
 #, c-format
 msgid "Line %s, column %s: %s"
 msgstr "Строка %s, столбец %s: %s"
@@ -5202,15 +5202,11 @@ msgstr "Оператор без части с версией."
 msgid "Version specification is missing."
 msgstr "отсутствует указатель формата."
 
-#: src/portage/mask.cc:182
-msgid "A '*' is only valid at the end of a version-string."
-msgstr "'*' уместно только в конце строки-версии."
-
-#: src/portage/mask.cc:189
+#: src/portage/mask.cc:183
 msgid "A wildcard is only valid with the = operator."
 msgstr "Шаблон поиска имеет смысл только с оператором =."
 
-#: src/portage/mask.cc:193
+#: src/portage/mask.cc:187
 msgid ""
 "A wildcard is only valid with the = operator.\n"
 "Portage would also accept something like ~app-shells/bash-3*,\n"

@@ -51,7 +51,7 @@ class Mask : public BasicVersion {
 			maskOpAll, maskOpEqual,
 			maskOpLess, maskOpLessEqual,
 			maskOpGreaterEqual, maskOpGreater,
-			maskOpRevisions, maskOpGlob,
+			maskOpRevisions, maskOpGlob, maskOpGlobExt,
 			maskIsSet
 		} Operator;
 

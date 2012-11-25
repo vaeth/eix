@@ -158,7 +158,7 @@ GCC_DIAG_ON(sign-conversion)
 	// Get the rest (name-version|name)
 	if((m_operator != maskOpAll) || (m_type == maskPseudomask)) {
 		// There must be a version somewhere
-		p = ExplodeAtom::get_start_of_version(str);
+		p = ExplodeAtom::get_start_of_version(str, true);
 
 		if(unlikely((p == NULLPTR) || ((end != NULLPTR) && (p >= end)))) {
 			*errtext = ((m_type != maskPseudomask) ?
@@ -176,12 +176,6 @@ GCC_DIAG_ON(sign-conversion)
 		const char *wildcard((m_type != maskPseudomask) ? strchr(str, '*') : NULLPTR);
 		if(unlikely((unlikely(wildcard != NULLPTR)) &&
 			(likely((end == NULLPTR) || (wildcard <= end))))) {
-			if(unlikely((wildcard[1] != '\0') &&
-				// The following is also valid if end=NULLPTR
-				(wildcard + 1 != end))) {
-				*errtext = _("A '*' is only valid at the end of a version-string.");
-				return parsedError;
-			}
 			// Only the = operator can have a wildcard-version
 			if(unlikely(m_operator != maskOpEqual)) {
 				// A finer error-reporting
@@ -196,8 +190,20 @@ GCC_DIAG_ON(sign-conversion)
 					return parsedError;
 				}
 			}
-			m_operator = maskOpGlob;
-			m_glob = string(str, wildcard);
+			if(unlikely((wildcard[1] != '\0') &&
+				// The following is also valid if end=NULLPTR
+				(wildcard + 1 != end))) {
+				// Wildcard is not the last symbol:
+				m_operator = maskOpGlobExt;
+				if(end != NULLPTR) {
+					m_glob.assign(str, end);
+				} else {
+					m_glob.assign(str);
+				}
+			} else {
+				m_operator = maskOpGlob;
+				m_glob.assign(str, wildcard);
+			}
 			return parsedOK;
 		}
 GCC_DIAG_OFF(sign-conversion)
@@ -248,6 +254,9 @@ Mask::test(const ExtendedVersion *ev) const
 	{
 		case maskOpAll:
 			return true;
+
+		case maskOpGlobExt:
+			return (fnmatch(m_glob.c_str(), ev->getFull().c_str(), 0) == 0);
 
 		case maskOpGlob:
 			if(m_glob.empty()) {
@@ -373,8 +382,8 @@ SetMask::applyItem(Package *pkg) const
 bool
 Mask::ismatch(const Package &pkg) const
 {
-	if (fnmatch(m_name.c_str(), pkg.name.c_str(), 0) ||
-		fnmatch(m_category.c_str(), pkg.category.c_str(), 0))
+	if((fnmatch(m_name.c_str(), pkg.name.c_str(), 0) != 0) ||
+		(fnmatch(m_category.c_str(), pkg.category.c_str(), 0) != 0))
 		return false;
 	for(Package::const_iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
 		if(test(*i))

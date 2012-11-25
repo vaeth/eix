@@ -52,7 +52,7 @@ extern std::locale localeC;
 /** Split names of Atoms in different ways. */
 class ExplodeAtom {
 	public:
-		static const char *get_start_of_version(const char* str) ATTRIBUTE_NONNULL_;
+		static const char *get_start_of_version(const char* str, bool allow_star) ATTRIBUTE_NONNULL_;
 
 		/** Get the version-string of a Atom (e.g. get 1.2.3 from foobar-1.2.3).  */
 		static char *split_version(const char* str) ATTRIBUTE_NONNULL_;

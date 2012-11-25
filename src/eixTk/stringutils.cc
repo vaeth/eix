@@ -195,15 +195,19 @@ slot_subslot(const string &full, string *slot, string *subslot)
 }
 
 const char *
-ExplodeAtom::get_start_of_version(const char *str)
+ExplodeAtom::get_start_of_version(const char *str, bool allow_star)
 {
 	// There must be at least one symbol before the version:
 	if(unlikely(*(str++) == '\0'))
 		return NULLPTR;
 	const char *x(NULLPTR);
 	while(likely((*str != '\0') && (*str != ':'))) {
-		if(unlikely((*str++ == '-') && (isdigit(*str, localeC))))
-			x = str;
+		if(unlikely(*str++ == '-')) {
+			if(isdigit(*str, localeC) ||
+				unlikely(allow_star && ((*str) == '*'))) {
+				x = str;
+			}
+		}
 	}
 	return x;
 }
@@ -211,7 +215,7 @@ ExplodeAtom::get_start_of_version(const char *str)
 char *
 ExplodeAtom::split_version(const char *str)
 {
-	const char *x(get_start_of_version(str));
+	const char *x(get_start_of_version(str, false));
 	if(likely(x != NULLPTR))
 		return strdup(x);
 	return NULLPTR;
@@ -220,7 +224,7 @@ ExplodeAtom::split_version(const char *str)
 char *
 ExplodeAtom::split_name(const char *str)
 {
-	const char *x(get_start_of_version(str));
+	const char *x(get_start_of_version(str, false));
 	if(likely(x != NULLPTR)) {
 GCC_DIAG_OFF(sign-conversion)
 		return strndup(str, ((x - 1) - str));
@@ -233,7 +237,7 @@ char **
 ExplodeAtom::split(const char *str)
 {
 	static char* out[2] = { NULLPTR, NULLPTR };
-	const char *x(get_start_of_version(str));
+	const char *x(get_start_of_version(str, false));
 
 	if(unlikely(x == NULLPTR))
 		return NULLPTR;

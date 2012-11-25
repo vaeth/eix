@@ -9,6 +9,9 @@
 	  only 88 colors which could deserve its own color scheme.
 	  For the moment, COLORSCHEME0 is used as a poor man's 88 color scheme.
 	- Fix color output of overlay list if no colors are used.
+	- Support =foo/bar-* version atoms as reported by bugmenot2:
+	  http://developer.berlios.de/bugs/?func=detailbug&bug_id=18788&
+	  group_id=11597
 
 *eix-0.27.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
