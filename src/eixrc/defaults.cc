@@ -642,24 +642,44 @@ AddOption(STRING, "BG3",
 	"This variable is only used for delayed substitution.\n"
 	"It is the background color for color scheme 3. Use \"none\" for no change."));
 
-AddOption(STRING, "TERM_ALT",
+AddOption(STRING, "TERM_ALT1",
 	"256 [aeEkx]term rxvt konsole gnome putty", _(
 	"This is a list of regular expressions; if one of it matches TERM, then\n"
-	"COLORSCHEME_ALT is used instead of COLORSCHEME."));
+	"COLORSCHEME1 is used instead of COLORSCHEME0."));
+
+AddOption(STRING, "TERM_ALT2",
+	"88 rxvt-unicode[^2]*$", _(
+	"This is a list of regular expressions; if one of it matches TERM, then\n"
+	"COLORSCHEME2 is used instead of COLORSCHEME0."));
+
+AddOption(STRING, "TERM_ALT3",
+	"", _(
+	"This is a list of regular expressions; if one of it matches TERM, then\n"
+	"COLORSCHEME3 is used instead of COLORSCHEME0."));
 
 AddOption(BOOLEAN, "DARK",
 	"true", _(
-	"This variable is only used for delayed substitution in COLORSCHEME{,_ALT}.\n"
+	"This variable is only used for delayed substitution in COLORSCHEME*.\n"
 	"If true, the \"dark\" color schemes (for black background) are selected."));
 
-AddOption(STRING, "COLORSCHEME",
+AddOption(STRING, "COLORSCHEME0",
 	"%{?DARK}0%{else}2%{}", _(
-	"If TERM_ALT does not match, this chooses the corresponding color of\n"
+	"If TERM_ALT* does not match, this chooses the corresponding color of\n"
 	"color specifications (starting from 0)."));
 
-AddOption(STRING, "COLORSCHEME_ALT",
+AddOption(STRING, "COLORSCHEME1",
 	"%{?DARK}1%{else}3%{}", _(
-	"If TERM_ALT matches, this chooses the corresponding color of\n"
+	"If TERM_ALT1 matches, this chooses the corresponding color of\n"
+	"color specifications (starting from 0)."));
+
+AddOption(STRING, "COLORSCHEME2",
+	"%{COLORSCHEME0}", _(
+	"If TERM_ALT2 matches, this chooses the corresponding color of\n"
+	"color specifications (starting from 0)."));
+
+AddOption(STRING, "COLORSCHEME3",
+	"%{COLORSCHEME1}", _(
+	"If TERM_ALT3 matches, this chooses the corresponding color of\n"
 	"color specifications (starting from 0)."));
 
 AddOption(BOOLEAN, "SORT_INST_USE_ALPHA",
@@ -1173,12 +1193,12 @@ AddOption(STRING, "COLOR_UNSET_USE",
 	"It defines the color used for printing the unset useflags."));
 
 AddOption(STRING, "COLOR_VERSION_IUSE",
-	"gray;%{BG0}|168;%{BG1}|gray;%{BG2}|168,1;%{BG3}", _(
+	",1;%{BG0}|168;%{BG1}|,1;%{BG2}|168,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing IUSE for available versions."));
 
 AddOption(STRING, "COLOR_COLL_IUSE",
-	"gray;%{BG0}|38;%{BG1}|gray;%{BG2}|61,1;%{BG3}", _(
+	",1;%{BG0}|38;%{BG1}|,1;%{BG2}|61,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing collected IUSE for packages."));
 

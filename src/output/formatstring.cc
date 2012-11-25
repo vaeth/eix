@@ -290,17 +290,21 @@ PrintFormat::setupResources(EixRc *rc)
 	before_unset_use = (*rc)["FORMAT_BEFORE_UNSET_USE"];
 	after_unset_use  = (*rc)["FORMAT_AFTER_UNSET_USE"];
 
-	vector<string> term_alt;
-	split_string(&term_alt, (*rc)["TERM_ALT"], true);
 	const char *term((*rc)["TERM"].c_str());
-	for(vector<string>::const_iterator it(term_alt.begin());
-		it != term_alt.end(); ++it) {
-		if(Regex(it->c_str()).match(term)) {
-			AnsiColor::colorscheme = rc->getInteger("COLORSCHEME_ALT");
-			return;
+	char schemenum('0');
+	for(char i('1'); likely(i != '4'); ++i) {
+		vector<string> term_alt;
+		split_string(&term_alt, (*rc)[string("TERM_ALT") + i], true);
+		for(vector<string>::const_iterator it(term_alt.begin());
+			it != term_alt.end(); ++it) {
+			if(Regex(it->c_str()).match(term)) {
+cerr << it->c_str();
+				schemenum = i;
+				break;
+			}
 		}
 	}
-	AnsiColor::colorscheme = rc->getInteger("COLORSCHEME");
+	AnsiColor::colorscheme = rc->getInteger(string("COLORSCHEME") + schemenum);
 }
 
 static void

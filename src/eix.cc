@@ -519,15 +519,20 @@ print_overlay_table(PrintFormat *fmt, DBHeader *header, vector<bool> *overlay_us
 	for(ExtendedVersion::Overlay i((overlay_mode == mode_list_all) ? 0 : 1);
 		likely(i != header->countOverlays()); ++i) {
 		if((i != 0) && (overlay_used != NULLPTR)) {
-			if(!((*overlay_used)[i-1]))
+			if(!((*overlay_used)[i-1])) {
 				continue;
+			}
 		}
-		cout << fmt->overlay_keytext(i)
-			<< " "
-			<< fmt->color_overlayname
-			<< header->getOverlay(i).human_readable()
-			<< fmt->color_overlaynameend
-			<< "\n";
+		cout << fmt->overlay_keytext(i) << " ";
+		if(fmt->no_color) {
+			cout << header->getOverlay(i).human_readable();
+		} else {
+			cout
+				<< fmt->color_overlayname
+				<< header->getOverlay(i).human_readable()
+				<< fmt->color_overlaynameend;
+		}
+		cout << "\n";
 		printed_overlay = true;
 	}
 	return printed_overlay;

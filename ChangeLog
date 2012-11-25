@@ -1,5 +1,15 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.27.5
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Rename variables to allow more cases of terminals:
+	  TERM_ALT1 ... TERM_ALT3  and COLORSCHEME0 ... COLORSCHEME3
+	  Previous TERM_ALT and COLORSCHEME{,_ALT} variables are obsolete.
+	- Move rxvt-unicode without -256color to ALT_TERM2, since it supports
+	  only 88 colors which could deserve its own color scheme.
+	  For the moment, COLORSCHEME0 is used as a poor man's 88 color scheme.
+	- Fix color output of overlay list if no colors are used.
+
 *eix-0.27.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Change COLOR_INST_VERSION to work with solarized. Thanks to khayyam:

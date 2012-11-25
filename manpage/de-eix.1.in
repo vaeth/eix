@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-10-21 18:30:00 +0200 (Sun, 21 Oct 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-11-25 15:00:00 +0200 (Sun, 24 Nov 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1434,7 +1434,7 @@ verfügbaren Versionen des aktuellen (d.h. neuen) Pakets ausgeben.
 .SS Farben
 .TP
 .BI ( COLORSTRING | COLORSTRING | ... )
-Der tatsächlich ausgewählte I<COLORSTRING> hängt von B<COLORSCHEME> ab.
+Der tatsächlich ausgewählte I<COLORSTRING> hängt von B<COLORSCHEME*> ab.
 Er sollte die folgende Gestalt haben:
 
 .TP
@@ -1448,7 +1448,9 @@ I<none bold underline blink inverse>
 Verfügbare Farbnamen:
 I<default black red green yellow blue purple cyan gray 0 ... 255>
 
-Die Farbnamen I<0> ... I<255> werden nur auf einem 256-Farben-Terminal sinnvoll ausgegeben.
+Beachten Sie, dass I<gray> geht nicht auf allen Terminals das Gewünschte tut,
+und die Farbnamen I<0> ... I<255> nur auf einem 88/256-Farben-Terminal
+sinnvoll interpretiert werden.
 
 Die erste Farbe in I<COLORSTRING> legt die Vordergrund-, die zweite die
 Hintergrundfarbe fest.
@@ -1786,7 +1788,7 @@ expandieren, B<BAD_FORMAT> hingegen zu
 
 .B (blue|27,1;invert)A
 
-Letzteres führt wahrscheinlich nicht zum beabsichtigten Ergebnis, falls B<COLORSCHEME=0> ist.
+Letzteres führt wahrscheinlich nicht zum beabsichtigten Ergebnis, falls B<COLORSCHEME*=0> ist.
 .RE
 .\" }}}
 
@@ -2383,18 +2385,22 @@ Falls dieser String nichtleer ist, wird er als Ende-Statuszeile benutzt.
 Ein optionales führendes Leerzeichen in diesem String wird ignoriert.
 
 .TP
-.BR TERM_ALT " " "(Stringliste)"
+.BR TERM_ALT1 ", " TERM_ALT2 ", " TERM_ALT3 " " "(Stringliste)"
 Dies ist eine Liste regulärer Ausdrücke.
-Falls einer von ihnen auf B<TERM> passt, wird B<COLORSCHEME_ALT> statt
-B<COLORSCHEME> benutzt.
+Falls einer von ihnen auf B<TERM> passt, wird B<COLORSCHEME1>, B<COLORSCHEME2>
+bzw. B<COLORSCHEME3> statt B<COLORSCHEME0> benutzt,
+wobei die größte passende Zahl Vorrang hat.
 
 .TP
-.BR COLORSCHEME ", " COLORSCHEME_ALT " " (integer)
-Das benutzte Farbschema:
-Wenn es 0 ist, wird jeweils der erste I<COLORSTRING> von Farbspezifikationen benutzt;
+.BR COLORSCHEME0 ", " COLORSCHEME1 ", " COLORSCHEME2 ", " COLORSCHEME3 " " (integer)
+Welche dieser Variablen tasächlich benutzt wird hängt davon ab, welches B<TERM_ALT*> auf B<TERM> passt.
+
+Diese Variablen geben das benutzte Farbschema an::
+
+Der Wert 0 bedeutet, dass der erste I<COLORSTRING> von Farbspezifikationen benutzt wird;
 für höhere Zahlen wird ein entsprechend späterer I<COLORSTRING> benutzt.
 Falls die Zahl zu hoch ist, wird der erste I<COLORSTRING> benutzt.
-Falls B<TERM_ALT> passt, wird B<COLORSCHEME_ALT> anstelle von B<COLORSCHEME> ausgewertet.
+
 Der Defaultwert dieser Variablen hängt von der Variablen B<DARK> ab
 (die nur via verzögerter Ersetzung benutzt wird).
 
