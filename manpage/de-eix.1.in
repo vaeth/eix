@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-11-25 15:00:00 +0200 (Sun, 24 Nov 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-11-26 18:00:00 +0200 (Mon, 26 Nov 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1692,7 +1692,7 @@ Daher sollte man sicher gehen, dass diese Variablen nicht kompromittiert sind, w
 
 .\" {{{ -------- ~/.eixrc
 .SS ~/.eixrc
-User-spezifische Konfigurations-Datei.
+Benutzerspezifische Konfigurationsdatei.
 Die Variablen dieser Datei können durch Environmentvariablen überschrieben werden.
 In dieser Datei kann eine Shell-ähnliche Syntax benutzt werden, um die folgenden Variablen zu setzen.
 Insbesondere können andere Dateien gesourced werden und Hilfsvariablen benutzt werden
@@ -2391,6 +2391,14 @@ Falls einer von ihnen auf B<TERM> passt, wird B<COLORSCHEME1>, B<COLORSCHEME2>
 bzw. B<COLORSCHEME3> statt B<COLORSCHEME0> benutzt,
 wobei die größte passende Zahl Vorrang hat.
 
+Natürlich steht es Ihnen frei, andere Bedeutungen zuzuweisen, aber die Absicht der
+Defaults ist, dass ein Nicht-passendes Terminal 8/16 Farben hat, B<TERM_ALT1> die 256-farbigen
+Terminals spezifiziert, B<TERM_ALT2> die 88-farbigen Terminals, und B<TERM_ALT3> für den
+Benutzer frei bleibt (so dass damit alles andere überschrieben werden kann).
+
+B<EXAMPLE:> Falls solarized (8/16) Farben auf alen Terminals gewünscht sind,
+können Sie B<TERM_ALT3=.> setzen um für alle Terminals den B<COLORSCHEME3>-Default
+zu wählen (der B<COLORSCHEME0> ist, s. unten).
 .TP
 .BR COLORSCHEME0 ", " COLORSCHEME1 ", " COLORSCHEME2 ", " COLORSCHEME3 " " (integer)
 Welche dieser Variablen tasächlich benutzt wird hängt davon ab, welches B<TERM_ALT*> auf B<TERM> passt.
@@ -2400,9 +2408,6 @@ Diese Variablen geben das benutzte Farbschema an::
 Der Wert 0 bedeutet, dass der erste I<COLORSTRING> von Farbspezifikationen benutzt wird;
 für höhere Zahlen wird ein entsprechend späterer I<COLORSTRING> benutzt.
 Falls die Zahl zu hoch ist, wird der erste I<COLORSTRING> benutzt.
-
-Der Defaultwert dieser Variablen hängt von der Variablen B<DARK> ab
-(die nur via verzögerter Ersetzung benutzt wird).
 
 Die Zahlen für die Default-Settings sind:
 
@@ -2418,6 +2423,15 @@ Die Variablen B<BG0>, B<BG1>, B<BG2>, B<BG3> werden von den Defaults zur
 verzögerten Ersetzung berücksichtigt, um die Hintergrundfarbe der entsprechenden Schemata zu erzwingen.
 Der Wert "none" bedeutet, dass die Hintergrundfarbe nicht geändert wird.
 
+Die Default-Werte der Variablen sind:
+
+B<COLORSCHEME0>: 0 oder 2 (je nach Wert der Variablen B<DARK>); dies ist für Terminals mit 8/16 Farben gedacht.
+
+B<COLORSCHEME1>: 1 oder 3 (je nach Wert der Variablen B<DARK>); dies ist für 256-farbige Terminals gedacht.
+
+B<COLORSCHEME2>: das gleiche wie B<COLORSCHEME0>, für 88-farbige Terminals gedacht.
+
+B<COLORSCHEME3>: das gleiche wie B<COLORSCHEME0>, gedacht als vernünftiger Defaultwert für Änderungen durch den Benutzer.
 .TP
 .BR LEVENSHTEIN_DISTANCE " " (integer)
 Legt den Default Levenshtein-Abstand fest.

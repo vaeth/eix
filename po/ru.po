@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-11-25 20:33+0100\n"
+"POT-Creation-Date: 2012-11-26 16:29+0100\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -2944,56 +2944,63 @@ msgstr ""
 #: src/eixrc/defaults.cc:647
 msgid ""
 "This is a list of regular expressions; if one of it matches TERM, then\n"
-"COLORSCHEME1 is used instead of COLORSCHEME0."
+"COLORSCHEME1 is used instead of COLORSCHEME0. The intention is that the\n"
+"specified terminals default to 256 colors."
 msgstr ""
 
-#: src/eixrc/defaults.cc:652
+#: src/eixrc/defaults.cc:653
 msgid ""
 "This is a list of regular expressions; if one of it matches TERM, then\n"
-"COLORSCHEME2 is used instead of COLORSCHEME0."
+"COLORSCHEME2 is used instead of COLORSCHEME0. The intention is that the\n"
+"specified terminals default to 88 colors."
 msgstr ""
 
-#: src/eixrc/defaults.cc:657
+#: src/eixrc/defaults.cc:659
 msgid ""
 "This is a list of regular expressions; if one of it matches TERM, then\n"
-"COLORSCHEME3 is used instead of COLORSCHEME0."
+"COLORSCHEME3 is used instead of COLORSCHEME0. The intention is that\n"
+"these terminals are exceptions made on user request."
 msgstr ""
 
-#: src/eixrc/defaults.cc:662
+#: src/eixrc/defaults.cc:665
 msgid ""
 "This variable is only used for delayed substitution in COLORSCHEME*.\n"
 "If true, the \"dark\" color schemes (for black background) are selected."
 msgstr ""
 
-#: src/eixrc/defaults.cc:667
+#: src/eixrc/defaults.cc:670
 msgid ""
 "If TERM_ALT* does not match, this chooses the corresponding color of\n"
-"color specifications (starting from 0)."
+"color specifications (starting from 0). The intention of this variable\n"
+"is to select the color scheme used for 8/16 color terminals."
 msgstr ""
 
-#: src/eixrc/defaults.cc:672
+#: src/eixrc/defaults.cc:676
 msgid ""
 "If TERM_ALT1 matches, this chooses the corresponding color of\n"
-"color specifications (starting from 0)."
-msgstr ""
-
-#: src/eixrc/defaults.cc:677
-msgid ""
-"If TERM_ALT2 matches, this chooses the corresponding color of\n"
-"color specifications (starting from 0)."
+"color specifications (starting from 0). The intention of this variable\n"
+"is to select the color scheme used for 256 color terminals."
 msgstr ""
 
 #: src/eixrc/defaults.cc:682
 msgid ""
-"If TERM_ALT3 matches, this chooses the corresponding color of\n"
-"color specifications (starting from 0)."
+"If TERM_ALT2 matches, this chooses the corresponding color of\n"
+"color specifications (starting from 0). The intention of this variable\n"
+"is to select the color scheme used for 88 color terminals."
 msgstr ""
 
-#: src/eixrc/defaults.cc:687
+#: src/eixrc/defaults.cc:688
+msgid ""
+"If TERM_ALT3 matches, this chooses the corresponding color of\n"
+"color specifications (starting from 0). The intention of this variable\n"
+"is to select the color scheme used for user-specified terminals."
+msgstr ""
+
+#: src/eixrc/defaults.cc:694
 msgid "If false, sort installed useflags by whether they are set."
 msgstr ""
 
-#: src/eixrc/defaults.cc:691
+#: src/eixrc/defaults.cc:698
 msgid ""
 "Allowed values are true/false/repository.\n"
 "If true, always check from which overlay a package version was installed.\n"
@@ -3003,37 +3010,37 @@ msgid ""
 "actually installed from a place not in the database anymore."
 msgstr ""
 
-#: src/eixrc/defaults.cc:700
+#: src/eixrc/defaults.cc:707
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_FIELD for description."
 msgstr ""
 
-#: src/eixrc/defaults.cc:705
+#: src/eixrc/defaults.cc:712
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_FIELD for set."
 msgstr ""
 
-#: src/eixrc/defaults.cc:710
+#: src/eixrc/defaults.cc:717
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_FIELD for homepage."
 msgstr ""
 
-#: src/eixrc/defaults.cc:715
+#: src/eixrc/defaults.cc:722
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_FIELD for category/name."
 msgstr ""
 
-#: src/eixrc/defaults.cc:720 src/eixrc/defaults.cc:725
+#: src/eixrc/defaults.cc:727 src/eixrc/defaults.cc:732
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_FIELD for license."
 msgstr ""
 
-#: src/eixrc/defaults.cc:736
+#: src/eixrc/defaults.cc:743
 msgid ""
 "This is a list of strings of the form regexp[ ]match_field.\n"
 "If regexp matches the search pattern, use match_field as the default.\n"
@@ -3043,37 +3050,37 @@ msgid ""
 "with-use, without-use."
 msgstr ""
 
-#: src/eixrc/defaults.cc:745
+#: src/eixrc/defaults.cc:752
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_ALGORITHM for regex."
 msgstr ""
 
-#: src/eixrc/defaults.cc:750 src/eixrc/defaults.cc:765
+#: src/eixrc/defaults.cc:757 src/eixrc/defaults.cc:772
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_ALGORITHM for pattern."
 msgstr ""
 
-#: src/eixrc/defaults.cc:755
+#: src/eixrc/defaults.cc:762
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_ALGORITHM for substring."
 msgstr ""
 
-#: src/eixrc/defaults.cc:760
+#: src/eixrc/defaults.cc:767
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_ALGORITHM for exact."
 msgstr ""
 
-#: src/eixrc/defaults.cc:770
+#: src/eixrc/defaults.cc:777
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_ALGORITHM for begin."
 msgstr ""
 
-#: src/eixrc/defaults.cc:781
+#: src/eixrc/defaults.cc:788
 msgid ""
 "This is a list of strings of the form regexp[ ]match_algorithm.\n"
 "If regexp matches the search pattern, use match_algorithm as the default.\n"
@@ -3082,88 +3089,88 @@ msgid ""
 "begin, end, exact, fuzzy."
 msgstr ""
 
-#: src/eixrc/defaults.cc:789
+#: src/eixrc/defaults.cc:796
 msgid ""
 "Defines whether empty entries in /etc/portage/package.* are shown with -t."
 msgstr ""
 
-#: src/eixrc/defaults.cc:793
+#: src/eixrc/defaults.cc:800
 msgid "Defines whether /etc/portage/package.accept_keywords is tested with -t."
 msgstr ""
 
-#: src/eixrc/defaults.cc:797
+#: src/eixrc/defaults.cc:804
 msgid "Defines whether /etc/portage/package.mask is tested with -t."
 msgstr ""
 
-#: src/eixrc/defaults.cc:801
+#: src/eixrc/defaults.cc:808
 msgid "Defines whether /etc/portage/package.unmask is tested with -t."
 msgstr ""
 
-#: src/eixrc/defaults.cc:805
+#: src/eixrc/defaults.cc:812
 msgid "Defines whether /etc/portage/package.use is tested with -t."
 msgstr ""
 
-#: src/eixrc/defaults.cc:809
+#: src/eixrc/defaults.cc:816
 msgid "Defines whether /etc/portage/package.env is tested with -t."
 msgstr ""
 
-#: src/eixrc/defaults.cc:813
+#: src/eixrc/defaults.cc:820
 msgid "Defines whether /etc/portage/package.license is tested with -t."
 msgstr ""
 
-#: src/eixrc/defaults.cc:817
+#: src/eixrc/defaults.cc:824
 msgid "Defines whether /etc/portage/package.cflags is tested with -t."
 msgstr ""
 
-#: src/eixrc/defaults.cc:821
+#: src/eixrc/defaults.cc:828
 msgid "Defines whether removed packages are tested with -t."
 msgstr ""
 
-#: src/eixrc/defaults.cc:825
+#: src/eixrc/defaults.cc:832
 msgid "Defines whether non-existing installed versions are positive for -T."
 msgstr ""
 
-#: src/eixrc/defaults.cc:829
+#: src/eixrc/defaults.cc:836
 msgid ""
 "Defines whether versions are non-existent for TEST_FOR_NONEXISTENT\n"
 "if they come from a different overlay than the installed version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:834
+#: src/eixrc/defaults.cc:841
 msgid ""
 "Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT."
 msgstr ""
 
-#: src/eixrc/defaults.cc:838
+#: src/eixrc/defaults.cc:845
 msgid "Defines whether redundant entries are positive for -T."
 msgstr ""
 
-#: src/eixrc/defaults.cc:842
+#: src/eixrc/defaults.cc:849
 msgid ""
 "If full or true modify ARCH by ACCEPT_KEYWORDS.\n"
 "This determines which keywords are considered as ARCH or OTHERARCH.\n"
 "The value full also influences the original ARCH keywording."
 msgstr ""
 
-#: src/eixrc/defaults.cc:848
+#: src/eixrc/defaults.cc:855
 msgid ""
 "Applies if /etc/portage/package.accept_keywords lists the same keyword\n"
 "twice for the versions in question."
 msgstr ""
 
-#: src/eixrc/defaults.cc:853
+#: src/eixrc/defaults.cc:860
 msgid ""
 "Applies if /etc/portage/package.accept_keywords has two lines for\n"
 "identical target."
 msgstr ""
 
-#: src/eixrc/defaults.cc:858
+#: src/eixrc/defaults.cc:865
 msgid ""
 "Applies if /etc/portage/package.accept_keywords lists two different\n"
 "keywords, e.g. ~ARCH and -*, for the versions in question."
 msgstr ""
 
-#: src/eixrc/defaults.cc:863
+#: src/eixrc/defaults.cc:870
 msgid ""
 "Applies if /etc/portage/package.accept_keywords lists a keywords which can\n"
 "be replaced by a weaker keyword, e.g. -* or ~OTHERARCH or OTHERARCH\n"
@@ -3171,1040 +3178,1040 @@ msgid ""
 "for the versions in question."
 msgstr ""
 
-#: src/eixrc/defaults.cc:870
+#: src/eixrc/defaults.cc:877
 msgid ""
 "Applies if /etc/portage/package.accept_keywords lists a strange keyword\n"
 "e.g. UNKNOWNARCH (unknown to the .ebuild and ARCH) or -OTHERARCH,\n"
 "for the versions in question."
 msgstr ""
 
-#: src/eixrc/defaults.cc:876
+#: src/eixrc/defaults.cc:883
 msgid ""
 "Applies if /etc/portage/package.accept_keywords provides keywords which do\n"
 "not change the availability keywords status for the versions in question."
 msgstr ""
 
-#: src/eixrc/defaults.cc:881
+#: src/eixrc/defaults.cc:888
 msgid ""
 "Applies if /etc/portage/package.mask contains entries\n"
 "which do not change the mask status for the versions in question."
 msgstr ""
 
-#: src/eixrc/defaults.cc:886
+#: src/eixrc/defaults.cc:893
 msgid ""
 "Applies if /etc/portage/package.unmask contains entries\n"
 "which do not change the mask status for the versions in question."
 msgstr ""
 
-#: src/eixrc/defaults.cc:891
+#: src/eixrc/defaults.cc:898
 msgid ""
 "Applies if /etc/portage/package.mask matches twice\n"
 "for the versions in question."
 msgstr ""
 
-#: src/eixrc/defaults.cc:896
+#: src/eixrc/defaults.cc:903
 msgid ""
 "Applies if /etc/portage/package.unmask matches twice\n"
 "for the versions in question."
 msgstr ""
 
-#: src/eixrc/defaults.cc:901
+#: src/eixrc/defaults.cc:908
 msgid ""
 "Applies if /etc/portage/package.use matches twice\n"
 "for the versions in question."
 msgstr ""
 
-#: src/eixrc/defaults.cc:906
+#: src/eixrc/defaults.cc:913
 msgid ""
 "Applies if /etc/portage/package.env matches twice\n"
 "for the versions in question."
 msgstr ""
 
-#: src/eixrc/defaults.cc:911
+#: src/eixrc/defaults.cc:918
 msgid ""
 "Applies if /etc/portage/package.license matches twice\n"
 "for the versions in question."
 msgstr ""
 
-#: src/eixrc/defaults.cc:916
+#: src/eixrc/defaults.cc:923
 msgid ""
 "Applies if /etc/portage/package.cflags matches twice\n"
 "for the versions in question."
 msgstr ""
 
-#: src/eixrc/defaults.cc:921
+#: src/eixrc/defaults.cc:928
 msgid ""
 "Applies if /etc/portage/package.accept_keywords contains a matching entry."
 msgstr ""
 
-#: src/eixrc/defaults.cc:925
+#: src/eixrc/defaults.cc:932
 msgid "Applies if /etc/portage/package.mask matches."
 msgstr ""
 
-#: src/eixrc/defaults.cc:929
+#: src/eixrc/defaults.cc:936
 msgid "Applies if /etc/portage/package.unmask matches."
 msgstr ""
 
-#: src/eixrc/defaults.cc:933
+#: src/eixrc/defaults.cc:940
 msgid "Applies if /etc/portage/package.use matches."
 msgstr ""
 
-#: src/eixrc/defaults.cc:937
+#: src/eixrc/defaults.cc:944
 msgid "Applies if /etc/portage/package.env matches."
 msgstr ""
 
-#: src/eixrc/defaults.cc:941
+#: src/eixrc/defaults.cc:948
 msgid "Applies if /etc/portage/package.license matches."
 msgstr ""
 
-#: src/eixrc/defaults.cc:945
+#: src/eixrc/defaults.cc:952
 msgid "Applies if /etc/portage/package.cflags matches."
 msgstr ""
 
-#: src/eixrc/defaults.cc:949
+#: src/eixrc/defaults.cc:956
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the directory where eix searches for its package.*.*/sets.eix files."
 msgstr ""
 
-#: src/eixrc/defaults.cc:954
+#: src/eixrc/defaults.cc:961
 msgid ""
 "If UPGRADE_TO_HIGHEST_SLOT=true, then packages listed in these files/dirs\n"
 "are treated as if UPGRADE_TO_HIGHEST_SLOT=false."
 msgstr ""
 
-#: src/eixrc/defaults.cc:962
+#: src/eixrc/defaults.cc:969
 msgid ""
 "If UPGRADE_TO_HIGHEST_SLOT=false, then packages listed in these files/dirs\n"
 "are treated as if UPGRADE_TO_HIGHEST_SLOT=true."
 msgstr ""
 
-#: src/eixrc/defaults.cc:968
+#: src/eixrc/defaults.cc:975
 msgid "Entries listed in these files/dirs are excluded for -t TEST_KEYWORDS."
 msgstr ""
 
-#: src/eixrc/defaults.cc:972
+#: src/eixrc/defaults.cc:979
 msgid "Entries listed in these files/dirs are excluded for -t TEST_MASK."
 msgstr ""
 
-#: src/eixrc/defaults.cc:976
+#: src/eixrc/defaults.cc:983
 msgid "Entries listed in these files/dirs are excluded for -t TEST_UNMASK."
 msgstr ""
 
-#: src/eixrc/defaults.cc:980
+#: src/eixrc/defaults.cc:987
 msgid "Entries listed in these files/dire are excluded for -t TEST_USE."
 msgstr ""
 
-#: src/eixrc/defaults.cc:984
+#: src/eixrc/defaults.cc:991
 msgid "Entries listed in these files/dire are excluded for -t TEST_ENV."
 msgstr ""
 
-#: src/eixrc/defaults.cc:988
+#: src/eixrc/defaults.cc:995
 msgid "Entries listed in these files/dirs are excluded for -t TEST_LICENSE."
 msgstr ""
 
-#: src/eixrc/defaults.cc:992
+#: src/eixrc/defaults.cc:999
 msgid "Entries listed in these files/dirs are excluded for -t TEST_CFLAGS."
 msgstr ""
 
-#: src/eixrc/defaults.cc:996
+#: src/eixrc/defaults.cc:1003
 msgid "Packages listed in these files/dirs are excluded for -t TEST_REMOVED."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1000
+#: src/eixrc/defaults.cc:1007
 msgid ""
 "This variable is only used for delayed substitution in PACKAGE_NOWARN.\n"
 "It is meant to be a local addition to PACKAGE_NOWARN."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1005
+#: src/eixrc/defaults.cc:1012
 msgid ""
 "This variable is only used for delayed substitution in PACKAGE_NOWARN.\n"
 "If it is set then the files from OBSOLETE_PACKAGE_NOWARN are used."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1018
+#: src/eixrc/defaults.cc:1025
 msgid ""
 "This variable is used for delayed substitution in PACKAGE_NOWARN if the\n"
 "variable OBSOLETE_NOWARN is set."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1027
+#: src/eixrc/defaults.cc:1034
 msgid "This file/directory contains exceptions for -T tests."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1031
+#: src/eixrc/defaults.cc:1038
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It specifies directories for EIX_LOCAL_SETS."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1040
+#: src/eixrc/defaults.cc:1047
 msgid ""
 "This is a space-separated list of directories containing set definitions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1044
+#: src/eixrc/defaults.cc:1051
 msgid ""
 "This regular expression describes the recognized EAPIs in .ebuild suffixes.\n"
 "You might need to modify it according to the installed portage version.\n"
 "Leave it empty if EAPI-suffixed ebuilds (GLEP 55) should be ignored."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1050
+#: src/eixrc/defaults.cc:1057
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the color used for default colors."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1055
+#: src/eixrc/defaults.cc:1062
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for the name of packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1060
+#: src/eixrc/defaults.cc:1067
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for the name of world packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1065
+#: src/eixrc/defaults.cc:1072
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for the name of world sets packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1070
+#: src/eixrc/defaults.cc:1077
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for the category of packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1075
+#: src/eixrc/defaults.cc:1082
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for the category of system packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1080
+#: src/eixrc/defaults.cc:1087
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for the category of world packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1085
+#: src/eixrc/defaults.cc:1092
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing the category of world sets packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1090
+#: src/eixrc/defaults.cc:1097
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing upgrade recommendation texts."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1095
+#: src/eixrc/defaults.cc:1102
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing downgrade recommendation texts."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1100
+#: src/eixrc/defaults.cc:1107
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing upgrade recommendation tags."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1105
+#: src/eixrc/defaults.cc:1112
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing downgrade recommendation tags."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1110
+#: src/eixrc/defaults.cc:1117
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing tags for uninstalled packages\n"
 "which have gained a stable version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1116
+#: src/eixrc/defaults.cc:1123
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing tags for installed packages\n"
 "which have gained a stable version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1122
+#: src/eixrc/defaults.cc:1129
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for \"better version\" tags (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1127
+#: src/eixrc/defaults.cc:1134
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for \"worse version\" tags (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1132
+#: src/eixrc/defaults.cc:1139
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for \"new package\" tags (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1137
+#: src/eixrc/defaults.cc:1144
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for \"new package\" separators (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1142
+#: src/eixrc/defaults.cc:1149
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for \"deleted package\" separators (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1147
+#: src/eixrc/defaults.cc:1154
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for \"changed package\" separators (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1152
+#: src/eixrc/defaults.cc:1159
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for tagging installed packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1157
+#: src/eixrc/defaults.cc:1164
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for tagging uninstalled packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1162
+#: src/eixrc/defaults.cc:1169
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing the date."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1167
+#: src/eixrc/defaults.cc:1174
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color of the DEPEND output."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1172
+#: src/eixrc/defaults.cc:1179
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the end of color of the DEPEND output."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1177
+#: src/eixrc/defaults.cc:1184
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing normal texts."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1182
+#: src/eixrc/defaults.cc:1189
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing end of normal texts."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1187
+#: src/eixrc/defaults.cc:1194
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing the set useflags."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1192
+#: src/eixrc/defaults.cc:1199
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing the unset useflags."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1197
+#: src/eixrc/defaults.cc:1204
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing IUSE for available versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1202
+#: src/eixrc/defaults.cc:1209
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing collected IUSE for packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1207
+#: src/eixrc/defaults.cc:1214
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing USE_EXPAND variables."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1212
+#: src/eixrc/defaults.cc:1219
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing end of USE_EXPAND variables."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1217
+#: src/eixrc/defaults.cc:1224
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing the braces around collected USE."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1222
+#: src/eixrc/defaults.cc:1229
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing the version of installed packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1227
+#: src/eixrc/defaults.cc:1234
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for the title texts for packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1232
+#: src/eixrc/defaults.cc:1239
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for the title texts for installed versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1237
+#: src/eixrc/defaults.cc:1244
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for the title texts for available versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1242
+#: src/eixrc/defaults.cc:1249
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing a marked version of a packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1247
+#: src/eixrc/defaults.cc:1254
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing the package sets."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1252
+#: src/eixrc/defaults.cc:1259
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing a marked package name."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1257
+#: src/eixrc/defaults.cc:1264
 msgid "Color for the overlaykey in version listings."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1261
+#: src/eixrc/defaults.cc:1268
 msgid "Color for the overlaykey for virtual overlays in version listings."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1265
+#: src/eixrc/defaults.cc:1272
 msgid "Color after printing an overlay key."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1269
+#: src/eixrc/defaults.cc:1276
 msgid "Color for printing an overlay name."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1273
+#: src/eixrc/defaults.cc:1280
 msgid "Color after printing an overlay name."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1277
+#: src/eixrc/defaults.cc:1284
 msgid "Color for printing the number of packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1281
+#: src/eixrc/defaults.cc:1288
 msgid "Color for slots. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1285
+#: src/eixrc/defaults.cc:1292
 msgid ""
 "Color for versions with *.tbz2. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1289
+#: src/eixrc/defaults.cc:1296
 msgid ""
 "Color for the restriction tags. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1293
+#: src/eixrc/defaults.cc:1300
 msgid ""
 "Color for the properties tags. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1297
+#: src/eixrc/defaults.cc:1304
 msgid "Color for keywords. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1301
+#: src/eixrc/defaults.cc:1308
 msgid "Color for keywords*. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1305
+#: src/eixrc/defaults.cc:1312
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines how installed versions are marked."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1310
+#: src/eixrc/defaults.cc:1317
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines how upgrade candidate versions are marked."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1315
+#: src/eixrc/defaults.cc:1322
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines how the package versions passed with --pipe are marked."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1320
+#: src/eixrc/defaults.cc:1327
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the default for NO{COLORS,STATUSLINE,PERCENTAGE}."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1325
+#: src/eixrc/defaults.cc:1332
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the character printed for upgrade recommendations."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1330
+#: src/eixrc/defaults.cc:1337
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the character printed for downgrade recommendations."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1335
+#: src/eixrc/defaults.cc:1342
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the character printed for installed packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1340
+#: src/eixrc/defaults.cc:1347
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the character printed for uninstalled packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1345
+#: src/eixrc/defaults.cc:1352
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the character printed for uninstalled packages which have gained\n"
 "a stable version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1351
+#: src/eixrc/defaults.cc:1358
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the character printed for installed packages which have gained\n"
 "a stable version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1357
+#: src/eixrc/defaults.cc:1364
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the character printed for new packages (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1362
+#: src/eixrc/defaults.cc:1369
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the character used for \"better version\" tags (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1367
+#: src/eixrc/defaults.cc:1374
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the character used for \"worse version\" tags (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1372
+#: src/eixrc/defaults.cc:1379
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the tag printed for upgrade recommendations."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1377
+#: src/eixrc/defaults.cc:1384
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the tag printed for downgrade recommendations."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1382
+#: src/eixrc/defaults.cc:1389
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the tag printed for installed packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1387
+#: src/eixrc/defaults.cc:1394
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the tag printed for uninstalled packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1396
+#: src/eixrc/defaults.cc:1403
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the tag for packages which have gained a stable version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1401
+#: src/eixrc/defaults.cc:1408
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the tag printed for new packages (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1406
+#: src/eixrc/defaults.cc:1413
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the tag used for \"better version\" (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1411
+#: src/eixrc/defaults.cc:1418
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the tag used for \"worse version\" (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1416
+#: src/eixrc/defaults.cc:1423
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the string used for \"plain\" tagging installed packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1421
+#: src/eixrc/defaults.cc:1428
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the string used for \"plain\" tagging uninstalled packages."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1426
+#: src/eixrc/defaults.cc:1433
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the string used for \"new package\" separators (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1431
+#: src/eixrc/defaults.cc:1438
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the string used for \"deleted package\" separators (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1436
+#: src/eixrc/defaults.cc:1443
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the string used for \"changed package\" separators (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1443
+#: src/eixrc/defaults.cc:1450
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines what to print if no version number is printed."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1450
+#: src/eixrc/defaults.cc:1457
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines what to print after \"->\" if there is no installable."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1455
+#: src/eixrc/defaults.cc:1462
 msgid ""
 "Tag for versions with *.tbz2. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1459
+#: src/eixrc/defaults.cc:1466
 msgid "Tag for RESTRICT=fetch. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1463
+#: src/eixrc/defaults.cc:1470
 msgid "Tag for RESTRICT=mirror. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1467
+#: src/eixrc/defaults.cc:1474
 msgid ""
 "Tag for RESTRICT=primaryuri. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1471
+#: src/eixrc/defaults.cc:1478
 msgid "Tag for RESTRICT=binchecks. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1478
+#: src/eixrc/defaults.cc:1485
 msgid "Tag for RESTRICT=strip. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1482
+#: src/eixrc/defaults.cc:1489
 msgid "Tag for RESTRICT=test. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1486
+#: src/eixrc/defaults.cc:1493
 msgid "Tag for RESTRICT=userpriv. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1490
+#: src/eixrc/defaults.cc:1497
 msgid ""
 "Tag for RESTRICT=installsources. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1494
+#: src/eixrc/defaults.cc:1501
 msgid "Tag for RESTRICT=bindist. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1498
+#: src/eixrc/defaults.cc:1505
 msgid "Tag for RESTRICT=parallel. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1502
+#: src/eixrc/defaults.cc:1509
 msgid ""
 "Tag for PROPERTIES=interactive. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1506
+#: src/eixrc/defaults.cc:1513
 msgid "Tag for PROPERTIES=live. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1510
+#: src/eixrc/defaults.cc:1517
 msgid "Tag for PROPERTIES=virtual. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1514
+#: src/eixrc/defaults.cc:1521
 msgid "Tag for PROPERTIES=set. This is only used for delayed substitution."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1518
+#: src/eixrc/defaults.cc:1525
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"profile masked\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1523
+#: src/eixrc/defaults.cc:1530
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"package.masked\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1528
+#: src/eixrc/defaults.cc:1535
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"originally profile masked but unmasked\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1533
+#: src/eixrc/defaults.cc:1540
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"originally package.masked but unmasked\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1538
+#: src/eixrc/defaults.cc:1545
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"only locally masked\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1543
+#: src/eixrc/defaults.cc:1550
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"stable\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1548
+#: src/eixrc/defaults.cc:1555
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"unstable\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1553
+#: src/eixrc/defaults.cc:1560
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"-*\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1558
+#: src/eixrc/defaults.cc:1565
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"-~*\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1563
+#: src/eixrc/defaults.cc:1570
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"-ARCH\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1568
+#: src/eixrc/defaults.cc:1575
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"ALIENARCH\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1573
+#: src/eixrc/defaults.cc:1580
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"~ALIENARCH\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1578
+#: src/eixrc/defaults.cc:1585
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"no keyword\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1583
+#: src/eixrc/defaults.cc:1590
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"originally unstable but now stable\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1588
+#: src/eixrc/defaults.cc:1595
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"originally -* but now stable\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1593
+#: src/eixrc/defaults.cc:1600
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"originally -~* but now stable\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1598
+#: src/eixrc/defaults.cc:1605
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"originally -ARCH but now stable\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1603
+#: src/eixrc/defaults.cc:1610
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"originally ALIENARCH but now stable\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1608
+#: src/eixrc/defaults.cc:1615
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"originally ~ALIENARCH but now stable\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1613
+#: src/eixrc/defaults.cc:1620
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the tag for \"originally no keyword but now stable\" versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1618
+#: src/eixrc/defaults.cc:1625
 msgid ""
 "This variable is used by delayed substitution in version formatters.\n"
 "It prints a newline at the end of a version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1624
+#: src/eixrc/defaults.cc:1631
 msgid ""
 "This variable is used as a version formatter.\n"
 "It is an example for usage with <bestslotupgradeversions:NAMEVERSION>\n"
 "or <installedversions:NAMEVERION> or <availableversions:NAMEVERSION>."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1631
+#: src/eixrc/defaults.cc:1638
 msgid ""
 "This variable is used as a version formatter.\n"
 "It is an example for usage with <bestslotupgradeversions:EQNAMEVERSION>\n"
 "or <installedversions:EQNAMEVERION> or <availableversions:EQNAMEVERSION>."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1638
+#: src/eixrc/defaults.cc:1645
 msgid ""
 "This variable is used as a version formatter.\n"
 "It is an example for usage as <availableversion:ANAMESLOT:ANAMESLOT>."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1644
+#: src/eixrc/defaults.cc:1651
 msgid ""
 "This variable is used as a version formatter.\n"
 "It is an example for usage with <availableversion:ANAMEASLOT:ANAMEASLOT>."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1649
+#: src/eixrc/defaults.cc:1656
 msgid ""
 "This variable is used as a version formatter.\n"
 "It is an example for usage with <installedversions:NAMESLOT>."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1655
+#: src/eixrc/defaults.cc:1662
 msgid ""
 "This variable is used as a version formatter.\n"
 "It is an example for usage with <installedversions:NAMEASLOT>."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1660
+#: src/eixrc/defaults.cc:1667
 msgid "strftime() format for printing the installation date in DATESORT"
 msgstr ""
 
-#: src/eixrc/defaults.cc:1664
+#: src/eixrc/defaults.cc:1671
 msgid ""
 "This variable is used as a version formatter.\n"
 "It is an example for usage as <installedversions:DATESORT>. Typical usage:\n"
 "eix -'*I' --format '<installedversions:DATESORT>' | sort | cut -f2-3"
 msgstr ""
 
-#: src/eixrc/defaults.cc:1670
+#: src/eixrc/defaults.cc:1677
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format of the DEPEND output."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1675
+#: src/eixrc/defaults.cc:1682
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format of the RDEPEND output."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1680
+#: src/eixrc/defaults.cc:1687
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format of the PDEPEND output."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1685
+#: src/eixrc/defaults.cc:1692
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format of the HDEPEND output."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1690
+#: src/eixrc/defaults.cc:1697
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format of the DEPEND output with --verbose."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1695
+#: src/eixrc/defaults.cc:1702
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format of the RDEPEND output with --verbose."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1700
+#: src/eixrc/defaults.cc:1707
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format of the PDEPEND output with --verbose."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1705
+#: src/eixrc/defaults.cc:1712
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format of the HDEPEND output with --verbose."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1710
+#: src/eixrc/defaults.cc:1717
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is used for colored <use> in available versions; color is not reset."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1715
+#: src/eixrc/defaults.cc:1722
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is used for colored <colliuse>; color is not reset."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1720
+#: src/eixrc/defaults.cc:1727
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is used for printing colored <keywords>; color is not reset."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1725
+#: src/eixrc/defaults.cc:1732
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is used for printing colored <keywords*>; color is not reset."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1730
+#: src/eixrc/defaults.cc:1737
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines what to output for KEYWORDS* if they equal KEYWORDS."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1753
+#: src/eixrc/defaults.cc:1760
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It sets the runtime variable $mask to the masking tag, and unless the\n"
 "runtime variable $color is set, it outputs the color and sets $color."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1809
+#: src/eixrc/defaults.cc:1816
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It sets the runtime variable $stable to the stability tag, and unless the\n"
 "runtime variable $color is set, it outputs the color and sets $color."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1815
+#: src/eixrc/defaults.cc:1822
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It outputs the stability tag, changing the color appropriately.\n"
 "It sets the runtime variable $color depending on whether color was changed."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1821
+#: src/eixrc/defaults.cc:1828
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It sets the initial string and $color for PROPERTIES output."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1826
+#: src/eixrc/defaults.cc:1833
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It sets the initial string and $color for RESTRICT output."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1835
+#: src/eixrc/defaults.cc:1842
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It outputs the PROPERTIES tag, changing the color appropriately.\n"
 "It sets the runtime variable $color if color was changed."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1852
+#: src/eixrc/defaults.cc:1859
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It outputs the RESTRICT tag, changing the color appropriately.\n"
 "It sets the runtime variable $color if color was changed."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1861 src/eixrc/defaults.cc:1871
+#: src/eixrc/defaults.cc:1868 src/eixrc/defaults.cc:1878
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format of the PROPERTIES and RESTRICT of a version\n"
 "and resets the color."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1877
+#: src/eixrc/defaults.cc:1884
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the slot format printed for slotsorted versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1882
+#: src/eixrc/defaults.cc:1889
 msgid ""
 "This variable is used for <markedversions:VERSION>.\n"
 "It just gives the plain version name without anything else.\n"
 "You can use it similarly for e.g. <availableversions:VERSION>."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1896
+#: src/eixrc/defaults.cc:1903
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It outputs an available version with various marks and sets the runtime\n"
@@ -4212,627 +4219,627 @@ msgid ""
 "It should be follows by FORMAT_VERSION_END or FORMAT_VERSIONS_END."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1903
+#: src/eixrc/defaults.cc:1910
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It resets all colors/markers if the runtime variable $color was set."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1921
+#: src/eixrc/defaults.cc:1928
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It outputs an optional subslot, caring about the runtime variable $color,\n"
 "and then invokes FORMAT_VERSION_END."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1940
+#: src/eixrc/defaults.cc:1947
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It outputs an optional slot, caring about the runtime variable $color,\n"
 "and then invokes FORMAT_VERSION_END."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1946
+#: src/eixrc/defaults.cc:1953
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a plain version without slot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1951 src/eixrc/defaults.cc:1956
+#: src/eixrc/defaults.cc:1958 src/eixrc/defaults.cc:1963
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for printing a plain version with its slot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1961
+#: src/eixrc/defaults.cc:1968
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for an available version without slot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1966
+#: src/eixrc/defaults.cc:1973
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for printing an available version\n"
 "with its optional subslot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1972
+#: src/eixrc/defaults.cc:1979
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for printing an available version with its slot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1977
+#: src/eixrc/defaults.cc:1984
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for printing an installed version with its slot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1982
+#: src/eixrc/defaults.cc:1989
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for printing the overlay in versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1987
+#: src/eixrc/defaults.cc:1994
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a plain version with most data and slot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1992
+#: src/eixrc/defaults.cc:1999
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for an available version with most data and slot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:1997
+#: src/eixrc/defaults.cc:2004
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for an installed version with most data and slot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2002
+#: src/eixrc/defaults.cc:2009
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a plain version with most data, optional subslot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2007
+#: src/eixrc/defaults.cc:2014
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for an available version with most data,\n"
 "optional subslot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2013
+#: src/eixrc/defaults.cc:2020
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a plain version with most data, no slot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2018
+#: src/eixrc/defaults.cc:2025
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for an available version with most data, no slot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2023
+#: src/eixrc/defaults.cc:2030
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a plain version with important data and slot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2028
+#: src/eixrc/defaults.cc:2035
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for an available version with important data and slot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2033
+#: src/eixrc/defaults.cc:2040
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for an installed version with important data and slot."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2038
+#: src/eixrc/defaults.cc:2045
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "This string is printed before KEYWORDS string for a version is output\n"
 "(with --versionlines and nonverbose)"
 msgstr ""
 
-#: src/eixrc/defaults.cc:2044
+#: src/eixrc/defaults.cc:2051
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "This string is printed after KEYWORDS string for a version is output.\n"
 "(with --versionlines and nonverbose)"
 msgstr ""
 
-#: src/eixrc/defaults.cc:2050
+#: src/eixrc/defaults.cc:2057
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the lineskip used for the versionline appendix."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2065
+#: src/eixrc/defaults.cc:2072
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the normal format for KEYWORDS for an available version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2078
+#: src/eixrc/defaults.cc:2085
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the normal format for IUSE for an available version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2102 src/eixrc/defaults.cc:2172
+#: src/eixrc/defaults.cc:2109 src/eixrc/defaults.cc:2179
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the verbose format for DEPs for an available version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2126
+#: src/eixrc/defaults.cc:2133
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the verbose format for KEYWORDS for an available version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2140
+#: src/eixrc/defaults.cc:2147
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the verbose format for IUSE for an available version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2179
+#: src/eixrc/defaults.cc:2186
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines normal data appended to available versions with --versionlines"
 msgstr ""
 
-#: src/eixrc/defaults.cc:2186
+#: src/eixrc/defaults.cc:2193
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines verbose data appended to available versions with --versionlines"
 msgstr ""
 
-#: src/eixrc/defaults.cc:2195
+#: src/eixrc/defaults.cc:2202
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the data appended to available versions with --versionlines"
 msgstr ""
 
-#: src/eixrc/defaults.cc:2200
+#: src/eixrc/defaults.cc:2207
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines lineskip + slot if slotsorted versionlines are used."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2205
+#: src/eixrc/defaults.cc:2212
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines lineskip + slot if slotsort but no versionlines are used."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2210
+#: src/eixrc/defaults.cc:2217
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines lineskip + stability if lineskip is used."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2215
+#: src/eixrc/defaults.cc:2222
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the lineskip for installed versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2224
+#: src/eixrc/defaults.cc:2231
 msgid ""
 "This variable is used as a version formatter.\n"
 "It defines the format for a version; versionsorted with versionlines."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2229
+#: src/eixrc/defaults.cc:2236
 msgid ""
 "This variable is used as a version formatter.\n"
 "It defines the format for a version; versionsorted without versionlines."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2236
+#: src/eixrc/defaults.cc:2243
 msgid ""
 "This variable is used as a version formatter.\n"
 "It defines the format for a version; slotsorted with versionlines."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2245
+#: src/eixrc/defaults.cc:2252
 msgid ""
 "This variable is used as a version formatter.\n"
 "It defines the format for a version; slotsorted without versionlines."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2250
+#: src/eixrc/defaults.cc:2257
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for collected IUSE data in one line."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2255
+#: src/eixrc/defaults.cc:2262
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for collected IUSE data in a separate line."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2264
+#: src/eixrc/defaults.cc:2271
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the format for package IUSE in single-line verbose mode."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2269
+#: src/eixrc/defaults.cc:2276
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the format for package IUSE in multiline verbose mode."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2284
+#: src/eixrc/defaults.cc:2291
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for collected IUSE data."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2301
+#: src/eixrc/defaults.cc:2308
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for collected IUSE data with --versionlines."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2312
+#: src/eixrc/defaults.cc:2319
 msgid ""
 "This variable is used as a version formatter.\n"
 "It defines the normal format of installed versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2319
+#: src/eixrc/defaults.cc:2326
 msgid ""
 "This variable is used as a version formatter.\n"
 "It defines the compact format of installed versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2334
+#: src/eixrc/defaults.cc:2341
 msgid ""
 "This variable is used as a version formatter.\n"
 "It defines the verbose format of installed versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2347
+#: src/eixrc/defaults.cc:2354
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the verbose format for printing available versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2356
+#: src/eixrc/defaults.cc:2363
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for useflags in installed versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2361
+#: src/eixrc/defaults.cc:2368
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format used for printing installed versions normally."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2366
+#: src/eixrc/defaults.cc:2373
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format used for printing installed versions compactly."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2371
+#: src/eixrc/defaults.cc:2378
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format used for printing installed versions verbosely."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2380
+#: src/eixrc/defaults.cc:2387
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format used for printing installed versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2393 src/eixrc/defaults.cc:2624
+#: src/eixrc/defaults.cc:2400 src/eixrc/defaults.cc:2631
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with installed versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2399
+#: src/eixrc/defaults.cc:2406
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for eix-diff for installed versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2404
+#: src/eixrc/defaults.cc:2411
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It prints a newline at the end of a package."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2424
+#: src/eixrc/defaults.cc:2431
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the printing the package name."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2435
+#: src/eixrc/defaults.cc:2442
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the normal header symbols."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2442
+#: src/eixrc/defaults.cc:2449
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the verbose header symbols."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2454
+#: src/eixrc/defaults.cc:2461
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the compact header symbols."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2465
+#: src/eixrc/defaults.cc:2472
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the diff-new header symbols."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2477
+#: src/eixrc/defaults.cc:2484
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the diff-delete header symbols."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2489
+#: src/eixrc/defaults.cc:2496
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the diff-changed header symbols."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2506
+#: src/eixrc/defaults.cc:2513
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the compact format for the best version(s)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2523
+#: src/eixrc/defaults.cc:2530
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the compact format for the best version(s) in case of changes."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2540
+#: src/eixrc/defaults.cc:2547
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the eix-diff format for the best version(s)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2557
+#: src/eixrc/defaults.cc:2564
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the eix-diff format for the best version(s) in case of changes."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2574
+#: src/eixrc/defaults.cc:2581
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the eix-diff format for the old best versions in case of changes."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2584
+#: src/eixrc/defaults.cc:2591
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the eix-diff format for changed versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2589
+#: src/eixrc/defaults.cc:2596
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the printing the optional overlay key."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2594
+#: src/eixrc/defaults.cc:2601
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the normal header line."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2599
+#: src/eixrc/defaults.cc:2606
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the verbose header line."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2604
+#: src/eixrc/defaults.cc:2611
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the compact header line."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2609
+#: src/eixrc/defaults.cc:2616
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the diff-new header."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2614
+#: src/eixrc/defaults.cc:2621
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the diff-delete header."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2619
+#: src/eixrc/defaults.cc:2626
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the diff-changed header."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2630
+#: src/eixrc/defaults.cc:2637
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the eix-diff line for the best versions/slots."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2636
+#: src/eixrc/defaults.cc:2643
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the eix-diff line for changed versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2646
+#: src/eixrc/defaults.cc:2653
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with marked versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2656
+#: src/eixrc/defaults.cc:2663
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with package sets."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2668
+#: src/eixrc/defaults.cc:2675
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with the package homepage."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2680
+#: src/eixrc/defaults.cc:2687
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with the package bug-reference."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2692
+#: src/eixrc/defaults.cc:2699
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with the package description."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2701
+#: src/eixrc/defaults.cc:2708
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with the best versions/slots."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2716
+#: src/eixrc/defaults.cc:2723
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with the up-/downgrade recommendations."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2728
+#: src/eixrc/defaults.cc:2735
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with the package licenses."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2735
+#: src/eixrc/defaults.cc:2742
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for eix-diff after the versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2747
+#: src/eixrc/defaults.cc:2754
 msgid ""
 "This format is only used for delayed substitution in FORMAT.\n"
 "It defines the format of the normal output of eix."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2763
+#: src/eixrc/defaults.cc:2770
 msgid ""
 "This format is only used for delayed substitution in FORMAT_COMPACT.\n"
 "It defines the format of the compact output of eix (option -c)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2780
+#: src/eixrc/defaults.cc:2787
 msgid ""
 "This format is only used for delayed substitution in FORMAT_VERBOSE.\n"
 "It defines the format of the verbose output of eix (option -v)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2785
+#: src/eixrc/defaults.cc:2792
 msgid ""
 "The format of the normal output of eix.\n"
 "Do not modify it in a config file; modify FORMAT_ALL instead."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2790
+#: src/eixrc/defaults.cc:2797
 msgid ""
 "The format of the compact output of eix (option -c).\n"
 "Do not modify it in a config file; modify FORMAT_ALL_COMPACT instead."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2795
+#: src/eixrc/defaults.cc:2802
 msgid ""
 "The format of the verbose output of eix (option -v).\n"
 "Do not modify it in a config file; modify FORMAT_ALL_VERBOSE instead."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2800
+#: src/eixrc/defaults.cc:2807
 msgid ""
 "The format used for output by the eix-test-obsolete script.\n"
 "The value %{FORMAT} is not allowed here; use %{FORMAT_ALL} instead."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2807
+#: src/eixrc/defaults.cc:2814
 msgid ""
 "This format is only used for delayed substitution in DIFF_FORMAT_NEW.\n"
 "It defines the format used for new packages (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2814
+#: src/eixrc/defaults.cc:2821
 msgid ""
 "This format is only used for delayed substitution in DIFF_FORMAT_DELETE.\n"
 "It defines the format used for packages that were deleted (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2821
+#: src/eixrc/defaults.cc:2828
 msgid ""
 "This format is only used for delayed substitution in DIFF_FORMAT_CHANGED.\n"
 "It defines the format used for packages that were changed (eix-diff)."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2826
+#: src/eixrc/defaults.cc:2833
 msgid ""
 "The format used for new packages (eix-diff).\n"
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_NEW instead."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2831
+#: src/eixrc/defaults.cc:2838
 msgid ""
 "The format used for packages that were deleted (eix-diff).\n"
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_DELETE instead."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2836
+#: src/eixrc/defaults.cc:2843
 msgid ""
 "The format used for packages that were changed (eix-diff).\n"
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_CHANGED instead."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2841
+#: src/eixrc/defaults.cc:2848
 msgid "strftime() format for printing the installation date in long form"
 msgstr ""
 
-#: src/eixrc/defaults.cc:2845
+#: src/eixrc/defaults.cc:2852
 msgid "strftime() format for printing the installation date in short form"
 msgstr ""
 
-#: src/eixrc/defaults.cc:2849
+#: src/eixrc/defaults.cc:2856
 msgid ""
 "Can be full/effective/both/full*/effective*/none.\n"
 "Depending on the value, with --xml the full/effective (or both types)\n"
@@ -4840,158 +4847,158 @@ msgid ""
 "With full*/effective* also both types are output if they differ."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2856
+#: src/eixrc/defaults.cc:2863
 msgid ""
 "If false, the overlay is not output with --xml.\n"
 "For overlays without label (repository name) the overlay is output anyway."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2861
+#: src/eixrc/defaults.cc:2868
 msgid "strftime() format for printing the installation date with --xml."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2865
+#: src/eixrc/defaults.cc:2872
 msgid ""
 "This string is printed before each set USE flag of an installed version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2869
+#: src/eixrc/defaults.cc:2876
 msgid "This string is printed after each set USE flag of an installed version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2873
+#: src/eixrc/defaults.cc:2880
 msgid ""
 "This string is printed before each unset USE flag of an installed version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2877
+#: src/eixrc/defaults.cc:2884
 msgid ""
 "This string is printed after each unset USE flag of an installed version."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2881
+#: src/eixrc/defaults.cc:2888
 msgid ""
 "This string is printed before the variable name of an USE_EXPAND use value."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2885
+#: src/eixrc/defaults.cc:2892
 msgid ""
 "This string is printed after the variable name of an USE_EXPAND use value."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2889
+#: src/eixrc/defaults.cc:2896
 msgid "This string is printed at the end of a USE_EXPAND use value."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2893
+#: src/eixrc/defaults.cc:2900
 msgid ""
 "This string is printed before the variable name of an USE_EXPAND iuse value."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2897
+#: src/eixrc/defaults.cc:2904
 msgid ""
 "This string is printed after the variable name of an USE_EXPAND iuse value."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2901
+#: src/eixrc/defaults.cc:2908
 msgid "This string is printed at the end of a USE_EXPAND iuse value."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2905
+#: src/eixrc/defaults.cc:2912
 msgid ""
 "This string is printed before the variable name of an USE_EXPAND collected\n"
 "iuse value."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2910
+#: src/eixrc/defaults.cc:2917
 msgid ""
 "This string is printed after the variable name of an USE_EXPAND collected\n"
 "iuse value."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2915
+#: src/eixrc/defaults.cc:2922
 msgid "This string is printed at the end of a USE_EXPAND collected iuse value."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2919
+#: src/eixrc/defaults.cc:2926
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "This string is printed before IUSE data for a version is output.\n"
 "(Normally, this is only used when --versionlines is active)"
 msgstr ""
 
-#: src/eixrc/defaults.cc:2925
+#: src/eixrc/defaults.cc:2932
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "This string is printed after IUSE data for a version is output.\n"
 "(Normally, this is only used when --versionlines is active)"
 msgstr ""
 
-#: src/eixrc/defaults.cc:2931
+#: src/eixrc/defaults.cc:2938
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "This string is printed before IUSE data for all versions is output.\n"
 "(This is meant for printing after all versions in a line)"
 msgstr ""
 
-#: src/eixrc/defaults.cc:2937
+#: src/eixrc/defaults.cc:2944
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "This string is printed after IUSE data for all versions is output.\n"
 "(This is meant for printing after all versions in a line)"
 msgstr ""
 
-#: src/eixrc/defaults.cc:2943
+#: src/eixrc/defaults.cc:2950
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "This string is printed before IUSE data for all versions is output.\n"
 "(This is meant for printing in a separate line)"
 msgstr ""
 
-#: src/eixrc/defaults.cc:2949
+#: src/eixrc/defaults.cc:2956
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "This string is printed after IUSE data for all versions is output.\n"
 "(This is meant for printing in a separate line)"
 msgstr ""
 
-#: src/eixrc/defaults.cc:2955
+#: src/eixrc/defaults.cc:2962
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color for masked versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2960
+#: src/eixrc/defaults.cc:2967
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color for unstable versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2965
+#: src/eixrc/defaults.cc:2972
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color for stable versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2970
+#: src/eixrc/defaults.cc:2977
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format to change the color for masked versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2975
+#: src/eixrc/defaults.cc:2982
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format to change the color for unstable versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2980
+#: src/eixrc/defaults.cc:2987
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format to change the color for stable versions."
 msgstr ""
 
-#: src/eixrc/defaults.cc:2985
+#: src/eixrc/defaults.cc:2992
 msgid ""
 "This variable is ignored. You can use it to collect delayed references to\n"
 "locally added (unused) variables so that they are printed with --dump."

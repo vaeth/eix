@@ -3,11 +3,14 @@
 *eix-0.27.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Rename variables to allow more cases of terminals:
-	  TERM_ALT1 ... TERM_ALT3  and COLORSCHEME0 ... COLORSCHEME3
+	  TERM_ALT{1..3} corresponding to COLORSCHEME{0..3}
 	  Previous TERM_ALT and COLORSCHEME{,_ALT} variables are obsolete.
+	- Example: To select 8/16 colors on all terminals (e.g. for solarized)
+	  set TERM_ALT3="."
 	- Move rxvt-unicode without -256color to ALT_TERM2, since it supports
 	  only 88 colors which could deserve its own color scheme.
 	  For the moment, COLORSCHEME0 is used as a poor man's 88 color scheme.
+	  See http://bugs.gentoo.org/show_bug.cgi?id=438076
 	- Fix color output of overlay list if no colors are used.
 	- Support =foo/bar-* version atoms as reported by bugmenot2:
 	  http://developer.berlios.de/bugs/?func=detailbug&bug_id=18788&

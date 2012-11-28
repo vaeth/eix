@@ -645,17 +645,20 @@ AddOption(STRING, "BG3",
 AddOption(STRING, "TERM_ALT1",
 	"256 [aeEkx]term rxvt konsole gnome putty", _(
 	"This is a list of regular expressions; if one of it matches TERM, then\n"
-	"COLORSCHEME1 is used instead of COLORSCHEME0."));
+	"COLORSCHEME1 is used instead of COLORSCHEME0. The intention is that the\n"
+	"specified terminals default to 256 colors."));
 
 AddOption(STRING, "TERM_ALT2",
 	"88 rxvt-unicode[^2]*$", _(
 	"This is a list of regular expressions; if one of it matches TERM, then\n"
-	"COLORSCHEME2 is used instead of COLORSCHEME0."));
+	"COLORSCHEME2 is used instead of COLORSCHEME0. The intention is that the\n"
+	"specified terminals default to 88 colors."));
 
 AddOption(STRING, "TERM_ALT3",
 	"", _(
 	"This is a list of regular expressions; if one of it matches TERM, then\n"
-	"COLORSCHEME3 is used instead of COLORSCHEME0."));
+	"COLORSCHEME3 is used instead of COLORSCHEME0. The intention is that\n"
+	"these terminals are exceptions made on user request."));
 
 AddOption(BOOLEAN, "DARK",
 	"true", _(
@@ -665,22 +668,26 @@ AddOption(BOOLEAN, "DARK",
 AddOption(STRING, "COLORSCHEME0",
 	"%{?DARK}0%{else}2%{}", _(
 	"If TERM_ALT* does not match, this chooses the corresponding color of\n"
-	"color specifications (starting from 0)."));
+	"color specifications (starting from 0). The intention of this variable\n"
+	"is to select the color scheme used for 8/16 color terminals."));
 
 AddOption(STRING, "COLORSCHEME1",
 	"%{?DARK}1%{else}3%{}", _(
 	"If TERM_ALT1 matches, this chooses the corresponding color of\n"
-	"color specifications (starting from 0)."));
+	"color specifications (starting from 0). The intention of this variable\n"
+	"is to select the color scheme used for 256 color terminals."));
 
 AddOption(STRING, "COLORSCHEME2",
 	"%{COLORSCHEME0}", _(
 	"If TERM_ALT2 matches, this chooses the corresponding color of\n"
-	"color specifications (starting from 0)."));
+	"color specifications (starting from 0). The intention of this variable\n"
+	"is to select the color scheme used for 88 color terminals."));
 
 AddOption(STRING, "COLORSCHEME3",
-	"%{COLORSCHEME1}", _(
+	"%{COLORSCHEME0}", _(
 	"If TERM_ALT3 matches, this chooses the corresponding color of\n"
-	"color specifications (starting from 0)."));
+	"color specifications (starting from 0). The intention of this variable\n"
+	"is to select the color scheme used for user-specified terminals."));
 
 AddOption(BOOLEAN, "SORT_INST_USE_ALPHA",
 	"false", _(

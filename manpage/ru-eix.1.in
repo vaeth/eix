@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-11-25 15:00:00 +0200 (Sun, 24 Nov 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-11-26 18:00:00 +0200 (Mon, 26 Nov 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -2345,19 +2345,24 @@ This is a list of regular expressions; if one of it matches B<TERM>, then
 B<COLORSCHEME1>, B<COLORSCHEME2>, or B<COLORSCHEME3, respectively,
 is used instead of B<COLORSCHEME0>, the biggest matching number taking precedence.
 
+You are of course free to assign any meaning, but the intention of the defaults is
+that no match means 8/16 colors, B<TERM_ALT1> specifies the 256 color terminals,
+B<TERM_ALT2> specifies 88 color terminals, and B<TERM_ALT3> is free for the user
+(therefore overriding everything else).
+
+B<EXAMPLE:> If you want to use solarized (8/16) colors on all terminals you can set
+B<TERM_ALT3=.> to select all terminals for the B<COLORSCHEME3> default
+(which is B<COLORSCHEME0>, see below).
 .TP
 .BR COLORSCHEME0 ", " COLORSCHEME1 ", " COLORSCHEME2 ", " COLORSCHEME3 " " (integer)
 Which of these variables is actually used depends on which B<TERM_ALT*> matches B<TERM>;
-if none matches, then B<COLORSCHME0> is used.
+if none matches, then B<COLORSCHEME0> is used.
 
 These variables determine the color scheme to be used:
 
 The value 0 means that the first I<COLORSTRING> of each color specification is used;
 for higher numbers a correspondingly later I<COLORSTRING> is used.
 If the number is too high, the first I<COLORSTRING> is used.
-
-The default values of these variables depend on the variable B<DARK>
-(which is only used by delayed substitution).
 
 The numbers in the default settings are:
 
@@ -2373,6 +2378,15 @@ The variables B<BG0>, B<BG1>, B<BG2>, B<BG3> are honoured by the defaults with
 delayed substitution to force the background color for the corresponding schemes.
 Use "none" if the background color should not be forced.
 
+The default values of the variables are:
+
+B<COLORSCHEME0>: 0 or 2 (depending on the variable B<DARK>), meant for 8/16 color terminals
+
+B<COLORSCHEME1>: 1 or 3 (depending on the variable B<DARK>), meant for 256 color terminals
+
+B<COLORSCHEME2>: same as B<COLORSCHEME0>, meant for 88 color terminals
+
+B<COLORSCHEME3>: same as B<COLORSCHEME0>, meant to be a sane default, to be modified by the user.
 .TP
 .BR LEVENSHTEIN_DISTANCE " " (integer)
 Set default levenshtein-distance.
