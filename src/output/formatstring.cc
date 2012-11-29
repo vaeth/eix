@@ -305,9 +305,9 @@ PrintFormat::setupResources(EixRc *rc)
 		eix::TinyUnsigned entry(0);
 		if(schemes.size() > 1) {
 			eix::SignedBool dark(rc->getBoolText("DARK", "auto"));
-			if(dark > 0) {
+			if(dark == 0) {
 				entry = 1;
-			} else if(dark != 0) {
+			} else if(dark < 0) {
 				if(!RegexList((*rc)["TERM_DARK"]).match(term)) {
 					if(!RegexList((*rc)["COLORFGBG_DARK"]).match((*rc)["COLORFGBG"].c_str())) {
 						entry = 1;
