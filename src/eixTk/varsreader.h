@@ -295,7 +295,8 @@ class VarsReader {
 		 * and returns if the state is STOP. */
 		bool runFsm();
 
-		bool isIncremental(const char *key);
+		bool isIncremental(const char *key)
+		{ return match_list(incremental_keys, key); }
 };
 
 #endif  // SRC_EIXTK_VARSREADER_H_

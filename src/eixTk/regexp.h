@@ -15,6 +15,7 @@
 // include <cstdlib> make check_includes happy
 
 #include <string>
+#include <vector>
 
 
 /// Handles regular expressions.
@@ -63,6 +64,19 @@ class Regex
 
 		/// Is the regex already compiled and nonempty?
 		bool m_compiled;
+};
+
+class RegexList
+{
+	public:
+		explicit RegexList(const std::string& stringlist);
+
+		~RegexList();
+
+		bool match(const char *str);
+
+	protected:
+		std::vector<Regex *> reglist;
 };
 
 #endif  // SRC_EIXTK_REGEXP_H_

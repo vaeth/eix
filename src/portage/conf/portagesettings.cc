@@ -9,8 +9,6 @@
 
 #include <config.h>
 
-#include <fnmatch.h>
-
 #include <cstdlib>
 #include <cstring>
 
@@ -60,7 +58,6 @@ typedef char ArchUsed;
 static ArchUsed apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags kf,
 	const set<string> *arch_set,
 	Keywords::Redundant &redundant, Keywords::Redundant check, bool shortcut) ATTRIBUTE_NONNULL_;
-static bool is_accumulating(const char **accumulating, const char *key) ATTRIBUTE_NONNULL_;
 inline static void increase(char *s) ATTRIBUTE_NONNULL_;
 
 
@@ -142,17 +139,6 @@ static const char *test_in_env_late[] = {
 	NULLPTR
 };
 
-static bool
-is_accumulating(const char **accumulating, const char *key)
-{
-	const char *match;
-	while((match = *(accumulating++)) != NULLPTR) {
-		if(fnmatch(match, key, 0) == 0)
-			return true;
-	}
-	return false;
-}
-
 void
 PortageSettings::override_by_env(const char **vars)
 {
@@ -160,7 +146,7 @@ PortageSettings::override_by_env(const char **vars)
 		const char *e(getenv(var));
 		if(e == NULLPTR)
 			continue;
-		if(!is_accumulating(default_accumulating_keys, var)) {
+		if(!match_list(default_accumulating_keys, var)) {
 			(*this)[var] = e;
 			continue;
 		}

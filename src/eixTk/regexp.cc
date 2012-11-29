@@ -13,13 +13,16 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "eixTk/diagnostics.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/regexp.h"
+#include "eixTk/stringutils.h"
 
 using std::string;
+using std::vector;
 
 using std::cerr;
 using std::endl;
@@ -97,4 +100,35 @@ GCC_DIAG_OFF(sign-conversion)
 GCC_DIAG_ON(sign-conversion)
 	}
 	return true;
+}
+
+RegexList::RegexList(const string& stringlist)
+{
+	vector<string> l;
+	split_string(&l, stringlist, true);
+	for(vector<string>::const_iterator it(l.begin());
+		likely(it != l.end()); ++it) {
+		reglist.push_back(new Regex(it->c_str()));
+	}
+}
+
+RegexList::~RegexList()
+{
+	for(vector<Regex*>::iterator it(reglist.begin());
+		likely(it != reglist.end()); ++it) {
+		(*it)->free();
+		delete *it;
+	}
+}
+
+bool
+RegexList::match(const char *str)
+{
+	for(vector<Regex*>::const_iterator it(reglist.begin());
+		likely(it != reglist.end()); ++it) {
+		if((*it)->match(str)) {
+			return true;
+		}
+	}
+	return false;
 }

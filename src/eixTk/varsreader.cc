@@ -10,7 +10,6 @@
 #include <config.h>
 
 #include <fcntl.h>
-#include <fnmatch.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -104,20 +103,6 @@ const VarsReader::Flags
 	VarsReader::PORTAGE_ESCAPES,
 	VarsReader::HAVE_READ,
 	VarsReader::ONLY_HAVE_READ;
-
-bool
-VarsReader::isIncremental(const char *key)
-{
-	if(incremental_keys == NULLPTR)
-		return false;
-
-	const char **it(incremental_keys);
-	while(likely(*it != NULLPTR)) {
-		if(fnmatch(*it++, key, 0) == 0)
-			return true;
-	}
-	return false;
-}
 
 /*************************************************************************/
 /********************** FSM states begin here ****************************/

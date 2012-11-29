@@ -23,6 +23,7 @@
 
 #include "eixTk/ansicolor.h"
 #include "eixTk/diagnostics.h"
+#include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -293,17 +294,29 @@ PrintFormat::setupResources(EixRc *rc)
 	const char *term((*rc)["TERM"].c_str());
 	char schemenum('0');
 	for(char i('1'); likely(i != '4'); ++i) {
-		vector<string> term_alt;
-		split_string(&term_alt, (*rc)[string("TERM_ALT") + i], true);
-		for(vector<string>::const_iterator it(term_alt.begin());
-			it != term_alt.end(); ++it) {
-			if(Regex(it->c_str()).match(term)) {
-				schemenum = i;
-				break;
-			}
+		if(RegexList((*rc)[string("TERM_ALT") + i]).match(term)) {
+			schemenum = i;
+			break;
 		}
 	}
-	AnsiColor::colorscheme = rc->getInteger(string("COLORSCHEME") + schemenum);
+	vector<string> schemes;
+	split_string(&schemes, (*rc)[string("COLORSCHEME") + schemenum]);
+	if(schemes.size() > 0) {
+		eix::TinyUnsigned entry(0);
+		if(schemes.size() > 1) {
+			eix::SignedBool dark(rc->getBoolText("DARK", "auto"));
+			if(dark > 0) {
+				entry = 1;
+			} else if(dark != 0) {
+				if(!RegexList((*rc)["TERM_DARK"]).match(term)) {
+					if(!RegexList((*rc)["COLORFGBG_DARK"]).match((*rc)["COLORFGBG"].c_str())) {
+						entry = 1;
+					}
+				}
+			}
+		}
+		AnsiColor::colorscheme = my_atoi(schemes[entry].c_str());
+	}
 }
 
 static void

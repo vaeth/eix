@@ -13,6 +13,8 @@
 #include <sys/types.h>
 #endif
 
+#include <fnmatch.h>
+
 #include <locale>
 
 #include <cstdio>
@@ -562,4 +564,17 @@ StringHash::finalize()
 		it->second = size();
 		push_back(it->first);
 	}
+}
+
+bool
+match_list(const char **str_list, const char *str)
+{
+	if(str_list != NULLPTR) {
+		while(likely(*str_list != NULLPTR)) {
+			if(fnmatch(*(str_list++), str, 0) == 0) {
+				return true;
+			}
+		}
+	}
+	return false;
 }

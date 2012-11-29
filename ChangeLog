@@ -7,6 +7,10 @@
 	  Previous TERM_ALT and COLORSCHEME{,_ALT} variables are obsolete.
 	- Example: To select 8/16 colors on all terminals (e.g. for solarized)
 	  set TERM_ALT3="."
+	- COLORSCHEME{0..3} can now contain two numbers (dark and light).
+	- Let DARK=auto use a heuristic based on TERM_DARK, COLORFGBG_DARK,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=438076
+	- Make BG?=none the default again (reasonable with DARK heuristics).
 	- Move rxvt-unicode without -256color to ALT_TERM2, since it supports
 	  only 88 colors which could deserve its own color scheme.
 	  For the moment, COLORSCHEME0 is used as a poor man's 88 color scheme.

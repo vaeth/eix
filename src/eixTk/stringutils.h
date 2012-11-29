@@ -187,6 +187,9 @@ template<typename T> inline static void make_set(std::set<T> *the_set, const std
 /** Make a vector from a set. */
 template<typename T> inline static void make_vector(std::vector<T> *the_list, const std::set<T> &the_set) ATTRIBUTE_NONNULL_;
 
+/** Match str against a null-terminated list of patterns */
+bool match_list(const char **str_list, const char *str);
+
 class StringHash : public std::vector<std::string>
 {
 	public:

@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-11-26 18:00:00 +0200 (Mon, 26 Nov 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-11-29 21:00:00 +0200 (Thu, 29 Nov 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2400,10 +2400,11 @@ B<EXAMPLE:> Falls solarized (8/16) Farben auf alen Terminals gewünscht sind,
 können Sie B<TERM_ALT3=.> setzen um für alle Terminals den B<COLORSCHEME3>-Default
 zu wählen (der B<COLORSCHEME0> ist, s. unten).
 .TP
-.BR COLORSCHEME0 ", " COLORSCHEME1 ", " COLORSCHEME2 ", " COLORSCHEME3 " " (integer)
+.BR COLORSCHEME0 ", " COLORSCHEME1 ", " COLORSCHEME2 ", " COLORSCHEME3 " " "(Integer-Liste)"
 Welche dieser Variablen tasächlich benutzt wird hängt davon ab, welches B<TERM_ALT*> auf B<TERM> passt.
 
-Diese Variablen geben das benutzte Farbschema an::
+Der Zahlwert dieser Variablen gibt das benutzte Farbschema an;
+falls die Variable zwei Zahlwerte enthält (durch Leerzeichen getrennt), wird der erste Wert benutzt, falls B<DARK=true> ist.
 
 Der Wert 0 bedeutet, dass der erste I<COLORSTRING> von Farbspezifikationen benutzt wird;
 für höhere Zahlen wird ein entsprechend späterer I<COLORSTRING> benutzt.
@@ -2425,19 +2426,37 @@ Der Wert "none" bedeutet, dass die Hintergrundfarbe nicht geändert wird.
 
 Die Default-Werte der Variablen sind:
 
-B<COLORSCHEME0>: 0 oder 2 (je nach Wert der Variablen B<DARK>); dies ist für Terminals mit 8/16 Farben gedacht.
+B<COLORSCHEME0>: 0 2; dies ist für Terminals mit 8/16 Farben gedacht.
 
-B<COLORSCHEME1>: 1 oder 3 (je nach Wert der Variablen B<DARK>); dies ist für 256-farbige Terminals gedacht.
+B<COLORSCHEME1>: 1 3; dies ist für 256-farbige Terminals gedacht.
 
-B<COLORSCHEME2>: das gleiche wie B<COLORSCHEME0>, für 88-farbige Terminals gedacht.
+B<COLORSCHEME2>: wie B<COLORSCHEME0>, für 88-farbige Terminals gedacht.
 
-B<COLORSCHEME3>: das gleiche wie B<COLORSCHEME0>, gedacht als vernünftiger Defaultwert für Änderungen durch den Benutzer.
+B<COLORSCHEME3>: wie B<COLORSCHEME0>, gedacht als vernünftiger Defaultwert für Änderungen durch den Benutzer.
+
+.TP
+.BR DARK " " (true / false / auto)
+Der Wert dieser Variablen gibt an, ob in B<COLORSCHEME*> der erste Wert gewählt wird.
+Beim Wert B<auto> wird eine Heurstik benutzt, die auf B<TERM_DARK> und B<COLORFGBG_DARK> basiert.
+
+.TP
+.BR TERM_DARK " " (Stringliste)
+Falls B<DARK=auto> wird diese Liste regulärer Ausdrücke betrachtet.
+Wenn B<TERM> passt, wird B<DARK=true> angenommen.
+
+.TP
+.BR COLORFGBG_DARK " " (Stringliste)
+Wenn B<DARK=auto> wird diese Liste regulärer Ausdrücke betrachtet.
+Wenn B<COLORFGBG> passt, wird B<DARK=true> angenommen.
+Beachten Sie, dass B<COLORFGBG> eine Environment-Variable ist, die von einige Terminals
+wie rxvt gesetzt wrid.
+
 .TP
 .BR LEVENSHTEIN_DISTANCE " " (integer)
 Legt den Default Levenshtein-Abstand fest.
 
 .TP
-.BR UPDATE_VERBOSE " " (bool)
+.BR UPDATE_VERBOSE " " (true / false)
 Legt fest, ob eix-update -v per Default an ist
 (Ausgabe der effektiven Cachemethode pro Version).
 

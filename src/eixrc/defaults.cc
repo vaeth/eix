@@ -628,7 +628,7 @@ AddOption(STRING, "BG0",
 	"It is the background color for color scheme 0. Use \"none\" for no change."));
 
 AddOption(STRING, "BG1",
-	"black", _(
+	"%{BG0}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is the background color for color scheme 1. Use \"none\" for no change."));
 
@@ -638,7 +638,7 @@ AddOption(STRING, "BG2",
 	"It is the background color for color scheme 2. Use \"none\" for no change."));
 
 AddOption(STRING, "BG3",
-	"white", _(
+	"%{BG2}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is the background color for color scheme 3. Use \"none\" for no change."));
 
@@ -660,34 +660,58 @@ AddOption(STRING, "TERM_ALT3",
 	"COLORSCHEME3 is used instead of COLORSCHEME0. The intention is that\n"
 	"these terminals are exceptions made on user request."));
 
-AddOption(BOOLEAN, "DARK",
-	"true", _(
-	"This variable is only used for delayed substitution in COLORSCHEME*.\n"
-	"If true, the \"dark\" color schemes (for black background) are selected."));
+AddOption(STRING, "DARK",
+	"auto", _(
+	"The value \"true\" or \"false\" means that the first or second entry of the\n"
+	"COLORSCHEME* variables is used (meaning black or white background, resp.).\n"
+	"The value \"auto\" means a heuristic based on TERM_DARK and COLORFGBG_DARK."));
+
+AddOption(STRING, "TERM_DARK",
+	"linux cygwin putty", _(
+	"If DARK=auto then this list of regular expressions is considered.\n"
+	"If TERM matches then DARK=true is assumed."));
+
+AddOption(STRING, "COLORFGBG_DARK",
+	"^[^;]*;[0-68][^0-9]?", _(
+	"If DARK=auto then this list of regular expressions is considered.\n"
+	"If COLORFGBG matches then DARK=true is assumed."));
+
+AddOption(STRING, "COLORFGBG",
+	"", _(
+	"Usually, this is set in the environment by some terminals like rxvt.\n"
+	"It is only used if DARK=auto, see COLORFGBG_BLACK."));
 
 AddOption(STRING, "COLORSCHEME0",
-	"%{?DARK}0%{else}2%{}", _(
-	"If TERM_ALT* does not match, this chooses the corresponding color of\n"
-	"color specifications (starting from 0). The intention of this variable\n"
-	"is to select the color scheme used for 8/16 color terminals."));
+	"0 2", _(
+	"This is one or two numbers. If TERM_ALT* does not match, this chooses the\n"
+	"corresponding number in color specifications (starting from 0).\n"
+	"If two numbers are specified, the choice depends on DARK.\n"
+	"The intention of this variable is to select the color scheme used for\n"
+	"8/16 color terminals."));
 
 AddOption(STRING, "COLORSCHEME1",
-	"%{?DARK}1%{else}3%{}", _(
-	"If TERM_ALT1 matches, this chooses the corresponding color of\n"
-	"color specifications (starting from 0). The intention of this variable\n"
-	"is to select the color scheme used for 256 color terminals."));
+	"1 3", _(
+	"This is one or two numbers. If TERM_ALT1 matches, this chooses the\n"
+	"corresponding number in color specifications (starting from 0).\n"
+	"If two numbers are specified, the choice depends on DARK.\n"
+	"The intention of this variable is to select the color scheme used for\n"
+	"256 color terminals."));
 
 AddOption(STRING, "COLORSCHEME2",
 	"%{COLORSCHEME0}", _(
-	"If TERM_ALT2 matches, this chooses the corresponding color of\n"
-	"color specifications (starting from 0). The intention of this variable\n"
-	"is to select the color scheme used for 88 color terminals."));
+	"This is one or two numbers. If TERM_ALT2 matches, this chooses the\n"
+	"corresponding number in color specifications (starting from 0).\n"
+	"If two numbers are specified, the choice depends on DARK.\n"
+	"The intention of this variable is to select the color scheme used for\n"
+	"88 color terminals."));
 
 AddOption(STRING, "COLORSCHEME3",
 	"%{COLORSCHEME0}", _(
-	"If TERM_ALT3 matches, this chooses the corresponding color of\n"
-	"color specifications (starting from 0). The intention of this variable\n"
-	"is to select the color scheme used for user-specified terminals."));
+	"This is one or two numbers. If TERM_ALT3 matches, this chooses the\n"
+	"corresponding number in color specifications (starting from 0).\n"
+	"If two numbers are specified, the choice depends on DARK.\n"
+	"The intention of this variable is to select the color scheme used for\n"
+	"user-specified terminals."));
 
 AddOption(BOOLEAN, "SORT_INST_USE_ALPHA",
 	"false", _(
