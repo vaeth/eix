@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-11-29 21:00:00 +0200 (Thu, 29 Nov 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-11-29 23:30:00 +0200 (Thu, 29 Nov 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -64,9 +64,9 @@ Per default benutzt es ein separates Datenbankfile.
 Bei diesem Default sollten Sie regelmäig B<eix-remote add> nach <eix-update>
 aufrufen, so dass das separate Cachefile mit der Hauptdatenbank synchron ist.
 (Beispielsweise ist es in diesem Fall sinnvoll, B<@@eix-remote add> zu
-/etc/eix-sync.conf hinzuzufügen.)
+I<@SYSCONFDIR@/eix-sync.conf> hinzuzufügen.)
 Falls das selbe Datenbankfile benutzt wird, können dennoch solche Remote-Daten über
-B<eix-update>-Aufrufe hinweg erhalten werden, indem man B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc setzt.
+B<eix-update>-Aufrufe hinweg erhalten werden, indem man B<KEEP_VIRTUALS=true> in I<@SYSCONFDIR@/eixrc> setzt.
 Per Default wird dieses Skript seine Rechte durch B<eix-drop-permissions> fallenlassen.
 Mehr zu B<eix-remote> erfahren Sie durch den Aufruf B<eix-remote -h>.
 
@@ -160,7 +160,8 @@ dass dies durch die Variable B<DATESORT_DATE> geschieht, deren erster Eintrag B<
 und B<sort> erzeugt so durch einfaches alphabetisches Sortieren die korrekte Ordnung.
 Das B<cut>-Kommando verschluckt schließlich wieder die erste Spalte, die nur zum Sortieren benötigt wurde.
 
-In diesem Beispiel sind Dinge wie B<NAMEVERSION> oder B<DATESORT> nur Variablennamen,
+.LP
+In diesen Beispielen sind Dinge wie B<NAMEVERSION> oder B<DATESORT> nur Variablennamen,
 die in eix vordefiniert wurden (B<eix --dump> listet sie auf).
 Genausogut können natürlich auch eigene Variablen definiert und benutzt werden.
 Genaueres dazu steht später in der Manpage, insbesonder die Beschreibung des B<FORMAT> Strings.
@@ -1434,7 +1435,7 @@ verfügbaren Versionen des aktuellen (d.h. neuen) Pakets ausgeben.
 .SS Farben
 .TP
 .BI ( COLORSTRING | COLORSTRING | ... )
-Der tatsächlich ausgewählte I<COLORSTRING> hängt von B<COLORSCHEME*> ab.
+Der tatsächlich ausgewählte I<COLORSTRING> hängt von B<COLORSCHEME?> ab.
 Er sollte die folgende Gestalt haben:
 
 .TP
@@ -1514,7 +1515,7 @@ vor B<emerge --sync> ausgeführt.
 
 Beachten Sie, dass der Inhalt der Variablen B<EIX_SYNC_CONF> an diese Datei angehängt wird.
 Per Default expandiert die Variable zu B<EIX_SYNC_OPTS>, so dass effektiv auch diese Variable an die Datei angehängt wird.
-Beide Variablen können benutzt werden, ob die Defaults aus B<@SYSCONFDIR@/eix-sync.conf> zu modifizieren.
+Beide Variablen können benutzt werden, ob die Defaults aus I<@SYSCONFDIR@/eix-sync.conf> zu modifizieren.
 Machen Sie sich bitte bewusst, dass der Code dieser Zeilen bei B<eix-sync> innerhalb einer Shell mit "eval" ausgeführt wird, also Vorsicht bzgl. Sicherheitsproblemen!
 .TP
 .I Option(en)
@@ -1589,7 +1590,7 @@ Es folgt ein B<schematischer> Überblick über die Reihenfolge der Hooks/Kommand
 
 .BR "cp @EIX_CACHEFILE@ @EIX_PREVIOUS@"
 
-layman-Aufrufe und B<!>-Hooks in der Reihenfolge von @SYSCONFDIR@/eix-sync.conf
+layman-Aufrufe und B<!>-Hooks in der Reihenfolge von I<@SYSCONFDIR@/eix-sync.conf>
 
 .BR ~ " hooks"
 
@@ -1604,7 +1605,7 @@ layman-Aufrufe und B<!>-Hooks in der Reihenfolge von @SYSCONFDIR@/eix-sync.conf
 .BR eix-diff
 
 .TP
-Einige Beispiele nützlicher Zeilen in B<@SYSCONFDIR@/eix-sync.conf>:
+Einige Beispiele nützlicher Zeilen in I<@SYSCONFDIR@/eix-sync.conf>:
 .TP
 .B @@eix-remote add
 Diese Zeile sollte bei Benutzung des Defaults (nichtleeres B<EIX_REMOTE>)
@@ -1677,7 +1678,7 @@ die Variablen aus dieser Datei überschreiben, siehe B<~/.eixrc>.
 .\" {{{ -------- EIXRC
 .SS EIXRC
 Wenn diese Environmentvariable gesetzt ist, wird ihr Wert anstelle des Dateinamen
-@SYSCONFDIR@/eixrc benutzt, um die Konfigurationsdaten zu lesen.
+I<@SYSCONFDIR@/eixrc> benutzt, um die Konfigurationsdaten zu lesen.
 In diesem Fall wird die Datei ~/.eixrc ignoriert
 (aber sie kann natürlich ggf. gesourced werden).
 
@@ -1788,7 +1789,7 @@ expandieren, B<BAD_FORMAT> hingegen zu
 
 .B (blue|27,1;invert)A
 
-Letzteres führt wahrscheinlich nicht zum beabsichtigten Ergebnis, falls B<COLORSCHEME*=0> ist.
+Letzteres führt wahrscheinlich nicht zum beabsichtigten Ergebnis, falls B<COLORSCHEME?=0> ist.
 .RE
 .\" }}}
 
@@ -1865,7 +1866,7 @@ zu sammeln, so dass diese mit --dump oder --dump-defaults ausgegeben werden.
 
 .TP
 .BR EIX_SYNC_OPTS ", " EIX_SYNC_CONF " " (string)
-Der Inhalt von B<EIX_SYNC_CONF> wird an die Datei B<@SYSCONFDIR/eix-sync.conf> angehängt.
+Der Inhalt von B<EIX_SYNC_CONF> wird an die Datei I<@SYSCONFDIR/eix-sync.conf> angehängt.
 Weitere Details finden sich in der Beschreibung jener Datei.
 Per default ist B<EIX_SYNC_CONF> eine verzögerte Ersetzung von B<EIX_SYNC_OPTS>,
 so dass typischerweise B<EIX_SYNC_OPTS> zum gleichen Zweck genutzt werden kann.
@@ -1881,8 +1882,8 @@ Diese Variablen sind also vorsichtig zu quoten. Vorsicht vor Sicherheitsrisiken!
 
 .TP
 .BR EIXRC_SOURCE " " (string)
-Dieser Pfad wird bei Source-Kommandos in @SYSCONFDIR@/eixrc vorangestellt.
-Er ist gedacht, in der Environment gesetzt zu werden, aber er kann auch in @SYSCONFDIR@/eixrc gesetzt werden.
+Dieser Pfad wird bei Source-Kommandos in I<@SYSCONFDIR@/eixrc> vorangestellt.
+Er ist gedacht, in der Environment gesetzt zu werden, aber er kann auch in I<@SYSCONFDIR@/eixrc> gesetzt werden.
 Im letzte Fall wird er alle Settings aus der Environment überschreiben, sobald er gelesen wird,
 so lange bis alle Dateien gesourced wurden.
 Beachten Sie, dass noch keine verzögerte Ersetzung stattfindet, wenn diese Variable aktiv wird.
@@ -1891,7 +1892,7 @@ Beachten Sie, dass noch keine verzögerte Ersetzung stattfindet, wenn diese Vari
 .BR EIX_PREFIX " " (prefix-string) " (prefix-string heißt, dass dies ein String ist, aber wenn es den Wert '/' hat, wird dieser geändert zu '')"
 
 Dies ist i.W. dazu gedacht in der Environment gesetzt zu werden, falls eine chroot benutzt wird:
-Es wird dem Pfad vorangestellt, in dem @SYSCONFDIR@/eixrc gesucht wird.
+Es wird dem Pfad vorangestellt, in dem I<@SYSCONFDIR@/eixrc> gesucht wird.
 Falls es nicht gesetzt ist, wird der Wert der Environment-Variable B<PORTAGE_CONFIGROOT> vorangestellt.
 Der Defaultwert (typischerweise leer) dieser Variable wird benutzt, falls keines
 von beiden in der Environment gesetzt ist.
@@ -1965,8 +1966,8 @@ setzen, wenn man will, dass die Cachedatei von eix (nur) vom PROFILE-Wurzelverze
 Dieser Pfad wir /etc-Pfaden vorangestellt.
 Der Zweck ist es, PORTAGE_CONFIGROOT auf analoge Weise wie portage zu berücksichtigen.
 Falls diese Variable in der Environment gesetzt wird, wird sie auch den Pfad ändern,
-in dem @SYSCONFDIR@/eixrc gesucht wird.
-(Beachte, dass das Lesen von @SYSCONFDIR@/eixrc geschieht, bevor verzögerte Ersetzung aktiv wird.)
+in dem I<@SYSCONFDIR@/eixrc> gesucht wird.
+(Beachte, dass das Lesen von I<@SYSCONFDIR@/eixrc> geschieht, bevor verzögerte Ersetzung aktiv wird.)
 
 .TP
 .BR MAKE_GLOBALS " " (string)
@@ -2063,7 +2064,7 @@ Der Default dieser Variable enthält B</etc/portage/sets>, B</etc/portage/sets.e
 B<*/sets> (d.h. ungefähr B<${PORTIDR_OVERLAY}/sets> nach dem vorherigen Absatz)
 sowie B<%{EIX_LOCAL_SETS_ADD}>.
 Der Grund für Letzteres ist, dass man einfach zusätzliche Verzeichnisse
-zur Variablen B<%{EIX_LOCAL_SETS_ADD}> in B<@SYSCONFDIR@/eixrc> hinzufügen kann.
+zur Variablen B<%{EIX_LOCAL_SETS_ADD}> in I<@SYSCONFDIR@/eixrc> hinzufügen kann.
 Gründe dafür sind beispielsweise, wenn man in /etc/portage/sets.conf oder in der sets.conf Datei eines Overlays
 ein weiteres multiset-Verzeichnis definiert,
 z.B. für einen Overlay oder für die Behandlung mit "world-candidate = False".
@@ -2401,7 +2402,7 @@ können Sie B<TERM_ALT3=.> setzen um für alle Terminals den B<COLORSCHEME3>-Def
 zu wählen (der B<COLORSCHEME0> ist, s. unten).
 .TP
 .BR COLORSCHEME0 ", " COLORSCHEME1 ", " COLORSCHEME2 ", " COLORSCHEME3 " " "(Integer-Liste)"
-Welche dieser Variablen tasächlich benutzt wird hängt davon ab, welches B<TERM_ALT*> auf B<TERM> passt.
+Welche dieser Variablen tasächlich benutzt wird hängt davon ab, welches B<TERM_ALT?> auf B<TERM> passt.
 
 Der Zahlwert dieser Variablen gibt das benutzte Farbschema an;
 falls die Variable zwei Zahlwerte enthält (durch Leerzeichen getrennt), wird der erste Wert benutzt, falls B<DARK=true> ist.
@@ -2422,9 +2423,18 @@ Die Zahlen für die Default-Settings sind:
 
 Die Variablen B<BG0>, B<BG1>, B<BG2>, B<BG3> werden von den Defaults zur
 verzögerten Ersetzung berücksichtigt, um die Hintergrundfarbe der entsprechenden Schemata zu erzwingen.
-Der Wert "none" bedeutet, dass die Hintergrundfarbe nicht geändert wird.
+Der Default der B<BG?>-Variablen ist "none": Keine Hintegrundfarbe soll erzwungen werden.
+Um die korrekten Hintergrundfarben zu erzwingen, setzen Sie die Variablen wie folgt:
 
-Die Default-Werte der Variablen sind:
+B<BG0=black>
+
+B<BG1=black>
+
+B<BG2=white>
+
+B<BG3=white>
+
+Die Default-Werte der  B<COLORSCHEME?>-Variablen sind:
 
 B<COLORSCHEME0>: 0 2; dies ist für Terminals mit 8/16 Farben gedacht.
 
@@ -2436,7 +2446,7 @@ B<COLORSCHEME3>: wie B<COLORSCHEME0>, gedacht als vernünftiger Defaultwert für
 
 .TP
 .BR DARK " " (true / false / auto)
-Der Wert dieser Variablen gibt an, ob in B<COLORSCHEME*> der erste Wert gewählt wird.
+Der Wert dieser Variablen gibt an, ob in B<COLORSCHEME?> der erste Wert gewählt wird.
 Beim Wert B<auto> wird eine Heurstik benutzt, die auf B<TERM_DARK> und B<COLORFGBG_DARK> basiert.
 
 .TP
@@ -2529,7 +2539,7 @@ Durch verspätete Ersetzung, die in einem anderen Abschnitt erklärt wird,
 bewirkt dies, dass die Variables B<ADD_CACHE_METHOD> bzw.
 B<ADD_OVERRIDE_CACHE_METHOD> ebenfalls benutzt werden können, um die
 Cachemethoden lokal zu überschreiben.
-Falls Sie B<CACHE_METHOD> oder B<OVERRIDE_CACHE_METHOD> in B<@SYSCONFDIR@/eixrc>
+Falls Sie B<CACHE_METHOD> oder B<OVERRIDE_CACHE_METHOD> in I<@SYSCONFDIR@/eixrc>
 verändern, ist die Empfehlung zusätzlich " B<%{ADD_CACHE_METHOD}>" bzw.
 " B<%{ADD_OVERRIDE_CACHE_METHOD}>" (beachte das Leerzeichen vor B<%>)
 an das Ende der neuen Definitionen anzufügen, so dass diese Variablen nach wie
@@ -3386,6 +3396,21 @@ Bei allen anderen Optionen (oder ohne Option) wird durch Vorstellen des "X" klar
 Für Fehlermeldungen benutzen Sie bitte I<@PACKAGE_BUGREPORT@> oder
 Gentoos Bugzilla I<http://bugs.gentoo.org/>
 
+eix kann nicht zuverlässig die Farbmöglichkeiten und Hintergrundfarbe Ihres Terminal feststellen;
+dies ist gerade dann besonders ärgerlich, wenn Sie ein transparentes Terminal benutzen oder die Default-Hintergrundfarbe von
+beispielsweise xterm auf Schwarz geändert haben.
+Hier sind einige einfache Methoden, wie sie einige ungewünschte Farbprobleme vermeiden können:
+
+.TP
+1. Benutzen Sie das Farbschema zu ihrer tatsächlichen Hintergrundfarbe, indem Sie B<DARK=true> oder B<DARK=false> in I<@SYSCONFDIR@/eixrc> setzen.
+
+.TP
+2. Erzwingen Sie die korrekte Hintergrundfarbe, indem Sie B<BG0=black>, B<BG1=black>, B<BG2=white>, B<BG3=white> in I<@SYSCONFDIR@/eixrc> setzen.
+
+.TP
+3. Erzwingen Sie ein gewünschtes Farbschema auf allen Terminals indem Sie B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc> setzen; dies kann mit B<COLORSCHEME3=0> (oder B<=1>, B<=2>, B<=3>) kombiniert werden.
+
+.LP
 eix beherrscht keine Abhängigkeiten und/oder USE-Flags und wird das
 vermutlich auch niemals tun.
 Insbesondere heißt dies, dass die Ausgabe von eix -u i.a. anderes liefert
@@ -3394,35 +3419,35 @@ Dies gilt insbesondere auch für das Upgraden von Paketen mit Slots.
 Die Variable B<UPGRADE_TO_HIGHEST_SLOT> und händische Ausnahmen
 in B</etc/portage/package.slot_upgrade_forbid> bzw.
 B</etc/portage/package.slot_upgrade_allow> können benutzt werden,
-um diese Nachteil von eix abzufedern.
+um diesen Nachteil von eix abzufedern.
 
 eix beherrscht nicht alle Sets, die Portage unterstützt, und wird das vermutlich auch niemals tun.
 Derzeit scheint es, dass sogar der vorgeschlagene Weg, Sets in den Portagebaum
 über PROPERTIES=set einzubauen, von eix nicht unterstützt werden wird
-(weil eix Abhängigkeiten und USE-Flags kennen müsste, ob dies zu unterstützen).
+(weil eix Abhängigkeiten und USE-Flags kennen müsste, um dies zu unterstützen).
 Als eine Notlösung kann man manuell solche zusätzlichen Sets in
 B</etc/portage/sets.eix> definieren.
 Darüberhinaus beherrscht eix nicht das Lesen von sets.conf-Dateien und wird das vermutlich auch niemals tun.
 Falls zusätzliche B<sets/>-Verzeichnisse etwa in einem Overlay angegeben wurden,
-müssen diese zusätzlichen Verzeichnisse manuell in @SYSCONFDIR@/eixrc zur
+müssen diese zusätzlichen Verzeichnisse manuell in I<@SYSCONFDIR@/eixrc> zur
 Variablen B<EIX_LOCAL_SETS> hinzugefügt werden.
 Der leichteste Weg zu Letzterem ist es, einen Eintrag der Art
 
 B<EIX_LOCAL_SETS_ADD=">I</path/to/overlay1/sets> I</path/to/overlay2/sets> I<...>B<">
 
-nach @SYSCONFDIR@/eixrc zu schreiben (vgl. die frühere Beschreibung von B<EIX_LOCAL_SETS>).
+nach I<@SYSCONFDIR@/eixrc> zu schreiben (vgl. die frühere Beschreibung von B<EIX_LOCAL_SETS>).
 
 eix-diff ignoriert /etc/portage/profile. (Grund: Die gespeicherte Datenbank
 enthält nur den Maskierungsstatus entsprechend des ursprünglichen Profils,
 aber nicht das Profil selbst.
-Andererseits kann /etc/portage/profile nur dann interpretiert werden, ewnn
+Andererseits kann /etc/portage/profile nur dann interpretiert werden, wenn
 das Profil bekannt ist).
 
 Die Ausgabe mit dem Default B<OVERLAYS_LIST=all-used-renumbered> ist irritierend,
 wenn man die Overlaynummer in einer eix-Variablen oder -Kommando-Argument benutzen will.
 
 Es gibt keine Cachemethode, das die Information aller Overlays
-(für die es keinen Portage-Metadatencache gibt) schnell und zuverlässig hold:
+(für die es keinen Portage-Metadatencache gibt) schnell und zuverlässig holt:
 Man muss immer eines dieser beiden Extreme wählen.
 Der Default ist schnell, aber er liefert oft falsche Slots und hat andere Probleme.
 
@@ -3431,7 +3456,7 @@ Insbesondere wird eix durch die bloße Tatsache, viele dieser Variablen zu berü
 stets verwundbar gegen lokale Angriffe sein, wenn es in einer möglicherweise kompromitierten
 Environment gestartet wird.
 
-Der frühere Deafult B<KEEP_VIRTUALS=true> verwirrte viele Leute.
+Der frühere Default B<KEEP_VIRTUALS=true> verwirrte viele Leute.
 Mit dem neuen Default findet leider fast niemand heraus, dass dieses Feature existiert.
 :(
 
@@ -3486,10 +3511,10 @@ Um dies zu vermeiden, hatte eix-sync den alten Cache gelöscht
 Da die meisten Nutzer dies Cachemethode nicht mehr benutzen müssen,
 und das Löschen des alten Caches den nächsten Start von Portage verlangsamt,
 ist dies nicht mehr der Default (aber immer noch als Option verfügbar,
-die man nach @SYSCONFDIR@/eix-sync.conf schreiben kann).
+die man nach I<@SYSCONFDIR@/eix-sync.conf> schreiben kann).
 
 eix-sync benutzte früher gensync statt layman.
-In der Beschreibung von @SYSCONFDIR@/eix-sync.conf erfährt man, wie man
+In der Beschreibung von I<@SYSCONFDIR@/eix-sync.conf> erfährt man, wie man
 das obsolete gensync benutzen könnte.
 
 eix-sync unterstützt kein Loggen mehr; die Optionen -v und -V wurden entfernt.
@@ -3502,7 +3527,7 @@ Die früheren (weniger mächtigen) Variablen B<MATCH_.*_IF> und B<MATCH_ORDER> w
 Die Variablen B<ADD_CACHE_METHOD> und B<ADD_OVERRIDE_CACHE_METHOD> sind nicht länger
 fest eingebaut, sondern werden nur implizit durch verzögerte Ersetzung in den Defaults
 von B<CACHE_METHOD> und B<OVERRIDE_CACHE_METHOD> ausgewertet.
-Insbesondere wird also Setzen der letzten beiden Variablen in B<@SYSCONFDIR@/eixrc> ohne
+Insbesondere wird also Setzen der letzten beiden Variablen in I<@SYSCONFDIR@/eixrc> ohne
 Hinzufügen der verzögerten Ersetzung " B<%{ADD_CACHE_METHOD}>" bzw. " B<%{ADD_OVERRIDE_CACHE_METHOD}>"
 den ersten Variablen ihre Bedeutung vollständig nehmen.
 
@@ -3551,6 +3576,9 @@ Früher war die Option B<-F> automatisch und konnte nicht abgestellt werden.
 
 Bei <eix-0.25.6 gab es eine B<NEWLINE>-Variable, die nach einem Paket einen automatischen Zeilenvorschub ausgeben konnte.
 Dieser Hack war nur für obsolete FORMAT-Strings eingeführt worden und wurde wieder entfernt.
+
+Die Variablen B<COLORSTRING>, B<COLORSTRING_ALT> und B<TERM_ALT> wurden durch die flexibleren
+Variablen B<COLORSTRING?> und B<TERM_ALT?> ersetzt.
 .\" }}}
 
 .\" {{{ AUTOREN

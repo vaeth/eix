@@ -2,15 +2,24 @@
 
 *eix-0.27.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Rename variables to allow more cases of terminals:
+	- If you have inconvenient colors (e.g. on dark or transparent terms),
+	  this is probably due to the new DARK heuristics (see below).
+	  Put DARK=true (or false) into /etc/eixrc to avoid it.
+	  See the BUGS section on the eix manpage.
+	- To improve readability by forcing the background colors, set
+	  BG0=black, BG1=black, BG2=white, BG3=white in /etc/eixrc:
+	  The defaults are all reverted to "none" due to DARK heuristics.
+	  See the BUGS section on the eix manpage.
+	- Renamed variables to allow more cases of terminals:
 	  TERM_ALT{1..3} corresponding to COLORSCHEME{0..3}
 	  Previous TERM_ALT and COLORSCHEME{,_ALT} variables are obsolete.
-	- Example: To select 8/16 colors on all terminals (e.g. for solarized)
-	  set TERM_ALT3="."
-	- COLORSCHEME{0..3} can now contain two numbers (dark and light).
+	- Example: To select 8/16 colors on all terminals and dark background
+	  (e.g. for solarized) set TERM_ALT3="." and e.g. DARK=true or
+	  COLORSCHEME3=0.
+	  See the BUGS section on the eix manpage.
 	- Let DARK=auto use a heuristic based on TERM_DARK, COLORFGBG_DARK,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=438076
-	- Make BG?=none the default again (reasonable with DARK heuristics).
+	- COLORSCHEME{0..3} can now contain two numbers (dark and light).
 	- Move rxvt-unicode without -256color to ALT_TERM2, since it supports
 	  only 88 colors which could deserve its own color scheme.
 	  For the moment, COLORSCHEME0 is used as a poor man's 88 color scheme.

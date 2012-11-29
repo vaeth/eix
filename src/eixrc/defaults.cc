@@ -683,7 +683,7 @@ AddOption(STRING, "COLORFGBG",
 
 AddOption(STRING, "COLORSCHEME0",
 	"0 2", _(
-	"This is one or two numbers. If TERM_ALT* does not match, this chooses the\n"
+	"This is one or two numbers. If TERM_ALT? does not match, this chooses the\n"
 	"corresponding number in color specifications (starting from 0).\n"
 	"If two numbers are specified, the choice depends on DARK.\n"
 	"The intention of this variable is to select the color scheme used for\n"
