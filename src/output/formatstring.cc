@@ -268,28 +268,29 @@ void
 PrintFormat::setupResources(EixRc *rc)
 {
 	eix_rc = rc;
-	color_overlaykey = (*rc)["COLOR_OVERLAYKEY"];
-	color_virtualkey = (*rc)["COLOR_VIRTUALKEY"];
-	color_keyend     = (*rc)["COLOR_KEYEND"];
+	color_overlaykey     = (*rc)["COLOR_OVERLAYKEY"];
+	color_virtualkey     = (*rc)["COLOR_VIRTUALKEY"];
+	color_keyend         = (*rc)["COLOR_KEYEND"];
 	color_overlayname    = (*rc)["COLOR_OVERLAYNAME"];
 	color_overlaynameend = (*rc)["COLOR_OVERLAYNAMEEND"];
-	color_numbertext = (*rc)["COLOR_NUMBERTEXT"];
+	color_numbertext     = (*rc)["COLOR_NUMBERTEXT"];
+	color_numbertextend  = (*rc)["COLOR_NUMBERTEXTEND"];
 	color_end.clear();
 
-	alpha_use        = rc->getBool("SORT_INST_USE_ALPHA");
-	before_use_start = (*rc)["FORMAT_BEFORE_USE_EXPAND_START"];
-	before_use_end   = (*rc)["FORMAT_BEFORE_USE_EXPAND_END"];
-	after_use        = (*rc)["FORMAT_AFTER_USE_EXPAND"];
+	alpha_use         = rc->getBool("SORT_INST_USE_ALPHA");
+	before_use_start  = (*rc)["FORMAT_BEFORE_USE_EXPAND_START"];
+	before_use_end    = (*rc)["FORMAT_BEFORE_USE_EXPAND_END"];
+	after_use         = (*rc)["FORMAT_AFTER_USE_EXPAND"];
 	before_iuse_start = (*rc)["FORMAT_BEFORE_IUSE_EXPAND_START"];
-	before_iuse_end  = (*rc)["FORMAT_BEFORE_IUSE_EXPAND_END"];
-	after_iuse       = (*rc)["FORMAT_AFTER_IUSE_EXPAND"];
+	before_iuse_end   = (*rc)["FORMAT_BEFORE_IUSE_EXPAND_END"];
+	after_iuse        = (*rc)["FORMAT_AFTER_IUSE_EXPAND"];
 	before_coll_start = (*rc)["FORMAT_BEFORE_COLL_EXPAND_START"];
-	before_coll_end  = (*rc)["FORMAT_BEFORE_COLL_EXPAND_END"];
-	after_coll       = (*rc)["FORMAT_AFTER_COLL_EXPAND"];
-	before_set_use   = (*rc)["FORMAT_BEFORE_SET_USE"];
-	after_set_use    = (*rc)["FORMAT_AFTER_SET_USE"];
-	before_unset_use = (*rc)["FORMAT_BEFORE_UNSET_USE"];
-	after_unset_use  = (*rc)["FORMAT_AFTER_UNSET_USE"];
+	before_coll_end   = (*rc)["FORMAT_BEFORE_COLL_EXPAND_END"];
+	after_coll        = (*rc)["FORMAT_AFTER_COLL_EXPAND"];
+	before_set_use    = (*rc)["FORMAT_BEFORE_SET_USE"];
+	after_set_use     = (*rc)["FORMAT_AFTER_SET_USE"];
+	before_unset_use  = (*rc)["FORMAT_BEFORE_UNSET_USE"];
+	after_unset_use   = (*rc)["FORMAT_AFTER_UNSET_USE"];
 
 	const char *term((*rc)["TERM"].c_str());
 	char schemenum('0');
@@ -351,6 +352,7 @@ PrintFormat::setupColors()
 		colorstring(&color_overlayname);
 		colorstring(&color_overlaynameend);
 		colorstring(&color_numbertext);
+		colorstring(&color_numbertextend);
 		colorstring(&color_end);
 	}
 	parse_color(&before_use_start, use_color);

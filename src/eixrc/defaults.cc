@@ -622,6 +622,12 @@ AddOption(STRING, "EXIT_STATUSLINE",
 	"If this is nonempty, it is used as the exit statusline.\n"
 	"An optional leading space in this string is ignored."));
 
+AddOption(BOOLEAN, "RESET_ALL_LINES",
+	"false", _(
+	"This variable is only used for delayed substitution.\n"
+	"It decides whether background colors are reset on every newline.\n"
+	"This may be desired if you set BG? to a value differrent than \"none\"."));
+
 AddOption(STRING, "BG0",
 	"none", _(
 	"This variable is only used for delayed substitution.\n"
@@ -1081,6 +1087,11 @@ AddOption(STRING, "COLOR_RESET",
 	"This variable is only used for delayed substitution.\n"
 	"It is the color used for default colors."));
 
+AddOption(STRING, "COLOR_RESET_BG",
+	"none;%{BG0}|none;%{BG1}|none;%{BG2}|none;%{BG3}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the color used for default colors."));
+
 AddOption(STRING, "COLOR_NAME",
 	",1;%{BG0}|253,1;%{BG1}|,1;%{BG2}|232;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -1300,12 +1311,16 @@ AddOption(STRING, "COLOR_OVERLAYNAME",
 	"Color for printing an overlay name."));
 
 AddOption(STRING, "COLOR_OVERLAYNAMEEND",
-	"%{COLOR_RESET}", _(
+	"", _(
 	"Color after printing an overlay name."));
 
 AddOption(STRING, "COLOR_NUMBERTEXT",
 	"%{COLOR_NORMAL}", _(
 	"Color for printing the number of packages."));
+
+AddOption(STRING, "COLOR_NUMBERTEXTEND",
+	"", _(
+	"Color after printing the number of packages."));
 
 AddOption(STRING, "COLOR_SLOTS",
 	"red,1;%{BG0}|166,1;%{BG1}|red,1;%{BG2}|166,1;%{BG3}", _(
@@ -2076,8 +2091,13 @@ AddOption(STRING, "FORMAT_AFTER_KEYWORDS",
 	"This string is printed after KEYWORDS string for a version is output.\n"
 	"(with --versionlines and nonverbose)"));
 
+AddOption(STRING, "FORMAT_NEWLINE",
+	"%{?RESET_ALL_LINES}()\\n(%{COLOR_RESET_BG})%{else}\\n%{}", _(
+	"This variable only used for delayed substitution.\n"
+	"It prints a newline, optionally handling background colors for broken terminals."));
+
 AddOption(STRING, "FORMAT_VER_LINESKIP",
-	"\\n                          ", _(
+	"%{FORMAT_NEWLINE}                          ", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the lineskip used for the versionline appendix."));
 
@@ -2227,17 +2247,17 @@ AddOption(STRING, "FORMAT_VERSION_APPENDIX",
 	"It defines the data appended to available versions with --versionlines"));
 
 AddOption(STRING, "FORMAT_SLOTLINESKIP_VERSIONLINES",
-	"\\n      %{FORMAT_SLOT}", _(
+	"%{FORMAT_NEWLINE}      %{FORMAT_SLOT}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines lineskip + slot if slotsorted versionlines are used."));
 
 AddOption(STRING, "FORMAT_SLOTLINESKIP",
-	"\\n\\t%{FORMAT_SLOT}\\t", _(
+	"%{FORMAT_NEWLINE}\\t%{FORMAT_SLOT}\\t", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines lineskip + slot if slotsort but no versionlines are used."));
 
 AddOption(STRING, "FORMAT_VERSLINESKIP",
-	"\\n\\t%{FORMAT_STABILITY}\\t", _(
+	"%{FORMAT_NEWLINE}\\t%{FORMAT_STABILITY}\\t", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines lineskip + stability if lineskip is used."));
 
@@ -2288,7 +2308,7 @@ AddOption(STRING, "FORMAT_COLL_SEP",
 
 AddOption(STRING, "FORMAT_COLL_VERBOSE",
 	"%{!PRINT_ALWAYS}{havecolliuse}%{}"
-		"\\n     (%{COLOR_TITLE})IUSE \\(all versions\\):(%{COLOR_RESET})"
+		"%{FORMAT_NEWLINE}     (%{COLOR_TITLE})IUSE \\(all versions\\):(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{havecolliuse}%{}"
 		" %{FORMAT_COLLIUSE}(%{COLOR_RESET})"
 	"{}",  _(
@@ -2418,8 +2438,8 @@ AddOption(STRING, "FORMATLINE_INSTALLEDVERSIONS",
 		"%{?PRINT_ALWAYS}{installed}%{}"
 			"%{INSTALLEDVERSIONS}"
 		"%{?PRINT_ALWAYS}{else}"
-			"None{}\\n"
-		"%{else}\\n{}"
+			"None{}%{FORMAT_NEWLINE}"
+		"%{else}%{FORMAT_NEWLINE}{}"
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with installed versions."));
@@ -2431,7 +2451,7 @@ AddOption(STRING, "DIFF_FORMATLINE_INSTALLEDVERSIONS",
 	"It defines the format for eix-diff for installed versions."));
 
 AddOption(STRING, "FORMAT_FINISH",
-	"\\n", _(
+	"()\\n", _(
 	"This variable is only used for delayed substitution.\n"
 	"It prints a newline at the end of a package."));
 
@@ -2621,12 +2641,12 @@ AddOption(STRING, "FORMAT_OVERLAYKEY",
 	"It defines the format for the printing the optional overlay key."));
 
 AddOption(STRING, "FORMATLINE_NAME",
-	"%{FORMAT_HEADER} %{FORMAT_NAME}%{FORMAT_OVERLAYKEY}\\n", _(
+	"%{FORMAT_HEADER} %{FORMAT_NAME}%{FORMAT_OVERLAYKEY}%{FORMAT_NEWLINE}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the normal header line."));
 
 AddOption(STRING, "FORMATLINE_NAME_VERBOSE",
-	"%{FORMAT_HEADER_VERBOSE} %{FORMAT_NAME}%{FORMAT_OVERLAYKEY}\\n", _(
+	"%{FORMAT_HEADER_VERBOSE} %{FORMAT_NAME}%{FORMAT_OVERLAYKEY}%{FORMAT_NEWLINE}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the verbose header line."));
 
@@ -2651,7 +2671,7 @@ AddOption(STRING, "DIFF_FORMATLINE_NAME_CHANGED",
 	"It defines the format for the diff-changed header."));
 
 AddOption(STRING, "FORMATLINE_AVAILABLEVERSIONS",
-	"     (%{COLOR_TITLE})Available versions:(%{COLOR_RESET})  %{FORMAT_AVAILABLEVERSIONS}\\n", _(
+	"     (%{COLOR_TITLE})Available versions:(%{COLOR_RESET})  %{FORMAT_AVAILABLEVERSIONS}%{FORMAT_NEWLINE}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with installed versions."));
 
@@ -2672,8 +2692,9 @@ AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
 		"     (%{COLOR_TITLE})Marked:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{havemarkedversion}%{}"
 		"              "
-		"(%{COLOR_MARKED_VERSION})<markedversions:VERSION>(%{COLOR_RESET})"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
+		"(%{COLOR_MARKED_VERSION})<markedversions:VERSION>"
+		"%{!RESET_ALL_LINES}(%{COLOR_RESET})%{}"
+	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with marked versions."));
 
@@ -2682,8 +2703,9 @@ AddOption(STRING, "FORMATLINE_PACKAGESETS",
 		"     (%{COLOR_TITLE})Package sets:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{%{PRINT_SETNAMES}}%{}"
 		"        "
-		"(%{COLOR_PACKAGESETS})<%{PRINT_SETNAMES}>(%{COLOR_RESET})"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
+		"(%{COLOR_PACKAGESETS})<%{PRINT_SETNAMES}>"
+		"%{!RESET_ALL_LINES}(%{COLOR_RESET})%{}"
+	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with package sets."));
 
@@ -2694,8 +2716,8 @@ AddOption(STRING, "FORMATLINE_HOMEPAGE",
 		"            "
 		"(%{COLOR_NORMAL})"
 		"<homepage>"
-		"(%{COLOR_NORMAL_END})"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
+		"%{!RESET_ALL_LINES}(%{COLOR_NORMAL_END})%{}"
+	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the package homepage."));
 
@@ -2705,8 +2727,9 @@ AddOption(STRING, "FORMATLINE_BUGS",
 		"      "
 		"(%{COLOR_NORMAL})"
 		"http://bugs.gentoo.org/buglist.cgi?quicksearch="
-		"<category>%2F<name>\\n"
-		"(%{COLOR_NORMAL_END})"
+		"<category>%2F<name>"
+		"%{!RESET_ALL_LINES}(%{COLOR_NORMAL_END})%{}"
+		"%{FORMAT_NEWLINE}"
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the package bug-reference."));
@@ -2718,8 +2741,8 @@ AddOption(STRING, "FORMATLINE_DESCRIPTION",
 		"         "
 		"(%{COLOR_NORMAL})"
 		"<description>"
-		"(%{COLOR_NORMAL_END})"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
+		"%{!RESET_ALL_LINES}(%{COLOR_NORMAL_END})%{}"
+	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the package description."));
 
@@ -2728,7 +2751,7 @@ AddOption(STRING, "FORMATLINE_BEST",
 		"     (%{COLOR_TITLE})Best versions/slot:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{havebest}%{}"
 		"  <bestslotversions:VSORT>"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
+	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the best versions/slots."));
 
@@ -2742,8 +2765,11 @@ AddOption(STRING, "FORMATLINE_RECOMMEND",
 				" and "
 			"{}"
 		"{}"
-		"{downgrade}(%{COLOR_DOWNGRADE_TEXT})Downgrade(%{COLOR_RESET}){}"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
+		"{downgrade}"
+			"(%{COLOR_DOWNGRADE_TEXT})Downgrade"
+			"%{!RESET_ALL_LINES}(%{COLOR_RESET})%{}"
+		"{}"
+	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the up-/downgrade recommendations."));
 
@@ -2754,14 +2780,15 @@ AddOption(STRING, "FORMATLINE_LICENSES",
 		"             "
 		"(%{COLOR_NORMAL})"
 		"<licenses>"
-		"(%{COLOR_NORMAL_END})"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
+		"%{!RESET_ALL_LINES}(%{COLOR_NORMAL_END})%{}"
+	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the package licenses."));
 
 AddOption(STRING, "DIFF_FORMATLINE",
 	"%{FORMAT_OVERLAYKEY}"
-	"(%{COLOR_NORMAL}): <description>(%{COLOR_NORMAL_END})"
+	"(%{COLOR_NORMAL}): <description>"
+	"(%{COLOR_NORMAL_END})"
 	"%{FORMAT_FINISH}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for eix-diff after the versions."));
@@ -2789,7 +2816,8 @@ AddOption(STRING, "FORMAT_ALL_COMPACT",
 	"{else}"
 		"%{FORMAT_BEST_COMPACT}"
 	"{}"
-	"(%{COLOR_NORMAL})\\): <description>(%{COLOR_NORMAL_END})"
+	"(%{COLOR_NORMAL})\\): <description>"
+	"(%{COLOR_NORMAL_END})"
 	"%{FORMAT_FINISH}", _(
 	"This format is only used for delayed substitution in FORMAT_COMPACT.\n"
 	"It defines the format of the compact output of eix (option -c)."));
@@ -2970,7 +2998,7 @@ AddOption(STRING, "FORMAT_AFTER_COLL",
 	"(This is meant for printing after all versions in a line)"));
 
 AddOption(STRING, "FORMAT_BEFORE_COLL_SEP",
-	"\\n\\t(%{COLOR_USE_COLL})\\{", _(
+	"%{FORMAT_NEWLINE}\\t(%{COLOR_USE_COLL})\\{", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before IUSE data for all versions is output.\n"
 	"(This is meant for printing in a separate line)"));

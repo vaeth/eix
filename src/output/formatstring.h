@@ -384,7 +384,7 @@ class PrintFormat {
 			color_virtualkey,  /**< Color for the virtual key */
 			color_keyend,
 			color_overlayname, color_overlaynameend,
-			color_numbertext, color_end,
+			color_numbertext, color_numbertextend, color_end,
 			before_use_start, before_use_end, after_use,
 			before_iuse_start, before_iuse_end, after_iuse,
 			before_coll_start, before_coll_end, after_coll,

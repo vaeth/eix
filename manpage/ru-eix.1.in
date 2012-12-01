@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-11-29 23:30:00 +0200 (Thu, 29 Nov 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-01 22:00:00 +0200 (Sun, 01 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -2237,7 +2237,7 @@ These strings are printed at the start/end or after B<USE_EXPAND> variables
 are output with B<colliuse*>.
 
 .TP
-.BR COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY ", " COLOR_KEYEND ", " COLOR_OVERLAYNAME ", " COLOR_OVERLAYNAMEEND ", " COLOR_NUMBERTEXT
+.BR COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY ", " COLOR_KEYEND ", " COLOR_OVERLAYNAME ", " COLOR_OVERLAYNAMEEND ", " COLOR_NUMBERTEXT ", " COLOR_NUMBERTEXTEND
 These colors are used before/after normal/virtual overlay keys,
 for printing the overlays at the end or when printing the number of packages.
 
@@ -2389,6 +2389,9 @@ B<BG1=black>
 B<BG2=white>
 
 B<BG3=white>
+
+However, this can have undesired effects on some broken terminals, see the BUGS section.
+To change some behavior, when you set BG? you might want to set B<RESET_ALL_LINES=true>.
 
 The default values of the B<COLORSCHEME?> variables are:
 
@@ -3318,10 +3321,13 @@ e.g. of xterm to black.
 Here are a few simple methods how you can avoid some undesired color problems:
 
 .TP
-1. Use the color scheme corresponding to your actual background color by setting B<DARK=true> or B<DARK=false> in I<@SYSCONFDIR@/eixrc>
+1. Use the color scheme corresponding to your actual background color by setting B<DARK=true> or B<DARK=false> in I<@SYSCONFDIR@/eixrc>.
 
 .TP
-2. Force the desired background color by setting B<BG0=black>, B<BG1=black>, B<BG2=white>, B<BG3=white> in I<@SYSCONFDIR@/eixrc>
+2. Force the desired background color by setting B<BG0=black>, B<BG1=black>, B<BG2=white>, B<BG3=white> in I<@SYSCONFDIR@/eixrc>.
+However, note that forcing of the background color can cause on some broken
+terminals some new scrolled-in lines to be in this background color.
+To reset background colors before all newlines you might want to set B<RESET_ALL_LINES=true>.
 
 .TP
 3. Force a desired color scheme on all terminals by setting B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc>; you may want to combine this with setting B<COLORSCHEME3=0> (or B<=1>, B<=2>, B<=3>).

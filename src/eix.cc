@@ -1030,34 +1030,39 @@ run_eix(int argc, char** argv)
 	}
 	eix::SignedBool print_count_always(rc_options.pure_packages ? -1 :
 		eixrc.getBoolText("PRINT_COUNT_ALWAYS", "never"));
+	bool printed_matches(false);
 	if(likely(print_count_always >= 0)) {
 		if(unlikely(count == 0)) {
-			have_printed = true;
+			printed_matches = true;
 			cout << format->color_numbertext;
 			if(print_count_always) {
-				cout << eix::format(_("Found %s matches.\n"))
+				cout << eix::format(_("Found %s matches."))
 					% eix::ptr_list<Package>::size_type(0);
 			} else {
-				cout << _("No matches found.\n");
+				cout << _("No matches found.");
 			}
 		} else if(unlikely(count == 1)) {
 			if(print_count_always) {
-				have_printed = true;
+				printed_matches = true;
 				if(printed_overlay) {
 					cout << "\n";
 				}
-				cout << format->color_numbertext <<
-					eix::format(_("Found %s match.\n"))
+				cout << format->color_numbertext
+					<< eix::format(_("Found %s match."))
 					% eix::ptr_list<Package>::size_type(1);
 			}
 		} else {
-			have_printed = true;
+			printed_matches = true;
 			if(printed_overlay) {
 				cout << "\n";
 			}
 			cout << format->color_numbertext <<
-				eix::format(_("Found %s matches.\n")) % count;
+				eix::format(_("Found %s matches.")) % count;
 		}
+	}
+	if(printed_matches) {
+		have_printed = true;
+		cout << format->color_numbertextend << "\n";
 	}
 	if(have_printed) {
 		cout << format->color_end;

@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-11-29 23:30:00 +0200 (Thu, 29 Nov 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-01 22:00:00 +0200 (Sun, 01 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2273,7 +2273,7 @@ für installierte bzw. verfügbare Versionen ausgegeben.
 Diese String werden zu Beginn/Ende bzw. nach B<USE_EXPAND>-Variablen bei B<colliuse*> ausgegeben.
 
 .TP
-.BR COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY ", " COLOR_KEYEND ", " COLOR_OVERLAYNAME ", " COLOR_OVERLAYNAMEEND ", " COLOR_NUMBERTEXT
+.BR COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY ", " COLOR_KEYEND ", " COLOR_OVERLAYNAME ", " COLOR_OVERLAYNAMEEND ", " COLOR_NUMBERTEXT ", " COLOR_NUMBERTEXTEND
 Diese Farben werden vor/nach normalen/virtualen Overlaynummern benutzt,
 zur Ausgabe der Overlays am Ende bzw. zur Ausgabe der Anzahl der Pakete.
 
@@ -2433,6 +2433,9 @@ B<BG1=black>
 B<BG2=white>
 
 B<BG3=white>
+
+Dies kann jedoch unerwünschte Effekte auf einigen defekten Terminals haben, siehe den Abschnitt FEHLER.
+Um das Verhalten etwas zu ändern, können Sie B<RESET_ALL_LINES=true> setzen.
 
 Die Default-Werte der  B<COLORSCHEME?>-Variablen sind:
 
@@ -3406,6 +3409,9 @@ Hier sind einige einfache Methoden, wie sie einige ungewünschte Farbprobleme ve
 
 .TP
 2. Erzwingen Sie die korrekte Hintergrundfarbe, indem Sie B<BG0=black>, B<BG1=black>, B<BG2=white>, B<BG3=white> in I<@SYSCONFDIR@/eixrc> setzen.
+Beachten Sie allerdings, dass das Erzwingen der Hintergrundfarbe auf einigen fehlerhaften Terminals
+dazu führt, dass auch neu hereingescrollte Zeilen in dieser Hintergrundfarbe sein können.
+Um die Hintergrundfarbe bei jedem Zeilenende zurückzusetzen können Sie B<RESET_ALL_LINES=true> setzen.
 
 .TP
 3. Erzwingen Sie ein gewünschtes Farbschema auf allen Terminals indem Sie B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc> setzen; dies kann mit B<COLORSCHEME3=0> (oder B<=1>, B<=2>, B<=3>) kombiniert werden.
