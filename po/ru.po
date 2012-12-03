@@ -1582,19 +1582,18 @@ msgstr ""
 "Запустите 'eix-update' и попробуйте ещё раз."
 
 #: src/eix.cc:1039 src/eix.cc:1060
-#, fuzzy, c-format
+#, c-format
 msgid "Found %s matches."
-msgstr "Найдено %s совпадений.\n"
+msgstr "Найдено %s совпадений."
 
 #: src/eix.cc:1042
-#, fuzzy
 msgid "No matches found."
-msgstr "Совпадений не найдено.\n"
+msgstr "Совпадений не найдено."
 
 #: src/eix.cc:1051
-#, fuzzy, c-format
+#, c-format
 msgid "Found %s match."
-msgstr "Найдено %s совпадений.\n"
+msgstr "Найдено %s совпадений."
 
 #: src/eix.cc:1168
 #, c-format
