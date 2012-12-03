@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-03 00:30:00 +0200 (Mon, 03 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-03 18:00:00 +0200 (Mon, 03 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1847,6 +1847,20 @@ To get a full description of the latter (and of the defaults), please use B<eix 
 This variable has no direct influence on the programs, but the content of this
 variable can be used to collect delayed references to (otherwise unused) variables
 so that they are printed with --dump or --dump-defaults.
+
+.TP
+.BR WIDETERM " " (true / false / auto / empty)
+This variable is only used for delayed substitution.
+It defines whether you have a wide terminal (bigger than 80 columns).
+In B<WIDETERM> is empty or B<auto> then B<COLUMNS> is used to set its value
+for delayed substitution.
+
+.TP
+.BR COLUMNS " " (integer / auto / empty)
+This defines the terminal width if B<WIDETERM> is empty.
+If B<COLUMNS> is empty or B<auto> then a heuristic is used for B<WIDETERM>.
+If the heuristic fails then the substituted value of B<WIDETERM> is empty
+(which acts as B<false> for delayed substitution).
 
 .TP
 .BR EIX_SYNC_OPTS ", " EIX_SYNC_CONF " " (string)

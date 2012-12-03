@@ -23,6 +23,17 @@ AddOption(STRING, "EIXRC",
 	"The file which is used instead of /etc/eixrc and ~/.eixrc.\n"
 	"This variable can of course only be set in the environment."));
 
+AddOption(BOOLEAN, "WIDETERM",
+	"", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines whether you have a wide terminal (>80 columns).\n"
+	"An empty value or \"auto\" means that COLUMNS is used/calculated."));
+
+AddOption(INTEGER, "COLUMNS",
+	"", _(
+	"Set the terminal width to define the WIDETERM expansion.\n"
+	"An empty value or \"auto\" means that a heuristic is used instead."));
+
 AddOption(PREFIXSTRING, "EIXRC_SOURCE",
 	"", _(
 	"This path is prepended to source commands in /etc/eixrc.\n"
@@ -435,9 +446,6 @@ AddOption(STRING, "REPO_NAMES",
 	"the label OVERLAY_LABEL, independent of the content of profiles/repo_name\n"
 	"or the label associated by KEEP_VIRTUALS.\n"
 	"The last matching DIR_PATTERN takes precedence."));
-#endif
-
-#if (DEFAULT_PART == 2)
 
 AddOption(STRING, "EXCLUDE_OVERLAY",
 	"", _(
@@ -477,6 +485,9 @@ AddOption(BOOLEAN, "RECOMMEND_LOCAL_MODE",
 AddOption(BOOLEAN, "RECURSIVE_SETS",
 	"true", _(
 	"Are packages/sets in included sets part of the parent set?"));
+#endif
+
+#if (DEFAULT_PART == 2)
 
 AddOption(BOOLEAN, "UPGRADE_TO_HIGHEST_SLOT",
 	"true", _(
@@ -1240,7 +1251,7 @@ AddOption(STRING, "COLOR_NORMAL_END",
 	"It defines the color used for printing end of normal texts."));
 
 AddOption(STRING, "COLOR_MASKREASONS",
-	"%{COLOR_MASKED}", _(
+	"red;%{BG0}|177;%{BG1}|red;%{BG2}|201;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color of the mask reasons output."));
 
@@ -2177,7 +2188,7 @@ AddOption(STRING, "FORMAT_MASKREASONS_NORMAL",
 	"%{?PRINT_MASKREASONS}"
 		"%{?MASKREASONS_NORMAL}"
 			"{havemaskreasons}"
-				" "
+				"%{?WIDETERM} %{else}%{FORMAT_NEWLINE}%{}"
 				"(%{COLOR_MASKREASONS})<maskreasons>(%{COLOR_RESET})"
 			"{}"
 		"%{}"
@@ -2260,8 +2271,9 @@ AddOption(STRING, "FORMAT_MASKREASONS_VERBOSE",
 		"%{?MASKREASONS_VERBOSE}"
 			"%{!PRINT_ALWAYS}{havemaskreasons}%{}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})Mask:(%{COLOR_RESET}) "
+				"(%{COLOR_AVAILABLE_TITLE})Mask:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{havemaskreasons}%{}"
+				"%{?WIDETERM} %{else}%{FORMAT_NEWLINE}%{}"
 				"(%{COLOR_MASKREASONS})<maskreasons*>(%{COLOR_RESET})"
 			"{}"
 		"%{}"
@@ -2968,15 +2980,28 @@ AddOption(STRING, "XML_DATE",
 	"strftime() format for printing the installation date with --xml."));
 
 AddOption(STRING, "FORMAT_MASKREASONS_LINESKIP",
-	" ", _(
+	"%{?WIDETERM}"
+		" "
+	"%{else}"
+		"%{FORMAT_NEWLINE}(%{COLOR_MASKREASONS})"
+	"%{}", _(
 	"This string is printed as line separator in <maskreasons>."));
 
 AddOption(STRING, "FORMAT_MASKREASONS_SEP",
-	" - ", _(
+	"%{?WIDETERM}"
+		" - "
+	"%{else}"
+		"%{FORMAT_NEWLINE}%{FORMAT_NEWLINE}(%{COLOR_MASKREASONS})"
+	"%{}", _(
 	"This string is printed as separator for different <maskreasons>."));
 
 AddOption(STRING, "FORMAT_MASKREASONSS_LINESKIP",
-	"%{FORMAT_VER_LINESKIP}      (%{COLOR_MASKREASONS})", _(
+	"%{?WIDETERM}"
+		"%{FORMAT_VER_LINESKIP}      "
+	"%{else}"
+		"%{FORMAT_NEWLINE}"
+	"%{}"
+	"(%{COLOR_MASKREASONS})", _(
 	"This string is printed as line separator in <maskreasons*>."));
 
 AddOption(STRING, "FORMAT_MASKREASONSS_SEP",

@@ -41,4 +41,7 @@ time_t get_mtime(const char *file) ATTRIBUTE_NONNULL_;
 /** @return mydate formatted according to locales and dateFormat */
 const char *date_conv(const char *dateFormat, time_t mydate) ATTRIBUTE_NONNULL_;
 
+/** @return true in case of success */
+bool get_geometry(unsigned int *width, unsigned int *columns) ATTRIBUTE_NONNULL_;
+
 #endif  // SRC_EIXTK_SYSUTILS_H_

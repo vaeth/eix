@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-03 00:30:00 +0200 (Mon, 03 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-03 01:00:00 +0200 (Mon, 03 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1871,6 +1871,20 @@ kann benutzt werden, um verzögerte Ersetzungen zu (ansonsten unbenutzten) Varia
 zu sammeln, so dass diese mit --dump oder --dump-defaults ausgegeben werden.
 
 .TP
+.BR WIDETERM " " (true / false / auto / leer)
+Diese Variable wird nur zur verzögerten Ersetzung benutzt.
+Sie legt fest, ob ein breites Terminal (breiter als 80 Spalten) vorliegt.
+Falls B<WIDETERM> leer oder B<auto> ist, wird B<COLUMNS> benutzt, um den Wert
+zur verzögerten Ersetzung festzulegen.
+
+.TP
+.B COLUMNS " " (integer / auto / leer)
+Dies legt die Terminalbreite fest, wenn B<WIDETERM> leer ist.
+Wenn B<COLUMNS> leer oder B<auto> ist, wird eine Heuristik für B<WIDETERM> benutzt.
+Wenn die Heuristik fehlschlägt ist der eingesetzte Wert von B<WIDETERM> leer
+(was sich bzgl. verzögerter Ersetzung wie B<false> verhält).
+
+.TP
 .BR EIX_SYNC_OPTS ", " EIX_SYNC_CONF " " (string)
 Der Inhalt von B<EIX_SYNC_CONF> wird an die Datei I<@SYSCONFDIR/eix-sync.conf> angehängt.
 Weitere Details finden sich in der Beschreibung jener Datei.
@@ -3429,13 +3443,12 @@ Um die Hintergrundfarbe bei jedem Zeilenende zurückzusetzen können Sie B<RESET
 .LP
 eix beherrscht keine Abhängigkeiten und/oder USE-Flags und wird das
 vermutlich auch niemals tun.
-Insbesondere heißt dies, dass die Ausgabe von eix -u i.a. anderes liefert
+Insbesondere heißt dies, dass die Ausgabe von eix -u i.a. etwas anderes liefert
 als ein emerge update-Kommando - das Letztere ist zuverlässiger.
 Dies gilt insbesondere auch für das Upgraden von Paketen mit Slots.
 Die Variable B<UPGRADE_TO_HIGHEST_SLOT> und händische Ausnahmen
-in B</etc/portage/package.slot_upgrade_forbid> bzw.
-B</etc/portage/package.slot_upgrade_allow> können benutzt werden,
-um diesen Nachteil von eix abzufedern.
+in B</etc/portage/package.slot_upgrade_forbid> bzw. B</etc/portage/package.slot_upgrade_allow>
+können benutzt werden, um diesen Nachteil von eix abzufedern.
 
 eix beherrscht nicht alle Sets, die Portage unterstützt, und wird das vermutlich auch niemals tun.
 Derzeit scheint es, dass sogar der vorgeschlagene Weg, Sets in den Portagebaum

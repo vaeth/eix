@@ -297,10 +297,9 @@ PrintFormat::setupResources(EixRc *rc)
 	maskreasonss_sep  = (*rc)["FORMAT_MASKREASONSS_SEP"];
 
 	const char *term((*rc)["TERM"].c_str());
-	char schemenum('0');
-	for(char i('1'); likely(i != '4'); ++i) {
-		if(RegexList((*rc)[string("TERM_ALT") + i]).match(term)) {
-			schemenum = i;
+	char schemenum('3');
+	for(; likely(schemenum != '0'); --schemenum) {
+		if(RegexList((*rc)[string("TERM_ALT") + schemenum]).match(term)) {
 			break;
 		}
 	}

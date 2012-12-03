@@ -14,6 +14,25 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#ifdef HAVE_TERMIOS_H
+#include <termios.h>
+#endif
+#ifdef HAVE_SYS_IOCTL_H
+#include <sys/ioctl.h>
+#endif
+#ifdef HAVE_SYS_STREAM_H
+#include <sys/stream.h>
+#endif
+#ifdef HAVE_SYS_PTEM_H
+#include <sys/ptem.h>
+#endif
+#ifdef HAVE_SYS_TTY_H
+#include <sys/tty.h>
+#endif
+#ifdef HAVE_SYS_PTY_H
+#include <sys/pty.h>
+#endif
+
 #include <clocale>
 #include <ctime>
 
@@ -22,6 +41,7 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/sysutils.h"
+#include "eixTk/unused.h"
 
 using std::string;
 
@@ -110,3 +130,27 @@ date_conv(const char *dateFormat, time_t mydate)
 	setlocale(LC_ALL, old_lcall.c_str());
 	return buffer;
 }
+
+/** @return true in case of success */
+#ifdef TIOCGWINSZ
+bool
+get_geometry(unsigned int *lines, unsigned int *columns)
+{
+	struct winsize win;
+	if(ioctl(1, TIOCGWINSZ, &win) == 0) {
+		if((win.ws_row >= 0) && (win.ws_col >= 0)) {
+			*lines = win.ws_row;
+			*columns = win.ws_col;
+		}
+		return true;
+	}
+	return false;
+}
+#else
+bool
+get_geometry(unsigned int *lines ATTRIBUTE_UNUSED, unsigned int *columns ATTRIBUTE_UNUSED)
+{
+	UNUSED(lines); UNUSED(columns);
+	return false;
+}
+#endif

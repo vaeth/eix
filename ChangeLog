@@ -33,6 +33,7 @@
 	  breaking with changed background colors, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=445392
 	- Fix color output of overlay list if no colors are used.
+	- Add WIDETERM, COLUMNS, and a heuristic for the defaults.
 	- Support =foo/bar-* version atoms as reported by bugmenot2:
 	  http://developer.berlios.de/bugs/?func=detailbug&bug_id=18788&
 	  group_id=11597

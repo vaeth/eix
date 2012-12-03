@@ -211,14 +211,32 @@
 /* Define to 1 if you have the `strtoul' function. */
 #undef HAVE_STRTOUL
 
+/* Define to 1 if you have the <sys/ioctl.h> header file. */
+#undef HAVE_SYS_IOCTL_H
+
 /* Define to 1 if you have the <sys/param.h> header file. */
 #undef HAVE_SYS_PARAM_H
+
+/* Define to 1 if you have the <sys/ptem.h> header file. */
+#undef HAVE_SYS_PTEM_H
+
+/* Define to 1 if you have the <sys/pty.h> header file. */
+#undef HAVE_SYS_PTY_H
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
 
+/* Define to 1 if you have the <sys/stream.h> header file. */
+#undef HAVE_SYS_STREAM_H
+
+/* Define to 1 if you have the <sys/tty.h> header file. */
+#undef HAVE_SYS_TTY_H
+
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <termios.h> header file. */
+#undef HAVE_TERMIOS_H
 
 /* Define to 1 if you have the <tr1/cstdint> header file. */
 #undef HAVE_TR1_CSTDINT

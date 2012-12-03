@@ -590,6 +590,12 @@ AC_CHECK_FUNCS([strtoul strtol atoi],
 
 # Optional header files:
 AC_CHECK_HEADERS([sys/param.h \
+	termios.h \
+	sys/ioctl.h \
+	sys/stream.h \
+	sys/ptem.h \
+	sys/tty.h \
+	sys/pty.h \
 	grp.h \
 	interix/security.h \
 	])

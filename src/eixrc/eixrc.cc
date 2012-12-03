@@ -25,6 +25,7 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringutils.h"
+#include "eixTk/sysutils.h"
 #include "eixTk/varsreader.h"
 #include "eixrc/eixrc.h"
 
@@ -463,6 +464,22 @@ EixRc::read_undelayed(set<string> *has_delayed)
 
 	// override with ENV
 	override_by_env(&filevarmap);
+
+	// set WIDETERM
+	string &wide(filevarmap["WIDETERM"]);
+	if(wide.empty() || (wide == "auto")) {
+		string &c(filevarmap["COLUMNS"]);
+		if(c.empty() || (c == "auto")) {
+			unsigned int lines, columns;
+			if(get_geometry(&lines, &columns)) {
+				wide = ((columns > 80) ? "true" : "false");
+			} else {
+				wide.clear();
+			}
+		} else {
+			wide = ((my_atoi(c.c_str()) > 80) ? "true" : "false");
+		}
+	}
 
 	// Set new values as default and for printing with --dump.
 	set<string> original_defaults;
