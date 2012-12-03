@@ -159,7 +159,7 @@ public:
 	}
 
 	/* return true if something was added */
-	bool add_file(const char *file, Mask::Type mask_type, bool recursive) ATTRIBUTE_NONNULL_;
+	bool add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines = false) ATTRIBUTE_NONNULL_;
 
 	/** This can be optionally called after the last add():
 	 *  It will release memory. */
@@ -310,17 +310,17 @@ public:
 	{ handle_file(lines, filename, reponame, only_add); }
 
 	/// return true if something was changed
-	bool handle_file(const std::vector<std::string> &lines, const std::string &filename, const char *reponame, bool only_add)
-	{ return handle_lines(lines, push_name(filename, reponame), only_add, NULLPTR); }
+	bool handle_file(const std::vector<std::string> &lines, const std::string &filename, const char *reponame, bool only_add, bool keep_commentlines = false)
+	{ return handle_lines(lines, push_name(filename, reponame), only_add, NULLPTR, keep_commentlines); }
 
 	/// return true if something was changed
-	bool handle_lines(const std::vector<std::string> &lines, FilenameIndex file, bool only_add, LineNumber *num);
+	bool handle_lines(const std::vector<std::string> &lines, FilenameIndex file, bool only_add, LineNumber *num, bool keep_commentlines);
 
 	/// return true if something was changed
-	bool handle_line(const std::string &line, FilenameIndex file, LineNumber number, bool only_add);
+	bool handle_line(const std::string &line, FilenameIndex file, LineNumber number, bool only_add, bool keep_commentlines);
 
 	/// return true if something was changed
-	bool add_line(const std::string &line, FilenameIndex file, LineNumber number);
+	bool add_line(const std::string &line, FilenameIndex file, LineNumber number, bool keep_commentlines);
 
 	/// return true if something was changed
 	bool remove_line(const std::string &line);
@@ -333,7 +333,7 @@ public:
 
 	void finalize();
 
-	void initialize(MaskList<Mask> *l, Mask::Type t) ATTRIBUTE_NONNULL_;
+	void initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines = false) ATTRIBUTE_NONNULL_;
 
 	void initialize(MaskList<KeywordMask> *l, std::string raised_arch) ATTRIBUTE_NONNULL_;
 

@@ -16,6 +16,7 @@
 #include "eixTk/exceptions.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringlist.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/utils.h"
 #include "portage/basicversion.h"
@@ -32,15 +33,32 @@ using std::vector;
 
 template <>
 bool
-MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive)
+MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines)
 {
 	vector<string> lines;
-	if(!pushback_lines(file, &lines, false, recursive))
+	if(!pushback_lines(file, &lines, false, recursive, (keep_commentlines ? -1 : 0))) {
 		return false;
+	}
 	bool added(false);
+	StringList *comments(NULLPTR);
 	for(vector<string>::iterator it(lines.begin()); likely(it != lines.end()); ++it) {
 		if(it->empty()) {
+			if(keep_commentlines) {
+				delete comments;
+				comments = NULLPTR;
+			}
 			continue;
+		}
+		if(keep_commentlines) {
+			if((*it)[0] == '#') {
+				string line(it->substr(1));
+				trim(&line);
+				if(comments == NULLPTR) {
+					comments = new StringList;
+				}
+				comments->push_back(line);
+				continue;
+			}
 		}
 		Mask m(mask_type);
 		string errtext;
@@ -49,9 +67,18 @@ MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive)
 			portage_parse_error(file, lines.begin(), it, errtext);
 		}
 		if(likely(r != BasicVersion::parsedError)) {
+			if(keep_commentlines && (comments != NULLPTR)) {
+				comments->finalize();
+				if(!(comments->empty())) {
+					m.comments = *comments;
+				}
+			}
 			add(m);
 			added = true;
 		}
+	}
+	if(keep_commentlines) {
+		delete comments;
 	}
 	return added;
 }
@@ -141,13 +168,13 @@ PreListFilename::repo() const
 }
 
 bool
-PreList::handle_lines(const vector<string> &lines, FilenameIndex file, const bool only_add, LineNumber *num)
+PreList::handle_lines(const vector<string> &lines, FilenameIndex file, const bool only_add, LineNumber *num, bool keep_commentlines)
 {
 	bool changed(false);
 	LineNumber number((num == NULLPTR) ? 1 : (*num));
 	for(vector<string>::const_iterator it(lines.begin());
 		likely(it != lines.end()); ++it) {
-		if(handle_line(*it, file, number++, only_add)) {
+		if(handle_line(*it, file, number++, only_add, keep_commentlines)) {
 			changed = true;
 		}
 	}
@@ -158,21 +185,50 @@ PreList::handle_lines(const vector<string> &lines, FilenameIndex file, const boo
 }
 
 bool
-PreList::handle_line(const std::string &line, FilenameIndex file, LineNumber number, bool only_add)
+PreList::handle_line(const std::string &line, FilenameIndex file, LineNumber number, bool only_add, bool keep_commentlines)
 {
 	if(line.empty()) {
+		if(keep_commentlines) {
+			return add_line(line, file, number, keep_commentlines);
+		}
 		return false;
 	}
 	if(only_add || (line[0] != '-')) {
-		return add_line(line, file, number);
+		return add_line(line, file, number, keep_commentlines);
 	}
 	return remove_line(line.c_str() + 1);
 }
 
 bool
-PreList::add_line(const std::string &line, FilenameIndex file, LineNumber number)
+PreList::add_line(const std::string &line, FilenameIndex file, LineNumber number, bool keep_commentlines)
 {
+	static string *unique = NULLPTR;
 	vector<string> l;
+	if(keep_commentlines) {
+		if(line.empty() || (line[0] == '#')) {
+			if(unique == NULLPTR) {
+				unique = new string("#a");
+			} else {
+				for(string::size_type i(unique->length() - 1);;) {
+					char a((*unique)[i]);
+					if(a != 'z') {
+						(*unique)[i] = ++a;
+						break;
+					} else {
+						(*unique)[i] = 'a';
+						if(--i == 0) {
+							unique->insert(1, 1, 'a');
+							break;
+						}
+					}
+				}
+			}
+			l.push_back(*unique);
+			l.push_back(line);
+			add_splitted(l, file, number);
+			return false;
+		}
+	}
 	split_string(&l, line);
 	return add_splitted(l, file, number);
 }
@@ -242,6 +298,9 @@ PreList::finalize()
 		if(unlikely(it->removed)) {
 			continue;
 		}
+		if(it->empty()) {
+			continue;
+		}
 		PreListOrderEntry::const_iterator curr(it->begin());
 		PreListEntry *e;
 		map<string, PreListEntry>::iterator r(result.find(*curr));
@@ -272,10 +331,32 @@ PreList::finalize()
 }
 
 void
-PreList::initialize(MaskList<Mask> *l, Mask::Type t)
+PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines)
 {
 	finalize();
+	StringList *comments(NULLPTR);
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
+		if(it->name.empty()) {
+			continue;
+		}
+		if(it->name[0] == '#') {
+			if(!keep_commentlines) {
+				continue;
+			}
+			const string &comment(it->args[0]);
+			if(comment.empty()) {
+				delete comments;
+				comments = NULLPTR;
+				continue;
+			}
+			string line(comment.substr(1));
+			trim(&line);
+			if(comments == NULLPTR) {
+				comments = new StringList;
+			}
+			comments->push_back(line);
+			continue;
+		}
 		Mask m(t, repo(it->filename_index));
 		string errtext;
 		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(), &errtext));
@@ -284,8 +365,17 @@ PreList::initialize(MaskList<Mask> *l, Mask::Type t)
 				it->linenumber, it->name + " ...", errtext);
 		}
 		if(likely(r != BasicVersion::parsedError)) {
+			if(keep_commentlines && (comments != NULLPTR)) {
+				comments->finalize();
+				if(!(comments->empty())) {
+					m.comments = *comments;
+				}
+			}
 			l->add(m);
 		}
+	}
+	if(keep_commentlines) {
+		delete comments;
 	}
 	l->finalize();
 	clear();

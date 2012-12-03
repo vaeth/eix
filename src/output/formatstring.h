@@ -370,6 +370,10 @@ class PrintFormat {
 		std::string VER_WASMINUSKEYWORD(Package *package) const ATTRIBUTE_NONNULL_;
 		std::string VER_WASMINUSUNSTABLE(Package *package) const ATTRIBUTE_NONNULL_;
 		std::string VER_WASMINUSASTERISK(Package *package) const ATTRIBUTE_NONNULL_;
+		std::string VER_HAVEMASKREASONS(Package *package) const ATTRIBUTE_NONNULL_;
+		std::string ver_maskreasons(const std::string &skip, const std::string &sep) const;
+		std::string VER_MASKREASONS(Package *package) const ATTRIBUTE_NONNULL_;
+		std::string VER_MASKREASONSS(Package *package) const ATTRIBUTE_NONNULL_;
 
 	public:
 		bool	no_color,            /**< Shall we use colors? */
@@ -389,7 +393,9 @@ class PrintFormat {
 			before_iuse_start, before_iuse_end, after_iuse,
 			before_coll_start, before_coll_end, after_coll,
 			before_set_use, after_set_use,
-			before_unset_use, after_unset_use;
+			before_unset_use, after_unset_use,
+			maskreasons_skip,  maskreasons_sep,
+			maskreasonss_skip, maskreasonss_sep;
 
 		explicit PrintFormat(GetProperty get_callback = NULLPTR);
 

@@ -52,6 +52,8 @@ eixTk/varsreader.cc \
 eixTk/varsreader.h
 
 masklist_src = \
+eixTk/stringlist.cc \
+eixTk/stringlist.h \
 portage/mask.cc \
 portage/mask.h \
 portage/mask_list.cc \

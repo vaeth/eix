@@ -179,11 +179,9 @@ CascadingProfile::readremoveFiles()
 			continue;
 		}
 
-		vector<string> lines;
-		pushback_lines(file->c_str(), &lines, false, true, true);
 		OverlayIdent &overlay(m_portagesettings->repos[file->reponum]);
 		overlay.readLabel();
-		if((this->*handler)(lines, file->name(),
+		if((this->*handler)(file->name(),
 			overlay.label.empty() ? NULLPTR : overlay.label.c_str())) {
 			ret = true;
 		}
@@ -193,8 +191,10 @@ CascadingProfile::readremoveFiles()
 }
 
 bool
-CascadingProfile::readPackages(const vector<string> &lines, const string &filename, const char *repo)
+CascadingProfile::readPackages(const string &filename, const char *repo)
 {
+	vector<string> lines;
+	pushback_lines(filename.c_str(), &lines, false, true);
 	bool ret(false);
 	PreList::FilenameIndex file_system(p_system.push_name(filename, repo));
 	PreList::FilenameIndex file_system_allowed(p_system_allowed.push_name(filename, repo));
@@ -215,38 +215,46 @@ CascadingProfile::readPackages(const vector<string> &lines, const string &filena
 			if(unlikely(remove)) {
 				ret |= p_system.remove_line(p);
 			} else {
-				ret |= p_system.add_line(p, file_system, number);
+				ret |= p_system.add_line(p, file_system, number, false);
 			}
 		} else if(unlikely(remove)) {
 			ret |= p_system_allowed.remove_line(p);
 		} else {
-			ret |= p_system_allowed.add_line(p, file_system_allowed, number);
+			ret |= p_system_allowed.add_line(p, file_system_allowed, number, false);
 		}
 	}
 	return ret;
 }
 
 bool
-CascadingProfile::readPackageMasks(const vector<string> &lines, const string &filename, const char *repo)
+CascadingProfile::readPackageMasks(const string &filename, const char *repo)
 {
-	return p_package_masks.handle_file(lines, filename, repo, false);
+	vector<string> lines;
+	pushback_lines(filename.c_str(), &lines, false, true, -1);
+	return p_package_masks.handle_file(lines, filename, repo, false, true);
 }
 
 bool
-CascadingProfile::readPackageUnmasks(const vector<string> &lines, const string &filename, const char *repo)
+CascadingProfile::readPackageUnmasks(const string &filename, const char *repo)
 {
+	vector<string> lines;
+	pushback_lines(filename.c_str(), &lines, false, true);
 	return p_package_unmasks.handle_file(lines, filename, repo, false);
 }
 
 bool
-CascadingProfile::readPackageKeywords(const vector<string> &lines, const string &filename, const char *repo)
+CascadingProfile::readPackageKeywords(const string &filename, const char *repo)
 {
+	vector<string> lines;
+	pushback_lines(filename.c_str(), &lines, false, true);
 	return p_package_keywords.handle_file(lines, filename, repo, false);
 }
 
 bool
-CascadingProfile::readPackageAcceptKeywords(const vector<string> &lines, const string &filename, const char *repo)
+CascadingProfile::readPackageAcceptKeywords(const string &filename, const char *repo)
 {
+	vector<string> lines;
+	pushback_lines(filename.c_str(), &lines, false, true);
 	return p_package_accept_keywords.handle_file(lines, filename, repo, true);
 }
 
@@ -273,7 +281,7 @@ CascadingProfile::finalize()
 	finalized = true;
 	p_system.initialize(&m_system, Mask::maskInSystem);
 	p_system_allowed.initialize(&m_system_allowed, Mask::maskAllowedByProfile);
-	p_package_masks.initialize(&m_package_masks, Mask::maskMask);
+	p_package_masks.initialize(&m_package_masks, Mask::maskMask, true);
 	p_package_unmasks.initialize(&m_package_unmasks, Mask::maskUnmask);
 	p_package_keywords.initialize(&m_package_keywords);
 	p_package_accept_keywords.initialize(&m_package_accept_keywords, m_portagesettings->m_raised_arch);

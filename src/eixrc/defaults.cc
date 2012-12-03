@@ -563,6 +563,21 @@ AddOption(BOOLEAN, "VERSION_KEYWORDS_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
 	"If true, eix --versionlines --verbose outputs KEYWORDS."));
 
+AddOption(BOOLEAN, "PRINT_MASKREASONS",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"If false, mask reasons are never output."));
+
+AddOption(BOOLEAN, "MASKREASONS_NORMAL",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, eix --versionlines (nonverbose) outputs mask reasons."));
+
+AddOption(BOOLEAN, "MASKREASONS_VERBOSE",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, eix --versionlines --verbose outputs mask reasons."));
+
 AddOption(BOOLEAN, "VERSION_DEPS_NORMAL",
 	"false", _(
 	"This variable is only used for delayed substitution.\n"
@@ -1223,6 +1238,11 @@ AddOption(STRING, "COLOR_NORMAL_END",
 	"none|;%{BG1}|none|;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing end of normal texts."));
+
+AddOption(STRING, "COLOR_MASKREASONS",
+	"%{COLOR_MASKED}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color of the mask reasons output."));
 
 AddOption(STRING, "COLOR_SET_USE",
 	"red,1;%{BG0}|125,1;%{BG1}|red,1;%{BG2}|125,1;%{BG3}", _(
@@ -2153,6 +2173,18 @@ AddOption(STRING, "FORMAT_DEPS_NORMAL",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the verbose format for DEPs for an available version."));
 
+AddOption(STRING, "FORMAT_MASKREASONS_NORMAL",
+	"%{?PRINT_MASKREASONS}"
+		"%{?MASKREASONS_NORMAL}"
+			"{havemaskreasons}"
+				" "
+				"(%{COLOR_MASKREASONS})<maskreasons>(%{COLOR_RESET})"
+			"{}"
+		"%{}"
+	"%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the normal format for mask reasons for an available version."));
+
 AddOption(STRING, "FORMAT_VERSION_KEYWORDS_VERBOSE",
 	"%{?PRINT_KEYWORDS}"
 		"%{?VERSION_KEYWORDS_VERBOSE}"
@@ -2223,17 +2255,33 @@ AddOption(STRING, "FORMAT_DEPS_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the verbose format for DEPs for an available version."));
 
+AddOption(STRING, "FORMAT_MASKREASONS_VERBOSE",
+	"%{?PRINT_MASKREASONS}"
+		"%{?MASKREASONS_VERBOSE}"
+			"%{!PRINT_ALWAYS}{havemaskreasons}%{}"
+				"%{FORMAT_VER_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})Mask:(%{COLOR_RESET}) "
+				"%{?PRINT_ALWAYS}{havemaskreasons}%{}"
+				"(%{COLOR_MASKREASONS})<maskreasons*>(%{COLOR_RESET})"
+			"{}"
+		"%{}"
+	"%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the verbose format for mask reasons for an available version."));
+
 AddOption(STRING, "FORMAT_VERSION_APPENDIX_NORMAL",
 	"%{FORMAT_VERSION_KEYWORDS_NORMAL}"
 	"%{FORMAT_IUSE_NORMAL}"
-	"%{FORMAT_DEPS_NORMAL}", _(
+	"%{FORMAT_DEPS_NORMAL}"
+	"%{FORMAT_MASKREASONS_NORMAL}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines normal data appended to available versions with --versionlines"));
 
 AddOption(STRING, "FORMAT_VERSION_APPENDIX_VERBOSE",
 	"%{FORMAT_VERSION_KEYWORDS_VERBOSE}"
 	"%{FORMAT_IUSE_VERBOSE}"
-	"%{FORMAT_DEPS_VERBOSE}", _(
+	"%{FORMAT_DEPS_VERBOSE}"
+	"%{FORMAT_MASKREASONS_VERBOSE}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines verbose data appended to available versions with --versionlines"));
 
@@ -2918,6 +2966,22 @@ AddOption(STRING, "XML_OVERLAY",
 AddOption(STRING, "XML_DATE",
 	"%s", _(
 	"strftime() format for printing the installation date with --xml."));
+
+AddOption(STRING, "FORMAT_MASKREASONS_LINESKIP",
+	" ", _(
+	"This string is printed as line separator in <maskreasons>."));
+
+AddOption(STRING, "FORMAT_MASKREASONS_SEP",
+	" - ", _(
+	"This string is printed as separator for different <maskreasons>."));
+
+AddOption(STRING, "FORMAT_MASKREASONSS_LINESKIP",
+	"%{FORMAT_VER_LINESKIP}      (%{COLOR_MASKREASONS})", _(
+	"This string is printed as line separator in <maskreasons*>."));
+
+AddOption(STRING, "FORMAT_MASKREASONSS_SEP",
+	"%{FORMAT_NEWLINE}%{FORMAT_MASKREASONSS_LINESKIP}", _(
+	"This string is printed as separator for different <maskreasons*>."));
 
 AddOption(STRING, "FORMAT_BEFORE_SET_USE",
 	"(%{COLOR_SET_USE})", _(

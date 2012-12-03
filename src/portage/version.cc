@@ -15,6 +15,7 @@
 
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringlist.h"
 #include "eixTk/stringutils.h"
 #include "portage/version.h"
 
@@ -196,4 +197,34 @@ Version::add_accepted_keywords(const std::string &accepted_keywords)
 		m_accepted_keywords.append(" ");
 	}
 	m_accepted_keywords.append(accepted_keywords);
+}
+
+void
+Version::add_reason(const StringList& reason)
+{
+	if(reason.empty()) {
+		return;
+	}
+	if(reasons.find(reason) != reasons.end()) {
+		return;
+	}
+	reasons.insert(reason);
+}
+
+void
+Version::reasons_string(string *s, const string &skip, const string &sep) const
+{
+	bool psep(false);
+	s->clear();
+	for(set<StringList>::const_iterator it(reasons.begin());
+		it != reasons.end(); ++it) {
+		if(psep) {
+			s->append(sep);
+		} else {
+			psep = true;
+		}
+		string r;
+		it->append_to_string(&r, skip);
+		s->append(r);
+	}
 }

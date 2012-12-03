@@ -19,6 +19,7 @@
 
 #include "database/io.h"
 #include "eixTk/eixint.h"
+#include "eixTk/stringlist.h"
 #include "portage/basicversion.h"
 #include "portage/extendedversion.h"
 #include "portage/keywords.h"
@@ -241,7 +242,15 @@ class Version : public ExtendedVersion, public Keywords {
 		void set_keyflags(const std::set<std::string> &accepted_keywords)
 		{ keyflags.set_keyflags(get_keyflags(accepted_keywords)); }
 
+		void add_reason(const StringList &reason);
+
+		void reasons_string(std::string *s, const std::string &skip, const std::string &sep) const ATTRIBUTE_NONNULL_;
+
+		bool have_reasons() const ATTRIBUTE_NONNULL_
+		{ return !reasons.empty(); }
+
 	protected:
+		std::set<StringList> reasons;
 		std::string full_keywords, effective_keywords;
 		EffectiveState effective_state;
 };

@@ -435,6 +435,7 @@ Mask::apply(Version *ve, bool do_test, Keywords::Redundant check) const
 				if(check & Keywords::RED_MASK)
 					ve->set_was_masked();
 			}
+			ve->add_reason(comments);
 			break;
 		case maskInSystem:
 			if(ve->maskflags.isSystem() && ve->maskflags.isProfileMask())	/* Won't change anything cause already masked by profile */

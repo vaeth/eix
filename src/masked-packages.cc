@@ -167,7 +167,7 @@ read_args(MaskList<Mask> *mask_list, vector<string> &args, const ArgumentReader 
 					need_argindex = false;
 					argindex =  pre_list.push_name("(arg)", NULLPTR);
 				}
-				pre_list.handle_line(opt_arg(&arg, ar), argindex, ++linenr, false);
+				pre_list.handle_line(opt_arg(&arg, ar), argindex, ++linenr, false, false);
 				break;
 			case 'F':
 				add_words(&args, opt_arg(&arg, ar));

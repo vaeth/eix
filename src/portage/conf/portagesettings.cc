@@ -673,7 +673,7 @@ PortageUserConfig::~PortageUserConfig()
 bool
 PortageUserConfig::readMasks()
 {
-	bool added(m_localmasks.add_file(((m_settings->m_eprefixconf) + USER_MASK_FILE).c_str(), Mask::maskMask, true));
+	bool added(m_localmasks.add_file(((m_settings->m_eprefixconf) + USER_MASK_FILE).c_str(), Mask::maskMask, true, true));
 	if(m_localmasks.add_file(((m_settings->m_eprefixconf) + USER_UNMASK_FILE).c_str(), Mask::maskUnmask, true)) {
 		added = true;
 	}

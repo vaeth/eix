@@ -291,6 +291,10 @@ PrintFormat::setupResources(EixRc *rc)
 	after_set_use     = (*rc)["FORMAT_AFTER_SET_USE"];
 	before_unset_use  = (*rc)["FORMAT_BEFORE_UNSET_USE"];
 	after_unset_use   = (*rc)["FORMAT_AFTER_UNSET_USE"];
+	maskreasons_skip  = (*rc)["FORMAT_MASKREASONS_LINESKIP"];
+	maskreasons_sep   = (*rc)["FORMAT_MASKREASONS_SEP"];
+	maskreasonss_skip = (*rc)["FORMAT_MASKREASONSS_LINESKIP"];
+	maskreasonss_sep  = (*rc)["FORMAT_MASKREASONSS_SEP"];
 
 	const char *term((*rc)["TERM"].c_str());
 	char schemenum('0');
@@ -368,6 +372,10 @@ PrintFormat::setupColors()
 	parse_color(&after_set_use, use_color);
 	parse_color(&before_unset_use, use_color);
 	parse_color(&after_unset_use, use_color);
+	parse_color(&maskreasons_skip, use_color);
+	parse_color(&maskreasons_sep, use_color);
+	parse_color(&maskreasonss_skip, use_color);
+	parse_color(&maskreasonss_sep, use_color);
 }
 
 bool

@@ -14,6 +14,7 @@
 
 #include "eixTk/null.h"
 #include "eixTk/ptr_list.h"
+#include "eixTk/stringlist.h"
 #include "portage/basicversion.h"
 #include "portage/keywords.h"
 #include "portage/packagesets.h"
@@ -54,6 +55,8 @@ class Mask : public BasicVersion {
 			maskOpRevisions, maskOpGlob, maskOpGlobExt,
 			maskIsSet
 		} Operator;
+
+		StringList comments;
 
 	protected:
 		Operator m_operator; /**< Operator for mask. */

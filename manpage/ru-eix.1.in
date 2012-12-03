@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-01 22:00:00 +0200 (Sun, 01 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-03 00:30:00 +0200 (Mon, 03 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -1285,6 +1285,12 @@ The latter might change in a future release of eix.
 This is like the above with the difference that only 1 is returned if the
 value of the corresponding string (resp. of at least one of these) is nonempty.
 .TP
+.BR havemaskreasons ", " maskreasons ", " maskreasons*
+This must occur only in I<VARIABLE> in the context of version printing.
+For available versions, B<maskreasons> outputs the mask reasons and B<havemaskreasons> whether there are some.
+Separators used are B<FORMAT_MASKREASONS_LINESKIP> and B<FORMAT_MASKREASONS_SEP>;
+for B<maskreasons*> separators used are <FORMAT_MASKREASONSS_LINESKIP> and B<FORMAT_MASKREASONSS_SEP>.
+.TP
 .BR haveuse ", " use ", " use*
 This must occur only in I<VARIABLE> in the context of version printing.
 For available versions, B<use> outputs the B<IUSE> variable.
@@ -2235,6 +2241,10 @@ are output with B<use*> for installed or available versions, respectively.
 .BR FORMAT_BEFORE_COLL_EXPAND_START ", " FORMAT_BEFORE_COLL_EXPAND_END ", " FORMAT_AFTER_COLL_EXPAND
 These strings are printed at the start/end or after B<USE_EXPAND> variables
 are output with B<colliuse*>.
+
+.TP
+.BR FORMAT_MASKREASONS_LINESKIP ", " FORMAT_MASKREASONS_SEP ", "  FORMAT_MASKREASONSS_LINESKIP ", " FORMAT_MASKREASONSS_SEP
+There string are used as separator for new lines resp. new reasons for <maskreasons> and <maskreasons*>, respectively.
 
 .TP
 .BR COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY ", " COLOR_KEYEND ", " COLOR_OVERLAYNAME ", " COLOR_OVERLAYNAMEEND ", " COLOR_NUMBERTEXT ", " COLOR_NUMBERTEXTEND

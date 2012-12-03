@@ -70,6 +70,8 @@ src/eixTk/ptr_list.h
 src/eixTk/regexp.h
 src/eixTk/statusline.cc
 src/eixTk/statusline.h
+src/eixTk/stringlist.cc
+src/eixTk/stringlist.h
 src/eixTk/stringutils.cc
 src/eixTk/stringutils.h
 src/eixTk/sysutils.cc

@@ -2,6 +2,9 @@
 
 *eix-0.27.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Support mask reason (by default output with --versionlines), see
+	  http://developer.berlios.de/feature/?func=detailfeature&
+	  feature_id=5605&group_id=11597
 	- If you have inconvenient colors (e.g. on dark or transparent terms),
 	  this is probably due to the new DARK heuristics (see below).
 	  Put DARK=true (or false) into /etc/eixrc to avoid it.
@@ -128,7 +131,7 @@
 	- Fix --without-sqlite compile regression, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=432238
 	- include config.h in all non-headers, and only there.
-	  This should fix https://bugs.gentoo.org/show_bug.cgi?id=432478
+	  This should fix http://bugs.gentoo.org/show_bug.cgi?id=432478
 
 *eix-0.26.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

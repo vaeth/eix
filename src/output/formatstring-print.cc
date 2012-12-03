@@ -533,6 +533,9 @@ class Scanner {
 			prop_ver("wasminuskeyword", &PrintFormat::VER_WASMINUSKEYWORD);
 			prop_ver("wasminusunstable", &PrintFormat::VER_WASMINUSUNSTABLE);
 			prop_ver("wasminusasterisK", &PrintFormat::VER_WASMINUSASTERISK);
+			prop_ver("havemaskreasons", &PrintFormat::VER_HAVEMASKREASONS);
+			prop_ver("maskreasons", &PrintFormat::VER_MASKREASONS);
+			prop_ver("maskreasons*", &PrintFormat::VER_MASKREASONSS);
 		}
 
 		Diff get_diff(const string& s) const ATTRIBUTE_PURE
@@ -1797,6 +1800,41 @@ PrintFormat::VER_WASMINUSASTERISK(Package *package) const
 {
 	KeywordsFlags keywordsflags;
 	return IS_TRUE(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMinusAsterisk());
+}
+
+string
+PrintFormat::VER_HAVEMASKREASONS(Package *package ATTRIBUTE_UNUSED) const
+{
+	UNUSED(package);
+	if(unlikely(version_variables->isinst)) {
+		return STRING_FALSE;
+	}
+	return IS_TRUE(version_variables->version()->have_reasons());
+}
+
+string
+PrintFormat::ver_maskreasons(const string &skip, const string &sep) const
+{
+	if(unlikely(version_variables->isinst)) {
+		return STRING_EMPTY;
+	}
+	string s;
+	version_variables->version()->reasons_string(&s, skip, sep);
+	return s;
+}
+
+string
+PrintFormat::VER_MASKREASONS(Package *package ATTRIBUTE_UNUSED) const
+{
+	UNUSED(package);
+	return ver_maskreasons(maskreasons_skip, maskreasons_sep);
+}
+
+string
+PrintFormat::VER_MASKREASONSS(Package *package ATTRIBUTE_UNUSED) const
+{
+	UNUSED(package);
+	return ver_maskreasons(maskreasonss_skip, maskreasonss_sep);
 }
 
 static Package *

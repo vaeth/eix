@@ -65,32 +65,32 @@ class CascadingProfile {
 		bool addProfile(const char *profile, std::set<std::string> *sourced_files = NULLPTR) ATTRIBUTE_NONNULL((2));
 
 		/** Handler functions follow for reading a file */
-		typedef bool (CascadingProfile::*Handler)(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
+		typedef bool (CascadingProfile::*Handler)(const std::string &filename, const char *repo);
 
 		/** Read all "packages" files found in profile.
 		 * Populate p_system and p_system_allowed.
 		 * @return true if data was changed */
-		bool readPackages(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
+		bool readPackages(const std::string &filename, const char *repo);
 
 		/** Read all "package.mask" files found in profile.
 		 * Populate p_package_masks.
 		 * @return true if data was changed */
-		bool readPackageMasks(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
+		bool readPackageMasks(const std::string &filename, const char *repo);
 
 		/** Read all "package.unmask" files found in profile.
 		 * Populate p_package_unmasks.
 		 * @return true if data was changed */
-		bool readPackageUnmasks(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
+		bool readPackageUnmasks(const std::string &filename, const char *repo);
 
 		/** Read all "package.keywords" files found in profile.
 		 * Populate p_package_keywords.
 		 * @return true if data was changed */
-		bool readPackageKeywords(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
+		bool readPackageKeywords(const std::string &filename, const char *repo);
 
 		/** Read all "package.accept_keywords" files found in profile.
 		 * Populate p_package_accept_keywords.
 		 * @return true if data was changed */
-		bool readPackageAcceptKeywords(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
+		bool readPackageAcceptKeywords(const std::string &filename, const char *repo);
 
 	public:
 		CascadingProfile(PortageSettings *portagesettings, bool init_world)  ATTRIBUTE_NONNULL_ :

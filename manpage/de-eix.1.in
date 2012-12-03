@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-01 22:00:00 +0200 (Sun, 01 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-03 00:30:00 +0200 (Mon, 03 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1313,6 +1313,12 @@ Letzteres kann sich möglicherweise in einer zukünftigen Version von eix änder
 Wie oben mit dem Unterschied, dass nur 1 ausgegeben wird, wenn der
 Wert des entsprechenden String bzw. mindestens eines davon nichtleer ist.
 .TP
+.BR havemaskreasons ", " maskreasons ", " maskreasons*
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Für verfügbare Versionen gibt B<maskreasons> die Gründe für Maskierungen aus, und B<havemaskreasons> ob es solche Gründe gibt.
+Als Trenner werden B<FORMAT_MASKREASONS_LINESKIP> und B<FORMAT_MASKREASONS_SEP> benutzt;
+bei B<maskreasons*> werden hingegen B<FORMAT_MASKREASONSS_LINESKIP> und B<FORMAT_MASKREASONSS_SEP> benutzt.
+.TP
 .BR haveuse ", " use ", " use*
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 Für verfügbare Versionen gibt B<use> die B<IUSE> Variable aus.
@@ -2271,6 +2277,10 @@ für installierte bzw. verfügbare Versionen ausgegeben.
 .TP
 .BR FORMAT_BEFORE_COLL_EXPAND_START ", " FORMAT_BEFORE_COLL_EXPAND_END ", " FORMAT_AFTER_COLL_EXPAND
 Diese String werden zu Beginn/Ende bzw. nach B<USE_EXPAND>-Variablen bei B<colliuse*> ausgegeben.
+
+.TP
+.BR FORMAT_MASKREASONS_LINESKIP ", " FORMAT_MASKREASONS_SEP ", "  FORMAT_MASKREASONSS_LINESKIP ", " FORMAT_MASKREASONSS_SEP
+Diese String werden als Trenner für neue Zeilen bzw. neue Gründe bei <maskreasons> bzw. <maskreasons*> ausgegeben.
 
 .TP
 .BR COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY ", " COLOR_KEYEND ", " COLOR_OVERLAYNAME ", " COLOR_OVERLAYNAMEEND ", " COLOR_NUMBERTEXT ", " COLOR_NUMBERTEXTEND
