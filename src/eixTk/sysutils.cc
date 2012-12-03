@@ -141,8 +141,8 @@ get_geometry(unsigned int *lines, unsigned int *columns)
 		if((win.ws_row >= 0) && (win.ws_col >= 0)) {
 			*lines = win.ws_row;
 			*columns = win.ws_col;
+			return true;
 		}
-		return true;
 	}
 	return false;
 }

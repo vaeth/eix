@@ -9,7 +9,7 @@
 #define SRC_EIXTK_STRINGLIST_H_
 
 #undef STRINGLIST_COUNTER
-// Setting STRINGLIST_COUNTER should save memory but crashes for some reason
+// Setting STRINGLIST_COUNTER might save memory but crashes for some reason
 // #define STRINGLIST_COUNTER 1
 
 #include <string>

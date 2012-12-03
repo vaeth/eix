@@ -2273,7 +2273,7 @@ AddOption(STRING, "FORMAT_MASKREASONS_VERBOSE",
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})Mask:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{havemaskreasons}%{}"
-				"%{?WIDETERM} %{else}%{FORMAT_NEWLINE}%{}"
+				"%{?WIDETERM}      %{else}%{FORMAT_NEWLINE}%{}"
 				"(%{COLOR_MASKREASONS})<maskreasons*>(%{COLOR_RESET})"
 			"{}"
 		"%{}"
@@ -2997,7 +2997,7 @@ AddOption(STRING, "FORMAT_MASKREASONS_SEP",
 
 AddOption(STRING, "FORMAT_MASKREASONSS_LINESKIP",
 	"%{?WIDETERM}"
-		"%{FORMAT_VER_LINESKIP}      "
+		"%{FORMAT_VER_LINESKIP}           "
 	"%{else}"
 		"%{FORMAT_NEWLINE}"
 	"%{}"

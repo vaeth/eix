@@ -26,15 +26,15 @@ StringListContent::finalize()
 	if(unlikely(m_list[0].empty()) || unlikely(m_list[m_list.size() - 1].empty())) {
 		vector<string> cp;
 		vector<string>::const_iterator it(m_list.begin());
-		for(; unlikely(it->empty()); ++it) {
-			if(unlikely(it == m_list.end())) {
+		while(unlikely(it->empty())) {
+			if(unlikely((++it) == m_list.end())) {
 				m_list.clear();
 				return;
 			}
 		}
 		for(; likely(it != m_list.end()); ++it) {
-			for(vector<string>::const_iterator r(it); unlikely(r->empty()); ++r) {
-				if(unlikely(r == m_list.end())) {
+			for(vector<string>::const_iterator r(it); unlikely(r->empty()); ) {
+				if(unlikely((++r) == m_list.end())) {
 					m_list = cp;
 					return;
 				}

@@ -39,11 +39,12 @@ MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive,
 	if(!pushback_lines(file, &lines, false, recursive, (keep_commentlines ? -1 : 0))) {
 		return false;
 	}
-	bool added(false);
+	bool added(false), finishcomment(false);
 	StringList *comments(NULLPTR);
 	for(vector<string>::iterator it(lines.begin()); likely(it != lines.end()); ++it) {
 		if(it->empty()) {
 			if(keep_commentlines) {
+				finishcomment = false;
 				delete comments;
 				comments = NULLPTR;
 			}
@@ -53,6 +54,11 @@ MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive,
 			if((*it)[0] == '#') {
 				string line(it->substr(1));
 				trim(&line);
+				if(finishcomment) {
+					finishcomment = false;
+					delete comments;
+					comments = NULLPTR;
+				}
 				if(comments == NULLPTR) {
 					comments = new StringList;
 				}
@@ -60,6 +66,7 @@ MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive,
 				continue;
 			}
 		}
+		finishcomment = true;
 		Mask m(mask_type);
 		string errtext;
 		BasicVersion::ParseResult r(m.parseMask(it->c_str(), &errtext));
@@ -335,6 +342,7 @@ PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines)
 {
 	finalize();
 	StringList *comments(NULLPTR);
+	bool finishcomment(false);
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		if(it->name.empty()) {
 			continue;
@@ -345,18 +353,25 @@ PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines)
 			}
 			const string &comment(it->args[0]);
 			if(comment.empty()) {
+				finishcomment = false;
 				delete comments;
 				comments = NULLPTR;
 				continue;
 			}
 			string line(comment.substr(1));
 			trim(&line);
+			if(finishcomment) {
+				finishcomment = false;
+				delete comments;
+				comments = NULLPTR;
+			}
 			if(comments == NULLPTR) {
 				comments = new StringList;
 			}
 			comments->push_back(line);
 			continue;
 		}
+		finishcomment = true;
 		Mask m(t, repo(it->filename_index));
 		string errtext;
 		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(), &errtext));
