@@ -60,13 +60,15 @@ StringListContent::append_to_string(string *s, const string &skip) const
 	}
 }
 
-#ifdef STRINGLIST_COUNTER
-StringList::StringList(const StringList &s)
+#ifdef STRINGLIST_FREE
+StringList&
+StringList::operator=(const StringList &s)
 {
 	ptr = s.ptr;
 	if(ptr != NULLPTR) {
 		++(ptr->usage);
 	}
+	return *this;
 }
 
 StringList::~StringList()
@@ -96,7 +98,7 @@ StringList::push_back(const std::string &s)
 {
 	if(ptr == NULLPTR) {
 		ptr = new StringListContent;
-#ifdef STRINGLIST_COUNTER
+#ifdef STRINGLIST_FREE
 		ptr->usage = 1;
 #endif
 	}

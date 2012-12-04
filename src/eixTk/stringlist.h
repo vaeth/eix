@@ -8,14 +8,14 @@
 #ifndef SRC_EIXTK_STRINGLIST_H_
 #define SRC_EIXTK_STRINGLIST_H_
 
-#undef STRINGLIST_COUNTER
-// Setting STRINGLIST_COUNTER might save memory but crashes for some reason
-// #define STRINGLIST_COUNTER 1
+// Without STRINGLIST_FREE, stringlists cannot be completely destructed.
+// However, using STRINGLIST_FREE has a slight memory and code overhead.
+#define STRINGLIST_FREE 1
 
 #include <string>
 #include <vector>
 
-#ifdef STRINGLIST_COUNTER
+#ifdef STRINGLIST_FREE
 #include "eixTk/inttypes.h"
 #endif
 #include "eixTk/null.h"
@@ -28,7 +28,7 @@ class StringListContent {
 		std::vector<std::string> m_list;
 
 	protected:
-#ifdef STRINGLIST_COUNTER
+#ifdef STRINGLIST_FREE
 		uint32_t usage;
 #endif
 		void finalize();
@@ -55,8 +55,11 @@ class StringList {
 		StringList() : ptr(NULLPTR)
 		{ }
 
-#ifdef STRINGLIST_COUNTER
-		explicit StringList(const StringList &s);
+#ifdef STRINGLIST_FREE
+		StringList& operator=(const StringList &s);
+
+		StringList(const StringList &s)
+		{ *this = s; }
 
 		~StringList();
 #endif
