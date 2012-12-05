@@ -72,7 +72,7 @@ OverlayIdent::readLabel_internal(const char *Path)
 		label = f->second;
 		return;
 	}
-	pushback_lines((my_path + "/profiles/repo_name").c_str(), &lines, true, false, 0);
+	pushback_lines((my_path + "/profiles/repo_name").c_str(), &lines);
 	label.clear();
 	for(vector<string>::const_iterator i(lines.begin()); likely(i != lines.end()); ++i) {
 		if(i->empty()) {

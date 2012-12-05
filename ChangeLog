@@ -6,6 +6,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=446078 and
 	  http://developer.berlios.de/bugs/?func=detailbug&
 	  bug_id=18819&group_id=11597
+	- Recognize file-ends better for comment separation
 
 *eix-0.27.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

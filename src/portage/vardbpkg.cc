@@ -163,9 +163,9 @@ VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
 	dirname.append(1, '-');
 	dirname.append(v->getFull());
 	pushback_lines((dirname + "/repository").c_str(),
-		&lines, true, false, false);
+		&lines, false, false, 1);
 	pushback_lines((dirname + "/REPOSITORY").c_str(),
-		&lines, true, false, false);
+		&lines, false, false, 1);
 	if(lines.empty())
 		return "";
 	return lines[0];
@@ -183,7 +183,7 @@ VarDbPkg::readSlot(const Package &p, InstVersion *v) const
 	vector<string> lines;
 	if(unlikely(!pushback_lines(
 		(m_directory + p.category + "/" + p.name + "-" + v->getFull() + "/SLOT").c_str(),
-		&lines, true, false, false, NULLPTR))) {
+		&lines, false, false, 1))) {
 		return (v->read_failed = true);
 	}
 	if((lines.empty()) || (lines[0] == "0")) {
@@ -207,13 +207,13 @@ VarDbPkg::readUse(const Package &p, InstVersion *v) const
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
 	vector<string> lines;
 	if(unlikely(!pushback_lines((dirname + "/IUSE").c_str(),
-		&lines, true, false, false)))
+		&lines, false, false, 1)))
 		return false;
 	join_and_split(&(v->inst_iuse), lines);
 
 	lines.clear();
 	if(unlikely(!pushback_lines((dirname + "/USE").c_str(),
-		&lines, true, false, false)))
+		&lines, false, false, 1)))
 		return false;
 	join_and_split(&alluse, lines);
 	for(vector<string>::iterator it(v->inst_iuse.begin());
@@ -268,7 +268,7 @@ VarDbPkg::readRestricted(const Package &p, InstVersion *v, const DBHeader& heade
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
 	vector<string> lines;
 	if(unlikely(!pushback_lines((dirname + "/RESTRICT").c_str(),
-		&lines, true, false, false))) {
+		&lines, false, false, 1))) {
 		// It is OK that this file does not exist:
 		// Portage does this if RESTRICT is not set.
 		v->restrictFlags = ExtendedVersion::RESTRICT_NONE;
@@ -290,7 +290,8 @@ VarDbPkg::readInstDate(const Package &p, InstVersion *v) const
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
 	vector<string> datelines;
 	if(use_build_time &&
-		pushback_lines((dirname + "/BUILD_TIME").c_str(), &datelines)) {
+		pushback_lines((dirname + "/BUILD_TIME").c_str(),
+			&datelines, false, false, 1)) {
 		for(vector<string>::const_iterator it(datelines.begin());
 			it != datelines.end(); ++it) {
 GCC_DIAG_OFF(sign-conversion)

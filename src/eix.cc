@@ -1117,7 +1117,7 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 	vector<string> lines;
 	set<string> excludes;
 	bool know_excludes(false);
-	pushback_lines(filename.c_str(), &lines, true, true);
+	pushback_lines(filename.c_str(), &lines, true);
 	for(vector<string>::iterator i(lines.begin());
 		likely(i != lines.end()); ++i) {
 		if(unlikely(!know_excludes)) {
@@ -1127,7 +1127,7 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 			for(vector<string>::const_iterator it(excludelist.begin());
 				likely(it != excludelist.end()); ++it) {
 				vector<string> excl;
-				pushback_lines(it->c_str(), &excl, false, true);
+				pushback_lines(it->c_str(), &excl, true);
 				join_and_split(&excludes, excl);
 			}
 		}
@@ -1216,7 +1216,7 @@ print_removed(const string &dirname, const string &excludefiles, const eix::ptr_
 					for(vector<string>::const_iterator it(excludelist.begin());
 						likely(it != excludelist.end()); ++it) {
 						vector<string> excl;
-						pushback_lines(it->c_str(), &excl, false, true);
+						pushback_lines(it->c_str(), &excl, true);
 						join_and_split(&excludes, excl);
 					}
 				}

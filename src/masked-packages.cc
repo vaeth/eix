@@ -112,7 +112,7 @@ add_file(vector<string> *lines, const string &name, string *new_name)
 	if(name.empty() || (name == "-")) {
 		read_stdin(lines, new_name);
 	} else {
-		pushback_lines(name.c_str(), lines, true, true);
+		pushback_lines(name.c_str(), lines, true);
 		if(new_name != NULLPTR) {
 			*new_name = name;
 		}

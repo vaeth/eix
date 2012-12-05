@@ -36,7 +36,7 @@ bool
 MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines)
 {
 	vector<string> lines;
-	if(!pushback_lines(file, &lines, false, recursive, (keep_commentlines ? -1 : 1))) {
+	if(!pushback_lines(file, &lines, recursive, true, (keep_commentlines ? (-1) : 0))) {
 		return false;
 	}
 	bool added(false), finishcomment(false);
@@ -343,10 +343,18 @@ PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines)
 	finalize();
 	StringList *comments(NULLPTR);
 	bool finishcomment(false);
+	PreListEntry::FilenameIndex lastfile(0);
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		if(it->name.empty()) {
 			continue;
 		}
+		PreListEntry::FilenameIndex currfile(it->filename_index);
+		if(lastfile != currfile) {
+			// In the first iteration, this may be executed by accident but does not hurt
+			delete comments;
+			comments = NULLPTR;
+		}
+		lastfile = currfile;
 		if(it->name[0] == '#') {
 			if(!keep_commentlines) {
 				continue;

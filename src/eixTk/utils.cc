@@ -36,7 +36,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-static bool pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, eix::SignedBool remove_comments, string *errtext) ATTRIBUTE_NONNULL((1, 2));
+static bool pushback_lines_file(const char *file, vector<string> *v, bool keep_empty, eix::SignedBool keep_comments, string *errtext) ATTRIBUTE_NONNULL((1, 2));
 static int pushback_files_selector(SCANDIR_ARG3 dir_entry);
 
 bool
@@ -64,7 +64,7 @@ scandir_cc(const string &dir, vector<string> *namelist, select_dirent select, bo
 
 /** push_back every line of file into v. */
 static bool
-pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, eix::SignedBool remove_comments, string *errtext)
+pushback_lines_file(const char *file, vector<string> *v, bool keep_empty, eix::SignedBool keep_comments, string *errtext)
 {
 	string line;
 	std::ifstream ifstr(file);
@@ -75,10 +75,10 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, eix:
 		return false;
 	}
 	while(likely(getline(ifstr, line) != NULLPTR)) {
-		if(remove_comments != 0) {
+		if(keep_comments <= 0) {
 			string::size_type x(line.find('#'));
 			if(unlikely(x != string::npos)) {
-				if(likely((remove_comments > 0) || (x != 0))) {
+				if(likely((keep_comments == 0) || (x != 0))) {
 					line.erase(x);
 				}
 			}
@@ -86,7 +86,7 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, eix:
 
 		trim(&line);
 
-		if((!remove_empty) || (!line.empty())) {
+		if(keep_empty || (!line.empty())) {
 			v->push_back(line);
 		}
 	}
@@ -101,7 +101,7 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, eix:
 
 /** push_back every line of file or dir into v. */
 bool
-pushback_lines(const char *file, vector<string> *v, bool remove_empty, bool recursive, eix::SignedBool remove_comments, string *errtext)
+pushback_lines(const char *file, vector<string> *v, bool recursive, bool keep_empty, eix::SignedBool keep_comments, string *errtext)
 {
 	static const char *files_exclude[] = { "..", ".", "CVS", "RCS", "SCCS", NULLPTR };
 	static int depth(0);
@@ -119,13 +119,14 @@ pushback_lines(const char *file, vector<string> *v, bool remove_empty, bool recu
 				}
 				return false;
 			}
-			if(unlikely(!pushback_lines(it->c_str(), v, remove_empty, true, remove_comments, errtext)))
+			if(unlikely(!pushback_lines(it->c_str(), v, true, keep_empty, keep_comments, errtext))) {
 				rvalue = false;
+			}
 			--depth;
 		}
 		return rvalue;
 	} else {
-		return pushback_lines_file(file, v, remove_empty, remove_comments, errtext);
+		return pushback_lines_file(file, v, keep_empty, keep_comments, errtext);
 	}
 }
 

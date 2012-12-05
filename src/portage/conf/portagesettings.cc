@@ -84,7 +84,7 @@ static bool
 grab_setmasks(const char *file, MaskList<SetMask> *masklist, SetsIndex i, vector<string> *contains_set, bool recursive = false)
 {
 	vector<string> lines;
-	if(!pushback_lines(file, &lines, false, recursive)) {
+	if(!pushback_lines(file, &lines, recursive, true)) {
 		return false;
 	}
 	for(vector<string>::iterator it(lines.begin()); likely(it < lines.end()); ++it) {
@@ -396,7 +396,7 @@ void
 PortageSettings::read_world_sets(const char *file)
 {
 	vector<string> lines;
-	if(!pushback_lines(file, &lines, true, false))
+	if(!pushback_lines(file, &lines))
 		return;
 	vector<string> the_sets;
 	for(vector<string>::const_iterator it(lines.begin());
@@ -631,7 +631,7 @@ PortageSettings::pushback_categories(vector<string> *vec)
 			continue;
 		}
 		if(!pushback_lines((m_eprefixaccessoverlays + (i->path) + "/" + PORTDIR_CATEGORIES_FILE).c_str(),
-			vec, true, false, true, &errtext)) {
+			vec, false, false, 0, &errtext)) {
 			if(i == repos.begin()) {
 				cerr << errtext << endl;
 				exit(EXIT_FAILURE);
@@ -688,12 +688,12 @@ PortageUserConfig::readKeywords() {
 	vector<string> lines;
 	const string &path(m_settings->m_eprefixconf);
 	string file(path + USER_KEYWORDS_FILE1);
-	if(pushback_lines(file.c_str(), &lines, false, true)) {
+	if(pushback_lines(file.c_str(), &lines, true, true)) {
 		added = pre_list.handle_file(lines, file, NULLPTR, true);
 		lines.clear();
 	}
 	file = (path + USER_KEYWORDS_FILE2);
-	if(pushback_lines(file.c_str(), &lines, false, true)) {
+	if(pushback_lines(file.c_str(), &lines, true, true)) {
 		added |= pre_list.handle_file(lines, file, NULLPTR,  true);
 	}
 	if(!added) {
@@ -707,7 +707,7 @@ void
 PortageUserConfig::ReadVersionFile(const char *file, MaskList<KeywordMask> *list)
 {
 	vector<string> lines;
-	pushback_lines(file, &lines, false, true);
+	pushback_lines(file, &lines, true, true);
 	for(vector<string>::iterator i(lines.begin());
 		likely(i != lines.end()); ++i) {
 		if(i->empty())

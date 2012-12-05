@@ -194,7 +194,7 @@ bool
 CascadingProfile::readPackages(const string &filename, const char *repo)
 {
 	vector<string> lines;
-	pushback_lines(filename.c_str(), &lines, false, true);
+	pushback_lines(filename.c_str(), &lines, true, true);
 	bool ret(false);
 	PreList::FilenameIndex file_system(p_system.push_name(filename, repo));
 	PreList::FilenameIndex file_system_allowed(p_system_allowed.push_name(filename, repo));
@@ -230,7 +230,7 @@ bool
 CascadingProfile::readPackageMasks(const string &filename, const char *repo)
 {
 	vector<string> lines;
-	pushback_lines(filename.c_str(), &lines, false, true, -1);
+	pushback_lines(filename.c_str(), &lines, true, true, -1);
 	return p_package_masks.handle_file(lines, filename, repo, false, true);
 }
 
@@ -238,7 +238,7 @@ bool
 CascadingProfile::readPackageUnmasks(const string &filename, const char *repo)
 {
 	vector<string> lines;
-	pushback_lines(filename.c_str(), &lines, false, true);
+	pushback_lines(filename.c_str(), &lines, true, true);
 	return p_package_unmasks.handle_file(lines, filename, repo, false);
 }
 
@@ -246,7 +246,7 @@ bool
 CascadingProfile::readPackageKeywords(const string &filename, const char *repo)
 {
 	vector<string> lines;
-	pushback_lines(filename.c_str(), &lines, false, true);
+	pushback_lines(filename.c_str(), &lines, true, true);
 	return p_package_keywords.handle_file(lines, filename, repo, false);
 }
 
@@ -254,7 +254,7 @@ bool
 CascadingProfile::readPackageAcceptKeywords(const string &filename, const char *repo)
 {
 	vector<string> lines;
-	pushback_lines(filename.c_str(), &lines, false, true);
+	pushback_lines(filename.c_str(), &lines, true, true);
 	return p_package_accept_keywords.handle_file(lines, filename, repo, true);
 }
 
