@@ -36,7 +36,7 @@ bool
 MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines)
 {
 	vector<string> lines;
-	if(!pushback_lines(file, &lines, false, recursive, (keep_commentlines ? -1 : 0))) {
+	if(!pushback_lines(file, &lines, false, recursive, (keep_commentlines ? -1 : 1))) {
 		return false;
 	}
 	bool added(false), finishcomment(false);

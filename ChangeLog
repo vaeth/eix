@@ -1,5 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.27.6
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Clear comment lines correctly in non-mask files, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=446078 and
+	  http://developer.berlios.de/bugs/?func=detailbug&
+	  bug_id=18819&group_id=11597
+
 *eix-0.27.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Support mask reason (by default output with --versionlines), see
