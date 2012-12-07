@@ -5,6 +5,10 @@
 	- Let the background guess heuristics default to black background
 	  unless there are sure signs that the background is white.
 	  This makes the default choice more consistent with <=eix-0.27.4.
+	- Revert BG1=black, BG3=white since it is the only way to guarantee
+	  readability if the heuristic fails.
+	- Users of transparent terms should therefore set BG1=none BG3=none
+	  in /etc/eixrc, see the BUGS section of the eix manpage.
 	- Change TERM_DARK meaning to allow a finer heuristics
 	  (e.g. tune whether COLORFGBG is respected).
 	- Clear comment lines correctly in non-mask files, see

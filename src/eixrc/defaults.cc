@@ -660,7 +660,7 @@ AddOption(STRING, "BG0",
 	"It is the background color for color scheme 0. Use \"none\" for no change."));
 
 AddOption(STRING, "BG1",
-	"%{BG0}", _(
+	"black", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is the background color for color scheme 1. Use \"none\" for no change."));
 
@@ -670,7 +670,7 @@ AddOption(STRING, "BG2",
 	"It is the background color for color scheme 2. Use \"none\" for no change."));
 
 AddOption(STRING, "BG3",
-	"%{BG2}", _(
+	"white", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is the background color for color scheme 3. Use \"none\" for no change."));
 

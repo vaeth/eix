@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-07 18:00:00 +0200 (Fri, 07 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-07 23:00:00 +0200 (Fri, 07 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2459,7 +2459,8 @@ B<BG2=white>
 
 B<BG3=white>
 
-Dies kann jedoch unerwünschte Effekte auf einigen defekten Terminals haben, siehe den Abschnitt FEHLER.
+(Je nach eix-Version sind einige davon sogar der Default).
+Dies kann jedoch unerwünschte Effekte auf transparenten Terminals haben oder falls Scrollen notwendig ist, siehe den Abschnitt FEHLER.
 Um das Verhalten etwas zu ändern, können Sie B<RESET_ALL_LINES=true> setzen.
 
 Die Default-Werte der  B<COLORSCHEME?>-Variablen sind:
@@ -3442,10 +3443,11 @@ Hier sind einige einfache Methoden, wie sie einige ungewünschte Farbprobleme ve
 1. Benutzen Sie das Farbschema zu ihrer tatsächlichen Hintergrundfarbe, indem Sie B<DARK=true> oder B<DARK=false> in I<@SYSCONFDIR@/eixrc> setzen.
 
 .TP
-2. Erzwingen Sie die korrekte Hintergrundfarbe, indem Sie B<BG0=black>, B<BG1=black>, B<BG2=white>, B<BG3=white> in I<@SYSCONFDIR@/eixrc> setzen.
-Beachten Sie allerdings, dass das Erzwingen der Hintergrundfarbe auf einigen fehlerhaften Terminals
-dazu führt, dass auch neu hereingescrollte Zeilen in dieser Hintergrundfarbe sein können.
-Um die Hintergrundfarbe bei jedem Zeilenende zurückzusetzen können Sie B<RESET_ALL_LINES=true> setzen.
+2. Erzwingen Sie die korrekte Hintergrundfarbe (oder vermeiden Sie deren Setzen), indem Sie B<BG0=black>, B<BG1=black>, B<BG2=white>, B<BG3=white>
+(oder B<BG0=none>, B<BG1=none>, B<BG2=none>, B<BG3=none>) in I<@SYSCONFDIR@/eixrc> setzen.
+Beachten Sie, dass das Erzwingen der Hintergrundfarbe transparente Terminals intransparent machen kann
+und dass darüberhinaus bei einige Terminals auch neu hereingescrollte Zeilen in dieser Hintergrundfarbe sein können.
+Um die Hintergrundfarbe bei jedem Zeilenende zurückzusetzen, können Sie B<RESET_ALL_LINES=true> setzen.
 
 .TP
 3. Erzwingen Sie ein gewünschtes Farbschema auf allen Terminals indem Sie B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc> setzen; dies kann mit B<COLORSCHEME3=0> (oder B<=1>, B<=2>, B<=3>) kombiniert werden.
