@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-03 01:00:00 +0200 (Mon, 03 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-08 18:00:00 +0200 (Fri, 07 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2429,7 +2429,8 @@ zu wählen (der B<COLORSCHEME0> ist, s. unten).
 Welche dieser Variablen tasächlich benutzt wird hängt davon ab, welches B<TERM_ALT?> auf B<TERM> passt.
 
 Der Zahlwert dieser Variablen gibt das benutzte Farbschema an;
-falls die Variable zwei Zahlwerte enthält (durch Leerzeichen getrennt), wird der erste Wert benutzt, falls B<DARK=true> ist.
+falls die Variable zwei Zahlwerte enthält (durch Leerzeichen getrennt), wird der erste bzw. zweite Wert benutzt,
+je nachdem ob der Dunkelmodus an oder aus ist (siehe B<DARK> und B<TERM_DARK>).
 
 Der Wert 0 bedeutet, dass der erste I<COLORSTRING> von Farbspezifikationen benutzt wird;
 für höhere Zahlen wird ein entsprechend späterer I<COLORSTRING> benutzt.
@@ -2473,20 +2474,29 @@ B<COLORSCHEME3>: wie B<COLORSCHEME0>, gedacht als vernünftiger Defaultwert für
 
 .TP
 .BR DARK " " (true / false / auto)
-Der Wert dieser Variablen gibt an, ob in B<COLORSCHEME?> der erste Wert gewählt wird.
-Beim Wert B<auto> wird eine Heurstik benutzt, die auf B<TERM_DARK> und B<COLORFGBG_DARK> basiert.
+Der Wert dieser Variablen gibt an, ob der Dunkelmodus bei der Wahl des Farbschemas in den B<COLORSCHEME?>-Variablen an oder aus ist.
+Für den Wert B<auto> hängt das Ergebnis von einer Heuristic ab, die durch die Variablen B<TERM_DARK> und B<COLORFGBG_DARK> spezifiziert wird, siehe unten.
 
 .TP
 .BR TERM_DARK " " (Stringliste)
-Falls B<DARK=auto> wird diese Liste regulärer Ausdrücke betrachtet.
-Wenn B<TERM> passt, wird B<DARK=true> angenommen.
+Dies ist eine Liste von Paaren der Form I<regulärer Ausdruck 1> I<Dunkelmodus 1> I<regulärer Ausdruck 2> B<Dunkelmodus 2> ... wobei B<Dunkelmodus> jeweils einer der Werte B<true>, B<false>, B<true*>, B<false*> sein muss;
+optional kann ein Default-Wert für I<Dunkelmodus> als letzter Eintrag spezifiziert werden (wenn keiner spezifiziert ist, ist B<true*> der Default).
+Wenn B<DARK=auto> ist, wird diese Liste benutzt, um den Dunkelmodus wie folgt festzulegen:
+
+Der erste B<reguläre Ausdruck> wird betrachtet, der auf B<TERM> passt, und der entsprechende I<Dunkelmodus> beschreibt, was zu tun ist
+(wenn kein B<regulärer Ausdruck> passt, wird angenommen, dass der I<Dunkelmodus> B<true> ist):
+Die Werte B<true> (oder B<true*>) und B<false> (oder B<false*>) bedeuten, dass der Dunkelmodus an bzw. aus ist.
+Für die Werte B<true> und B<false> wird aber zusätzlich die Variable B<COLORFGBG> berücksichtigt:
+Wenn B<COLORFGBG> nichtleer ist, so ist der Dunkelmodus an oder aus, je nachdem ob B<COLORFGBG> auf einen Ausdruck aus B<COLORFGBG_DARK> passt.
+Beachten Sie, dass B<COLORFGBG> eine Environment-Variable ist, die von einigen Terminals wie B<rxvt> oder B<konsole> gesetzt wird, um die Hintergrundfarbe zu beschreiben.
 
 .TP
 .BR COLORFGBG_DARK " " (Stringliste)
-Wenn B<DARK=auto> wird diese Liste regulärer Ausdrücke betrachtet.
-Wenn B<COLORFGBG> passt, wird B<DARK=true> angenommen.
-Beachten Sie, dass B<COLORFGBG> eine Environment-Variable ist, die von einige Terminals
-wie rxvt gesetzt wrid.
+Dies ist eine Liste regulärer Ausdrücke.
+Sie wird nur benutzt, falls B<DARK=auto> ist, der entsprechende I<Dunkelmodus> in B<DARK_MODE> den Wert B<true> oder B<false> hat,
+und wenn B<COLORFGBG> nichtleer ist.
+Wenn all dies zutrifft, ist der Dunkelmodus an oder aus, je nachdem of B<COLORFGBG> auf einen der regulären Ausdrücke aus B<COLORFGBG_DARK> passt.
+Beachten Sie, dass B<COLORFGBG> eine Environment-Variable ist, die von einigen Terminals wie B<rxvt> oder B<konsole> gesetzt wird, um die Hintergrundfarbe zu beschreiben.
 
 .TP
 .BR LEVENSHTEIN_DISTANCE " " (integer)

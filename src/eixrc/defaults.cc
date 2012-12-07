@@ -699,14 +699,16 @@ AddOption(STRING, "DARK",
 	"The value \"auto\" means a heuristic based on TERM_DARK and COLORFGBG_DARK."));
 
 AddOption(STRING, "TERM_DARK",
-	"linux cygwin putty", _(
-	"If DARK=auto then this list of regular expressions is considered.\n"
-	"If TERM matches then DARK=true is assumed."));
+	"linux true cygwin true putty true true*", _(
+	"A list of pairs regexp1 darkmode1 regexp2 darkmode2 ... [default darkmode].\n"
+	"If DARK=auto the first darkmode for which TERM matches regexp is assumed.\n"
+	"In modes true* and false* also COLORGBGB is respected by COLORFGBG_DARK."));
 
 AddOption(STRING, "COLORFGBG_DARK",
-	"^[^;]*;[0-68][^0-9]?", _(
-	"If DARK=auto then this list of regular expressions is considered.\n"
-	"If COLORFGBG matches then DARK=true is assumed."));
+	"^[^;]*;[02-689] ^[^;]*;1[^5]", _(
+	"This is a list of regular expressions.\n"
+	"If modes true* and false* are active in TERM_DARK and COLORFGBG is nonempty,\n"
+	"then the darkmode depends on whether COLORFGBG matches at least one entry."));
 
 AddOption(STRING, "COLORFGBG",
 	"", _(

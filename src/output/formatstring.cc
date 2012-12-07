@@ -36,6 +36,7 @@
 #include "portage/extendedversion.h"
 
 class PortageSettings;
+class Darkmode;
 
 using std::map;
 using std::pair;
@@ -50,6 +51,8 @@ using std::endl;
 static void parse_color(string *color, bool use_color) ATTRIBUTE_NONNULL_;
 static void colorstring(string *color) ATTRIBUTE_NONNULL_;
 static bool parse_colors(string *ret, const string &colorstring, bool colors, string *errtext) ATTRIBUTE_NONNULL_;
+static void parse_termdark(vector<Darkmode> *mode, vector<string> *regexp, const string &termdark) ATTRIBUTE_NONNULL_;
+inline static const char *seek_character(const char *fmt) ATTRIBUTE_PURE;
 
 void
 MarkedList::add(const char *pkg, const char *ver)
@@ -264,6 +267,63 @@ PrintFormat::overlay_keytext(ExtendedVersion::Overlay overlay, bool plain) const
 	return eix::format("%s%s%s") % start % overlay % end;
 }
 
+class Darkmode {
+	public:
+		bool dark, check;
+
+		void init(bool is_dark, bool is_check)
+		{ dark = is_dark; check = is_check; }
+
+		bool init(const string &s)
+		{
+			if(s == "true")  {
+				init(true, false);
+			} else if(s == "true*") {
+				init(true, true);
+			} else if(s == "false") {
+				init(false, false);
+			} else if(s == "false*") {
+				init(false, true);
+			} else {
+				return false;
+			}
+			return true;
+		}
+
+		Darkmode()
+		{ }
+
+		explicit Darkmode(bool is_dark, bool is_check) : dark(is_dark), check(is_check)
+		{ }
+};
+
+static void
+parse_termdark(vector<Darkmode> *modes, vector<string> *regexp, const string &termdark)
+{
+	vector<string> terms_dark;
+	split_string(&terms_dark, termdark, true);
+	for(vector<string>::const_iterator it(terms_dark.begin());
+		likely(it != terms_dark.end()); ++it) {
+		const string *text(&(*it));
+		bool is_default(true);
+		if(likely(++it != terms_dark.end())) {
+			is_default = false;
+			regexp->push_back(*text);
+			text = &(*it);
+		}
+		Darkmode darkmode;
+		if(!darkmode.init(*text)) {
+			cerr << eix::format(_("DARK_TERM has illegal format: %s")) % termdark;
+			exit(EXIT_FAILURE);
+		}
+		modes->push_back(darkmode);
+		if(is_default) {
+			return;
+		}
+	}
+	modes->push_back(Darkmode(true, true));
+}
+
 void
 PrintFormat::setupResources(EixRc *rc)
 {
@@ -312,10 +372,25 @@ PrintFormat::setupResources(EixRc *rc)
 			if(dark == 0) {
 				entry = 1;
 			} else if(dark < 0) {
-				if(!RegexList((*rc)["TERM_DARK"]).match(term)) {
-					if(!RegexList((*rc)["COLORFGBG_DARK"]).match((*rc)["COLORFGBG"].c_str())) {
-						entry = 1;
+				vector<Darkmode> modes;
+				vector<string> regexp;
+				parse_termdark(&modes, &regexp, (*rc)["TERM_DARK"]);
+				vector<string>::size_type i(0);
+				for(; likely(i < regexp.size()); ++i) {
+					if(Regex(regexp[i].c_str()).match(term)) {
+						break;
 					}
+				}
+				const Darkmode &mode(modes[i]);
+				bool is_dark(mode.dark);
+				if(mode.check) {
+					const string &colorfgbg((*rc)["COLORFGBG"]);
+					if(!colorfgbg.empty()) {
+						is_dark = RegexList((*rc)["COLORFGBG_DARK"]).match(colorfgbg.c_str());
+					}
+				}
+				if(!is_dark) {
+					entry = 1;
 				}
 			}
 		}
@@ -571,7 +646,6 @@ GCC_DIAG_ON(sign-conversion)
 	return START;
 }
 
-inline static const char *seek_character(const char *fmt) ATTRIBUTE_PURE;
 inline static const char *
 seek_character(const char *fmt)
 {

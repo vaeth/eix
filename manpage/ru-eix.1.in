@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-03 18:00:00 +0200 (Mon, 03 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-08 18:00:00 +0200 (Fri, 07 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -2385,7 +2385,7 @@ if none matches, then B<COLORSCHEME0> is used.
 
 The integer value of this variable determines the color scheme to be used;
 if the variable contains two integer numbers (separated by spaces)
-then the first number is used if B<DARK> is B<true>.
+then the first/second number is used if darkmode is on/off (cf. B<DARK> and B<TERM_DARK>).
 
 The value 0 means that the first I<COLORSTRING> of each color specification is used;
 for higher numbers a correspondingly later I<COLORSTRING> is used.
@@ -2429,19 +2429,28 @@ B<COLORSCHEME3>: as B<COLORSCHEME0>, meant to be a sane default, to be modified 
 
 .TP
 .BR DARK " " (true / false / auto)
-The value of this variable determines whether in the B<COLORSCHEME?> variables the first value is used.
-The value B<auto> means to use some heuristic based on B<TERM_DARK> and B<COLORFGBG_DARK>.
+The value of this variable determines whether darkmode is on/off for the colorscheme selection in the B<COLORSCHEME?> variables.
+For the value B<auto> the result depends on a heuristic based on B<TERM_DARK> and B<COLORFGBG_DARK>, see below.
 
 .TP
 .BR TERM_DARK " " (string list)
-If B<DARK=auto> then this list of regular expressions is considered.
-If B<TERM> matches then B<DARK=true> is assumed.
+This is a list of pairs of the form I<regular-expresssion 1> I<dark-mode 1> I<regular-expresssion 2> B<dark-mode 2> ... where B<dark-mode> is one of B<true>, B<false>, B<true*>, B<false*>;
+optionally, a default I<dark-mode> can be specified as a last entry (if none is specified, the default is B<true*>).
+If B<DARK=auto> this is used to determine the darkmode as follows:
+
+The first B<regular-expresssion> matching B<TERM> is considered, and the corresponding B<dark-mode> describes what to do
+(if no B<regular expression> matches then B<dark-mode> is assumed to be B<true>):
+The values B<true> (or B<true*>) and B<false> (or B<false*>) mean that the darkmode is on or off, respectively.
+However, for B<true*> and B<false*> the variable B<COLORFGBG> is respected in addition:
+If B<COLORFGBG> is nonempty then the darkmode is on or off, depending on whether B<COLORFGBG> matches an expression from B<COLORFGBG_DARK>.
+Note that B<COLORFGBG> is an environment variable set by some terminals like B<rxvt> or B<konsole> which describes the background color.
 
 .TP
 .BR COLORFGBG_DARK " " (string list)
-If B<DARK=auto> then this list of regular expressions is considered.
-If B<COLORFGBG> matches then B<DARK=true> is assumed.
-Note that B<COLORFGBG> is an environment variable set by some terminals like rxvt.
+This is a list of regular expressions.
+It is only used if B<DARK=auto>, the matching I<dark-mode> in B<DARK_TERM> is B<true*> or B<false*>, and B<COLORFGBG> is nonempty.
+In this case, the resulting darkmode is on or off, depending on whether B<COLORFGBG> matches an element of this list.
+Note that B<COLORFGBG> is an environment variable set by some terminals like B<rxvt> or B<konsole> which describes the background color.
 
 .TP
 .BR LEVENSHTEIN_DISTANCE " " (integer)
@@ -3339,13 +3348,12 @@ For all other options (or without option), it is made clear by prepending of "X"
 .LP
 For bugreports use either I<@PACKAGE_BUGREPORT@> or Gentoo's bugzilla I<http://bugs.gentoo.org/>
 
-eix cannot reliably detect the color capabilities and background color of your terminal;
-this can be especially annoying if you use a transparent terminal or changed the default background color
-e.g. of xterm to black.
+eix cannot reliably detect the color capabilities and background color of your terminal.
 Here are a few simple methods how you can avoid some undesired color problems:
 
 .TP
-1. Use the color scheme corresponding to your actual background color by setting B<DARK=true> or B<DARK=false> in I<@SYSCONFDIR@/eixrc>.
+1. Use the color scheme corresponding to your actual background color by setting B<DARK=true> or B<DARK=false> in I<@SYSCONFDIR@/eixrc>
+(or improve the heuristics in B<TERM_DARK> to your needs).
 
 .TP
 2. Force the desired background color by setting B<BG0=black>, B<BG1=black>, B<BG2=white>, B<BG3=white> in I<@SYSCONFDIR@/eixrc>.
@@ -3354,7 +3362,8 @@ terminals some new scrolled-in lines to be in this background color.
 To reset background colors before all newlines you might want to set B<RESET_ALL_LINES=true>.
 
 .TP
-3. Force a desired color scheme on all terminals by setting B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc>; you may want to combine this with setting B<COLORSCHEME3=0> (or B<=1>, B<=2>, B<=3>).
+3. Force a desired color scheme on all terminals by setting B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc>; you may want to combine this with setting B<COLORSCHEME3=0> (or B<=1>, B<=2>, B<=3>);
+this makes sense e.g. if you use the solarized color scheme throughout.
 
 .LP
 eix does not and probably never will support dependencies and/or useflags.

@@ -2,6 +2,11 @@
 
 *eix-0.27.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Let the background guess heuristics default to black background
+	  unless there are sure signs that the background is white.
+	  This makes the default choice more consistent with <=eix-0.27.4.
+	- Change TERM_DARK meaning to allow a finer heuristics
+	  (e.g. tune whether COLORFGBG is respected).
 	- Clear comment lines correctly in non-mask files, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=446078 and
 	  http://developer.berlios.de/bugs/?func=detailbug&
