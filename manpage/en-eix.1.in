@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-07 23:00:00 +0200 (Fri, 07 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-08 00:10:00 +0200 (Sat, 08 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2418,7 +2418,8 @@ B<BG3=white>
 
 (Depending on your eix version, some of these are even the defaults).
 However, this can have undesired effects on transparent terminals or when scrolling is necessary, see the BUGS section.
-To change some behavior, when you set BG? you might want to set B<RESET_ALL_LINES=true>.
+For these side effects it can be desirable/undesirable - depending on your taste and terminal - to set
+B<RESET_ALL_LINES=false> or B<RESET_ALL_LINES=true> (the default can depend on the eix version).
 
 The default values of the B<COLORSCHEME?> variables are:
 
@@ -3363,7 +3364,8 @@ Here are a few simple methods how you can avoid some undesired color problems:
 (or B<BG0=none>, B<BG1=none>, B<BG2=none>, B<BG3=none>) in I<@SYSCONFDIR@/eixrc>.
 Note that forcing of the background color usually makes transparent terminals non-transparent and, moreover,
 can cause on some terminals some new scrolled-in lines to be in this background color.
-To reset background colors before all newlines you might want to set B<RESET_ALL_LINES=true>.
+In order to (not) reset the forced background color before every newline you can set B<RESET_ALL_LINES=false> or B<RESET_ALL_LINES=true>, respectively
+(the default can depend on the eix version).
 
 .TP
 3. Force a desired color scheme on all terminals by setting B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc>; you may want to combine this with setting B<COLORSCHEME3=0> (or B<=1>, B<=2>, B<=3>);

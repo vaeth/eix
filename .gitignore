@@ -4,6 +4,7 @@
 /autom4te.cache/
 /config/
 /m4/
+/eix-0.*
 
 # autotools/doxygen files:
 /ABOUT-NLS
@@ -16,6 +17,7 @@
 /conftest*
 /doxygen.cfg
 /stamp-h1
+/a.out
 
 # Special directories:
 

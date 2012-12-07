@@ -649,7 +649,7 @@ AddOption(STRING, "EXIT_STATUSLINE",
 	"An optional leading space in this string is ignored."));
 
 AddOption(BOOLEAN, "RESET_ALL_LINES",
-	"false", _(
+	"true", _(
 	"This variable is only used for delayed substitution.\n"
 	"It decides whether background colors are reset on every newline.\n"
 	"This may be desired if you set BG? to a value differrent than \"none\"."));

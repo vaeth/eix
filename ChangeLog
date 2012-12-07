@@ -9,6 +9,8 @@
 	  readability if the heuristic fails.
 	- Users of transparent terms should therefore set BG1=none BG3=none
 	  in /etc/eixrc, see the BUGS section of the eix manpage.
+	- Make RESET_ALL_LINES=true the default to make forced background color
+	  (reversion of BG?-defaults) as non-intrusive as possible.
 	- Change TERM_DARK meaning to allow a finer heuristics
 	  (e.g. tune whether COLORFGBG is respected).
 	- Clear comment lines correctly in non-mask files, see

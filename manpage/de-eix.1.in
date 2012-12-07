@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-07 23:00:00 +0200 (Fri, 07 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-08 00:10:00 +0200 (Sat, 08 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2461,7 +2461,8 @@ B<BG3=white>
 
 (Je nach eix-Version sind einige davon sogar der Default).
 Dies kann jedoch unerwünschte Effekte auf transparenten Terminals haben oder falls Scrollen notwendig ist, siehe den Abschnitt FEHLER.
-Um das Verhalten etwas zu ändern, können Sie B<RESET_ALL_LINES=true> setzen.
+Für diese Nebeneffekte kann es - je nach Geschmack und Terminal - nützlich/hinderlich sein, B<RESET_ALL_LINES=false> oder B<RESET_ALL_LINES=true> zu setzen
+(der Default kann von der eix-Version abhängen).
 
 Die Default-Werte der  B<COLORSCHEME?>-Variablen sind:
 
@@ -3447,7 +3448,7 @@ Hier sind einige einfache Methoden, wie sie einige ungewünschte Farbprobleme ve
 (oder B<BG0=none>, B<BG1=none>, B<BG2=none>, B<BG3=none>) in I<@SYSCONFDIR@/eixrc> setzen.
 Beachten Sie, dass das Erzwingen der Hintergrundfarbe transparente Terminals intransparent machen kann
 und dass darüberhinaus bei einige Terminals auch neu hereingescrollte Zeilen in dieser Hintergrundfarbe sein können.
-Um die Hintergrundfarbe bei jedem Zeilenende zurückzusetzen, können Sie B<RESET_ALL_LINES=true> setzen.
+Um die erzwungene Hintergrundfarbe bei jedem Zeilenende (nicht) zurückzusetzen, können Sie B<RESET_ALL_LINES=false> bzw. B<RESET_ALL_LINES=true> setzen (der Default kann von der eix-Version abhängen).
 
 .TP
 3. Erzwingen Sie ein gewünschtes Farbschema auf allen Terminals indem Sie B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc> setzen; dies kann mit B<COLORSCHEME3=0> (oder B<=1>, B<=2>, B<=3>) kombiniert werden.
