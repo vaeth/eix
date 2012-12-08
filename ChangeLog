@@ -2,7 +2,10 @@
 
 *eix-0.27.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Let the background guess heuristics default to black background
+	- PLEASE READ THIS IF YOU HAVE TROUBLES WITH COLORS/BACKGROUND:
+	  Try the hints in the beginning of the BUGS section of the eix
+	  manpage.
+	- The background guess heuristics defaults now to black background
 	  unless there are sure signs that the background is white.
 	  This makes the default choice more consistent with <=eix-0.27.4.
 	- Revert BG1=black, BG3=white since it is the only way to guarantee

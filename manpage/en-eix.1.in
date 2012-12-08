@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-08 00:10:00 +0200 (Sat, 08 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-08 00:17:00 +0200 (Sat, 08 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2433,7 +2433,7 @@ B<COLORSCHEME3>: as B<COLORSCHEME0>, meant to be a sane default, to be modified 
 
 .TP
 .BR DARK " " (true / false / auto)
-The value of this variable determines whether darkmode is on/off for the colorscheme selection in the B<COLORSCHEME?> variables.
+The value of this variable determines whether darkmode is on/off for the color scheme selection in the B<COLORSCHEME?> variables.
 For the value B<auto> the result depends on a heuristic based on B<TERM_DARK> and B<COLORFGBG_DARK>, see below.
 
 .TP
@@ -3356,20 +3356,13 @@ eix cannot reliably detect the color capabilities and background color of your t
 Here are a few simple methods how you can avoid some undesired color problems:
 
 .TP
-1. Use the color scheme corresponding to your actual background color by setting B<DARK=true> or B<DARK=false> in I<@SYSCONFDIR@/eixrc>
-(or improve the heuristics in B<TERM_DARK> to your needs).
+1. Use the color scheme corresponding to your actual background color by setting B<DARK=true> or B<DARK=false> in I<@SYSCONFDIR@/eixrc> (or adapt the heuristics in B<TERM_DARK> to your system.)
 
 .TP
-2. Force the desired background color (or avoid to set it) by setting B<BG0=black>, B<BG1=black>, B<BG2=white>, B<BG3=white>
-(or B<BG0=none>, B<BG1=none>, B<BG2=none>, B<BG3=none>) in I<@SYSCONFDIR@/eixrc>.
-Note that forcing of the background color usually makes transparent terminals non-transparent and, moreover,
-can cause on some terminals some new scrolled-in lines to be in this background color.
-In order to (not) reset the forced background color before every newline you can set B<RESET_ALL_LINES=false> or B<RESET_ALL_LINES=true>, respectively
-(the default can depend on the eix version).
+2. Force the desired background color (or avoid to set it) by setting B<BG0=black>, B<BG1=black>, B<BG2=white>, B<BG3=white> (or B<BG0=none>, B<BG1=none>, B<BG2=none>, B<BG3=none>) in I<@SYSCONFDIR@/eixrc>. Note that forcing of the background color usually makes transparent terminals non-transparent and, moreover, can cause on some terminals some new scrolled-in lines to be in this background color. In order to (not) reset the forced background color before every newline you can set B<RESET_ALL_LINES=false> or B<RESET_ALL_LINES=true>, respectively (the default can depend on the eix version).
 
 .TP
-3. Force a desired color scheme on all terminals by setting B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc>; you may want to combine this with setting B<COLORSCHEME3=0> (or B<=1>, B<=2>, B<=3>);
-this makes sense e.g. if you use the solarized color scheme throughout.
+3. Force a desired color scheme on all terminals by setting B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc>; you may want to combine this with setting B<COLORSCHEME3=0> (or B<=1>, B<=2>, B<=3>). Note that the color schemes selected by the numbers 0 and 2 are very poor since they use only the few system colors and thus different things cannot always be distinguished by different colors. However, this can make sense e.g. if you use the solarized color scheme throughout in X or if you frequently use different terminals and want to get used to only one scheme.
 
 .LP
 eix does not and probably never will support dependencies and/or useflags.
