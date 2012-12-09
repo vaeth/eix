@@ -10,6 +10,9 @@
 	  This makes the default choice more consistent with <=eix-0.27.4.
 	- Revert BG1=black, BG3=white since it is the only way to guarantee
 	  readability if the heuristic fails.
+	- Remove rxvt from 256 color terminals: If your rxvt supports
+	  256 colors but sets only TERM=rxvt, you have to change this to
+	  TERM=rxvt-256color or put TERM_ALT1_ADD=rxvt to /etc/eixrc
 	- Users of transparent terms should therefore set BG1=none BG3=none
 	  in /etc/eixrc, see the BUGS section of the eix manpage.
 	- Make RESET_ALL_LINES=true the default to make forced background color

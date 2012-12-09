@@ -675,16 +675,24 @@ AddOption(STRING, "BG3",
 	"It is the background color for color scheme 3. Use \"none\" for no change."));
 
 AddOption(STRING, "TERM_ALT1",
-	"256 [aeEkx]term rxvt konsole gnome putty", _(
+	"256 [aeEkx]term konsole gnome putty %{TERM_ALT1_ADD}", _(
 	"This is a list of regular expressions; if one of it matches TERM, then\n"
 	"COLORSCHEME1 is used instead of COLORSCHEME0. The intention is that the\n"
 	"specified terminals default to 256 colors."));
 
+AddOption(STRING, "TERM_ALT1_ADD",
+	"", _(
+	"This variable is only used for delayed substitution of TERM_ALT1."));
+
 AddOption(STRING, "TERM_ALT2",
-	"88 rxvt-unicode[^2]*$", _(
+	"88 rxvt-unicode[^2]*$ %{TERM_ALT2_ADD}", _(
 	"This is a list of regular expressions; if one of it matches TERM, then\n"
 	"COLORSCHEME2 is used instead of COLORSCHEME0. The intention is that the\n"
 	"specified terminals default to 88 colors."));
+
+AddOption(STRING, "TERM_ALT2_ADD",
+	"", _(
+	"This variable is only used for delayed substitution of TERM_ALT2."));
 
 AddOption(STRING, "TERM_ALT3",
 	"", _(
@@ -1268,12 +1276,12 @@ AddOption(STRING, "COLOR_UNSET_USE",
 	"It defines the color used for printing the unset useflags."));
 
 AddOption(STRING, "COLOR_VERSION_IUSE",
-	",1;%{BG0}|168;%{BG1}|,1;%{BG2}|168,1;%{BG3}", _(
+	";%{BG0}|168;%{BG1}|,1;%{BG2}|168,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing IUSE for available versions."));
 
 AddOption(STRING, "COLOR_COLL_IUSE",
-	",1;%{BG0}|38;%{BG1}|,1;%{BG2}|61,1;%{BG3}", _(
+	";%{BG0}|38;%{BG1}|,1;%{BG2}|61,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing collected IUSE for packages."));
 

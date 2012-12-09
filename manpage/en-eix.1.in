@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-08 00:17:00 +0200 (Sat, 08 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-09 10:00:00 +0200 (Sun, 09 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2377,9 +2377,18 @@ that no match means 8/16 colors, B<TERM_ALT1> specifies the 256 color terminals,
 B<TERM_ALT2> specifies 88 color terminals, and B<TERM_ALT3> is free for the user
 (therefore overriding everything else).
 
-B<EXAMPLE:> If you want to use solarized (8/16) colors on all terminals you can set
+The default expansion of B<TERM_ALT1> and B<TERM_ALT2> include the values of
+B<TERM_ALT1_ADD> and B<TERM_ALT2_ADD> via delayed substitution.
+So when you just want to add something to the default lists, add it to
+B<TERM_ALT?_ADD>.
+
+B<EXAMPLE 1:> If you want to use solarized (8/16) colors on all terminals you can set
 B<TERM_ALT3=.> to select all terminals for the B<COLORSCHEME3> default
 (which is B<COLORSCHEME0>, see below).
+
+B<EXAMPLE 2:> If you want to tell eix that TERM=rxvt means a 256 color terminal, set B<TERM_ALT1_ADD=rxvt>.
+(This is no longer the default, because there are rxvt versions which support only 88 colors and set TERM=rxvt;
+thus assuming 256 colors would produce completely broken colors.)
 .TP
 .BR COLORSCHEME0 ", " COLORSCHEME1 ", " COLORSCHEME2 ", " COLORSCHEME3 " " "(list of integers)"
 Which of these variables is actually used depends on which B<TERM_ALT?> matches B<TERM>;
@@ -3363,6 +3372,9 @@ Here are a few simple methods how you can avoid some undesired color problems:
 
 .TP
 3. Force a desired color scheme on all terminals by setting B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc>; you may want to combine this with setting B<COLORSCHEME3=0> (or B<=1>, B<=2>, B<=3>). Note that the color schemes selected by the numbers 0 and 2 are very poor since they use only the few system colors and thus different things cannot always be distinguished by different colors. However, this can make sense e.g. if you use the solarized color scheme throughout in X or if you frequently use different terminals and want to get used to only one scheme.
+
+.TP
+4. If you use rxvt which can do 256 colors but which does not set TERM=rxvt-256color or TERM=rxvt-unicode-256color, put B<TERM_ALT1_ADD=rxvt> to I<@SYSCONFDIR@/eixrc>.
 
 .LP
 eix does not and probably never will support dependencies and/or useflags.

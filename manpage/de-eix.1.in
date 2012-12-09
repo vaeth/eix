@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-08 00:17:00 +0200 (Sat, 08 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-09 10:00:00 +0200 (Sun, 09 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2421,9 +2421,19 @@ Defaults ist, dass ein Nicht-passendes Terminal 8/16 Farben hat, B<TERM_ALT1> di
 Terminals spezifiziert, B<TERM_ALT2> die 88-farbigen Terminals, und B<TERM_ALT3> für den
 Benutzer frei bleibt (so dass damit alles andere überschrieben werden kann).
 
-B<EXAMPLE:> Falls solarized (8/16) Farben auf alen Terminals gewünscht sind,
+Der Defaultersetzung von B<TERM_ALT1> und B<TERM_ALT2> berücksichtigt
+B<TERM_ALT1_ADD> bzw. B<TERM_ALT2_ADD> durch verzögerte Ersetzung.
+Insbesondere können Sie eine Erweiterung der Defaultwerte dadurch erreichen,
+dass Sie B<TERM_ALT?_ADD> entsprechend definieren.
+
+B<BEISPIEL 1:> Falls solarized (8/16) Farben auf alen Terminals gewünscht sind,
 können Sie B<TERM_ALT3=.> setzen um für alle Terminals den B<COLORSCHEME3>-Default
 zu wählen (der B<COLORSCHEME0> ist, s. unten).
+
+B<BEISPIEL 2:> Wenn Sie eix mitteilen wollen, dass TERM=rxvt ein 256-Farben Terminal ist,
+setzen Sie B<TERM_ALT1_ADD=rxvt>.
+(Dies ist nicht mehr der Default, weil es rxvt-Versionen gibt, die nur 88 Farben unterstützen
+und TERM=rxvt setzen; daher würde es kaputte Farben geben, wenn 256 Farben angenommen würden).
 .TP
 .BR COLORSCHEME0 ", " COLORSCHEME1 ", " COLORSCHEME2 ", " COLORSCHEME3 " " "(Integer-Liste)"
 Welche dieser Variablen tasächlich benutzt wird hängt davon ab, welches B<TERM_ALT?> auf B<TERM> passt.
@@ -3449,6 +3459,9 @@ Hier sind einige einfache Methoden, wie sie einige ungewünschte Farbprobleme ve
 .TP
 3. Erzwingen Sie ein gewünschtes Farbschema auf allen Terminals indem Sie B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc> setzen; dies kann mit B<COLORSCHEME3=0> (oder B<=1>, B<=2>, B<=3>) kombiniert werden. Beachten Sie, dass die Farbschemas 0 und 2 sehr armselig sind, das sie nur die wenigen Systemfarben benutzen und daher verschiedene Dinge farblich nicht immer unterscheidbar sind. Dennoch kann dies sinnvoll sein, wenn Sie beispielsweise durchweg das Solarized Farbschema unter X benutzen, oder wenn Sie regelmäßig verschiedene Terminals benutzen und sich nur an ein einziges Farbschema gewöhnen wollen.
 
+.TP
+4. Wenn Sie ein rxvt benutzen, das 256 Farben beherrscht, dass aber nicht TERM=rxvt-256color oder
+TERM=rxvt-unicode-256color setzen, setzen Sie B<TERM_ALT1_ADD=rxvt> in I<@SYSCONFDIR@/eixrc>.
 .LP
 eix beherrscht keine Abhängigkeiten und/oder USE-Flags und wird das
 vermutlich auch niemals tun.
