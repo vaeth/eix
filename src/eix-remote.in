@@ -196,11 +196,15 @@ The default should have been set with ./configure --remote-file'`"
 	[ -n "${archive:++}" ] && test -e "${archive}" \
 		&& cp -p -- "${archive}" "${tmpfile}" >/dev/null 2>&1
 	(
-		CdDir "${tmpdir}" && wget -N -- "${addr}" \
-			|| die "`eval_gettext 'failed: wget -N -- ${addr}'`"
+		CdDir "${tmpdir}" || die "`gettext 'cannot cd to tempdir'`"
+		set -- wget -N
+		${verbose} || set -- "${@}" -q
+		test -w '/dev/stdout' && set -- "${@}" -o '/dev/stdout'
+		set -- "${@}" -- "${addr}"
+		"${@}" || die "`gettext 'failed: '` ${*}"
 	) || {
 		exitcode=${?}
-		exit
+		exit ${exitcode}
 	}
 }
 

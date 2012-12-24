@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.27.7
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Extend COLORFGBG_DARK default for rxvt-unicode with XPM support.
+	- eix-remote: Redirect wget diagnostics to stdout and let it honour -q,
+	  see http://forums.gentoo.org/viewtopic.php?p=7208430
+
 *eix-0.27.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- PLEASE READ THIS IF YOU HAVE TROUBLES WITH COLORS/BACKGROUND:

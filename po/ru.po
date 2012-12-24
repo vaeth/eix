@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-12-09 12:02+0100\n"
+"POT-Creation-Date: 2012-12-24 17:58+0100\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -37,7 +37,7 @@ msgstr "Проблема при запуске ${eixf_cmd}"
 msgid "Calling eix-update"
 msgstr "Запускаю eix-update"
 
-#: src/eix-functions.sh.in:304 src/eix-remote.sh:296
+#: src/eix-functions.sh.in:304 src/eix-remote.sh:300
 msgid "eix-update failed"
 msgstr "ошибка eix-update"
 
@@ -334,7 +334,7 @@ msgstr ""
 "-H            Подавить обновление линии статуса\n"
 "-q            Тихо"
 
-#: src/eix-layman.sh:133 src/eix-remote.sh:240 src/eix-update.cc:668
+#: src/eix-layman.sh:133 src/eix-remote.sh:244 src/eix-update.cc:668
 msgid "Analyzing"
 msgstr "Анализ"
 
@@ -499,12 +499,17 @@ msgstr "$LOCAL_LAYMAN должен начинаться с /"
 msgid "cannot cd to ${a}"
 msgstr "невозможно перейти в ${a}"
 
-#: src/eix-remote.sh:200
-#, sh-format
-msgid "failed: wget -N -- ${addr}"
-msgstr "ошибка: wget -N -- ${addr}"
+#: src/eix-remote.sh:199
+#, fuzzy
+msgid "cannot cd to tempdir"
+msgstr "невозможно перейти в tempdir"
 
-#: src/eix-remote.sh:211
+#: src/eix-remote.sh:204
+#, fuzzy
+msgid "failed: "
+msgstr "ошибка: "
+
+#: src/eix-remote.sh:215
 #, sh-format
 msgid ""
 "Probably your eix cachefile was *not* updated successfully.\n"
@@ -543,45 +548,45 @@ msgstr ""
 "чтобы использовать eix-remote:\n"
 "Это неудобство неизбежно и ошибкой не является!"
 
-#: src/eix-remote.sh:232
+#: src/eix-remote.sh:236
 msgid "Unpacking data"
 msgstr "Распаковка данных"
 
-#: src/eix-remote.sh:233
+#: src/eix-remote.sh:237
 #, sh-format
 msgid "cannot unpack ${a}"
 msgstr "невозможно распаковать ${a}"
 
-#: src/eix-remote.sh:261
+#: src/eix-remote.sh:265
 #, sh-format
 msgid "problems occurred with cachefile ${i}"
 msgstr "возникли проблемы с файлом кэша ${i}"
 
-#: src/eix-remote.sh:281
+#: src/eix-remote.sh:285
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "невозможно прочесть все файлы кэша eix от ${a}"
 
-#: src/eix-remote.sh:287
+#: src/eix-remote.sh:291
 #, sh-format
 msgid "Output to remote database ${EIX_REMOTE}"
 msgstr ""
 
-#: src/eix-remote.sh:306
+#: src/eix-remote.sh:310
 msgid "A temporary file makes only sense for update mode"
 msgstr "Временный файл имеет смысл только для режима обновления"
 
-#: src/eix-remote.sh:317
+#: src/eix-remote.sh:321
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
 msgstr "невозможно сделать копию ${file} временного файла"
 
-#: src/eix-remote.sh:329
+#: src/eix-remote.sh:333
 #, sh-format
 msgid "cannot read ${archive}"
 msgstr "невозможно прочесть ${archive}"
 
-#: src/eix-remote.sh:348
+#: src/eix-remote.sh:352
 #, sh-format
 msgid "mkdir ${tmpsub} failed"
 msgstr "ошибка создания каталога ${tmpsub}"

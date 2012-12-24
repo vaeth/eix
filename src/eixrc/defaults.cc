@@ -713,7 +713,7 @@ AddOption(STRING, "TERM_DARK",
 	"In modes true* and false* also COLORGBGB is respected by COLORFGBG_DARK."));
 
 AddOption(STRING, "COLORFGBG_DARK",
-	"^[^;]*;[02-689] ^[^;]*;1[^5]", _(
+	";0?[02-689]$ ;1[0-46]$ ;[a-km-vxz][a-z]*$", _(
 	"This is a list of regular expressions.\n"
 	"If modes true* and false* are active in TERM_DARK and COLORFGBG is nonempty,\n"
 	"then the darkmode depends on whether COLORFGBG matches at least one entry."));
