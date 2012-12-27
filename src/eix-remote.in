@@ -198,8 +198,8 @@ The default should have been set with ./configure --remote-file'`"
 	(
 		CdDir "${tmpdir}" || die "`gettext 'cannot cd to tempdir'`"
 		set -- wget -N
-		${verbose} || set -- "${@}" -q
-		test -w '/dev/stdout' && set -- "${@}" -o '/dev/stdout'
+		${verbose} || set -- "${@}" --no-verbose
+		# test -w '/dev/stdout' && set -- "${@}" -o '/dev/stdout'
 		set -- "${@}" -- "${addr}"
 		"${@}" || die "`gettext 'failed: '` ${*}"
 	) || {

@@ -3,7 +3,7 @@
 *eix-0.27.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Extend COLORFGBG_DARK default for rxvt-unicode with XPM support.
-	- eix-remote: Redirect wget diagnostics to stdout and let it honour -q,
+	- eix-remote -q: Pass --no-verbose to wget,
 	  see http://forums.gentoo.org/viewtopic.php?p=7208430
 
 *eix-0.27.6
