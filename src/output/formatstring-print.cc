@@ -76,7 +76,6 @@ class VersionVariables {
 
 	public:
 		bool first, last, slotfirst, slotlast, oneslot, isinst;
-		bool know_restrict;
 		string result;
 
 		VersionVariables()
@@ -89,7 +88,6 @@ class VersionVariables {
 
 		void setinst(InstVersion *inst)
 		{
-			know_restrict = false;
 			m_instver = inst;
 		}
 
@@ -1377,14 +1375,8 @@ PrintFormat::ver_restrict(Package *package) const
 {
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
-		if(!version_variables->know_restrict) {
-			eix_assert_paranoic(header != NULLPTR);
-			if(vardb->readRestricted(*package, i, *header)) {
-					version_variables->know_restrict = true;
-			} else {
-				return NULLPTR;
-			}
-		}
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readRestricted(*package, i, *header);
 		return i;
 	}
 	return version_variables->version();

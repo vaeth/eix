@@ -43,6 +43,7 @@ class ProfileFile {
 class CascadingProfile {
 		friend class ProfileFilenames;
 	public:
+		const std::string *profile_paths_append;
 		bool use_world, finalized;
 		MaskList<Mask> m_world;          /**< Packages in world. This must be set externally */
 
@@ -93,7 +94,8 @@ class CascadingProfile {
 		bool readPackageAcceptKeywords(const std::string &filename, const char *repo);
 
 	public:
-		CascadingProfile(PortageSettings *portagesettings, bool init_world)  ATTRIBUTE_NONNULL_ :
+		CascadingProfile(PortageSettings *portagesettings, bool init_world) ATTRIBUTE_NONNULL_ :
+			profile_paths_append(NULLPTR),
 			use_world(false), finalized(false),
 			m_init_world(init_world),
 			m_portagesettings(portagesettings)

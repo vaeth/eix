@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/null.h"
 #include "portage/keywords.h"
 #include "portage/mask.h"
 #include "portage/mask_list.h"
@@ -185,7 +186,7 @@ class PortageSettings : public std::map<std::string, std::string> {
 		const char *cstr(const std::string &var) const ATTRIBUTE_PURE;
 
 		/** Read make.globals and make.conf. */
-		PortageSettings(EixRc *eixrc, bool getlocal, bool init_world);
+		PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, const std::string *profile_paths_append = NULLPTR);
 
 		/** Free memory. */
 		~PortageSettings();

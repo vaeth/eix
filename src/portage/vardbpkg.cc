@@ -239,11 +239,15 @@ VarDbPkg::readUse(const Package &p, InstVersion *v) const
 	return true;
 }
 
-bool
+void
 VarDbPkg::readRestricted(const Package &p, InstVersion *v, const DBHeader& header) const
 {
-	if(likely(v->know_restricted))
-		return true;
+	if(unlikely(!get_restrictions)) {
+		return;
+	}
+	if(likely(v->know_restricted)) {
+		return;
+	}
 	v->know_restricted = true;
 	v->restrictFlags = ExtendedVersion::RESTRICT_NONE;
 	v->propertiesFlags = ExtendedVersion::PROPERTIES_NONE;
@@ -263,8 +267,9 @@ VarDbPkg::readRestricted(const Package &p, InstVersion *v, const DBHeader& heade
 		v->propertiesFlags = it->propertiesFlags;
 		break;
 	}
-	if(!care_of_restrictions)
-		return true;
+	if(!care_of_restrictions) {
+		return;
+	}
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
 	vector<string> lines;
 	if(unlikely(!pushback_lines((dirname + "/RESTRICT").c_str(),
@@ -272,13 +277,14 @@ VarDbPkg::readRestricted(const Package &p, InstVersion *v, const DBHeader& heade
 		// It is OK that this file does not exist:
 		// Portage does this if RESTRICT is not set.
 		v->restrictFlags = ExtendedVersion::RESTRICT_NONE;
-		return true;
+		return;
 	}
-	if(lines.size() == 1)
+	if(lines.size() == 1) {
 		v->set_restrict(lines[0]);
-	else
+	} else {
 		v->set_restrict(join_to_string(lines));
-	return true;
+	}
+	return;
 }
 
 void

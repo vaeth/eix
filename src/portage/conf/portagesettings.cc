@@ -205,7 +205,7 @@ PortageSettings::add_repo_vector(vector<string> *v, bool resolve, bool modify)
 }
 
 /** Read make.globals and make.conf. */
-PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world)
+PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, const string *profile_paths_append)
 {
 	settings_rc = eixrc;
 #ifndef HAVE_SETENV
@@ -253,7 +253,9 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world)
 		ref = join_to_string(overlayvec);
 	}
 
+	user_config = NULLPTR;
 	profile = new CascadingProfile(this, init_world);
+	profile->profile_paths_append = profile_paths_append;
 	store_world_sets(NULLPTR);
 	bool read_world(false);
 	if(init_world) {
@@ -274,6 +276,9 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world)
 	string &my_path((*this)["PORTDIR"]);
 	profile->listaddFile(my_path + PORTDIR_MASK_FILE, 0);
 	profile->listaddProfile();
+	if(unlikely(profile_paths_append != NULLPTR)) {
+		return;
+	}
 	profile->readMakeDefaults();
 	profile->readremoveFiles();
 	CascadingProfile *local_profile(NULLPTR);
@@ -294,7 +299,6 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world)
 	} else {
 		profile->readMakeDefaults();
 		profile->readremoveFiles();
-		user_config = NULLPTR;
 	}
 	override_by_env(test_in_env_late);
 

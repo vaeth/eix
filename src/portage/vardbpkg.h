@@ -65,7 +65,7 @@ class VarDbPkg {
 
 		bool readSlot(const Package &p, InstVersion *v) const ATTRIBUTE_NONNULL_;
 		bool readUse(const Package &p, InstVersion *v) const ATTRIBUTE_NONNULL_;
-		bool readRestricted(const Package &p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
+		void readRestricted(const Package &p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
 		void readInstDate(const Package &p, InstVersion *v) const ATTRIBUTE_NONNULL_;
 
 		bool readOverlay(const Package &p, InstVersion *v, const DBHeader &header) const ATTRIBUTE_NONNULL_;

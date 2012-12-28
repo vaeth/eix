@@ -272,7 +272,10 @@ class Darkmode {
 		bool dark, check;
 
 		void init(bool is_dark, bool is_check)
-		{ dark = is_dark; check = is_check; }
+		{
+			dark = is_dark;
+			check = is_check;
+		}
 
 		bool init(const string &s)
 		{

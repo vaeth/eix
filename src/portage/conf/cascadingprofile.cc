@@ -9,8 +9,6 @@
 
 #include <config.h>
 
-// #define DEBUG_PROFILE_PATHS
-
 #include <cstring>
 
 #include <iostream>
@@ -27,6 +25,7 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/sysutils.h"
 #include "eixTk/utils.h"
 #include "portage/conf/cascadingprofile.h"
 #include "portage/conf/portagesettings.h"
@@ -44,9 +43,7 @@ using std::string;
 using std::vector;
 
 using std::cerr;
-#ifdef DEBUG_PROFILE_PATHS
 using std::cout;
-#endif
 using std::endl;
 
 
@@ -57,9 +54,16 @@ static const char *profile_exclude[] = { "parent", "..", "." , NULLPTR };
 bool CascadingProfile::addProfile(const char *profile, set<string> *sourced_files)
 {
 	string truename(normalize_path(profile, true, true));
-#ifdef DEBUG_PROFILE_PATHS
-	cout << eix::format("Adding to Profile:\n\t%r -> %r\n") % profile % truename;
-#endif
+	if(unlikely(profile_paths_append != NULLPTR)) {
+		if(likely(is_dir(truename.c_str()))) {
+			cout << truename;
+			if(profile_paths_append->empty()) {
+				cout << '\0';
+			} else {
+				cout << (*profile_paths_append);
+			}
+		}
+	}
 	if(truename.empty()) {
 		return false;
 	}

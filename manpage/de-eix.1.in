@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-09 10:00:00 +0200 (Sun, 09 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-28 09:00:00 +0200 (Fri, 28 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -281,6 +281,11 @@ Die geht nur, falls B<DEP=true> aktiv ist (und bei der Erzeugung der Cachedatei 
 .TP
 .B --print-world-sets
 Gibt die world sets aus.
+.TP
+.B --print-profile-paths
+Gibt alle Pfade des aktuellen Profils aus.
+An jeden Pfad wird B<PRINT_APPEND> angehängt.
+Falls B<PRINT_APPEND> leer ist, wird das Nullzeichen angehängt.
 .TP
 .B --is-current
 Diese Option überprüft nur, ob B<@EIX_CACHEFILE@> vorhanden und zulässig ist

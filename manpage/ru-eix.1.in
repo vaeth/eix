@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-09 10:00:00 +0200 (Sun, 09 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-28 09:00:00 +0200 (Fri, 28 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -268,6 +268,11 @@ This only works if B<DEP=true> is active (and was so when the cachefile was crea
 .TP
 .B --print-world-sets
 print the world sets.
+.TP
+.B --print-profile-paths
+Outputs all paths of the current profile.
+To each Path B<PRINT_APPEND> is appended.
+If B<PRINT_APPEND> is empty, the null character is appended.
 .TP
 .B --is-current
 This checks only whether B<@EIX_CACHEFILE@> is available and valid

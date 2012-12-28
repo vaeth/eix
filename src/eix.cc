@@ -110,6 +110,7 @@ dump_help()
 "     --print-overlay-path  print the path of specified overlay\n"
 "     --print-overlay-label print label of specified overlay\n"
 "     --print-overlay-data  print label and path of specified overlay\n"
+"     --print-profile-paths print all paths of current profile\n"
 "     --is-current          check for valid cache-file\n"
 "     --256                 Print all ansi color palettes\n"
 "     --256d                Print ansi color palettes for foreground (dark)\n"
@@ -299,6 +300,7 @@ static struct LocalOptions {
 		hash_slot,
 		hash_license,
 		hash_depend,
+		print_profile_paths,
 		world_sets;
 } rc_options;
 
@@ -346,12 +348,13 @@ EixOptionList::EixOptionList()
 
 	push_back(Option("is-current",   O_CURRENT, Option::BOOLEAN_T,   &rc_options.is_current));
 
-	push_back(Option("print-all-useflags", O_HASH_IUSE,     Option::BOOLEAN_T, &rc_options.hash_iuse));
-	push_back(Option("print-all-keywords", O_HASH_KEYWORDS, Option::BOOLEAN_T, &rc_options.hash_keywords));
-	push_back(Option("print-all-slots",    O_HASH_SLOT,     Option::BOOLEAN_T, &rc_options.hash_slot));
-	push_back(Option("print-all-licenses", O_HASH_LICENSE,  Option::BOOLEAN_T, &rc_options.hash_license));
-	push_back(Option("print-all-depends",  O_HASH_DEPEND,   Option::BOOLEAN_T, &rc_options.hash_depend));
-	push_back(Option("print-world-sets",   O_WORLD_SETS,    Option::BOOLEAN_T, &rc_options.world_sets));
+	push_back(Option("print-all-useflags",  O_HASH_IUSE,     Option::BOOLEAN_T, &rc_options.hash_iuse));
+	push_back(Option("print-all-keywords",  O_HASH_KEYWORDS, Option::BOOLEAN_T, &rc_options.hash_keywords));
+	push_back(Option("print-all-slots",     O_HASH_SLOT,     Option::BOOLEAN_T, &rc_options.hash_slot));
+	push_back(Option("print-all-licenses",  O_HASH_LICENSE,  Option::BOOLEAN_T, &rc_options.hash_license));
+	push_back(Option("print-all-depends",   O_HASH_DEPEND,   Option::BOOLEAN_T, &rc_options.hash_depend));
+	push_back(Option("print-world-sets",    O_WORLD_SETS,    Option::BOOLEAN_T, &rc_options.world_sets));
+	push_back(Option("print-profile-paths", O_PROFILE_PATHS, Option::BOOLEAN_T, &rc_options.print_profile_paths));
 
 	push_back(Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage));
 
@@ -563,6 +566,14 @@ set_format()
 	}
 }
 
+static string *
+new_print_append(EixRc *eixrc)
+{
+	string *print_append = new string((*eixrc)["PRINT_APPEND"]);
+	unescape_string(print_append);
+	return print_append;
+}
+
 int
 run_eix(int argc, char** argv)
 {
@@ -698,7 +709,15 @@ run_eix(int argc, char** argv)
 		overlay_mode = mode_list_none;
 	}
 
-	PortageSettings portagesettings(&eixrc, true, false);
+	string *print_append(NULLPTR);
+	if(unlikely(rc_options.print_profile_paths)) {
+		print_append = new_print_append(&eixrc);
+	}
+	PortageSettings portagesettings(&eixrc, true, false, print_append);
+	if(unlikely(rc_options.print_profile_paths)) {
+		delete print_append;
+		return EXIT_SUCCESS;
+	}
 
 	string var_db_pkg(eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG);
 	VarDbPkg varpkg_db(var_db_pkg, !rc_options.quick, rc_options.care,
@@ -796,17 +815,17 @@ run_eix(int argc, char** argv)
 				return EXIT_FAILURE;
 			}
 			const OverlayIdent& overlay(header.getOverlay(num));
-			string print_append(eixrc["PRINT_APPEND"]);
-			unescape_string(&print_append);
+			print_append = new_print_append(&eixrc);
 			string result;
 			if((print_overlay_mode & PRINT_OVERLAY_LABEL) != PRINT_OVERLAY_NONE) {
 				result.assign(overlay.label);
-				result.append(print_append);
+				result.append(*print_append);
 			}
 			if((print_overlay_mode & PRINT_OVERLAY_PATH) != PRINT_OVERLAY_NONE) {
 				result.append(overlay.path);
-				result.append(print_append);
+				result.append(*print_append);
 			}
+			delete print_append;
 			cout << result;
 			return EXIT_SUCCESS;
 		}
