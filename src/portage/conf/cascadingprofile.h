@@ -43,7 +43,8 @@ class ProfileFile {
 class CascadingProfile {
 		friend class ProfileFilenames;
 	public:
-		const std::string *profile_paths_append;
+		bool print_profile_paths;
+		std::string profile_paths_append;
 		bool use_world, finalized;
 		MaskList<Mask> m_world;          /**< Packages in world. This must be set externally */
 
@@ -95,7 +96,7 @@ class CascadingProfile {
 
 	public:
 		CascadingProfile(PortageSettings *portagesettings, bool init_world) ATTRIBUTE_NONNULL_ :
-			profile_paths_append(NULLPTR),
+			print_profile_paths(false),
 			use_world(false), finalized(false),
 			m_init_world(init_world),
 			m_portagesettings(portagesettings)

@@ -54,13 +54,13 @@ static const char *profile_exclude[] = { "parent", "..", "." , NULLPTR };
 bool CascadingProfile::addProfile(const char *profile, set<string> *sourced_files)
 {
 	string truename(normalize_path(profile, true, true));
-	if(unlikely(profile_paths_append != NULLPTR)) {
+	if(unlikely(print_profile_paths)) {
 		if(likely(is_dir(truename.c_str()))) {
 			cout << truename;
-			if(profile_paths_append->empty()) {
+			if(profile_paths_append.empty()) {
 				cout << '\0';
 			} else {
-				cout << (*profile_paths_append);
+				cout << profile_paths_append;
 			}
 		}
 	}

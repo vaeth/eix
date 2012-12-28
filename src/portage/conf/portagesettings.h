@@ -15,7 +15,6 @@
 #include <string>
 #include <vector>
 
-#include "eixTk/null.h"
 #include "portage/keywords.h"
 #include "portage/mask.h"
 #include "portage/mask_list.h"
@@ -117,6 +116,7 @@ class PortageSettings : public std::map<std::string, std::string> {
 		friend class CascadingProfile;
 		friend class PortageUserConfig;
 
+
 		EixRc *settings_rc;
 		std::vector<std::string> m_categories; /**< Vector of all allowed categories. */
 		std::vector<std::string> m_accepted_keywords;
@@ -179,6 +179,9 @@ class PortageSettings : public std::map<std::string, std::string> {
 #ifndef HAVE_SETENV
 		bool export_portdir_overlay;
 #endif
+		using std::map<std::string, std::string>::find;
+		using std::map<std::string, std::string>::erase;
+		using std::map<std::string, std::string>::end;
 		using std::map<std::string, std::string>::operator[];
 
 		const std::string &operator[](const std::string &var) const ATTRIBUTE_PURE;
@@ -186,7 +189,7 @@ class PortageSettings : public std::map<std::string, std::string> {
 		const char *cstr(const std::string &var) const ATTRIBUTE_PURE;
 
 		/** Read make.globals and make.conf. */
-		PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, const std::string *profile_paths_append = NULLPTR);
+		PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, bool print_profile_paths = false);
 
 		/** Free memory. */
 		~PortageSettings();

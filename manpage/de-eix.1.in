@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-28 09:00:00 +0200 (Fri, 28 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-12-28 15:00:00 +0200 (Fri, 28 Dec 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -214,6 +214,7 @@ Der Exit-Status ist positiv, falls I<VAR> eix unbekannt ist (siehe B<--known-var
 Diese Option ist hauptsächlich für Skripte nützlich oder zum Debuggen.
 Zur Benutzung in Skripten empfiehlt sich die Benutzung von B<PRINT_APPEND>.
 um das Abschneiden von Leerzeichen am Ende zu verhinden (siehe die Beschreibung zu B<PRINT_APPEND>).
+Eine spezieller I<VAR>-Wert, der nur auf diese Weise erhalten werden kann, ist B<USE.profile> was den USE-String des Profiles enthält.
 .TP
 .B --know-vars
 Ausgabe eine alphabetischen Liste aller Variablen, die eix für B<--print> bekannt sind.

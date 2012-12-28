@@ -566,14 +566,6 @@ set_format()
 	}
 }
 
-static string *
-new_print_append(EixRc *eixrc)
-{
-	string *print_append = new string((*eixrc)["PRINT_APPEND"]);
-	unescape_string(print_append);
-	return print_append;
-}
-
 int
 run_eix(int argc, char** argv)
 {
@@ -709,13 +701,8 @@ run_eix(int argc, char** argv)
 		overlay_mode = mode_list_none;
 	}
 
-	string *print_append(NULLPTR);
+	PortageSettings portagesettings(&eixrc, true, false, rc_options.print_profile_paths);
 	if(unlikely(rc_options.print_profile_paths)) {
-		print_append = new_print_append(&eixrc);
-	}
-	PortageSettings portagesettings(&eixrc, true, false, print_append);
-	if(unlikely(rc_options.print_profile_paths)) {
-		delete print_append;
 		return EXIT_SUCCESS;
 	}
 
@@ -815,17 +802,17 @@ run_eix(int argc, char** argv)
 				return EXIT_FAILURE;
 			}
 			const OverlayIdent& overlay(header.getOverlay(num));
-			print_append = new_print_append(&eixrc);
+			string print_append(eixrc["PRINT_APPEND"]);
+			unescape_string(&print_append);
 			string result;
 			if((print_overlay_mode & PRINT_OVERLAY_LABEL) != PRINT_OVERLAY_NONE) {
 				result.assign(overlay.label);
-				result.append(*print_append);
+				result.append(print_append);
 			}
 			if((print_overlay_mode & PRINT_OVERLAY_PATH) != PRINT_OVERLAY_NONE) {
 				result.append(overlay.path);
-				result.append(*print_append);
+				result.append(print_append);
 			}
-			delete print_append;
 			cout << result;
 			return EXIT_SUCCESS;
 		}

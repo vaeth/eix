@@ -60,23 +60,23 @@ static ArchUsed apply_keyword(const string &key, const set<string> &keywords_set
 	Keywords::Redundant &redundant, Keywords::Redundant check, bool shortcut) ATTRIBUTE_NONNULL_;
 inline static void increase(char *s) ATTRIBUTE_NONNULL_;
 
-
-const std::string &
-PortageSettings::operator[](const std::string &var) const
+const string &
+PortageSettings::operator[](const string &var) const
 {
-	map<string, string>::const_iterator it(map<string, string>::find(var));
-	if(it == map<string, string>::end()) {
+	map<string, string>::const_iterator it(find(var));
+	if(it == end()) {
 		return *emptystring;
 	}
 	return it->second;
 }
 
 const char *
-PortageSettings::cstr(const std::string &var) const
+PortageSettings::cstr(const string &var) const
 {
-	map<string, string>::const_iterator it(map<string, string>::find(var));
-	if(it == map<string, string>::end())
+	map<string, string>::const_iterator it(find(var));
+	if(it == end()) {
 		return NULLPTR;
+	}
 	return it->second.c_str();
 }
 
@@ -205,7 +205,7 @@ PortageSettings::add_repo_vector(vector<string> *v, bool resolve, bool modify)
 }
 
 /** Read make.globals and make.conf. */
-PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, const string *profile_paths_append)
+PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, bool print_profile_paths)
 {
 	settings_rc = eixrc;
 #ifndef HAVE_SETENV
@@ -230,6 +230,16 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, c
 	}
 	read_config(m_eprefixconf + MAKE_CONF_FILE, eprefixsource);
 	read_config(m_eprefixconf + MAKE_CONF_FILE_NEW, eprefixsource);
+	string *use_make_conf;
+	{
+		map<string, string>::iterator it(find("USE"));
+		if(likely(it != end())) {
+			use_make_conf = new string(it->second);
+			erase(it);
+		} else {
+			use_make_conf = NULLPTR;
+		}
+	}
 
 	override_by_env(test_in_env_early);
 	/* Normalize "PORTDIR": */
@@ -255,7 +265,12 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, c
 
 	user_config = NULLPTR;
 	profile = new CascadingProfile(this, init_world);
-	profile->profile_paths_append = profile_paths_append;
+	if(unlikely(print_profile_paths)) {
+		profile->print_profile_paths = true;
+		string &s(profile->profile_paths_append);
+		s = (*eixrc)["PRINT_APPEND"];
+		unescape_string(&s);
+	}
 	store_world_sets(NULLPTR);
 	bool read_world(false);
 	if(init_world) {
@@ -276,7 +291,7 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, c
 	string &my_path((*this)["PORTDIR"]);
 	profile->listaddFile(my_path + PORTDIR_MASK_FILE, 0);
 	profile->listaddProfile();
-	if(unlikely(profile_paths_append != NULLPTR)) {
+	if(unlikely(print_profile_paths)) {
 		return;
 	}
 	profile->readMakeDefaults();
@@ -300,6 +315,20 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, c
 		profile->readMakeDefaults();
 		profile->readremoveFiles();
 	}
+
+	{
+		const char *useflags(cstr("USE"));
+		if(likely(useflags != NULLPTR)) {
+			(*this)["USE.profile"] = useflags;
+		}
+		if(likely(use_make_conf != NULLPTR)) {
+			(*this)["USE"] = *use_make_conf;
+			delete use_make_conf;
+		} else if(likely(useflags != NULLPTR)) {
+			erase("USE");
+		}
+	}
+
 	override_by_env(test_in_env_late);
 
 	m_accepted_keywords.clear();
