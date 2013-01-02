@@ -1,5 +1,0 @@
-#! /usr/bin/env sh
-
-export LC_ALL=C
-umask 022
-exec git log --decorate --graph --all --full-history "${@}"

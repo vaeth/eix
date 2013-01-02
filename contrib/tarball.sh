@@ -1,11 +1,11 @@
 #! /usr/bin/env sh
 
-project="eix"
-mkclean="./mk/clean"
-mkemerge="./mk/emerge"
-mkrelease="./mk/release"
-mkmake="./mk/make"
-mkmakeextra="UPDATEPOFILES="
+project='eix'
+mkclean='contrib/clean.sh'
+mkemerge='contrib/emerge.sh'
+mkrelease='contrib/release.sh'
+mkmake='contrib/make.sh'
+mkmakeextra='UPDATEPOFILES='
 make_opts='-0Geq'
 
 export LC_ALL=C XZ_OPT=--extreme

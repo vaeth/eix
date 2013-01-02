@@ -6,16 +6,6 @@
 #     Emil Beinroth <emilbeinroth@gmx.net>
 #     Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
 
-# If you do not have access to automake-1.11 but want to compile the
-# eix repository anyway, you can also use the commented AUTOMAKE_OPTIONS:
-# then any >=automake-1.4 should do (although early versions are untested).
-# However, for creating a distribution tarball, you should not do this:
-# I would like to see in distributions only the "silent rules" default
-# (and also the .tar.xz format for the tarball, at least for the default).
-# Both of these are only available with automake-1.11, therefore the latter
-# is required by default. Moreover, only in >=automake-1.11.2 silent rules
-# work also without dependency tracking
-#AUTOMAKE_OPTIONS = foreign 1.4
 AUTOMAKE_OPTIONS = foreign 1.11.2 no-dist-gzip dist-xz -Wobsolete -Wportability -Wextra-portability
 
 if EXTRA_DOC
@@ -33,7 +23,7 @@ CLEANFILES = doxygen.cfg cppcomplete.tags tags
 dist_doc_DATA = AUTHORS ChangeLog
 
 # Stuff from our distribution
-EXTRA_DIST = config/config.rpath doxygen.cfg.in bash/eix .gitignore
+EXTRA_DIST = config/config.rpath contrib/cpplint.sh contrib/check_includes.sh doxygen.cfg.in bash/eix .gitignore
 
 ACLOCAL_AMFLAGS = -I m4 -I martinm4
 

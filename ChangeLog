@@ -8,6 +8,9 @@
 	- Extend COLORFGBG_DARK default for rxvt-unicode with XPM support.
 	- eix-remote -q: Pass --no-verbose to wget,
 	  see http://forums.gentoo.org/viewtopic.php?p=7208430
+	- Support AC_CONFIG_MACRO_DIR[S] of automake-1.13, keep ACLOCAL_AMFLAGS
+	- Remove support for <automake-1.11.2
+	- Move tools to contrib/
 
 *eix-0.27.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

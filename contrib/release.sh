@@ -3,7 +3,7 @@
 export LC_ALL=C
 umask 022
 
-proj="eix"
+proj='eix'
 
 Echo() {
 	printf '%s\n' "${*}"
@@ -51,7 +51,7 @@ ExecDie() {
 
 [ ${#} -eq 0 ] || Usage
 
-test -f mk/release || Die 'You must be in the parent directory of ./mk'
+test -f contrib/release.sh || Die 'You must be in the parent directory of ./contrib'
 ver=`sed -ne 's/^[[:space:]]*AC_INIT[[:space:]]*([^,]*,[[:space:][]*\([^],[:space:]]*\).*$/\1/p' configure.ac`
 
 KeyCheck() {
@@ -96,7 +96,7 @@ do	tarball="${proj}-${ver}.${j}"
 	test -f "${tarball}" && break
 done
 test -f "${tarball}" || \
-	Die "You must first create the tarball with ./mk/tarball"
+	Die "You must first create the tarball with ./contrib/tarball.sh"
 
 # The rest must be a function, since the original file
 # will be removed during execution, and so parsing of this file might fail

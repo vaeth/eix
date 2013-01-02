@@ -1,10 +1,10 @@
 
 # autotools directories:
-/tmp*
+/tmp*/
 /autom4te.cache/
 /config/
 /m4/
-/eix-0.*
+/eix-*/
 
 # autotools/doxygen files:
 /ABOUT-NLS

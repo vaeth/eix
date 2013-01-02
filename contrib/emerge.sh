@@ -1,7 +1,7 @@
 #! /usr/bin/env sh
 
-category="app-portage"
-project="eix"
+category='app-portage'
+project='eix'
 
 export LC_ALL=C
 
