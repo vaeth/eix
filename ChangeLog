@@ -2,6 +2,7 @@
 
 *eix-0.27.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- manpage: add section how to speed up eix-update / handle metadata
 	- Add --print-profile-paths
 	- Add --print USE.profile for profile's USE; USE is only make.conf's
 	- Honour RESTRICT_INSTALLED as documented

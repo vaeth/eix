@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-28 15:00:00 +0200 (Fri, 28 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-01-03 17:00:00 +0200 (Thu, 03 Jan 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2476,7 +2476,7 @@ B<BG2=white>
 B<BG3=white>
 
 (Je nach eix-Version sind einige davon sogar der Default).
-Dies kann jedoch unerwünschte Effekte auf transparenten Terminals haben oder falls Scrollen notwendig ist, siehe den Abschnitt FEHLER.
+Dies kann jedoch unerwünschte Effekte auf transparenten Terminals haben oder falls Scrollen notwendig ist, siehe den Abschnitt B<FEHLER>.
 Für diese Nebeneffekte kann es - je nach Geschmack und Terminal - nützlich/hinderlich sein, B<RESET_ALL_LINES=false> oder B<RESET_ALL_LINES=true> zu setzen
 (der Default kann von der eix-Version abhängen).
 
@@ -2549,14 +2549,19 @@ Der Default enthält B<#metadata-md5#metadata-flat>.
 Außer für spezielle Setups ist dies meist erwünscht:
 Es bedeutet, dass wenn aktuelle Metadaten (in einem metadata/*cache Unterverzeichnis)
 verfügbar sind, so werden diese anstelle des Parsens/Ausführens des ebuilds benutzt.
+
 Letzteres ist prinzipiell nicht verlässlich (Parsen) oder ziemlich langsam (Ausführen),
 d.h. die Metadaten (falls vorhanden und aktuell) sind immer vorzuziehen.
+Näheres dazu findet sich im Abschnitt B<BESCHLEUNIGUNG>.
 
 .TP
 .BR PORTDIR_CACHE_METHOD ", " OVERLAY_CACHE_METHOD " " (string)
 Legt den Cachetyp für Portage und Overlays fest.
 Der Default für B<PORTDIR_CACHE_METHOD> ist to I<@PORTDIR_CACHE_METHOD@>,
 der für B<OVERLAY_CACHE_METHOD> ist I<parse|ebuild*>.
+
+Aus Geschwindigkeitsgründen sind auch für Overlays grundsätzlich Metadaten vorzuziehen.
+Näheres dazu findet sich im Abschnitt B<BESCHLEUNIGUNG>.
 
 B<Sicherheitswarnung:>
 Falls die .ebuilds der Overlays nicht vollständig vertrauenswürdig sind,
@@ -3451,6 +3456,9 @@ Bei allen anderen Optionen (oder ohne Option) wird durch Vorstellen des "X" klar
 Für Fehlermeldungen benutzen Sie bitte I<@PACKAGE_BUGREPORT@> oder
 Gentoos Bugzilla I<http://bugs.gentoo.org/>
 
+Viele Cache-Methoden sind prinzipbedingt sehr langsam.
+Benutzen Sie die Hinweise im speziellen Abschnitt B<BESCHLEUNIGUNG> weiter unten.
+
 eix kann nicht zuverlässig die Farbmöglichkeiten und Hintergrundfarbe Ihres Terminal feststellen;
 dies ist gerade dann besonders ärgerlich, wenn Sie ein transparentes Terminal benutzen oder die Default-Hintergrundfarbe von
 beispielsweise xterm auf Schwarz geändert haben.
@@ -3519,6 +3527,112 @@ Mit dem neuen Default findet leider fast niemand heraus, dass dieses Feature exi
 
 Es gibt zu viele Features: Dokumentation und Konfiguration sind zu kompliziert geworden.
 Andererseits gibt es immer noch eine Menge Dinge, die nicht konfiguriert werden können...
+.\" }}}
+
+.\" {{{ BESCHLEUNIGUNG
+.SH "BESCHLEUNIGUNG"
+.LP
+Alle Nicht-Metadaten-basierten Cachemethoden für B<eix-update> sind entweder unzuverlässig (B<parse>, B<parse*>) oder langsam und unsicher (B<eix>, B<eix*>).
+Daher wird es empfohlen, Metadaten zu erzeugen und sie für den Hauptbaum und aller Overlays zu benutzen.
+Die Default von eix sind so, dass diese Metadaten benutzt werden, sofern vorhanden (siehe B<CACHE_METHOD_PARSE>)
+(Konfiguration ist nur im Falle des sqlite-Backends von Portage erforderlich).
+Im Wesentlichen gibt es zwei Arten möglicher Metdaten, die benutzt werden können:
+
+.TP
+1. Metadaten, die jeweils im Baum/Overlay gespeichert werden.
+
+Diese Daten liegen im metadata/cache oder metadata/md5-cache-Unterverzeichnis von $PORTDIR bzw. vom entsprechenden Overlay.
+
+.TP
+2. Metadaten, die von Portage für jeden Baum/Overlay in I</var/cache/edb/> gespeichert werden.
+
+Diese Daten werden mit B<emerge --metadata> erzeugt (und ihr Format hängt davon ab, ob Portage das sqlite-Backend benutzt).
+
+.LP
+Der Nachteil bei der Benutzung von Metadaten ist, dass sie vor dem Aufruf von B<eix-update>
+generiert bzw. auf den neuesten Stand gebracht werden müssen, sobald der entsprechende Baum/Overlay geändert wird,
+sowie im Falle von den Metadaten von I</var/cache/edb>, dass sie zusätzlichen Platz benötigen.
+
+Glücklicherweise muss man sich nicht um Metadaten um Hauptbaum kümmern, da
+das metadata/{md5-,}cache-Unterverzeichnis von $PORTDIR automatisch mit B<emerge --sync> auf den neuesten Stand gebracht wird.
+Der lokale Overlay allerdings und etliche Overlays, die von layman o.a. behandelt werden,
+enthalten keine Metadaten (und selbst wenn sie es tun, sind diese nicht immer aktuell),
+und daher sollten Metadaten dieser Overlays generiert werden, um B<eix-update> zu beschleunigen.
+
+B<Vorsicht:> Metadaten zu erzeugen ist ein Sicherheitsrisiko, da alle Ebuilds des Baums dazu ausgeführt werden!
+Andererseits müssen Sie Overlays ohnehin vertrauen, wenn Sie sie nutzen...
+
+Ich empfehle B<nicht> die Benutzung von B<emerge --metadata> (obwohl dies automatisiert leich
+zum richtigen Zeitpunkt ausgeführt werden könnte, indem man B<eix-sync> mit der Option B<-M> benutzt:
+Man müsste nur die Zeile <-M> in B</etc/eix-sync.conf> einfügen),
+denn es wäre eine Verschwendung von Plattenplatz, die Metadaten des ganzen Portage-Baums
+als Duplikat nach I</var/cache/edb> zu speichern.
+
+Stattdessen empfehle ich, die Metadaten in den Overlays bei jedem B<eix-sync> zu aktualisieren.
+Dies kann ebenfalls automatisiert zu richtigen Zeitpunkt geschehen, aber es erfordert ein
+etwas komplizierteres Setup:
+
+Für einen lokalen Overlay - der Einfachheit halber nehmen wir an, er liege in I</usr/local/portage>,
+und dass dieser Pfad in B<PORTDIR_OVERLAY> enthalten ist - geht man wie folgt vor:
+
+Als erstes muss man dem Overlay einen Namen geben, falls nicht bereits geschehen:
+Dieser kommt in des File I</usr/local/portage/profiles/repo_name> (das ggf. zu erzeugen ist).
+(Dieser Schritt sollte unabhängig von eix oder Metadaten ohnehin immer geschehen).
+Ich nehme ab jetzt an, dass dieser Name I<mein_lokaler_Overlay> lautet.
+
+Als zweites muss man angeben, welcher Typ von Metadaten gewünscht ist:
+Dazu kommt in die Date I</usr/local/portage/metadata/layout.conf>
+(die ggf. neu anzulegen ist), die Zeile
+
+B<cache-formats = md5-dict>
+
+sowie, außer man hat Gründe das nicht zu tun, ebenfalls die Zeile
+
+B<thin-manifests = true>
+
+Das erste weist Portage an nur die Metadaten in
+I</usr/local/portage/medata/md5-cache> zu erzeugen/benutzen
+(was die neue Methode ist und der alten vorgezogen werden sollte).
+Die andere Zeile hat nichts mit Metadaten zu tun sondern bedeutet nur,
+dass die Manifest-Dateien im Overlay keine Checksummen der Dateien aus
+I</usr/local/portage> enthalten müssen/werden.
+
+Ab jetzt kann man jederzeit durch den Aufruf
+
+B<egencache --repo=>I<mein_lokaler_Overlay> B<--update --update-use-local-desc>
+
+die Metadaten erzeugen bzw. auf den neuesten Stand bringen.
+Beachten Sie, dass für den Fall, dass der Overlay eclassen vom Hauptbaum benutzt,
+der obige Befehl auch dann ausgeführt werden muss, wenn sich die eclassen ändern,
+also nach jedem B<emerge --sync>.
+Um den obigen Befehl automatisch rechtzeitig mit B<eix-sync> auszuführen,
+fügen Sie in I</etc/eix-sync.conf> die folgenden Zeilen ein:
+
+B<@einfo Erzeuge Metadaten für> I<mein_lokaler_Overlay>
+
+B<@egencache --repo=>I<mein_lokaler_Overlay> B<--update --update-use-local-desc>
+
+In ähnlicher Weise können auch beispielsweise alle Overlays gehandhabt werden, die von layman versorgt werden:
+Fügen Sie einfach für jeden Layman-Overlay entsprechende B<egencache>-Aufrufe in F</etc/eix-sync.conf> ein.
+(Seien Sie dabei allerdings nochmals gewarnt, dass dies ein Sicherheitsrisiko darstellt,
+weil es bedeutet, dass die Ebuilds in den Overlays bei B<eix-sync> ausgeführt werden).
+
+Für layman-Overlays gibt es noch ein weiteres Problem:
+Je nach Versionskontrollsystem des Overlays kann sich layman weigern,
+den Overlay zu synchronisieren, wenn Daten in das metadata/-Unterverzeichnis
+geschrieben wurden, oder layman kann dieses Verzeichnis beim Synchronisieren löschen.
+
+Für Overlays, die mit git gehandhabt werden, kann dieses Problem folgendermaßen gelöst werden:
+Erzeugen Sie im Hauptverzeichnis dieses Overlays die Datei I<.gitignore>
+(wenn sie nicht bereits existiert), and fügen sie ihr die beiden Zeilen
+
+B</.gitignore>
+
+B</metadata/>
+
+hinzu: Dies bewirkt, dass das File .gitignore selbst sowie das
+Unterverzeichnis metadata (und sein Inhalt) von git/layman bei obigem
+Aufruf ignoriert (insbesondere nicht verändert) werden.
 .\" }}}
 
 .\" {{{ GESCHICHTE

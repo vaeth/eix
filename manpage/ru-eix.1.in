@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-12-28 15:00:00 +0200 (Fri, 28 Dec 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-01-03 17:00:00 +0200 (Thu, 03 Jan 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -2430,7 +2430,7 @@ B<BG2=white>
 B<BG3=white>
 
 (Depending on your eix version, some of these are even the defaults).
-However, this can have undesired effects on transparent terminals or when scrolling is necessary, see the BUGS section.
+However, this can have undesired effects on transparent terminals or when scrolling is necessary, see the B<BUGS> section.
 For these side effects it can be desirable/undesirable - depending on your taste and terminal - to set
 B<RESET_ALL_LINES=false> or B<RESET_ALL_LINES=true> (the default can depend on the eix version).
 
@@ -2502,15 +2502,20 @@ Unless you have a very special setup this is always what you want:
 It means that if a current metadata (in a metadata/*cache subdirectory)
 is available for the ebuild,
 this is used instead of parsing/executing the ebuild.
+
 The latter is in principle not completely reliable (parsing) or
 rather slow (executing), i.e. the metadata
 (if available and up-to-date) is always preferable.
+For more details see the section B<SPEEDUP>.
 
 .TP
 .BR PORTDIR_CACHE_METHOD ", " OVERLAY_CACHE_METHOD " " (string)
 Set the type of the cache used by portage and for overlays.
 B<PORTDIR_CACHE_METHOD> defaults to I<@PORTDIR_CACHE_METHOD@>,
 B<OVERLAY_CACHE_METHOD> to I<parse|ebuild*>.
+
+For speed reasons it is preferable to use metadata also for overlays.
+More details can be found in the section B<SPEEDUP>.
 
 B<Security Warning:>
 If you do not completely trust the .ebuilds in your overlays,
@@ -3365,6 +3370,9 @@ For all other options (or without option), it is made clear by prepending of "X"
 .LP
 For bugreports use either I<@PACKAGE_BUGREPORT@> or Gentoo's bugzilla I<http://bugs.gentoo.org/>
 
+Many cache methods are slowly in principle:
+Please use the hints given in the separate section B<SPEEDUP> below.
+
 eix cannot reliably detect the color capabilities and background color of your terminal.
 Here are a few simple methods how you can avoid some undesired color problems:
 
@@ -3430,6 +3438,105 @@ However, with the new default, nobody will find out that this feature exists.
 
 There are too many features: The documentation and configuration has become too complicated.
 On the other hand, there are still many things which cannot be configured...
+.\" }}}
+
+.\" {{{ SPEEDUP
+.SH "SPEEDUP"
+.LP
+All non-metadata cache methods for B<eix-update> are either non-reliable (B<parse>, B<parse*>) or rather slow and insecure (B<eix>, B<eix*>).
+For this reason, it is recommended to generate and use metadata for the main portage tree as well as for all its overlays.
+The defaults of eix are such that this metadata is used if available (see B<CACHE_METHOD_PARSE>) (configuration is only necessary if you use the sqlite backend of portage).
+Essentially, there are two types of possible metadata which can be used:
+
+.TP
+1. Metadata stored in each tree/overlay.
+
+This metadata is in the metadata/cache or metadata/md5-cache subdirectory of $PORTDIR or of the overlay's directory.
+
+.TP
+2. Metadata stored by portage for each tree/overlay in I</var/cache/edb/>
+
+This metadata is updated with B<emerge --metadata> (and its format depends on whether portage uses the sqlite backend).
+
+.LP
+The disadvantage of using metadata is that it has to be generated/updated before calling B<eix-update>
+if the corresponding tree/overlay is updated and,
+in case of metadata in I</var/cache/edb>, that it takes additional space.
+
+Fortunately, you do not have to care about metadata in the main tree, since
+the metadata/{md5-,}cache subdirectory of $PORTDIR is automatically updated with B<emerge --sync>.
+However, your local overlays and several overlays updated by layman (or maybe in a different way)
+do not contain metadata (and even if they do, this metadata is not always up-to-date),
+and thus metadata for these overlays should be generated to speed up B<eix-update>.
+
+Be aware that generating metadata is a security risk, since all ebuilds of the tree are executed when doing so!
+However, you must be trusting the overlays anyway if you use them...
+
+I do B<not> recommend to use B<emerge --metadata> (although this could be automatically
+called at the correct time by using B<eix-sync> with the B<-M> option: put e.g. the line <-M> into B</etc/eix-sync.conf>),
+because it would be a waste of disk space to store the metadata of the whole portage tree in duplicate into I</var/cache/edb>.
+
+Instead, I B<do> recommend to update the metadata in the overlays at each B<eix-sync>.
+This can also be automatically updated at the correct time, but it requires a more complicated setup:
+
+For a local overlay, for simplicity assume it is in I</usr/local/portage>
+(and that this path is contained in B<PORTDIR_OVERLAY>), the procedure is as follows:
+
+First you must give your overlay a name if you have not already done so:
+Put into the file I</usr/local/portage/profiles/repo_name> (creating it if necessary)
+the name of your overlay.
+(This step should always be done for overlays, independent of eix or metadata).
+I assume in the following that this name is I<my_local_overlay>.
+
+Second, you should specify which type of metadata you want: Put into the file
+I</usr/local/portage/metadata/layout.conf> (creating it if necessary) the line
+
+B<cache-formats = md5-dict>
+
+and, unless you have a reason not to do so, also the line
+
+B<thin-manifests = true>
+
+The former tells portage to create/read only the metadata in
+I</usr/local/portage/medata/md5-cache> (which is the new method and should be preferred over the other).
+The other line is not really related with metadata but just means that the Manifest files
+in your overlay will/need not contain checksums of files from I</usr/local/portage>.
+
+Now, whenever you want, the metadata can be updated by calling
+
+B<egencache --repo=>I<my_local_overlay> B<--update --update-use-local-desc>
+
+Note that if the overlay uses eclasses from the main tree, the above command should be
+executed also if these eclasses change, i.e. after each B<emerge --sync>.
+To call the above command automatically at the right time with B<eix-sync>, put e.g.
+the following lines into I</etc/eix-sync.conf>:
+
+B<@echo Updating metadata for> I<my_local_overlay>
+
+B<@egencache --repo=>I<my_local_overlay> B<--update --update-use-local-desc>
+
+In a similar manner, you can also treat e.g. overlays managed by layman:
+For each layman overlay which you use you should put corresponding calls
+to B<egencache> into I</etc/eix-sync.conf> (however, please be warned again
+that this is a security risk since it means that the ebuilds in the overlays
+will be executed with B<eix-sync>).
+
+Moreover, for layman overlays there is an additional problem:
+Depending on the version control system of the overlay, layman might refuse to sync
+if you have written data into the metadata/ subdirectory, or layman
+might remove this subdirectory during syncing.
+
+For overlays managed by git, this problem can be solved as follows:
+Create in the main directory of that overlay the file I<.gitignore>
+(if it does not already exist) and add to it the lines:
+
+B</.gitignore>
+
+B</metadata/>
+
+This will cause that the file .gitignore itself as well as the
+subdirectory metadata (and its content) are ignored (and thus not updated)
+by git/layman but only by your above call.
 .\" }}}
 
 .\" {{{ HISTORY
