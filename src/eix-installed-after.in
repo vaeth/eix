@@ -180,7 +180,7 @@ fi
 
 Output() {
 	if [ ${#} -eq 3 ]
-	then	printf '%s\n' "${3}"
+	then	Echo "${3}"
 	elif [ ${#} -gt 3 ]
 	then	printf '%-43s %-11s %s\n' "${3}" "${4}" "${5}"
 	fi

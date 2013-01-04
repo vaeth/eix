@@ -74,7 +74,7 @@ ScanVarDbPkg() {
 			then	${n} || continue
 			else	${n} && continue
 			fi
-			printf '%s\n' "${equal}${j}"
+			Echo "${equal}${j}"
 			${quiet} || c=`Expr "${c}" + 1`
 		done
 	done

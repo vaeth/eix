@@ -7,8 +7,9 @@
 	- Add --print USE.profile for profile's USE; USE is only make.conf's
 	- Honour RESTRICT_INSTALLED as documented
 	- Extend COLORFGBG_DARK default for rxvt-unicode with XPM support.
-	- eix-remote -q: Pass --no-verbose to wget,
+	- eix-remote -q: Pass --no-verbose to wget and redirect its output,
 	  see http://forums.gentoo.org/viewtopic.php?p=7208430
+	- eix-functions.sh: Introduce Echo
 	- Support AC_CONFIG_MACRO_DIR[S] of automake-1.13, keep ACLOCAL_AMFLAGS
 	- Remove support for <automake-1.11.2
 	- Move tools to contrib/

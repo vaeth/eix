@@ -131,7 +131,7 @@ FalseExcept() {
 
 Output() {
 	if ! NOFOUND_STATUS=1 COUNT_ONLY_PRINTED=false eix -Tq0
-	then	[ -z "${1:++}" ] || printf '%s\n' "${1}"
+	then	[ -z "${1:++}" ] || Echo "${1}"
 		return
 	fi
 	printf '\n%s\n' "${2}"
@@ -151,13 +151,9 @@ Output() {
 	done
 }
 
-EchoSkip() {
-	printf '%s\n' "${*}"
-}
-
 Check() (
 	if eval AllFalse \${set_${1}}
-	then	EchoSkip "${4}"
+	then	Echo "${4}"
 		return
 	fi
 	FalseExcept ${1}
@@ -213,12 +209,11 @@ DefineSet in_cflags \
 	REDUNDANT_IF_IN_CFLAGS
 
 if AllFalse TEST_FOR_REDUNDANCY
-then
-EchoSkip  "`eval_gettext 'Skipping check of entries in ${rump}*'`"
+then	Echo \
+	"`eval_gettext 'Skipping check of entries in ${rump}*'`"
 elif ${quickmode}
-then
-Statusline 'package.*'
-OutputExcept nonexistent \
+then	Statusline 'package.*'
+	OutputExcept nonexistent \
 	"`eval_gettext 'No redundant entries in any ${rump}*'`" \
 	"`eval_gettext 'Redundant in some ${rump}*:'`"
 else

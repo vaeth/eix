@@ -106,6 +106,10 @@ Exit() {
 	exit ${eixf_exit}
 }
 
+Echo() {
+	printf '%s\n' "${@}"
+}
+
 eerror() {
 	eixf_eerror=${?}
 	SetColors

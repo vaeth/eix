@@ -195,13 +195,19 @@ The default should have been set with ./configure --remote-file'`"
 	tmpfile="${tmpdir}/${eixcachesname}"
 	[ -n "${archive:++}" ] && test -e "${archive}" \
 		&& cp -p -- "${archive}" "${tmpfile}" >/dev/null 2>&1
+	Statusline "`gettext 'Downloading remote data'`"
 	(
 		CdDir "${tmpdir}" || die "`gettext 'cannot cd to tempdir'`"
 		set -- wget -N
 		${verbose} || set -- "${@}" --no-verbose
-		# test -w '/dev/stdout' && set -- "${@}" -o '/dev/stdout'
 		set -- "${@}" -- "${addr}"
-		"${@}" || die "`gettext 'failed: '` ${*}"
+		if ${verbose}
+		then	"${@}"
+		else	a=`"${@}" 2>&1` || {
+				Echo "${a}" >&2
+				false
+			}
+		fi || die "`gettext 'failed: '` ${*}"
 	) || {
 		exitcode=${?}
 		exit ${exitcode}
@@ -209,8 +215,7 @@ The default should have been set with ./configure --remote-file'`"
 }
 
 BugReport() {
-	echo
-	printf '\n'
+	printf '\n\n'
 	eval_gettext \
 'Probably your eix cachefile was *not* updated successfully.
 Unless the above messages suggest another cause or you specified a
@@ -261,7 +266,7 @@ AddArchive() {
 		p="${2}/${i}"
 		l=`EIX_CACHEFILE=${p} eix --print-overlay-data "${n}"` \
 			&& [ -n "${l:++}" ] || {
-			printf '%s\n' "`eval_gettext \
+			Echo "`eval_gettext \
 				'problems occurred with cachefile ${i}'`" >&2
 			exitcode=1
 			continue
