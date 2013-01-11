@@ -28,6 +28,7 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/outputstring.h"
 #include "eixTk/regexp.h"
 #include "eixTk/stringutils.h"
 #include "eixrc/eixrc.h"
@@ -48,9 +49,11 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-static void parse_color(string *color, bool use_color) ATTRIBUTE_NONNULL_;
+string::size_type PrintFormat::currcolumn = 0;
+
+static void parse_color(OutputString *color, bool use_color) ATTRIBUTE_NONNULL_;
 static void colorstring(string *color) ATTRIBUTE_NONNULL_;
-static bool parse_colors(string *ret, const string &colorstring, bool colors, string *errtext) ATTRIBUTE_NONNULL_;
+static bool parse_colors(OutputString *ret, const string &colorstring, bool colors, string *errtext) ATTRIBUTE_NONNULL_;
 static void parse_termdark(vector<Darkmode> *mode, vector<string> *regexp, const string &termdark) ATTRIBUTE_NONNULL_;
 inline static const char *seek_character(const char *fmt) ATTRIBUTE_PURE;
 
@@ -227,22 +230,11 @@ PrintFormat::parse_variable(const string &varname) const
 	return rootnode;
 }
 
-string
-PrintFormat::overlay_keytext(ExtendedVersion::Overlay overlay, bool plain) const
+void
+PrintFormat::overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay, bool plain) const
 {
-	string start("[");
-	string end("]");
-	bool color(!no_color);
-	if(plain)
-		color = false;
-	if(color) {
-		if(is_virtual(overlay))
-			start = color_virtualkey + start;
-		else
-			start = color_overlaykey + start;
-		end.append(color_keyend);
-	}
-	if(overlay) {
+	ExtendedVersion::Overlay number(overlay);
+	if(number != 0) {
 		vector<ExtendedVersion::Overlay>::size_type index(overlay - 1);
 		if(overlay_used)
 			(*overlay_used)[index] = true;
@@ -250,21 +242,32 @@ PrintFormat::overlay_keytext(ExtendedVersion::Overlay overlay, bool plain) const
 			*some_overlay_used = true;
 		if(overlay_translations) {
 			overlay = (*overlay_translations)[index];
-			if(!overlay) {
-				ExtendedVersion::Overlay number(0);
+			if(overlay != 0) {
+				number = 0;
 				for(vector<ExtendedVersion::Overlay>::iterator it(overlay_translations->begin());
 					likely(it != overlay_translations->end()); ++it) {
 					if(number < *it)
 						number = *it;
 				}
 				(*overlay_translations)[index] = ++number;
-				overlay = number;
 			}
 		}
 	}
-	if(plain)
-		return eix::format("%s") % overlay;
-	return eix::format("%s%s%s") % start % overlay % end;
+	string onum(eix::format("%s") % number);
+	if(plain) {
+		s->assign(onum);
+		return;
+	}
+	bool color(!no_color);
+	if(color) {
+		s->assign(((is_virtual(overlay)) ? color_virtualkey : color_overlaykey), 0);
+	}
+	s->append('[');
+	s->append(onum);
+	s->append(']');
+	if(color) {
+		s->append(color_keyend, 0);
+	}
 }
 
 class Darkmode {
@@ -331,6 +334,7 @@ void
 PrintFormat::setupResources(EixRc *rc)
 {
 	eix_rc = rc;
+
 	color_overlaykey     = (*rc)["COLOR_OVERLAYKEY"];
 	color_virtualkey     = (*rc)["COLOR_VIRTUALKEY"];
 	color_keyend         = (*rc)["COLOR_KEYEND"];
@@ -402,10 +406,10 @@ PrintFormat::setupResources(EixRc *rc)
 }
 
 static void
-parse_color(string *color, bool use_color)
+parse_color(OutputString *color, bool use_color)
 {
 	string errtext;
-	if(unlikely(!parse_colors(color, *color, use_color, &errtext))) {
+	if(unlikely(!parse_colors(color, color->as_string(), use_color, &errtext))) {
 		cerr << errtext << endl;
 	}
 }
@@ -456,38 +460,41 @@ PrintFormat::setupColors()
 }
 
 bool
-PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, Node *root) const
+PrintFormat::recPrint(OutputString *result, void *entity, GetProperty get_property, Node *root) const
 {
 	bool printed(false);
 	for(; likely(root != NULLPTR); root = root->next) {
 		switch(root->type) {
 			case Node::TEXT: /* text!! */
 				{
-					const string &t(static_cast<Text*>(root)->text);
+					const OutputString &t(static_cast<Text*>(root)->text);
 					if(!t.empty()) {
 						printed = true;
-						if(result != NULLPTR)
+						if(result != NULLPTR) {
 							result->append(t);
-						else
-							cout << t;
+						} else {
+							t.print(&currcolumn);
+						}
 					}
 				}
 				break;
 			case Node::OUTPUT:
 				{
 					Property *p(static_cast<Property*>(root));
-					string s;
+					OutputString *s;
 					if(p->user_variable) {
-						s = user_variables[p->name];
+						s = &user_variables[p->name];
 					} else {
-						s = get_property(this, entity, p->name);
+						s = new OutputString();
+						get_property(s, this, entity, p->name);
 					}
-					if(!s.empty()) {
+					if(!s->empty()) {
 						printed = true;
-						if(result)
-							result->append(s);
-						else
-							cout << s;
+						if(result != NULLPTR) {
+							result->append(*s);
+						} else {
+							s->print(&currcolumn);
+						}
 					}
 				}
 				break;
@@ -496,44 +503,53 @@ PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, No
 			// case Node::SET:
 				{
 					ConditionBlock *ief(static_cast<ConditionBlock*>(root));
-					string rhs;
+					OutputString *rhs;
 					switch(ief->rhs) {
 						case ConditionBlock::RHS_VAR:
-							rhs = user_variables[ief->text.text];
+							rhs = &(user_variables[ief->text.text.as_string()]);
 							break;
 						case ConditionBlock::RHS_PROPERTY:
-							rhs = get_property(this, entity, ief->text.text);
+							rhs = new OutputString();
+							get_property(rhs, this, entity, ief->text.text.as_string());
 							break;
 						default:
 						// case ConditionBlock::RHS_STRING:
-							rhs = ief->text.text;
+							rhs = &ief->text.text;
 							break;
 					}
 					if(root->type == Node::SET) {
+						OutputString &r(user_variables[ief->variable.name]);
 						if(ief->negation) {
-							if(rhs.empty())
-								user_variables[ief->variable.name] = "1";
-							else
-								user_variables[ief->variable.name].clear();
+							if(r.empty()) {
+								r.set_one();
+							} else {
+								r.clear();
+							}
 						} else {
-							user_variables[ief->variable.name] = rhs;
+							r = *rhs;
 						}
 						break;
 					}
 					// Node::IF:
-					bool ok(false);
+					OutputString *r;
 					if(ief->user_variable) {
-						ok = (user_variables[ief->variable.name] == rhs);
+						r = &(user_variables[ief->variable.name]);
 					} else {
-						ok = (get_property(this, entity, ief->variable.name) == rhs);
+						r = new OutputString();
+						get_property(r, this, entity, ief->variable.name);
 					}
-					ok = ief->negation ? !ok : ok;
+					bool ok(rhs->is_equal(*r));
+					if(ief->negation) {
+						ok = !ok;
+					}
 					if(ok && ief->if_true) {
-						if(recPrint(result, entity, get_property, ief->if_true))
+						if(recPrint(result, entity, get_property, ief->if_true)) {
 							printed = true;
+						}
 					} else if(!ok && ief->if_false) {
-						if(recPrint(result, entity, get_property, ief->if_false))
+						if(recPrint(result, entity, get_property, ief->if_false)) {
 							printed = true;
+						}
 					}
 				}
 				break;
@@ -543,7 +559,7 @@ PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, No
 }
 
 static bool
-parse_colors(string *ret, const string &colorstring, bool colors, string *errtext)
+parse_colors(OutputString *ret, const string &colorstring, bool colors, string *errtext)
 {
 	FormatParser parser;
 	if(unlikely(!parser.start(colorstring.c_str(), colors, true, errtext))) {
@@ -610,15 +626,13 @@ FormatParser::state_START()
 FormatParser::ParserState
 FormatParser::state_TEXT()
 {
-	string textbuffer;
-	const char *end_of_text("<{(");
-	if(only_colors)
-		end_of_text = "(";
-	while(*band_position && (strchr(end_of_text, *band_position ) == NULLPTR)) {
+	OutputString textbuffer;
+	const char *end_of_text(only_colors ? "(" : "<{(");
+	while(*band_position && (strchr(end_of_text, *band_position) == NULLPTR)) {
 		if(*band_position == '\\') {
-			textbuffer.append(1, get_escape(*(++band_position)));
+			textbuffer.append_escape(&band_position);
 		} else {
-			textbuffer.append(band_position, 1);
+			textbuffer.append_smart(*band_position);
 		}
 		++band_position;
 	}
@@ -643,7 +657,7 @@ GCC_DIAG_ON(sign-conversion)
 			last_error = eix::format(_("Error while parsing color: %s")) % errtext;
 			return ERROR;
 		}
-		keller.push(new Text(ac.asString()));
+		keller.push(new Text(ac.asString(), 0));
 	}
 	band_position = q + 1;
 	return START;
@@ -744,7 +758,7 @@ FormatParser::state_IF()
 
 	band_position = seek_character(band_position);
 	if(*band_position == '}') {
-		n->text = Text("");
+		n->text = Text();
 		n->negation = !n->negation;
 		n->rhs = ConditionBlock::RHS_STRING;
 		++band_position;
@@ -793,7 +807,7 @@ FormatParser::state_IF()
 			break;
 	}
 
-	string textbuffer;
+	OutputString textbuffer;
 	for(char c(*band_position); likely(c != '\0'); c = *(++band_position)) {
 		if(parse_modus != plain) {
 			if(c == parse_modus)
@@ -802,11 +816,12 @@ FormatParser::state_IF()
 			break;
 		}
 		if((c == '\\') && (parse_modus != single_quote)) {
-			textbuffer.append(1, get_escape(*(++band_position)));
-			if(!*band_position)
+			textbuffer.append_escape(&band_position);
+			if(!*band_position) {
 				break;
+			}
 		} else {
-			textbuffer.append(1, c);
+			textbuffer.append_smart(c);
 		}
 	}
 	n->text = Text(textbuffer);
@@ -844,7 +859,7 @@ FormatParser::state_ELSE()
 		keller.pop();
 	}
 	if(q == NULLPTR) {
-		q = new Text("");
+		q = new Text();
 	}
 	(static_cast<ConditionBlock*>(p))->if_true = q;
 	keller.push(p);
@@ -961,7 +976,7 @@ PrintFormat::print(void *entity, GetProperty get_property, Node *root, const DBH
 }
 
 bool
-PrintFormat::parseFormat(Node **rootnode, const char *fmt, std::string *errtext)
+PrintFormat::parseFormat(Node **rootnode, const char *fmt, string *errtext)
 {
 	if(likely(m_parser.start(fmt, !no_color, false, errtext))) {
 		*rootnode = m_parser.rootnode();

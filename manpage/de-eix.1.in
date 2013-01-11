@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2013-01-03 17:00:00 +0200 (Thu, 03 Jan 2013)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-01-11 22:00:00 +0200 (Fri, 11 Jan 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1441,6 +1441,24 @@ Beispielsweise gibt B<oldavailableversions:VAR> die vorerigen verfügbaren Versi
 (mit der Variablen B<VAR> als Ausgabeformat), während
 B<newavailableversions:VAR> und B<availableversions:VAR> jeweils die
 verfügbaren Versionen des aktuellen (d.h. neuen) Pakets ausgeben.
+.\" }}}
+
+
+.\" {{{ -------- Escape-Folgen
+.SS Escape-Folgen
+.TP
+.B \\\\n \\\\r  \\\\t  \\\\b  \\\\a
+Diese werden auf die übliche Art wie in printf interpretiert.
+
+.TP
+.B \\\\C\<I<SPALTE>>
+Diese spezielle Escape-Folge ist nur in Formatstrings zulässig.
+Hierbei ist I<SPALTE> eine Zahl (die eingeklammert sein muss).
+Während der Ausgabe, wird das Ganze von eix folgendermaßen interpretiert:
+Falls die Spalte I<SPALTE> noch während der Ausgabe der aktuellen Zeile
+noch nicht erreicht wurde, werden so viele Leerzeichen ausgegben, dass dies der Fall ist.
+In gewissem Sinne kann dies also als ein mächtiger Tabulator betrachtet werden,
+dessen Interpretation nicht dem Terminal überlassen wird.
 .\" }}}
 
 .\" {{{ -------- Farben

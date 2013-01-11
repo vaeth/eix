@@ -21,6 +21,7 @@
 #include "eixTk/null.h"
 
 class StringList;
+class OutputString;
 
 class StringListContent {
 		friend class StringList;
@@ -39,7 +40,7 @@ class StringListContent {
 		void push_back(const std::string &s)
 		{ m_list.push_back(s); }
 
-		void append_to_string(std::string *s, const std::string &skip) const ATTRIBUTE_NONNULL_;
+		void append_to_string(OutputString *s, const OutputString &skip) const ATTRIBUTE_NONNULL_;
 };
 
 inline static
@@ -70,7 +71,7 @@ class StringList {
 
 		void push_back(const std::string &s);
 
-		void append_to_string(std::string *s, const std::string &skip) const ATTRIBUTE_NONNULL_
+		void append_to_string(OutputString *s, const OutputString &skip) const ATTRIBUTE_NONNULL_
 		{
 			if(ptr != NULLPTR) {
 				ptr->append_to_string(s, skip);

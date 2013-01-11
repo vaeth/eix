@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "eixTk/null.h"
+#include "eixTk/outputstring.h"
 #include "portage/basicversion.h"
 #include "portage/extendedversion.h"
 #include "portage/package.h"
@@ -51,9 +52,15 @@ class Node {
 
 class Text : public Node {
 	public:
-		std::string text;
+		OutputString text;
 
-		explicit Text(const std::string &t = "") : Node(TEXT), text(t)
+		Text() : Node(TEXT)
+		{ }
+
+		explicit Text(const OutputString &t) : Node(TEXT), text(t)
+		{ }
+
+		explicit Text(const std::string &t, std::string::size_type s) : Node(TEXT), text(t, s)
 		{ }
 };
 
@@ -174,14 +181,16 @@ class VersionVariables;
 class PrintFormat {
 	friend class LocalCopy;
 	friend class Scanner;
-	friend std::string get_package_property(const PrintFormat *fmt, void *entity, const std::string &name) ATTRIBUTE_NONNULL_;
-	friend std::string get_diff_package_property(const PrintFormat *fmt, void *void_entity, const std::string &name) ATTRIBUTE_NONNULL_;
+	friend void get_package_property(OutputString *s, const PrintFormat *fmt, void *entity, const std::string &name) ATTRIBUTE_NONNULL_;
+	friend void get_diff_package_property(OutputString *s, const PrintFormat *fmt, void *void_entity, const std::string &name) ATTRIBUTE_NONNULL_;
 
 	public:
-		typedef std::string (*GetProperty)(const PrintFormat *fmt, void *entity, const std::string &property) ATTRIBUTE_NONNULL_;
+		typedef void (*GetProperty)(OutputString *s, const PrintFormat *fmt, void *entity, const std::string &property) ATTRIBUTE_NONNULL_;
 
 	protected:
-		mutable std::map<std::string, std::string> user_variables;
+		static std::string::size_type currcolumn;
+
+		mutable std::map<std::string, OutputString> user_variables;
 		/* Looping over variables is a bit tricky:
 		   We store the parsed thing in VarParserCache.
 		   Additionally, we store there whether we currently loop
@@ -207,23 +216,23 @@ class PrintFormat {
 		const SetStability *stability;
 
 		/* return true if something was actually printed */
-		bool recPrint(std::string *result, void *entity, GetProperty get_property, Node *root) const ATTRIBUTE_NONNULL((3, 5));
+		bool recPrint(OutputString *result, void *entity, GetProperty get_property, Node *root) const ATTRIBUTE_NONNULL((3, 5));
 
 		bool parse_variable(Node **rootnode, const std::string &varname, std::string *errtext) const ATTRIBUTE_NONNULL((2));
 		Node *parse_variable(const std::string &varname) const;
 
-		std::string iuse_expand(const IUseSet &iuse, bool coll) const;
-		std::string get_inst_use(const Package &package, InstVersion *i, bool expand) const ATTRIBUTE_NONNULL_;
+		void iuse_expand(OutputString *s, const IUseSet &iuse, bool coll) const;
+		void get_inst_use(OutputString *s, const Package &package, InstVersion *i, bool expand) const ATTRIBUTE_NONNULL_;
 		void get_installed(Package *package, Node *root, bool mark) const ATTRIBUTE_NONNULL_;
 		void get_versions_versorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2, 3));
 		void get_versions_slotsorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2, 3));
-		std::string get_pkg_property(Package *package, const std::string &name) const ATTRIBUTE_NONNULL_;
+		void get_pkg_property(OutputString *s, Package *package, const std::string &name) const ATTRIBUTE_NONNULL_;
 
 		// It follows a list of indirect functions called in get_pkg_property():
 		// Functions with capital letters are parser destinations; other functions
 		// here are sort of "macros" used by several other "capital letter" functions.
 
-		std::string COLON_VER_DATE(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
+		void COLON_VER_DATE(OutputString *s, Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
 		void colon_pkg_availableversions(Package *package, const std::string &after_colon, bool only_marked) const ATTRIBUTE_NONNULL_;
 		void COLON_PKG_AVAILABLEVERSIONS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
 		void COLON_PKG_MARKEDVERSIONS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
@@ -239,141 +248,141 @@ class PrintFormat {
 		void colon_pkg_installedversions(Package *package, const std::string &after_colon, bool only_marked) const ATTRIBUTE_NONNULL_;
 		void COLON_PKG_INSTALLEDVERSIONS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
 		void COLON_PKG_INSTALLEDMARKEDVERSIONS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
-		std::string PKG_INSTALLED(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_VERSIONLINES(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_SLOTSORTED(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_COLOR(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_HAVEBEST(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_HAVEBESTS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_CATEGORY(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_NAME(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_DESCRIPTION(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_HOMEPAGE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_LICENSES(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_BINARY(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_OVERLAYKEY(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_SYSTEM(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_WORLD(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_WORLD_SETS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_SETNAMES(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_ALLSETNAMES(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string pkg_upgrade(Package *package, bool only_installed, bool test_slots) const ATTRIBUTE_NONNULL_;
-		std::string PKG_UPGRADE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_UPGRADEORINSTALL(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_BESTUPGRADE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_BESTUPGRADEORINSTALL(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string pkg_downgrade(Package *package, bool test_slots) const ATTRIBUTE_NONNULL_;
-		std::string PKG_DOWNGRADE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_BESTDOWNGRADE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string pkg_recommend(Package *package, bool only_installed, bool test_slots) const ATTRIBUTE_NONNULL_;
-		std::string PKG_RECOMMEND(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_RECOMMENDORINSTALL(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_BESTRECOMMEND(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_BESTRECOMMENDORINSTALL(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_MARKED(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_HAVEMARKEDVERSION(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_SLOTS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_SLOTTED(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_HAVEVIRTUAL(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_HAVENONVIRTUAL(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_HAVECOLLIUSE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_COLLIUSES(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string PKG_COLLIUSE(Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_INSTALLED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_VERSIONLINES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_SLOTSORTED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_COLOR(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_HAVEBEST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_HAVEBESTS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_CATEGORY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_NAME(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_DESCRIPTION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_HOMEPAGE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_LICENSES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_BINARY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_OVERLAYKEY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_SYSTEM(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_WORLD(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_WORLD_SETS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_SETNAMES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_ALLSETNAMES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void pkg_upgrade(OutputString *s, Package *package, bool only_installed, bool test_slots) const ATTRIBUTE_NONNULL_;
+		void PKG_UPGRADE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_UPGRADEORINSTALL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_BESTUPGRADE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_BESTUPGRADEORINSTALL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void pkg_downgrade(OutputString *s, Package *package, bool test_slots) const ATTRIBUTE_NONNULL_;
+		void PKG_DOWNGRADE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_BESTDOWNGRADE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void pkg_recommend(OutputString *s, Package *package, bool only_installed, bool test_slots) const ATTRIBUTE_NONNULL_;
+		void PKG_RECOMMEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_RECOMMENDORINSTALL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_BESTRECOMMEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_BESTRECOMMENDORINSTALL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_MARKED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_HAVEMARKEDVERSION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_SLOTS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_SLOTTED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_HAVEVIRTUAL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_HAVENONVIRTUAL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_HAVECOLLIUSE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_COLLIUSES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_COLLIUSE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		const ExtendedVersion *ver_version() const ATTRIBUTE_PURE;
-		std::string VER_FIRST(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_LAST(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_SLOTFIRST(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_SLOTLAST(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ONESLOT(Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_FIRST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_LAST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_SLOTFIRST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_SLOTLAST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ONESLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		const ExtendedVersion *ver_versionslot(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_FULLSLOT(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISFULLSLOT(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_SLOT(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISSLOT(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_SUBSLOT(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISSUBSLOT(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_VERSION(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_PLAINVERSION(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_REVISION(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string ver_overlay(Package *package, bool getnum) const ATTRIBUTE_NONNULL_;
-		std::string VER_OVERLAYNUM(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_OVERLAYVER(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_VERSIONKEYWORDSS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_VERSIONKEYWORDS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_VERSIONEKEYWORDS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string ver_isbestupgrade(Package *package, bool check_slots, bool allow_unstable) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISBESTUPGRADESLOT(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISBESTUPGRADESLOTS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISBESTUPGRADE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISBESTUPGRADES(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_MARKEDVERSION(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_INSTALLEDVERSION(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_HAVEUSE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_USE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_USES(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_VIRTUAL(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISBINARY(Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_FULLSLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISFULLSLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_SLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISSLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_SUBSLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISSUBSLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_VERSION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_PLAINVERSION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_REVISION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void ver_overlay(OutputString *s, Package *package, bool getnum) const ATTRIBUTE_NONNULL_;
+		void VER_OVERLAYNUM(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_OVERLAYVER(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_VERSIONKEYWORDSS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_VERSIONKEYWORDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_VERSIONEKEYWORDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void ver_isbestupgrade(OutputString *s, Package *package, bool check_slots, bool allow_unstable) const ATTRIBUTE_NONNULL_;
+		void VER_ISBESTUPGRADESLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISBESTUPGRADESLOTS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISBESTUPGRADE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISBESTUPGRADES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_MARKEDVERSION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_INSTALLEDVERSION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_HAVEUSE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_USE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_USES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_VIRTUAL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISBINARY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		const ExtendedVersion *ver_restrict(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string ver_restrict(Package *package, ExtendedVersion::Restrict r) const ATTRIBUTE_NONNULL_;
-		std::string VER_RESTRICT(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_RESTRICTFETCH(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_RESTRICTMIRROR(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_RESTRICTPRIMARYURI(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_RESTRICTBINCHECKS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_RESTRICTSTRIP(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_RESTRICTTEST(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_RESTRICTUSERPRIV(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_RESTRICTINSTALLSOURCES(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_RESTRICTBINDIST(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_RESTRICTPARALLEL(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string ver_properties(Package *package, ExtendedVersion::Properties p) const ATTRIBUTE_NONNULL_;
-		std::string VER_PROPERTIES(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_PROPERTIESINTERACTIVE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_PROPERTIESLIVE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_PROPERTIESVIRTUAL(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_PROPERTIESSET(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_HAVEDEPEND(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_HAVERDEPEND(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_HAVEPDEPEND(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_HAVEHDEPEND(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_HAVEDEPS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_DEPENDS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_DEPEND(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_RDEPENDS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_RDEPEND(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_PDEPENDS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_PDEPEND(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_HDEPENDS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_HDEPEND(Package *package) const ATTRIBUTE_NONNULL_;
+		void ver_restrict(OutputString *s, Package *package, ExtendedVersion::Restrict r) const ATTRIBUTE_NONNULL_;
+		void VER_RESTRICT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_RESTRICTFETCH(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_RESTRICTMIRROR(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_RESTRICTPRIMARYURI(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_RESTRICTBINCHECKS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_RESTRICTSTRIP(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_RESTRICTTEST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_RESTRICTUSERPRIV(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_RESTRICTINSTALLSOURCES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_RESTRICTBINDIST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_RESTRICTPARALLEL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void ver_properties(OutputString *s, Package *package, ExtendedVersion::Properties p) const ATTRIBUTE_NONNULL_;
+		void VER_PROPERTIES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_PROPERTIESINTERACTIVE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_PROPERTIESLIVE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_PROPERTIESVIRTUAL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_PROPERTIESSET(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_HAVEDEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_HAVERDEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_HAVEPDEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_HAVEHDEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_HAVEDEPS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_DEPENDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_DEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_RDEPENDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_RDEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_PDEPENDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_PDEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_HDEPENDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_HDEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		const MaskFlags *ver_maskflags() const ATTRIBUTE_PURE;
-		std::string VER_ISHARDMASKED(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISPROFILEMASKED(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISMASKED(Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISHARDMASKED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISPROFILEMASKED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISMASKED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		const KeywordsFlags *ver_keywordsflags() const ATTRIBUTE_PURE;
-		std::string VER_ISSTABLE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISUNSTABLE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISALIENSTABLE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISALIENUNSTABLE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISMISSINGKEYWORD(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISMINUSKEYWORD(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISMINUSUNSTABLE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_ISMINUSASTERISK(Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISUNSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISALIENSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISALIENUNSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISMISSINGKEYWORD(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISMINUSKEYWORD(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISMINUSUNSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISMINUSASTERISK(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		bool ver_wasflags(Package *package, MaskFlags *maskflags, KeywordsFlags *keyflags) const ATTRIBUTE_NONNULL((2));
-		std::string VER_WASHARDMASKED(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_WASPROFILEMASKED(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_WASMASKED(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_WASSTABLE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_WASUNSTABLE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_WASALIENSTABLE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_WASALIENUNSTABLE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_WASMISSINGKEYWORD(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_WASMINUSKEYWORD(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_WASMINUSUNSTABLE(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_WASMINUSASTERISK(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_HAVEMASKREASONS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string ver_maskreasons(const std::string &skip, const std::string &sep) const;
-		std::string VER_MASKREASONS(Package *package) const ATTRIBUTE_NONNULL_;
-		std::string VER_MASKREASONSS(Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_WASHARDMASKED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_WASPROFILEMASKED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_WASMASKED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_WASSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_WASUNSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_WASALIENSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_WASALIENUNSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_WASMISSINGKEYWORD(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_WASMINUSKEYWORD(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_WASMINUSUNSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_WASMINUSASTERISK(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_HAVEMASKREASONS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void ver_maskreasons(OutputString *s, const OutputString &skip, const OutputString &sep) const;
+		void VER_MASKREASONS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_MASKREASONSS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 
 	public:
 		bool	no_color,            /**< Shall we use colors? */
@@ -388,7 +397,8 @@ class PrintFormat {
 			color_virtualkey,  /**< Color for the virtual key */
 			color_keyend,
 			color_overlayname, color_overlaynameend,
-			color_numbertext, color_numbertextend, color_end,
+			color_numbertext, color_numbertextend, color_end;
+		OutputString
 			before_use_start, before_use_end, after_use,
 			before_iuse_start, before_iuse_end, after_iuse,
 			before_coll_start, before_coll_end, after_coll,
@@ -424,7 +434,7 @@ class PrintFormat {
 		void set_marked_list(MarkedList *m_list)
 		{ marked_list = m_list; }
 
-		std::string overlay_keytext(ExtendedVersion::Overlay overlay, bool plain = false) const;
+		void overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay, bool plain = false) const ATTRIBUTE_NONNULL_;
 
 		/* return true if something was actually printed */
 		bool print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL_;

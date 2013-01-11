@@ -1813,7 +1813,7 @@ AddOption(STRING, "FORMAT_KEYWORDSS",
 	"It is used for printing colored <keywords*>; color is not reset."));
 
 AddOption(STRING, "FORMAT_KEYWORDS_EQUAL",
-	"{versionkeywords} (%{COLOR_KEYWORDSS})$\\{KEYWORDS\\}(%{COLOR_RESET}){}", _(
+	"{versionkeywords}(%{COLOR_KEYWORDSS})$\\{KEYWORDS\\}(%{COLOR_RESET}){}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines what to output for KEYWORDS* if they equal KEYWORDS."));
 
@@ -1904,12 +1904,12 @@ AddOption(STRING, "FORMAT_STABILITY",
 	"It sets the runtime variable $color depending on whether color was changed."));
 
 AddOption(STRING, "FORMAT_PROPERTIESSEPARATOR",
-	"<$sep>{!*sep}{*color}(%{COLOR_PROPERTIES})*", _(
+	"(%{COLOR_RESET})<$sep>{!*sep}{*color}(%{COLOR_PROPERTIES})*", _(
 	"This variable is only used for delayed substitution.\n"
 	"It sets the initial string and $color for PROPERTIES output."));
 
 AddOption(STRING, "FORMAT_RESTRICTSEPARATOR",
-	"<$sep>{!*sep}{*color}(%{COLOR_RESTRICT})^", _(
+	"(%{COLOR_RESET})<$sep>{!*sep}{*color}(%{COLOR_RESTRICT})^", _(
 	"This variable is only used for delayed substitution.\n"
 	"It sets the initial string and $color for RESTRICT output."));
 
@@ -1952,7 +1952,7 @@ AddOption(STRING, "FORMAT_PROPRESTRICT",
 AddOption(STRING, "FORMAT_BINARY",
 	"%{!NO_BINARY}"
 		"{isbinary}"
-			"<$sep>{!*sep}(%{COLOR_BINARY})%{TAG_BINARY}(%{COLOR_RESET})"
+			"(%{COLOR_RESET})<$sep>{!*sep}(%{COLOR_BINARY})%{TAG_BINARY}(%{COLOR_RESET})"
 		"{}"
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -1994,13 +1994,11 @@ AddOption(STRING, "FORMAT_VERSIONO_END",
 	"%{?PRINT_SLOTS}"
 		"{issubslot}"
 			"%{?COLORED_SLOTS}"
-				"{$color}(%{COLOR_RESET}){}"
-				"{*color}"
 				"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<fullslot>"
-				"%{else}<$sep>{!*sep}(%{COLOR_SLOTS})\\(<fullslot>\\)%{}"
+				"%{else}(%{COLOR_RESET})<$sep>{!*sep}(%{COLOR_SLOTS})\\(<fullslot>\\){*color}%{}"
 			"%{else}"
 				"%{?COLON_SLOTS}:<fullslot>"
-				"%{else}<$sep>{!*sep}\\(<fullslot>\\)%{}"
+				"%{else}(%{COLOR_RESET})<$sep>{!*sep}\\(<fullslot>\\){!*color}%{}"
 			"%{}"
 		"{}"
 	"%{}"
@@ -2013,13 +2011,11 @@ AddOption(STRING, "FORMAT_VERSIONS_END",
 	"%{?PRINT_SLOTS}"
 		"{isfullslot}"
 			"%{?COLORED_SLOTS}"
-				"{$color}(%{COLOR_RESET}){}"
-				"{*color}"
 				"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<fullslot>"
-				"%{else}<$sep>{!*sep}(%{COLOR_SLOTS})\\(<fullslot>\\)%{}"
+				"%{else}(%{COLOR_RESET})<$sep>{!*sep}(%{COLOR_SLOTS})\\(<fullslot>\\){*color}%{}"
 			"%{else}"
 				"%{?COLON_SLOTS}:<fullslot>"
-				"%{else}<$sep>{!*sep}\\(<fullslot>\\)%{}"
+				"%{else}(%{COLOR_RESET})<$sep>{!*sep}\\(<fullslot>\\){!*color}%{}"
 			"%{}"
 		"{}"
 	"%{}"
@@ -2065,7 +2061,7 @@ AddOption(STRING, "IVERSIONS",
 	"It defines the format for printing an installed version with its slot."));
 
 AddOption(STRING, "OVERLAYVER",
-	"{overlayver}<$sep>{!*sep}<overlayver>{}", _(
+	"{overlayver}(%{COLOR_RESET})<$sep>{!*sep}<overlayver>{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for printing the overlay in versions."));
 
@@ -2121,7 +2117,7 @@ AddOption(STRING, "IVERSIONS_COMPACT",
 	"It defines the format for an installed version with important data and slot."));
 
 AddOption(STRING, "FORMAT_BEFORE_KEYWORDS",
-	"\\t(%{COLOR_NORMAL})\"", _(
+	"(%{COLOR_NORMAL}) \\C<%{COLUMN_KEYWORDS}>\"", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before KEYWORDS string for a version is output\n"
 	"(with --versionlines and nonverbose)"));
@@ -2137,8 +2133,78 @@ AddOption(STRING, "FORMAT_NEWLINE",
 	"This variable only used for delayed substitution.\n"
 	"It prints a newline, optionally handling background colors for broken terminals."));
 
+AddOption(STRING, "COLUMN_TITLE",
+	"5", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the first column for the titles."));
+
+AddOption(STRING, "COLUMN_KEYWORDS",
+	"22", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the first column after the version."));
+
+AddOption(STRING, "COLUMN_CONTENT",
+	"26", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the first column for the content."));
+
+AddOption(STRING, "COLUMN_INST_TITLE",
+	"%{COLUMN_CONTENT}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the first column for the title of installed versions."));
+
+AddOption(STRING, "COLUMN_INST_CONTENT",
+	"37", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the first column for the content of installed versions."));
+
+AddOption(STRING, "COLUMN_AVAILABLE_TITLE",
+	"15", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the first column for the title of available versions."));
+
+AddOption(STRING, "COLUMN_AVAILABLE_CONTENT",
+	"26", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the first column for the content of available versions."));
+
+AddOption(STRING, "COLUMN_SLOT",
+	"%{COLUMN_TITLE}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the first column for the slot without versionlines."));
+
+AddOption(STRING, "COLUMN_SLOT_AFTER",
+	"12", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the first column after the slot without versionlines."));
+
+AddOption(STRING, "COLUMN_STABILITY",
+	"7", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the first stability column with versionlines."));
+
+AddOption(STRING, "COLUMN_STABILITY_AFTER",
+	"12", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the first column after stability with versionlines."));
+
+AddOption(STRING, "COLUMN_SLOT_APPEND",
+	"22", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the first column of the slot with versionsort."));
+
+AddOption(STRING, "COLUMN_VER_APPEND",
+	"22", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the first column after the version without versionsort."));
+
+AddOption(STRING, "COLUMN_USE",
+	"7", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the first column of the collected USE."));
+
 AddOption(STRING, "FORMAT_VER_LINESKIP",
-	"%{FORMAT_NEWLINE}                          ", _(
+	"%{FORMAT_NEWLINE}\\C<%{COLUMN_AVAILABLE_TITLE}>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the lineskip used for the versionline appendix."));
 
@@ -2175,19 +2241,27 @@ AddOption(STRING, "FORMAT_DEPS_NORMAL",
 		"%{?VERSION_DEPS_NORMAL}"
 			"{havedepend}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})DEPEND:(%{COLOR_RESET})    %{FORMAT_DEPEND}"
+				"(%{COLOR_AVAILABLE_TITLE})DEPEND:(%{COLOR_RESET})"
+				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"%{FORMAT_DEPEND}"
 			"{}"
 			"{haverdepend}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})RDEPEND:(%{COLOR_RESET})   %{FORMAT_RDEPEND}"
+				"(%{COLOR_AVAILABLE_TITLE})RDEPEND:(%{COLOR_RESET})"
+				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"%{FORMAT_RDEPEND}"
 			"{}"
 			"{havepdepend}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})PDEPEND:(%{COLOR_RESET})   %{FORMAT_PDEPEND}"
+				"(%{COLOR_AVAILABLE_TITLE})PDEPEND:(%{COLOR_RESET})"
+				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"%{FORMAT_PDEPEND}"
 			"{}"
 			"{havehdepend}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})HDEPEND:(%{COLOR_RESET})   %{FORMAT_HDEPEND}"
+				"(%{COLOR_AVAILABLE_TITLE})HDEPEND:(%{COLOR_RESET})"
+				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"%{FORMAT_HDEPEND}"
 			"{}"
 		"%{}"
 	"%{}", _(
@@ -2213,17 +2287,20 @@ AddOption(STRING, "FORMAT_VERSION_KEYWORDS_VERBOSE",
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})KEYWORDS:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{versionkeywords}%{}"
-				"  %{FORMAT_KEYWORDS}(%{COLOR_RESET})"
+				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"%{FORMAT_KEYWORDS}(%{COLOR_RESET})"
 			"{}"
 			"%{!PRINT_ALWAYS}{versionekeywords}%{}"
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})KEYWORDS*:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}"
 					"{!versionekeywords}"
+						"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
 						"%{FORMAT_KEYWORDS_EQUAL}"
 					"{else}"
 				"%{}"
-				" %{FORMAT_KEYWORDSS}(%{COLOR_RESET})"
+				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"%{FORMAT_KEYWORDSS}(%{COLOR_RESET})"
 			"{}"
 		"%{}"
 	"%{}", _(
@@ -2237,7 +2314,8 @@ AddOption(STRING, "FORMAT_IUSE_VERBOSE",
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})IUSE:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{haveuse}%{}"
-				"      %{FORMAT_VERSION_IUSE}(%{COLOR_RESET})"
+				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"%{FORMAT_VERSION_IUSE}(%{COLOR_RESET})"
 			"{}"
 		"%{}"
 	"%{}", _(
@@ -2251,25 +2329,29 @@ AddOption(STRING, "FORMAT_DEPS_VERBOSE",
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})DEPEND:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{depend}%{}"
-				"    %{FORMAT_DEPEND_VERBOSE}"
+				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"%{FORMAT_DEPEND_VERBOSE}"
 			"{}"
 			"%{!PRINT_ALWAYS}{haverdepend}%{}"
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})RDEPEND:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{haverdepend}%{}"
-				"   %{FORMAT_RDEPEND_VERBOSE}"
+				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"%{FORMAT_RDEPEND_VERBOSE}"
 			"{}"
 			"%{!PRINT_ALWAYS}{havepdepend}%{}"
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})PDEPEND:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{havepdepend}%{}"
-				"   %{FORMAT_PDEPEND_VERBOSE}"
+				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"%{FORMAT_PDEPEND_VERBOSE}"
 			"{}"
 			"%{!PRINT_ALWAYS}{havehdepend}%{}"
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})HDEPEND:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{havehdepend}%{}"
-				"   %{FORMAT_HDEPEND_VERBOSE}"
+				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"%{FORMAT_HDEPEND_VERBOSE}"
 			"{}"
 		"%{}"
 	"%{}", _(
@@ -2283,7 +2365,11 @@ AddOption(STRING, "FORMAT_MASKREASONS_VERBOSE",
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})Mask:(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{havemaskreasons}%{}"
-				"%{?WIDETERM}      %{else}%{FORMAT_NEWLINE}%{}"
+				"%{?WIDETERM}"
+					"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"%{else}"
+					"%{FORMAT_NEWLINE}"
+				"%{}"
 				"(%{COLOR_MASKREASONS})<maskreasons*>(%{COLOR_RESET})"
 			"{}"
 		"%{}"
@@ -2317,22 +2403,22 @@ AddOption(STRING, "FORMAT_VERSION_APPENDIX",
 	"It defines the data appended to available versions with --versionlines"));
 
 AddOption(STRING, "FORMAT_SLOTLINESKIP_VERSIONLINES",
-	"%{FORMAT_NEWLINE}      %{FORMAT_SLOT}", _(
+	"%{FORMAT_NEWLINE}\\C<%{COLUMN_SLOT}>%{FORMAT_SLOT}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines lineskip + slot if slotsorted versionlines are used."));
 
 AddOption(STRING, "FORMAT_SLOTLINESKIP",
-	"%{FORMAT_NEWLINE}\\t%{FORMAT_SLOT}\\t", _(
+	"%{FORMAT_NEWLINE}\\C<%{COLUMN_SLOT}>%{FORMAT_SLOT} \\C<%{COLUMN_SLOT_AFTER}>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines lineskip + slot if slotsort but no versionlines are used."));
 
 AddOption(STRING, "FORMAT_VERSLINESKIP",
-	"%{FORMAT_NEWLINE}\\t%{FORMAT_STABILITY}\\t", _(
+	"%{FORMAT_NEWLINE}\\C<%{COLUMN_STABILITY}>%{FORMAT_STABILITY} \\C<%{COLUMN_STABILITY_AFTER}>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines lineskip + stability if lineskip is used."));
 
 AddOption(STRING, "FORMAT_INST_LINESKIP",
-	"%{FORMAT_VER_LINESKIP}", _(
+	"%{FORMAT_NEWLINE}\\C<%{COLUMN_INST_TITLE}>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the lineskip for installed versions."));
 #endif
@@ -2340,7 +2426,7 @@ AddOption(STRING, "FORMAT_INST_LINESKIP",
 #if (DEFAULT_PART == 5)
 
 AddOption(STRING, "VSORTL",
-	"%{FORMAT_VERSLINESKIP}{*sep=\\t}%{PVERSIONS_VERBOSE}{!*sep}"
+	"%{FORMAT_VERSLINESKIP}{*sep= \\C<%{COLUMN_SLOT_APPEND}>}%{PVERSIONS_VERBOSE}{!*sep}"
 	"%{FORMAT_VERSION_APPENDIX}{last}{*sorted=version}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; versionsorted with versionlines."));
@@ -2352,7 +2438,7 @@ AddOption(STRING, "VSORT",
 
 AddOption(STRING, "SSORTL",
 	"{slotfirst}%{FORMAT_SLOTLINESKIP_VERSIONLINES}{}"
-	"%{FORMAT_VERSLINESKIP}{*sep=\\t}%{PVERSIONO_VERBOSE}{!*sep}"
+	"%{FORMAT_VERSLINESKIP}{*sep= \\C<%{COLUMN_VER_APPEND}>}%{PVERSIONO_VERBOSE}{!*sep}"
 	"%{FORMAT_VERSION_APPENDIX}{last}{*sorted=slot}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; slotsorted with versionlines."));
@@ -2441,14 +2527,17 @@ AddOption(STRING, "ICOMPACT",
 	"It defines the compact format of installed versions."));
 
 AddOption(STRING, "IVERBOSE",
-	"(%{COLOR_INST_TITLE})Version:(%{COLOR_RESET})   "
+	"(%{COLOR_INST_TITLE})Version:(%{COLOR_RESET})"
+	"\\C<%{COLUMN_INST_CONTENT}>"
 	"%{IVERSIONS_VERBOSE}(%{COLOR_RESET})"
 	"%{FORMAT_INST_LINESKIP}"
-	"(%{COLOR_INST_TITLE})Date:(%{COLOR_RESET})      "
+	"(%{COLOR_INST_TITLE})Date:(%{COLOR_RESET})"
+	"\\C<%{COLUMN_INST_CONTENT}>"
 	"(%{COLOR_DATE})<date:FORMAT_INSTALLATION_DATE>(%{COLOR_RESET})"
 	"{haveuse}"
 		"%{FORMAT_INST_LINESKIP}"
-		"(%{COLOR_INST_TITLE})USE:(%{COLOR_RESET})       "
+		"(%{COLOR_INST_TITLE})USE:(%{COLOR_RESET})"
+		"\\C<%{COLUMN_INST_CONTENT}>"
 		"%{?EIX_USE_EXPAND}<use*>%{else}<use>%{}"
 	"{}"
 	"{!last}%{FORMAT_INST_LINESKIP}{}", _(
@@ -2503,11 +2592,13 @@ AddOption(STRING, "INSTALLEDVERSIONS",
 
 AddOption(STRING, "FORMATLINE_INSTALLEDVERSIONS",
 	"%{!PRINT_ALWAYS}{installed}%{}"
-		"     (%{COLOR_TITLE})Installed versions:(%{COLOR_RESET})"
-		"  "
+		"\\C<%{COLUMN_TITLE}>"
+		"(%{COLOR_TITLE})Installed versions:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{installed}%{}"
+			"\\C<%{COLUMN_CONTENT}>"
 			"%{INSTALLEDVERSIONS}"
 		"%{?PRINT_ALWAYS}{else}"
+			"\\C<%{COLUMN_CONTENT}>"
 			"None{}%{FORMAT_NEWLINE}"
 		"%{else}%{FORMAT_NEWLINE}{}"
 	"%{}", _(
@@ -2741,7 +2832,10 @@ AddOption(STRING, "DIFF_FORMATLINE_NAME_CHANGED",
 	"It defines the format for the diff-changed header."));
 
 AddOption(STRING, "FORMATLINE_AVAILABLEVERSIONS",
-	"     (%{COLOR_TITLE})Available versions:(%{COLOR_RESET})  %{FORMAT_AVAILABLEVERSIONS}%{FORMAT_NEWLINE}", _(
+	"\\C<%{COLUMN_TITLE}>"
+	"(%{COLOR_TITLE})Available versions:(%{COLOR_RESET})"
+	"\\C<%{COLUMN_CONTENT}>"
+	"%{FORMAT_AVAILABLEVERSIONS}%{FORMAT_NEWLINE}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with installed versions."));
 
@@ -2759,9 +2853,10 @@ AddOption(STRING, "DIFF_FORMATLINE_CHANGED_VERSIONS",
 
 AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
 	"%{!PRINT_ALWAYS}{havemarkedversion}%{}"
-		"     (%{COLOR_TITLE})Marked:(%{COLOR_RESET})"
+		"\\C<%{COLUMN_TITLE}>"
+		"(%{COLOR_TITLE})Marked:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{havemarkedversion}%{}"
-		"              "
+		"\\C<%{COLUMN_CONTENT}>"
 		"(%{COLOR_MARKED_VERSION})<markedversions:VERSION>"
 		"%{!RESET_ALL_LINES}(%{COLOR_RESET})%{}"
 	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
@@ -2770,9 +2865,10 @@ AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
 
 AddOption(STRING, "FORMATLINE_PACKAGESETS",
 	"%{!PRINT_ALWAYS}{%{PRINT_SETNAMES}}%{}"
-		"     (%{COLOR_TITLE})Package sets:(%{COLOR_RESET})"
+		"\\C<%{COLUMN_TITLE}>"
+		"(%{COLOR_TITLE})Package sets:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{%{PRINT_SETNAMES}}%{}"
-		"        "
+		"\\C<%{COLUMN_CONTENT}>"
 		"(%{COLOR_PACKAGESETS})<%{PRINT_SETNAMES}>"
 		"%{!RESET_ALL_LINES}(%{COLOR_RESET})%{}"
 	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
@@ -2781,11 +2877,11 @@ AddOption(STRING, "FORMATLINE_PACKAGESETS",
 
 AddOption(STRING, "FORMATLINE_HOMEPAGE",
 	"%{!PRINT_ALWAYS}{homepage}%{}"
-		"     (%{COLOR_TITLE})Homepage:(%{COLOR_RESET})"
+		"\\C<%{COLUMN_TITLE}>"
+		"(%{COLOR_TITLE})Homepage:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{homepage}%{}"
-		"            "
-		"(%{COLOR_NORMAL})"
-		"<homepage>"
+		"\\C<%{COLUMN_CONTENT}>"
+		"(%{COLOR_NORMAL})<homepage>"
 		"%{!RESET_ALL_LINES}(%{COLOR_NORMAL_END})%{}"
 	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -2793,8 +2889,9 @@ AddOption(STRING, "FORMATLINE_HOMEPAGE",
 
 AddOption(STRING, "FORMATLINE_BUGS",
 	"%{?PRINT_BUGS}"
-		"     (%{COLOR_TITLE})Find open bugs:(%{COLOR_RESET})"
-		"      "
+		"\\C<%{COLUMN_TITLE}>"
+		"(%{COLOR_TITLE})Find open bugs:(%{COLOR_RESET})"
+		"\\C<%{COLUMN_CONTENT}>"
 		"(%{COLOR_NORMAL})"
 		"http://bugs.gentoo.org/buglist.cgi?quicksearch="
 		"<category>%2F<name>"
@@ -2806,11 +2903,11 @@ AddOption(STRING, "FORMATLINE_BUGS",
 
 AddOption(STRING, "FORMATLINE_DESCRIPTION",
 	"%{!PRINT_ALWAYS}{description}%{}"
-		"     (%{COLOR_TITLE})Description:(%{COLOR_RESET})"
+		"\\C<%{COLUMN_TITLE}>"
+		"(%{COLOR_TITLE})Description:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{description}%{}"
-		"         "
-		"(%{COLOR_NORMAL})"
-		"<description>"
+		"\\C<%{COLUMN_CONTENT}>"
+		"(%{COLOR_NORMAL})<description>"
 		"%{!RESET_ALL_LINES}(%{COLOR_NORMAL_END})%{}"
 	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -2818,18 +2915,21 @@ AddOption(STRING, "FORMATLINE_DESCRIPTION",
 
 AddOption(STRING, "FORMATLINE_BEST",
 	"%{!PRINT_ALWAYS}{havebest}%{}"
-		"     (%{COLOR_TITLE})Best versions/slot:(%{COLOR_RESET})"
+		"\\C<%{COLUMN_TITLE}>"
+		"(%{COLOR_TITLE})Best versions/slot:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{havebest}%{}"
-		"  <bestslotversions:VSORT>"
+		"\\C<%{COLUMN_CONTENT}>"
+		"<bestslotversions:VSORT>"
 	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the best versions/slots."));
 
 AddOption(STRING, "FORMATLINE_RECOMMEND",
 	"%{!PRINT_ALWAYS}{recommend}%{}"
-		"     (%{COLOR_TITLE})Recommendation:(%{COLOR_RESET})"
+		"\\C<%{COLUMN_TITLE}>"
+		"(%{COLOR_TITLE})Recommendation:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{recommend}%{}"
-		"      "
+		"\\C<%{COLUMN_CONTENT}>"
 		"{upgrade}(%{COLOR_UPGRADE_TEXT})Upgrade(%{COLOR_RESET})"
 			"{downgrade}"
 				" and "
@@ -2845,11 +2945,11 @@ AddOption(STRING, "FORMATLINE_RECOMMEND",
 
 AddOption(STRING, "FORMATLINE_LICENSES",
 	"%{!PRINT_ALWAYS}{licenses}%{}"
-		"     (%{COLOR_TITLE})License:(%{COLOR_RESET})"
+		"\\C<%{COLUMN_TITLE}>"
+		"(%{COLOR_TITLE})License:(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{licenses}%{}"
-		"             "
-		"(%{COLOR_NORMAL})"
-		"<licenses>"
+		"\\C<%{COLUMN_CONTENT}>"
+		"(%{COLOR_NORMAL})<licenses>"
 		"%{!RESET_ALL_LINES}(%{COLOR_NORMAL_END})%{}"
 	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -3007,7 +3107,7 @@ AddOption(STRING, "FORMAT_MASKREASONS_SEP",
 
 AddOption(STRING, "FORMAT_MASKREASONSS_LINESKIP",
 	"%{?WIDETERM}"
-		"%{FORMAT_VER_LINESKIP}           "
+		"%{FORMAT_VER_LINESKIP}\\C<%{COLUMN_AVAILABLE_CONTENT}>"
 	"%{else}"
 		"%{FORMAT_NEWLINE}"
 	"%{}"
@@ -3097,7 +3197,7 @@ AddOption(STRING, "FORMAT_AFTER_COLL",
 	"(This is meant for printing after all versions in a line)"));
 
 AddOption(STRING, "FORMAT_BEFORE_COLL_SEP",
-	"%{FORMAT_NEWLINE}\\t(%{COLOR_USE_COLL})\\{", _(
+	"%{FORMAT_NEWLINE}\\C<%{COLUMN_USE}>(%{COLOR_USE_COLL})\\{", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before IUSE data for all versions is output.\n"
 	"(This is meant for printing in a separate line)"));

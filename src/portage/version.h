@@ -26,6 +26,7 @@
 #include "portage/packagesets.h"
 
 class DBHeader;
+class OutputString;
 
 class IUse : public std::string {
 	public:
@@ -244,8 +245,7 @@ class Version : public ExtendedVersion, public Keywords {
 
 		void add_reason(const StringList &reason);
 
-		void reasons_string(std::string *s, const std::string &skip, const std::string &sep) const ATTRIBUTE_NONNULL_;
-
+		void reasons_string(OutputString *s, const OutputString &skip, const OutputString &sep) const ATTRIBUTE_NONNULL_;
 		bool have_reasons() const ATTRIBUTE_NONNULL_
 		{ return !reasons.empty(); }
 

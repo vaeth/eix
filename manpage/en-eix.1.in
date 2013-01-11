@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2013-01-03 17:00:00 +0200 (Thu, 03 Jan 2013)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-01-11 22:00:00 +0200 (Fri, 11 Jan 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1421,6 +1421,24 @@ For example, B<oldavailableversions:VAR> will output the previous available
 versions (using the variable B<VAR> to determine the output format)
 while B<newavailableversions:VAR> and B<availableversions:VAR> both will print
 the available versions of the current (i.e. new) package.
+.\" }}}
+
+
+.\" {{{ -------- Escape sequences
+.SS Escape sequences
+.TP
+.B \\\\n \\\\r  \\\\t  \\\\b  \\\\a
+These are interpreted in the usual way as in printf.
+
+.TP
+.B \\\\C\<I<COLUMN>>
+This special escape sequence is only admissible in formatstrings.
+Here, I<COLUMN> is a number (which must be enclosed in the braces).
+During output, this is interpreted by eix in such a way that if
+the column I<COLUMN> is not yet reached during output of the current line,
+so many spaces are output that this is the case.
+Thus, in a sense, this can be considered as a powerful tabulator
+which does not leave the interpretation to the terminal.
 .\" }}}
 
 .\" {{{ -------- Colors

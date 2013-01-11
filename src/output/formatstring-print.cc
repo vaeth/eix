@@ -27,6 +27,7 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/outputstring.h"
 #include "eixTk/sysutils.h"
 #include "eixTk/unused.h"
 #include "eixrc/eixrc.h"
@@ -47,27 +48,10 @@ using std::string;
 using std::vector;
 
 using std::cerr;
+using std::cout;
 using std::endl;
 
-#define STRING_TRUE "1"
-#define STRING_FALSE ""
-#define STRING_EMPTY ""
-
-inline static const char *IS_TRUE(bool a);
-inline static const char *IS_FALSE(bool a);
 static Package *old_or_new(string *new_name, Package *older, Package *newer, const string &name) ATTRIBUTE_NONNULL_;
-
-inline static
-const char *IS_TRUE(bool a)
-{
-	return (a ? STRING_TRUE : STRING_FALSE);
-}
-
-inline static
-const char *IS_FALSE(bool a)
-{
-	return (a ? STRING_FALSE : STRING_TRUE);
-}
 
 class VersionVariables {
 	private:
@@ -76,7 +60,7 @@ class VersionVariables {
 
 	public:
 		bool first, last, slotfirst, slotlast, oneslot, isinst;
-		string result;
+		OutputString result;
 
 		VersionVariables()
 		{
@@ -101,10 +85,9 @@ class VersionVariables {
 		{ return m_instver; }
 };
 
-string
-PrintFormat::iuse_expand(const IUseSet &iuse, bool coll) const
+void
+PrintFormat::iuse_expand(OutputString *s, const IUseSet &iuse, bool coll) const
 {
-	string ret;
 	map<string, string> expvars;
 	const set<IUse> &iuse_set(iuse.asSet());
 	for(set<IUse>::const_iterator it(iuse_set.begin());
@@ -122,39 +105,39 @@ PrintFormat::iuse_expand(const IUseSet &iuse, bool coll) const
 			}
 			r.append(expval);
 		} else {
-			if(!ret.empty()) {
-				ret.append(1, ' ');
+			if(!s->empty()) {
+				s->append(' ');
 			}
-			ret.append(it->asString());
+			s->append(it->asString());
 		}
 	}
 	for(map<string, string>::const_iterator it(expvars.begin());
 		it != expvars.end(); ++it) {
-		if(!ret.empty()) {
-			ret.append(1, ' ');
+		if(!s->empty()) {
+			s->append(' ');
 		}
-		ret.append(coll ? before_coll_start : before_iuse_start);
-		ret.append(it->first);
-		ret.append(coll ? before_coll_end : before_iuse_end);
-		ret.append(it->second);
-		ret.append(coll ? after_coll : after_iuse);
+		s->append(coll ? before_coll_start : before_iuse_start);
+		s->append(it->first);
+		s->append(coll ? before_coll_end : before_iuse_end);
+		s->append(it->second);
+		s->append(coll ? after_coll : after_iuse);
 	}
-	return ret;
 }
 
-string
-PrintFormat::get_inst_use(const Package &package, InstVersion *i, bool expand) const
+void
+PrintFormat::get_inst_use(OutputString *s, const Package &package, InstVersion *i, bool expand) const
 {
 	if((!(vardb->readUse(package, i))) || i->inst_iuse.empty()) {
-		return STRING_EMPTY;
+		return;
 	}
-	string ret, add, expval;
-	map<string, pair<string, string> > expvars;
+	OutputString add;
+	string expval;
+	map<string, pair<OutputString, OutputString> > expvars;
 	for(vector<string>::iterator it(i->inst_iuse.begin());
 		likely(it != i->inst_iuse.end()); ++it) {
 		string *value(&(*it));
 		bool is_unset(i->usedUse.find(*value) == i->usedUse.end());
-		string *curr(&ret);
+		OutputString *curr(s);
 		bool unset_list(false);
 		if(is_unset && !alpha_use) {
 			unset_list = true;
@@ -164,64 +147,70 @@ PrintFormat::get_inst_use(const Package &package, InstVersion *i, bool expand) c
 			string var;
 			if(portagesettings->use_expand(&var, &expval, *value)) {
 				value = &expval;
-				pair<string, string> &r(expvars[var]);
+				pair<OutputString, OutputString> &r(expvars[var]);
 				curr = (unset_list ? &(r.second) : &(r.first));
 			}
 		}
-		if(!curr->empty())
-			curr->append(1, ' ');
-		if(is_unset)
+		if(!curr->empty()) {
+			curr->append(' ');
+		}
+		if(is_unset) {
 			curr->append(before_unset_use);
-		else
+		} else {
 			curr->append(before_set_use);
+		}
 		curr->append(*value);
-		if(is_unset)
+		if(is_unset) {
 			curr->append(after_unset_use);
-		else
+		} else {
 			curr->append(after_set_use);
+		}
 	}
 	if(!add.empty()) {
-		if(!ret.empty())
-			ret.append(1, ' ');
-		ret.append(add);
+		if(!s->empty()) {
+			s->append(' ');
+		}
+		s->append(add);
 	}
-	for(map<string, pair<string, string> >::const_iterator it(expvars.begin());
+	for(map<string, pair<OutputString, OutputString> >::const_iterator it(expvars.begin());
 		it != expvars.end(); ++it) {
-		if(!ret.empty()) {
-			ret.append(1, ' ');
+		if(!s->empty()) {
+			s->append(' ');
 		}
-		ret.append(before_use_start);
-		ret.append(it->first);
-		ret.append(before_use_end);
-		const string &f(it->second.first);
-		ret.append(f);
-		const string &s(it->second.second);
-		if(!s.empty()) {
+		s->append(before_use_start);
+		s->append(it->first);
+		s->append(before_use_end);
+		const OutputString &f(it->second.first);
+		s->append(f);
+		const OutputString &t(it->second.second);
+		if(!t.empty()) {
 			if(!f.empty()) {
-				ret.append(1, ' ');
+				s->append(' ');
 			}
-			ret.append(s);
+			s->append(t);
 		}
-		ret.append(after_use);
+		s->append(after_use);
 	}
-	return ret;
 }
 
 void
 PrintFormat::get_installed(Package *package, Node *root, bool only_marked) const
 {
 	eix_assert_paranoic(vardb != NULLPTR);
-	if(unlikely((unlikely(only_marked)) && (marked_list == NULLPTR)))
+	if(unlikely((unlikely(only_marked)) && (marked_list == NULLPTR))) {
 		return;
+	}
 	vector<InstVersion> *vec(vardb->getInstalledVector(*package));
-	if(vec == NULLPTR)
+	if(vec == NULLPTR) {
 		return;
+	}
 	bool have_prevversion(false);
 	for(vector<InstVersion>::iterator it(vec->begin());
 		likely(it != vec->end()); ++it) {
 		if(unlikely(only_marked)) {
-			if(likely(!(marked_list->is_marked(*package, &(*it)))))
+			if(likely(!(marked_list->is_marked(*package, &(*it))))) {
 				continue;
+			}
 		}
 		if(have_prevversion) {
 			version_variables->last = version_variables->slotlast = false;
@@ -368,9 +357,9 @@ class Scanner {
 			DIFF_BESTDIFFER
 		};
 		enum Prop { PKG, VER };
-		typedef string (PrintFormat::*Plain)(Package *pkg) const;
+		typedef void (PrintFormat::*Plain)(OutputString *s, Package *pkg) const;
 		typedef void (PrintFormat::*ColonVar)(Package *pkg, const string &after_colon) const;
-		typedef string (PrintFormat::*ColonOther)(Package *pkg, const string &after_colon) const;
+		typedef void (PrintFormat::*ColonOther)(OutputString *s, Package *pkg, const string &after_colon) const;
 
 	protected:
 		map<string, Diff> diff;
@@ -583,8 +572,8 @@ PrintFormat::init_static()
 	AnsiColor::init_static();
 }
 
-string
-PrintFormat::get_pkg_property(Package *package, const string &name) const
+void
+PrintFormat::get_pkg_property(OutputString *s, Package *package, const string &name) const
 {
 	eix_assert_static(scanner != NULLPTR);
 	Scanner::Prop t;
@@ -617,10 +606,12 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const
 		exit(EXIT_FAILURE);
 	}
 	if(plain != NULLPTR) {
-		return (this->*plain)(package);
+		(this->*plain)(s, package);
+		return;
 	}
 	if(colon_var == NULLPTR) {
-		return (this->*colon_other)(package, after_colon);
+		(this->*colon_other)(s, package, after_colon);
+		return;
 	}
 	// colon_var:
 	// It is important that version_variables points to a local object:
@@ -631,18 +622,18 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const
 	version_variables = &variables;
 	(this->*colon_var)(package, after_colon);
 	version_variables = previous_variables;
-	return variables.result;
+	s->assign(variables.result);
 }
 
-string
-PrintFormat::COLON_VER_DATE(Package *package, const string &after_colon) const
+void
+PrintFormat::COLON_VER_DATE(OutputString *s, Package *package, const string &after_colon) const
 {
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
 		vardb->readInstDate(*package, i);
-		return date_conv((*eix_rc)[after_colon].c_str(), i->instDate);
+		s->assign(date_conv((*eix_rc)[after_colon].c_str(), i->instDate));
+		return;
 	}
-	return STRING_EMPTY;
 }
 
 void
@@ -775,90 +766,102 @@ PrintFormat::COLON_PKG_INSTALLEDVERSIONS(Package *package, const string &after_c
 	colon_pkg_installedversions(package, after_colon, false);
 }
 
-
 void
 PrintFormat::COLON_PKG_INSTALLEDMARKEDVERSIONS(Package *package, const string &after_colon) const
 {
 	colon_pkg_installedversions(package, after_colon, true);
 }
 
-string
-PrintFormat::PKG_INSTALLED(Package *package) const
+void
+PrintFormat::PKG_INSTALLED(OutputString *s, Package *package) const
 {
 	eix_assert_paranoic(vardb != NULLPTR);
 	vector<InstVersion> *vec(vardb->getInstalledVector(*package));
-	return IS_TRUE((vec != NULLPTR) && (likely(!(vec->empty()))));
+	if((vec != NULLPTR) && (likely(!(vec->empty())))) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::PKG_VERSIONLINES(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::PKG_VERSIONLINES(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return IS_TRUE(style_version_lines);
+	if(style_version_lines) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::PKG_SLOTSORTED(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::PKG_SLOTSORTED(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return IS_TRUE(slot_sorted);
+	if(slot_sorted) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::PKG_COLOR(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::PKG_COLOR(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return IS_FALSE(no_color);
+	if(!no_color) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::PKG_HAVEBEST(Package *package) const
+void
+PrintFormat::PKG_HAVEBEST(OutputString *s, Package *package) const
 {
-	return IS_TRUE(package->best(false) != NULLPTR);
+	if(package->best(false) != NULLPTR) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::PKG_HAVEBESTS(Package *package) const
+void
+PrintFormat::PKG_HAVEBESTS(OutputString *s, Package *package) const
 {
-	return IS_TRUE(package->best(true) != NULLPTR);
+	if(package->best(true) != NULLPTR) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::PKG_CATEGORY(Package *package) const
+void
+PrintFormat::PKG_CATEGORY(OutputString *s, Package *package) const
 {
-	return package->category;
+	s->assign(package->category);
 }
 
-string
-PrintFormat::PKG_NAME(Package *package) const
+void
+PrintFormat::PKG_NAME(OutputString *s, Package *package) const
 {
-	return package->name;
+	s->assign(package->name);
 }
 
-string
-PrintFormat::PKG_DESCRIPTION(Package *package) const
+void
+PrintFormat::PKG_DESCRIPTION(OutputString *s, Package *package) const
 {
-	return package->desc;
+	s->assign(package->desc);
 }
 
-string
-PrintFormat::PKG_HOMEPAGE(Package *package) const
+void
+PrintFormat::PKG_HOMEPAGE(OutputString *s, Package *package) const
 {
-	return package->homepage;
+	s->assign(package->homepage);
 }
 
-string
-PrintFormat::PKG_LICENSES(Package *package) const
+void
+PrintFormat::PKG_LICENSES(OutputString *s, Package *package) const
 {
-	return package->licenses;
+	s->assign(package->licenses);
 }
 
-string
-PrintFormat::PKG_BINARY(Package *package) const
+void
+PrintFormat::PKG_BINARY(OutputString *s, Package *package) const
 {
 	for(Package::const_iterator it(package->begin()); likely(it != package->end()); ++it) {
 		if(it->have_bin_pkg(portagesettings, package)) {
-			return STRING_TRUE;
+			s->set_one();
+			return;
 		}
 	}
 	eix_assert_paranoic(vardb != NULLPTR);
@@ -867,205 +870,223 @@ PrintFormat::PKG_BINARY(Package *package) const
 		for(vector<InstVersion>::iterator it(vec->begin());
 			likely(it != vec->end()); ++it) {
 			if(it->have_bin_pkg(portagesettings, package)) {
-				return STRING_TRUE;
+				s->set_one();
+				return;
 			}
 		}
 	}
-	return STRING_FALSE;
 }
 
-string
-PrintFormat::PKG_OVERLAYKEY(Package *package) const
+void
+PrintFormat::PKG_OVERLAYKEY(OutputString *s, Package *package) const
 {
 	ExtendedVersion::Overlay ov_key(package->largest_overlay);
 	if(ov_key && package->have_same_overlay_key()) {
-		return overlay_keytext(ov_key, false);
+		overlay_keytext(s, ov_key, false);
 	}
-	return STRING_EMPTY;
 }
 
-string
-PrintFormat::PKG_SYSTEM(Package *package) const
+void
+PrintFormat::PKG_SYSTEM(OutputString *s, Package *package) const
 {
-	return IS_TRUE(package->is_system_package());
+	if(package->is_system_package()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::PKG_WORLD(Package *package) const
+void
+PrintFormat::PKG_WORLD(OutputString *s, Package *package) const
 {
-	return IS_TRUE(package->is_world_package());
+	if(package->is_world_package()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::PKG_WORLD_SETS(Package *package) const
+void
+PrintFormat::PKG_WORLD_SETS(OutputString *s, Package *package) const
 {
-	return IS_TRUE(package->is_world_sets_package());
+	if(package->is_world_sets_package()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::PKG_SETNAMES(Package *package) const
+void
+PrintFormat::PKG_SETNAMES(OutputString *s, Package *package) const
 {
-	return portagesettings->get_setnames(package);
+	s->assign(portagesettings->get_setnames(package));
 }
 
-string
-PrintFormat::PKG_ALLSETNAMES(Package *package) const
+void
+PrintFormat::PKG_ALLSETNAMES(OutputString *s, Package *package) const
 {
-	return portagesettings->get_setnames(package, true);
+	s->assign(portagesettings->get_setnames(package, true));
 }
 
-string
-PrintFormat::pkg_upgrade(Package *package, bool only_installed, bool test_slots) const
+void
+PrintFormat::pkg_upgrade(OutputString *s, Package *package, bool only_installed, bool test_slots) const
 {
 	LocalCopy localcopy(this, package);
-	bool result(package->can_upgrade(vardb, portagesettings, only_installed, test_slots));
+	if(package->can_upgrade(vardb, portagesettings, only_installed, test_slots)) {
+		s->set_one();
+	}
 	localcopy.restore(package);
-	return IS_TRUE(result);
 }
 
-string
-PrintFormat::PKG_UPGRADE(Package *package) const
+void
+PrintFormat::PKG_UPGRADE(OutputString *s, Package *package) const
 {
-	return pkg_upgrade(package, true, true);
+	pkg_upgrade(s, package, true, true);
 }
 
-string
-PrintFormat::PKG_UPGRADEORINSTALL(Package *package) const
+void
+PrintFormat::PKG_UPGRADEORINSTALL(OutputString *s, Package *package) const
 {
-	return pkg_upgrade(package, false, true);
+	pkg_upgrade(s, package, false, true);
 }
 
-string
-PrintFormat::PKG_BESTUPGRADE(Package *package) const
+void
+PrintFormat::PKG_BESTUPGRADE(OutputString *s, Package *package) const
 {
-	return pkg_upgrade(package, true, false);
+	pkg_upgrade(s, package, true, false);
 }
 
-string
-PrintFormat::PKG_BESTUPGRADEORINSTALL(Package *package) const
+void
+PrintFormat::PKG_BESTUPGRADEORINSTALL(OutputString *s, Package *package) const
 {
-	return pkg_upgrade(package, false, false);
+	pkg_upgrade(s, package, false, false);
 }
 
-string
-PrintFormat::pkg_downgrade(Package *package, bool test_slots) const
-{
-	LocalCopy locallocalcopy(this, package);
-	bool result(package->must_downgrade(vardb, test_slots));
-	locallocalcopy.restore(package);
-	return IS_TRUE(result);
-}
-
-string
-PrintFormat::PKG_DOWNGRADE(Package *package) const
-{
-	return pkg_downgrade(package, true);
-}
-
-string
-PrintFormat::PKG_BESTDOWNGRADE(Package *package) const
-{
-	return pkg_downgrade(package, false);
-}
-
-string
-PrintFormat::pkg_recommend(Package *package, bool only_installed, bool test_slots) const
+void
+PrintFormat::pkg_downgrade(OutputString *s, Package *package, bool test_slots) const
 {
 	LocalCopy locallocalcopy(this, package);
-	bool result(package->recommend(vardb, portagesettings, only_installed, test_slots));
+	if(package->must_downgrade(vardb, test_slots)) {
+		s->set_one();
+	}
 	locallocalcopy.restore(package);
-	return IS_TRUE(result);
 }
 
-string
-PrintFormat::PKG_RECOMMEND(Package *package) const
+void
+PrintFormat::PKG_DOWNGRADE(OutputString *s, Package *package) const
 {
-	return pkg_recommend(package, true, true);
+	pkg_downgrade(s, package, true);
 }
 
-string
-PrintFormat::PKG_RECOMMENDORINSTALL(Package *package) const
+void
+PrintFormat::PKG_BESTDOWNGRADE(OutputString *s, Package *package) const
 {
-	return pkg_recommend(package, false, true);
+	pkg_downgrade(s, package, false);
 }
 
-string
-PrintFormat::PKG_BESTRECOMMEND(Package *package) const
+void
+PrintFormat::pkg_recommend(OutputString *s, Package *package, bool only_installed, bool test_slots) const
 {
-	return pkg_recommend(package, true, false);
+	LocalCopy locallocalcopy(this, package);
+	if(package->recommend(vardb, portagesettings, only_installed, test_slots)) {
+		s->set_one();
+	}
+	locallocalcopy.restore(package);
 }
 
-string
-PrintFormat::PKG_BESTRECOMMENDORINSTALL(Package *package) const
+void
+PrintFormat::PKG_RECOMMEND(OutputString *s, Package *package) const
 {
-	return pkg_recommend(package, false, false);
+	pkg_recommend(s, package, true, true);
 }
 
-string
-PrintFormat::PKG_MARKED(Package *package) const
+void
+PrintFormat::PKG_RECOMMENDORINSTALL(OutputString *s, Package *package) const
+{
+	pkg_recommend(s, package, false, true);
+}
+
+void
+PrintFormat::PKG_BESTRECOMMEND(OutputString *s, Package *package) const
+{
+	pkg_recommend(s, package, true, false);
+}
+
+void
+PrintFormat::PKG_BESTRECOMMENDORINSTALL(OutputString *s, Package *package) const
+{
+	pkg_recommend(s, package, false, false);
+}
+
+void
+PrintFormat::PKG_MARKED(OutputString *s, Package *package) const
 {
 	if(likely(marked_list != NULLPTR)) {
 		if(unlikely(marked_list->is_marked(*package))) {
-			return STRING_TRUE;
+			s->set_one();
+			return;
 		}
 	}
-	return STRING_FALSE;
 }
 
-string
-PrintFormat::PKG_HAVEMARKEDVERSION(Package *package) const
+void
+PrintFormat::PKG_HAVEMARKEDVERSION(OutputString *s, Package *package) const
 {
 	if(likely(marked_list != NULLPTR)) {
 		for(Package::const_iterator it(package->begin());
 			likely(it != package->end()); ++it) {
 			if(marked_list->is_marked(*package, &(**it))) {
-				return STRING_TRUE;
+				s->set_one();
+				return;
 			}
 		}
 	}
-	return STRING_FALSE;
 }
 
-string
-PrintFormat::PKG_SLOTS(Package *package) const
+void
+PrintFormat::PKG_SLOTS(OutputString *s, Package *package) const
 {
-	return IS_TRUE((package->slotlist()).size() > 1);
+	if((package->slotlist()).size() > 1) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::PKG_SLOTTED(Package *package) const
+void
+PrintFormat::PKG_SLOTTED(OutputString *s, Package *package) const
 {
-	return IS_TRUE(package->have_nontrivial_slots());
+	if(package->have_nontrivial_slots()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::PKG_HAVEVIRTUAL(Package *package) const
+void
+PrintFormat::PKG_HAVEVIRTUAL(OutputString *s, Package *package) const
 {
-	return IS_TRUE(have_virtual(package, false));
+	if(have_virtual(package, false)) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::PKG_HAVENONVIRTUAL(Package *package) const
+void
+PrintFormat::PKG_HAVENONVIRTUAL(OutputString *s, Package *package) const
 {
-	return IS_TRUE(have_virtual(package, true));
+	if(have_virtual(package, true)) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::PKG_HAVECOLLIUSE(Package *package) const
+void
+PrintFormat::PKG_HAVECOLLIUSE(OutputString *s, Package *package) const
 {
-	return IS_FALSE(package->iuse.empty());
+	if(!(package->iuse.empty())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::PKG_COLLIUSES(Package *package) const
+void
+PrintFormat::PKG_COLLIUSES(OutputString *s, Package *package) const
 {
-	return iuse_expand(package->iuse, true);
+	iuse_expand(s, package->iuse, true);
 }
 
-string
-PrintFormat::PKG_COLLIUSE(Package *package) const
+void
+PrintFormat::PKG_COLLIUSE(OutputString *s, Package *package) const
 {
-	return package->iuse.asString();
+	s->assign(package->iuse.asString());
 }
 
 const ExtendedVersion *
@@ -1077,39 +1098,49 @@ PrintFormat::ver_version() const
 	return version_variables->version();
 }
 
-string
-PrintFormat::VER_FIRST(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_FIRST(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return IS_TRUE(version_variables->first);
+	if(version_variables->first) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_LAST(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_LAST(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return IS_TRUE(version_variables->last);
+	if(version_variables->last) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_SLOTFIRST(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_SLOTFIRST(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return IS_TRUE(version_variables->slotfirst);
+	if(version_variables->slotfirst) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_SLOTLAST(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_SLOTLAST(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return IS_TRUE(version_variables->slotlast);
+	if(version_variables->slotlast) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_ONESLOT(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_ONESLOT(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return IS_TRUE(version_variables->oneslot);
+	if(version_variables->oneslot) {
+		s->set_one();
+	}
 }
 
 const ExtendedVersion *
@@ -1124,250 +1155,275 @@ PrintFormat::ver_versionslot(Package *package) const
 	}
 }
 
-string
-PrintFormat::VER_FULLSLOT(Package *package) const
+void
+PrintFormat::VER_FULLSLOT(OutputString *s, Package *package) const
 {
-	return ver_versionslot(package)->get_longfullslot();
+	s->assign(ver_versionslot(package)->get_longfullslot());
 }
 
-string
-PrintFormat::VER_ISFULLSLOT(Package *package) const
+void
+PrintFormat::VER_ISFULLSLOT(OutputString *s, Package *package) const
 {
-	return IS_FALSE(ver_versionslot(package)->get_shortfullslot().empty());
+	if(!(ver_versionslot(package)->get_shortfullslot().empty())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_SLOT(Package *package) const
+void
+PrintFormat::VER_SLOT(OutputString *s, Package *package) const
 {
 	const string &slot(ver_versionslot(package)->slotname);
-	return ((slot.empty()) ? "0" : slot);
+	s->assign((slot.empty()) ? "0" : slot);
 }
 
-string
-PrintFormat::VER_ISSLOT(Package *package) const
+void
+PrintFormat::VER_ISSLOT(OutputString *s, Package *package) const
 {
 	const string &slot(ver_versionslot(package)->slotname);
-	return IS_FALSE(slot.empty() || (slot == "0"));
+	if((!slot.empty()) && (slot != "0")) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_SUBSLOT(Package *package) const
+void
+PrintFormat::VER_SUBSLOT(OutputString *s, Package *package) const
 {
-	return ver_versionslot(package)->subslotname;
+	s->assign(ver_versionslot(package)->subslotname);
 }
 
-string
-PrintFormat::VER_ISSUBSLOT(Package *package) const
+void
+PrintFormat::VER_ISSUBSLOT(OutputString *s, Package *package) const
 {
-	return IS_FALSE(ver_versionslot(package)->subslotname.empty());
+	if(!(ver_versionslot(package)->subslotname.empty())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_VERSION(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_VERSION(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(version_variables->isinst) {
-		return version_variables->instver()->getFull();
+		s->assign(version_variables->instver()->getFull());
+	} else {
+		s->assign(version_variables->version()->getFull());
 	}
-	return version_variables->version()->getFull();
 }
 
-string
-PrintFormat::VER_PLAINVERSION(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_PLAINVERSION(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(version_variables->isinst) {
-		return version_variables->instver()->getPlain();
+		s->assign(version_variables->instver()->getPlain());
+	} else {
+		s->assign(version_variables->version()->getPlain());
 	}
-	return version_variables->version()->getPlain();
 }
 
-string
-PrintFormat::VER_REVISION(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_REVISION(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(version_variables->isinst) {
-		return version_variables->instver()->getRevision();
+		s->assign(version_variables->instver()->getRevision());
+	} else {
+		s->assign(version_variables->version()->getRevision());
 	}
-	return version_variables->version()->getRevision();
 }
 
-string
-PrintFormat::ver_overlay(Package *package, bool getnum) const
+void
+PrintFormat::ver_overlay(OutputString *s, Package *package, bool getnum) const
 {
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
 		eix_assert_paranoic(header != NULLPTR);
 		if(unlikely(!(vardb->readOverlay(*package, i, *header)))) {
 			if(getnum || no_color) {
-				return "[?]";
+				s->assign("[?]");
+			} else {
+				s->assign(color_overlaykey, 0);
+				s->append("[?]");
+				s->append(color_keyend, 0);
 			}
-			return color_overlaykey + "[?]" + color_keyend;
+			return;
 		}
 		if(i->overlay_key > 0) {
 			if(getnum || (!package->have_same_overlay_key()) || (package->largest_overlay != i->overlay_key)) {
-				return overlay_keytext(i->overlay_key, getnum);
+				overlay_keytext(s, i->overlay_key, getnum);
 			}
 		}
 	} else if(getnum || (!package->have_same_overlay_key())) {
 		if(version_variables->version()->overlay_key) {
-			return overlay_keytext(version_variables->version()->overlay_key, getnum);
+			overlay_keytext(s, version_variables->version()->overlay_key, getnum);
 		}
 	}
-	return STRING_EMPTY;
 }
 
-string
-PrintFormat::VER_OVERLAYNUM(Package *package) const
+void
+PrintFormat::VER_OVERLAYNUM(OutputString *s, Package *package) const
 {
-	return ver_overlay(package, true);
+	ver_overlay(s, package, true);
 }
 
-string
-PrintFormat::VER_OVERLAYVER(Package *package) const
+void
+PrintFormat::VER_OVERLAYVER(OutputString *s, Package *package) const
 {
-	return ver_overlay(package, false);
+	ver_overlay(s, package, false);
 }
 
-string
-PrintFormat::VER_VERSIONKEYWORDSS(Package *package) const
+void
+PrintFormat::VER_VERSIONKEYWORDSS(OutputString *s, Package *package) const
 {
 	if(unlikely(version_variables->isinst)) {
-		return STRING_EMPTY;
+		return;
 	}
 	portagesettings->get_effective_keywords_userprofile(package);
-	return version_variables->version()->get_effective_keywords();
+	s->assign(version_variables->version()->get_effective_keywords());
 }
 
-string
-PrintFormat::VER_VERSIONKEYWORDS(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_VERSIONKEYWORDS(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return STRING_EMPTY;
+		return;
 	}
-	return version_variables->version()->get_full_keywords();
+	s->assign(version_variables->version()->get_full_keywords());
 }
 
-string
-PrintFormat::VER_VERSIONEKEYWORDS(Package *package) const
+void
+PrintFormat::VER_VERSIONEKEYWORDS(OutputString *s, Package *package) const
 {
 	if(likely(!version_variables->isinst)) {
 		portagesettings->get_effective_keywords_userprofile(package);
 		const Version *v(version_variables->version());
-		string s(v->get_effective_keywords());
-		if(s != v->get_full_keywords()) {
-			return s;
+		string t(v->get_effective_keywords());
+		if(t != v->get_full_keywords()) {
+			s->assign(t);
 		}
 	}
-	return STRING_EMPTY;
 }
 
-string
-PrintFormat::ver_isbestupgrade(Package *package, bool check_slots, bool allow_unstable) const
+void
+PrintFormat::ver_isbestupgrade(OutputString *s, Package *package, bool check_slots, bool allow_unstable) const
 {
-	return IS_TRUE(likely(!version_variables->isinst) &&
+	if(likely(!version_variables->isinst) &&
 		unlikely(package->is_best_upgrade(check_slots,
 				version_variables->version(),
-				vardb, portagesettings, allow_unstable)));
+				vardb, portagesettings, allow_unstable))) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_ISBESTUPGRADESLOT(Package *package) const
+void
+PrintFormat::VER_ISBESTUPGRADESLOT(OutputString *s, Package *package) const
 {
-	return ver_isbestupgrade(package, true, false);
+	ver_isbestupgrade(s, package, true, false);
 }
 
-string
-PrintFormat::VER_ISBESTUPGRADESLOTS(Package *package) const
+void
+PrintFormat::VER_ISBESTUPGRADESLOTS(OutputString *s, Package *package) const
 {
-	return ver_isbestupgrade(package, true, true);
+	ver_isbestupgrade(s, package, true, true);
 }
 
-string
-PrintFormat::VER_ISBESTUPGRADE(Package *package) const
+void
+PrintFormat::VER_ISBESTUPGRADE(OutputString *s, Package *package) const
 {
-	return ver_isbestupgrade(package, false, false);
+	ver_isbestupgrade(s, package, false, false);
 }
 
-string
-PrintFormat::VER_ISBESTUPGRADES(Package *package) const
+void
+PrintFormat::VER_ISBESTUPGRADES(OutputString *s, Package *package) const
 {
-	return ver_isbestupgrade(package, false, true);
+	ver_isbestupgrade(s, package, false, true);
 }
 
-string
-PrintFormat::VER_MARKEDVERSION(Package *package) const
+void
+PrintFormat::VER_MARKEDVERSION(OutputString *s, Package *package) const
 {
 	if(likely(!version_variables->isinst)) {
 		if(unlikely((likely(marked_list != NULLPTR)) && (unlikely(marked_list->is_marked(*package,
 			version_variables->version()))))) {
-			return STRING_TRUE;
+			s->set_one();
 		}
 	}
-	return STRING_FALSE;
 }
 
-string
-PrintFormat::VER_INSTALLEDVERSION(Package *package) const
+void
+PrintFormat::VER_INSTALLEDVERSION(OutputString *s, Package *package) const
 {
 	if(unlikely(version_variables->isinst)) {
-		return STRING_TRUE;
+		s->set_one();
+		return;
 	}
 	eix_assert_paranoic(header != NULLPTR);
-	return IS_TRUE(vardb->isInstalledVersion(*package, version_variables->version(), *header));
+	if(vardb->isInstalledVersion(*package, version_variables->version(), *header)) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_HAVEUSE(Package *package) const
+void
+PrintFormat::VER_HAVEUSE(OutputString *s, Package *package) const
 {
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
-		return IS_TRUE(likely(vardb->readUse(*package, i))
-			&& !(i->inst_iuse.empty()));
+		if(likely(vardb->readUse(*package, i)) && !(i->inst_iuse.empty())) {
+			s->set_one();
+		}
+		return;
 	}
-	return IS_FALSE(version_variables->version()->iuse.empty());
+	if(!(version_variables->version()->iuse.empty())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_USE(Package *package) const
+void
+PrintFormat::VER_USE(OutputString *s, Package *package) const
 {
 	if(version_variables->isinst) {
-		return get_inst_use(*package, version_variables->instver(), false);
+		get_inst_use(s, *package, version_variables->instver(), false);
+	} else {
+		s->assign(version_variables->version()->iuse.asString());
 	}
-	return version_variables->version()->iuse.asString();
 }
 
-string
-PrintFormat::VER_USES(Package *package) const
+void
+PrintFormat::VER_USES(OutputString *s, Package *package) const
 {
 	if(version_variables->isinst) {
-		return get_inst_use(*package, version_variables->instver(), true);
+		get_inst_use(s, *package, version_variables->instver(), true);
+	} else {
+		iuse_expand(s, version_variables->version()->iuse, false);
 	}
-	return iuse_expand(version_variables->version()->iuse, false);
 }
 
-string
-PrintFormat::VER_VIRTUAL(Package *package) const
+void
+PrintFormat::VER_VIRTUAL(OutputString *s, Package *package) const
 {
 	ExtendedVersion::Overlay key;
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
 		eix_assert_paranoic(header != NULLPTR);
 		if(!(vardb->readOverlay(*package, i, *header))) {
-			return STRING_FALSE;
+			return;
 		}
 		key = i->overlay_key;
 	} else {
 		key = version_variables->version()->overlay_key;
 	}
-	return IS_TRUE(is_virtual(key));
+	if(is_virtual(key)) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_ISBINARY(Package *package) const
+void
+PrintFormat::VER_ISBINARY(OutputString *s, Package *package) const
 {
-	return IS_TRUE(ver_version()->have_bin_pkg(portagesettings, package));
+	if(ver_version()->have_bin_pkg(portagesettings, package)) {
+		s->set_one();
+	}
 }
 
 const ExtendedVersion *
@@ -1382,229 +1438,243 @@ PrintFormat::ver_restrict(Package *package) const
 	return version_variables->version();
 }
 
-string
-PrintFormat::ver_restrict(Package *package, ExtendedVersion::Restrict r) const
+void
+PrintFormat::ver_restrict(OutputString *s, Package *package, ExtendedVersion::Restrict r) const
 {
 	const ExtendedVersion *e(ver_restrict(package));
-	return IS_TRUE((e != NULLPTR) && (((e->restrictFlags) & r) != ExtendedVersion::RESTRICT_NONE));
+	if((e != NULLPTR) && (((e->restrictFlags) & r) != ExtendedVersion::RESTRICT_NONE)) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_RESTRICT(Package *package) const
+void
+PrintFormat::VER_RESTRICT(OutputString *s, Package *package) const
 {
-	return ver_restrict(package, ExtendedVersion::RESTRICT_ALL);
+	ver_restrict(s, package, ExtendedVersion::RESTRICT_ALL);
 }
 
-string
-PrintFormat::VER_RESTRICTFETCH(Package *package) const
+void
+PrintFormat::VER_RESTRICTFETCH(OutputString *s, Package *package) const
 {
-	return ver_restrict(package, ExtendedVersion::RESTRICT_FETCH);
+	ver_restrict(s, package, ExtendedVersion::RESTRICT_FETCH);
 }
 
-string
-PrintFormat::VER_RESTRICTMIRROR(Package *package) const
+void
+PrintFormat::VER_RESTRICTMIRROR(OutputString *s, Package *package) const
 {
-	return ver_restrict(package, ExtendedVersion::RESTRICT_MIRROR);
+	ver_restrict(s, package, ExtendedVersion::RESTRICT_MIRROR);
 }
 
-string
-PrintFormat::VER_RESTRICTPRIMARYURI(Package *package) const
+void
+PrintFormat::VER_RESTRICTPRIMARYURI(OutputString *s, Package *package) const
 {
-	return ver_restrict(package, ExtendedVersion::RESTRICT_PRIMARYURI);
+	ver_restrict(s, package, ExtendedVersion::RESTRICT_PRIMARYURI);
 }
 
-string
-PrintFormat::VER_RESTRICTBINCHECKS(Package *package) const
+void
+PrintFormat::VER_RESTRICTBINCHECKS(OutputString *s, Package *package) const
 {
-	return ver_restrict(package, ExtendedVersion::RESTRICT_BINCHECKS);
+	ver_restrict(s, package, ExtendedVersion::RESTRICT_BINCHECKS);
 }
-string
-PrintFormat::VER_RESTRICTSTRIP(Package *package) const
+void
+PrintFormat::VER_RESTRICTSTRIP(OutputString *s, Package *package) const
 {
-	return ver_restrict(package, ExtendedVersion::RESTRICT_STRIP);
-}
-
-string
-PrintFormat::VER_RESTRICTTEST(Package *package) const
-{
-	return ver_restrict(package, ExtendedVersion::RESTRICT_TEST);
+	ver_restrict(s, package, ExtendedVersion::RESTRICT_STRIP);
 }
 
-string
-PrintFormat::VER_RESTRICTUSERPRIV(Package *package) const
+void
+PrintFormat::VER_RESTRICTTEST(OutputString *s, Package *package) const
 {
-	return ver_restrict(package, ExtendedVersion::RESTRICT_USERPRIV);
+	ver_restrict(s, package, ExtendedVersion::RESTRICT_TEST);
 }
 
-string
-PrintFormat::VER_RESTRICTINSTALLSOURCES(Package *package) const
+void
+PrintFormat::VER_RESTRICTUSERPRIV(OutputString *s, Package *package) const
 {
-	return ver_restrict(package, ExtendedVersion::RESTRICT_INSTALLSOURCES);
+	ver_restrict(s, package, ExtendedVersion::RESTRICT_USERPRIV);
 }
 
-string
-PrintFormat::VER_RESTRICTBINDIST(Package *package) const
+void
+PrintFormat::VER_RESTRICTINSTALLSOURCES(OutputString *s, Package *package) const
 {
-	return ver_restrict(package, ExtendedVersion::RESTRICT_BINDIST);
+	ver_restrict(s, package, ExtendedVersion::RESTRICT_INSTALLSOURCES);
 }
 
-string
-PrintFormat::VER_RESTRICTPARALLEL(Package *package) const
+void
+PrintFormat::VER_RESTRICTBINDIST(OutputString *s, Package *package) const
 {
-	return ver_restrict(package, ExtendedVersion::RESTRICT_PARALLEL);
+	ver_restrict(s, package, ExtendedVersion::RESTRICT_BINDIST);
 }
 
-string
-PrintFormat::ver_properties(Package *package, ExtendedVersion::Properties p) const
+void
+PrintFormat::VER_RESTRICTPARALLEL(OutputString *s, Package *package) const
+{
+	ver_restrict(s, package, ExtendedVersion::RESTRICT_PARALLEL);
+}
+
+void
+PrintFormat::ver_properties(OutputString *s, Package *package, ExtendedVersion::Properties p) const
 {
 	const ExtendedVersion *e(ver_restrict(package));
-	return IS_TRUE((e != NULLPTR) && (((e->propertiesFlags) & p) != ExtendedVersion::RESTRICT_NONE));
+	if((e != NULLPTR) && (((e->propertiesFlags) & p) != ExtendedVersion::RESTRICT_NONE)) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_PROPERTIES(Package *package) const
+void
+PrintFormat::VER_PROPERTIES(OutputString *s, Package *package) const
 {
-	return ver_properties(package, ExtendedVersion::PROPERTIES_ALL);
+	ver_properties(s, package, ExtendedVersion::PROPERTIES_ALL);
 }
 
-string
-PrintFormat::VER_PROPERTIESINTERACTIVE(Package *package) const
+void
+PrintFormat::VER_PROPERTIESINTERACTIVE(OutputString *s, Package *package) const
 {
-	return ver_properties(package, ExtendedVersion::PROPERTIES_INTERACTIVE);
+	ver_properties(s, package, ExtendedVersion::PROPERTIES_INTERACTIVE);
 }
 
-string
-PrintFormat::VER_PROPERTIESLIVE(Package *package) const
+void
+PrintFormat::VER_PROPERTIESLIVE(OutputString *s, Package *package) const
 {
-	return ver_properties(package, ExtendedVersion::PROPERTIES_LIVE);
+	ver_properties(s, package, ExtendedVersion::PROPERTIES_LIVE);
 }
 
-string
-PrintFormat::VER_PROPERTIESVIRTUAL(Package *package) const
+void
+PrintFormat::VER_PROPERTIESVIRTUAL(OutputString *s, Package *package) const
 {
-	return ver_properties(package, ExtendedVersion::PROPERTIES_VIRTUAL);
+	ver_properties(s, package, ExtendedVersion::PROPERTIES_VIRTUAL);
 }
 
-string
-PrintFormat::VER_PROPERTIESSET(Package *package) const
+void
+PrintFormat::VER_PROPERTIESSET(OutputString *s, Package *package) const
 {
-	return ver_properties(package, ExtendedVersion::PROPERTIES_SET);
+	ver_properties(s, package, ExtendedVersion::PROPERTIES_SET);
 }
 
-string
-PrintFormat::VER_HAVEDEPEND(Package *package ATTRIBUTE_UNUSED) const
-{
-	UNUSED(package);
-	return IS_FALSE((unlikely(version_variables->isinst)) || version_variables->version()->depend.depend_empty());
-}
-
-string
-PrintFormat::VER_HAVERDEPEND(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_HAVEDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return IS_FALSE((unlikely(version_variables->isinst)) || version_variables->version()->depend.rdepend_empty());
+	if(!((unlikely(version_variables->isinst)) || version_variables->version()->depend.depend_empty())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_HAVEPDEPEND(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_HAVERDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return IS_FALSE((unlikely(version_variables->isinst)) || version_variables->version()->depend.pdepend_empty());
+	if(!((unlikely(version_variables->isinst)) || version_variables->version()->depend.rdepend_empty())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_HAVEHDEPEND(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_HAVEPDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return IS_FALSE((unlikely(version_variables->isinst)) || version_variables->version()->depend.hdepend_empty());
+	if(!((unlikely(version_variables->isinst)) || version_variables->version()->depend.pdepend_empty())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_HAVEDEPS(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_HAVEHDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return IS_FALSE((unlikely(version_variables->isinst)) || version_variables->version()->depend.empty());
+	if(!((unlikely(version_variables->isinst)) || version_variables->version()->depend.hdepend_empty())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_DEPENDS(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_HAVEDEPS(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
+{
+	UNUSED(package);
+	if(!((unlikely(version_variables->isinst)) || version_variables->version()->depend.empty())) {
+		s->set_one();
+	}
+}
+
+void
+PrintFormat::VER_DEPENDS(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return STRING_EMPTY;
+		return;
 	}
-	return version_variables->version()->depend.get_depend_brief();
+	s->assign(version_variables->version()->depend.get_depend_brief());
 }
 
-string
-PrintFormat::VER_DEPEND(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_DEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return STRING_EMPTY;
+		return;
 	}
-	return version_variables->version()->depend.get_depend();
+	s->assign(version_variables->version()->depend.get_depend());
 }
 
-string
-PrintFormat::VER_RDEPENDS(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_RDEPENDS(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return STRING_EMPTY;
+		return;
 	}
-	return version_variables->version()->depend.get_rdepend_brief();
+	s->assign(version_variables->version()->depend.get_rdepend_brief());
 }
 
 
-string
-PrintFormat::VER_RDEPEND(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_RDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return STRING_EMPTY;
+		return;
 	}
-	return version_variables->version()->depend.get_rdepend();
+	s->assign(version_variables->version()->depend.get_rdepend());
 }
 
-string
-PrintFormat::VER_PDEPENDS(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_PDEPENDS(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return STRING_EMPTY;
+		return;
 	}
-	return version_variables->version()->depend.get_pdepend_brief();
+	s->assign(version_variables->version()->depend.get_pdepend_brief());
 }
 
-string
-PrintFormat::VER_PDEPEND(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_PDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return STRING_EMPTY;
+		return;
 	}
-	return version_variables->version()->depend.get_pdepend();
+	s->assign(version_variables->version()->depend.get_pdepend());
 }
 
-string
-PrintFormat::VER_HDEPENDS(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_HDEPENDS(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return STRING_EMPTY;
+		return;
 	}
-	return version_variables->version()->depend.get_hdepend_brief();
+	s->assign(version_variables->version()->depend.get_hdepend_brief());
 }
 
-string
-PrintFormat::VER_HDEPEND(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_HDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return STRING_EMPTY;
+		return;
 	}
-	return version_variables->version()->depend.get_hdepend();
+	s->assign(version_variables->version()->depend.get_hdepend());
 }
 
 const MaskFlags *
@@ -1613,28 +1683,34 @@ PrintFormat::ver_maskflags() const
 	return ((unlikely(version_variables->isinst)) ? NULLPTR : (&(version_variables->version()->maskflags)));
 }
 
-string
-PrintFormat::VER_ISHARDMASKED(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_ISHARDMASKED(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const MaskFlags *maskflags(ver_maskflags());
-	return IS_TRUE((maskflags != NULLPTR) && (maskflags->isHardMasked()));
+	if((maskflags != NULLPTR) && (maskflags->isHardMasked())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_ISPROFILEMASKED(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_ISPROFILEMASKED(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const MaskFlags *maskflags(ver_maskflags());
-	return IS_TRUE((maskflags != NULLPTR) && (maskflags->isProfileMask()));
+	if((maskflags != NULLPTR) && (maskflags->isProfileMask())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_ISMASKED(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_ISMASKED(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const MaskFlags *maskflags(ver_maskflags());
-	return IS_TRUE((maskflags != NULLPTR) && (maskflags->isPackageMask()));
+	if((maskflags != NULLPTR) && (maskflags->isPackageMask())) {
+		s->set_one();
+	}
 }
 
 const KeywordsFlags *
@@ -1643,68 +1719,84 @@ PrintFormat::ver_keywordsflags() const
 	return ((unlikely(version_variables->isinst)) ? NULLPTR : (&(version_variables->version()->keyflags)));
 }
 
-string
-PrintFormat::VER_ISSTABLE(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_ISSTABLE(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return IS_TRUE((keywordsflags != NULLPTR) && (keywordsflags->isStable()));
+	if((keywordsflags != NULLPTR) && (keywordsflags->isStable())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_ISUNSTABLE(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_ISUNSTABLE(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return IS_TRUE((keywordsflags != NULLPTR) && (keywordsflags->isUnstable()));
+	if((keywordsflags != NULLPTR) && (keywordsflags->isUnstable())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_ISALIENSTABLE(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_ISALIENSTABLE(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return IS_TRUE((keywordsflags != NULLPTR) && (keywordsflags->isAlienStable()));
+	if((keywordsflags != NULLPTR) && (keywordsflags->isAlienStable())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_ISALIENUNSTABLE(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_ISALIENUNSTABLE(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return IS_TRUE((keywordsflags != NULLPTR) && (keywordsflags->isAlienUnstable()));
+	if((keywordsflags != NULLPTR) && (keywordsflags->isAlienUnstable())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_ISMISSINGKEYWORD(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_ISMISSINGKEYWORD(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return IS_TRUE((keywordsflags != NULLPTR) && (keywordsflags->isMissingKeyword()));
+	if((keywordsflags != NULLPTR) && (keywordsflags->isMissingKeyword())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_ISMINUSKEYWORD(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_ISMINUSKEYWORD(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return IS_TRUE((keywordsflags != NULLPTR) && (keywordsflags->isMinusKeyword()));
+	if((keywordsflags != NULLPTR) && (keywordsflags->isMinusKeyword())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_ISMINUSUNSTABLE(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_ISMINUSUNSTABLE(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return IS_TRUE((keywordsflags != NULLPTR) && (keywordsflags->isMinusUnstable()));
+	if((keywordsflags != NULLPTR) && (keywordsflags->isMinusUnstable())) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_ISMINUSASTERISK(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_ISMINUSASTERISK(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return IS_TRUE((keywordsflags != NULLPTR) && (keywordsflags->isMinusAsterisk()));
+	if((keywordsflags != NULLPTR) && (keywordsflags->isMinusAsterisk())) {
+		s->set_one();
+	}
 }
 
 bool
@@ -1717,116 +1809,138 @@ PrintFormat::ver_wasflags(Package *package, MaskFlags *maskflags, KeywordsFlags 
 	return true;
 }
 
-string
-PrintFormat::VER_WASHARDMASKED(Package *package) const
+void
+PrintFormat::VER_WASHARDMASKED(OutputString *s, Package *package) const
 {
 	MaskFlags maskflags;
-	return IS_TRUE(ver_wasflags(package, &maskflags, NULLPTR) && maskflags.isHardMasked());
+	if(ver_wasflags(package, &maskflags, NULLPTR) && maskflags.isHardMasked()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_WASPROFILEMASKED(Package *package) const
+void
+PrintFormat::VER_WASPROFILEMASKED(OutputString *s, Package *package) const
 {
 	MaskFlags maskflags;
-	return IS_TRUE(ver_wasflags(package, &maskflags, NULLPTR) && maskflags.isProfileMask());
+	if(ver_wasflags(package, &maskflags, NULLPTR) && maskflags.isProfileMask()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_WASMASKED(Package *package) const
+void
+PrintFormat::VER_WASMASKED(OutputString *s, Package *package) const
 {
 	MaskFlags maskflags;
-	return IS_TRUE(ver_wasflags(package, &maskflags, NULLPTR) && maskflags.isPackageMask());
+	if(ver_wasflags(package, &maskflags, NULLPTR) && maskflags.isPackageMask()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_WASSTABLE(Package *package) const
+void
+PrintFormat::VER_WASSTABLE(OutputString *s, Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return IS_TRUE(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isStable());
+	if(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isStable()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_WASUNSTABLE(Package *package) const
+void
+PrintFormat::VER_WASUNSTABLE(OutputString *s, Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return IS_TRUE(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isUnstable());
+	if(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isUnstable()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_WASALIENSTABLE(Package *package) const
+void
+PrintFormat::VER_WASALIENSTABLE(OutputString *s, Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return IS_TRUE(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isAlienStable());
+	if(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isAlienStable()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_WASALIENUNSTABLE(Package *package) const
+void
+PrintFormat::VER_WASALIENUNSTABLE(OutputString *s, Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return IS_TRUE(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isAlienUnstable());
+	if(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isAlienUnstable()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_WASMISSINGKEYWORD(Package *package) const
+void
+PrintFormat::VER_WASMISSINGKEYWORD(OutputString *s, Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return IS_TRUE(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMissingKeyword());
+	if(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMissingKeyword()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_WASMINUSKEYWORD(Package *package) const
+void
+PrintFormat::VER_WASMINUSKEYWORD(OutputString *s, Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return IS_TRUE(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMinusKeyword());
+	if(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMinusKeyword()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_WASMINUSUNSTABLE(Package *package) const
+void
+PrintFormat::VER_WASMINUSUNSTABLE(OutputString *s, Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return IS_TRUE(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMinusUnstable());
+	if(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMinusUnstable()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_WASMINUSASTERISK(Package *package) const
+void
+PrintFormat::VER_WASMINUSASTERISK(OutputString *s, Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return IS_TRUE(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMinusAsterisk());
+	if(ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMinusAsterisk()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::VER_HAVEMASKREASONS(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_HAVEMASKREASONS(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return STRING_FALSE;
+		return;
 	}
-	return IS_TRUE(version_variables->version()->have_reasons());
+	if(version_variables->version()->have_reasons()) {
+		s->set_one();
+	}
 }
 
-string
-PrintFormat::ver_maskreasons(const string &skip, const string &sep) const
+void
+PrintFormat::ver_maskreasons(OutputString *s, const OutputString &skip, const OutputString &sep) const
 {
 	if(unlikely(version_variables->isinst)) {
-		return STRING_EMPTY;
+		return;
 	}
-	string s;
-	version_variables->version()->reasons_string(&s, skip, sep);
-	return s;
+	version_variables->version()->reasons_string(s, skip, sep);
 }
 
-string
-PrintFormat::VER_MASKREASONS(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_MASKREASONS(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return ver_maskreasons(maskreasons_skip, maskreasons_sep);
+	ver_maskreasons(s, maskreasons_skip, maskreasons_sep);
 }
 
-string
-PrintFormat::VER_MASKREASONSS(Package *package ATTRIBUTE_UNUSED) const
+void
+PrintFormat::VER_MASKREASONSS(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return ver_maskreasons(maskreasonss_skip, maskreasonss_sep);
+	ver_maskreasons(s, maskreasonss_skip, maskreasonss_sep);
 }
 
 static Package *
@@ -1845,14 +1959,14 @@ old_or_new(string *new_name, Package *older, Package *newer, const string &name)
 	return newer;
 }
 
-string
-get_package_property(const PrintFormat *fmt, void *entity, const string &name)
+void
+get_package_property(OutputString *s, const PrintFormat *fmt, void *entity, const string &name)
 {
-	return fmt->get_pkg_property(static_cast<Package *>(entity), name);
+	fmt->get_pkg_property(s, static_cast<Package *>(entity), name);
 }
 
-string
-get_diff_package_property(const PrintFormat *fmt, void *entity, const string &name)
+void
+get_diff_package_property(OutputString *s, const PrintFormat *fmt, void *entity, const string &name)
 {
 	Package *older((static_cast<Package**>(entity))[0]);
 	Package *newer((static_cast<Package**>(entity))[1]);
@@ -1884,9 +1998,12 @@ get_diff_package_property(const PrintFormat *fmt, void *entity, const string &na
 		}
 		copyolder.restore(older);
 		copynewer.restore(newer);
-		return IS_TRUE(result);
+		if(result) {
+			s->set_one();
+		}
+		return;
 	}
 	string new_name;
 	Package *package(old_or_new(&new_name, older, newer, name));
-	return fmt->get_pkg_property(package, new_name);
+	fmt->get_pkg_property(s, package, new_name);
 }

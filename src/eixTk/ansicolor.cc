@@ -96,7 +96,7 @@ AnsiColor::initcolor(const string &str, string *errtext)
 	string fg, bg, markers;
 	bool ok(true);
 	bool bold(false);
-	bool havecol(false);
+	bool havecol(false), noreset(false);
 	string::size_type currpos(0);
 	string::size_type endpos, first_endpos(string::npos);
 	for(unsigned int i(colorscheme); ; --i) {
@@ -126,7 +126,11 @@ AnsiColor::initcolor(const string &str, string *errtext)
 		map<string, ColorType>::const_iterator f(static_color_map->find(curr));
 		if(f != static_color_map->end()) {
 			col = f->second;
-			if(col == acNone) {
+			if(col == amNone) {
+				if(!havecol) {
+					noreset = havecol = true;
+				}
+			} else if(col == acNone) {
 				col = amNone;
 				iscol = 1;
 				havecol = true;
@@ -200,7 +204,7 @@ AnsiColor::initcolor(const string &str, string *errtext)
 	}
 	code.assign("\x1B[");
 	string::size_type skip(1);
-	if(havecol) {
+	if(havecol && !noreset) {
 		code.append(1, '0');
 		skip = 0;
 	}

@@ -45,21 +45,6 @@ StringListContent::finalize()
 	}
 }
 
-void
-StringListContent::append_to_string(string *s, const string &skip) const
-{
-	bool sep(false);
-	for(vector<string>::const_iterator it(m_list.begin());
-		likely(it != m_list.end()); ++it) {
-		if(sep) {
-			s->append(skip);
-		} else {
-			sep = true;
-		}
-		s->append(*it);
-	}
-}
-
 #ifdef STRINGLIST_FREE
 StringList&
 StringList::operator=(const StringList &s)

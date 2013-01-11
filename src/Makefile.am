@@ -180,6 +180,10 @@ output/print-xml.h
 nodist_printxml_src =
 
 output_src = \
+eixTk/outputstring.cc \
+eixTk/outputstring.h \
+eixTk/stringlist_output.cc \
+portage/version_output.cc \
 output/formatstring.cc \
 output/formatstring.h \
 output/formatstring-print.cc \

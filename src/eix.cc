@@ -33,6 +33,7 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/outputstring.h"
 #include "eixTk/ptr_list.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/utils.h"
@@ -526,7 +527,9 @@ print_overlay_table(PrintFormat *fmt, DBHeader *header, vector<bool> *overlay_us
 				continue;
 			}
 		}
-		cout << fmt->overlay_keytext(i) << " ";
+		OutputString s;
+		fmt->overlay_keytext(&s, i);
+		cout << s.as_string() << " ";
 		if(fmt->no_color) {
 			cout << header->getOverlay(i).human_readable();
 		} else {

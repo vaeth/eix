@@ -210,21 +210,3 @@ Version::add_reason(const StringList& reason)
 	}
 	reasons.insert(reason);
 }
-
-void
-Version::reasons_string(string *s, const string &skip, const string &sep) const
-{
-	bool psep(false);
-	s->clear();
-	for(set<StringList>::const_iterator it(reasons.begin());
-		it != reasons.end(); ++it) {
-		if(psep) {
-			s->append(sep);
-		} else {
-			psep = true;
-		}
-		string r;
-		it->append_to_string(&r, skip);
-		s->append(r);
-	}
-}
