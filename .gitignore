@@ -47,8 +47,8 @@
 /src/eixrc/eixrc
 /src/cache/cache_map.cc
 
-/zsh/_eix
 !/zsh/_eix*.*
+/zsh/_eix
 
 # General patterns are last:
 !*.in
