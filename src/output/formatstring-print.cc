@@ -48,7 +48,6 @@ using std::string;
 using std::vector;
 
 using std::cerr;
-using std::cout;
 using std::endl;
 
 static Package *old_or_new(string *new_name, Package *older, Package *newer, const string &name) ATTRIBUTE_NONNULL_;

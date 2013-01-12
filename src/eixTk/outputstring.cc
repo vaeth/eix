@@ -7,12 +7,15 @@
 
 #include <config.h>
 
+#include <cstring>
+
 #include <iostream>
 #include <string>
 #include <vector>
 
 #include "eixTk/diagnostics.h"
 #include "eixTk/likely.h"
+#include "eixTk/null.h"
 #include "eixTk/outputstring.h"
 #include "eixTk/stringutils.h"
 
@@ -138,7 +141,7 @@ OutputString::append_smart(char s)
 			}
 			break;
 		default:
-			++m_size;;
+			++m_size;
 			break;
 	}
 }

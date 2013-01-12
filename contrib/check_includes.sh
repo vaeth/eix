@@ -10,36 +10,74 @@
 # Copyright (c)
 #	Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
 
-export LC_ALL="C"
-unset GREP_OPTIONS GREP_COLORS GREP_COLOR
+export LC_ALL='C' GREP_OPTIONS='--color=always'
+unset GREP_COLORS GREP_COLOR
+
+name=${0##*/}
 
 Echo() {
 	printf '%s\n' "${*}"
 }
 
-GrepAllSub() {
-	find . '(' -name "generate*.sh" -o -name "*.cc" -o -name "*.h" ')' \
-		-exec grep -l "${@}" -- '{}' '+'
+Die() {
+	Echo "${name}: ${*}" >&2
+	exit ${1:-1}
 }
 
-GrepAllWith() {
-	Echo "Files with ${*}:"
-	GREP_OPTIONS='--color=always' GrepAllSub "${@}"
+test -f "contrib/${name}" || {
+	test -f "${name}" && cd ..
+}
+test -f "contrib/${name}" || Die 'must be run from the main directory'
+
+EchoResultPositive() {
+	Echo "${*}"
+	Echo "${result}"
 	echo
+}
+
+EchoResultNegative() {
+	Echo "${*}" 'none'
+}
+
+if [ ${#} -eq 0 ]
+then	Echo "${name}: no parameters given: non-verbose"
+	echo
+	EchoResultNegative() {
+	:
+}
+fi
+
+EchoResult() {
+	if [ -n "${result}" ]
+	then	EchoResultPositive "${@}"
+	else	EchoResultNegative "${@}"
+	fi
+}
+
+GrepAllSub() {
+	find . '(' -name "generate*.sh" -o -name "*.cc" -o -name "*.h" ')' \
+		'-!' -name "config.h" -exec grep -l "${@}" -- '{}' '+'
+}
+
+GrepAllSubQ() (
+	unset GREP_OPTIONS
+	GrepAllSub "${@}"
+)
+
+GrepAllWith() {
+	result=`GrepAllSub "${@}"`
+	EchoResult "Files with ${*}:"
 }
 
 GrepHWith() {
-	Echo "*.h files with ${*}:"
-	GREP_OPTIONS='--color=always' find . -name "*.h" \
-		-exec grep -l -e "${@}" -- '{}' '+'
-	echo
+	result=`find . -name "*.h" -exec grep -l -e "${@}" -- '{}' '+'`
+	EchoResult "*.h files with ${*}:"
 }
 
 GrepCCWithout() {
-	Echo "*.cc files without ${*}:"
-	GREP_OPTIONS='--color=always' find . '(' -name "generate*.sh" -o -name "*.cc" ')' \
-		-exec grep -L -e "${@}" -- '{}' '+'
-	echo
+	result=`find . '(' -name "generate*.sh" -o -name "*.cc" ')' \
+		-exec grep -L -e "${@}" -- '{}' '+'`
+	EchoResult "*.cc files without ${*}:"
 }
 
 SetG='case ${1} in
@@ -53,19 +91,15 @@ ${colon}'
 CheckWithout() {
 	local g
 	eval "${SetG}" || return 0
-	Echo "Files with ${*} but not ${g}:"
-	GrepAllSub "${@}" | GREP_OPTIONS='--color=always' \
-		xargs -- grep -L -e "${g}" --
-	echo
+	result=`GrepAllSubQ "${@}" | xargs -- grep -L -e "${g}" --`
+	EchoResult "Files with ${*} but not ${g}:"
 }
 
 CheckWith() {
 	local g
 	eval "${SetG}"
-	Echo "Files with ${g} but not ${*}:"
-	GrepAllSub -e "${g}" | GREP_OPTIONS='--color=always' \
-		xargs -- grep -L "${@}" --
-	echo
+	result=`GrepAllSubQ -e "${g}" | xargs -- grep -L "${@}" --`
+	EchoResult "Files with ${g} but not ${*}:"
 }
 
 Check() {

@@ -71,4 +71,4 @@ public:
 	void print(std::string::size_type *s) const ATTRIBUTE_NONNULL_;
 };
 
-#endif // SRC_EIXTK_OUTPUTSTRING_H_
+#endif  // SRC_EIXTK_OUTPUTSTRING_H_

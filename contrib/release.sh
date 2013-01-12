@@ -5,6 +5,8 @@ umask 022
 
 proj='eix'
 
+name=${0##*/}
+
 Echo() {
 	printf '%s\n' "${*}"
 }
@@ -23,7 +25,7 @@ Exec() {
 }
 
 Usage() {
-	Echo "Usage: ${0##*/}
+	Echo "Usage: ${name}
 Marks a new release in the git repository.
 Verify in advance to have AC_INIT set correctly in configure.ac
 and that you have committed your last changes."
@@ -31,13 +33,13 @@ and that you have committed your last changes."
 }
 
 Die() {
-	Echo "${0##*/}: ${1}" >&2
+	Echo "${name}: ${1}" >&2
 	exit ${2:-1}
 }
 
 Warn() {
 	wret=${?}
-	Echo "${0##*/}: warning: ${1}" >&2
+	Echo "${name}: warning: ${1}" >&2
 	return ${wret}
 }
 
@@ -51,7 +53,11 @@ ExecDie() {
 
 [ ${#} -eq 0 ] || Usage
 
-test -f contrib/release.sh || Die 'You must be in the parent directory of ./contrib'
+test -f "contrib/${name}" || {
+	test -f "${name}" && cd ..
+}
+test -f "contrib/${name}" || Die 'must be run from the main directory'
+
 ver=`sed -ne 's/^[[:space:]]*AC_INIT[[:space:]]*([^,]*,[[:space:][]*\([^],[:space:]]*\).*$/\1/p' configure.ac`
 
 KeyCheck() {
