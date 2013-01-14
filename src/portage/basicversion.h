@@ -78,7 +78,7 @@ public:
 	virtual ~BasicVersion() { }
 
 	/// Parse the version-string pointed to by str.
-	BasicVersion::ParseResult parseVersion(const std::string& str, std::string *errtext, bool accept_garbage = true);
+	BasicVersion::ParseResult parseVersion(const std::string& str, std::string *errtext, eix::SignedBool accept_garbage = 1);
 
 	/// Compare all except gentoo revisions
 	static eix::SignedBool compareTilde(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;

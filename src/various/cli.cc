@@ -505,7 +505,7 @@ parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettin
 					ver  = name_ver[1];
 					// split version only if it is valid:
 					BasicVersion b;
-					success = (b.parseVersion(ver, NULLPTR) != BasicVersion::parsedError);
+					success = (b.parseVersion(ver, NULLPTR, -1) != BasicVersion::parsedError);
 				}
 			}
 			if((pipe_mode <= 0) && (!success) && !word->empty()) {

@@ -64,7 +64,7 @@ MarkedList::add(const char *pkg, const char *ver)
 	BasicVersion *&basic_version(p.second);
 	if(ver != NULLPTR) {
 		basic_version = new BasicVersion;
-		if(unlikely(basic_version->parseVersion(ver, NULLPTR) == BasicVersion::parsedError)) {
+		if(unlikely(basic_version->parseVersion(ver, NULLPTR, -1) == BasicVersion::parsedError)) {
 			delete basic_version;
 			basic_version = NULLPTR;
 		}
@@ -519,7 +519,7 @@ PrintFormat::recPrint(OutputString *result, void *entity, GetProperty get_proper
 					if(root->type == Node::SET) {
 						OutputString &r(user_variables[ief->variable.name]);
 						if(ief->negation) {
-							if(r.empty()) {
+							if(rhs->empty()) {
 								r.set_one();
 							} else {
 								r.clear();

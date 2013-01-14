@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "eixTk/eixint.h"
 #include "eixTk/null.h"
 #include "eixTk/ptr_list.h"
 #include "eixTk/stringlist.h"
@@ -95,7 +96,7 @@ class Mask : public BasicVersion {
 		 * @param str_mask the string to be dissected
 		 * @param errtext contains error message if not 0 and not parseOK
 		 * @param accept_garbage passed to parseVersion if appropriate */
-		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, bool accept_garbage = true) ATTRIBUTE_NONNULL_;
+		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, eix::SignedBool accept_garbage = 1) ATTRIBUTE_NONNULL_;
 
 		void match(Matches *m, Package *pkg) const ATTRIBUTE_NONNULL_;
 

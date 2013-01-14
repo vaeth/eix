@@ -1904,12 +1904,12 @@ AddOption(STRING, "FORMAT_STABILITY",
 	"It sets the runtime variable $color depending on whether color was changed."));
 
 AddOption(STRING, "FORMAT_PROPERTIESSEPARATOR",
-	"(%{COLOR_RESET})<$sep>{!*sep}{*color}(%{COLOR_PROPERTIES})*", _(
+	"<$sep>{!*sep}{*color}(%{COLOR_PROPERTIES})*", _(
 	"This variable is only used for delayed substitution.\n"
 	"It sets the initial string and $color for PROPERTIES output."));
 
 AddOption(STRING, "FORMAT_RESTRICTSEPARATOR",
-	"(%{COLOR_RESET})<$sep>{!*sep}{*color}(%{COLOR_RESTRICT})^", _(
+	"<$sep>{!*sep}{*color}(%{COLOR_RESTRICT})^", _(
 	"This variable is only used for delayed substitution.\n"
 	"It sets the initial string and $color for RESTRICT output."));
 
@@ -1952,7 +1952,7 @@ AddOption(STRING, "FORMAT_PROPRESTRICT",
 AddOption(STRING, "FORMAT_BINARY",
 	"%{!NO_BINARY}"
 		"{isbinary}"
-			"(%{COLOR_RESET})<$sep>{!*sep}(%{COLOR_BINARY})%{TAG_BINARY}(%{COLOR_RESET})"
+			"<$sep>{!*sep}(%{COLOR_BINARY})%{TAG_BINARY}(%{COLOR_RESET})"
 		"{}"
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -1994,11 +1994,13 @@ AddOption(STRING, "FORMAT_VERSIONO_END",
 	"%{?PRINT_SLOTS}"
 		"{issubslot}"
 			"%{?COLORED_SLOTS}"
+				"{$color}(%{COLOR_RESET}){}"
+				"{*color}"
 				"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<fullslot>"
-				"%{else}(%{COLOR_RESET})<$sep>{!*sep}(%{COLOR_SLOTS})\\(<fullslot>\\){*color}%{}"
+				"%{else}<$sep>{!*sep}(%{COLOR_SLOTS})\\(<fullslot>\\)%{}"
 			"%{else}"
 				"%{?COLON_SLOTS}:<fullslot>"
-				"%{else}(%{COLOR_RESET})<$sep>{!*sep}\\(<fullslot>\\){!*color}%{}"
+				"%{else}<$sep>{!*sep}\\(<fullslot>\\)%{}"
 			"%{}"
 		"{}"
 	"%{}"
@@ -2011,11 +2013,13 @@ AddOption(STRING, "FORMAT_VERSIONS_END",
 	"%{?PRINT_SLOTS}"
 		"{isfullslot}"
 			"%{?COLORED_SLOTS}"
+				"{$color}(%{COLOR_RESET}){}"
+				"{*color}"
 				"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<fullslot>"
-				"%{else}(%{COLOR_RESET})<$sep>{!*sep}(%{COLOR_SLOTS})\\(<fullslot>\\){*color}%{}"
+				"%{else}<$sep>{!*sep}(%{COLOR_SLOTS})\\(<fullslot>\\)%{}"
 			"%{else}"
 				"%{?COLON_SLOTS}:<fullslot>"
-				"%{else}(%{COLOR_RESET})<$sep>{!*sep}\\(<fullslot>\\){!*color}%{}"
+				"%{else}<$sep>{!*sep}\\(<fullslot>\\)%{}"
 			"%{}"
 		"{}"
 	"%{}"
@@ -2061,7 +2065,7 @@ AddOption(STRING, "IVERSIONS",
 	"It defines the format for printing an installed version with its slot."));
 
 AddOption(STRING, "OVERLAYVER",
-	"{overlayver}(%{COLOR_RESET})<$sep>{!*sep}<overlayver>{}", _(
+	"{overlayver}<$sep>{!*sep}<overlayver>{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for printing the overlay in versions."));
 
@@ -2203,6 +2207,16 @@ AddOption(STRING, "COLUMN_USE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the first column of the collected USE."));
 
+AddOption(STRING, "DIFF_COLUMNA",
+	"6", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the column for the main tag in eix-diff."));
+
+AddOption(STRING, "DIFF_COLUMNB",
+	"9", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the column after the tags in eix-diff."));
+
 AddOption(STRING, "FORMAT_VER_LINESKIP",
 	"%{FORMAT_NEWLINE}\\C<%{COLUMN_AVAILABLE_TITLE}>", _(
 	"This variable is only used for delayed substitution.\n"
@@ -2321,6 +2335,9 @@ AddOption(STRING, "FORMAT_IUSE_VERBOSE",
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the verbose format for IUSE for an available version."));
+#endif
+
+#if (DEFAULT_PART == 5)
 
 AddOption(STRING, "FORMAT_DEPS_VERBOSE",
 	"%{?DEP}"
@@ -2421,12 +2438,9 @@ AddOption(STRING, "FORMAT_INST_LINESKIP",
 	"%{FORMAT_NEWLINE}\\C<%{COLUMN_INST_TITLE}>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the lineskip for installed versions."));
-#endif
-
-#if (DEFAULT_PART == 5)
 
 AddOption(STRING, "VSORTL",
-	"%{FORMAT_VERSLINESKIP}{*sep= \\C<%{COLUMN_SLOT_APPEND}>}%{PVERSIONS_VERBOSE}{!*sep}"
+	"%{FORMAT_VERSLINESKIP}{*sep=\\ \\C<%{COLUMN_SLOT_APPEND}>}%{PVERSIONS_VERBOSE}{!*sep}"
 	"%{FORMAT_VERSION_APPENDIX}{last}{*sorted=version}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; versionsorted with versionlines."));
@@ -2438,7 +2452,7 @@ AddOption(STRING, "VSORT",
 
 AddOption(STRING, "SSORTL",
 	"{slotfirst}%{FORMAT_SLOTLINESKIP_VERSIONLINES}{}"
-	"%{FORMAT_VERSLINESKIP}{*sep= \\C<%{COLUMN_VER_APPEND}>}%{PVERSIONO_VERBOSE}{!*sep}"
+	"%{FORMAT_VERSLINESKIP}{*sep=\\ \\C<%{COLUMN_VER_APPEND}>}%{PVERSIONO_VERBOSE}{!*sep}"
 	"%{FORMAT_VERSION_APPENDIX}{last}{*sorted=slot}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; slotsorted with versionlines."));
@@ -2657,23 +2671,24 @@ AddOption(STRING, "FORMAT_HEADER_VERBOSE",
 AddOption(STRING, "FORMAT_HEADER_COMPACT",
 	"(%{COLOR_NORMAL})["
 	"{installed}"
-		"{!*updn}"
-		"{upgrade}{*updn}%{TAG_UPGRADE}{}"
-		"{downgrade}{*updn}%{TAG_DOWNGRADE}{}"
-		"{!$updn}%{TAG_INSTALLED}{}"
+		"{upgrade}{*upgrade}%{TAG_UPGRADE}{else}{!*upgrade}{}"
+		"{downgrade}%{TAG_DOWNGRADE}"
+		"{else}{!$upgrade}%{TAG_INSTALLED}{}{}"
 	"{else}%{TAG_UNINSTALLED}{}"
 	"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the compact header symbols."));
 
 AddOption(STRING, "DIFF_FORMAT_HEADER_NEW",
-	"(%{COLOR_NORMAL})[{*better=\\ }{*stable=\\ }{!*updn}"
-	"{havebest}%{TAG_STABILIZE}{!*better}{}"
-	"{upgrade}{*updn}%{TAG_UPGRADE}{}"
-	"{downgrade}{$updn}{!*stable}{}{*updn}%{TAG_DOWNGRADE}{}"
-	"{!$updn}%{TAG_NEW}{}"
-	"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})<$better><$stable>"
-	" (%{DIFF_COLOR_NEW})%{DIFF_STRING_NEW}(%{COLOR_RESET})", _(
+	"(%{COLOR_NORMAL})["
+	"{havebest}%{TAG_STABILIZE}{}"
+	"{upgrade}{*upgrade}%{TAG_UPGRADE}{else}{!*upgrade}{}"
+	"{downgrade}%{TAG_DOWNGRADE}"
+	"{else}{!$upgrade}%{TAG_NEW}{}{}"
+	"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})"
+	"\\C<%{DIFF_COLUMNA}>"
+	"(%{DIFF_COLOR_NEW})%{DIFF_STRING_NEW}(%{COLOR_RESET})"
+	"\\C<%{DIFF_COLUMNB}>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-new header symbols."));
 
@@ -2682,22 +2697,24 @@ AddOption(STRING, "DIFF_FORMAT_HEADER_DELETE",
 		"(%{COLOR_NORMAL})["
 		"(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}"
 		"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})"
-	"{else}"
-		"   "
-	"{}"
-	"   (%{DIFF_COLOR_DELETE})%{DIFF_STRING_DELETE}(%{COLOR_RESET})", _(
+	"{}\\C<%{DIFF_COLUMNA}>"
+	"(%{DIFF_COLOR_DELETE})%{DIFF_STRING_DELETE}(%{COLOR_RESET})"
+	"\\C<%{DIFF_COLUMNB}>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-delete header symbols."));
 
 AddOption(STRING, "DIFF_FORMAT_HEADER_CHANGED",
-	"(%{COLOR_NORMAL})[{*better=\\ }{*up=\\ }{*down=\\ }"
-	"{havebest}{!oldhavebest}%{TAG_STABILIZE}{!*better}{}{}"
-	"{upgrade}{!*up}%{TAG_UPGRADE}{}"
-	"{downgrade}{!*down}%{TAG_DOWNGRADE}{}"
-	"{$up}{better}{!*up}%{TAG_BETTER}{}{}"
-	"{$down}{worse}{!*down}%{TAG_WORSE}{}{}"
-	"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})<$better><$up><$down>"
-	" (%{DIFF_COLOR_CHANGED})%{DIFF_STRING_CHANGED}(%{COLOR_RESET})", _(
+	"(%{COLOR_NORMAL})["
+	"{havebest}{!oldhavebest}%{TAG_STABILIZE}{}{}"
+	"{!*better}{!*worse}"
+	"{upgrade}%{TAG_UPGRADE}{else}{better}{*better}{}{}"
+	"{downgrade}%{TAG_DOWNGRADE}{else}{worse}{*worse}{}{}"
+	"{$better}%{TAG_BETTER}{}"
+	"{$worse}%{TAG_WORSE}{}"
+	"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})"
+	"\\C<%{DIFF_COLUMNA}>"
+	"(%{DIFF_COLOR_CHANGED})%{DIFF_STRING_CHANGED}(%{COLOR_RESET})"
+	"\\C<%{DIFF_COLUMNB}>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-changed header symbols."));
 
@@ -2817,17 +2834,17 @@ AddOption(STRING, "FORMATLINE_NAME_COMPACT",
 	"It defines the format for the compact header line."));
 
 AddOption(STRING, "DIFF_FORMATLINE_NAME_NEW",
-	"%{DIFF_FORMAT_HEADER_NEW} %{FORMAT_NAME} ", _(
+	"%{DIFF_FORMAT_HEADER_NEW}%{FORMAT_NAME} ", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-new header."));
 
 AddOption(STRING, "DIFF_FORMATLINE_NAME_DELETE",
-	"%{DIFF_FORMAT_HEADER_DELETE} %{FORMAT_NAME} ", _(
+	"%{DIFF_FORMAT_HEADER_DELETE}%{FORMAT_NAME} ", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-delete header."));
 
 AddOption(STRING, "DIFF_FORMATLINE_NAME_CHANGED",
-	"%{DIFF_FORMAT_HEADER_CHANGED} %{FORMAT_NAME} ", _(
+	"%{DIFF_FORMAT_HEADER_CHANGED}%{FORMAT_NAME} ", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-changed header."));
 

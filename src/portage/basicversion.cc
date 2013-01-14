@@ -155,7 +155,7 @@ BasicVersion::getRevision() const
 }
 
 BasicVersion::ParseResult
-BasicVersion::parseVersion(const string& str, string *errtext, bool accept_garbage)
+BasicVersion::parseVersion(const string& str, string *errtext, eix::SignedBool accept_garbage)
 {
 	m_parts.clear();
 	string::size_type pos(0);
@@ -258,7 +258,9 @@ BasicVersion::parseVersion(const string& str, string *errtext, bool accept_garba
 		}
 	}
 
-	m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
+	if(accept_garbage >= 0) {
+		m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
+	}
 	if(errtext != NULLPTR) {
 		*errtext = eix::format(accept_garbage ?
 			_("garbage (%s) at end of version %r\n"

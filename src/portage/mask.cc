@@ -64,7 +64,7 @@ Mask::Mask(Type type, const char *repo)
  * @param errtext contains error message if not 0 and not parseOK
  * @param accept_garbage passed to parseVersion if appropriate */
 BasicVersion::ParseResult
-Mask::parseMask(const char *str, string *errtext, bool accept_garbage)
+Mask::parseMask(const char *str, string *errtext, eix::SignedBool accept_garbage)
 {
 	// determine comparison operator
 	if(m_type != maskPseudomask) {
