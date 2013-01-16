@@ -235,18 +235,19 @@ PrintFormat::overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay, 
 	ExtendedVersion::Overlay number(overlay);
 	if(number != 0) {
 		vector<ExtendedVersion::Overlay>::size_type index(overlay - 1);
-		if(overlay_used)
+		if(overlay_used != NULLPTR) {
 			(*overlay_used)[index] = true;
-		if(some_overlay_used)
+		}
+		if(some_overlay_used != NULLPTR) {
 			*some_overlay_used = true;
-		if(overlay_translations) {
-			overlay = (*overlay_translations)[index];
-			if(overlay != 0) {
-				number = 0;
+		}
+		if(overlay_translations != NULLPTR) {
+			if((number = (*overlay_translations)[index]) == 0) {
 				for(vector<ExtendedVersion::Overlay>::iterator it(overlay_translations->begin());
 					likely(it != overlay_translations->end()); ++it) {
-					if(number < *it)
+					if(number < *it) {
 						number = *it;
+					}
 				}
 				(*overlay_translations)[index] = ++number;
 			}

@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.28.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix regression of re-enumeration of overlays from eix-0.28.0, see
+	  https://bugs.gentoo.org/show_bug.cgi?id=452548
+
 *eix-0.28.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix regression {*var} and {!*var} from eix-0.28.0
