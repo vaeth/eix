@@ -28,6 +28,6 @@ StringListContent::append_to_string(OutputString *s, const OutputString &skip) c
 		} else {
 			sep = true;
 		}
-		s->append(*it);
+		s->append_smart(*it);
 	}
 }

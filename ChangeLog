@@ -4,6 +4,7 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix regression of re-enumeration of overlays from eix-0.28.0, see
 	  https://bugs.gentoo.org/show_bug.cgi?id=452548
+	- Make \C<number> slower but reliable (OutputString::..._smart())
 
 *eix-0.28.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

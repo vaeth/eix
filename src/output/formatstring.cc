@@ -255,16 +255,16 @@ PrintFormat::overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay, 
 	}
 	string onum(eix::format("%s") % number);
 	if(plain) {
-		s->assign(onum);
+		s->assign_fast(onum);
 		return;
 	}
 	bool color(!no_color);
 	if(color) {
 		s->assign(((is_virtual(overlay)) ? color_virtualkey : color_overlaykey), 0);
 	}
-	s->append('[');
-	s->append(onum);
-	s->append(']');
+	s->append_fast('[');
+	s->append_fast(onum);
+	s->append_fast(']');
 	if(color) {
 		s->append(color_keyend, 0);
 	}

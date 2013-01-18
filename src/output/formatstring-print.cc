@@ -87,36 +87,36 @@ class VersionVariables {
 void
 PrintFormat::iuse_expand(OutputString *s, const IUseSet &iuse, bool coll) const
 {
-	map<string, string> expvars;
+	map<string, OutputString> expvars;
 	const set<IUse> &iuse_set(iuse.asSet());
 	for(set<IUse>::const_iterator it(iuse_set.begin());
 		it != iuse_set.end(); ++it) {
 		string var, expval;
 		const string &name(it->name());
 		if(portagesettings->use_expand(&var, &expval, name)) {
-			string &r(expvars[var]);
+			OutputString &r(expvars[var]);
 			if(!r.empty()) {
-				r.append(1, ' ');
+				r.append_fast(' ');
 			}
 			const char *p(it->prefix());
 			if(p != NULLPTR) {
-				r.append(p);
+				r.append_smart(p);
 			}
-			r.append(expval);
+			r.append_smart(expval);
 		} else {
 			if(!s->empty()) {
-				s->append(' ');
+				s->append_fast(' ');
 			}
-			s->append(it->asString());
+			s->append_smart(it->asString());
 		}
 	}
-	for(map<string, string>::const_iterator it(expvars.begin());
+	for(map<string, OutputString>::const_iterator it(expvars.begin());
 		it != expvars.end(); ++it) {
 		if(!s->empty()) {
-			s->append(' ');
+			s->append_fast(' ');
 		}
 		s->append(coll ? before_coll_start : before_iuse_start);
-		s->append(it->first);
+		s->append_smart(it->first);
 		s->append(coll ? before_coll_end : before_iuse_end);
 		s->append(it->second);
 		s->append(coll ? after_coll : after_iuse);
@@ -151,14 +151,14 @@ PrintFormat::get_inst_use(OutputString *s, const Package &package, InstVersion *
 			}
 		}
 		if(!curr->empty()) {
-			curr->append(' ');
+			curr->append_fast(' ');
 		}
 		if(is_unset) {
 			curr->append(before_unset_use);
 		} else {
 			curr->append(before_set_use);
 		}
-		curr->append(*value);
+		curr->append_smart(*value);
 		if(is_unset) {
 			curr->append(after_unset_use);
 		} else {
@@ -167,24 +167,24 @@ PrintFormat::get_inst_use(OutputString *s, const Package &package, InstVersion *
 	}
 	if(!add.empty()) {
 		if(!s->empty()) {
-			s->append(' ');
+			s->append_fast(' ');
 		}
 		s->append(add);
 	}
 	for(map<string, pair<OutputString, OutputString> >::const_iterator it(expvars.begin());
 		it != expvars.end(); ++it) {
 		if(!s->empty()) {
-			s->append(' ');
+			s->append_fast(' ');
 		}
 		s->append(before_use_start);
-		s->append(it->first);
+		s->append_smart(it->first);
 		s->append(before_use_end);
 		const OutputString &f(it->second.first);
 		s->append(f);
 		const OutputString &t(it->second.second);
 		if(!t.empty()) {
 			if(!f.empty()) {
-				s->append(' ');
+				s->append_fast(' ');
 			}
 			s->append(t);
 		}
@@ -630,7 +630,7 @@ PrintFormat::COLON_VER_DATE(OutputString *s, Package *package, const string &aft
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
 		vardb->readInstDate(*package, i);
-		s->assign(date_conv((*eix_rc)[after_colon].c_str(), i->instDate));
+		s->assign_smart(date_conv((*eix_rc)[after_colon].c_str(), i->instDate));
 		return;
 	}
 }
@@ -827,31 +827,31 @@ PrintFormat::PKG_HAVEBESTS(OutputString *s, Package *package) const
 void
 PrintFormat::PKG_CATEGORY(OutputString *s, Package *package) const
 {
-	s->assign(package->category);
+	s->assign_smart(package->category);
 }
 
 void
 PrintFormat::PKG_NAME(OutputString *s, Package *package) const
 {
-	s->assign(package->name);
+	s->assign_smart(package->name);
 }
 
 void
 PrintFormat::PKG_DESCRIPTION(OutputString *s, Package *package) const
 {
-	s->assign(package->desc);
+	s->assign_smart(package->desc);
 }
 
 void
 PrintFormat::PKG_HOMEPAGE(OutputString *s, Package *package) const
 {
-	s->assign(package->homepage);
+	s->assign_smart(package->homepage);
 }
 
 void
 PrintFormat::PKG_LICENSES(OutputString *s, Package *package) const
 {
-	s->assign(package->licenses);
+	s->assign_smart(package->licenses);
 }
 
 void
@@ -912,13 +912,13 @@ PrintFormat::PKG_WORLD_SETS(OutputString *s, Package *package) const
 void
 PrintFormat::PKG_SETNAMES(OutputString *s, Package *package) const
 {
-	s->assign(portagesettings->get_setnames(package));
+	s->assign_smart(portagesettings->get_setnames(package));
 }
 
 void
 PrintFormat::PKG_ALLSETNAMES(OutputString *s, Package *package) const
 {
-	s->assign(portagesettings->get_setnames(package, true));
+	s->assign_smart(portagesettings->get_setnames(package, true));
 }
 
 void
@@ -1085,7 +1085,7 @@ PrintFormat::PKG_COLLIUSES(OutputString *s, Package *package) const
 void
 PrintFormat::PKG_COLLIUSE(OutputString *s, Package *package) const
 {
-	s->assign(package->iuse.asString());
+	s->assign_smart(package->iuse.asString());
 }
 
 const ExtendedVersion *
@@ -1157,7 +1157,7 @@ PrintFormat::ver_versionslot(Package *package) const
 void
 PrintFormat::VER_FULLSLOT(OutputString *s, Package *package) const
 {
-	s->assign(ver_versionslot(package)->get_longfullslot());
+	s->assign_smart(ver_versionslot(package)->get_longfullslot());
 }
 
 void
@@ -1172,7 +1172,11 @@ void
 PrintFormat::VER_SLOT(OutputString *s, Package *package) const
 {
 	const string &slot(ver_versionslot(package)->slotname);
-	s->assign((slot.empty()) ? "0" : slot);
+	if(likely(slot.empty())) {
+		s->assign_fast('0');
+	} else {
+		s->assign_smart(slot);
+	}
 }
 
 void
@@ -1187,7 +1191,7 @@ PrintFormat::VER_ISSLOT(OutputString *s, Package *package) const
 void
 PrintFormat::VER_SUBSLOT(OutputString *s, Package *package) const
 {
-	s->assign(ver_versionslot(package)->subslotname);
+	s->assign_smart(ver_versionslot(package)->subslotname);
 }
 
 void
@@ -1203,9 +1207,9 @@ PrintFormat::VER_VERSION(OutputString *s, Package *package ATTRIBUTE_UNUSED) con
 {
 	UNUSED(package);
 	if(version_variables->isinst) {
-		s->assign(version_variables->instver()->getFull());
+		s->assign_smart(version_variables->instver()->getFull());
 	} else {
-		s->assign(version_variables->version()->getFull());
+		s->assign_smart(version_variables->version()->getFull());
 	}
 }
 
@@ -1214,9 +1218,9 @@ PrintFormat::VER_PLAINVERSION(OutputString *s, Package *package ATTRIBUTE_UNUSED
 {
 	UNUSED(package);
 	if(version_variables->isinst) {
-		s->assign(version_variables->instver()->getPlain());
+		s->assign_smart(version_variables->instver()->getPlain());
 	} else {
-		s->assign(version_variables->version()->getPlain());
+		s->assign_smart(version_variables->version()->getPlain());
 	}
 }
 
@@ -1225,9 +1229,9 @@ PrintFormat::VER_REVISION(OutputString *s, Package *package ATTRIBUTE_UNUSED) co
 {
 	UNUSED(package);
 	if(version_variables->isinst) {
-		s->assign(version_variables->instver()->getRevision());
+		s->assign_smart(version_variables->instver()->getRevision());
 	} else {
-		s->assign(version_variables->version()->getRevision());
+		s->assign_smart(version_variables->version()->getRevision());
 	}
 }
 
@@ -1239,10 +1243,10 @@ PrintFormat::ver_overlay(OutputString *s, Package *package, bool getnum) const
 		eix_assert_paranoic(header != NULLPTR);
 		if(unlikely(!(vardb->readOverlay(*package, i, *header)))) {
 			if(getnum || no_color) {
-				s->assign("[?]");
+				s->assign_fast("[?]");
 			} else {
 				s->assign(color_overlaykey, 0);
-				s->append("[?]");
+				s->append_fast("[?]");
 				s->append(color_keyend, 0);
 			}
 			return;
@@ -1278,7 +1282,7 @@ PrintFormat::VER_VERSIONKEYWORDSS(OutputString *s, Package *package) const
 		return;
 	}
 	portagesettings->get_effective_keywords_userprofile(package);
-	s->assign(version_variables->version()->get_effective_keywords());
+	s->assign_smart(version_variables->version()->get_effective_keywords());
 }
 
 void
@@ -1288,7 +1292,7 @@ PrintFormat::VER_VERSIONKEYWORDS(OutputString *s, Package *package ATTRIBUTE_UNU
 	if(unlikely(version_variables->isinst)) {
 		return;
 	}
-	s->assign(version_variables->version()->get_full_keywords());
+	s->assign_smart(version_variables->version()->get_full_keywords());
 }
 
 void
@@ -1299,7 +1303,7 @@ PrintFormat::VER_VERSIONEKEYWORDS(OutputString *s, Package *package) const
 		const Version *v(version_variables->version());
 		string t(v->get_effective_keywords());
 		if(t != v->get_full_keywords()) {
-			s->assign(t);
+			s->assign_smart(t);
 		}
 	}
 }
@@ -1384,7 +1388,7 @@ PrintFormat::VER_USE(OutputString *s, Package *package) const
 	if(version_variables->isinst) {
 		get_inst_use(s, *package, version_variables->instver(), false);
 	} else {
-		s->assign(version_variables->version()->iuse.asString());
+		s->assign_smart(version_variables->version()->iuse.asString());
 	}
 }
 
@@ -1602,7 +1606,7 @@ PrintFormat::VER_DEPENDS(OutputString *s, Package *package ATTRIBUTE_UNUSED) con
 	if(unlikely(version_variables->isinst)) {
 		return;
 	}
-	s->assign(version_variables->version()->depend.get_depend_brief());
+	s->assign_smart(version_variables->version()->depend.get_depend_brief());
 }
 
 void
@@ -1612,7 +1616,7 @@ PrintFormat::VER_DEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) cons
 	if(unlikely(version_variables->isinst)) {
 		return;
 	}
-	s->assign(version_variables->version()->depend.get_depend());
+	s->assign_smart(version_variables->version()->depend.get_depend());
 }
 
 void
@@ -1622,7 +1626,7 @@ PrintFormat::VER_RDEPENDS(OutputString *s, Package *package ATTRIBUTE_UNUSED) co
 	if(unlikely(version_variables->isinst)) {
 		return;
 	}
-	s->assign(version_variables->version()->depend.get_rdepend_brief());
+	s->assign_smart(version_variables->version()->depend.get_rdepend_brief());
 }
 
 
@@ -1633,7 +1637,7 @@ PrintFormat::VER_RDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) con
 	if(unlikely(version_variables->isinst)) {
 		return;
 	}
-	s->assign(version_variables->version()->depend.get_rdepend());
+	s->assign_smart(version_variables->version()->depend.get_rdepend());
 }
 
 void
@@ -1643,7 +1647,7 @@ PrintFormat::VER_PDEPENDS(OutputString *s, Package *package ATTRIBUTE_UNUSED) co
 	if(unlikely(version_variables->isinst)) {
 		return;
 	}
-	s->assign(version_variables->version()->depend.get_pdepend_brief());
+	s->assign_smart(version_variables->version()->depend.get_pdepend_brief());
 }
 
 void
@@ -1653,7 +1657,7 @@ PrintFormat::VER_PDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) con
 	if(unlikely(version_variables->isinst)) {
 		return;
 	}
-	s->assign(version_variables->version()->depend.get_pdepend());
+	s->assign_smart(version_variables->version()->depend.get_pdepend());
 }
 
 void
@@ -1663,7 +1667,7 @@ PrintFormat::VER_HDEPENDS(OutputString *s, Package *package ATTRIBUTE_UNUSED) co
 	if(unlikely(version_variables->isinst)) {
 		return;
 	}
-	s->assign(version_variables->version()->depend.get_hdepend_brief());
+	s->assign_smart(version_variables->version()->depend.get_hdepend_brief());
 }
 
 void
@@ -1673,7 +1677,7 @@ PrintFormat::VER_HDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) con
 	if(unlikely(version_variables->isinst)) {
 		return;
 	}
-	s->assign(version_variables->version()->depend.get_hdepend());
+	s->assign_smart(version_variables->version()->depend.get_hdepend());
 }
 
 const MaskFlags *
