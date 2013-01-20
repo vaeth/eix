@@ -1,6 +1,6 @@
 # Russian translations for eix package
 # Russian messages for eix.
-# Copyright (C) 2009-2013 Martin Vaeth
+# Copyright (C)
 # This file is distributed under the same license as the eix package.
 # Artem Vorotnikov <vorot93@yandex.ru>, 2012-2013.
 # Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>, 2013.
