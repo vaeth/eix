@@ -59,7 +59,7 @@ case $service in
 {'(--verbose)-v','(-v)--verbose'}'[use \$FORMAT_VERBOSE]'
 '--xml[output in xml format]'
 {'(--pure-packages)-\\*','(-\\*)--pure-packages'}'[omit printing of overlay names and package number]'
-'--only-names[print with format \<category\>/\<name\>]'
+{'(--only-names)-#','(-#)--only-names'}'[print with format \<category\>/\<name\>]'
 {'(--brief)-0','(-0)--brief'}'[print at most one package]'
 '--brief2[print at most two packages]'
 {'(--test-non-matching)-t','(-t)--test-non-matching'}'[check /etc/portage/package.* and installed packages]'

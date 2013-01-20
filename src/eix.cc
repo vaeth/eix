@@ -138,7 +138,7 @@ dump_help()
 "     -n, --nocolor          do not use ANSI color codes\n"
 "     -F, --force-color      force colorful output\n"
 "     -*, --pure-packages    Omit printing of overlay names and package number\n"
-"     --only-names           -* with format <category>/<name>\n"
+"     -#, --only-names       --pure-packages with format <category>/<name>\n"
 "     -0  --brief (toggle)   Print at most one package then stop. See -q\n"
 "                            Usually faster with COUNT_ONLY_PRINTED=false\n"
 "         --brief2 (toggle)  Print at most two packages then stop\n"
@@ -332,9 +332,9 @@ EixOptionList::EixOptionList()
 	push_back(Option("versionlines",  'l',     Option::BOOLEAN,       &format->style_version_lines));
 	push_back(Option("versionsort",   'x',     Option::BOOLEAN,       &format->slot_sorted));
 	push_back(Option("pure-packages", '*',     Option::BOOLEAN,       &rc_options.pure_packages));
-	push_back(Option("only-names", O_ONLY_NAMES, Option::BOOLEAN,      &rc_options.only_names));
-	push_back(Option("brief",        '0',      Option::BOOLEAN,       &rc_options.brief));
-	push_back(Option("brief2",        O_BRIEF2, Option::BOOLEAN,       &rc_options.brief2));
+	push_back(Option("only-names",    '#',     Option::BOOLEAN,       &rc_options.only_names));
+	push_back(Option("brief",         '0',     Option::BOOLEAN,       &rc_options.brief));
+	push_back(Option("brief2",       O_BRIEF2, Option::BOOLEAN,       &rc_options.brief2));
 
 	push_back(Option("verbose",       'v',     Option::BOOLEAN,       &rc_options.verbose_output));
 	push_back(Option("compact",       'c',     Option::BOOLEAN,       &rc_options.compact_output));

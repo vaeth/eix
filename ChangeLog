@@ -1,10 +1,16 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.28.2
+	Артём Воротников <vorot93 at yandex.ru>:
+	- Russian translation fixes and updates
+
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce -# as short form of --only-names, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=453180
 	- Fix regression of re-enumeration of overlays from eix-0.28.0, see
-	  https://bugs.gentoo.org/show_bug.cgi?id=452548
+	  http://bugs.gentoo.org/show_bug.cgi?id=452548
 	- Make \C<number> slower but reliable (OutputString::..._smart())
+	- Reformat parts of Russian translation to keep 79 characters/line
 
 *eix-0.28.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
