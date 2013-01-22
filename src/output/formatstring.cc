@@ -16,9 +16,7 @@
 
 #include <iostream>
 #include <map>
-#include <set>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "eixTk/ansicolor.h"
@@ -33,15 +31,12 @@
 #include "eixTk/stringutils.h"
 #include "eixrc/eixrc.h"
 #include "output/formatstring.h"
-#include "portage/basicversion.h"
 #include "portage/extendedversion.h"
 
 class PortageSettings;
 class Darkmode;
 
 using std::map;
-using std::pair;
-using std::set;
 using std::string;
 using std::vector;
 
@@ -55,102 +50,6 @@ static void colorstring(string *color) ATTRIBUTE_NONNULL_;
 static bool parse_colors(OutputString *ret, const string &colorstring, bool colors, string *errtext) ATTRIBUTE_NONNULL_;
 static void parse_termdark(vector<Darkmode> *mode, vector<string> *regexp, const string &termdark) ATTRIBUTE_NONNULL_;
 inline static const char *seek_character(const char *fmt) ATTRIBUTE_PURE;
-
-void
-MarkedList::add(const char *pkg, const char *ver)
-{
-	pair<string, BasicVersion*> p;
-	p.first = string(pkg);
-	BasicVersion *&basic_version(p.second);
-	if(ver != NULLPTR) {
-		basic_version = new BasicVersion;
-		if(unlikely(basic_version->parseVersion(ver, NULLPTR, -1) == BasicVersion::parsedError)) {
-			delete basic_version;
-			basic_version = NULLPTR;
-		}
-	} else {
-		basic_version = NULLPTR;
-	}
-	insert(p);
-}
-
-inline MarkedList::CIPair
-MarkedList::equal_range_pkg(const Package &pkg) const
-{
-	return equal_range(pkg.category + "/" + pkg.name);
-}
-
-/** Return pointer to (newly allocated) sorted vector of marked versions,
-    or NULLPTR. With nonversion argument, its content will decide whether
-    the package was marked with a non-version argument */
-set<BasicVersion> *
-MarkedList::get_marked_versions(const Package &pkg, bool *nonversion) const
-{
-	CIPair beg_end(equal_range_pkg(pkg));
-	if(nonversion != NULLPTR)
-		*nonversion = false;
-	if(likely((beg_end.first == end()) || (beg_end.first == beg_end.second))) {
-		// no match
-		return NULLPTR;
-	}
-	set<BasicVersion> *ret(NULLPTR);
-	for(const_iterator it(beg_end.first); likely(it != beg_end.second); ++it) {
-		BasicVersion *p(it->second);
-		if(p == NULLPTR) {
-			if(nonversion != NULLPTR)
-				*nonversion = true;
-			continue;
-		}
-		if(ret == NULLPTR)
-			ret = new set<BasicVersion>;
-		ret->insert(*p);
-	}
-	if(likely(ret == NULLPTR))  // No version was explicitly marked
-		return NULLPTR;
-	return ret;
-}
-
-/** Return true if pkg is marked. If ver is non-NULLPTR also *ver must match */
-bool
-MarkedList::is_marked(const Package &pkg, const BasicVersion *ver) const
-{
-	CIPair beg_end(equal_range_pkg(pkg));
-	if((beg_end.first == end()) || (beg_end.first == beg_end.second)) {
-		// no match
-		return false;
-	}
-	if(ver == NULLPTR)  // do not care about versions
-		return true;
-	for(const_iterator it(beg_end.first); likely(it != beg_end.second); ++it ) {
-		BasicVersion *p(it->second);
-		if(p != NULLPTR) {
-			if(unlikely(*p == *ver))
-				return true;
-		}
-	}
-	return false;
-}
-
-/** Return String of marked versions (sorted) */
-string
-MarkedList::getMarkedString(const Package &pkg) const
-{
-	bool nonversion;
-	set<BasicVersion> *marked(get_marked_versions(pkg, &nonversion));
-	if(marked == NULLPTR)
-		return nonversion ? "*" : "";
-	string ret;
-	if(nonversion)
-		ret = "*";
-	for(set<BasicVersion>::const_iterator it(marked->begin());
-		likely(it != marked->end()); ++it ) {
-		if(!ret.empty())
-			ret.append(1, ' ');
-		ret.append(it->getFull());
-	}
-	delete marked;
-	return ret;
-}
 
 LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg) :
 	PackageSave((fmt->recommend_mode) == LOCALMODE_DEFAULT ? NULLPTR : pkg)

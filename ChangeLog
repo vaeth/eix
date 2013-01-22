@@ -11,6 +11,12 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=452548
 	- Make \C<number> slower but reliable (OutputString::..._smart())
 	- Reformat parts of Russian translation to keep 79 characters/line
+	- Allow full mask syntax in --pipe.
+	- Introduce --pipe-mask.
+	- Remove --pipe-name --pipe-version hacks (--pipe-mask is better).
+	- Removed <installedmarkedversions:*> since new --pipe matches only
+	  available versions. As a substitute use e.g. <markedversion:VAR>
+	  with VAR="{installedversion}...{}"
 
 *eix-0.28.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

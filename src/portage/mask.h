@@ -45,7 +45,7 @@ class Mask : public BasicVersion {
 			maskTypeNone, maskAllowedByProfile,
 			maskInSystem, maskInWorld,
 			maskMask, maskUnmask,
-			maskPseudomask
+			maskPseudomask, maskMark, maskMarkOptional
 		} Type;
 
 		/** Describes the comparison operator before the mask. */
@@ -161,6 +161,5 @@ class SetMask : public Mask {
 
 		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;
 };
-
 
 #endif  // SRC_PORTAGE_MASK_H_

@@ -27,7 +27,8 @@ class MaskFlags {
 			MASK_HARD               = MASK_PACKAGE|MASK_PROFILE,
 			MASK_SYSTEM             = 0x04U,
 			MASK_WORLD              = 0x08U,
-			MASK_WORLD_SETS         = 0x10U;
+			MASK_WORLD_SETS         = 0x10U,
+			MASK_MARKED             = 0x20U;
 
 		explicit MaskFlags(MaskType t = MASK_NONE)
 		{ m_mask = t; }
@@ -70,6 +71,9 @@ class MaskFlags {
 		/** @return true if version is part of world sets. */
 		bool isWorldSets() const
 		{ return havesome(MaskFlags::MASK_WORLD_SETS); }
+		/** @return true if version is marked. */
+		bool isMarked() const
+		{ return havesome(MaskFlags::MASK_MARKED); }
 
 	protected:
 		MaskType m_mask;

@@ -58,6 +58,8 @@
 
 #define VAR_DB_PKG "/var/db/pkg/"
 
+template<typename m_Type> class MaskList;
+
 using std::map;
 using std::set;
 using std::string;
@@ -206,8 +208,7 @@ dump_help()
 "                          /etc/portage/package.* (see man eix).\n"
 "                          Use -t to check non-existing packages.\n"
 "    -|, --pipe            Use input from pipe of emerge -pv\n"
-"    --pipe-name           As --pipe, but input is without version\n"
-"    --pipe-version        As --pipe, but input is with    version\n"
+"    --pipe-mask           As --pipe, but input is assumed to be masks\n"
 "\n"
 "  Search Fields:\n"
 "    -y, --any               any search field can match (same as -SACsHL...)\n"
@@ -428,8 +429,7 @@ EixOptionList::EixOptionList()
 	push_back(Option("dup-versions",  'D'));
 	push_back(Option("test-obsolete", 'T'));
 	push_back(Option("pipe",          '|'));
-	push_back(Option("pipe-name",     O_PIPE_NAME));
-	push_back(Option("pipe-version",  O_PIPE_VERSION));
+	push_back(Option("pipe-mask",     O_PIPE_MASK));
 
 	// Algorithms for a criterion
 	push_back(Option("fuzzy",         'f'));
@@ -716,7 +716,7 @@ run_eix(int argc, char** argv)
 		eixrc.getBool("USE_BUILD_TIME"));
 	varpkg_db.check_installed_overlays = eixrc.getBoolText("CHECK_INSTALLED_OVERLAYS", "repository");
 
-	MarkedList *marked_list(NULLPTR);
+	MaskList<Mask> *marked_list(NULLPTR);
 
 	/* Open database file */
 	FILE *fp(fopen(cachefile.c_str(), "rb"));
@@ -1079,6 +1079,7 @@ run_eix(int argc, char** argv)
 
 	// Delete matches
 	matches.delete_and_clear();
+	delete marked_list;
 
 	if(unlikely(!count)) {
 GCC_DIAG_OFF(sign-conversion)

@@ -67,7 +67,9 @@ BasicVersion::ParseResult
 Mask::parseMask(const char *str, string *errtext, eix::SignedBool accept_garbage)
 {
 	// determine comparison operator
-	if(m_type != maskPseudomask) {
+	if(unlikely(m_type == maskPseudomask)) {
+		m_operator = maskOpEqual;
+	} else {
 		for(eix::TinyUnsigned i(0); ; ++i) {
 			eix::TinyUnsigned len(operators[i].len);
 			if(unlikely(len == 0)) {
@@ -156,26 +158,35 @@ GCC_DIAG_ON(sign-conversion)
 	}
 
 	// Get the rest (name-version|name)
-	if((m_operator != maskOpAll) || (m_type == maskPseudomask)) {
-		// There must be a version somewhere
+	bool have_version(false);
+	if((m_operator != maskOpAll) || (m_type == maskMarkOptional)) {
+		// Is there a version somewhere
 		p = ExplodeAtom::get_start_of_version(str, true);
 
 		if(unlikely((p == NULLPTR) || ((end != NULLPTR) && (p >= end)))) {
-			*errtext = ((m_type != maskPseudomask) ?
-				_("Operator without a version part.") :
-				_("Version specification is missing."));
-			return parsedError;
+			if(unlikely(m_operator != maskOpAll)) {  // maskMarkOptional without explicit "="
+				*errtext = ((m_type != maskPseudomask) ?
+					_("Operator without a version part.") :
+					_("Version specification is missing."));
+				return parsedError;
+			}
+		} else {
+			have_version = true;
 		}
+	}
 
+	if(have_version) {
 GCC_DIAG_OFF(sign-conversion)
 		m_name = string(str, (p - 1) - str);
 GCC_DIAG_ON(sign-conversion)
-		str = p;
 
 		// Check for wildcard-version
-		const char *wildcard((m_type != maskPseudomask) ? strchr(str, '*') : NULLPTR);
+		const char *wildcard((m_type != maskPseudomask) ? strchr(p, '*') : NULLPTR);
 		if(unlikely((unlikely(wildcard != NULLPTR)) &&
 			(likely((end == NULLPTR) || (wildcard <= end))))) {
+			if(unlikely(m_operator == maskOpAll)) {  // maskMarkOptional without explicit "="
+				m_operator = maskOpEqual;
+			}
 			// Only the = operator can have a wildcard-version
 			if(unlikely(m_operator != maskOpEqual)) {
 				// A finer error-reporting
@@ -196,19 +207,27 @@ GCC_DIAG_ON(sign-conversion)
 				// Wildcard is not the last symbol:
 				m_operator = maskOpGlobExt;
 				if(end != NULLPTR) {
-					m_glob.assign(str, end);
+					m_glob.assign(p, end);
 				} else {
-					m_glob.assign(str);
+					m_glob.assign(p);
 				}
 			} else {
 				m_operator = maskOpGlob;
-				m_glob.assign(str, wildcard);
+				m_glob.assign(p, wildcard);
 			}
 			return parsedOK;
 		}
 GCC_DIAG_OFF(sign-conversion)
-		return parseVersion(((end != NULLPTR) ? string(str, end - str) : str), errtext, accept_garbage);
+		BasicVersion::ParseResult r(parseVersion(((end != NULLPTR) ? string(p, end - p) : p), errtext, accept_garbage));
 GCC_DIAG_ON(sign-conversion)
+		if(likely(m_operator != maskOpAll)) {
+			return r;
+		}
+		// maskMarkOptional without explicit "="
+		if(likely(r == BasicVersion::parsedOK)) {
+			m_operator = maskOpEqual;
+			return r;
+		}
 	}
 	// Everything else is the package-name
 GCC_DIAG_OFF(sign-conversion)
@@ -459,7 +478,14 @@ Mask::apply(Version *ve, bool do_test, Keywords::Redundant check) const
 				break;
 			if(do_test && (!test(ve)))
 				ve->maskflags.setbits(MaskFlags::MASK_PROFILE);
+			break;
+		case maskMark:
+		case maskMarkOptional:
+			if(do_test && (!test(ve)))
+				break;
+			ve->maskflags.setbits(MaskFlags::MASK_MARKED);
 			// break;
+		// case maskPseudomask:
 		// case maskTypeNone:
 		default:
 			break;

@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2013-01-11 22:00:00 +0200 (Fri, 11 Jan 2013)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-01-22 21:00:00 +0200 (Tue, 22 Jan 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -727,19 +727,19 @@ Diese Datei (und wie alternative/zusätzliche Dateien angegeben werden können) 
 (Beachten Sie, dass die Shell normalerweise kein B<|>-Zeichen übergibt, wenn es
 nicht gequotet ist).
 
-Findet nur Pakete aus Standard-Input; normalerweise wird dies in einer Pipe benutzt,
+Findet nur Pakete/Masken aus Standard-Input; normalerweise wird dies in einer Pipe benutzt,
 etwa als Ausgabe von emerge -pv (oder genlop -p).
-Tatsächlich werden im Input nur Worte (durch Leerzeichen oder Zeilenende separiert) beachtet,
-die im folgenden Format sind:
+Tatsächlich werden im Input alle Worte (durch Leerzeichen oder Zeilenende separiert) beachtet,
+die das Zeichen / enthalten.
 
-I<category>B</>I<package>B<->I<version> oder
+Jedes solche Wort wird als Maske betrachtet (in der Form des ersten Eintrags der /etc/portage/package.*-Dateien),
+aber eine Heuristik erlaubt, dass Versionen auch ohne ein explizites führendes B<=>-Zeichen angegeben werden können.
+(Dies kann zu Mehrdeutigkeiten führen; benutzen Sie B<--pipe-mask>, wenn Sie ein zuverlässiges Ergebnis benötigen).
 
-I<category>B</>I<package>
-
-Zusätzlich werden alle passenden Pakete/Versionen in der Ausgabe als markiert behandelt.
+Alle verfügbaren Pakete/Versionen, die auf eine Maske der Standardeingabe passen, werden in der Ausgabe als markiert behandelt.
 Details zu Letzterem stehen in der Beschreibung der B<marked> und B<markedversions:*> Formatstrings.
 
-Auchwenn B<--pipe> mehr als einmal auftaucht, wird die Standard-Eingabe natürlich nur einmalig gelesen,
+Auch wenn B<--pipe> mehr als einmal auftaucht, wird die Standard-Eingabe natürlich nur einmalig gelesen,
 aber wiederholt für jedes Auftauchen interpretiert (d.h. falls der erste --pipe Ausdruck passt,
 werden auch alle anderen passen).
 
@@ -752,23 +752,10 @@ Falls die Option B<--pipe-name> oder B<--pipe-version> später in der Argumentli
 verhält sich B<-pipe> wie B<--pipe-name> bzw. B<--pipe-version>.
 .TP
 .B --pipe-name
-Dies ist analog zu B<--pipe> mit dem Unterschied, dass nur Zeilen der Gestalt
-
-I<category>B</>I<package>
-
-akzeptiert werden.
-Dies verhindert mögliche Fehlinterpretationen, falls ein Paketname mit einer gültigen Versionsnummer endet.
-Falls die Option B<--pipe> oder B<--pipe-version> später in der Argumentliste vorkommt,
-verhält sich B<-pipe-name> wie B<--pipe> bzw. B<--pipe-version>.
-.TP
-.B --pipe-version
-Dies ist analog zu B<--pipe> mit dem Unterschied, dass nur Zeilen der Gestalt
-
-I<category>B</>I<package>B<->I<version>
-
-akzeptiert werden; unpassende Zeilen werden ignoriert.
-Falls die Option B<--pipe> oder B<--pipe-name> später in der Argumentliste vorkommt,
-verhält sich B<-pipe-version> wie B<--pipe> bzw, B<--pipe-name>.
+Dies ist analog zu B<--pipe> mit dem Unterschied, dass nur Masken in der Eingabe erlaubt sind,
+d.h. bei der Angabe von Paketversionen ist ein führendes B<=>-Zeichen nicht optional.
+Dies verhindert Mehrdeutigkeiten, wenn ein Teil des Namens wie eine Versionsnummer aussieht.
+Benutzen Sie diese Option anstelle von B<--pipe> für ein zuverlässiges Ergebnis!
 .\" }}}
 
 .\" {{{ -------- Operandenwahl
@@ -1232,7 +1219,7 @@ Siehe B<eix --dump> für die genaue Definition der Variablen.
 .TP
 .BR "markedversions:I<VARIABLE>" ", " "markedversions:I<VARIABLE>:I<VARSLOTS>"
 Dies ist analog zu B<availableversions> mit dem Unterschied, dass nur
-markierte Versionen ausgegeben werden.
+markierte (verfügbare) Versionen ausgegeben werden.
 .TP
 .BR "bestversion:I<VARIABLE>" ", " "bestversion*:I<VARIABLE>" ", " "bestslotversions:I<VARIABLE>" ", " "bestslotversions*:I<VARIABLE>" ", " "bestslotupgradeversions:I<VARIABLE>" ", " "bestslotupgradeversions*:I<VARIABLE>"
 Dies ist analog zu B<availableversions> mit dem Unterschied, dass nur die
@@ -1244,10 +1231,6 @@ die voraussichtlich nach dem Upgrade erscheinen.
 .B "installedversions:I<VARIABLE>"
 Dies ist analog zu B<availableversions> mit dem Unterschied, dass nur
 installierte Versionen ausgegeben werden.
-.TP
-.B "installedmarkedversions:I<VARIABLE>"
-Dies ist analog zu B<installedversions> mit dem Unterschied, dass nur
-markierte Versionen ausgegeben werden.
 .TP
 .BR first ", " last ", " slotfirst ", " slotlast ", " oneslot
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
@@ -1287,7 +1270,8 @@ Für die Varianten mit B<*> werden auch instabile Versionen berücksichtigt.
 .TP
 .BR installedversion ", " markedversion
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
-Expandiert zu 1 oder dem Leerstring, je nachdem ob die aktuelle Version installiert bzw. markiert ist.
+Expandiert zu 1 oder dem Leerstring, je nachdem ob die aktuelle verfügbare Version installiert bzw. markiert ist.
+Für B<markedversions> schlägt dieser Test im Zusammenhang mit <installedversions:...> immer fehl.
 .TP
 .BR ishardmasked ", " washardmasked ", " isprofilemasked ", " wasprofilemasked ", " ismasked ", " wasmasked ", " isstable ", " wasstable ", " isunstable ", " wasunstable ", " isalienstable ", " wasalienstable ", " isalienunstable ", " wasalienunstable ", " ismissingkeyword ", " wasmissingkeyword ", " isminuskeyword ", " wasminuskeyword ", " isminusunstable ", " wasminusunstable  ", " isminusasterisk ", " wasminusasterisk
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
@@ -1388,7 +1372,7 @@ Ist 1 or leer, je nachdem ob mindestens eine verfügbare Version aus einem (nich
 1. falls das Paket zu world_sets gehört.
 .TP
 .B marked
-1, falls das Paket mit der B<--pipe>-Option übergeben wurde.
+1, falls der Paketname mit der B<--pipe>-Option übergeben wurde (unabhängig davon, ob eine verfügbare Version auf die Maske passt, siehe B<havemarkedversion>)
 Dies ist hauptsächlich für Tests sinnvoll.
 .TP
 .BR havemarkedversion

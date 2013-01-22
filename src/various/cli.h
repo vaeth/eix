@@ -14,14 +14,15 @@
 
 class DBHeader;
 class EixRc;
-class MarkedList;
+class Mask;
 class MatchTree;
 class PackageTest;
 class PortageSettings;
 class SetStability;
 class VarDbPkg;
+template<typename m_Type> class MaskList;
 
-void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, MarkedList **marked_list, const ArgumentReader &ar) ATTRIBUTE_NONNULL_;
+void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, MaskList<Mask> **marked_list, const ArgumentReader &ar) ATTRIBUTE_NONNULL_;
 
 /*	If you want to add a new parameter to eix just insert a line into
  *	long_options. If you only want a longopt, add a new define.
@@ -38,8 +39,7 @@ enum cli_options {
 	O_PRINT_OPATH,
 	O_PRINT_OLABEL,
 	O_PRINT_OLABELPATH,
-	O_PIPE_NAME,
-	O_PIPE_VERSION,
+	O_PIPE_MASK,
 	O_ANSI,
 	O_P256,
 	O_P256D,

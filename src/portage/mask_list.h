@@ -33,6 +33,7 @@ template<typename m_Type>
 class Masks : public std::list<m_Type>
 {
 	std::string full;
+
 public:
 	using std::list<m_Type>::push_back;
 	using std::list<m_Type>::begin;
@@ -75,6 +76,7 @@ private:
 	// The exact ones are in a lookup-table.
 	LookupType exact_name;
 	MapType full_index;
+
 public:
 	typedef typename eix::ptr_list<const m_Type> Get;
 
@@ -192,8 +194,11 @@ public:
 		delete masks;
 	}
 
-	// return true if some masks applied
+	// return true if some mask potentially applied
 	bool applyMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const ATTRIBUTE_NONNULL_;
+
+	// return true if some mask matches
+	bool MaskMatches(Package *p) const ATTRIBUTE_NONNULL_;
 
 	void applySetMasks(Version *v, const std::string &set_name) const ATTRIBUTE_NONNULL_;
 };
@@ -237,6 +242,7 @@ class PreListFilename
 private:
 	std::string filename, m_repo;
 	bool know_repo;
+
 public:
 	PreListFilename(const std::string &n, const char *label);
 
@@ -275,6 +281,7 @@ public:
 	using super::size;
 	using super::empty;
 	using super::clear;
+
 private:
 	using super::push_back;
 
@@ -282,6 +289,7 @@ private:
 	std::vector<PreListFilename> filenames;
 	std::map<std::vector<std::string>, std::vector<PreListOrderEntry>::size_type> have;
 	bool finalized;
+
 public:
 	void clear()
 	{

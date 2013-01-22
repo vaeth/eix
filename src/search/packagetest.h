@@ -25,12 +25,14 @@
 #include "search/algorithms.h"
 #include "search/redundancy.h"
 
+class Mask;
 class MatcherAlgorithm;
 class MatcherField;
 class NowarnMaskList;
 class PortageSettings;
 class PrintFormat;
 class VarDbPkg;
+template<typename m_Type> class MaskList;
 
 /** Test a package if it matches some criteria. */
 class PackageTest {
@@ -145,6 +147,9 @@ class PackageTest {
 
 		void SetInstability(TestStability avoid)
 		{  test_instability |= avoid; }
+
+		void SetMarkedList(MaskList<Mask> *markedlist)
+		{  marked_list = markedlist; }
 
 		void Virtual()
 		{ have_virtual = true; }
@@ -293,6 +298,8 @@ class PackageTest {
 
 		std::set<ExtendedVersion::Overlay> *from_overlay_inst_list;
 		std::vector<std::string> *from_foreign_overlay_inst_list;
+
+		MaskList<Mask> *marked_list;
 
 		PortageSettings *portagesettings;
 		/** Lookup stuff about user flags here. */

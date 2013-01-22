@@ -90,7 +90,28 @@ MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive,
 	return added;
 }
 
-// return true if some masks applied
+	// return true if some mask matches
+template <>
+bool
+MaskList<Mask>::MaskMatches(Package *p) const
+{
+	Get *masks(get(p));
+	if(likely(masks == NULLPTR)) {
+		return false;
+	}
+	bool ret(false);
+	for(Get::const_iterator it(masks->begin());
+		likely(it != masks->end()); ++it) {
+		if(it->ismatch(*p)) {
+			ret = true;
+			break;
+		}
+	}
+	delete masks;
+	return ret;
+}
+
+// return true if some mask potentially applied
 template <>
 bool
 MaskList<Mask>::applyMasks(Package *p, Keywords::Redundant check) const

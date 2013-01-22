@@ -34,6 +34,7 @@
 #include "portage/conf/portagesettings.h"
 #include "portage/depend.h"
 #include "portage/extendedversion.h"
+#include "portage/mask_list.h"
 #include "portage/package.h"
 #include "portage/vardbpkg.h"
 #include "search/algorithms.h"
@@ -105,6 +106,7 @@ PackageTest::PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f
 	algorithm = NULLPTR;
 	from_overlay_inst_list = NULLPTR;
 	from_foreign_overlay_inst_list = NULLPTR;
+	marked_list = NULLPTR;
 
 	field    = NONE;
 	need     = PackageReader::NONE;
@@ -163,6 +165,7 @@ PackageTest::calculateNeeds() {
 		(from_foreign_overlay_inst_list != NULLPTR) ||
 		(overlay_list != NULLPTR) || (overlay_only_list != NULLPTR) ||
 		(in_overlay_inst_list != NULLPTR) ||
+		(marked_list != NULLPTR) ||
 		(restrictions != ExtendedVersion::RESTRICT_NONE) ||
 		(properties != ExtendedVersion::PROPERTIES_NONE) ||
 		(test_instability != STABLE_NONE) ||
@@ -1119,6 +1122,13 @@ PackageTest::match(PackageReader *pkg) const
 			if(worldset_only_selected || !p->is_system_package()) {
 				return false;
 			}
+		}
+	}
+
+	if(unlikely(marked_list != NULLPTR)) {
+		get_p(p, pkg);
+		if(likely(!marked_list->MaskMatches(p))) {
+			return false;
 		}
 	}
 

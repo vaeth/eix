@@ -9,8 +9,6 @@
 
 #include <config.h>
 
-#include <cstdlib>
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -24,6 +22,8 @@
 #include "output/formatstring.h"
 #include "portage/basicversion.h"
 #include "portage/conf/portagesettings.h"
+#include "portage/mask.h"
+#include "portage/mask_list.h"
 #include "portage/set_stability.h"
 #include "portage/vardbpkg.h"
 #include "search/matchtree.h"
@@ -69,12 +69,12 @@ optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader &ar)
 } while(0)
 
 void
-parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, MarkedList **marked_list, const ArgumentReader& ar)
+parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, MaskList<Mask> **marked_list, const ArgumentReader& ar)
 {
 	bool	use_pipe(false),      // A pipe is used somewhere
 		force_test(false),    // There is a current test or a pipe
-		curr_pipe(false);     // There is a current pipe
-	signed char pipe_mode(0);     // Do we force pipes of a particular mode?
+		curr_pipe(false),     // There is a current pipe
+		pipe_mode(false);     // Do we force pipes of a particular mode?
 	PackageTest *test(NULLPTR);   // The current test
 
 	for(ArgumentReader::const_iterator arg(ar.begin());
@@ -101,9 +101,8 @@ parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettin
 			// Check local options {{{
 			// --pipe is a "faked" local option but actually treated by matchtree...
 			// Note that we must *not* FINISH_TEST here!
-			case O_PIPE_NAME:
-			case O_PIPE_VERSION:
-				pipe_mode = ((**arg == O_PIPE_VERSION) ? 1 : -1);
+			case O_PIPE_MASK:
+				pipe_mode = true;
 			case '|': force_test = curr_pipe = use_pipe = true;
 				break;
 			case 'I': USE_TEST;
@@ -483,51 +482,29 @@ parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettin
 	while(likely(!std::cin.eof())) {
 		string line;
 		getline(std::cin, line);
-		trim(&line);
 		vector<string> wordlist;
 		split_string(&wordlist, line);
 		for(vector<string>::iterator word(wordlist.begin());
 			likely(word != wordlist.end()); ++word) {
 			string::size_type i(word->find("/"));
-			if((i == string::npos) || (i == 0) || (i == word->size() - 1))
+			if((i == string::npos) || (i == 0) || (i == word->size() - 1)) {
 				continue;
-			if(word->find("/", i + 1) != string::npos)
+			}
+			if(word->find("/", i + 1) != string::npos) {
 				continue;
-			if((*word)[0] == '=') {
-				word->erase(0, 1);
 			}
-			bool success(false);
-			char **name_ver(NULLPTR);
-			const char *name, *ver;
-			if(pipe_mode >= 0) {
-				if((name_ver = ExplodeAtom::split(word->c_str())) != NULLPTR) {
-					name = name_ver[0];
-					ver  = name_ver[1];
-					// split version only if it is valid:
-					BasicVersion b;
-					success = (b.parseVersion(ver, NULLPTR, -1) != BasicVersion::parsedError);
-				}
-			}
-			if((pipe_mode <= 0) && (!success) && !word->empty()) {
-				name = word->c_str();
-				ver  = NULLPTR;
-				success = true;
-			}
-			if(success) {
+			Mask m(pipe_mode ? Mask::maskMark : Mask::maskMarkOptional);
+			string errtext;
+			if(m.parseMask(word->c_str(), &errtext, -1) != BasicVersion::parsedError) {
 				if(unlikely(*marked_list == NULLPTR)) {
-					*marked_list = new MarkedList();
+					*marked_list = new MaskList<Mask>;
 				}
-				(*marked_list)->add(name, ver);
+				(*marked_list)->add(m);
 
 				NEW_TEST;
 				*test = PackageTest::CATEGORY_NAME;
-				test->setAlgorithm(new ExactAlgorithm());
-				test->setPattern(name);
+				test->SetMarkedList(*marked_list);
 				matchtree->set_pipetest(test);
-			}
-			if(name_ver != NULLPTR) {
-				free(name_ver[0]);
-				free(name_ver[1]);
 			}
 		}
 	}

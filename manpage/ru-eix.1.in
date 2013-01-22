@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2013-01-11 22:00:00 +0200 (Fri, 11 Jan 2013)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-01-22 21:00:00 +0200 (Tue, 22 Jan 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -706,15 +706,15 @@ This file (and how to specify alternative/additional files) is described later.
 .BR -| ", " --pipe
 (Recall that a shell will not pass an unquoted B<|> sign, so quote properly).
 
-Only match packages from standard input; usually you will want to use this in a pipe,
+Only match packages/masks from standard input; usually you will want to use this in a pipe,
 redirected e.g. from emerge -pv (similar to genlop -p).
-Actually, any input data is honored which contains words (space or newline separated) in the format
+Actually, any (space or newline separated) words are considered which contain a / symbol.
 
-I<category>B</>I<package>B<->I<version> or
+Each such word is considered as a mask (in the form of the first entry in /etc/portage/package.* files),
+and due to a heuristics package versions can also specified without an explicit leading B<=> symbol.
+(This can lead to ambiguities; use B<--pipe-mask> if you need a reliable result.)
 
-I<category>B</>I<package>
-
-In addition, all packages/versions passed this way will in the output be considered marked.
+All available packages/versions which match a mask from the input will in the output be considered as marked.
 For details on the latter, see the B<marked> and B<markedversions:*> formatstrings.
 
 Even if B<--pipe> occurs more than once, the standard input is of course only read once,
@@ -728,24 +728,11 @@ B<eix something -a "-(" --pipe -o "-)">
 If the option B<--pipe-name> or B<--pipe-version> occurs after this option in the argument list,
 B<--pipe> acts as if it were B<--pipe-name> or B<--pipe-version>, respectively.
 .TP
-.B --pipe-name
-This is analogous to B<--pipe> with the difference that only lines of the form
-
-I<category>B</>I<package>
-
-are accepted.
-This avoids possible misinterpretation if a package name ends with a valid version number.
-If the option B<--pipe> or B<--pipe-version> occurs after this option in the argument list,
-B<--pipe-name> acts as if it were B<--pipe> or B<--pipe-version>, respectively.
-.TP
-.B --pipe-version
-This is analogous to B<--pipe> with the difference that only lines of the form
-
-I<category>B</>I<package>B<->I<version>
-
-are accepted; non-matching lines are ignored.
-If the option B<--pipe> or B<--pipe-name> occurs after this option in the argument list,
-B<--pipe-name> acts as if it were B<--pipe> or B<--pipe-name>, respectively.
+.B --pipe-mask
+This is analogous to B<--pipe> with the difference that only masks are allowed in the input,
+i.e. if package versions are specified the leading B<=> is non-optional.
+This avoids ambiguities in the input if a part of the name looks like a version number.
+You should use this option instead of B<--pipe> if you want a reliable result!
 .\" }}}
 
 .\" {{{ -------- Match field selection
@@ -1205,7 +1192,7 @@ See B<eix --dump> to see the variables in detail.
 .TP
 .BR "markedversions:I<VARIABLE>" ", " "markedversions:I<VARIABLE>:I<VARSLOTS>"
 This is analogous to B<availableversions> with the difference that only
-marked versions are printed.
+marked (and available) versions are printed.
 .TP
 .BR "bestversion:I<VARIABLE>" ", " "bestversion*:I<VARIABLE>" ", " "bestslotversions:I<VARIABLE>" ", " "bestslotversions*:I<VARIABLE>" ", " "bestslotupgradeversions:I<VARIABLE>" ", " "bestslotupgradeversions*:I<VARIABLE>"
 This is analogous to B<availableversions> with the difference that only the best version
@@ -1217,10 +1204,6 @@ probably will appear after the upgrade.
 .B "installedversions:I<VARIABLE>"
 This is analogous to B<availableversions> with the difference that only
 installed versions are printed.
-.TP
-.B "installedmarkedversions:I<VARIABLE>"
-This is analogous to B<installedversions> with the difference that only
-marked versions are printed.
 .TP
 .BR first ", " last ", " slotfirst ", " slotlast ", " oneslot
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -1258,8 +1241,9 @@ For the variants with B<*> also unstable versions are considered.
 .TP
 .BR installedversion ", " markedversion
 This must occur only in I<VARIABLE> in the context of version printing.
-It returns 1 or the empty string depending on whether the current version is
-installed or marked, respectively.
+It returns 1 or the empty string depending on whether the current available
+version is installed or marked, respectively.
+The test for B<markedversions> always fails in the context of <installedversions:...>.
 .TP
 .BR ishardmasked ", " washardmasked ", " isprofilemasked ", " wasprofilemasked ", " ismasked ", " wasmasked ", " isstable ", " wasstable ", " isunstable ", " wasunstable ", " isalienstable ", " wasalienstable ", " isalienunstable ", " wasalienunstable ", " ismissingkeyword ", " wasmissingkeyword ", " isminuskeyword ", " wasminuskeyword ", " isminusunstable ", " wasminusunstable  ", " isminusasterisk ", " wasminusasterisk
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -1362,7 +1346,7 @@ expands to 1 if the package is in the world file
 expands to 1 if the package is in the world sets
 .TP
 .B marked
-expands to 1 if the package was passed with the B<--pipe> option.
+expands to 1 if the package name was passed with the B<--pipe> option (no matter whether a version matches or not, see also B<havemarkedversion>).
 This is mainly only useful in tests.
 .TP
 .BR havemarkedversion

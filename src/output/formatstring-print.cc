@@ -193,12 +193,9 @@ PrintFormat::get_inst_use(OutputString *s, const Package &package, InstVersion *
 }
 
 void
-PrintFormat::get_installed(Package *package, Node *root, bool only_marked) const
+PrintFormat::get_installed(Package *package, Node *root) const
 {
 	eix_assert_paranoic(vardb != NULLPTR);
-	if(unlikely((unlikely(only_marked)) && (marked_list == NULLPTR))) {
-		return;
-	}
 	vector<InstVersion> *vec(vardb->getInstalledVector(*package));
 	if(vec == NULLPTR) {
 		return;
@@ -206,11 +203,6 @@ PrintFormat::get_installed(Package *package, Node *root, bool only_marked) const
 	bool have_prevversion(false);
 	for(vector<InstVersion>::iterator it(vec->begin());
 		likely(it != vec->end()); ++it) {
-		if(unlikely(only_marked)) {
-			if(likely(!(marked_list->is_marked(*package, &(*it))))) {
-				continue;
-			}
-		}
 		if(have_prevversion) {
 			version_variables->last = version_variables->slotlast = false;
 			recPrint(&(version_variables->result), package, &get_package_property, root);
@@ -226,13 +218,13 @@ PrintFormat::get_installed(Package *package, Node *root, bool only_marked) const
 }
 
 void
-PrintFormat::get_versions_versorted(Package *package, Node *root, vector<Version*> *versions) const
+PrintFormat::get_versions_versorted(Package *package, Node *root, bool only_marked) const
 {
 	bool have_prevversion(false);
 	for(Package::const_iterator vit(package->begin());
 		likely(vit != package->end()); ++vit) {
-		if(unlikely(versions != NULLPTR)) {
-			if(likely(find(versions->begin(), versions->end(), *vit) == versions->end())) {
+		if(unlikely(only_marked)) {
+			if(likely(!vit->maskflags.isMarked())) {
 				continue;
 			}
 		}
@@ -251,17 +243,17 @@ PrintFormat::get_versions_versorted(Package *package, Node *root, vector<Version
 }
 
 void
-PrintFormat::get_versions_slotsorted(Package *package, Node *root, vector<Version*> *versions) const
+PrintFormat::get_versions_slotsorted(Package *package, Node *root, bool only_marked) const
 {
 	const SlotList *sl(&(package->slotlist()));
 	SlotList::size_type slotnum(0);
-	if(unlikely(versions != NULLPTR)) {
+	if(only_marked) {
 		for(SlotList::const_iterator it(sl->begin());
 			likely(it != sl->end()); ++it) {
 			const VersionList *vl(&(it->const_version_list()));
 			for(VersionList::const_iterator vit(vl->begin());
 				likely(vit != vl->end()); ++vit) {
-				if(unlikely(find(versions->begin(), versions->end(), *vit) != versions->end())) {
+				if(unlikely((*vit)->maskflags.isMarked())) {
 					++slotnum;
 					break;
 				}
@@ -281,9 +273,10 @@ PrintFormat::get_versions_slotsorted(Package *package, Node *root, vector<Versio
 		const VersionList *vl(&(it->const_version_list()));
 		for(VersionList::const_iterator vit(vl->begin());
 			likely(vit != vl->end()); ++vit) {
-			if(unlikely(versions != NULLPTR)) {
-				if(likely(find(versions->begin(), versions->end(), *vit) == versions->end()))
+			if(unlikely(only_marked)) {
+				if(likely(!(*vit)->maskflags.isMarked())) {
 					continue;
+				}
 			}
 			if(have_prevversion) {
 				version_variables->last = false;
@@ -400,7 +393,6 @@ class Scanner {
 			prop_colon_pkg("bestslotupgradeversions*", &PrintFormat::COLON_PKG_BESTSLOTUPGRADEVERSIONSS);
 			prop_colon_pkg("bestslotupgradeversions", &PrintFormat::COLON_PKG_BESTSLOTUPGRADEVERSIONS);
 			prop_colon_pkg("installedversions", &PrintFormat::COLON_PKG_INSTALLEDVERSIONS);
-			prop_colon_pkg("installedmarkedversions", &PrintFormat::COLON_PKG_INSTALLEDMARKEDVERSIONS);
 			prop_pkg("installed", &PrintFormat::PKG_INSTALLED);
 			prop_pkg("versionlines", &PrintFormat::PKG_VERSIONLINES);
 			prop_pkg("slotsorted", &PrintFormat::PKG_SLOTSORTED);
@@ -638,34 +630,25 @@ PrintFormat::COLON_VER_DATE(OutputString *s, Package *package, const string &aft
 void
 PrintFormat::colon_pkg_availableversions(Package *package, const string &after_colon, bool only_marked) const
 {
-	vector<Version*> *versions(NULLPTR);
 	if(unlikely(only_marked)) {
-		versions = new vector<Version*>;
-		if(likely(marked_list != NULLPTR)) {
-			for(Package::const_iterator it(package->begin());
-				likely(it != package->end()); ++it) {
-				if(unlikely(marked_list->is_marked(*package, &(**it)))) {
-					versions->push_back(*it);
-				}
-			}
+		if(unlikely(marked_list == NULLPTR) ||
+			likely(!marked_list->applyMasks(package))) {
+			return;
 		}
 	}
-	if(likely((!only_marked) || !(versions->empty()))) {
-		string::size_type col(after_colon.find(':'));
-		if(col == string::npos) {
-			get_versions_versorted(package, parse_variable(after_colon), versions);
-			varcache[after_colon].in_use = false;
-		} else if(!(package->have_nontrivial_slots())) {
-			string var(after_colon, 0, col);
-			get_versions_versorted(package, parse_variable(var), versions);
-			varcache[var].in_use = false;
-		} else {
-			string var(after_colon, col + 1, string::npos);
-			get_versions_slotsorted(package, parse_variable(var), versions);
-			varcache[var].in_use = false;
-		}
+	string::size_type col(after_colon.find(':'));
+	if(col == string::npos) {
+		get_versions_versorted(package, parse_variable(after_colon), only_marked);
+		varcache[after_colon].in_use = false;
+	} else if(!(package->have_nontrivial_slots())) {
+		string var(after_colon, 0, col);
+		get_versions_versorted(package, parse_variable(var), only_marked);
+		varcache[var].in_use = false;
+	} else {
+		string var(after_colon, col + 1, string::npos);
+		get_versions_slotsorted(package, parse_variable(var), only_marked);
+		varcache[var].in_use = false;
 	}
-	delete versions;
 }
 
 void
@@ -752,23 +735,11 @@ PrintFormat::COLON_PKG_BESTSLOTUPGRADEVERSIONSS(Package *package, const string &
 }
 
 void
-PrintFormat::colon_pkg_installedversions(Package *package, const string &after_colon, bool only_marked) const
-{
-	version_variables->isinst = true;
-	get_installed(package, parse_variable(after_colon), only_marked);
-	varcache[after_colon].in_use = false;
-}
-
-void
 PrintFormat::COLON_PKG_INSTALLEDVERSIONS(Package *package, const string &after_colon) const
 {
-	colon_pkg_installedversions(package, after_colon, false);
-}
-
-void
-PrintFormat::COLON_PKG_INSTALLEDMARKEDVERSIONS(Package *package, const string &after_colon) const
-{
-	colon_pkg_installedversions(package, after_colon, true);
+	version_variables->isinst = true;
+	get_installed(package, parse_variable(after_colon));
+	varcache[after_colon].in_use = false;
 }
 
 void
@@ -1014,25 +985,18 @@ PrintFormat::PKG_BESTRECOMMENDORINSTALL(OutputString *s, Package *package) const
 void
 PrintFormat::PKG_MARKED(OutputString *s, Package *package) const
 {
-	if(likely(marked_list != NULLPTR)) {
-		if(unlikely(marked_list->is_marked(*package))) {
-			s->set_one();
-			return;
-		}
+	if(unlikely(marked_list != NULLPTR) &&
+		unlikely(marked_list->applyMasks(package))) {
+		s->set_one();
 	}
 }
 
 void
 PrintFormat::PKG_HAVEMARKEDVERSION(OutputString *s, Package *package) const
 {
-	if(likely(marked_list != NULLPTR)) {
-		for(Package::const_iterator it(package->begin());
-			likely(it != package->end()); ++it) {
-			if(marked_list->is_marked(*package, &(**it))) {
-				s->set_one();
-				return;
-			}
-		}
+	if(unlikely(marked_list != NULLPTR) &&
+		unlikely(marked_list->MaskMatches(package))) {
+		s->set_one();
 	}
 }
 
@@ -1347,9 +1311,11 @@ void
 PrintFormat::VER_MARKEDVERSION(OutputString *s, Package *package) const
 {
 	if(likely(!version_variables->isinst)) {
-		if(unlikely((likely(marked_list != NULLPTR)) && (unlikely(marked_list->is_marked(*package,
-			version_variables->version()))))) {
-			s->set_one();
+		if(unlikely(marked_list != NULLPTR) &&
+			likely(marked_list->applyMasks(package))) {
+			if(version_variables->version()->maskflags.isMarked()) {
+				s->set_one();
+			}
 		}
 	}
 }

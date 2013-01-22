@@ -13,15 +13,12 @@
 #include <sys/types.h>
 
 #include <map>
-#include <set>
 #include <stack>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "eixTk/null.h"
 #include "eixTk/outputstring.h"
-#include "portage/basicversion.h"
 #include "portage/extendedversion.h"
 #include "portage/package.h"
 #include "portage/set_stability.h"
@@ -30,11 +27,13 @@ class DBHeader;
 class EixRc;
 class IUseSet;
 class KeywordsFlags;
+class Mask;
 class MaskFlags;
 class Package;
 class PortageSettings;
 class VarDbPkg;
 class Version;
+template<typename m_Type> class MaskList;
 
 class Node {
 	public:
@@ -134,34 +133,6 @@ class FormatParser {
 		void getPosition(size_t *line, size_t *column);
 };
 
-class MarkedList : public std::multimap<std::string, BasicVersion*>
-{
-	public:
-		MarkedList() {}
-		~MarkedList()
-		{
-			for(const_iterator it(begin()); it != end(); ++it)
-			{
-				if(it->second)
-					delete it->second;
-			}
-		}
-
-		void add(const char *pkg, const char *ver) ATTRIBUTE_NONNULL((2));
-		/** Return pointer to (newly allocated) sorted vector of marked versions,
-		    or NULLPTR. With nonversion argument, its content will decide whether
-		    the package was marked with a non-version argument */
-		std::set<BasicVersion> *get_marked_versions(const Package &pkg, bool *nonversion = NULLPTR) const;
-		/** Return true if pkg is marked. If ver is non-NULLPTR also *ver must match */
-		bool is_marked(const Package &pkg, const BasicVersion *ver = NULLPTR) const;
-		/** Return String of marked versions (sorted) */
-		std::string getMarkedString(const Package &pkg) const;
-	private:
-		typedef const_iterator CI;
-		typedef std::pair<CI, CI> CIPair;
-		CIPair equal_range_pkg(const Package &pkg) const;
-};
-
 class VarParserCacheNode {
 	public:
 		FormatParser m_parser;
@@ -203,7 +174,7 @@ class PrintFormat {
 		std::vector<ExtendedVersion::Overlay> *overlay_translations;
 		std::vector<bool> *overlay_used;
 		bool          *some_overlay_used;
-		MarkedList    *marked_list;
+		MaskList<Mask> *marked_list;
 		EixRc         *eix_rc;
 		/* The following four variables are actually a hack:
 		   This is only set temporarily during printing to avoid
@@ -223,9 +194,9 @@ class PrintFormat {
 
 		void iuse_expand(OutputString *s, const IUseSet &iuse, bool coll) const;
 		void get_inst_use(OutputString *s, const Package &package, InstVersion *i, bool expand) const ATTRIBUTE_NONNULL_;
-		void get_installed(Package *package, Node *root, bool mark) const ATTRIBUTE_NONNULL_;
-		void get_versions_versorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2, 3));
-		void get_versions_slotsorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2, 3));
+		void get_installed(Package *package, Node *root) const ATTRIBUTE_NONNULL_;
+		void get_versions_versorted(Package *package, Node *root, bool only_marked) const ATTRIBUTE_NONNULL_;
+		void get_versions_slotsorted(Package *package, Node *root, bool only_marked) const ATTRIBUTE_NONNULL_;
 		void get_pkg_property(OutputString *s, Package *package, const std::string &name) const ATTRIBUTE_NONNULL_;
 
 		// It follows a list of indirect functions called in get_pkg_property():
@@ -245,9 +216,7 @@ class PrintFormat {
 		void colon_pkg_bestslotupgradeversions(Package *package, const std::string &after_colon, bool allow_unstable) const ATTRIBUTE_NONNULL_;
 		void COLON_PKG_BESTSLOTUPGRADEVERSIONS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
 		void COLON_PKG_BESTSLOTUPGRADEVERSIONSS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
-		void colon_pkg_installedversions(Package *package, const std::string &after_colon, bool only_marked) const ATTRIBUTE_NONNULL_;
 		void COLON_PKG_INSTALLEDVERSIONS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_INSTALLEDMARKEDVERSIONS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
 		void PKG_INSTALLED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_VERSIONLINES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_SLOTSORTED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
@@ -431,7 +400,7 @@ class PrintFormat {
 			some_overlay_used = some;
 		}
 
-		void set_marked_list(MarkedList *m_list)
+		void set_marked_list(MaskList<Mask> *m_list)
 		{ marked_list = m_list; }
 
 		void overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay, bool plain = false) const ATTRIBUTE_NONNULL_;
