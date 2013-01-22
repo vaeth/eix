@@ -195,8 +195,8 @@ class PrintFormat {
 		void iuse_expand(OutputString *s, const IUseSet &iuse, bool coll) const;
 		void get_inst_use(OutputString *s, const Package &package, InstVersion *i, bool expand) const ATTRIBUTE_NONNULL_;
 		void get_installed(Package *package, Node *root) const ATTRIBUTE_NONNULL_;
-		void get_versions_versorted(Package *package, Node *root, bool only_marked) const ATTRIBUTE_NONNULL_;
-		void get_versions_slotsorted(Package *package, Node *root, bool only_marked) const ATTRIBUTE_NONNULL_;
+		void get_versions_versorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2, 3));
+		void get_versions_slotsorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2, 3));
 		void get_pkg_property(OutputString *s, Package *package, const std::string &name) const ATTRIBUTE_NONNULL_;
 
 		// It follows a list of indirect functions called in get_pkg_property():
