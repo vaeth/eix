@@ -1539,7 +1539,7 @@ msgstr "Совпадений не найдено."
 #: src/eix.cc:1060
 #, c-format
 msgid "Found %s match."
-msgstr "Найдено %s совпадений."
+msgstr "Найдено %s совпадение."
 
 #: src/eix.cc:1178
 #, c-format
