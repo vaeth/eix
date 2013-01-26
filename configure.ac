@@ -30,7 +30,7 @@ dnl Exception is the AS_CASE macro where value and action are on the same line,
 dnl separated only with a space (and the indent level is increased for the
 dnl action if it needs more than one line).
 dnl Similar exceptions are macros where the arguments are closely connected
-dnl (like calls of most MV_* macros defined later).
+dnl (like calls of most MV_* macros).
 dnl
 dnl Commas and closing braces are appended without leading space or newlines;
 dnl in particular, no extra space is used even if several indent levels are
@@ -140,6 +140,14 @@ AC_ARG_ENABLE([security],
 	[AS_VAR_SET([security], [false])
 	AS_VAR_SET([cmt_security], ["default"])])
 
+AC_ARG_ENABLE([strong-security],
+	[AS_HELP_STRING([--enable-strong-security],
+		[append paranoic security options to flags; slowdown])],
+	[MV_ENABLE([strong-security])
+	AS_VAR_SET([cmt_strong_security], ["on request"])],
+	[AS_VAR_SET([strong_security], [false])
+	AS_VAR_SET([cmt_strong_security], ["default"])])
+
 AC_ARG_ENABLE([optimization],
 	[AS_HELP_STRING([--enable-optimization],
 		[append optimization flags])],
@@ -213,7 +221,13 @@ AS_IF([${strong_warnings}],
 	AS_VAR_SET([cmt_warnings], ["forced by strong warnings"])])
 MV_MSG_RESULT_BIN([${warnings}], [${cmt_warnings}])
 
+AC_MSG_CHECKING([whether strong security options should be used])
+MV_MSG_RESULT_BIN([${strong_security}], [${cmt_strong_security}])
+
 AC_MSG_CHECKING([whether security options should be used])
+AS_IF([${strong_security}],
+	[AS_VAR_SET([security], [:])
+	AS_VAR_SET([cmt_security], ["forced by strong security"])])
 MV_MSG_RESULT_BIN([${security}], [${cmt_security}])
 
 AC_MSG_CHECKING([whether options should not be tested individually])
@@ -281,7 +295,11 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
 AS_VAR_COPY([CXXFLAGS], [my_cxxflags])])
 
 AS_IF([${debugging}],
-	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+	[MV_ADDFLAGS([my_ldadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+			-g \
+			-ggdb3 \
+		], [${my_ldfatal}], [], [:], [${quicktrue}])
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-g \
 			-ggdb3 \
 		], [${my_cxxfatal}], [], [:], [${quicktrue}])])
@@ -400,6 +418,7 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			${gnuflags} \
 		], [${my_cxxfatal}], [${CPPFLAGS}], [:], [${quicktrue}])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
+			-Wpedantic \
 			-pedantic \
 			-Wall \
 			-Wextra \
@@ -493,6 +512,19 @@ AS_IF([${security}],
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-D_FORTIFY_SOURCE=2 \
 			-fstack-protector \
+		], [${my_cxxfatal}], [${CPPFLAGS}], [:], [${quicktrue}])])
+AS_IF([${strong_security}],
+	# We try to add -fsanitize=address to LDFLAGS before adding to CXXFLAGS
+	# since on some systems it requires also linking with a library.
+	[MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
+			-fstack-protector-all \
+			-faddress-sanitizer \
+			-fsanitize=address \
+		], [${my_ldfatal}], [], [:], [${quicktrue}])
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+			-fstack-protector-all \
+			-faddress-sanitizer \
+			-fsanitize=address \
 		], [${my_cxxfatal}], [${CPPFLAGS}], [:], [${quicktrue}])])
 
 # We are done with testing, the real flag mangling takes place:

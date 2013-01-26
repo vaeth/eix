@@ -29,9 +29,10 @@ Available options are
   -Y  Do not use new c++ dialect
   -jX Use -jX (currently ${jarg})
   -c OPT Add OPT to ./configure
-  -f  With --enable-quickcheck
-  -d  With --enable-debugging
-  -O  Pass --enable-strong-optimization --enable-security
+  -f  As -c --enable-quickcheck
+  -d  As -c --enable-debugging
+  -O  As -c --enable-strong-optimization -c --enable-security
+  -o  Do not pass --enable-strong-security
   -r  Change also directory permissions to root (for fakeroot-ng)"
 	exit ${1:-1}
 }
@@ -115,15 +116,16 @@ clear_ccache=false
 debugging=false
 command -v clang++ >/dev/null 2>&1 && clang=: || clang=false
 dialect='enable'
+strong_security=:
 OPTIND=1
-while getopts 'q01234gGdnewWsSrOfCxXyYdc:j:hH?' opt
+while getopts 'q01234gGdnewWsSrOofCxXyYdc:j:hH?' opt
 do	case ${opt} in
 	q)	quiet=:;;
 	0)	separate_all=false;;
-	1)	configure_extra="${configure_extra} --disable-separate-binaries";;
-	2)	configure_extra="${configure_extra} --enable-separate-update";;
-	3)	configure_extra="${configure_extra} --enable-separate-binaries";;
-	4)	configure_extra="${configure_extra} --enable-separate-tools";;
+	1)	configure_extra=${configure_extra}' --disable-separate-binaries';;
+	2)	configure_extra=${configure_extra}' --enable-separate-update';;
+	3)	configure_extra=${configure_extra}' --enable-separate-binaries';;
+	4)	configure_extra=${configure_extra}' --enable-separate-tools';;
 	g)	clang=:;;
 	G)	clang=false;;
 	d)	dep_default=false;;
@@ -131,10 +133,11 @@ do	case ${opt} in
 	e)	keepenv=:;;
 	w)	werror=:;;
 	W)	warnings=false;;
-	s)	configure_extra="${configure_extra} --with-sqlite";;
-	S)	configure_extra="${configure_extra} --without-sqlite";;
+	s)	configure_extra=${configure_extra}' --with-sqlite';;
+	S)	configure_extra=${configure_extra}' --without-sqlite';;
 	r)	use_chown=:;;
 	O)	optimization=:;;
+	o)	strong_security=false;;
 	f)	quickcheck=:;;
 	C)	use_ccache=false;;
 	x)	recache=:;;
@@ -142,8 +145,8 @@ do	case ${opt} in
 	y)	dialect='enable';;
 	Y)	dialect='disable';;
 	d)	debugging=:;;
-	c)	configure_extra="${configure_extra} ${OPTARG}";;
-	j)	[ -n "${OPTARG:++}" ] && jarg='-j${OPTARG}' || jarg=;;
+	c)	configure_extra=${configure_extra}" ${OPTARG}";;
+	j)	[ -n "${OPTARG:++}" ] && jarg='-j'${OPTARG} || jarg=;;
 	*)	Usage 0;;
 	esac
 done
@@ -165,19 +168,20 @@ then	SetCcache
 	fi
 fi
 
-[ -n "${dialect:++}" ] && configure_extra="${configure_extra} --${dialect}-new-dialect"
-${clang} && configure_extra="${configure_extra} --with-nongnu-cxx=${clang_cc}"
-${quickcheck} && configure_extra="${configure_extra} --enable-quickcheck"
-${dep_default} && configure_extra="${configure_extra} --with-dep-default"
-${separate_all} && configure_extra="${configure_extra} --enable-separate-binaries --enable-separate-tools"
-${optimization} && configure_extra="${configure_extra} --enable-strong-optimization --enable-security"
-${debugging} && configure_extra="${configure_extra} --enable-debugging"
+[ -n "${dialect:++}" ] && configure_extra=${configure_extra}" --${dialect}-new-dialect"
+${clang} && configure_extra=${configure_extra}" --with-nongnu-cxx=${clang_cc}"
+${quickcheck} && configure_extra=${configure_extra}' --enable-quickcheck'
+${dep_default} && configure_extra=${configure_extra}' --with-dep-default'
+${separate_all} && configure_extra=${configure_extra}' --enable-separate-binaries --enable-separate-tools'
+${optimization} && configure_extra=${configure_extra}' --enable-strong-optimization --enable-security'
+${strong_security} && configure_extra=${configure_extra}' --enable-strong-security'
+${debugging} && configure_extra=${configure_extra}' --enable-debugging'
 
 ${quiet} && quietredirect='>/dev/null' || quietredirect=
 
 if ${use_chown}
 then	ls /root >/dev/null 2>&1 && \
-		Die "you should not really be root when you use -r" 2
+		Die 'you should not really be root when you use -r' 2
 	chown -R root:root .
 fi
 
@@ -227,12 +231,12 @@ then	CFLAGS=`portageq envvar CFLAGS`
 		-ftracer
 	export CFLAGS CXXFLAGS LDFLAGS CPPFLAGS
 	if ${warnings}
-	then	configure_extra="${configure_extra} --enable-strong-warnings"
-		automake_extra="${automake_extra} -Wall"
+	then	configure_extra=${configure_extra}' --enable-strong-warnings'
+		automake_extra=${automake_extra}' -Wall'
 	fi
 	if ${werror}
-	then	CXXFLAGS="${CXXFLAGS} -Werror"
-		automake_extra="${automake_extra} -Werror"
+	then	CXXFLAGS=${CXXFLAGS}' -Werror'
+		automake_extra=${automake_extra}' -Werror'
 	fi
 fi
 Info "export CXXFLAGS=${CXXFLAGS}"
