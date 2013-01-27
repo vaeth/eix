@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2013-01-22 21:00:00 +0200 (Tue, 22 Jan 2013)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-01-27 11:00:00 +0200 (Tue, 22 Jan 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -326,8 +326,8 @@ and in less human-readable form (namely as an xml-schema) in the file eix-xml.xs
 Omit printing of additional information (overlay names, number of found packages) after the packages.
 This might be useful for some shell scripts parsing the output
 .TP
-.BR --only-names "   (toggle)"
-As "-*", but additionally print only the category and name of the packages found.
+.BR -# ", " --only-names "   (toggle)"
+As B<--pure-packages>, but additionally print only the category and name of the packages found.
 .TP
 .BR -0 ", " --brief "   (toggle)"
 Print at most one package then stop.
@@ -425,7 +425,7 @@ This is somehow ambiguous, since PATTERN can be omitted.
 This ambiguity is resolved by interpreting successive TEST_OPTIONS always as a
 part of one TEST_WITH_OPTIONS.
 For instance, in B<eix -I -O -e foo> all options are considered as part of a common I<EXPRESSION>
-(not as four B<EXPRESSION> as would be the case for B<eix -I '' -O '' -e '' foo>).
+(not as four I<EXPRESSION>s as would be the case for B<eix -I '' -O '' -e '' foo>).
 On the other hand, in B<eix -I --not -e> the B<--not> will cause the subsequent TEST_OPTION B<-e> to be considered as part of a new I<EXPRESSION>.
 Options other than TEST_OPTIONS or a logical option (like B<-!>, B<-(>, B<-)>, B<-a>, B<-o>) are ignored in this respect.
 For instance, B<eix -I -c -e> generates only one I<EXPRESSION>, since B<-c> is neither a TEST_OPTION nor a logical option

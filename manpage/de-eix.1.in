@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2013-01-22 21:00:00 +0200 (Tue, 22 Jan 2013)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-01-27 11:00:00 +0200 (Tue, 22 Jan 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -340,8 +340,8 @@ dokumentiert und auf weniger menschenlesbare Art (nämlich als XML-Schema) in de
 Diese Option verhindert die Ausgabe zusätzlicher Informationen (Overlaynamen, Zahl der gefundenen Pakete) am Ende.
 Dies kann für Shellskripte nützlich sein, die die Ausgabe parsen.
 .TP
-.BR --only-names "   (toggle)"
-Wie "-*", aber zusätzlich werden nur Kategorie und Name der gefundenen Pakete ausgegeben.
+.BR -# ", " --only-names "   (toggle)"
+Wie B<--pure-packages>, aber zusätzlich werden nur Kategorie und Name der gefundenen Pakete ausgegeben.
 .TP
 .BR -0 ", " --brief "   (toggle)"
 Ausgabe von höchstens einem Paket.
@@ -440,7 +440,7 @@ Dies ist etwas zweideutig, da SUCHMUSTER weggelassen werden kann.
 Diese Zweideutigkeit wird so aufgelöst, dass aufeinanderfolgende TEST_OPTIONEN stets als
 ein Teil eines einzige TEST_MIT_OPTIONEN aufgefasst werden.
 Beispielsweise werden in B<eix -I -O -e foo> alle Optionen als Teil eines einzigen I<AUSDRUCK> interpretiert
-(nicht als vier B<AUSDRUCK>-Argumente wie es etwas bei B<eix -I '' -O '' -e '' foo> der Fall wäre).
+(nicht als vier I<AUSDRUCK>-Argumente wie es etwas bei B<eix -I '' -O '' -e '' foo> der Fall wäre).
 Andererseits wird das B<--not> in B<eix -I --not -e> nicht dazu führen, dass die darauffolgende
 TEST_OPTION B<-e> als Teil eines neuen I<AUSDRUCK>s verstanden wird.
 Andere Optionen als TEST_OPTIONEN oder logische Optionen (wie B<-!>, B<-(>, B<-)>, B<-a>, B<-o>) werden diesbezüglich ignoriert.
