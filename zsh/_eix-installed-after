@@ -1,7 +1,7 @@
 #compdef eix-installed-after
-local context state state_descr line
+local curcontext="$curcontext" state state_descr line expl
 typeset -A opt_args
-_arguments -s -S -A '-*' : \
+_arguments -C -s -S -A '-*' : \
 '(1 -)'{'-h','-\\?'}'[help]' \
 '-I[include the given package in the output]' \
 '(1 -b -L -l -a -A -I -e -F -S -V)-f[output full list of packages]' \
@@ -25,18 +25,21 @@ _arguments -s -S -A '-*' : \
 local ret=$?
 case $state in
 (package)
-	local d
-	local -x NEWLINE=false CAREMODE=false QUICKMODE=true FORCE_COLORS=false \
-		RESTRICT_INSTALLED=false USE_BUILD_TIME=false \
-		FORMAT='<installedversions:I>' I
-	if (( $words[(i)(-*[lLV]*)] < CURRENT ))
-	then	d='-version'
-		I='-<version>'
-	else	d='[:slot]'
-		I='{slots}:<slot>{}'
-	fi
-	I='<category>/<name>'"$I"'\n'
-	_wanted package expl 'category/package'"$d" compadd -- $(eix '-I*' 2>/dev/null)
+	_tag packages
+	_requested packages && {
+		local d
+		local -x NEWLINE=false CAREMODE=false QUICKMODE=true \
+			FORCE_COLORS=false RESTRICT_INSTALLED=false \
+			USE_BUILD_TIME=false FORMAT='<installedversions:I>' I
+		if (( $words[(i)(-*[lLV]*)] < CURRENT ))
+		then	_description packages expl 'category/package-version'
+			I='-<version>'
+		else	_description packages expl 'category/package[:slot]'
+			I='{slots}:<slot>{}'
+		fi
+		I='<category>/<name>'"$I"'\n'
+		compadd "$expl[@]" --$(eix '-I*' 2>/dev/null)
+	}
 	ret=$?;;
 esac
 return ret

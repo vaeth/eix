@@ -1,7 +1,7 @@
 #compdef eix-remote
-local context state state_descr line
+local curcontext="$curcontext" state state_descr line
 typeset -A opt_args
-_arguments -s -S -A '-*' : \
+_arguments -C -s -S -A '-*' : \
 '(1 -)'{'-h','-\\?'}'[help]' \
 '-k[keep permissions]' \
 '-K[keep permissions, resistent to -i]' \

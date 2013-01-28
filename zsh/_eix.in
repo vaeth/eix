@@ -1,10 +1,8 @@
 #compdef eix eix-diff eix-update
-local context state state_descr line
+local curcontext="$curcontext" state state_descr line expl
 typeset -A opt_args
 
-local service_opts excl_opt field installed ret
-local sets i j k c w is_or addarg eixopt portdir
-local -aU o
+local service_opts excl_opt ret i
 
 # Options common to diff-eix and eix
 service_opts=(
@@ -154,8 +152,7 @@ case $service in
 {'*--regex','*-r'}'[pattern is regular expression]'
 )
 # find out search field and whether to check only installed packages
-	field=
-	installed=
+	local c w is_or local field= installed=
 	if ((CURRENT>2))
 	then	is_or=false
 		case $(PRINT_APPEND= eix --print DEFAULT_IS_OR 2>/dev/null) in
@@ -163,7 +160,7 @@ case $service in
 			is_or=:;;
 		esac
 		for ((i=2;i<CURRENT;++i))
-		do	case $words[$i] in
+		do	case $words[i] in
 			(--)
 				i=$CURRENT;;
 			(--print-overlay-(path|label)|--cache-file|--format(-compact|-verbose|)|--(only-|)in-overlay|--installed-(from|in)-overlay|--fuzzy|--print)
@@ -176,7 +173,7 @@ case $service in
 			(--(multi-|)installed)
 				installed='installed';;
 			(--category|--name|--description|--homepage|--license)
-				field="${words[$i]#--}";;
+				field=${words[i]#--};;
 			(--category-name)
 				field='category/name';;
 			(--use|--installed-with(out|)-use)
@@ -199,7 +196,7 @@ case $service in
 			(-[!-]*)
 				w=$words[$i]
 				for ((c=2;c<=$#w;++c))
-				do	case $w[$c] in
+				do	case $w[c] in
 					([f])
 						if ((c==$#w))
 						then	((++i))
@@ -236,7 +233,7 @@ case $service in
 );;
 esac
 
-_arguments -s -S : \
+_arguments -C -s -S : \
 "$excl_opt"{'--help','-h'}'[help]' \
 "$excl_opt"{'--version','-v'}'[version]' \
 "$excl_opt"'--print[print expanded variable value]:variable:->vars' \
@@ -249,64 +246,109 @@ $service_opts
 ret=$?
 case $state in
 (vars)
-	compadd $@ -- ${(f)"$($service --known-vars)"}
-	ret=$?;;
+	_requested variables && {
+		_description variables expl 'eix variable name'
+		compadd "$expl[@]" - ${(f)"$($service --known-vars)"}
+		ret=$?
+	};;
 (overlay)
-	o=($(PRINT_APPEND= eix --print PORTDIR_OVERLAY 2>/dev/null))
-	o+=("$(PRINT_APPEND= eix --print PORTDIR 2>/dev/null)")
-	o+=({0..$#o})
-	compadd $@ -- $o
-	ret=$?;;
+	_requested overlays && {
+		local -ua o
+		o=($(PRINT_APPEND= eix --print PORTDIR_OVERLAY 2>/dev/null))
+		o+=("$(PRINT_APPEND= eix --print PORTDIR 2>/dev/null)")
+		o+=({0..$#o})
+		_description overlays expl 'overlay'
+		compadd "$expl[@]" - $o
+		ret=$?
+	};;
 (args)
-	addarg=($@ --)
+	local -a eixopt
 	eixopt=('-*')
 	[[ -z $installed ]] || eixopt+=('-I')
 	local -x NEWLINE=false CAREMODE=false QUICKMODE=true FORCE_COLORS=false \
 		RESTRICT_INSTALLED=false USE_BUILD_TIME=false
 	case $field in
 	(category)
-		compadd $addarg $(eix $eixopt --format '<category>\n' 2>/dev/null);;
+		_tags categories
+		_requested categories && {
+			_description categories expl 'package category'
+			compadd "$expl[@]" - $(eix $eixopt --format '<category>\n' 2>/dev/null)
+		};;
 	(name)
-		compadd $addarg $(eix $eixopt --format '<name>\n' 2>/dev/null);;
+		_tags packages
+		_requested packages && {
+			_description packages expl 'package name'
+			compadd "$expl[@]" - $(eix $eixopt --format '<name>\n' 2>/dev/null)
+		};;
 	(category/name)
-		compadd $addarg $(eix $eixopt --only-names 2>/dev/null);;
+		_tags packages
+		_requested packages && {
+			_description packages expl 'category/name'
+			compadd "$expl[@]" - $(eix $eixopt --only-names 2>/dev/null)
+		};;
 	(package)
-		case $PREFIX in
+		_tags packages
+		_requested packages && case $PREFIX in
 		(*/*)
+			_description packages expl 'category/name'
+			i=${PREFIX%/*}
 			compset -P '*/'
-			compadd $addarg $(eix $eixopt -PC "${IPREFIX%/}" --format '<name>\n' 2>/dev/null);;
+			compadd "$expl[@]" - $(eix $eixopt -C "${i}" --format '<name>\n' 2>/dev/null);;
 		(*)
+			_description packages expl 'package'
 			i=($(eix $eixopt --only-names 2>/dev/null))
-			compadd $addarg ${i:t}
-			compadd $addarg[1,-2] -S '/' -- ${i%%/*};;
+			compadd "$expl[@]" - ${i:t} ${i%%/*}/
 		esac;;
 	(useflag)
-		compadd $addarg ${$(eix --print-all-useflags 2>/dev/null)##[()+-]#};;
+		_tags useflags
+		_requested useflags && {
+			_description useflags expl 'useflag'
+			compadd "${expl[@]}" - ${$(eix --print-all-useflags 2>/dev/null)##[()+-]#}
+		};;
 	(license)
-		compadd $addarg ${$(eix --print-all-licenses 2>/dev/null)//([\(\)\|]|[![:space:]]#\?)/};;
+		_tags licenses
+		_requested licenses && {
+			_description licenses expl 'license'
+			compadd "${expl[@]}" - ${$(eix --print-all-licenses 2>/dev/null)//([\(\)\|]|[![:space:]]#\?)/}
+		};;
 	(slot)
-		compadd $addarg $(eix --print-all-slots 2>/dev/null);;
+		_tags slots
+		_requested slots && {
+			_description slots expl 'slots'
+			compadd "${expl[@]}" - $(eix --print-all-slots 2>/dev/null)
+		};;
 	(homepage)
-		compadd $addarg $(eix $eixopt --format '<homepage>\n' 2>/dev/null);;
+		_tags homepages
+		_requested homepages && {
+			_description homepages expl 'homepage'
+			compadd "${expl[@]}" - $(eix $eixopt --format '<homepage>\n' 2>/dev/null)
+		};;
 	(set)
-		o=($(PRINT_APPEND= eix --print PORTDIR_OVERLAY 2>/dev/null))
-		portdir="$(PRINT_APPEND= eix --print PORTDIR 2>/dev/null)"
-		sets=()
-		for i in ${="$(PRINT_APPEND= eix --print EIX_LOCAL_SETS 2>/dev/null)"}
-		do	case $i in
-			(/*)
-				[[ -d $i ]] && sets+=($i);;
-			('*'*)
-				k=${i#'*'}
-				for j in $o
-				do	[[ -d "$j$k" ]] && sets+=("$j$k")
-				done;;
-			(*)	[[ -d "$portdir$i" ]] && sets+=("$portdir$i");;
-			esac
-		done
-		if (($#sets))
-		then	compadd $addarg ${${(f)"$(find -L $sets -type f -name '[!.]*' -print 2>/dev/null)"}:t}
-		fi;;
+		_tags sets
+		_requested sets && () {
+			local -ua o
+			local portdir j k
+			local -a sets
+			o=($(PRINT_APPEND= eix --print PORTDIR_OVERLAY 2>/dev/null))
+			portdir="$(PRINT_APPEND= eix --print PORTDIR 2>/dev/null)"
+			sets=()
+			for i in ${="$(PRINT_APPEND= eix --print EIX_LOCAL_SETS 2>/dev/null)"}
+			do	case $i in
+				(/*)
+					[[ -d $i ]] && sets+=($i);;
+				('*'*)
+					k=${i#'*'}
+					for j in $o
+					do	[[ -d "$j$k" ]] && sets+=("$j$k")
+					done;;
+				(*)	[[ -d "$portdir$i" ]] && sets+=("$portdir$i");;
+				esac
+			done
+			if (($#sets))
+			then	_description sets expl 'set'
+				compadd "${expl[@]}" - ${${(f)"$(find -L $sets -type f -name '[!.]*' -print 2>/dev/null)"}:t}
+			fi
+		};;
 	esac
 	ret=$?;;
 esac

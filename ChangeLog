@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.28.3
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fixes in zsh-completion: content, tags, use always _description
+
 *eix-0.28.2
 	Артём Воротников <vorot93 at yandex.ru>:
 	- Russian translation fixes and updates
