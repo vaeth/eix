@@ -1,8 +1,13 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.28.3
+	Артём Воротников <vorot93 at yandex.ru>:
+	- Russian translation fixes and updates
+
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fixes in zsh-completion: content, tags, use always _description
+	- Make copy-constructors non-explicit as required in new C++ standard,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=456064
 
 *eix-0.28.2
 	Артём Воротников <vorot93 at yandex.ru>:

@@ -30,7 +30,7 @@ public:
 	explicit OutputString(const char *s) : m_string(s)
 	{ append_internal(s); }
 
-	explicit OutputString(const OutputString &s) :
+	OutputString(const OutputString &s) :
 		m_string(s.m_string), m_size(s.m_size), m_insert(s.m_insert), absolute(s.absolute)
 	{ }
 
