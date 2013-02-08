@@ -82,6 +82,6 @@ namespace eix {
 				clear();
 			}
 	};
-}
+}  // namespace eix
 
 #endif  // SRC_EIXTK_PTR_LIST_H_

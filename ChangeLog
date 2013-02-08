@@ -8,6 +8,7 @@
 	- Fixes in zsh-completion: content, tags, use always _description
 	- Make copy-constructors non-explicit as required in new C++ standard,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=456064
+	- Pass Google's current cpplint-3.231
 
 *eix-0.28.2
 	Артём Воротников <vorot93 at yandex.ru>:

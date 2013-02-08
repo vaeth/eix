@@ -38,6 +38,6 @@ namespace eix {
 			return ((a < 0) ? -1 : 1);
 		}
 	}
-}
+}  // namespace eix
 
 #endif  // SRC_EIXTK_EIXINT_H_

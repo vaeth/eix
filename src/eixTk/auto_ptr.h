@@ -34,6 +34,6 @@ namespace eix {
 		protected:
 			m_Type* m_p;
 	};
-}
+}  // namespace eix
 
 #endif  // SRC_EIXTK_AUTO_PTR_H_

@@ -254,6 +254,6 @@ GCC_DIAG_ON(sign-conversion)
 
 	bool write_packagetree(const PackageTree &pkg, const DBHeader &hdr, FILE *fp, std::string *errtext);
 	bool read_packagetree(PackageTree *tree, const DBHeader &hdr, PortageSettings *ps, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 3, 4));
-}
+}  // namespace io
 
 #endif  // SRC_DATABASE_IO_H_

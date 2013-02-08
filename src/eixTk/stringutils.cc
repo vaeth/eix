@@ -61,7 +61,7 @@ char *
 strndup(const char *s, size_t n)
 {
 	const char *p(s);
-	while(likely(*p++ && n--));
+	while(likely(*p++ && n--)) {}
 	n = p - s - 1;
 	char *r(static_cast<char *>(malloc(n + 1)));
 	if(r) {

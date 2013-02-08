@@ -32,6 +32,6 @@ namespace eix {
 	/// numeric comparison.
 	/// @note empty strings count a "0"
 	eix::SignedBool numeric_compare(const std::string& left, const std::string& right) ATTRIBUTE_PURE;
-}
+}  // namespace eix
 
 #endif  // SRC_EIXTK_COMPARE_H_
