@@ -56,7 +56,7 @@ class PrintXml {
 			clear(eixrc);
 		}
 
-		explicit PrintXml(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir) ATTRIBUTE_NONNULL_
+		PrintXml(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir) ATTRIBUTE_NONNULL_
 		{ init(header, vardb, printformat, set_stability, eixrc, port_dir); }
 
 		PrintXml() : hdr(NULLPTR), var_db_pkg(NULLPTR), print_format(NULLPTR), stability(NULLPTR)

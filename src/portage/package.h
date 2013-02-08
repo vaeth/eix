@@ -57,7 +57,7 @@ class SlotVersions
 		VersionList &version_list()
 		{ return m_version_list; }
 
-		explicit SlotVersions(const char *s, Version *v)  ATTRIBUTE_NONNULL((2, 3)) :
+		SlotVersions(const char *s, Version *v)  ATTRIBUTE_NONNULL((2, 3)) :
 			m_slotname(s), m_version_list(v)
 		{ }
 };

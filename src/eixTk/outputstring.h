@@ -34,7 +34,7 @@ public:
 		m_string(s.m_string), m_size(s.m_size), m_insert(s.m_insert), absolute(s.absolute)
 	{ }
 
-	explicit OutputString(const std::string &t, std::string::size_type s) :
+	OutputString(const std::string &t, std::string::size_type s) :
 		m_string(t), m_size(s), absolute(false)
 	{ }
 

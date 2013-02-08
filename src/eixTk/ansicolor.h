@@ -39,7 +39,7 @@ class AnsiColor {
 		AnsiColor()
 		{ }
 
-		explicit AnsiColor(const std::string &str, std::string *errtext)
+		AnsiColor(const std::string &str, std::string *errtext)
 		{ initcolor(str, errtext); }
 
 		static const char *reset()

@@ -59,7 +59,7 @@ class Text : public Node {
 		explicit Text(const OutputString &t) : Node(TEXT), text(t)
 		{ }
 
-		explicit Text(const std::string &t, std::string::size_type s) : Node(TEXT), text(t, s)
+		Text(const std::string &t, std::string::size_type s) : Node(TEXT), text(t, s)
 		{ }
 };
 

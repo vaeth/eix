@@ -42,34 +42,34 @@ class Option
 		KEEP_PAIR_OPTIONAL     /**< Do not remove. Pair of strings arg. */
 	} type;
 
-	explicit Option(const char *l, int s, enum Type t, int *i) ATTRIBUTE_NONNULL((2, 5))
+	Option(const char *l, int s, enum Type t, int *i) ATTRIBUTE_NONNULL((2, 5))
 		: type(t), longopt(l), shortopt(s)
 	{ u.integer = i; }
 
-	explicit Option(const char *l, int s, enum Type t, bool *b) ATTRIBUTE_NONNULL((2, 5))
+	Option(const char *l, int s, enum Type t, bool *b) ATTRIBUTE_NONNULL((2, 5))
 		: type(t), longopt(l), shortopt(s)
 	{ u.boolean = b; }
 
-	explicit Option(const char *l, int s, enum Type t, const char **c) ATTRIBUTE_NONNULL((2, 5))
+	Option(const char *l, int s, enum Type t, const char **c) ATTRIBUTE_NONNULL((2, 5))
 		: type(t), longopt(l), shortopt(s)
 	{ u.str = c; }
 
-	explicit Option(const char *l, int s, enum Type t, const char **c1, const char **c2) ATTRIBUTE_NONNULL((2, 5, 6))
+	Option(const char *l, int s, enum Type t, const char **c1, const char **c2) ATTRIBUTE_NONNULL((2, 5, 6))
 		: type(t), longopt(l), shortopt(s)
 	{
 		u.pr.first = c1;
 		u.pr.second = c2;
 	}
 
-	explicit Option(const char *l, int s, enum Type t, std::list<const char*> *c) ATTRIBUTE_NONNULL((2, 5))
+	Option(const char *l, int s, enum Type t, std::list<const char*> *c) ATTRIBUTE_NONNULL((2, 5))
 		: type(t), longopt(l), shortopt(s)
 	{ u.strlist = c; }
 
-	explicit Option(const char *l, int s, enum Type t, std::list<ArgPair> *c) ATTRIBUTE_NONNULL((2, 5))
+	Option(const char *l, int s, enum Type t, std::list<ArgPair> *c) ATTRIBUTE_NONNULL((2, 5))
 		: type(t), longopt(l), shortopt(s)
 	{ u.prlist = c; }
 
-	explicit Option(const char *l, int s, enum Type t = KEEP) ATTRIBUTE_NONNULL((2))
+	Option(const char *l, int s, enum Type t = KEEP) ATTRIBUTE_NONNULL((2))
 		: type(t), longopt(l), shortopt(s)
 	{ }
 
