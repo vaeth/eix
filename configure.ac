@@ -46,8 +46,10 @@ dnl    primitive scripts.
 AC_INIT([eix], [0.28.3], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
 AC_PREREQ([2.64])
 
-AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_MACRO_DIRS([m4 martinm4])
+m4_ifdef([AC_CONFIG_MACRO_DIR],
+	[AC_CONFIG_MACRO_DIR([m4])])
+m4_ifdef([AC_CONFIG_MACRO_DIRS],
+	[AC_CONFIG_MACRO_DIRS([m4 martinm4])])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_FILES([
 		Makefile
