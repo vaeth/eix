@@ -328,6 +328,8 @@ AS_IF([${optimization}],
 			-finline-functions \
 			-fvisibility=hidden \
 			-fvisibility-inlines-hidden \
+			-ftree-pre \
+			-ftree-partial-pre \
 			${gnuflags} \
 		], [${my_cxxfatal}], [], [:], [${quicktrue}])
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_FALSE], [ \
