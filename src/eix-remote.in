@@ -37,6 +37,7 @@ fi
 
 addr='@DEFAULT_REMOTE_PATH@'
 ReadVar archive EIX_REMOTEARCHIVE
+export REMOTE_DEFAULT=false
 
 Usage() {
 	n=${0##*/}

@@ -5,6 +5,8 @@
 	- Russian translation fixes and updates
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix eix-update with REMOTE_DEFAULT=true, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=462040
 	- Fixes in zsh-completion: content, tags, use always _description
 	- Make copy-constructors non-explicit as required in new C++ standard,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=456064

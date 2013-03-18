@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-01-22 21:32+0100\n"
+"POT-Creation-Date: 2013-03-18 11:38+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -37,7 +37,7 @@ msgstr "Probleme mit ${eixf_cmd}"
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-functions.sh.in:308 src/eix-remote.sh:305
+#: src/eix-functions.sh.in:308 src/eix-remote.sh:306
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
@@ -338,7 +338,7 @@ msgstr ""
 "-H            Keine Ausgabe der Statuszeile\n"
 "-q            Keine Ausgabe"
 
-#: src/eix-layman.sh:133 src/eix-remote.sh:249 src/eix-update.cc:668
+#: src/eix-layman.sh:133 src/eix-remote.sh:250 src/eix-update.cc:668
 msgid "Analyzing"
 msgstr "Analyse"
 
@@ -347,11 +347,11 @@ msgstr "Analyse"
 msgid "failed to execute ${prg}"
 msgstr "Konnte ${prg} nicht ausführen"
 
-#: src/eix-remote.sh:45
+#: src/eix-remote.sh:46
 msgid "temporary file"
 msgstr "Temporärdatei"
 
-#: src/eix-remote.sh:46
+#: src/eix-remote.sh:47
 #, sh-format
 msgid ""
 "Usage: ${n} [options] command\n"
@@ -479,34 +479,34 @@ msgstr ""
 "-H      Keine Ausgabe der Statuszeile\n"
 "-q      Keine Ausgabe"
 
-#: src/eix-remote.sh:108
+#: src/eix-remote.sh:109
 #, sh-format
 msgid "$LOCAL_LAYMAN must not be empty"
 msgstr "$LOCAL_LAYMAN darf nicht leer sein"
 
-#: src/eix-remote.sh:110
+#: src/eix-remote.sh:111
 #, sh-format
 msgid "$LOCAL_LAYMAN must start with /"
 msgstr "$LOCAL_LAYMAN muss mit / beginnen"
 
-#: src/eix-remote.sh:167
+#: src/eix-remote.sh:168
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "Wechseln ins Directory ${a} nicht möglich"
 
-#: src/eix-remote.sh:198
+#: src/eix-remote.sh:199
 msgid "Downloading remote data"
 msgstr "Daten herunterladen"
 
-#: src/eix-remote.sh:200
+#: src/eix-remote.sh:201
 msgid "cannot cd to tempdir"
 msgstr "Wechseln ins Temporärdirectory nicht möglich"
 
-#: src/eix-remote.sh:210
+#: src/eix-remote.sh:211
 msgid "failed: "
 msgstr "Fehler bei: "
 
-#: src/eix-remote.sh:220
+#: src/eix-remote.sh:221
 #, sh-format
 msgid ""
 "Probably your eix cachefile was *not* updated successfully.\n"
@@ -549,45 +549,45 @@ msgstr ""
 "eix-remote benutzen zu können. Dies ist unbequem, kann aber leider nicht\n"
 "vermieden werden und ist kein Bug!"
 
-#: src/eix-remote.sh:241
+#: src/eix-remote.sh:242
 msgid "Unpacking data"
 msgstr "Entpacken der Daten"
 
-#: src/eix-remote.sh:242
+#: src/eix-remote.sh:243
 #, sh-format
 msgid "cannot unpack ${a}"
 msgstr "${a} ist nicht entpackbar"
 
-#: src/eix-remote.sh:270
+#: src/eix-remote.sh:271
 #, sh-format
 msgid "problems occurred with cachefile ${i}"
 msgstr "Probleme mit Cachefile ${i}"
 
-#: src/eix-remote.sh:290
+#: src/eix-remote.sh:291
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "Fehler beim Lesen einiger eix-Cachefiles von ${a}"
 
-#: src/eix-remote.sh:296
+#: src/eix-remote.sh:297
 #, sh-format
 msgid "Output to remote database ${EIX_REMOTE}"
 msgstr "Ausgabe auf Remote-Datenbank ${EIX_REMOTE}"
 
-#: src/eix-remote.sh:315
+#: src/eix-remote.sh:316
 msgid "A temporary file makes only sense for update mode"
 msgstr "Eine Temporärdate ergibt nur im Update-Modus Sinn"
 
-#: src/eix-remote.sh:326
+#: src/eix-remote.sh:327
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
 msgstr "Temporärdatei kann nicht nach ${file} kopiert werden"
 
-#: src/eix-remote.sh:338
+#: src/eix-remote.sh:339
 #, sh-format
 msgid "cannot read ${archive}"
 msgstr "Datei ${archive} nicht lesbar"
 
-#: src/eix-remote.sh:357
+#: src/eix-remote.sh:358
 #, sh-format
 msgid "mkdir ${tmpsub} failed"
 msgstr "Fehler bei mkdir ${tmpsub}"
