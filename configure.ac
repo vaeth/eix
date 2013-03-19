@@ -558,7 +558,7 @@ AC_PROG_SED()
 
 # Add the libintl support if needed.
 dnl LT_INIT()
-AM_GNU_GETTEXT_VERSION([0.17])
+AM_GNU_GETTEXT_VERSION([0.18.2])
 AM_GNU_GETTEXT([external])
 AS_CASE([${USE_NLS}],
 	[yes],
@@ -1126,15 +1126,36 @@ AC_DEFINE_UNQUOTED([ARCH_DEFAULT],
 	[Default DEFAULT_ARCH])
 AC_SUBST([ARCH_DEFAULT])
 
-AC_MSG_CHECKING([default remote path])
-AC_ARG_WITH([remote-file],
-	[AS_HELP_STRING([--with-remote-file=STR],
-		[default remote file for eix-remote])],
-	[AS_VAR_COPY([DEFAULT_REMOTE_PATH], [withval])],
-	[AS_VAR_SET([DEFAULT_REMOTE_PATH],
+AC_MSG_CHECKING([swap remote paths])
+AC_ARG_ENABLE([swap-remote],
+	[AS_HELP_STRING([--enable-swap-remote],
+		[swap the remote paths])],
+	[AS_VAR_SET([swap_remote], [:])],
+	[AS_VAR_SET([swap_remote], [false])])
+MV_MSG_RESULT_BIN([${swap_remote}])
+
+AC_MSG_CHECKING([default remote path 1])
+AC_ARG_WITH([remote-file1],
+	[AS_HELP_STRING([--with-remote-path1=STR],
+		[default remote path 1 for eix-remote])],
+	[AS_VAR_COPY([DEFAULT_REMOTE_PATH1], [withval])],
+	[AS_VAR_SET([DEFAULT_REMOTE_PATH1],
 		["http://dev.gentooexperimental.org/eix_cache/eix-caches.tbz2"])])
-MV_MSG_RESULT_VAR([DEFAULT_REMOTE_PATH])
-AC_SUBST([DEFAULT_REMOTE_PATH])
+AC_ARG_WITH([remote-file2],
+	[AS_HELP_STRING([--with-remote-path2=STR],
+		[default remote path 2 for eix-remote])],
+	[AS_VAR_COPY([DEFAULT_REMOTE_PATH2], [withval])],
+	[AS_VAR_SET([DEFAULT_REMOTE_PATH2],
+		["http://gpo.zugaina.org/eix_cache/eix-cache.tbz2"])])
+AS_IF([${swap_remote}],
+	[AS_VAR_COPY([swap_remote], [DEFAULT_REMOTE_PATH1])
+	AS_VAR_COPY([DEFAULT_REMOTE_PATH1], [DEFAULT_REMOTE_PATH2])
+	AS_VAR_COPY([DEFAULT_REMOTE_PATH2], [swap_remote])])
+MV_MSG_RESULT_VAR([DEFAULT_REMOTE_PATH1])
+AC_SUBST([DEFAULT_REMOTE_PATH1])
+AC_MSG_CHECKING([default remote path 2])
+MV_MSG_RESULT_VAR([DEFAULT_REMOTE_PATH2])
+AC_SUBST([DEFAULT_REMOTE_PATH2])
 
 AC_MSG_CHECKING([ALWAYS_ACCEPT_KEYWORDS default])
 AC_ARG_WITH([always-accept-keywords],
@@ -1200,17 +1221,29 @@ AC_DEFINE_UNQUOTED([EIX_PREVIOUS],
 	[Location of the previous cachefile])
 AC_SUBST([EIX_PREVIOUS])
 
-EIX_REMOTECACHEFILE="/var/cache/eix/remote.eix"
-AC_DEFINE_UNQUOTED([EIX_REMOTECACHEFILE],
-	["${EIX_REMOTECACHEFILE}"],
-	[Location of the remote cachefile])
-AC_SUBST([EIX_REMOTECACHEFILE])
+EIX_REMOTECACHEFILE1="/var/cache/eix/remote.eix"
+AC_DEFINE_UNQUOTED([EIX_REMOTECACHEFILE1],
+	["${EIX_REMOTECACHEFILE1}"],
+	[Location of the remote cachefile 1])
+AC_SUBST([EIX_REMOTECACHEFILE1])
 
-EIX_REMOTEARCHIVE="/var/cache/eix/remote.tar.bz2"
-AC_DEFINE_UNQUOTED([EIX_REMOTEARCHIVE],
-	["${EIX_REMOTEARCHIVE}"],
-	[Location of the local remote cache archive])
-AC_SUBST([EIX_REMOTEARCHIVE])
+EIX_REMOTECACHEFILE2="/var/cache/eix/remote2.eix"
+AC_DEFINE_UNQUOTED([EIX_REMOTECACHEFILE2],
+	["${EIX_REMOTECACHEFILE2}"],
+	[Location of the remote cachefile 2])
+AC_SUBST([EIX_REMOTECACHEFILE2])
+
+EIX_REMOTEARCHIVE1="/var/cache/eix/remote.tar.bz2"
+AC_DEFINE_UNQUOTED([EIX_REMOTEARCHIVE1],
+	["${EIX_REMOTEARCHIVE1}"],
+	[Location of the local remote cache archive 1])
+AC_SUBST([EIX_REMOTEARCHIVE1])
+
+EIX_REMOTEARCHIVE2="/var/cache/eix/remote2.tar.bz2"
+AC_DEFINE_UNQUOTED([EIX_REMOTEARCHIVE2],
+	["${EIX_REMOTEARCHIVE2}"],
+	[Location of the local remote cache archive 2])
+AC_SUBST([EIX_REMOTEARCHIVE2])
 
 AC_DEFINE_UNQUOTED([LEVENSHTEIN_DISTANCE_DEFAULT],
 	["2"],

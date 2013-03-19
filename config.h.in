@@ -63,11 +63,17 @@
 /* Location of the previous cachefile */
 #undef EIX_PREVIOUS
 
-/* Location of the local remote cache archive */
-#undef EIX_REMOTEARCHIVE
+/* Location of the local remote cache archive 1 */
+#undef EIX_REMOTEARCHIVE1
 
-/* Location of the remote cachefile */
-#undef EIX_REMOTECACHEFILE
+/* Location of the local remote cache archive 2 */
+#undef EIX_REMOTEARCHIVE2
+
+/* Location of the remote cachefile 1 */
+#undef EIX_REMOTECACHEFILE1
+
+/* Location of the remote cachefile 2 */
+#undef EIX_REMOTECACHEFILE2
 
 /* Define to 1 if asserts for static initializers should be used */
 #undef EIX_STATIC_ASSERT
@@ -94,11 +100,11 @@
 /* Define to 1 if you have the `canonicalize_file_name' function. */
 #undef HAVE_CANONICALIZE_FILE_NAME
 
-/* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
+/* Define to 1 if you have the Mac OS X function CFLocaleCopyCurrent in the
    CoreFoundation framework. */
 #undef HAVE_CFLOCALECOPYCURRENT
 
-/* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
+/* Define to 1 if you have the Mac OS X function CFPreferencesCopyAppValue in
    the CoreFoundation framework. */
 #undef HAVE_CFPREFERENCESCOPYAPPVALUE
 

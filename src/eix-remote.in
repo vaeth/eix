@@ -35,40 +35,52 @@ then	prg=./eix-drop-permissions
 	die "`eval_gettext 'failed to execute ${prg}'`"
 fi
 
-addr='@DEFAULT_REMOTE_PATH@'
-ReadVar archive EIX_REMOTEARCHIVE
-export REMOTE_DEFAULT=false
+addr1='@DEFAULT_REMOTE_PATH1@'
+addr2='@DEFAULT_REMOTE_PATH2@'
+ReadVar archive1 EIX_REMOTEARCHIVE1
+ReadVar archive2 EIX_REMOTEARCHIVE2
 
 Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	f=${archive}
+	f1=${archive1}
+	f2=${archive2}
 	[ -n "${f:+}" ] || f=`gettext 'temporary file'`
 	eval_gettext 'Usage: ${n} [options] command
 Get data from a remote database for ${p}.
 The following commands are provided:
 
-update: Fetch the eix-caches of some layman overlays, store them locally in
-        EIX_REMOTEARCHIVE (${f})
-        and add them to the eix database.
-        If EIX_REMOTE is nonempty the output goes to that separate database.
-        You can use eix -R or set REMOTE_DEFAULT=true to access this
-        alternative database.
-        If EIX_REMOTE is empty the output is added to EIX_CACHEFILE.
+update1 (=update) or update2:
+        Fetch the eix-caches of some layman overlays, store them locally in
+        EIX_REMOTEARCHIVE1 (${f1}) or
+        EIX_REMOTEARCHIVE2 (${f2}),
+        respectively and add them to the eix database.
+        If EIX_REMOTE1 or EIX_REMOTE2, respectively, is nonempty the output
+        goes to that separate database.
+        You can use eix -R or eix -Z or set REMOTE_DEFAULT=1 or 2
+        to access this alternative database.
+        If EIX_REMOTE1 or EIX_REMOTE2 is empty the output is added to
+        EIX_CACHEFILE.
         In this case, to keep the remote data across eix-update calls
         you might want to set KEEP_VIRTUALS=true in /etc/eixrc
-add:    Only do the second task (add EIX_REMOTEARCHIVE without fetching).
-        If EIX_REMOTE is nonempty, it makes sense to call this regularly
-        after eix-update so that eix -R will show synchronized data.
+add1 (=add) or add2:
+        Only do the second task (add EIX_REMOTEARCHIVE? without fetching).
+        If EIX_REMOTE? is nonempty, it makes sense to call this regularly
+        after eix-update so that eix -R? will show synchronized data.
         It makes sense in this case to put this into your eix-sync.conf:
-        @@eix-remote add
-fetch:  Only do the first task (fetch eix-caches to EIX_REMOTEARCHIVE).
+        @@eix-remote add1
+        @@eix-remote add2
+fetch1 (=fetch) or fetch2:
+        Only do the first task (fetch eix-caches to EIX_REMOTEARCHIVE).
         If you want to download the most current remote data at every call of
         eix-sync put the following lines to your eix-sync.conf:
-        @eix-remote fetch
-        @@eix-remote add
+        @eix-remote fetch1
+        @@eix-remote add1
+        @eix-remote fetch2
+        @@eix-remote add2
 remove: Remove all temporarily added virtual overlays from the eix database.
-        This makes only sense if EIX_REMOTE is empty. The effect is similar to
+        This makes only sense if EIX_REMOTE? is empty.
+        The effect is similar to
         	KEEP_VIRTUALS=false eix-update
         but faster (using previous cachefile where possible).
 
@@ -76,7 +88,7 @@ The script will try to change its permissions to that of user EIX_USER
 before doing anything else (unless option -k or an empty user is specified),
 using sudo or su (see options -s and -S).
 
-For "update" and "add" all corresponding local layman overlay paths are
+For "update?" and "add?" all corresponding local layman overlay paths are
 excluded from the update of the current database to avoid confusion.
 These local paths are determined by prefixing the path
 	${LOCAL_LAYMAN}
@@ -93,8 +105,9 @@ The following options are available:
 -k      Keep permissions: Without this option, eix-drop-permissions is used.
 -K      As -k, but cannot be reset with -i
 -l PATH Use PATH as LOCAL_LAYMAN
--a ADDR Use ADDR as remote database address. Current value:
-        ${addr}
+-a ADDR Use ADDR as remote database address instead of:
+        ${addr1}
+        ${addr2}
 -i      Ignore all previous options (e.g. ignore EIX_REMOTE_OPTS).
 -v      Verbose (default)
 -H      Suppress status line update
@@ -137,6 +150,7 @@ InitLocalLayman() {
 }
 
 DefaultOpts() {
+	addr=
 	verbose=:
 	statusline=:
 	keep=false
@@ -199,6 +213,7 @@ The default should have been set with ./configure --remote-file'`"
 	Statusline "`gettext 'Downloading remote data'`"
 	(
 		CdDir "${tmpdir}" || die "`gettext 'cannot cd to tempdir'`"
+		umask 002
 		set -- wget -N
 		${verbose} || set -- "${@}" --no-verbose
 		set -- "${@}" -- "${addr}"
@@ -265,7 +280,7 @@ AddArchive() {
 		Replace -g n '_' '?'
 		n="*/${n}"
 		p="${2}/${i}"
-		l=`EIX_CACHEFILE=${p} eix --print-overlay-data "${n}"` \
+		l=`eix --cache-file "${p}" --print-overlay-data "${n}"` \
 			&& [ -n "${l:++}" ] || {
 			Echo "`eval_gettext \
 				'problems occurred with cachefile ${i}'`" >&2
@@ -290,12 +305,13 @@ AddArchive() {
 	[ ${exitcode} -ne 0 ] && \
 		msg=`eval_gettext 'could not read all eix cachefiles of ${a}'`
 	die_on_update_failure=false
-	ReadVar EIX_REMOTE EIX_REMOTE
+	ReadVar ${eix_remote_var} ${eix_remote_var}
+	eval eix_remote=\${${eix_remote_var}}
 	(
-		if [ -n "${EIX_REMOTE:++}" ]
+		if [ -n "${eix_remote:++}" ]
 		then	einfo "`eval_gettext \
-				'Output to remote database ${EIX_REMOTE}'`"
-			AddUpdateArgs '-o' "${EIX_REMOTE}"
+				'Output to remote database ${eix_remote}'`"
+			AddUpdateArgs '-o' "${eix_remote}"
 			umask 002
 		fi
 		KEEP_VIRTUALS=true
@@ -360,12 +376,21 @@ Update() {
 	AddArchive "${file}" "${tmpsub}"
 }
 
+number=1
+case ${1} in
+*2)
+	number=2;;
+esac
+[ -n "${addr}" ] || eval addr=\${addr${number}}
+eval archive=\${archive${number}}
+eix_remote_var=EIX_REMOTE${number}
+
 case ${1-} in
-update)
+update|update[12])
 	Update;;
-fetch)
+fetch|fetch[12])
 	Fetch;;
-add)
+add|add[12])
 	Add;;
 remove)
 	Remove;;

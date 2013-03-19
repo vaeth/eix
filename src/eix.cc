@@ -132,7 +132,8 @@ dump_help()
 "     -Q, --quick (toggle)  don't read unguessable slots of installed packages\n"
 "         --care            always read slots of installed packages\n"
 "         --cache-file      use another cache-file instead of %s\n"
-"     -R  --remote (toggle) use remote cache-file %s\n"
+"     -R  --remote (toggle)  use remote cache-file %s\n"
+"     -Z  --remote2 (toggle) use remote cache-file %s\n"
 "\n"
 "   Output:\n"
 "     -q, --quiet (toggle)   no output. Typically combined with -0\n"
@@ -242,7 +243,11 @@ dump_help()
 "    -f [m], --fuzzy [m]   Use fuzzy-search with a max. levenshtein-distance m.\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"), program_name, EIX_CACHEFILE, EIX_REMOTECACHEFILE);
+"further information.\n"),
+	program_name,
+	EIX_CACHEFILE,
+	EIX_REMOTECACHEFILE1,
+	EIX_REMOTECACHEFILE2);
 }
 
 static const char *format_normal, *format_verbose, *format_compact;
@@ -264,6 +269,8 @@ enum OverlayMode
 static OverlayMode overlay_mode;
 
 static PrintFormat *format;
+
+static eix::TinyUnsigned remote_default;
 
 /** Local options for argument reading. */
 static struct LocalOptions {
@@ -297,6 +304,7 @@ static struct LocalOptions {
 		ignore_etc_portage,
 		is_current,
 		remote,
+		remote2,
 		hash_iuse,
 		hash_keywords,
 		hash_slot,
@@ -371,6 +379,7 @@ EixOptionList::EixOptionList()
 
 	push_back(Option("cache-file",     O_EIX_CACHEFILE, Option::STRING, &eix_cachefile));
 	push_back(Option("remote",         'R', Option::BOOLEAN, &rc_options.remote));
+	push_back(Option("remote2",        'Z', Option::BOOLEAN, &rc_options.remote2));
 
 	// Options for criteria
 	push_back(Option("installed",     'I'));
@@ -482,7 +491,19 @@ setup_defaults(EixRc *rc)
 	rc_options.quick           = rc->getBool("QUICKMODE");
 	rc_options.be_quiet        = rc->getBool("QUIETMODE");
 	rc_options.care            = rc->getBool("CAREMODE");
-	rc_options.remote          = rc->getBool("REMOTE_DEFAULT");
+	switch(rc->getInteger("REMOTE_DEFAULT")) {
+		case 1:
+			remote_default = 1;
+			rc_options.remote = true;
+			break;
+		case 2:
+			remote_default = 2;
+			rc_options.remote2 = true;
+			break;
+		default:
+			remote_default = 0;
+			break;
+	}
 
 	format_verbose             = (*rc)["FORMAT_VERBOSE"].c_str();
 	format_compact             = (*rc)["FORMAT_COMPACT"].c_str();
@@ -620,8 +641,13 @@ run_eix(int argc, char** argv)
 	if(unlikely(eix_cachefile != NULLPTR)) {
 		cachefile = eix_cachefile;
 	} else {
+		if((remote_default == 1) && rc_options.remote2) {
+			rc_options.remote = false;  // Command line option wins
+		}
 		if(rc_options.remote) {
-			cachefile = eixrc["EIX_REMOTE"];
+			cachefile = eixrc["EIX_REMOTE1"];
+		} else if(rc_options.remote2) {
+			cachefile = eixrc["EIX_REMOTE2"];
 		}
 		if(cachefile.empty()) {
 			cachefile = eixrc["EIX_CACHEFILE"];

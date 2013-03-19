@@ -580,7 +580,8 @@ SUFFIXES = .in
 		-e "s,\@PORTDIR_CACHE_METHOD\@,$(PORTDIR_CACHE_METHOD),g" \
 		-e "s,\@BINDIR\@,$(bindir),g" \
 		-e "s,\@SYSCONFDIR\@,$(sysconfdir),g" \
-		-e "s,\@DEFAULT_REMOTE_PATH\@,$(DEFAULT_REMOTE_PATH),g" \
+		-e "s,\@DEFAULT_REMOTE_PATH1\@,$(DEFAULT_REMOTE_PATH1),g" \
+		-e "s,\@DEFAULT_REMOTE_PATH2\@,$(DEFAULT_REMOTE_PATH2),g" \
 		-e "s,/dev/null,$(DEV_NULL),g" \
 		-e "s,\./eix-functions\.sh\.in,'$(bindir)/eix-functions.sh',g" \
 		-e "s,\./eix-drop-permissions,'$(bindir)/eix-drop-permissions',g" \

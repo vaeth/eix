@@ -5,12 +5,17 @@
 	- Russian translation fixes and updates
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Fix eix-update with REMOTE_DEFAULT=true, see
+	- Support secondary remote database:
+	  Default: gentoo and zugaina (http://gpo.zugaina.org)
+	  New option -Z, --remote2; modify REMOTE_DEFAULT correspondingly
+	- Fix eix-update with REMOTE_DEFAULT, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=462040
-	- Fixes in zsh-completion: content, tags, use always _description
+	- Fixes in zsh-completion: content, tags, use always _description,
+	  add some forgotten options like -R (and new -Z)
 	- Make copy-constructors non-explicit as required in new C++ standard,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=456064
 	- Pass Google's current cpplint-3.231
+	- Use gettext-0.18.2
 	- Compile also with <automake-1.13
 
 *eix-0.28.2

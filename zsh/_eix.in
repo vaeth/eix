@@ -51,6 +51,8 @@ case $service in
 "$excl_opt"'--256d0[print dark ansi color palette (normal)]'
 "$excl_opt"'--256d1[print dark ansi color palette (bright)]'
 "$excl_opt"'--256b[print ansi color palette for background]'
+{'(--remote)-R','(-R)--remote'}'[use remote database 1]'
+{'(--remote2)-Z','(-Z)--remote2'}'[use remote database 2]'
 {'(--versionsort)-x','(-x)--versionsort'}'[sort output by slots/versions]'
 {'(--versionlines)-l','(-l)--versionlines'}'[output versions line by line]'
 {'(--compact)-c','(-c)--compact'}'[use \$FORMAT_COMPACT]'

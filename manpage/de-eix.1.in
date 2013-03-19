@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2013-01-27 11:00:00 +0200 (Tue, 22 Jan 2013)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-03-19 17:00:00 +0200 (Tue, 19 Mar 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -61,9 +61,9 @@ B<eix-test-obsolete> ist ein Skript, das B<eix> mehrmals aufruft, um die Ausgabe
 B<eix-remote> kann eine Eix-Datenbank von einem externen Server syncen und ihn zum
 lokalen Cache hinzufügen und wieder entfernen.
 Per default benutzt es ein separates Datenbankfile.
-Bei diesem Default sollten Sie regelmäig B<eix-remote add> nach <eix-update>
+Bei diesem Default sollten Sie regelmäig B<eix-remote add1> und/oder <eix-remote add2> nach <eix-update>
 aufrufen, so dass das separate Cachefile mit der Hauptdatenbank synchron ist.
-(Beispielsweise ist es in diesem Fall sinnvoll, B<@@eix-remote add> zu
+(Beispielsweise ist es in diesem Fall sinnvoll, B<@@eix-remote add1> und/oder B<@@eix-remote add1> zu
 I<@SYSCONFDIR@/eix-sync.conf> hinzuzufügen.)
 Falls das selbe Datenbankfile benutzt wird, können dennoch solche Remote-Daten über
 B<eix-update>-Aufrufe hinweg erhalten werden, indem man B<KEEP_VIRTUALS=true> in I<@SYSCONFDIR@/eixrc> setzt.
@@ -379,9 +379,15 @@ Diese Dateien (und wie ihre Namen geändert werden können) wird später beschri
 
 .TP
 .BR -R ", " --remote
-Benutzt den Wert von EIX_REMOTE als Namen für das Cachefile.
+Benutzt den Wert von EIX_REMOTE1 als Namen für das Cachefile.
 Diese Option sollten Sie benutzen, wenn Sie das Ergebnis von <eix-remote> sehen wollen.
-Sie können diese Option per Default aktivieren, indem Sie B<REMOTE_DEFAULT=true> setzen.
+Sie können diese Option per Default aktivieren, indem Sie B<REMOTE_DEFAULT=1> setzen.
+
+.TP
+.BR -Z ", " --remote2
+Benutzt den Wert von EIX_REMOTE2 als Namen für das Cachefile.
+Diese Option sollten Sie benutzen, wenn Sie das Ergebnis von <eix-remote> sehen wollen.
+Sie können diese Option per Default aktivieren, indem Sie B<REMOTE_DEFAULT=2> setzen.
 
 .TP
 .BI "--cache-file " FILE
@@ -1621,12 +1627,12 @@ layman-Aufrufe und B<!>-Hooks in der Reihenfolge von I<@SYSCONFDIR@/eix-sync.con
 .TP
 Einige Beispiele nützlicher Zeilen in I<@SYSCONFDIR@/eix-sync.conf>:
 .TP
-.B @@eix-remote add
-Diese Zeile sollte bei Benutzung des Defaults (nichtleeres B<EIX_REMOTE>)
-im File stehen, so dass die B<EIX_REMOTE> Datenbank mit der Hauptdatenbank von
+.B @@eix-remote add1
+Diese Zeile sollte bei Benutzung des Defaults (nichtleeres B<EIX_REMOTE1>)
+im File stehen, so dass die B<EIX_REMOTE1> Datenbank mit der Hauptdatenbank von
 eix am Ende von B<eix-sync> synchronisiert wird.
 .TP
-.B @eix-remote fetch
+.B @eix-remote fetch1
 Dies empfiehlt sich zusätzlich zur obigen Zeile, falls gewünscht ist, dass die
 aktuellsten Remote-Daten regelmäßig bei jedem Aufruf von B<eix-sync> heruntergeladen werden.
 .TP
@@ -2047,17 +2053,18 @@ Die alte eix-Cachedatei für eix-diff und eix-sync,
 normalerweise B<%{EPREFIX}@EIX_PREVIOUS@>
 
 .TP
-.BR EIX_REMOTE " " (string)
-Die eix-Cachedatei, die bei -R benutzt wird.
+.BR EIX_REMOTE1 ", " EIX_REMOTE1 " " (string)
+Die eix-Cachedatei, die bei B<-R> bzw. B<-Z> benutzt wird.
 Falls der String nichtleer ist, benutzt eix-remote diese Datanbank zur Ausgabe.
-Der Default-Wert ist B<%{EPREFIX}@EIX_REMOTECACHEFILE@>
+Der Default-Wert ist B<%{EPREFIX}@EIX_REMOTECACHEFILE1@> bzw. B<%{EPREFIX}@EIX_REMOTECACHEFILE2@>
 
 .TP
-.BR REMOTE_DEFAULT " " (bool)
-Ob die eix-Option -R per Default an sein soll.
+.BR REMOTE_DEFAULT " " (integer)
+Der Wert 1, 2 oder 0 bedeutet, dass per Default die Option
+B<-R> bzw. B<-Z> bzw. weder noch aktiviert ist.
 
 .TP
-.BR EIX_REMOTEARCHIVE " " (string)
+.BR EIX_REMOTEARCHIVE1 ", " EIX_REMOTEARCHIVE2 " " (string)
 Eine lokale Kopie des Remote-Archivs, auf das eix-remote zugreift.
 Falls es leer ist, werden nur Temporärdateien benutzt.
 
@@ -2126,7 +2133,7 @@ selbst dann, wenn die aktuelle world-Datei lesbar sein sollte.
 Andernfalls wird die aktuelle world-Datei (wenn sie lesbar ist), diese Information überschreiben.
 
 .TP
-.BR EIX_USER ", " EIX_GROUP ", " EIX_UID ", " EIX_GID
+.BR EIX_USER ", " EIX_GROUP ", " EIX_UID ", " EIX_GID " " (string / integer)
 B<eix>, B<eix-diff>, B<eix-update>, B<eix-drop-permissions> und B<eix-remote>
 ändern so früh wie möglich ihre Rechte zu B<EIX_USER>/B<EIX_GROUP>
 (bzw. zu den ID-Zahlen B<EIX_UID>/B<EIX_GID>, falls die vorherigen Variablen
@@ -2141,13 +2148,13 @@ dieses Benutzers gewählt; andernfalls schrumpft die Gruppenliste auf
 einen einzelnen Eintrag zusammen.
 
 .TP
-.BR PORTAGE_ROOTPATH ", " PORTAGE_BIN_PATH
+.BR PORTAGE_ROOTPATH ", " PORTAGE_BIN_PATH " " (string)
 Falls nichtleer, werden diese Variablen unverändert an ebuild.sh für die Cachemethode B<ebuild*> übergeben.
 Beachte, dass ebuild.sh diese Variablen benutzt, um den PATH zu ermitteln, so dass diese
 Werte extrem sicherheitsrelevant sind!
 
 .TP
-.BR DEFAULT_ARCH
+.BR DEFAULT_ARCH " " (string)
 Der Default-Wert für ARCH, falls keiner im Profile spezifiert ist.
 
 .TP
@@ -3326,11 +3333,11 @@ Der Pfad kann mit der Variablen B<EIX_PREVIOUS> geändert werden
 (deren Default B<EPREFIX> über verzögerte Ersetzung berücksichtigt).
 .\" }}}
 
-.\" {{{ -------- @EIX_REMOTEARCHIVE@
-.SS @EIX_REMOTEARCHIVE@
+.\" {{{ -------- @EIX_REMOTEARCHIVE1@ und @EIX_REMOTEARCHIVE2@
+.SS @EIX_REMOTEARCHIVE1@ und @EIX_REMOTEARCHIVE2@
 Dies ist eine lokale Kopie des Remote-Archivs, das von eix-remote benutzt wird.
-Der Pfad kann mit der Variablen B<EIX_REMOTEARCHIVE> geändert werden
-(deren Default B<EPREFIX> über verzögerte Ersetzung berücksichtigt).
+Der Pfad kann mit der Variablen B<EIX_REMOTEARCHIVE1> bzw. B<EIX_REMOTEARCHIVE2>
+geändert werden (deren Defaults B<EPREFIX> über verzögerte Ersetzung berücksichtigen).
 .\" }}}
 .\" }}}
 
@@ -3654,18 +3661,18 @@ Auch B<eix-diff> hieß früher B<diff-eix>,
 B<eix-remote> hieß früher B<update-eix-remote>,
 B<eix-layman> hieß früher B<update-eix-layman>, und
 B<eix-functions.sh> hieß früher B<functions-eix.sh> (und viel früher B<update-eix-functions.sh>).
-Der Grund für all diese Umbenennungen ist ein konsitenteres Namensschema:
+Der Grund für all diese Umbenennungen ist ein konsistenteres Namensschema:
 Alle mit eix verbundenen Programme beginnen jetzt mit eix-* (nur mit Ausnahme
-von B<versionsort>, was aber ohnehin mehr oder weniger unabhängig ist).
+von B<versionsort>, das aber ohnehin mehr oder weniger unabhängig ist).
 
 Falls Sie sich nicht an diese neuen Namen gewöhnen können, oder falls Sie alte
 Skripte haben, die die alten Namen benötigen, können Sie symbolische Links
 für die alten Namen benutzen; dies ist ausdrücklich zulässig, und es ist
 nicht geplant, die Unterstützung dafür fallenzulassen.
 
-Früher gab es eine B<./configure>-Option, umd solche symbolischen Links
+Früher gab es eine B<./configure>-Option, um solche symbolischen Links
 oder eine Erinnerung an ihre Entfernung automatisch zu installieren,
-aber Option wurde in eix-0.24.0 entfernt.
+aber diese Option wurde in eix-0.24.0 entfernt.
 
 Durch die Einführung der %{*VARIABLE}-Syntax in eix-0.8.0 ist es nicht mehr
 vernünftig, verschiedene Variablennamen für eix und eix-diff zu benutzen.
@@ -3681,7 +3688,7 @@ so dass eix mit der B<flat>/B<assign>-Cachemethode Pakete finden könnte,
 die es gar nicht mehr im Portagebaum gibt.
 Um dies zu vermeiden, hatte eix-sync den alten Cache gelöscht
 (rm -rf /var/cache/edb/dep/*).
-Da die meisten Nutzer dies Cachemethode nicht mehr benutzen müssen,
+Da die meisten Nutzer diese Cachemethode nicht mehr benutzen müssen,
 und das Löschen des alten Caches den nächsten Start von Portage verlangsamt,
 ist dies nicht mehr der Default (aber immer noch als Option verfügbar,
 die man nach I<@SYSCONFDIR@/eix-sync.conf> schreiben kann).

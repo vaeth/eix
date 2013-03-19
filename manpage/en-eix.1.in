@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2013-01-27 11:00:00 +0200 (Tue, 22 Jan 2013)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-03-19 17:00:00 +0200 (Tue, 19 Mar 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -63,9 +63,9 @@ the output of B<eix -tTc> in a more organized manner.
 
 B<eix-remote> can sync an eix database from an external server and
 add/remove it to the current database. By default it uses a separate cachefile.
-With this default you should regularly call B<eix-remote add> after <eix-update>
+With this default you should regularly call B<eix-remote add1> and/or B<eix-remote add2> after <eix-update>
 so that the separate cachefile is synchronized with your main database.
-(E.g. it is useful to put B<@@eix-remote add> to your I<@SYSCONFDIR@/eix-sync.conf> in this case.)
+(E.g. it is useful to put B<@@eix-remote add1> and/or B<@@eix-remote add2> to your I<@SYSCONFDIR@/eix-sync.conf> in this case.)
 If you use the same cachefile you can keep such remote data across eix-update
 calls by setting B<KEEP_VIRTUALS=true> in I<@SYSCONFDIR@/eixrc>.
 By default, this script drops its permissions using B<eix-drop-permissions>.
@@ -366,9 +366,15 @@ These files (and how to modify their filenames) are described later.
 
 .TP
 .BR -R ", " --remote
-Uses the value of B<EIX_REMOTE> as cache file name.
+Uses the value of B<EIX_REMOTE1> as cache file name.
 Use this option if you want to see what B<eix-remote> produced.
-You can make this option the default by setting B<REMOTE_DEFAULT=true>.
+You can make this option the default by setting B<REMOTE_DEFAULT=1>.
+
+.TP
+.BR -Z ", " --remote2
+Uses the value of B<EIX_REMOTE2> as cache file name.
+Use this option if you want to see what B<eix-remote> produced.
+You can make this option the default by setting B<REMOTE_DEFAULT=2>.
 
 .TP
 .BI "--cache-file " FILE
@@ -1601,11 +1607,11 @@ layman calls and B<!> hooks in order of I<@SYSCONFDIR@/eix-sync.conf>
 .TP
 Some examples of useful lines in I<@SYSCONFDIR@/eix-sync.conf>:
 .TP
-.B @@eix-remote add
-This should be put into the file if you use the default (a nonempty B<EIX_REMOTE>)
-so that your B<EIX_REMOTE> database is synchronized with your main eix database at the end of B<eix-sync>.
+.B @@eix-remote add1
+This should be put into the file if you use the default (a nonempty B<EIX_REMOTE1>)
+so that your B<EIX_REMOTE1> database is synchronized with your main eix database at the end of B<eix-sync>.
 .TP
-.B @eix-remote fetch
+.B @eix-remote fetch1
 Use this in addition to the above line if you want that the most current
 remote data is downloaded with every call of B<eix-sync>.
 .TP
@@ -2024,17 +2030,18 @@ The previous eix cachefile for eix-diff and eix-sync,
 usually B<%{EPREFIX}@EIX_PREVIOUS@>
 
 .TP
-.BR EIX_REMOTE " " (string)
-The eix cache used when -R is in effect.
+.BR EIX_REMOTE1 ", " EIX_REMOTE2 " " (string)
+The eix cache used when B<-R> or B<-Z> is in effect.
 If the string is nonempty, eix-remote uses this file for the output.
-The default value is B<%{EPREFIX}@EIX_REMOTECACHEFILE@>
+The default value is B<%{EPREFIX}@EIX_REMOTECACHEFILE1@>
+or B<%{EPREFIX}@EIX_REMOTECACHEFILE1@>, respectively.
 
 .TP
-.BR REMOTE_DEFAULT " " (bool)
-Whether eix option -R should be on by default.
+.BR REMOTE_DEFAULT " " (integer)
+The value 1, 2, or 0 means that eix option B<-R>, B<-Z>, or neither is the default.
 
 .TP
-.BR EIX_REMOTEARCHIVE " " (string)
+.BR EIX_REMOTEARCHIVE1 ", "  EIX_REMOTEARCHIVE2 " " (string)
 This is a local copy of the remote archive used by eix-remote.
 If it is empty, only temporary files are used.
 
@@ -2105,7 +2112,7 @@ even if your current world file is readable.
 Otherwise, your current world file (if it is readable) overrides that information.
 
 .TP
-.BR EIX_USER ", " EIX_GROUP ", " EIX_UID ", " EIX_GID
+.BR EIX_USER ", " EIX_GROUP ", " EIX_UID ", " EIX_GID " " (string / integer)
 B<eix>, B<eix-diff>, B<eix-update>, B<eix-drop-permissions>, and B<eix-remote>
 change to the permissions of B<EIX_USER>/B<EIX_GROUP>
 (using the ID-numbers B<EIX_UID>/B<EIX_GID> if the former have no valid name)
@@ -2119,12 +2126,12 @@ If B<EIX_USER> is a valid name, the full grouplist of that user
 is chosen; otherwise, the grouplist is shrinked to a singleton.
 
 .TP
-.BR PORTAGE_ROOTPATH ", " PORTAGE_BIN_PATH
+.BR PORTAGE_ROOTPATH ", " PORTAGE_BIN_PATH " " (string)
 If nonempty, these variables are passed unchanged to ebuild.sh for cache method B<ebuild*>.
 Note that ebuild.sh uses these variables to calculate the PATH, so this may be a severe security issue.
 
 .TP
-.BR DEFAULT_ARCH
+.BR DEFAULT_ARCH " " (string)
 The default ARCH if none is specified by the profile.
 
 .TP
@@ -3242,11 +3249,11 @@ The path can be changed with the B<EIX_PREVIOUS> variable
 (which by default honours B<EPREFIX> via delayed reference).
 .\" }}}
 
-.\" {{{ -------- @EIX_REMOTEARCHIVE@
-.SS @EIX_REMOTEARCHIVE@
+.\" {{{ -------- @EIX_REMOTEARCHIVE1@ @EIX_REMOTEARCHIVE2@
+.SS @EIX_REMOTEARCHIVE1@ @EIX_REMOTEARCHIVE2@
 This is a local copy of the remote archive, used by eix-remote.
-The path can be changed with the B<EIX_REMOTEARCHIVE> variable
-(which by default honours B<EPREFIX> via delayed reference).
+The path can be changed with the B<EIX_REMOTEARCHIVE1> or B<EIX_REMOTEARCHIVE1>
+variable, respectively (which by default honour B<EPREFIX> via delayed reference).
 .\" }}}
 .\" }}}
 

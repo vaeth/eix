@@ -159,17 +159,27 @@ AddOption(STRING, "EIX_PREVIOUS",
 	"%{EPREFIX}" EIX_PREVIOUS, _(
 	"This file is the previous eix cache (used by eix-diff and eix-sync)."));
 
-AddOption(STRING, "EIX_REMOTE",
-	"%{EPREFIX}" EIX_REMOTECACHEFILE, _(
+AddOption(STRING, "EIX_REMOTE1",
+	"%{EPREFIX}" EIX_REMOTECACHEFILE1, _(
 	"This is the eix cache used when -R is in effect. If the string is nonempty,\n"
 	"eix-remote uses this file for the output."));
 
-AddOption(BOOLEAN, "REMOTE_DEFAULT",
-	"false", _(
-	"Whether eix option -R should be on by default."));
+AddOption(STRING, "EIX_REMOTE2",
+	"%{EPREFIX}" EIX_REMOTECACHEFILE2, _(
+	"This is the eix cache used when -Z is in effect. If the string is nonempty,\n"
+	"eix-remote uses this file for the output."));
 
-AddOption(STRING, "EIX_REMOTEARCHIVE",
-	"%{EPREFIX}" EIX_REMOTEARCHIVE, _(
+AddOption(INTEGER, "REMOTE_DEFAULT",
+	"0", _(
+	"1, 2, or 0 means that eix option -R, -Z, or neither is the default."));
+
+AddOption(STRING, "EIX_REMOTEARCHIVE1",
+	"%{EPREFIX}" EIX_REMOTEARCHIVE1, _(
+	"This is a local copy of the remote archive used by eix-remote.\n"
+	"If the name is empty, only a temporary file is used."));
+
+AddOption(STRING, "EIX_REMOTEARCHIVE2",
+	"%{EPREFIX}" EIX_REMOTEARCHIVE2, _(
 	"This is a local copy of the remote archive used by eix-remote.\n"
 	"If the name is empty, only a temporary file is used."));
 
