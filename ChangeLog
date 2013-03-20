@@ -15,6 +15,7 @@
 	- Make copy-constructors non-explicit as required in new C++ standard,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=456064
 	- Pass Google's current cpplint-3.231
+	- Be nice to gcc-4.8 (e.g. -Wno-long-long for broken pre-includes)
 	- Use gettext-0.18.2
 	- Compile also with <automake-1.13
 

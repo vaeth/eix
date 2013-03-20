@@ -411,9 +411,11 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 		[AS_VAR_SET([gnuflags], ["
 			-fdirectives-only
 			-ftracer
+			-Wno-long-long \
 			"])],
 		[AS_VAR_SET([gnuflags], ["
 			-Wno-unknown-warning-option \
+			-Wlong-long \
 			"])])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
 			-fno-common \
@@ -452,7 +454,6 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wpacked \
 			-Wredundant-decls \
 			-Winvalid-pch \
-			-Wlong-long \
 			-Wvolatile-register-var \
 			-Wdisabled-optimization \
 			-Wlogical-op \
