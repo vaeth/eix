@@ -728,26 +728,26 @@ bool
 EixRc::istrue(const char *s)
 {
 	switch(s[0]) {
-		case 'y':
-		case 'Y':
-		case '1':
-		case 't':
-		case 'T':
-		case ':':
-			return true;
+		case 0:
+		case 'N':
+		case 'n':
+		case 'f':
+		case 'F':
+		case '0':
+			return false;
 		case 'o':
 		case 'O':
 			switch(s[1]) {
-				case 'n':
-				case 'N':
-					return true;
+				case 'f':
+				case 'F':
+					return false;
 				default:
 					break;
 			}
 		default:
 			break;
 	}
-	return false;
+	return true;
 }
 
 void

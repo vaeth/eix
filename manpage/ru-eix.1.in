@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2013-03-19 17:00:00 +0200 (Tue, 19 Mar 2013)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-03-28 16:00:00 +0200 (Thu, 28 Mar 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -2393,13 +2393,26 @@ B<TERM_ALT1_ADD> and B<TERM_ALT2_ADD> via delayed substitution.
 So when you just want to add something to the default lists, add it to
 B<TERM_ALT?_ADD>.
 
-B<EXAMPLE 1:> If you want to use solarized (8/16) colors on all terminals you can set
+B<EXAMPLE 1:> If you want to force 8/16 colors on all terminals you can set
 B<TERM_ALT3=.> to select all terminals for the B<COLORSCHEME3> default
 (which is B<COLORSCHEME0>, see below).
+Users of Ethan Schoonover's B<solarized> colorscheme should only do this if
+they want to force keeping the original 16 solarized colors.
+Otherwise they can just set B<SOLARIZED> (see the separate description).
 
 B<EXAMPLE 2:> If you want to tell eix that TERM=rxvt means a 256 color terminal, set B<TERM_ALT1_ADD=rxvt>.
 (This is no longer the default, because there are rxvt versions which support only 88 colors and set TERM=rxvt;
 thus assuming 256 colors would produce completely broken colors.)
+.TP
+.BR SOLARIZED (true / light / dark / false)
+This variable is only used in delayed substitution in the default values of the B<COLORSCHEME?> variables:
+If B<SOLARIZED> is not false then the default always chooses a colorscheme which assumes that
+the terminal output uses Ethan Schoonover's Solarized colorscheme (light or dark are both supported,
+independent of the particular values of B<SOLARIZED>).
+There is even a 256color solarized scheme available: If your terminal supports it,
+additional colors besides the 16 solarized colors are used.
+This is somewhat against Ethan Schoonover's original philosophy about solarized,
+but eix carries so much information in colors that this extension appears reasonable.
 .TP
 .BR COLORSCHEME0 ", " COLORSCHEME1 ", " COLORSCHEME2 ", " COLORSCHEME3 " " "(list of integers)"
 Which of these variables is actually used depends on which B<TERM_ALT?> matches B<TERM>;
@@ -2413,9 +2426,16 @@ The value 0 means that the first I<COLORSTRING> of each color specification is u
 for higher numbers a correspondingly later I<COLORSTRING> is used.
 If the number is too high, the first I<COLORSTRING> is used.
 
+The default values of the B<COLORSCHEME?> variables honour the values of the variable B<SOLARIZED>:
+If B<SOLARIZED> is set then the default is to use a colorscheme which was developed based on
+Ethan Schoonover's Solarized system colors (both, light and dark mode are supported;
+in 256 color capable terminals additional colors were added).
+Note that this only gives a reasonable output if the terminal was previously
+configured to use the solarized colors as system colors.
+
 The numbers in the default settings are:
 
-0: Dark basic scheme (for black background)
+0: Dark basic scheme (for black background) or solarized for 8/16 colors
 
 1: Dark scheme for 256 colors
 
@@ -2423,9 +2443,11 @@ The numbers in the default settings are:
 
 3: Light scheme for 256 colors
 
+4: Ethan Schoonover's Solarazied scheme, extended for 256 color terminals
+
 The variables B<BG0>, B<BG1>, B<BG2>, B<BG3> are honoured by the defaults with
 delayed substitution to force the background color for the corresponding schemes.
-The default of the B<BG?> variables is "none": No background color should not be forced.
+The default of the B<BG?> variables is "none": No background color should be forced.
 If you want to force the correct background colors, set the variables as follows:
 
 B<BG0=black>
@@ -3390,10 +3412,13 @@ Here are a few simple methods how you can avoid some undesired color problems:
 2. Force the desired background color (or avoid to set it) by setting B<BG0=black>, B<BG1=black>, B<BG2=white>, B<BG3=white> (or B<BG0=none>, B<BG1=none>, B<BG2=none>, B<BG3=none>) in I<@SYSCONFDIR@/eixrc>. Note that forcing of the background color usually makes transparent terminals non-transparent and, moreover, can cause on some terminals some new scrolled-in lines to be in this background color. In order to (not) reset the forced background color before every newline you can set B<RESET_ALL_LINES=false> or B<RESET_ALL_LINES=true>, respectively (the default can depend on the eix version).
 
 .TP
-3. Force a desired color scheme on all terminals by setting B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc>; you may want to combine this with setting B<COLORSCHEME3=0> (or B<=1>, B<=2>, B<=3>). Note that the color schemes selected by the numbers 0 and 2 are very poor since they use only the few system colors and thus different things cannot always be distinguished by different colors. However, this can make sense e.g. if you use the solarized color scheme throughout in X or if you frequently use different terminals and want to get used to only one scheme.
+3. Force a desired color scheme on all terminals by setting B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc>; you may want to combine this with setting B<COLORSCHEME3=0> (or B<=1>, B<=2>, B<=3>). Note that the color schemes selected by the numbers 0 and 2 are very poor since they use only the few system colors and thus different things cannot always be distinguished by different colors. However, this can make sense e.g. if you frequently use different terminals and want to get used to only one scheme or if you want to force Ethan Schoonover's B<original> solarized colorscheme. However, for solarized user's I recommend instead:
 
 .TP
-4. If you use rxvt which can do 256 colors but which does not set TERM=rxvt-256color or TERM=rxvt-unicode-256color, put B<TERM_ALT1_ADD=rxvt> to I<@SYSCONFDIR@/eixrc>.
+4. If you have configured your terminals to use Ethan Schoonover's Solarized colorscheme (light or dark) just set B<SOLARIZED=true> (or light or dark - all is equivalent concerning eix). Only use the previous hint if you do not like that there are additional colors used in 256 color capable terminals.
+
+.TP
+5. If you use rxvt which can do 256 colors but which does not set TERM=rxvt-256color or TERM=rxvt-unicode-256color, put B<TERM_ALT1_ADD=rxvt> to I<@SYSCONFDIR@/eixrc>.
 
 .LP
 eix does not and probably never will support dependencies and/or useflags.

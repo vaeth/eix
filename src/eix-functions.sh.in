@@ -27,10 +27,10 @@ ReadVar() {
 }
 
 ReadBoolean() {
-	case `PRINT_APPEND= "${2:-${read_var_prg}}" --print "${1}"` in
-	[yYtTsSaA1:+-]*|[oO][nN])	return 0;;
+	case `PRINT_APPEND=n "${2:-${read_var_prg}}" --print "${1}"` in
+	[nNfF]*|[oO][fF]*)	return 1;;
 	esac
-	return 1
+	return 0
 }
 
 eixf_know_colors=false

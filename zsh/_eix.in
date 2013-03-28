@@ -156,10 +156,10 @@ case $service in
 # find out search field and whether to check only installed packages
 	local c w is_or local field= installed=
 	if ((CURRENT>2))
-	then	is_or=false
-		case $(PRINT_APPEND= eix --print DEFAULT_IS_OR 2>/dev/null) in
-		([yY1:tT]*|[oO][nN]*)
-			is_or=:;;
+	then	is_or=:
+		case $(PRINT_APPEND=n eix --print DEFAULT_IS_OR 2>/dev/null) in
+		([nNfF0]*|[oO][fF]*)
+			is_or=false;;
 		esac
 		for ((i=2;i<CURRENT;++i))
 		do	case $words[i] in

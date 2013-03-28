@@ -684,6 +684,11 @@ AddOption(STRING, "BG3",
 	"This variable is only used for delayed substitution.\n"
 	"It is the background color for color scheme 3. Use \"none\" for no change."));
 
+AddOption(STRING, "BG0S",
+	"%{!SOLARIZED}%{BG0}%{else}none%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is used instead of BG0 to ignore BG0 if SOLARIZED is set."));
+
 AddOption(STRING, "TERM_ALT1",
 	"256 [aeEkx]term konsole gnome putty %{TERM_ALT1_ADD}", _(
 	"This is a list of regular expressions; if one of it matches TERM, then\n"
@@ -733,8 +738,14 @@ AddOption(STRING, "COLORFGBG",
 	"Usually, this is set in the environment by some terminals like rxvt.\n"
 	"It is only used if DARK=auto, see COLORFGBG_BLACK."));
 
+AddOption(BOOLEAN, "SOLARIZED",
+	"false", _(
+	"This variable is only used in delayed substitution in COLORSCHEME?.\n"
+	"Set it (e.g. in your environment) if your terminal is configured to use\n"
+	"the solarized color scheme of Ethan Schoonover."));
+
 AddOption(STRING, "COLORSCHEME0",
-	"0 2", _(
+	"0%{!SOLARIZED} 2%{}", _(
 	"This is one or two numbers. If TERM_ALT? does not match, this chooses the\n"
 	"corresponding number in color specifications (starting from 0).\n"
 	"If two numbers are specified, the choice depends on DARK.\n"
@@ -742,7 +753,7 @@ AddOption(STRING, "COLORSCHEME0",
 	"8/16 color terminals."));
 
 AddOption(STRING, "COLORSCHEME1",
-	"1 3", _(
+	"%{!SOLARIZED}1 3%{else}4%{}", _(
 	"This is one or two numbers. If TERM_ALT1 matches, this chooses the\n"
 	"corresponding number in color specifications (starting from 0).\n"
 	"If two numbers are specified, the choice depends on DARK.\n"
@@ -1129,27 +1140,27 @@ AddOption(STRING, "EAPI_REGEX",
 	"Leave it empty if EAPI-suffixed ebuilds (GLEP 55) should be ignored."));
 
 AddOption(STRING, "COLOR_RESET",
-	";%{BG0}|;%{BG1}|;%{BG2}|;%{BG3}", _(
+	";%{BG0S}|;%{BG1}|;%{BG2}|;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is the color used for default colors."));
 
 AddOption(STRING, "COLOR_RESET_BG",
-	"none;%{BG0}|none;%{BG1}|none;%{BG2}|none;%{BG3}", _(
+	"none;%{BG0S}|none;%{BG1}|none;%{BG2}|none;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is the color used for default colors."));
 
 AddOption(STRING, "COLOR_NAME",
-	",1;%{BG0}|253,1;%{BG1}|,1;%{BG2}|232;%{BG3}", _(
+	",1;%{BG0S}|253,1;%{BG1}|,1;%{BG2}|232;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the name of packages."));
 
 AddOption(STRING, "COLOR_WORLD",
-	"green,1;%{BG0}|47,1;%{BG1}|green,1;%{BG2}|22,1;%{BG3}", _(
+	"green,1;%{BG0S}|47,1;%{BG1}|green,1;%{BG2}|22,1;%{BG3}|34,0", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the name of world packages."));
 
 AddOption(STRING, "COLOR_WORLD_SETS",
-	"yellow,1;%{BG0}|214,1;%{BG1}|blue,1;%{BG2}|33,1;%{BG3}", _(
+	"yellow,1;%{BG0S}|214,1;%{BG1}|blue,1;%{BG2}|33,1;%{BG3}|142,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the name of world sets packages."));
 
@@ -1159,7 +1170,7 @@ AddOption(STRING, "COLOR_CATEGORY",
 	"It defines the color used for the category of packages."));
 
 AddOption(STRING, "COLOR_CATEGORY_SYSTEM",
-	"yellow;%{BG0}|154,1;%{BG1}|blue;%{BG2}|57,1;%{BG3}", _(
+	"yellow;%{BG0S}|154,1;%{BG1}|blue;%{BG2}|57,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the category of system packages."));
 
@@ -1174,12 +1185,12 @@ AddOption(STRING, "COLOR_CATEGORY_WORLD_SETS",
 	"It defines the color used for printing the category of world sets packages."));
 
 AddOption(STRING, "COLOR_UPGRADE_TEXT",
-	"cyan,1;%{BG0}|87,1;%{BG1}|blue,1;%{BG2}|21,1;%{BG3}", _(
+	"cyan,1;%{BG0S}|87,1;%{BG1}|blue,1;%{BG2}|21,1;%{BG3}|39,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing upgrade recommendation texts."));
 
 AddOption(STRING, "COLOR_DOWNGRADE_TEXT",
-	"blue,1;%{BG0}|135,1;%{BG1}|purple,1;%{BG2}|89,1;%{BG3}", _(
+	"blue,1;%{BG0S}|135,1;%{BG1}|purple,1;%{BG2}|89,1;%{BG3}|135,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing downgrade recommendation texts."));
 
@@ -1226,12 +1237,12 @@ AddOption(STRING, "DIFF_COLOR_NEW",
 	"It defines the color used for \"new package\" separators (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_DELETE",
-	"red,1;%{BG0}|197,1;%{BG1}|red,1;%{BG2}|197,1;%{BG3}", _(
+	"red,1;%{BG0S}|197,1;%{BG1}|red,1;%{BG2}|197,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for \"deleted package\" separators (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_CHANGED",
-	"yellow;%{BG0}|226;%{BG1}|blue;%{BG2}|24;%{BG3}", _(
+	"yellow;%{BG0S}|226;%{BG1}|blue;%{BG2}|24;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for \"changed package\" separators (eix-diff)."));
 
@@ -1246,12 +1257,12 @@ AddOption(STRING, "COLOR_UNINST_TAG",
 	"It defines the color used for tagging uninstalled packages."));
 
 AddOption(STRING, "COLOR_DATE",
-	"purple,1;%{BG0}|166;%{BG1}|purple,1;%{BG2}|130,1;%{BG3}", _(
+	"purple,1;%{BG0S}|166;%{BG1}|purple,1;%{BG2}|130,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the date."));
 
 AddOption(STRING, "COLOR_DEPEND",
-	"none|248;%{BG1}|none|241,1;%{BG3}", _(
+	"none|248;%{BG1}|none|241,1;%{BG3}|248", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color of the DEPEND output."));
 
@@ -1261,7 +1272,7 @@ AddOption(STRING, "COLOR_DEPEND_END",
 	"It defines the end of color of the DEPEND output."));
 
 AddOption(STRING, "COLOR_NORMAL",
-	";%{BG0}|252;%{BG1}|,1;%{BG2}|237,1;%{BG3}", _(
+	";%{BG0S}|252;%{BG1}|,1;%{BG2}|237,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing normal texts."));
 
@@ -1271,32 +1282,32 @@ AddOption(STRING, "COLOR_NORMAL_END",
 	"It defines the color used for printing end of normal texts."));
 
 AddOption(STRING, "COLOR_MASKREASONS",
-	"red;%{BG0}|177;%{BG1}|red;%{BG2}|201;%{BG3}", _(
+	"red;%{BG0S}|177;%{BG1}|red;%{BG2}|201;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color of the mask reasons output."));
 
 AddOption(STRING, "COLOR_SET_USE",
-	"red,1;%{BG0}|125,1;%{BG1}|red,1;%{BG2}|125,1;%{BG3}", _(
+	"red,1;%{BG0S}|125,1;%{BG1}|red,1;%{BG2}|125,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the set useflags."));
 
 AddOption(STRING, "COLOR_UNSET_USE",
-	"blue,1;%{BG0}|33;%{BG1}|blue,1;%{BG2}|17;%{BG3}", _(
+	"blue,1;%{BG0S}|33;%{BG1}|blue,1;%{BG2}|17;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the unset useflags."));
 
 AddOption(STRING, "COLOR_VERSION_IUSE",
-	";%{BG0}|168;%{BG1}|,1;%{BG2}|168,1;%{BG3}", _(
+	";%{BG0S}|168;%{BG1}|,1;%{BG2}|168,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing IUSE for available versions."));
 
 AddOption(STRING, "COLOR_COLL_IUSE",
-	";%{BG0}|38;%{BG1}|,1;%{BG2}|61,1;%{BG3}", _(
+	";%{BG0S}|38;%{BG1}|,1;%{BG2}|61,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing collected IUSE for packages."));
 
 AddOption(STRING, "COLOR_USE_EXPAND_START",
-	";%{BG0}|115;%{BG1}|;%{BG2}|95,1;%{BG3}", _(
+	";%{BG0S}|115;%{BG1}|;%{BG2}|95,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing USE_EXPAND variables."));
 
@@ -1306,7 +1317,7 @@ AddOption(STRING, "COLOR_USE_EXPAND_END",
 	"It defines the color used for printing end of USE_EXPAND variables."));
 
 AddOption(STRING, "COLOR_USE_COLL",
-	"yellow,1;%{BG0}|252;%{BG1}|blue;%{BG2}|237,1;%{BG3}", _(
+	"yellow,1;%{BG0S}|252;%{BG1}|blue;%{BG2}|237,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the braces around collected USE."));
 
@@ -1316,17 +1327,17 @@ AddOption(STRING, "COLOR_INST_VERSION",
 	"It defines the color used for printing the version of installed packages."));
 
 AddOption(STRING, "COLOR_TITLE",
-	"green;%{BG0}|34;%{BG1}|;%{BG2}|240,1;%{BG3}", _(
+	"green;%{BG0S}|34;%{BG1}|;%{BG2}|240,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the title texts for packages."));
 
 AddOption(STRING, "COLOR_INST_TITLE",
-	"cyan;%{BG0}|67;%{BG1}|cyan,1;%{BG2}|67,1;%{BG3}", _(
+	"cyan;%{BG0S}|67;%{BG1}|cyan,1;%{BG2}|67,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the title texts for installed versions."));
 
 AddOption(STRING, "COLOR_AVAILABLE_TITLE",
-	"purple;%{BG0}|70;%{BG1}|purple;%{BG2}|65,1;%{BG3}", _(
+	"purple;%{BG0S}|70;%{BG1}|purple;%{BG2}|65,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the title texts for available versions."));
 
@@ -1341,16 +1352,16 @@ AddOption(STRING, "COLOR_PACKAGESETS",
 	"It defines the color used for printing the package sets."));
 
 AddOption(STRING, "COLOR_MARKED_NAME",
-	"red,1;%{BG0};%{MARK_VERSIONS}|207,1;%{BG1};%{MARK_VERSIONS}|red,1;%{BG2};%{MARK_VERSIONS}|164,1;%{BG3};%{MARK_VERSIONS}", _(
+	"red,1;%{BG0S};%{MARK_VERSIONS}|207,1;%{BG1};%{MARK_VERSIONS}|red,1;%{BG2};%{MARK_VERSIONS}|164,1;%{BG3};%{MARK_VERSIONS}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing a marked package name."));
 
 AddOption(STRING, "COLOR_OVERLAYKEY",
-	"cyan;%{BG0}|87;%{BG1}|cyan,1;%{BG2}|26,1;%{BG3}", _(
+	"cyan;%{BG0S}|87;%{BG1}|cyan,1;%{BG2}|26,1;%{BG3}|44", _(
 	"Color for the overlaykey in version listings."));
 
 AddOption(STRING, "COLOR_VIRTUALKEY",
-	"purple;%{BG0}|170;%{BG1}|purple,1;%{BG2}|92,1;%{BG3}", _(
+	"purple;%{BG0S}|170;%{BG1}|purple,1;%{BG2}|92,1;%{BG3}|170", _(
 	"Color for the overlaykey for virtual overlays in version listings."));
 
 AddOption(STRING, "COLOR_KEYEND",
@@ -1374,23 +1385,23 @@ AddOption(STRING, "COLOR_NUMBERTEXTEND",
 	"Color after printing the number of packages."));
 
 AddOption(STRING, "COLOR_SLOTS",
-	"red,1;%{BG0}|166,1;%{BG1}|red,1;%{BG2}|166,1;%{BG3}", _(
+	"red,1;%{BG0S}|166,1;%{BG1}|red,1;%{BG2}|166,1;%{BG3}", _(
 	"Color for slots. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_BINARY",
-	"blue,1;%{BG0}|39,1;%{BG1}|blue,1;%{BG2}|39,1;%{BG3}", _(
+	"blue,1;%{BG0S}|39,1;%{BG1}|blue,1;%{BG2}|39,1;%{BG3}|39,1", _(
 	"Color for versions with *.tbz2. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_RESTRICT",
-	"red;%{BG0}|99;%{BG1}|red;%{BG2}|53;%{BG3}", _(
+	"red;%{BG0S}|99;%{BG1}|red;%{BG2}|53;%{BG3}|99", _(
 	"Color for the restriction tags. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_PROPERTIES",
-	"cyan;%{BG0}|143;%{BG1}|cyan,1;%{BG2}|57;%{BG3}", _(
+	"cyan;%{BG0S}|143;%{BG1}|cyan,1;%{BG2}|57;%{BG3}|214", _(
 	"Color for the properties tags. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_KEYWORDS",
-	"cyan;%{BG0}|73;%{BG1}|cyan,1;%{BG2}|26;%{BG3}", _(
+	"cyan;%{BG0S}|73;%{BG1}|cyan,1;%{BG2}|26;%{BG3}", _(
 	"Color for keywords. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_KEYWORDSS",
@@ -3233,17 +3244,17 @@ AddOption(STRING, "FORMAT_AFTER_COLL_SEP",
 	"(This is meant for printing in a separate line)"));
 
 AddOption(STRING, "COLOR_MASKED",
-	"red;%{BG0}|196;%{BG1}|red;%{BG2}|196;%{BG3}", _(
+	"red;%{BG0S}|196;%{BG1}|red;%{BG2}|196;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color for masked versions."));
 
 AddOption(STRING, "COLOR_UNSTABLE",
-	"yellow;%{BG0}|190;%{BG1}|blue;%{BG2}|21;%{BG3}", _(
+	"yellow;%{BG0S}|190;%{BG1}|blue;%{BG2}|21;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color for unstable versions."));
 
 AddOption(STRING, "COLOR_STABLE",
-	"green;%{BG0}|46;%{BG1}|;%{BG2}|58;%{BG3}", _(
+	"green;%{BG0S}|46;%{BG1}|;%{BG2}|58;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color for stable versions."));
 

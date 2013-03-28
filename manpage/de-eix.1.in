@@ -2441,14 +2441,27 @@ B<TERM_ALT1_ADD> bzw. B<TERM_ALT2_ADD> durch verzögerte Ersetzung.
 Insbesondere können Sie eine Erweiterung der Defaultwerte dadurch erreichen,
 dass Sie B<TERM_ALT?_ADD> entsprechend definieren.
 
-B<BEISPIEL 1:> Falls solarized (8/16) Farben auf alen Terminals gewünscht sind,
-können Sie B<TERM_ALT3=.> setzen um für alle Terminals den B<COLORSCHEME3>-Default
+B<BEISPIEL 1:> Falls auf allen Terminals 8/16 Farben erzwungen werden sollen, können
+Sie B<TERM_ALT3=.> setzen um für alle Terminals den B<COLORSCHEME3>-Default
 zu wählen (der B<COLORSCHEME0> ist, s. unten).
+Benutzer von Ethan Schoonovers B<solarized> Farbschema sollten dies nur dann tun,
+wenn Sie das original 16-farbige Farbscheme von Solarized erzwingen wollen:
+Andernfalls können sie einfach B<SOLARIZED> setzen (was getrennt beschrieben ist).
 
 B<BEISPIEL 2:> Wenn Sie eix mitteilen wollen, dass TERM=rxvt ein 256-Farben Terminal ist,
 setzen Sie B<TERM_ALT1_ADD=rxvt>.
 (Dies ist nicht mehr der Default, weil es rxvt-Versionen gibt, die nur 88 Farben unterstützen
 und TERM=rxvt setzen; daher würde es kaputte Farben geben, wenn 256 Farben angenommen würden).
+.TP
+.BR SOLARIZED (true / light / dark / false)
+Diese Variable wird nur bei verzögerter Ersetzung in den Defaultwerten der B<COLORSCHEME?>-Variablen benutzt:
+Wenn B<SOLARIZED> gesetzt ist, wählt dieser Default stets in Farbscheme, das annimmt dass
+der Terminaloutput Ethan Schoonovers Solarized Farbscheme benutzt (helles und dunkles Scheme werden
+beide unterstützt, unabhängig vom Wert der B<SOLARIZED>-Variablen).
+Es gibt hier sogar ein Solarized-Farbschma für 256 Farben: Wenn das Terminal es unterstützt,
+werden neben den 16 Farben von Solarized noch weitere benutzt.
+Dies entspricht nicht ganz Ethan Schoonovers ursprünglicher Philosophie bzgl. Solarized,
+aber eix transportiert so viel Information über die Farben, dass diese Erweiterung angemessen erscheint.
 .TP
 .BR COLORSCHEME0 ", " COLORSCHEME1 ", " COLORSCHEME2 ", " COLORSCHEME3 " " "(Integer-Liste)"
 Welche dieser Variablen tasächlich benutzt wird hängt davon ab, welches B<TERM_ALT?> auf B<TERM> passt.
@@ -2460,6 +2473,13 @@ je nachdem ob der Dunkelmodus an oder aus ist (siehe B<DARK> und B<TERM_DARK>).
 Der Wert 0 bedeutet, dass der erste I<COLORSTRING> von Farbspezifikationen benutzt wird;
 für höhere Zahlen wird ein entsprechend späterer I<COLORSTRING> benutzt.
 Falls die Zahl zu hoch ist, wird der erste I<COLORSTRING> benutzt.
+
+Die Defaultwerte der B<COLORSCHEME?>-Variablen berücksichtigen den Wert der Variablen B<SOLARIZED>:
+Wenn B<SOLARIZED> gesetzt ist, dann wird per Default ein Farbschema benutzt, das auf
+Ethan Schoonovers Solarized Systemfarben besiert (helles und dunkles Scheme werden beide unterstützt;
+in 256-farbigen Terminal werden zusätzliche Farben benutzt).
+Beachten Sie, dass dies nur dann eine vernünftige Ausgabe erzeugt,
+wenn das Terminal konfiguriert ist, die Solarized Systemfarben zu benutzen.
 
 Die Zahlen für die Default-Settings sind:
 
@@ -3480,11 +3500,13 @@ Hier sind einige einfache Methoden, wie sie einige ungewünschte Farbprobleme ve
 2. Erzwingen Sie die korrekte Hintergrundfarbe (oder vermeiden Sie deren Setzen), indem Sie B<BG0=black>, B<BG1=black>, B<BG2=white>, B<BG3=white> (oder B<BG0=none>, B<BG1=none>, B<BG2=none>, B<BG3=none>) in I<@SYSCONFDIR@/eixrc> setzen. Beachten Sie, dass das Erzwingen der Hintergrundfarbe transparente Terminals intransparent machen kann und dass darüberhinaus bei einige Terminals auch neu hereingescrollte Zeilen in dieser Hintergrundfarbe sein können. Um die erzwungene Hintergrundfarbe bei jedem Zeilenende (nicht) zurückzusetzen, können Sie B<RESET_ALL_LINES=false> bzw. B<RESET_ALL_LINES=true> setzen (der Default kann von der eix-Version abhängen).
 
 .TP
-3. Erzwingen Sie ein gewünschtes Farbschema auf allen Terminals indem Sie B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc> setzen; dies kann mit B<COLORSCHEME3=0> (oder B<=1>, B<=2>, B<=3>) kombiniert werden. Beachten Sie, dass die Farbschemas 0 und 2 sehr armselig sind, das sie nur die wenigen Systemfarben benutzen und daher verschiedene Dinge farblich nicht immer unterscheidbar sind. Dennoch kann dies sinnvoll sein, wenn Sie beispielsweise durchweg das Solarized Farbschema unter X benutzen, oder wenn Sie regelmäßig verschiedene Terminals benutzen und sich nur an ein einziges Farbschema gewöhnen wollen.
+3. Erzwingen Sie ein gewünschtes Farbschema auf allen Terminals indem Sie B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc> setzen; dies kann mit B<COLORSCHEME3=0> (oder B<=1>, B<=2>, B<=3>) kombiniert werden. Beachten Sie, dass die Farbschemas 0 und 2 sehr armselig sind, da sie nur die wenigen Systemfarben benutzen und daher verschiedene Dinge farblich nicht immer unterscheidbar sind. Dennoch kann dies sinnvoll sein, wenn Sie beispielsweise regelmäßig verschiedene Terminals benutzen und sich nur an ein einziges Farbschema gewöhnen wollen oder wenn Sie Ethan Schoonovers B<originales> Farbschema erzwingen wollen. Allerdings empfehle ich Benutzern von Solarized statt dessen:
 
 .TP
-4. Wenn Sie ein rxvt benutzen, das 256 Farben beherrscht, dass aber nicht TERM=rxvt-256color oder
-TERM=rxvt-unicode-256color setzen, setzen Sie B<TERM_ALT1_ADD=rxvt> in I<@SYSCONFDIR@/eixrc>.
+4. Wenn Sie Ihr Terminal auf Ethan Schoonovers Solarized Farbschema (hell oder dunkel) konfiguriert haben, setzen Sie einfach B<SOLARIZED=true> (oder light oder dark - bzgl. eix ist das alles äquivalent). Benutzen Sie den vorherigen Hinweis nur für den Fall, dass es ihnen nicht passt, dass für 256-farbige Terminals zusätzliche Farben benutzt werden.
+
+.TP
+5. Wenn Sie ein rxvt benutzen, das 256 Farben beherrscht, dass aber nicht TERM=rxvt-256color oder TERM=rxvt-unicode-256color setzen, setzen Sie B<TERM_ALT1_ADD=rxvt> in I<@SYSCONFDIR@/eixrc>.
 .LP
 eix beherrscht keine Abhängigkeiten und/oder USE-Flags und wird das
 vermutlich auch niemals tun.

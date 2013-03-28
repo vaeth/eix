@@ -1,5 +1,14 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.28.4
+	Артём Воротников <vorot93 at yandex.ru>:
+	- Russian translation fixes and updates
+
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Ethan Schoonover's Solarized scheme is now fully supported:
+	  Set SOLARIZED if you use it (and omit setting TERM_ALT3 or
+	  COLORSCHEME? as was recommended previously as a temporary hack).
+
 *eix-0.28.3
 	Артём Воротников <vorot93 at yandex.ru>:
 	- Russian translation fixes and updates
