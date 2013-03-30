@@ -745,7 +745,7 @@ AddOption(BOOLEAN, "SOLARIZED",
 	"the solarized color scheme of Ethan Schoonover."));
 
 AddOption(STRING, "COLORSCHEME0",
-	"0%{!SOLARIZED} 2%{}", _(
+	"%{!SOLARIZED}0 2%{else}5%{}", _(
 	"This is one or two numbers. If TERM_ALT? does not match, this chooses the\n"
 	"corresponding number in color specifications (starting from 0).\n"
 	"If two numbers are specified, the choice depends on DARK.\n"
@@ -1155,12 +1155,12 @@ AddOption(STRING, "COLOR_NAME",
 	"It defines the color used for the name of packages."));
 
 AddOption(STRING, "COLOR_WORLD",
-	"green,1;%{BG0S}|47,1;%{BG1}|green,1;%{BG2}|22,1;%{BG3}|34,0", _(
+	"green,1;%{BG0S}|47,1;%{BG1}|green,1;%{BG2}|22,1;%{BG3}|cyan,1|cyan,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the name of world packages."));
 
 AddOption(STRING, "COLOR_WORLD_SETS",
-	"yellow,1;%{BG0S}|214,1;%{BG1}|blue,1;%{BG2}|33,1;%{BG3}|142,1", _(
+	"yellow,1;%{BG0S}|214,1;%{BG1}|blue,1;%{BG2}|33,1;%{BG3}|purple,1|purple,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the name of world sets packages."));
 
@@ -1262,7 +1262,7 @@ AddOption(STRING, "COLOR_DATE",
 	"It defines the color used for printing the date."));
 
 AddOption(STRING, "COLOR_DEPEND",
-	"none|248;%{BG1}|none|241,1;%{BG3}|248", _(
+	"none|248;%{BG1}|none|241,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color of the DEPEND output."));
 
@@ -1297,7 +1297,7 @@ AddOption(STRING, "COLOR_UNSET_USE",
 	"It defines the color used for printing the unset useflags."));
 
 AddOption(STRING, "COLOR_VERSION_IUSE",
-	";%{BG0S}|168;%{BG1}|,1;%{BG2}|168,1;%{BG3}", _(
+	";%{BG0S}|168;%{BG1}|,1;%{BG2}|168,1;%{BG3}|yellow,1|yellow,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing IUSE for available versions."));
 
@@ -1357,7 +1357,7 @@ AddOption(STRING, "COLOR_MARKED_NAME",
 	"It defines the color used for printing a marked package name."));
 
 AddOption(STRING, "COLOR_OVERLAYKEY",
-	"cyan;%{BG0S}|87;%{BG1}|cyan,1;%{BG2}|26,1;%{BG3}|44", _(
+	"cyan;%{BG0S}|87;%{BG1}|cyan,1;%{BG2}|26,1;%{BG3}|39", _(
 	"Color for the overlaykey in version listings."));
 
 AddOption(STRING, "COLOR_VIRTUALKEY",

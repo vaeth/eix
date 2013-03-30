@@ -5,9 +5,11 @@
 	- Russian translation fixes and updates
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Ethan Schoonover's Solarized scheme is now fully supported:
-	  Set SOLARIZED if you use it (and omit setting TERM_ALT3 or
-	  COLORSCHEME? as was recommended previously as a temporary hack).
+	- Ethan Schoonover's Solarized has now its own color schemes in eix:
+	  Set SOLARIZED if you use solarized (and omit setting TERM_ALT3 or
+	  COLORSCHEME? as was recommended previously: this would choose a
+	  standard scheme instead of the special adaption to solarized
+	  system colors)
 
 *eix-0.28.3
 	Артём Воротников <vorot93 at yandex.ru>:
