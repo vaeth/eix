@@ -10,6 +10,7 @@
 	  COLORSCHEME? as was recommended previously: this would choose a
 	  standard scheme instead of the special adaption to solarized
 	  system colors)
+	- Use -fno-fat-lto-objects
 
 *eix-0.28.3
 	Артём Воротников <vorot93 at yandex.ru>:

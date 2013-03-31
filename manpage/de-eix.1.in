@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2013-03-30 07:30:00 +0200 (Sat, 30 Mar 2013)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-04-05 11:00:00 +0200 (Fri, 04 Apr 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2453,17 +2453,17 @@ setzen Sie B<TERM_ALT1_ADD=rxvt>.
 (Dies ist nicht mehr der Default, weil es rxvt-Versionen gibt, die nur 88 Farben unterstützen
 und TERM=rxvt setzen; daher würde es kaputte Farben geben, wenn 256 Farben angenommen würden).
 .TP
-.BR SOLARIZED (true / light / dark / false)
+.BR SOLARIZED " " (true / light / dark / false)
 Diese Variable wird nur bei verzögerter Ersetzung in den Defaultwerten der B<COLORSCHEME?>-Variablen benutzt:
-Wenn B<SOLARIZED> gesetzt ist, wählt dieser Default stets in Farbscheme, das annimmt dass
-der Terminaloutput Ethan Schoonovers Solarized Farbscheme benutzt (helles und dunkles Scheme werden
-beide unterstützt, unabhängig vom Wert der B<SOLARIZED>-Variablen).
-Es gibt hier sogar ein Solarized-Farbschma für 256 Farben: Wenn das Terminal es unterstützt,
+Wenn B<SOLARIZED> gesetzt ist (B<true>, B<light>, und B<dark> sind für eix derzeit äquivalent),
+wählt dieser Default ein Farbschema, das annimmt dass
+der Terminaloutput Ethan Schoonovers Solarized Farbscheme benutzt (helles oder dunkles Schema).
+Es gibt sogar ein Solarized-Farbschema für 256 Farben: Wenn das Terminal es unterstützt,
 werden neben den 16 Farben von Solarized noch weitere benutzt.
 Dies entspricht nicht ganz Ethan Schoonovers ursprünglicher Philosophie bzgl. Solarized,
 aber eix transportiert so viel Information über die Farben, dass diese Erweiterung angemessen erscheint.
-Es wird versucht, die Benutzung der zusätzlichen Farben möglichst unmarkant zu halten,
-z.B. möglichst nur für Flags zu verwenden.
+Es wird versucht, die zusätzlichen Farben möglichst zurückhaltend einzusetzen,
+z.B. möglichst nur für einzelne Symbole/Flags zu benutzen.
 .TP
 .BR COLORSCHEME0 ", " COLORSCHEME1 ", " COLORSCHEME2 ", " COLORSCHEME3 " " "(Integer-Liste)"
 Welche dieser Variablen tasächlich benutzt wird hängt davon ab, welches B<TERM_ALT?> auf B<TERM> passt.
@@ -2531,7 +2531,7 @@ Der Wert dieser Variablen gibt an, ob der Dunkelmodus bei der Wahl des Farbschem
 Für den Wert B<auto> hängt das Ergebnis von einer Heuristik ab, die durch die Variablen B<TERM_DARK> und B<COLORFGBG_DARK> spezifiziert wird, siehe unten.
 
 .TP
-.BR TERM_DARK " " (Stringliste)
+.B TERM_DARK " " "(Stringliste)"
 Dies ist eine Liste von Paaren der Form I<regulärer Ausdruck 1> I<Dunkelmodus 1> I<regulärer Ausdruck 2> B<Dunkelmodus 2> ... wobei B<Dunkelmodus> jeweils einer der Werte B<true>, B<false>, B<true*>, B<false*> sein muss;
 optional kann ein Default-Wert für I<Dunkelmodus> als letzter Eintrag spezifiziert werden (wenn keiner spezifiziert ist, ist B<true*> der Default).
 Wenn B<DARK=auto> ist, wird diese Liste benutzt, um den Dunkelmodus wie folgt festzulegen:
@@ -2544,7 +2544,7 @@ Wenn B<COLORFGBG> nichtleer ist, so ist der Dunkelmodus an oder aus, je nachdem 
 Beachten Sie, dass B<COLORFGBG> eine Environment-Variable ist, die von einigen Terminals wie B<rxvt> oder B<konsole> gesetzt wird, um die Hintergrundfarbe zu beschreiben.
 
 .TP
-.BR COLORFGBG_DARK " " (Stringliste)
+.B COLORFGBG_DARK " " "(Stringliste)"
 Dies ist eine Liste regulärer Ausdrücke.
 Sie wird nur benutzt, falls B<DARK=auto> ist, der entsprechende I<Dunkelmodus> in B<DARK_MODE> den Wert B<true> oder B<false> hat,
 und wenn B<COLORFGBG> nichtleer ist.

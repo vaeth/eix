@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2013-03-30 09:00:00 +0200 (Sat, 30 Mar 2013)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-04-05 11:00:00 +0200 (Fri, 04 Apr 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -60,7 +60,7 @@ B<EIX_SYNC_CONF>.
 B<eix-test-obsolete> - сценарий, несколько раз вызывающий B<eix> для более структурированного вывода B<eix -tTc>.
 
 B<eix-remote> позволяет синхронизировать текущую базу eix с внешним сервером, добавляя/удаляя из неё данные.
-With this default you should regularly call B<eix-remote add1> and/or B<eix-remote add2> after <eix-update>
+With this default you should regularly call B<eix-remote add1> and/or B<eix-remote add2> after B<eix-update>
 so that the separate cachefile is synchronized with your main database.
 (E.g. it is useful to put B<@@eix-remote add1> and/or B<@@eix-remote add2> to your I<@SYSCONFDIR@/eix-sync.conf> in this case.)
 If you use the same cachefile: Заметьте, что чтобы сохранять эти удалённые данные между вызовами eix-update, нужно установить
@@ -450,7 +450,7 @@ Here are the admissible TEST_OPTIONS:
 Only match installed packages.
 Please do not use this as a replacement for B<eix-installed -a>
 (or B<qlist -ICv> or B<equery>), it is not the same:
-Packages that are installed, but no longer in the portage tree (or an overlays) are not listed here.
+Packages that are installed, but no longer in the portage tree (or an overlay) are not listed here.
 However, you should better not have such packages at all
 (better put these packages in overlays in case you need to reinstall them).
 To find such packages, you can use B<eix -te> (or B<eix -tI> to get listed both)
@@ -2404,17 +2404,17 @@ B<EXAMPLE 2:> If you want to tell eix that TERM=rxvt means a 256 color terminal,
 (This is no longer the default, because there are rxvt versions which support only 88 colors and set TERM=rxvt;
 thus assuming 256 colors would produce completely broken colors.)
 .TP
-.BR SOLARIZED (true / light / dark / false)
+.BR SOLARIZED " " (true / light / dark / false)
 This variable is only used in delayed substitution in the default values of the B<COLORSCHEME?> variables:
-If B<SOLARIZED> is not false then the default always chooses a colorscheme which assumes that
-the terminal output uses Ethan Schoonover's Solarized colorscheme (light or dark are both supported,
-independent of the particular values of B<SOLARIZED>).
-There is even a 256color solarized scheme available: If your terminal supports it,
+If B<SOLARIZED> is not B<false> (i.e. B<true>, B<light>, and B<dark>, are currently equivalent for eix)
+then the default in these variables chooses a colorscheme which assumes that
+the terminal output uses Ethan Schoonover's Solarized colorscheme (light or dark).
+There is even a solarized scheme available for 256 colors: If your terminal supports it,
 additional colors besides the 16 solarized colors are used.
 This is somewhat against Ethan Schoonover's original philosophy about solarized,
 but eix carries so much information in colors that this extension appears reasonable.
 It is attempted to keep the usage of additional colors as nonintrusive as possible,
-e.g. to apply it only for flags.
+e.g. to use these colors mainly for single symbols/flags.
 .TP
 .BR COLORSCHEME0 ", " COLORSCHEME1 ", " COLORSCHEME2 ", " COLORSCHEME3 " " "(list of integers)"
 Which of these variables is actually used depends on which B<TERM_ALT?> matches B<TERM>;
@@ -2481,7 +2481,7 @@ The value of this variable determines whether darkmode is on/off for the color s
 For the value B<auto> the result depends on a heuristic based on B<TERM_DARK> and B<COLORFGBG_DARK>, see below.
 
 .TP
-.BR TERM_DARK " " (string list)
+.B TERM_DARK " " (string list)
 This is a list of pairs of the form I<regular-expresssion 1> I<dark-mode 1> I<regular-expresssion 2> B<dark-mode 2> ... where B<dark-mode> is one of B<true>, B<false>, B<true*>, B<false*>;
 optionally, a default I<dark-mode> can be specified as a last entry (if none is specified, the default is B<true*>).
 If B<DARK=auto> this is used to determine the darkmode as follows:
@@ -2494,7 +2494,7 @@ If B<COLORFGBG> is nonempty then the darkmode is on or off, depending on whether
 Note that B<COLORFGBG> is an environment variable set by some terminals like B<rxvt> or B<konsole> which describes the background color.
 
 .TP
-.BR COLORFGBG_DARK " " (string list)
+.B COLORFGBG_DARK " " (string list)
 This is a list of regular expressions.
 It is only used if B<DARK=auto>, the matching I<dark-mode> in B<DARK_TERM> is B<true*> or B<false*>, and B<COLORFGBG> is nonempty.
 In this case, the resulting darkmode is on or off, depending on whether B<COLORFGBG> matches an element of this list.

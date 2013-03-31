@@ -1322,7 +1322,7 @@ AddOption(STRING, "COLOR_USE_COLL",
 	"It defines the color used for printing the braces around collected USE."));
 
 AddOption(STRING, "COLOR_INST_VERSION",
-	"black,1;blue|33,1;%{BG1}|black;green|30,1;%{BG3}", _(
+	"black;blue|33,1;%{BG1}|black;green|30,1;%{BG3}|33,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the version of installed packages."));
 

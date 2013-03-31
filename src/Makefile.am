@@ -270,7 +270,7 @@ nodist_extra_output_only_src =
 # The update-tool for our database
 update_only_ldadd = $(SQLITE_LIBS)
 update_only_src = eix-update.cc $(percentage_src) $(cache_src)
-nodist_update_only_src = $(nodist_percentage_src) $(nodist_cache_src)
+nodist_update_only_src = $(nodist_cache_src) $(nodist_percentage_src) 
 extra_update_only_src =
 nodist_extra_update_only_src =
 
@@ -443,7 +443,7 @@ eix-update$(EXEEXT): eix$(EXEEXT)
 
 eix_LDADD = $(common_ldadd) $(eix_only_ldadd) $(diff_only_ldadd) $(update_only_ldadd) $(output_only_ldadd)
 eix_SOURCES = $(common_src) $(output_only_src) $(eix_only_src) $(diff_only_src) $(update_only_src) $(main_all_src)
-nodist_eix_SOURCES = $(nodist_common_src) $(nodist_output_only_src) $(nodist_eix_only_src) $(nodist_diff_only_src) $(nodist_update_only_src) $(nodist_main_all_src)
+nodist_eix_SOURCES = $(nodist_update_only_src) $(nodist_common_src) $(nodist_output_only_src) $(nodist_eix_only_src) $(nodist_diff_only_src) $(nodist_main_all_src)
 EXTRA_eix_SOURCES = $(extra_common_src) $(extra_output_only_src) $(extra_eix_only_src) $(extra_diff_only_src) $(extra_update_only_src)
 nodist_EXTRA_eix_SOURCES = $(nodist_extra_common_src) $(nodist_extra_output_only_src) $(nodist_extra_eix_only_src) $(nodist_extra_diff_only_src) $(nodist_extra_update_only_src)
 

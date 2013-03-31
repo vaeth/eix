@@ -364,15 +364,19 @@ dnl			-Wl,--enable-new-dtags \
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_FALSE], [ \
 			${flto} \
 		], [${my_cxxfatal}], [], [:], [${quicktrue}])])
-# If -flto is used during compilation, we can also use -fwhole-program during
-# compilation and should specify -flto during linking.
+# If -flto is used during compilation, we can also use -fwhole-program and
+# -fno-fat-lto-objects during compilation and should specify -flto during
+# linking.
 # However, -Wl,--warn-common will then give lots of warnings, so we
 # do not add the latter unless we use strong_warnings.
 AS_VAR_SET([fwhole_program], [])
 AS_VAR_SET([warn_common], [-Wl,--warn-common])
 AS_CASE([" ${CXXFLAGS} ${my_cxxadd} "],
 	[*" -flto "*],
-		[AS_VAR_SET([fwhole_program], [-fwhole-program])
+		[AS_VAR_SET([fwhole_program], ["
+			-fwhole-program
+			-fno-fat-lto-objects
+			"])
 		AS_IF([${strong_warnings}],
 			[],
 			[AS_VAR_SET([warn_common], [])])])
