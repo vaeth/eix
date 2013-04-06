@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.28.5
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fixes in zsh completion for --print and --*overlay*
+
 *eix-0.28.4
 	Артём Воротников <vorot93 at yandex.ru>:
 	- Russian translation fixes and updates

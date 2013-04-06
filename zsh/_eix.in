@@ -248,12 +248,14 @@ $service_opts
 ret=$?
 case $state in
 (vars)
+	_tags variables
 	_requested variables && {
 		_description variables expl 'eix variable name'
 		compadd "$expl[@]" - ${(f)"$($service --known-vars)"}
 		ret=$?
 	};;
 (overlay)
+	_tags overlays
 	_requested overlays && {
 		local -ua o
 		o=($(PRINT_APPEND= eix --print PORTDIR_OVERLAY 2>/dev/null))
