@@ -251,7 +251,7 @@ case $state in
 	_tags variables
 	_requested variables && {
 		_description variables expl 'eix variable name'
-		compadd "$expl[@]" - ${(f)"$($service --known-vars)"}
+		compadd "$expl[@]" - ${(f)"$($service --known-vars 2>/dev/null)"}
 		ret=$?
 	};;
 (overlay)

@@ -324,6 +324,7 @@ AS_IF([${optimization}],
 			-fomit-frame-pointer \
 			-fno-common \
 			-fstrict-aliasing \
+			-fstrict-enums \
 			-fmerge-all-constants \
 			-finline-functions \
 			-fvisibility=hidden \
@@ -383,7 +384,6 @@ AS_CASE([" ${CXXFLAGS} ${my_cxxadd} "],
 AS_IF([${strong_optimization}],
 	[AS_IF([${assumegnu}],
 		[AS_VAR_SET([gnuflags], ["
-			-ftree-vectorize
 			-fweb
 			-fgraphite
 			-fgraphite-identity
@@ -392,10 +392,16 @@ AS_IF([${strong_optimization}],
 			-floop-block
 			-fno-enforce-eh-specs
 			"])],
+dnl We do not use (since it uses too much memory/time for compilation):
+dnl			-fipa-pta
 		[AS_VAR_SET([gnuflags], [])])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_FALSE], [ \
 			${gnuflags} \
 			${fwhole_program} \
+			-ftree-vectorize \
+			-fvect-cost-model \
+			-fno-rtti \
+			-fno-threadsafe-statics \
 		], [${my_cxxfatal}], [${CPPFLAGS}], [:], [${quicktrue}])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-DNDEBUG \
@@ -479,6 +485,8 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wdelete-non-virtual-dtor \
 			${zero_as_null_pointer} \
 		], [${my_cxxfatal}], [], [:], [${quicktrue}])
+dnl We do not use normally (since its output is too confusing):
+			-fmem-report \
 dnl We do not use (since it gives too many useless warnings or is only for C):
 dnl			-Wtraditional \
 dnl			-Wc++-compat \

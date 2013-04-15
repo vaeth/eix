@@ -3,6 +3,7 @@
 *eix-0.28.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fixes in zsh completion for --print and --*overlay*
+	- -fstrict-enums -fno-rtti -fno-threadsafe-statics -fvect-cost-model
 
 *eix-0.28.4
 	Артём Воротников <vorot93 at yandex.ru>:
