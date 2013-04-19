@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2013-04-05 11:00:00 +0200 (Fri, 04 Apr 2013)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-04-19 20:00:00 +0200 (Fri, 19 Apr 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -1533,14 +1533,16 @@ Call B<layman -S> (i.e. all overlays are synced with layman).
 Evaluate I<command> within the B<eix-sync> shell script (in the same shell).
 I<command> must exit successfully or B<eix-sync> will print a warning.
 (Thus, B<!layman> I<Name> is more or less equivalent to I<Name>.)
-Close e.g. the command with "; true" if you want that the exit status
-is ignored. The warning becomes even a fatal error with the option B<-F>.
+Close e.g. the command with "; true" if you want that the exit status is ignored.
+The warning becomes even a fatal error with the option B<-F>.
 You can set B<FATAL_HOOKS> to a nonempty/empty value to force/cancel B<-F>
-for the currently and subsequently executed hooks. If you want only the
-current hook to exit with an error, you can call B<die> explicitly.
+for the currently and subsequently executed hooks.
+If you want only the current hook to exit with an error, you can call B<die> explicitly.
 
 You can use this feature to unpack e.g. an overlay before calling B<layman>
 or to apply local fixes after B<layman> was called.
+You can also set the variable B<have_changed=:> here to tell eix-sync that some overlay has changed.
+(Otherwise eix will stop with exit code 3 if the main portage tree did not change.)
 
 In contrast to earlier eix versions, I<command> does not output anything
 (use einfo if you want that), and it is not evaluated within a subshell,

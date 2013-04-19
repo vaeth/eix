@@ -40,10 +40,12 @@ Moreover, "--" in the default options will forbid command line options.
 The following options are available:
 
 -i   Ignore all previous options (useful to ignore ${eixsyncconf} options).
+-a   Always assume that some tree/overlay changes
+     (set have_changed=: in a !-hook to force this)
 -s [USER@]SERVER[:DIR] Sync via rsync from SERVER.
      USER defaults to current user and DIR defaults to PORTDIR.
      An empty SERVER cancels this option. This option implies -0
--0   No eix --sync
+-0   No eix --sync. This implies -a
 -2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successful syncing;
      you should later call eix-sync -u locally on CLIENT.
      If you already have synced you might want to combine this option with -uU.
@@ -193,6 +195,7 @@ DefaultOpts() {
 	Push -c emergecmd 'emerge' '--sync'
 	Push -c updatecmd 'eix-update'
 	Push -c layman_opt
+	have_changed=false
 	clearcache=false
 	nolayman=false
 	nohooks=false
@@ -217,9 +220,10 @@ Push opt "${@}"
 eval "set -- ${opt}"
 set +f
 OPTIND=1
-while getopts 'is:02:UuFl@SMNtTqwWL:c:C:o:rRHh?' opt
+while getopts 'ias:02:UuFl@SMNtTqwWL:c:C:o:rRHh?' opt
 do	case ${opt} in
 	i)	DefaultOpts;;
+	a)	have_changed=:;;
 	s)	server=${OPTARG};;
 	0)	skip_sync=:;;
 	2)	client=${OPTARG};;
@@ -252,6 +256,7 @@ do	case ${opt} in
 done
 opt=
 [ -z "${server:++}" ] || skip_sync=:
+${skip_sync} && have_changed=:
 
 if [ -z "${metadata:++}" ]
 then	metadata=false
@@ -504,15 +509,35 @@ UpdateDiff() {
 	PrintTimes
 }
 
+ReadTimeStamp() {
+	eval ${1}=
+	${have_changed} && return
+	GetPortdir
+	{
+		eval "read -r ${1} <\"\${local_portdir%/}/metadata/timestamp.chk\""
+	} 2>/dev/null && eval "[ -n \"\${${1}}\" ]" || have_changed=:
+}
+
+NotChanged() {
+	PerLineArg "`gettext \
+'Main gentoo tree does not appear to have changed: exiting
+Use -a or set have_changed=: in a ! hook to override this check'`" eerror
+	Exit 3
+}
+
 MainSync() {
 	CondUpdate
 	ClearCache
-	CopyPrevious
 	ExecuteConfig 'sync'
+	ReadTimeStamp previous_timestamp
 	CallEmergeSync
+	ReadTimeStamp current_timestamp
+	[ "${previous_timestamp}" != "${current_timestamp}" ] && have_changed=:
+	${have_changed} || NotChanged
 	${synchooks} && DoHook "${after_sync}"
 	CallSyncClient
 	CallEmergeMetadata
+	CopyPrevious
 	UpdateDiff
 }
 

@@ -486,7 +486,7 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			${zero_as_null_pointer} \
 		], [${my_cxxfatal}], [], [:], [${quicktrue}])
 dnl We do not use normally (since its output is too confusing):
-			-fmem-report \
+dnl			-fmem-report \
 dnl We do not use (since it gives too many useless warnings or is only for C):
 dnl			-Wtraditional \
 dnl			-Wc++-compat \

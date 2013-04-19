@@ -149,9 +149,21 @@ die() {
 
 PerLine() {
 	while IFS='
-' read eixf_line
+' read -r eixf_line
 	do	"${@}" "${eixf_line}"
 	done
+}
+
+PerLineArg() {
+	eixf_perline=${1}
+	shift
+	eixf_ifs=${IFS}
+	IFS='
+'
+	for eixf_line in ${eixf_perline}
+	do	"${@}" "${eixf_line}"
+	done
+	IFS=${eixf_ifs}
 }
 
 unset local_portdir

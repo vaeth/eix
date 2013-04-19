@@ -4,6 +4,10 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fixes in zsh completion for --print and --*overlay*
 	- -fstrict-enums -fno-rtti -fno-threadsafe-statics -fvect-cost-model
+	- eix-sync: Exit with status 3 if neither main tree changed nor
+	  option -a was used nor have_changed=: is set, see
+	  http://developer.berlios.de/bugs/?func=detailbug&
+	  bug_id=18973&group_id=11597
 
 *eix-0.28.4
 	Артём Воротников <vorot93 at yandex.ru>:

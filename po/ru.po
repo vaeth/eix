@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-03-28 18:15+0100\n"
+"POT-Creation-Date: 2013-04-19 21:09+0200\n"
 "PO-Revision-Date: 2013-03-24 01:22+0400\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -35,33 +35,33 @@ msgstr "Готово"
 msgid "Failure"
 msgstr "Ошибка"
 
-#: src/eix-functions.sh.in:176
+#: src/eix-functions.sh.in:188
 #, sh-format
 msgid "Problems running ${eixf_cmd}"
 msgstr "Проблема при запуске ${eixf_cmd}"
 
-#: src/eix-functions.sh.in:307
+#: src/eix-functions.sh.in:319
 msgid "Calling eix-update"
 msgstr "Запускаю eix-update"
 
-#: src/eix-functions.sh.in:308 src/eix-remote.sh:322
+#: src/eix-functions.sh.in:320 src/eix-remote.sh:322
 msgid "eix-update failed"
 msgstr "ошибка eix-update"
 
-#: src/eix-functions.sh.in:360
+#: src/eix-functions.sh.in:372
 #, sh-format
 msgid "${eixf_patha} cannot be found in PATH"
 msgstr "${eixf_patha} не найден в PATH"
 
-#: src/eix-functions.sh.in:504
+#: src/eix-functions.sh.in:516
 msgid "found no free temporary name after 10000 attempts"
 msgstr "невозможно найти свободное временное имя после 10000 попыток"
 
-#: src/eix-functions.sh.in:519
+#: src/eix-functions.sh.in:531
 msgid "cannot create temporary directory"
 msgstr "невозможно создать временный каталог"
 
-#: src/eix-functions.sh.in:520
+#: src/eix-functions.sh.in:532
 msgid "cannot create temporary file"
 msgstr "невозможно создать временный каталог"
 
@@ -637,10 +637,12 @@ msgid ""
 "The following options are available:\n"
 "\n"
 "-i   Ignore all previous options (useful to ignore ${eixsyncconf} options).\n"
+"-a   Always assume that some tree/overlay changes\n"
+"     (set have_changed=: in a !-hook to force this)\n"
 "-s [USER@]SERVER[:DIR] Sync via rsync from SERVER.\n"
 "     USER defaults to current user and DIR defaults to PORTDIR.\n"
 "     An empty SERVER cancels this option. This option implies -0\n"
-"-0   No eix --sync\n"
+"-0   No eix --sync. This implies -a\n"
 "-2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successful syncing;\n"
 "     you should later call eix-sync -u locally on CLIENT.\n"
 "     If you already have synced you might want to combine this option with -"
@@ -703,11 +705,13 @@ msgstr ""
 "\n"
 "-i   Игнорировать все предыдущие ключи (полезно для игнорирования "
 "${eixsyncconf}).\n"
+"-a   Always assume that some tree/overlay changes\n"
+"     (set have_changed=: in a !-hook to force this)\n"
 "-s [ПОЛЬЗОВАТЕЛЬ@]СЕРВЕР[:ДИР] Синхронизация через rsync с СЕРВЕРом.\n"
 "     ПОЛЬЗОВАТЕЛЬ и ДИР по умолчанию текущий пользователь и PORTDIR\n"
 "     соответственно.\n"
 "     Пустое поле СЕРВЕР отменяет этот ключ. Этот ключ предполагает -0\n"
-"-0   Не делать eix --sync\n"
+"-0   Не делать eix --sync. This implies -a\n"
 "-2 [ПОЛЬЗОВАТЕЛЬ@]КЛИЕНТ[:ДИР] Синхронизация через rsync к КЛИЕНТУ после\n"
 "     успешной синхронизации;\n"
 "     потом нужно вызвать eix-sync -u на ПК КЛИЕНТА.\n"
@@ -752,150 +756,156 @@ msgstr ""
 "-H   Подавить обновления строки состояния.\n"
 "-h   Показать этот текст и выйти."
 
-#: src/eix-sync.sh:96
+#: src/eix-sync.sh:98
 #, sh-format
 msgid "Something went wrong with ${curr_cmd}"
 msgstr "Что-то не так с ${curr_cmd}"
 
-#: src/eix-sync.sh:161
+#: src/eix-sync.sh:163
 msgid "Syncing all portage overlays"
 msgstr "Синхронизация всех оверлеев"
 
-#: src/eix-sync.sh:163
+#: src/eix-sync.sh:165
 #, sh-format
 msgid "${mycmd} -S failed"
 msgstr "ошибка ${mycmd} -S"
 
-#: src/eix-sync.sh:166
+#: src/eix-sync.sh:168
 #, sh-format
 msgid "Syncing portage overlay ${j}"
 msgstr "Синхронизация оверлея ${j}"
 
-#: src/eix-sync.sh:168
+#: src/eix-sync.sh:170
 #, sh-format
 msgid "${mycmd} -s ${j} failed"
 msgstr "ошибка ${mycmd} -s ${j}"
 
-#: src/eix-sync.sh:332
+#: src/eix-sync.sh:337
 #, sh-format
 msgid "Running ${myvarcmd}"
 msgstr "Запуск ${myvarcmd}"
 
-#: src/eix-sync.sh:334
+#: src/eix-sync.sh:339
 #, sh-format
 msgid "${myvarcmd} failed"
 msgstr "ошибка ${myvarcmd}"
 
-#: src/eix-sync.sh:345
+#: src/eix-sync.sh:350
 msgid "%6d seconds for %s\\n"
 msgstr "%6d секунд для %s\\n"
 
-#: src/eix-sync.sh:350
+#: src/eix-sync.sh:355
 msgid "Time statistics:"
 msgstr "Статистика времени:"
 
-#: src/eix-sync.sh:351
+#: src/eix-sync.sh:356
 msgid "initial eix-update"
 msgstr "начальный eix-update"
 
-#: src/eix-sync.sh:352
+#: src/eix-sync.sh:357
 msgid "syncing"
 msgstr "синхронизация"
 
-#: src/eix-sync.sh:353
+#: src/eix-sync.sh:358
 msgid "client syncing"
 msgstr "синхронизация клиента"
 
-#: src/eix-sync.sh:354
+#: src/eix-sync.sh:359
 msgid "metadata update"
 msgstr "обновление метаданных"
 
-#: src/eix-sync.sh:355
+#: src/eix-sync.sh:360
 msgid "eix-update"
 msgstr "eix-update"
 
-#: src/eix-sync.sh:356
+#: src/eix-sync.sh:361
 msgid "eix-diff"
 msgstr "eix-diff"
 
-#: src/eix-sync.sh:359
+#: src/eix-sync.sh:364
 msgid "%6d seconds total\\n"
 msgstr "%6d секунд всего\\n"
 
-#: src/eix-sync.sh:403
+#: src/eix-sync.sh:408
 #, sh-format
 msgid "${c} (output of ${curr_cmd}) failed"
 msgstr "${c} (ошибка вывода ${curr_cmd})"
 
-#: src/eix-sync.sh:404
+#: src/eix-sync.sh:409
 #, sh-format
 msgid "${curr_cmd} failed"
 msgstr "Ошибка ${curr_cmd}"
 
-#: src/eix-sync.sh:424
+#: src/eix-sync.sh:429
 #, sh-format
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr "Удаление старого кэша portage в ${local_varcache}/var/cache/edb/dep"
 
-#: src/eix-sync.sh:426
+#: src/eix-sync.sh:431
 #, sh-format
 msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
 msgstr "Ошибка rm -rf ${local_varcache}/var/cache/edb/dep/*"
 
-#: src/eix-sync.sh:434
+#: src/eix-sync.sh:439
 #, sh-format
 msgid "Could not rsync from ${hostdir}"
 msgstr "Невозможно выполнить rsync из ${hostdir}"
 
-#: src/eix-sync.sh:444
+#: src/eix-sync.sh:449
 #, sh-format
 msgid "rsyncing to ${hostdir}"
 msgstr "Выполняю rsync в ${hostdir}"
 
-#: src/eix-sync.sh:446
+#: src/eix-sync.sh:451
 #, sh-format
 msgid "Could not rsync to ${hostdir}"
 msgstr "Невозможно выполнить rsync в ${hostdir}"
 
-#: src/eix-sync.sh:456
+#: src/eix-sync.sh:461
 msgid "eix-cache does not exist."
 msgstr "eix-cache не существует."
 
-#: src/eix-sync.sh:461
+#: src/eix-sync.sh:466
 msgid "eix-cache format has changed."
 msgstr "Формат eix-cache изменился"
 
-#: src/eix-sync.sh:468
+#: src/eix-sync.sh:473
 #, sh-format
 msgid "Copying old ${eixcache} cache to temporary file"
 msgstr "Копирую старый кэш ${eixcache} во временный файл"
 
-#: src/eix-sync.sh:472
+#: src/eix-sync.sh:477
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Невозможно скопировать базу данных во временный файл ${tmpfile}"
 
-#: src/eix-sync.sh:476
+#: src/eix-sync.sh:481
 #, sh-format
 msgid "Copying old database to ${eixprevious}"
 msgstr "Копирую старую базу данных в ${eixprevious}"
 
-#: src/eix-sync.sh:478
+#: src/eix-sync.sh:483
 #, sh-format
 msgid "Could not copy database to ${eixprevious}"
 msgstr "Невозможно скопировать базу данных в ${eixprevious}"
 
-#: src/eix-sync.sh:497
+#: src/eix-sync.sh:502
 msgid "eix-update was apparently already called in a hook"
 msgstr "Вероятно, eix-update уже вызван крюком"
 
-#: src/eix-sync.sh:501
+#: src/eix-sync.sh:506
 msgid "Calling eix-diff"
 msgstr "Вызов eix-diff"
 
-#: src/eix-sync.sh:503
+#: src/eix-sync.sh:508
 msgid "Failed to diff against current cache"
 msgstr "Ошибка сравнения с текущим кэшем"
+
+#: src/eix-sync.sh:523
+msgid ""
+"Main gentoo tree does not appear to have changed: exiting\n"
+"Use -a or set have_changed=: in a ! hook to override this check"
+msgstr ""
 
 #: src/eix-test-obsolete.sh:17
 #, sh-format

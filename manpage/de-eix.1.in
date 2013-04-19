@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2013-04-05 11:00:00 +0200 (Fri, 04 Apr 2013)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2013-04-19 20:00:00 +0200 (Fri, 19 Apr 2013)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1564,6 +1564,8 @@ kann man explizit B<die> aufrufen.
 
 Man kann dieses Feature benutzen um z.B. einen Overlay vor dem Aufruf von B<layman>
 zu entpacken oder um lokale Fixes auszuführen, nachdem B<layman> aufgerufen wurde.
+Hier kann auch die Variable B<have_changed=:> gesetzt werden, um eix-sync mitzuteilen, dass ein Overlay verändert wurde:
+Andernfalls wird eix-sync mit Exitstatus 3 anhalten, falls der Hauptbaum nicht verändert wurde.
 
 Im Gegensatz zu früheren eix-Versionen gibt, I<Kommando> nichts aus
 (mit einfo kann man Ausgabe erreichen), und I<Kommando> wird nicht in einer
