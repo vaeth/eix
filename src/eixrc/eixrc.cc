@@ -430,7 +430,8 @@ EixRc::read_undelayed(set<string> *has_delayed)
 	VarsReader rc(  // VarsReader::NONE
 			VarsReader::SUBST_VARS
 			|VarsReader::ALLOW_SOURCE_VARNAME
-			|VarsReader::INTO_MAP);
+			|VarsReader::INTO_MAP
+			|VarsReader::RECURSE);
 	rc.useMap(&filevarmap);
 	rc.setPrefix("EIXRC_SOURCE");
 

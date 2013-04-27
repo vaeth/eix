@@ -48,6 +48,8 @@ eixTk/sysutils.h
 varsreader_src = \
 eixTk/filenames.cc \
 eixTk/filenames.h \
+eixTk/utils.cc \
+eixTk/utils.h \
 eixTk/varsreader.cc \
 eixTk/varsreader.h
 
@@ -73,8 +75,6 @@ eixTk/ptr_list.h \
 eixTk/regexp.cc \
 eixTk/regexp.h \
 $(sysutils_src) \
-eixTk/utils.cc \
-eixTk/utils.h \
 eixTk/unused.h \
 $(varsreader_src)
 

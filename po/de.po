@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-04-19 21:09+0200\n"
+"POT-Creation-Date: 2013-04-27 20:11+0200\n"
 "PO-Revision-Date: 2013-03-19 18:24+0100\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -2251,27 +2251,27 @@ msgstr "Datenbank defekt: Nichtexistierender Hash angefordert"
 msgid "Error reading %s: %s"
 msgstr "Lesefehler in %s: %s "
 
-#: src/eixTk/utils.cc:118
+#: src/eixTk/utils.cc:120
 msgid "Nesting level too deep in %r"
 msgstr "Zu tiefe Verschachtelung in %r"
 
-#: src/eixTk/varsreader.cc:143
+#: src/eixTk/varsreader.cc:145
 msgid "%s: failed to source %r (%s)"
 msgstr "%s: source %r ging nicht (%s)"
 
-#: src/eixTk/varsreader.cc:853
+#: src/eixTk/varsreader.cc:869
 msgid "cannot read file %r"
 msgstr "Datei %r kann nicht gelesen werden"
 
-#: src/eixTk/varsreader.cc:861
+#: src/eixTk/varsreader.cc:877
 msgid "cannot stat file %r"
 msgstr "Status der Datei %r kann nicht ermiitelt werden"
 
-#: src/eixTk/varsreader.cc:877
+#: src/eixTk/varsreader.cc:893
 msgid "cannot map file %r"
 msgstr "Datei %r kann nicht gemapped werden"
 
-#: src/eixTk/varsreader.cc:892
+#: src/eixTk/varsreader.cc:908
 msgid "recursively sourced file %r"
 msgstr "File %r wird rekursiv gesourced"
 
@@ -6373,15 +6373,15 @@ msgstr "doppeltes ELSE"
 msgid "IF without FI"
 msgstr "IF ohne FI"
 
-#: src/eixrc/eixrc.cc:454
+#: src/eixrc/eixrc.cc:455
 msgid "No $HOME found in environment."
 msgstr "Kein $HOME in der Environment."
 
-#: src/eixrc/eixrc.cc:775
+#: src/eixrc/eixrc.cc:776
 msgid "or"
 msgstr "oder"
 
-#: src/eixrc/eixrc.cc:791
+#: src/eixrc/eixrc.cc:792
 msgid ""
 "%s has unknown value %r\n"
 "\tassuming value 'all-installed' instead."
@@ -6389,15 +6389,15 @@ msgstr ""
 "%s hat unbekannten Wert %r\n"
 "\tAls Ersatz wird 'all-installed' benutzt."
 
-#: src/eixrc/eixrc.cc:821
+#: src/eixrc/eixrc.cc:822
 msgid "was locally changed to:"
 msgstr "lokal geändert auf:"
 
-#: src/eixrc/eixrc.cc:822
+#: src/eixrc/eixrc.cc:823
 msgid "changed locally, default was:"
 msgstr "lokal geändert. Default war:"
 
-#: src/eixrc/eixrc.cc:851
+#: src/eixrc/eixrc.cc:852
 msgid "locally added:"
 msgstr "lokal hinzugefügt:"
 

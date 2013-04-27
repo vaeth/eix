@@ -30,6 +30,9 @@ bool scandir_cc(const std::string &dir, std::vector<std::string> *namelist, sele
 /** push_back every line of file or dir into v. */
 bool pushback_lines(const char *file, std::vector<std::string> *v, bool recursive = false, bool keep_empty = false, eix::SignedBool keep_comments = 0, std::string *errtext = NULLPTR) ATTRIBUTE_NONNULL((1, 2));
 
+/** Files excluded for pushback_lines in recursive mode */
+extern const char *pushback_lines_exclude[];
+
 /** List of files in directory.
  * Pushed names of file in directory into string-vector if they don't match any
  * char * in given exlude list.
@@ -41,6 +44,7 @@ bool pushback_lines(const char *file, std::vector<std::string> *v, bool recursiv
  * @param full_path return full pathnames
  * @return true if everything is ok. Nonexisting directory is not ok. */
 bool pushback_files(const std::string &dir_path, std::vector<std::string> *into, const char *exclude[] = NULLPTR, unsigned char only_files = 1, bool no_hidden = true, bool full_path = true) ATTRIBUTE_NONNULL((2));
+
 
 /** Cycle through map using it, until it is it_end, append all values from it
  * to the value with the same key in append_to. */

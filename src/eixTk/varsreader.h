@@ -36,6 +36,7 @@ class VarsReader {
 			ALLOW_SOURCE         = 0x0040U,  /**< Flag: Allow "source"/"." command. */
 			ALLOW_SOURCE_VARNAME = 0x0080|ALLOW_SOURCE,  /**< Flag: Allow "source"/"." but Prefix is only a varname which might be modified during sourcing. */
 			PORTAGE_ESCAPES      = 0x0100U,  /**< Flag: Treat escapes like portage does. */
+			RECURSE              = 0x0200U,  /**< Flag: Allow recursive reading */
 			HAVE_READ            = KEYWORDS_READ|SLOT_READ,       /**< Combination of previous "*_READ" */
 			ONLY_HAVE_READ       = ONLY_KEYWORDS_SLOT|HAVE_READ;  /**< Combination of HAVE_READ and ONLY_KEYWORDS_SLOT */
 
@@ -58,7 +59,7 @@ class VarsReader {
 
 		/** Read file.
 		 * @return true if the file was successfully read. */
-		bool read(const char *filename, std::string *errtext, bool noexist_ok, std::set<std::string> *sourced = NULLPTR) ATTRIBUTE_NONNULL((2));
+		bool read(const char *filename, std::string *errtext, bool noexist_ok, std::set<std::string> *sourced = NULLPTR, bool nodir = false) ATTRIBUTE_NONNULL((2));
 
 		/** Use a supplied map for variables. */
 		void useMap(std::map<std::string, std::string> *vars_map) ATTRIBUTE_NONNULL_

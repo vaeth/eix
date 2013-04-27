@@ -30,6 +30,7 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringutils.h"
+#include "eixTk/utils.h"
 #include "eixTk/varsreader.h"
 
 /** Current input for FSM */
@@ -101,6 +102,7 @@ const VarsReader::Flags
 	VarsReader::ALLOW_SOURCE,
 	VarsReader::ALLOW_SOURCE_VARNAME,
 	VarsReader::PORTAGE_ESCAPES,
+	VarsReader::RECURSE,
 	VarsReader::HAVE_READ,
 	VarsReader::ONLY_HAVE_READ;
 
@@ -842,8 +844,22 @@ VarsReader::initFsm()
 }
 
 bool
-VarsReader::read(const char *filename, string *errtext, bool noexist_ok, set<string> *sourced)
+VarsReader::read(const char *filename, string *errtext, bool noexist_ok, set<string> *sourced, bool nodir)
 {
+	if((!nodir) && ((parse_flags & RECURSE) != NONE)) {
+		string dir(filename);
+		dir.append(1, '/');
+		vector<string> files;
+		if(pushback_files(dir, &files, pushback_lines_exclude, 3)) {
+			for(vector<string>::const_iterator file(files.begin());
+				likely(file != files.end()); ++file) {
+				if(!read(file->c_str(), errtext, false, sourced, false)) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
 	int fd(open(filename, O_RDONLY));
 	if(fd == -1) {
 		if(noexist_ok) {

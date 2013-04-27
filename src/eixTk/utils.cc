@@ -99,16 +99,18 @@ pushback_lines_file(const char *file, vector<string> *v, bool keep_empty, eix::S
 	return false;
 }
 
+/** Files excluded for pushback_lines in recursive mode */
+const char *pushback_lines_exclude[] = { "..", ".", "CVS", "RCS", "SCCS", NULLPTR };
+
 /** push_back every line of file or dir into v. */
 bool
 pushback_lines(const char *file, vector<string> *v, bool recursive, bool keep_empty, eix::SignedBool keep_comments, string *errtext)
 {
-	static const char *files_exclude[] = { "..", ".", "CVS", "RCS", "SCCS", NULLPTR };
 	static int depth(0);
 	vector<string> files;
 	string dir(file);
-	dir += "/";
-	if(recursive && pushback_files(dir, &files, files_exclude, 3)) {
+	dir.append(1, '/');
+	if(recursive && pushback_files(dir, &files, pushback_lines_exclude, 3)) {
 		bool rvalue(true);
 		for(vector<string>::iterator it(files.begin());
 			likely(it != files.end()); ++it) {

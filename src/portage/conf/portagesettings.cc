@@ -162,7 +162,7 @@ void
 PortageSettings::read_config(const string &name, const string &prefix)
 {
 	(*this)["EPREFIX"] = m_eprefix;
-	VarsReader configfile(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE|VarsReader::PORTAGE_ESCAPES);
+	VarsReader configfile(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE|VarsReader::PORTAGE_ESCAPES|VarsReader::RECURSE);
 	configfile.accumulatingKeys(default_accumulating_keys);
 	configfile.useMap(this);
 	configfile.setPrefix(prefix);
