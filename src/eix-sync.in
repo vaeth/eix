@@ -99,6 +99,20 @@ DoExecute() {
 	done
 }
 
+ConfigHooksInfo() {
+	StatusInfo "`gettext 'Running !!-hooks'`"
+	ConfigHooksInfo() {
+:
+}
+}
+
+LaymanHooksInfo() {
+	StatusInfo "`gettext 'Running !-hooks'`"
+	LaymanHooksInfo() {
+:
+}
+}
+
 ParseConfigLine() {
 	j=${2}
 	while :
@@ -115,7 +129,10 @@ ParseConfigLine() {
 	done
 	case ${j} in
 	'!!'*)
-		[ "${1}" = 'opts' ] && DoExecute "${j#??}"
+		if [ "${1}" = 'opts' ]
+		then	ConfigHooksInfo
+			DoExecute "${j#??}"
+		fi
 		return;;
 	'!'*)
 		j=${j#?}
@@ -147,7 +164,10 @@ ParseConfigLine() {
 		Push before_rsync "${j}"
 		return;;
 	'!')
-		${nolayman} || DoExecute "${j}"
+		if ! ${nolayman}
+		then	LaymanHooksInfo
+			DoExecute "${j}"
+		fi
 		return;;
 	esac
 	${nolayman} && return
@@ -309,7 +329,8 @@ MyRunCommand() {
 }
 
 DoHook() {
-	${nohooks} && return
+	${nohooks} || [ -z "${1:++}" ] && return
+	[ -z "${2:++}" ] || StatusInfo "${2}"
 	case ${-} in
 	*f*)
 		eval "set -- ${1}";;
@@ -402,6 +423,7 @@ PrepRsync() {
 		eval "set -- ${before_rsync}"
 		set +f;;
 	esac
+	[ ${#} -eq 0 ] || StatusInfo "`gettext 'Running ~-hooks'`"
 	for curr_cmd
 	do	if c=`eval "${curr_cmd}"`
 		then	eval "${c}" || WarnOrDie "`eval_gettext \
@@ -502,7 +524,7 @@ UpdateDiff() {
 			'eix-update was apparently already called in a hook'`"
 	else	MyVarCommand "${updatecmd}" -t update
 	fi
-	DoHook "${after_update}"
+	DoHook "${after_update}" "`gettext 'Running @@-hooks'`"
 	MyRunCommand "`gettext 'Calling eix-diff'`" \
 		-t diff eix-diff -- "${d}" || \
 		die "`gettext 'Failed to diff against current cache'`"
@@ -534,7 +556,7 @@ MainSync() {
 	ReadTimeStamp current_timestamp
 	[ "${previous_timestamp}" != "${current_timestamp}" ] && have_changed=:
 	${have_changed} || NotChanged
-	${synchooks} && DoHook "${after_sync}"
+	${synchooks} && DoHook "${after_sync}" "`gettext 'Running @-hooks'`"
 	CallSyncClient
 	CallEmergeMetadata
 	CopyPrevious
