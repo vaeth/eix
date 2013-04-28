@@ -278,11 +278,11 @@ Check in_license "`eval_gettext \
 	"`eval_gettext 'Not installed but in ${rump}license:'`" \
 	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}license'`"
 Statusline 'accept_restrict'
-Check license "`eval_gettext \
+Check restrict "`eval_gettext \
 	'No  redundant  entries in ${rump}accept_restrict'`" \
 	"`eval_gettext 'Redundant in ${rump}accept_restrict:'`" \
 	"`eval_gettext 'Skipping check:  redundant  entries in ${rump}accept_restrict'`"
-Check in_license "`eval_gettext \
+Check in_restrict "`eval_gettext \
 	'No uninstalled entries in ${rump}accept_restrict'`" \
 	"`eval_gettext 'Not installed but in ${rump}accept_restrict:'`" \
 	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}accept_restrict'`"
