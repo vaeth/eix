@@ -73,6 +73,8 @@ public:
 		init_red("double_env",       Keywords::RED_DOUBLE_ENV);
 		init_red("in_license",       Keywords::RED_IN_LICENSE);
 		init_red("double_license",   Keywords::RED_DOUBLE_LICENSE);
+		init_red("in_restrict",      Keywords::RED_IN_RESTRICT);
+		init_red("double_restrict",  Keywords::RED_DOUBLE_RESTRICT);
 		init_red("in_cflags",        Keywords::RED_IN_CFLAGS);
 		init_red("double_cflags",    Keywords::RED_DOUBLE_CFLAGS);
 		init_ins("nonexistent",      PackageTest::INS_NONEXISTENT);

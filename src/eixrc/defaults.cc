@@ -906,6 +906,10 @@ AddOption(BOOLEAN, "TEST_LICENSE",
 	"true", _(
 	"Defines whether /etc/portage/package.license is tested with -t."));
 
+AddOption(BOOLEAN, "TEST_RESTRICT",
+	"true", _(
+	"Defines whether /etc/portage/package.accept_restrict is tested with -t."));
+
 AddOption(BOOLEAN, "TEST_CFLAGS",
 	"true", _(
 	"Defines whether /etc/portage/package.cflags is tested with -t."));
@@ -1005,6 +1009,11 @@ AddOption(STRING, "REDUNDANT_IF_DOUBLE_LICENSE",
 	"Applies if /etc/portage/package.license matches twice\n"
 	"for the versions in question."));
 
+AddOption(STRING, "REDUNDANT_IF_DOUBLE_RESTRICT",
+	"some", _(
+	"Applies if /etc/portage/package.accept_restrict matches twice\n"
+	"for the versions in question."));
+
 AddOption(STRING, "REDUNDANT_IF_DOUBLE_CFLAGS",
 	"false", _(
 	"Applies if /etc/portage/package.cflags matches twice\n"
@@ -1033,6 +1042,10 @@ AddOption(STRING, "REDUNDANT_IF_IN_ENV",
 AddOption(STRING, "REDUNDANT_IF_IN_LICENSE",
 	"-some", _(
 	"Applies if /etc/portage/package.license matches."));
+
+AddOption(STRING, "REDUNDANT_IF_IN_RESTRICT",
+	"-some", _(
+	"Applies if /etc/portage/package.accept_restrict matches."));
 
 AddOption(STRING, "REDUNDANT_IF_IN_CFLAGS",
 	"false", _(
@@ -1081,6 +1094,10 @@ AddOption(STRING, "LICENSE_NONEXISTENT",
 	"%{\\EIXCFGDIR}/package.license.nonexistent", _(
 	"Entries listed in these files/dirs are excluded for -t TEST_LICENSE."));
 
+AddOption(STRING, "RESTRICT_NONEXISTENT",
+	"%{\\EIXCFGDIR}/package.accept_restrict.nonexistent", _(
+	"Entries listed in these files/dirs are excluded for -t TEST_RESTRICT."));
+
 AddOption(STRING, "CFLAGS_NONEXISTENT",
 	"%{\\EIXCFGDIR}/package.cflags.nonexistent", _(
 	"Entries listed in these files/dirs are excluded for -t TEST_CFLAGS."));
@@ -1107,6 +1124,7 @@ AddOption(STRING, "OBSOLETE_PACKAGE_NOWARN",
 	"%{\\EIXCFGDIR}/package.use.nowarn "
 	"%{\\EIXCFGDIR}/package.env.nowarn "
 	"%{\\EIXCFGDIR}/package.license.nowarn "
+	"%{\\EIXCFGDIR}/package.accept_restrict.nowarn "
 	"%{\\EIXCFGDIR}/package.cflags.nowarn "
 	"%{\\EIXCFGDIR}/package.installed.nowarn", _(
 	"This variable is used for delayed substitution in PACKAGE_NOWARN if the\n"

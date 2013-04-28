@@ -206,8 +206,11 @@ class Keywords
 			RED_DOUBLE_LICENSE= 0x020000U,  /**< Some entry in package.license   */
 			RED_IN_LICENSE    = 0x040000U,  /**< Double entry in package.license */
 			RED_ALL_LICENSE   = RED_DOUBLE_LICENSE|RED_IN_LICENSE,
-			RED_DOUBLE_CFLAGS = 0x080000U,  /**< Some entry in package.cflags    */
-			RED_IN_CFLAGS     = 0x100000U,  /**< Double entry in package.cflags  */
+			RED_DOUBLE_RESTRICT=0x080000U,  /**< Some entry in package.accept_restrict */
+			RED_IN_RESTRICT   = 0x100000U,  /**< Double entry in package.accept_restrict */
+			RED_ALL_RESTRICT  = RED_DOUBLE_RESTRICT|RED_IN_RESTRICT,
+			RED_DOUBLE_CFLAGS = 0x200000U,  /**< Some entry in package.cflags    */
+			RED_IN_CFLAGS     = 0x400000U,  /**< Double entry in package.cflags  */
 			RED_ALL_CFLAGS    = RED_DOUBLE_CFLAGS|RED_IN_CFLAGS;
 
 		KeywordsFlags keyflags;

@@ -334,6 +334,8 @@ parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettin
 						Keywords::RED_DOUBLE_ENV, &red);
 					eixrc->getRedundantFlags("REDUNDANT_IF_DOUBLE_LICENSE",
 						Keywords::RED_DOUBLE_LICENSE, &red);
+					eixrc->getRedundantFlags("REDUNDANT_IF_DOUBLE_RESTRICT",
+						Keywords::RED_DOUBLE_RESTRICT, &red);
 					eixrc->getRedundantFlags("REDUNDANT_IF_DOUBLE_CFLAGS",
 						Keywords::RED_DOUBLE_CFLAGS, &red);
 					eixrc->getRedundantFlags("REDUNDANT_IF_IN_KEYWORDS",
@@ -348,6 +350,8 @@ parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettin
 						Keywords::RED_IN_ENV, &red);
 					eixrc->getRedundantFlags("REDUNDANT_IF_IN_LICENSE",
 						Keywords::RED_IN_LICENSE, &red);
+					eixrc->getRedundantFlags("REDUNDANT_IF_IN_RESTRICT",
+						Keywords::RED_IN_RESTRICT, &red);
 					eixrc->getRedundantFlags("REDUNDANT_IF_IN_CFLAGS",
 						Keywords::RED_IN_CFLAGS, &red);
 				}

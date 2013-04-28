@@ -1013,6 +1013,15 @@ PackageTest::match(PackageReader *pkg) const
 					break;
 			}
 		}
+		r = rflags & Keywords::RED_ALL_RESTRICT;
+		if(r != Keywords::RED_NOTHING) {
+			if(r && portagesettings->user_config->CheckAcceptRestrict(p, r)) {
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE_RESTRICT))
+					break;
+				if(have_redundant(*p, r & Keywords::RED_IN_RESTRICT))
+					break;
+			}
+		}
 		r = rflags & Keywords::RED_ALL_CFLAGS;
 		if(r != Keywords::RED_NOTHING) {
 			if(r && portagesettings->user_config->CheckCflags(p, r)) {

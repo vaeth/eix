@@ -957,6 +957,11 @@ run_eix(int argc, char** argv)
 				eixrc["LICENSE_NONEXISTENT"],
 				all_packages, empty);
 		}
+		if(likely(eixrc.getBool("TEST_RESTRICT"))) {
+			print_unused(eixrc.m_eprefixconf + USER_RESTRICT_FILE,
+				eixrc["LICENSE_RESTRICT"],
+				all_packages, empty);
+		}
 		if(likely(eixrc.getBool("TEST_CFLAGS"))) {
 			print_unused(eixrc.m_eprefixconf + USER_CFLAGS_FILE,
 				eixrc["CFLAGS_NONEXISTENT"],

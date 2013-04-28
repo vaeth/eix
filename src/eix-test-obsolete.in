@@ -191,6 +191,8 @@ DefineSet env \
 	REDUNDANT_IF_DOUBLE_ENV
 DefineSet license \
 	REDUNDANT_IF_DOUBLE_LICENSE
+DefineSet restrict \
+	REDUNDANT_IF_DOUBLE_RESTRICT
 DefineSet cflags \
 	REDUNDANT_IF_DOUBLE_CFLAGS
 DefineSet in_keywords \
@@ -205,6 +207,8 @@ DefineSet in_env \
 	REDUNDANT_IF_IN_ENV
 DefineSet in_license \
 	REDUNDANT_IF_IN_LICENSE
+DefineSet in_restrict \
+	REDUNDANT_IF_IN_RESTRICT
 DefineSet in_cflags \
 	REDUNDANT_IF_IN_CFLAGS
 
@@ -273,6 +277,15 @@ Check in_license "`eval_gettext \
 	'No uninstalled entries in ${rump}license'`" \
 	"`eval_gettext 'Not installed but in ${rump}license:'`" \
 	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}license'`"
+Statusline 'accept_restrict'
+Check license "`eval_gettext \
+	'No  redundant  entries in ${rump}accept_restrict'`" \
+	"`eval_gettext 'Redundant in ${rump}accept_restrict:'`" \
+	"`eval_gettext 'Skipping check:  redundant  entries in ${rump}accept_restrict'`"
+Check in_license "`eval_gettext \
+	'No uninstalled entries in ${rump}accept_restrict'`" \
+	"`eval_gettext 'Not installed but in ${rump}accept_restrict:'`" \
+	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}accept_restrict'`"
 Statusline 'cflags'
 Check cflags "`eval_gettext \
 	'No  redundant  entries in ${rump}cflags'`" \

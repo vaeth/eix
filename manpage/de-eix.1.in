@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2013-04-19 20:00:00 +0200 (Fri, 19 Apr 2013)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -374,7 +374,7 @@ Oder sie kann mit B<-e> kombiniert werden, um weitere Ausgaben zu verhindern.
 
 Falls es einen Grund gibt, bestimmte Einträge/Pakete von diesem Test auszuschließen,
 können diese Einträge in eine Datei /etc/portage/package.*.nonexistent eingefügt werden.
-Hier steht * für eines der Wort keywords, mask, unmask, use, env, license, cflags, installed.
+Hier steht * für eines der Worte {accept_,}keywords, mask, unmask, use, env, license, accept_restrict, cflags, installed.
 Diese Dateien (und wie ihre Namen geändert werden können) wird später beschrieben.
 
 .TP
@@ -3055,6 +3055,9 @@ Legt fest, ob /etc/portage/package.env bei -t getestet wird.
 .BR TEST_LICENSE " " (true / false)
 Legt fest, ob /etc/portage/package.license bei -t getestet wird.
 .TP
+.BR TEST_RESTRICT " " (true / false)
+Legt fest, ob /etc/portage/package.accept_restrict bei -t getestet wird.
+.TP
 .BR TEST_CFLAGS " " (true / false)
 Legt fest, ob /etc/portage/package.cflags bei -t getestet wird.
 .TP
@@ -3187,6 +3190,10 @@ entsprechende Version zutrifft.
 Dies testet, ob /etc/portage/package.license zweimal auf die
 entsprechende Version zutrifft.
 .TP
+.BR REDUNDANT_IF_DOUBLE_RESTRICT " " (string ", siehe oben")
+Dies testet, ob /etc/portage/package.accept_restrict zweimal auf die
+entsprechende Version zutrifft.
+.TP
 .BR REDUNDANT_IF_DOUBLE_CFLAGS " " (string ", siehe oben")
 Dies testet, ob /etc/portage/package.cflags zweimal auf die
 entsprechende Version zutrifft.
@@ -3225,6 +3232,9 @@ Dies ist analog zu B<REDUNDANT_IF_IN_KEYWORDS>, aber für /etc/portage/package.e
 .BR REDUNDANT_IF_IN_LICENSE " " (string ", siehe oben")
 Dies ist analog zu B<REDUNDANT_IF_IN_KEYWORDS>, aber für /etc/portage/package.license.
 .TP
+.BR REDUNDANT_IF_IN_RESTRICT " " (string ", siehe oben")
+Dies ist analog zu B<REDUNDANT_IF_IN_KEYWORDS>, aber für /etc/portage/package.accept_restrict.
+.TP
 .BR REDUNDANT_IF_IN_CFLAGS " " (string ", siehe oben")
 Dies ist analog zu B<REDUNDANT_IF_IN_KEYWORDS>, aber für /etc/portage/package.cflags.
 Siehe die obigen Bemerkungen zu dieser Datei.
@@ -3254,6 +3264,9 @@ Dies ist eine Liste aller Datei/Verzeichnisnamen, die als /etc/portage/package.e
 .TP
 .BR LICENSE_NONEXISTENT " " "(Stringliste)"
 Dies ist eine Liste aller Datei/Verzeichnisnamen, die als /etc/portage/package.license.nonexistent dienen.
+.TP
+.BR RESTRICT_NONEXISTENT " " "(Stringliste)"
+Dies ist eine Liste aller Datei/Verzeichnisnamen, die als /etc/portage/package.accept_restrict.nonexistent dienen.
 .TP
 .BR CFLAGS_NONEXISTENT " " "(Stringliste)"
 Dies ist eine Liste aller Datei/Verzeichnisnamen, die als /etc/portage/package.cflags.nonexistent dienen.
@@ -3291,6 +3304,7 @@ Die entsprechenden Pakete werden als Ausnahmen für B<UPGRADE_TO_HIGHEST_SLOT> b
 .SS /etc/portage/package.use.nonexistent
 .SS /etc/portage/package.env.nonexistent
 .SS /etc/portage/package.license.nonexistent
+.SS /etc/portage/package.accept_restrict.nonexistent
 .SS /etc/portage/package.cflags.nonexistent
 Ähnlich wie /etc/portage/package.* kann dies eine Datei oder ein Verzeichnis sein.
 Falls ein Eintrag (durch Leerzeichen oder Zeilenvorschub getrennt) auf das
@@ -3337,6 +3351,7 @@ B<in_unmask>, B<unmask_no_change>, B<double_unmasked>,
 B<in_use>, B<double_use>,
 B<in_env>, B<double_env>,
 B<in_license>, B<double_license>,
+B<in_restrict>, B<double_restrict>,
 B<in_cflags>, B<double_cflags>.
 Die Bedeutung entspricht der zugehörigen B<REDUNDNANT_IF_*>-Variablen.
 

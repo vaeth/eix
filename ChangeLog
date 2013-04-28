@@ -4,6 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Allow that eix/portage config files are (recursively read) dirs,
 	  see e.g. http://bugs.gentoo.org/show_bug.cgi?id=467276
+	- Support for /etc/portage/package.accept_restrict, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=467622
 	- Fixes in zsh completion for --print and --*overlay*
 	- -fstrict-enums -fno-rtti -fno-threadsafe-statics -fvect-cost-model
 	- eix-sync: Exit with status 3 if neither main tree changed nor

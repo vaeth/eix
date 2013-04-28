@@ -37,6 +37,7 @@ class Version;
 #define USER_USE_FILE           "/etc/portage/package.use"
 #define USER_ENV_FILE           "/etc/portage/package.env"
 #define USER_LICENSE_FILE       "/etc/portage/package.license"
+#define USER_RESTRICT_FILE      "/etc/portage/package.accept_restrict"
 #define USER_CFLAGS_FILE        "/etc/portage/package.cflags"
 #define USER_PROFILE_DIR        "/etc/portage/profile"
 #define PORTDIR_CATEGORIES_FILE "profiles/categories"
@@ -98,6 +99,13 @@ class PortageUserConfig {
 		{
 			if(check & Keywords::RED_ALL_LICENSE)
 				return CheckFile(p, USER_LICENSE_FILE, &m_license, &read_license, check & Keywords::RED_DOUBLE_LICENSE, check & Keywords::RED_IN_LICENSE);
+			return false;
+		}
+		// @return true if something from /etc/portage/package.accept_restrict applied
+		bool CheckAcceptRestrict(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_
+		{
+			if(check & Keywords::RED_ALL_RESTRICT)
+				return CheckFile(p, USER_RESTRICT_FILE, &m_license, &read_license, check & Keywords::RED_DOUBLE_RESTRICT, check & Keywords::RED_IN_RESTRICT);
 			return false;
 		}
 		/// @return true if something from /etc/portage/package.cflags applied

@@ -152,6 +152,9 @@ const Keywords::Redundant
 	Keywords::RED_DOUBLE_LICENSE,
 	Keywords::RED_IN_LICENSE,
 	Keywords::RED_ALL_LICENSE,
+	Keywords::RED_DOUBLE_RESTRICT,
+	Keywords::RED_IN_RESTRICT,
+	Keywords::RED_ALL_RESTRICT,
 	Keywords::RED_DOUBLE_CFLAGS,
 	Keywords::RED_IN_CFLAGS,
 	Keywords::RED_ALL_CFLAGS;
