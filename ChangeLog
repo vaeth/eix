@@ -6,6 +6,8 @@
 	  see e.g. http://bugs.gentoo.org/show_bug.cgi?id=467276
 	- Support for /etc/portage/package.accept_restrict, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=467622
+	- eix-remote: make LOCAL_LAYMAN autodetection work with layman-2.0.0,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=467958
 	- Fixes in zsh completion for --print and --*overlay*
 	- -fstrict-enums -fno-rtti -fno-threadsafe-statics -fvect-cost-model
 	- eix-sync: Exit with status 3 if neither main tree changed nor

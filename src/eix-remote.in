@@ -125,6 +125,12 @@ SanitizeLocalLayman() {
 }
 
 PrintLaymanStorage() {
+	printf '%s\n%s\n' 'from layman.config import BareConfig' \
+	"print(BareConfig(read_configfile=True)['storage'])" \
+		| python -- "${@}" 2>/dev/null
+}
+
+PrintLaymanStorageOld() {
 	printf '%s\n%s\n' 'from layman.config import Config' \
 	"print(Config()['storage'])" | python -- "${@}" 2>/dev/null
 }
@@ -141,11 +147,12 @@ InitLocalLayman() {
 	[ -n "${LOCAL_LAYMAN:++}" ] && return
 	LOCAL_LAYMAN=`PrintLaymanStorage` || LOCAL_LAYMAN=
 	if [ -z "${LOCAL_LAYMAN:++}" ]
-	then	LOCAL_LAYMAN=`PrintLaymanStorage` || LOCAL_LAYMAN=
+	then	LOCAL_LAYMAN=`PrintLaymanStorageOld` || LOCAL_LAYMAN=
 	fi
 	SetLocalLayman "${LOCAL_LAYMAN}" \
 		'/usr/local/portage/layman' \
 		"${local_portdir:-/}local/layman/make.conf" \
+		"${local_portdir%/*/}/layman/make.conf" \
 		'/var/lib/layman'
 }
 
