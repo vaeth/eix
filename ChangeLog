@@ -4,11 +4,16 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Allow that eix/portage config files are (recursively read) dirs,
 	  see e.g. http://bugs.gentoo.org/show_bug.cgi?id=467276
+	  Make /etc/eixrc a directory by default
 	- Support for /etc/portage/package.accept_restrict, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=467622
-	- eix-remote: make LOCAL_LAYMAN autodetection work with layman-2.0.0,
+	- eix-remote: add option -x/-X to exclude redundant local/remote
+	  layman overlays. -x used to be the default in earlier eix versions,
+	  but this was reverted since users do not expect it,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=467958
-	- Fixes in zsh completion for --print and --*overlay*
+	  Put EIX_REMOTE_OPTS=-x into /etc/eixrc to keep the old behaviour.
+	- eix-remote: make LOCAL_LAYMAN heuristic work with layman-2.0.0
+	- Fixes in zsh completion for --print, --*overlay*, eix-installed-after
 	- -fstrict-enums -fno-rtti -fno-threadsafe-statics -fvect-cost-model
 	- eix-sync: Exit with status 3 if neither main tree changed nor
 	  option -a was used nor have_changed=: is set, see

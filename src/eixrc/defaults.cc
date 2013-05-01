@@ -183,6 +183,10 @@ AddOption(STRING, "EIX_REMOTEARCHIVE2",
 	"This is a local copy of the remote archive used by eix-remote.\n"
 	"If the name is empty, only a temporary file is used."));
 
+AddOption(STRING, "LOCAL_LAYMAN",
+	"", _(
+	"If nonempty, this will override the heuristics for eix-remote -L."));
+
 AddOption(STRING, "EXEC_EBUILD",
 	"%{EPREFIX_PORTAGE_EXEC}/usr/bin/ebuild", _(
 	"The path to the ebuild executable."));

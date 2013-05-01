@@ -1,0 +1,30 @@
+# /etc/eixrc/00-eirc
+#
+# All non-hidden files in /etc/eixrc
+# (or a subdirectory thereof) are read in alphabetical order.
+#
+# In these files system-wide defaults for variables related to eix can
+# be stored, i.e. the variables set in files override the built-in defaults.
+# Both can be overridden by ~/.eixrc and by environment variables.
+#
+# It is strongly recommended to set here only those variables which you
+# want to *differ* from the built-in defaults (or for which you have a
+# particular reason why the default should never change with an eix update).
+#
+# *Otherwise you might miss changes in the defaults in newer eix versions*
+# which may result in confusing behavior of the eix binaries.
+#
+# If you want to get a file containing the setting of all related variables
+# in the current/defaults state, redirect the output of options --dump
+# or --dump-defaults, respectively.
+#
+# However once more: To avoid unexpected problems
+#
+#   *IT IS NOT RECOMMENDED TO SET _ALL_ VARIABLES* in /etc/eixrc/*
+#
+# Only set those for which you have a reason to do so!
+#
+# For the available variables and their defaults, see the output of the
+# options --dump or --dump-defaults.
+# For more detailed explanations see the manpage of eix.
+

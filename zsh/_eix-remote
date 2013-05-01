@@ -3,8 +3,11 @@ local curcontext="$curcontext" state state_descr line
 typeset -A opt_args
 _arguments -C -s -S -A '-*' : \
 '(1 -)'{'-h','-\\?'}'[help]' \
+'(1 -)-L[print LOCAL_LAYMAN and exit]' \
 '-k[keep permissions]' \
 '-K[keep permissions, resistent to -i]' \
+'(-X)-x[exclude local layman overlays which are remote]' \
+'(-x)-X[exclude remote overlays which are local layman]' \
 '-l+[PATH (use PATH as LOCAL_LAYMAN)]:LOCAL_LAYMAN:_files -/' \
 '-a+[ADDR (use ADDR as remote database)]:remote address: ' \
 '-i[ignore all previous options]' \

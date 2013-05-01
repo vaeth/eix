@@ -1629,6 +1629,16 @@ layman-Aufrufe und B<!>-Hooks in der Reihenfolge von I<@SYSCONFDIR@/eix-sync.con
 .TP
 Einige Beispiele nützlicher Zeilen in I<@SYSCONFDIR@/eix-sync.conf>:
 .TP
+.B @@StatusInfo 'eix-remote add1'
+Ankündigung, dass das nächste Kommando eix-remote add1 ist
+(Setzt die Statuszeile nd gibt die Information für den Benutzer aus).
+.TP
+.B @@Statusline 'eix-remote add1'
+Wie oben, setzt aber nur die Statuszeile.
+.TP
+.B @@einfo 'eix-remote add1'
+Wie oben, gibt aber nur die Information für den Benutzer aus.
+.TP
 .B @@eix-remote add1
 Diese Zeile sollte bei Benutzung des Defaults (nichtleeres B<EIX_REMOTE1>)
 im File stehen, so dass die B<EIX_REMOTE1> Datenbank mit der Hauptdatenbank von
@@ -3662,7 +3672,7 @@ also nach jedem B<emerge --sync>.
 Um den obigen Befehl automatisch rechtzeitig mit B<eix-sync> auszuführen,
 fügen Sie in I</etc/eix-sync.conf> die folgenden Zeilen ein:
 
-B<@einfo Erzeuge Metadaten für> I<mein_lokaler_Overlay>
+B<@StatusInfo 'Erzeuge Metadaten für> I<mein_lokaler_Overlay><'>
 
 B<@egencache --repo=>I<mein_lokaler_Overlay> B<--update --update-use-local-desc>
 
@@ -3804,6 +3814,11 @@ Dieser Hack war nur für obsolete FORMAT-Strings eingeführt worden und wurde wi
 
 Die Variablen B<COLORSTRING>, B<COLORSTRING_ALT> und B<TERM_ALT> wurden durch die flexibleren
 Variablen B<COLORSTRING?> und B<TERM_ALT?> ersetzt.
+
+In B<eix-remote> vor eix-0.28.5 war die jetzige Option B<-x> der Default.
+Diese erscheint nach wie vor ein vernünftiger Default, aber das Feature irritierte Benutzer
+(einige hielten es sogar für einen Bug), so dass es jetzt manuell als Default
+festgelegt werden muss (durch Setzen von B<EIX_REMOTE_OPTS=-x> in I</etc/eixrc>).
 .\" }}}
 
 .\" {{{ AUTOREN

@@ -25,7 +25,7 @@ _arguments -C -s -S -A '-*' : \
 local ret=$?
 case $state in
 (package)
-	_tag packages
+	_tags packages
 	_requested packages && {
 		local d
 		local -x NEWLINE=false CAREMODE=false QUICKMODE=true \

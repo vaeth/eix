@@ -1609,6 +1609,16 @@ layman calls and B<!> hooks in order of I<@SYSCONFDIR@/eix-sync.conf>
 .TP
 Some examples of useful lines in I<@SYSCONFDIR@/eix-sync.conf>:
 .TP
+.B @@StatusInfo 'eix-remote add1'
+Announce that the next command will be eix-remote add1
+(sets hardstatus line and output info for user.)
+.TP
+.B @@Statusline 'eix-remote add1'
+As above, but set only hardstatus line.
+.TP
+.B @@einfo 'eix-remote add1'
+As above, but output only info to user.
+.TP
 .B @@eix-remote add1
 This should be put into the file if you use the default (a nonempty B<EIX_REMOTE1>)
 so that your B<EIX_REMOTE1> database is synchronized with your main eix database at the end of B<eix-sync>.
@@ -3567,7 +3577,7 @@ executed also if these eclasses change, i.e. after each B<emerge --sync>.
 To call the above command automatically at the right time with B<eix-sync>, put e.g.
 the following lines into I</etc/eix-sync.conf>:
 
-B<@echo Updating metadata for> I<my_local_overlay>
+B<@StatusInfo 'Updating metadata for> I<my_local_overlay>B<'>
 
 B<@egencache --repo=>I<my_local_overlay> B<--update --update-use-local-desc>
 
@@ -3707,6 +3717,11 @@ This hack had been only introduced to deal with obsolete FORMAT strings and has 
 
 The variables B<COLORSTRING>, B<COLORSTRING_ALT>, and B<TERM_ALT> have been replaced by the
 more flexible variables B<COLORSTRING?> and B<TERM_ALT?>.
+
+In B<eix-remote> before eix-0.28.5 the current option B<-x> was on by default.
+This would still be a reasonable default, but some users were confused by the feature
+(some even believed it is a bug) so that it is now necessary to configure this default
+manually (by setting B<EIX_REMOTE_OPTS=-x> in I</etc/eixrc>).
 .\" }}}
 
 .\" {{{ AUTHORS

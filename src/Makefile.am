@@ -14,8 +14,8 @@ AM_CXXFLAGS = \
 -DLOCALEDIR=\"$(localedir)\" \
 $(SQLITE_CFLAGS)
 
-nodist_sysconf_DATA = \
-eixrc/eixrc
+nobase_nodist_sysconf_DATA = \
+eixrc/00-eixrc
 
 database_src = \
 database/io.cc \
@@ -321,7 +321,7 @@ eix-layman.in \
 eix-remote.in \
 eix-sync.in \
 eix-test-obsolete.in \
-eixrc/eixrc.in \
+eixrc/00-eixrc.in \
 cache/generate_cachemap.sh
 
 if SEPARATE_TOOLS
