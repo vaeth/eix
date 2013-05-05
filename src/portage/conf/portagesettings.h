@@ -52,8 +52,8 @@ class PortageUserConfig {
 		PortageSettings      *m_settings;
 		MaskList<Mask>        m_localmasks;
 		MaskList<KeywordMask> m_accept_keywords;
-		MaskList<KeywordMask> m_use, m_env, m_license, m_cflags;
-		bool read_use, read_env, read_license, read_cflags;
+		MaskList<KeywordMask> m_use, m_env, m_license, m_restrict, m_cflags;
+		bool read_use, read_env, read_license, read_restrict, read_cflags;
 
 		/** Your cascading profile, including local settings */
 		CascadingProfile     *profile;
@@ -105,7 +105,7 @@ class PortageUserConfig {
 		bool CheckAcceptRestrict(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_
 		{
 			if(check & Keywords::RED_ALL_RESTRICT)
-				return CheckFile(p, USER_RESTRICT_FILE, &m_license, &read_license, check & Keywords::RED_DOUBLE_RESTRICT, check & Keywords::RED_IN_RESTRICT);
+				return CheckFile(p, USER_RESTRICT_FILE, &m_restrict, &read_restrict, check & Keywords::RED_DOUBLE_RESTRICT, check & Keywords::RED_IN_RESTRICT);
 			return false;
 		}
 		/// @return true if something from /etc/portage/package.cflags applied
