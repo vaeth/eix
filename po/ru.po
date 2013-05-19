@@ -3,16 +3,17 @@
 # Copyright (C)
 # This file is distributed under the same license as the eix package.
 #
-# Artem Vorotnikov <vorot93@yandex.ru>, 2012-2013.
 # Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>, 2013.
+# Artem Vorotnikov <skybon@gmail.com>, 2012-2013, 2013.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
 "POT-Creation-Date: 2013-05-01 12:06+0200\n"
-"PO-Revision-Date: 2013-05-01 11:40+0200\n"
+"PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
-"Language-Team: Russian <kde-russian@lists.kde.ru>\n"
+"Language-Team: русский <>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -24,7 +25,7 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
-"X-Generator: Lokalize 1.5\n"
+"X-Generator: Gtranslator 2.91.6\n"
 
 #: src/eix-functions.sh.in:103 src/eix-update.cc:626 src/eix-update.cc:660
 #: src/eixTk/statusline.cc:60
@@ -504,7 +505,7 @@ msgstr "$LOCAL_LAYMAN должен начинаться с /"
 #: src/eix-remote.sh:179
 #, sh-format
 msgid "cannot determine useful $LOCAL_LAYMAN"
-msgstr ""
+msgstr "невозможно определить полезный $LOCAL_LAYMAN"
 
 #: src/eix-remote.sh:195
 #, sh-format
@@ -751,11 +752,11 @@ msgstr "Что-то не так с ${curr_cmd}"
 
 #: src/eix-sync.sh:103
 msgid "Running !!-hooks"
-msgstr ""
+msgstr "Выполняются !!-хуки"
 
 #: src/eix-sync.sh:110
 msgid "Running !-hooks"
-msgstr ""
+msgstr "Выполняются !-хуки"
 
 #: src/eix-sync.sh:183
 msgid "Syncing all portage overlays"
@@ -824,7 +825,7 @@ msgstr "%6d секунд всего\\n"
 
 #: src/eix-sync.sh:426
 msgid "Running ~-hooks"
-msgstr ""
+msgstr "Выполняются ~-хуки"
 
 #: src/eix-sync.sh:430
 #, sh-format
@@ -895,7 +896,7 @@ msgstr "Вероятно, eix-update уже вызван крюком"
 
 #: src/eix-sync.sh:527
 msgid "Running @@-hooks"
-msgstr ""
+msgstr "Выполняются @@-хуки"
 
 #: src/eix-sync.sh:528
 msgid "Calling eix-diff"
@@ -910,10 +911,12 @@ msgid ""
 "Main gentoo tree does not appear to have changed: exiting\n"
 "Use -a or set have_changed=: in a ! hook to override this check"
 msgstr ""
+"Главное дерево gentoo не изменилось, выхожу\n"
+"Ключ -a или have_changed=: в !=хуке позволит обойти проверку"
 
 #: src/eix-sync.sh:559
 msgid "Running @-hooks"
-msgstr ""
+msgstr "Выполняются @-хуки"
 
 #: src/eix-test-obsolete.sh:17
 #, sh-format
