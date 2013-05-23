@@ -198,10 +198,11 @@ ExecuteConfig() {
 	before_rsync=
 	config_opts=
 	rsync_opts=
-	${haveconf} && while read confline
+	${haveconf} && while read -r confline
 	do	ParseConfigLine "${1}" "${confline}"
 	done <"${eixsyncconf}"
-	while read confline
+	[ -z "${confline}" ] || ParseConfigLine "${1}" "${confline}"
+	while read -r confline
 	do	ParseConfigLine "${1}" "${confline}"
 	done <<END_EIX_SYNC_CONF
 ${eix_sync_conf}
