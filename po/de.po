@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-05-23 21:39+0200\n"
+"POT-Creation-Date: 2013-05-23 22:16+0200\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -784,136 +784,136 @@ msgstr "Synce Portage-Overlay ${j}"
 msgid "${mycmd} -s ${j} failed"
 msgstr "${mycmd} -s ${j} schlug fehl"
 
-#: src/eix-sync.sh:359
+#: src/eix-sync.sh:360
 #, sh-format
 msgid "Running ${myvarcmd}"
 msgstr "Starte ${myvarcmd}"
 
-#: src/eix-sync.sh:361
+#: src/eix-sync.sh:362
 #, sh-format
 msgid "${myvarcmd} failed"
 msgstr "${myvarcmd} schlug fehl"
 
-#: src/eix-sync.sh:372
+#: src/eix-sync.sh:373
 msgid "%6d seconds for %s\\n"
 msgstr "%6d Sekunden für %s\\n"
 
-#: src/eix-sync.sh:377
+#: src/eix-sync.sh:378
 msgid "Time statistics:"
 msgstr "Benötigte Zeit:"
 
-#: src/eix-sync.sh:378
+#: src/eix-sync.sh:379
 msgid "initial eix-update"
 msgstr "Erstes eix-update"
 
-#: src/eix-sync.sh:379
+#: src/eix-sync.sh:380
 msgid "syncing"
 msgstr "syncen"
 
-#: src/eix-sync.sh:380
+#: src/eix-sync.sh:381
 msgid "client syncing"
 msgstr "Client syncen"
 
-#: src/eix-sync.sh:381
+#: src/eix-sync.sh:382
 msgid "metadata update"
 msgstr "Metadata update"
 
-#: src/eix-sync.sh:382
+#: src/eix-sync.sh:383
 msgid "eix-update"
 msgstr "eix-update"
 
-#: src/eix-sync.sh:383
+#: src/eix-sync.sh:384
 msgid "eix-diff"
 msgstr "eix-diff"
 
-#: src/eix-sync.sh:386
+#: src/eix-sync.sh:387
 msgid "%6d seconds total\\n"
 msgstr "%6d Sekunden insgesamt\\n"
 
-#: src/eix-sync.sh:427
+#: src/eix-sync.sh:428
 msgid "Running ~-hooks"
 msgstr "Starte ~-Hooks"
 
-#: src/eix-sync.sh:431
+#: src/eix-sync.sh:432
 #, sh-format
 msgid "${c} (output of ${curr_cmd}) failed"
 msgstr "${c} (Ausgabe von ${curr_cmd}) schlug fehl"
 
-#: src/eix-sync.sh:432
+#: src/eix-sync.sh:433
 #, sh-format
 msgid "${curr_cmd} failed"
 msgstr "${curr_cmd} schlug fehl"
 
-#: src/eix-sync.sh:452
+#: src/eix-sync.sh:453
 #, sh-format
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr "Lösche alten Portage-Cache aus ${local_varcache}/var/cache/edb/dep"
 
-#: src/eix-sync.sh:454
+#: src/eix-sync.sh:455
 #, sh-format
 msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
 msgstr "rm -rf ${local_varcache}/var/cache/edb/dep/* schlug fehl"
 
-#: src/eix-sync.sh:462
+#: src/eix-sync.sh:463
 #, sh-format
 msgid "Could not rsync from ${hostdir}"
 msgstr "Konnte nicht von ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:472
+#: src/eix-sync.sh:473
 #, sh-format
 msgid "rsyncing to ${hostdir}"
 msgstr "rsync auf ${hostdir}"
 
-#: src/eix-sync.sh:474
+#: src/eix-sync.sh:475
 #, sh-format
 msgid "Could not rsync to ${hostdir}"
 msgstr "Konnte nicht auf ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:484
+#: src/eix-sync.sh:485
 msgid "eix-cache does not exist."
 msgstr "Eix-Cache existiert nicht."
 
-#: src/eix-sync.sh:489
+#: src/eix-sync.sh:490
 msgid "eix-cache format has changed."
 msgstr "Eix-Cache-Format hat sich geändert."
 
-#: src/eix-sync.sh:496
+#: src/eix-sync.sh:497
 #, sh-format
 msgid "Copying old ${eixcache} cache to temporary file"
 msgstr "Kopiere alten ${eixcache} Cache in Temporärdatei"
 
-#: src/eix-sync.sh:500
+#: src/eix-sync.sh:501
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Konnte die Datenbank nicht in Temporärdatei ${tmpfile} kopieren"
 
-#: src/eix-sync.sh:504
+#: src/eix-sync.sh:505
 #, sh-format
 msgid "Copying old database to ${eixprevious}"
 msgstr "Kopiere alte Datenbank nach ${eixprevious}"
 
-#: src/eix-sync.sh:506
+#: src/eix-sync.sh:507
 #, sh-format
 msgid "Could not copy database to ${eixprevious}"
 msgstr "Konnte die Datenbank nicht nach ${eixprevious} kopieren"
 
-#: src/eix-sync.sh:525
+#: src/eix-sync.sh:526
 msgid "eix-update was apparently already called in a hook"
 msgstr "eix-update wurde anscheinend bereits in einem Hook aufgerufen"
 
-#: src/eix-sync.sh:528
+#: src/eix-sync.sh:529
 msgid "Running @@-hooks"
 msgstr "Starte @@-Hooks"
 
-#: src/eix-sync.sh:529
+#: src/eix-sync.sh:530
 msgid "Calling eix-diff"
 msgstr "Starte eix-diff"
 
-#: src/eix-sync.sh:531
+#: src/eix-sync.sh:532
 msgid "Failed to diff against current cache"
 msgstr "Konnte nicht gegen aktuellen Cache vergleichen."
 
-#: src/eix-sync.sh:546
+#: src/eix-sync.sh:547
 msgid ""
 "Main gentoo tree does not appear to have changed: exiting\n"
 "Use -a or set have_changed=: in a ! hook to override this check"
@@ -922,7 +922,7 @@ msgstr ""
 "Benutzen Sie -a oder setzen Sie have_changed=: in einem !-Hook, um diesen\n"
 "Test zu verhindern"
 
-#: src/eix-sync.sh:560
+#: src/eix-sync.sh:561
 msgid "Running @-hooks"
 msgstr "Starte @-Hooks"
 
