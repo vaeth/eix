@@ -202,7 +202,7 @@ ExecuteConfig() {
 	${haveconf} && while read -r confline
 	do	ParseConfigLine "${1}" "${confline}"
 	done <"${eixsyncconf}"
-	[ -z "${confline}" ] || ParseConfigLine "${1}" "${confline}"
+	[ -z "${confline:++}" ] || ParseConfigLine "${1}" "${confline}"
 	while read -r confline
 	do	ParseConfigLine "${1}" "${confline}"
 	done <<END_EIX_SYNC_CONF

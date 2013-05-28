@@ -174,11 +174,11 @@ InitLocalLayman() {
 	done
 	return 1
 }
-if [ -n "${exclude}" ]
+if [ -n "${exclude:++}" ]
 then	InitLocalLayman && SanitizeLocalLayman || {
 		ewarn "`gettext 'cannot determine useful $LOCAL_LAYMAN'`"
 		if [ "${exclude}" = 'debug' ]
-		then	[ -n "${local_layman}" ] && Echo "${local_layman}"
+		then	[ -n "${local_layman:++}" ] && Echo "${local_layman}"
 			Exit 1
 		fi
 		exclude=
@@ -397,7 +397,7 @@ case ${1} in
 *2)
 	number=2;;
 esac
-[ -n "${addr}" ] || eval addr=\${addr${number}}
+[ -n "${addr:++}" ] || eval addr=\${addr${number}}
 eval archive=\${archive${number}}
 eix_remote_var=EIX_REMOTE${number}
 

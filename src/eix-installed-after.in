@@ -121,7 +121,7 @@ done
 
 # After the options there should be exactly one argument: ${match}
 
-if [ -n "${timefile}" ]
+if [ -n "${timefile:++}" ]
 then	epoch=`stat -c '%Y' -- "${timefile}" 2>/dev/null` || epoch=
 fi
 
