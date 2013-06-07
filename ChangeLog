@@ -1,7 +1,7 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.28.6
-	Артём Воротников <vorot93 at yandex.ru>:
+	Артём Воротников <skybon at gmail.com>:
 	- Russian translation updates
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
@@ -28,7 +28,7 @@
 	  bug_id=18973&group_id=11597
 
 *eix-0.28.4
-	Артём Воротников <vorot93 at yandex.ru>:
+	Артём Воротников <skybon at gmail.com>:
 	- Russian translation fixes and updates
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
@@ -40,7 +40,7 @@
 	- Use -fno-fat-lto-objects
 
 *eix-0.28.3
-	Артём Воротников <vorot93 at yandex.ru>:
+	Артём Воротников <skybon at gmail.com>:
 	- Russian translation fixes and updates
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
@@ -59,7 +59,7 @@
 	- Compile also with <automake-1.13
 
 *eix-0.28.2
-	Артём Воротников <vorot93 at yandex.ru>:
+	Артём Воротников <skybon at gmail.com>:
 	- Russian translation fixes and updates
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
@@ -298,7 +298,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=427644
 
 *eix-0.26.0
-	Артём Воротников <vorot93 at yandex.ru>:
+	Артём Воротников <skybon at gmail.com>:
 	- Continued Russian translation and add fixes suggested by
 	  Stanislav Cymbalov <dummyunit at gmail.com>.
 
@@ -319,7 +319,7 @@
 	- Do not cache version strings to save memory
 
 *eix-0.25.5
-	Артём Воротников <vorot93 at yandex.ru>:
+	Артём Воротников <skybon at gmail.com>:
 	- Russian translation. (Missing yet: eix --dump and most of manpage)
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
