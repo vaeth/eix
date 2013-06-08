@@ -139,17 +139,15 @@ EixDiffOptionList::EixDiffOptionList()
 static void
 load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps)
 {
-	FILE *fp(fopen(file, "rb"));
-	if(likely(fp != NULLPTR)) {
+	Database db;
+	if(likely(db.openread(file))) {
 		string errtext;
-		if(likely(io::read_header(header, fp, &errtext))) {
+		if(likely(db.read_header(header, &errtext))) {
 			ps->store_world_sets(&(header->world_sets));
-			if(likely(io::read_packagetree(body, *header, ps, fp, &errtext))) {
-				fclose(fp);
+			if(likely(db.read_packagetree(body, *header, ps, &errtext))) {
 				return;
 			}
 		}
-		fclose(fp);
 		cerr << eix::format(_("error in database file %r: %s")) % file % errtext << endl;
 	} else {
 		cerr << eix::format(_("Can't open the database file %r for reading (mode = 'rb')")) % file << endl;
@@ -160,8 +158,9 @@ load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *
 static void
 set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix_virtual)
 {
-	if(!header.countOverlays())
+	if(header.countOverlays() == 0) {
 		return;
+	}
 	fmt->clear_virtual(header.countOverlays());
 	for(ExtendedVersion::Overlay i(1); i != header.countOverlays(); ++i)
 		fmt->set_as_virtual(i, is_virtual((eprefix_virtual + header.getOverlay(i).path).c_str()));

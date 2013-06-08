@@ -8,7 +8,6 @@
 #include <config.h>
 
 #include <cerrno>
-#include <cstdio>
 #include <cstring>
 
 #include <algorithm>
@@ -17,6 +16,7 @@
 
 #include "cache/eixcache/eixcache.h"
 #include "database/header.h"
+#include "database/io.h"
 #include "database/package_reader.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -244,8 +244,8 @@ EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Categor
 			}
 		}
 	}
-	FILE *fp(fopen(m_full.c_str(), "rb"));
-	if(unlikely(fp == NULLPTR)) {
+	Database db;
+	if(unlikely(!db.openread(m_full.c_str()))) {
 		allerrors(slaves, eix::format(_("Can't read cache file %s: %s")) %
 			m_full % strerror(errno));
 		m_error_callback(err_msg);
@@ -255,8 +255,7 @@ EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Categor
 	DBHeader header;
 
 	string errtext;
-	if(unlikely(!io::read_header(&header, fp, &errtext))) {
-		fclose(fp);
+	if(unlikely(!db.read_header(&header, &errtext))) {
 		allerrors(slaves, eix::format(_("error in file %s: %s")) % m_full % errtext);
 		m_error_callback(err_msg);
 		return false;
@@ -268,11 +267,10 @@ EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Categor
 			success = true;
 	}
 	if(!success) {
-		fclose(fp);
 		return false;
 	}
 
-	PackageReader reader(fp, header);
+	PackageReader reader(&db, header);
 	for(; reader.next(); reader.skip()) {
 		if(unlikely(!reader.read(PackageReader::NAME))) {
 			break;
@@ -298,7 +296,6 @@ EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Categor
 			(*sl)->get_package(p);
 		}
 	}
-	fclose(fp);
 	const char *err_cstr(reader.get_errtext());
 	if(unlikely(err_cstr != NULLPTR)) {
 		allerrors(slaves, eix::format(_("error in file %s: %s")) % m_full % err_cstr);

@@ -39,6 +39,7 @@
 #include "eixTk/utils.h"
 #include "eixrc/eixrc.h"
 #include "eixrc/global.h"
+#include "database/io.h"
 #include "main/main.h"
 #include "output/formatstring-print.h"
 #include "output/formatstring.h"
@@ -745,8 +746,8 @@ run_eix(int argc, char** argv)
 	MaskList<Mask> *marked_list(NULLPTR);
 
 	/* Open database file */
-	FILE *fp(fopen(cachefile.c_str(), "rb"));
-	if(unlikely(fp == NULLPTR)) {
+	Database db;
+	if(unlikely(!db.openread(cachefile.c_str()))) {
 		cerr << eix::format(_(
 			"Can't open the database file %s for reading (mode = 'rb')\n"
 			"Did you forget to create it with 'eix-update'?"))
@@ -756,8 +757,7 @@ run_eix(int argc, char** argv)
 
 	DBHeader header;
 
-	if(unlikely(!io::read_header(&header, fp, NULLPTR))) {
-		fclose(fp);
+	if(unlikely(!db.read_header(&header, NULLPTR))) {
 		cerr << eix::format(_(
 			"%s was created with an incompatible eix-update:\n"
 			"It uses database format %s (current is %s).\n"
@@ -768,34 +768,28 @@ run_eix(int argc, char** argv)
 	}
 
 	if(unlikely(rc_options.hash_iuse)) {
-		fclose(fp);
 		header.iuse_hash.output();
 		return EXIT_SUCCESS;
 	}
 	if(unlikely(rc_options.hash_keywords)) {
-		fclose(fp);
 		header.keywords_hash.output();
 		return EXIT_SUCCESS;
 	}
 	if(unlikely(rc_options.hash_slot)) {
-		fclose(fp);
 		header.slot_hash.output();
 		return EXIT_SUCCESS;
 	}
 	if(unlikely(rc_options.hash_license)) {
-		fclose(fp);
 		header.license_hash.output();
 		return EXIT_SUCCESS;
 	}
 	if(unlikely(rc_options.hash_depend)) {
-		fclose(fp);
 		set<string> skip;
 		skip.insert("\"");
 		header.depend_hash.output(&skip);
 		return EXIT_SUCCESS;
 	}
 	if(unlikely(rc_options.world_sets)) {
-		fclose(fp);
 		const vector<string> *p(portagesettings.get_world_sets());
 		for(vector<string>::const_iterator it(p->begin());
 			likely(it != p->end()); ++it)
@@ -825,7 +819,6 @@ run_eix(int argc, char** argv)
 			print_overlay_mode = PRINT_OVERLAY_NONE;
 		}
 		if(unlikely(print_overlay_mode != PRINT_OVERLAY_NONE)) {
-			fclose(fp);
 			ExtendedVersion::Overlay num;
 			if(unlikely(!header.find_overlay(&num, osearch, NULLPTR, 0, DBHeader::OVTEST_ALL))) {
 				return EXIT_FAILURE;
@@ -875,7 +868,7 @@ run_eix(int argc, char** argv)
 	eix::ptr_list<Package> all_packages;
 
 	{
-		PackageReader reader(fp, header, &portagesettings);
+		PackageReader reader(&db, header, &portagesettings);
 		bool add_rest(false);
 		while(likely(reader.next())) {
 			if(unlikely(add_rest)) {
@@ -910,7 +903,6 @@ run_eix(int argc, char** argv)
 				}
 			}
 		}
-		fclose(fp);
 		const char *err_cstr(reader.get_errtext());
 		if(unlikely(err_cstr != NULLPTR)) {
 			cerr << err_cstr << endl;
@@ -1128,16 +1120,15 @@ GCC_DIAG_ON(sign-conversion)
 static bool
 is_current_dbversion(const char *filename) {
 	DBHeader header;
-	FILE *fp(fopen(filename, "rb"));
-	if(unlikely(fp == NULLPTR)) {
+	Database db;
+	if(unlikely(!db.openread(filename))) {
 		cerr << eix::format(_(
 			"Can't open the database file %s for reading (mode = 'rb')\n"
 			"Did you forget to create it with 'eix-update'?"))
 			% filename << endl;
 		return EXIT_FAILURE;
 	}
-	bool is_current(io::read_header(&header, fp, NULLPTR));
-	fclose(fp);
+	bool is_current(db.read_header(&header, NULLPTR));
 	return is_current;
 }
 

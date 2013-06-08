@@ -246,8 +246,8 @@ add_reponames(vector<RepoName> *repo_names, EixRc *eixrc, const char *s)
 static void
 add_virtuals(vector<Override> *override_list, vector<Pathname> *add, vector<RepoName> *repo_names, const string &cachefile, const string &eprefix_virtual)
 {
-	FILE *fp(fopen(cachefile.c_str(), "rb"));
-	if(fp == NULLPTR) {
+	Database db;
+	if(unlikely(!db.openread(cachefile.c_str()))) {
 		INFO(eix::format(_(
 			"KEEP_VIRTUALS is ignored: there is no previous %s\n"))
 			% cachefile);
@@ -256,8 +256,7 @@ add_virtuals(vector<Override> *override_list, vector<Pathname> *add, vector<Repo
 
 	INFO(eix::format(_("Adding virtual overlays from %s ..\n")) % cachefile);
 	DBHeader header;
-	bool is_current(io::read_header(&header, fp, NULLPTR));
-	fclose(fp);
+	bool is_current(db.read_header(&header, NULLPTR));
 	if(unlikely(!is_current)) {
 		cerr << _("Warning: KEEP_VIRTUALS ignored because database format has changed");
 		return;
@@ -680,7 +679,7 @@ update(const char *outputfile, CacheTable *cache_table, PortageSettings *portage
 	}
 
 	INFO(_("Calculating hash tables ..\n"));
-	io::prep_header_hashs(&dbheader, package_tree);
+	Database::prep_header_hashs(&dbheader, package_tree);
 
 	/* And write database back to disk .. */
 	statusline->print(eix::format("Creating %s") % outputfile);
@@ -689,11 +688,12 @@ update(const char *outputfile, CacheTable *cache_table, PortageSettings *portage
 	if(override_umask) {
 		old_umask = umask(2);
 	}
-	FILE *database_stream(fopen(outputfile, "wb"));
+	Database db;
+	bool ok(db.openwrite(outputfile));
 	if(override_umask) {
 		umask(old_umask);
 	}
-	if(unlikely(database_stream == NULLPTR)) {
+	if(unlikely(!ok)) {
 		if(errtext != NULLPTR) {
 			*errtext = eix::format(_("Can't open the database file %r for writing (mode = 'wb')")) % outputfile;
 		}
@@ -702,11 +702,8 @@ update(const char *outputfile, CacheTable *cache_table, PortageSettings *portage
 
 	dbheader.size = package_tree.countCategories();
 
-	if(likely(io::write_header(dbheader, database_stream, errtext)) &&
-		likely(io::write_packagetree(package_tree, dbheader, database_stream, errtext))) {
-		fclose(database_stream);
-	} else {
-		fclose(database_stream);
+	if(!(likely(db.write_header(dbheader, errtext)) &&
+		likely(db.write_packagetree(package_tree, dbheader, errtext)))) {
 		return false;
 	}
 

@@ -36,6 +36,29 @@ using std::map;
 using std::string;
 using std::vector;
 
+class Directory {
+private:
+	DIR *dh;
+
+public:
+	Directory() : dh(NULLPTR)
+	{ }
+
+	bool opendirectory(const char *name) {
+		return ((dh = opendir(name)) != NULLPTR);
+	}
+
+	struct dirent *read() {
+		return readdir(dh);  // NOLINT(runtime/threadsafe_fn)
+	}
+
+	~Directory() {
+		if(dh != NULLPTR) {
+			closedir(dh);
+		}
+	}
+};
+
 static bool pushback_lines_file(const char *file, vector<string> *v, bool keep_empty, eix::SignedBool keep_comments, string *errtext) ATTRIBUTE_NONNULL((1, 2));
 static int pushback_files_selector(SCANDIR_ARG3 dir_entry);
 
@@ -43,19 +66,20 @@ bool
 scandir_cc(const string &dir, vector<string> *namelist, select_dirent select, bool sorted)
 {
 	namelist->clear();
-	DIR *dirhandle(opendir(dir.c_str()));
-	if(dirhandle == NULLPTR) {
-		return false;
-	}
-	struct dirent *d;
-	while(likely((d = readdir(dirhandle)) != NULLPTR)) {  // NOLINT(runtime/threadsafe_fn)
-		const char *name(d->d_name);
-		// Omit "." and ".." since we must not rely on their existence anyway
-		if(likely(strcmp(name, ".") && strcmp(name, "..") && (*select)(d))) {
-			namelist->push_back(name);
+	{
+		Directory my_dir;
+		if(!my_dir.opendirectory(dir.c_str())) {
+			return false;
+		}
+		struct dirent *d;
+		while(likely((d = my_dir.read()) != NULLPTR)) {
+			const char *name(d->d_name);
+			// Omit "." and ".." since we must not rely on their existence anyway
+			if(likely(strcmp(name, ".") && strcmp(name, "..") && (*select)(d))) {
+				namelist->push_back(name);
+			}
 		}
 	}
-	closedir(dirhandle);
 	if(sorted) {
 		sort(namelist->begin(), namelist->end());
 	}

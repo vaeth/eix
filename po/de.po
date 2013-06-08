@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-05-23 22:16+0200\n"
+"POT-Creation-Date: 2013-06-08 11:39+0200\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Language: German\n"
 
-#: src/eix-functions.sh.in:103 src/eix-update.cc:626 src/eix-update.cc:660
+#: src/eix-functions.sh.in:103 src/eix-update.cc:625 src/eix-update.cc:659
 #: src/eixTk/statusline.cc:60
 msgid "Finished"
 msgstr "Fertig"
@@ -338,7 +338,7 @@ msgstr ""
 "-H            Keine Ausgabe der Statuszeile\n"
 "-q            Keine Ausgabe"
 
-#: src/eix-layman.sh:133 src/eix-remote.sh:278 src/eix-update.cc:668
+#: src/eix-layman.sh:133 src/eix-remote.sh:278 src/eix-update.cc:667
 msgid "Analyzing"
 msgstr "Analyse"
 
@@ -1293,7 +1293,7 @@ msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 msgid "Skipping check: installed but not in the database"
 msgstr "Übergehe Check für installierte Pakete nicht in der Datenbank"
 
-#: src/eix.cc:85
+#: src/eix.cc:86
 #, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
@@ -1645,16 +1645,16 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:575 src/eix-diff.cc:281
+#: src/eix.cc:576 src/eix-diff.cc:280
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:671 src/eix-diff.cc:345 src/eix-update.cc:386
+#: src/eix.cc:672 src/eix-diff.cc:344 src/eix-update.cc:385
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
-#: src/eix.cc:751 src/eix.cc:1134
+#: src/eix.cc:752 src/eix.cc:1126
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1674,31 +1674,31 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit 'eix-update' neu erzeugen."
 
-#: src/eix.cc:1079 src/eix.cc:1100
+#: src/eix.cc:1071 src/eix.cc:1092
 #, c-format
 msgid "Found %s matches."
 msgstr "%s Treffer."
 
-#: src/eix.cc:1082
+#: src/eix.cc:1074
 msgid "No matches found."
 msgstr "Kein Treffer."
 
-#: src/eix.cc:1091
+#: src/eix.cc:1083
 #, c-format
 msgid "Found %s match."
 msgstr "%s Treffer."
 
-#: src/eix.cc:1209
+#: src/eix.cc:1200
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:1210
+#: src/eix.cc:1201
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:1215
+#: src/eix.cc:1206
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1707,7 +1707,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1216
+#: src/eix.cc:1207
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1716,7 +1716,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1274
+#: src/eix.cc:1265
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1724,7 +1724,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:1277
+#: src/eix.cc:1268
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -1774,15 +1774,15 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-diff.cc:153
+#: src/eix-diff.cc:151
 msgid "error in database file %r: %s"
 msgstr "Fehler in Datenbankfile %r: %s"
 
-#: src/eix-diff.cc:155
+#: src/eix-diff.cc:153
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Datenbankfile %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
 
-#: src/eix-diff.cc:411
+#: src/eix-diff.cc:410
 #, c-format
 msgid "Diffing databases (%s -> %s packages)\n"
 msgstr "Vergleiche Datenbanken (%s -> %s Pakete)\n"
@@ -1895,80 +1895,80 @@ msgstr "KEEP_VIRTUALS ignoriert: Es gibt kein vorheriges %s\n"
 msgid "Adding virtual overlays from %s ..\n"
 msgstr "Füge virtuellen Overlay aus %s hinzu...\n"
 
-#: src/eix-update.cc:262
+#: src/eix-update.cc:261
 msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
 msgstr "Warnung: KEEP_VIRTUALS wegen Änderung des Datenbank-Formats ignoriert"
 
-#: src/eix-update.cc:404
+#: src/eix-update.cc:403
 msgid "Reading Portage settings ..\n"
 msgstr "Lese Portage-Konfiguration...\n"
 
-#: src/eix-update.cc:520
+#: src/eix-update.cc:519
 #, c-format
 msgid "Excluded PORTDIR: %s\n"
 msgstr "Ausschluss von PORTDIR: %s\n"
 
-#: src/eix-update.cc:539
+#: src/eix-update.cc:538
 #, c-format
 msgid "Excluded overlay %s\n"
 msgstr "Ausschluss von Overlay: %s\n"
 
-#: src/eix-update.cc:545
+#: src/eix-update.cc:544
 #, c-format
 msgid "Building database (%s) ..\n"
 msgstr "Erzeuge Datenkbank (%s) ...\n"
 
-#: src/eix-update.cc:590
+#: src/eix-update.cc:589
 #, c-format
 msgid "Excluding \"%s\" %s (cache: %s)\n"
 msgstr "Ausschluss von \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:612
+#: src/eix-update.cc:611
 #, c-format
 msgid "[%s] \"%s\" %s (cache: %s)\n"
 msgstr "[%s] \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:617
+#: src/eix-update.cc:616
 #, c-format
 msgid "[%s] %s"
 msgstr "[%s] %s"
 
-#: src/eix-update.cc:622
+#: src/eix-update.cc:621
 msgid "     Reading Packages .. "
 msgstr "     Paket-Daten werden gelesen... "
 
-#: src/eix-update.cc:626 src/eix-update.cc:659
+#: src/eix-update.cc:625 src/eix-update.cc:658
 msgid "ABORTED!"
 msgstr "ABBRUCH!"
 
-#: src/eix-update.cc:630
+#: src/eix-update.cc:629
 #, c-format
 msgid "     Reading category %s|%s (%s%%)"
 msgstr "     Lese Category %s|%s (%s%%)"
 
-#: src/eix-update.cc:634
+#: src/eix-update.cc:633
 #, c-format
 msgid "     Reading up to %s categories of packages .. "
 msgstr "     Paketdaten aus bis zu %s Categorien werden gelesen... "
 
-#: src/eix-update.cc:649
+#: src/eix-update.cc:648
 #, c-format
 msgid ": %s .."
 msgstr ": %s ..."
 
-#: src/eix-update.cc:658
+#: src/eix-update.cc:657
 msgid "EMPTY!"
 msgstr "LEER!"
 
-#: src/eix-update.cc:671
+#: src/eix-update.cc:670
 msgid "Applying masks ..\n"
 msgstr "Maskiere Pakete...\n"
 
-#: src/eix-update.cc:682
+#: src/eix-update.cc:681
 msgid "Calculating hash tables ..\n"
 msgstr "Berechne Hash-Tabellen...\n"
 
-#: src/eix-update.cc:687
+#: src/eix-update.cc:686
 #, c-format
 msgid "Writing database file %s ..\n"
 msgstr "Schreibe Datenbankfile %s...\n"
@@ -1977,7 +1977,7 @@ msgstr "Schreibe Datenbankfile %s...\n"
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
 
-#: src/eix-update.cc:713
+#: src/eix-update.cc:710
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "Datenbank enthält %s Pakete in %s Kategorien.\n"
@@ -2081,7 +2081,7 @@ msgid "Child aborted in a strange way"
 msgstr "Kindprozess wurde auf seltsame Art beendet"
 
 #: src/cache/common/flat_reader.cc:54 src/cache/common/flat_reader.cc:95
-#: src/eixTk/utils.cc:73
+#: src/eixTk/utils.cc:97
 #, c-format
 msgid "Can't open %s: %s"
 msgstr "%s kann nicht geöffnet werden: %s"
@@ -2095,7 +2095,7 @@ msgstr "Cachefile %s enthält nicht Overlay %r [%s]"
 msgid "Cache file %s does not contain overlay %s"
 msgstr "Cachefile %s enthält nicht Overlay %s"
 
-#: src/cache/eixcache/eixcache.cc:260 src/cache/eixcache/eixcache.cc:304
+#: src/cache/eixcache/eixcache.cc:259 src/cache/eixcache/eixcache.cc:301
 #, c-format
 msgid "error in file %s: %s"
 msgstr "Fehler in Datei %s: %s"
@@ -2155,31 +2155,31 @@ msgstr ""
 "Cache-Methode sqlite ist nicht einkompiliert.\n"
 "Rekompilieren Sie eix mit ./configure-Option --with-sqlite"
 
-#: src/database/io.cc:89
+#: src/database/io.cc:71
+msgid "fseek failed"
+msgstr "fseek schlug fehl"
+
+#: src/database/io.cc:114
 msgid "error while reading from database: end of file"
 msgstr "Fehler beim Lesen der Datenbank: Zu frühes Dateiende"
 
-#: src/database/io.cc:90
+#: src/database/io.cc:115
 msgid "error while reading from database"
 msgstr "Fehler beim Lesen der Datenbank"
 
-#: src/database/io.cc:98
+#: src/database/io.cc:123
 msgid "error while writing to database"
 msgstr "Fehler beim Schreiben der Datenbank"
 
-#: src/database/io.cc:602
+#: src/database/io.cc:665
 #, c-format
 msgid "cachefile uses newer format %s (current is %s)"
 msgstr "Cachefile benutzt neueres Format %s (aktuell ist %s)"
 
-#: src/database/io.cc:603
+#: src/database/io.cc:666
 #, c-format
 msgid "cachefile uses obsolete format %s (current is %s)"
 msgstr "Cachefile benutzt veraltetes Format %s (aktuell ist %s)"
-
-#: src/database/io.cc:675 src/database/package_reader.cc:109
-msgid "fseek failed"
-msgstr "fseek schlug fehl"
 
 #: src/eixTk/ansicolor.cc:148
 msgid "Illegal color name %r in %r"
@@ -2293,12 +2293,12 @@ msgstr "Interner Fehler: Trying to shortcut non-hashed string."
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "Datenbank defekt: Nichtexistierender Hash angefordert"
 
-#: src/eixTk/utils.cc:97
+#: src/eixTk/utils.cc:121
 #, c-format
 msgid "Error reading %s: %s"
 msgstr "Lesefehler in %s: %s "
 
-#: src/eixTk/utils.cc:120
+#: src/eixTk/utils.cc:144
 msgid "Nesting level too deep in %r"
 msgstr "Zu tiefe Verschachtelung in %r"
 

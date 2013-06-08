@@ -12,8 +12,6 @@
 
 #include <sys/types.h>
 
-#include <cstdio>
-
 #include <memory>
 #include <string>
 
@@ -21,6 +19,7 @@
 #include "eixTk/eixint.h"
 #include "eixTk/null.h"
 
+class Database;
 class DBHeader;
 class Package;
 class PortageSettings;
@@ -36,8 +35,8 @@ class PackageReader {
 
 		/** Initialize with file-stream and number of packages.
 		    @arg ps is used to define the local package sets while version reading */
-		PackageReader(FILE *fp, const DBHeader &hdr, PortageSettings *ps = NULLPTR)
-			: m_fp(fp), m_frames(hdr.size), m_cat_size(0), m_pkg(NULLPTR), header(&hdr), m_portagesettings(ps), m_error(false)
+		PackageReader(Database *db, const DBHeader &hdr, PortageSettings *ps = NULLPTR)
+			: m_db(db), m_frames(hdr.size), m_cat_size(0), m_pkg(NULLPTR), header(&hdr), m_portagesettings(ps), m_error(false)
 		{ }
 
 		~PackageReader();
@@ -79,7 +78,7 @@ class PackageReader {
 		{ return (m_error ? m_errtext.c_str() : NULLPTR); }
 
 	protected:
-		FILE             *m_fp;
+		Database         *m_db;
 
 		eix::Treesize      m_frames;
 		eix::Treesize      m_cat_size;

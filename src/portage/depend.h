@@ -8,21 +8,16 @@
 #ifndef SRC_PORTAGE_DEPEND_H_
 #define SRC_PORTAGE_DEPEND_H_ 1
 
-#include <cstdio>
-
 #include <string>
 
-#include "database/io.h"
-
+class Database;
 class DBHeader;
 class Version;
 class PackageTree;
 
 class Depend
 {
-	friend bool io::read_depend(Depend *dep, const DBHeader &hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 3));
-	friend bool io::write_depend(const Depend &dep, const DBHeader &hdr, FILE *fp, std::string *errtext);
-	friend void io::prep_header_hashs(DBHeader *hdr, const PackageTree& tree) ATTRIBUTE_NONNULL_;
+	friend class Database;
 
 	private:
 		std::string m_depend, m_rdepend, m_pdepend, m_hdepend;

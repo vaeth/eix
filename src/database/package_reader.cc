@@ -9,14 +9,9 @@
 
 #include <config.h>
 
-#include <sys/types.h>
-
-#include <cstdio>
-
 #include "database/io.h"
 #include "database/package_reader.h"
 #include "eixTk/eixint.h"
-#include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "portage/conf/portagesettings.h"
@@ -31,34 +26,34 @@ PackageReader::~PackageReader()
 bool
 PackageReader::read(Attributes need)
 {
-	if(likely(m_have >= need))  // Already got this one
+	if(likely(m_have >= need)) {  // Already got this one
 		return true;
+	}
 
-	switch(m_have)
-	{
+	switch(m_have) {
 		case NONE:
-			if(unlikely(!io::read_string(&(m_pkg->name), m_fp, &m_errtext))) {
+			if(unlikely(!m_db->read_string(&(m_pkg->name), &m_errtext))) {
 				m_error = true;
 				return false;
 			}
 			if(unlikely(need == NAME))
 				break;
 		case NAME:
-			if(unlikely(!io::read_string(&(m_pkg->desc), m_fp, &m_errtext))) {
+			if(unlikely(!m_db->read_string(&(m_pkg->desc), &m_errtext))) {
 				m_error = true;
 				return false;
 			}
 			if(unlikely(need == DESCRIPTION))
 				break;
 		case DESCRIPTION:
-			if(unlikely(!io::read_string(&(m_pkg->homepage), m_fp, &m_errtext))) {
+			if(unlikely(!m_db->read_string(&(m_pkg->homepage), &m_errtext))) {
 				m_error = true;
 				return false;
 			}
 			if(unlikely(need == HOMEPAGE))
 				break;
 		case HOMEPAGE:
-			if(unlikely(!io::read_hash_string(header->license_hash, &(m_pkg->licenses), m_fp, &m_errtext))) {
+			if(unlikely(!m_db->read_hash_string(header->license_hash, &(m_pkg->licenses), &m_errtext))) {
 				m_error = true;
 				return false;
 			}
@@ -67,13 +62,13 @@ PackageReader::read(Attributes need)
 		case LICENSE:
 			{
 				eix::Versize i;
-				if(unlikely(!io::read_num(&i, m_fp, &m_errtext))) {
+				if(unlikely(!m_db->read_num(&i, &m_errtext))) {
 					m_error = true;
 					return false;
 				}
 				for(; likely(i != 0); --i) {
 					Version *v(new Version());
-					if(unlikely(!io::read_version(v, *header, m_fp, &m_errtext))) {
+					if(unlikely(!m_db->read_version(v, *header, &m_errtext))) {
 						m_error = true;
 						return false;
 					}
@@ -99,14 +94,8 @@ bool
 PackageReader::skip()
 {
 	// only seek if needed
-	if (m_have != ALL) {
-#ifdef HAVE_FSEEKO
-		if(unlikely(fseeko(m_fp, m_next, SEEK_SET) != 0))
-#else
-		if(unlikely(fseek(m_fp, m_next, SEEK_SET) != 0))
-#endif
-		{
-			m_errtext = _("fseek failed");
+	if(m_have != ALL) {
+		if(unlikely(m_db->seekabs(m_next, &m_errtext))) {
 			m_error = true;
 			return false;
 		}
@@ -134,7 +123,7 @@ PackageReader::next()
 		if(unlikely(m_frames-- == 0)) {
 			return false;
 		}
-		if(unlikely(!io::read_category_header(&m_cat_name, &m_cat_size, m_fp, &m_errtext))) {
+		if(unlikely(!m_db->read_category_header(&m_cat_name, &m_cat_size, &m_errtext))) {
 			m_error = true;
 			return false;
 		}
@@ -142,18 +131,11 @@ PackageReader::next()
 	}
 
 	eix::OffsetType len;
-	if(unlikely(!io::read_num(&len, m_fp, &m_errtext))) {
+	if(unlikely(!m_db->read_num(&len, &m_errtext))) {
 		m_error = true;
 		return false;
 	}
-#ifdef HAVE_FSEEKO
-	// We rely on autoconf whose documentation states:
-	// All system with fseeko() also supply ftello()
-	m_next = ftello(m_fp) + len;
-#else
-	// We want an off_t-addition, so we cast first to be safe:
-	m_next = off_t(ftell(m_fp)) + len;
-#endif
+	m_next = m_db->tell() + len;
 	m_have = NONE;
 	delete m_pkg;
 	m_pkg = new Package;
@@ -169,7 +151,7 @@ PackageReader::nextCategory()
 		return false;
 	}
 
-	if(likely(io::read_category_header(&m_cat_name, &m_cat_size, m_fp, &m_errtext))) {
+	if(likely(m_db->read_category_header(&m_cat_name, &m_cat_size, &m_errtext))) {
 		return true;
 	}
 	m_error = true;
@@ -179,14 +161,15 @@ PackageReader::nextCategory()
 bool
 PackageReader::nextPackage()
 {
-	if(unlikely(m_cat_size-- == 0))
+	if(unlikely(m_cat_size-- == 0)) {
 		return false;
+	}
 
 	/* Ignore the offset and read the whole package at once.
 	 */
 
 	eix::OffsetType dummy;
-	if(unlikely(!io::read_num(&dummy, m_fp, &m_errtext))) {
+	if(unlikely(!m_db->read_num(&dummy, &m_errtext))) {
 		m_error = true;
 		return false;
 	}

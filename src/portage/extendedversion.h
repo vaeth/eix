@@ -14,6 +14,7 @@
 
 #include "eixTk/eixint.h"
 #include "eixTk/inttypes.h"
+#include "eixTk/stringutils.h"
 #include "portage/basicversion.h"
 #include "portage/depend.h"
 
