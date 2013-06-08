@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-06-08 11:39+0200\n"
+"POT-Creation-Date: 2013-06-08 13:17+0200\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -2155,28 +2155,28 @@ msgstr ""
 "Cache-Methode sqlite ist nicht einkompiliert.\n"
 "Rekompilieren Sie eix mit ./configure-Option --with-sqlite"
 
-#: src/database/io.cc:71
+#: src/database/io.cc:85
 msgid "fseek failed"
 msgstr "fseek schlug fehl"
 
-#: src/database/io.cc:114
+#: src/database/io.cc:127
 msgid "error while reading from database: end of file"
 msgstr "Fehler beim Lesen der Datenbank: Zu frühes Dateiende"
 
-#: src/database/io.cc:115
+#: src/database/io.cc:128
 msgid "error while reading from database"
 msgstr "Fehler beim Lesen der Datenbank"
 
-#: src/database/io.cc:123
+#: src/database/io.cc:136
 msgid "error while writing to database"
 msgstr "Fehler beim Schreiben der Datenbank"
 
-#: src/database/io.cc:665
+#: src/database/io.cc:655
 #, c-format
 msgid "cachefile uses newer format %s (current is %s)"
 msgstr "Cachefile benutzt neueres Format %s (aktuell ist %s)"
 
-#: src/database/io.cc:666
+#: src/database/io.cc:656
 #, c-format
 msgid "cachefile uses obsolete format %s (current is %s)"
 msgstr "Cachefile benutzt veraltetes Format %s (aktuell ist %s)"

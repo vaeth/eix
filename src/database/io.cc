@@ -42,6 +42,20 @@ using std::list;
 using std::string;
 using std::vector;
 
+#define WRITE_COUNTER(f) do { \
+	eix::OffsetType counter_save(counter); \
+	counter = 0; \
+	bool counting_save(counting); \
+	counting = true; \
+	f; \
+	counting = counting_save; \
+	eix::OffsetType counter_diff(counter); \
+	counter = counter_save; \
+	if(unlikely(!write_num(counter_diff, errtext))) { \
+		return false; \
+	} \
+} while(0)
+
 bool File::openread(const char *name)
 {
 	return ((fp = fopen(name, "rb")) != NULLPTR);
@@ -78,10 +92,9 @@ File::tell()
 {
 #ifdef HAVE_FSEEKO
 	// We rely on autoconf whose documentation states:
-	// All system with fseeko() also supply ftello()
+	// All systems with fseeko() also supply ftello()
 	return ftello(fp);
 #else
-	// We want an off_t-addition, so we cast first to be safe:
 	return ftell(fp);
 #endif
 }
@@ -221,7 +234,7 @@ Database::read_hash_words(const StringHash& hash, string *s, string *errtext)
 	if(unlikely(!read_num(&e, errtext))) {
 		return false;
 	}
-	for(; e; --e) {
+	for(; e != 0; --e) {
 		string r;
 		if(unlikely(!read_hash_string(hash, &r, errtext))) {
 			return false;
@@ -385,16 +398,7 @@ Database::write_version(const Version *v, const DBHeader &hdr, string *errtext)
 		return false;
 	}
 	if(hdr.use_depend) {
-		eix::OffsetType counter_save(counter);
-		counter = 0;
-		counting = true;
-		write_depend(v->depend, hdr, NULLPTR);
-		counting = false;
-		eix::OffsetType counter_diff(counter);
-		counter = counter_save;
-		if(unlikely(!write_num(counter_diff, errtext))) {
-			return false;
-		}
+		WRITE_COUNTER(write_depend(v->depend, hdr, NULLPTR));
 		if(unlikely(!write_depend(v->depend, hdr, errtext))) {
 			return false;
 		}
@@ -427,7 +431,7 @@ Database::read_depend(Depend *dep, const DBHeader &hdr, string *errtext)
 	} else {
 		dep->clear();
 GCC_DIAG_OFF(sign-conversion)
-		if(unlikely(!seekabs(len, errtext))) {
+		if(unlikely(!seekrel(len, errtext))) {
 			return false;
 		}
 GCC_DIAG_ON(sign-conversion)
@@ -491,15 +495,8 @@ Database::write_package_pure(const Package &pkg, const DBHeader &hdr, string *er
 bool
 Database::write_package(const Package &pkg, const DBHeader &hdr, string *errtext)
 {
-	eix::OffsetType counter_save(counter);
-	counter = 0;
-	counting = true;
-	write_package_pure(pkg, hdr, NULLPTR);
-	counting = false;
-	eix::OffsetType counter_diff(counter);
-	counter = counter_save;
-	return (likely(write_num(counter_diff, errtext)) &&
-		likely(write_package_pure(pkg, hdr, errtext)));
+	WRITE_COUNTER(write_package_pure(pkg, hdr, NULLPTR));
+	return write_package_pure(pkg, hdr, errtext);
 }
 
 bool
@@ -627,15 +624,8 @@ Database::write_header(const DBHeader &hdr, string *errtext)
 		if(unlikely(!write_num(1, errtext))) {
 			return false;
 		}
-		eix::OffsetType counter_save(counter);
-		counter = 0;
-		counting = true;
-		write_hash(hdr.depend_hash, NULLPTR);
-		counting = false;
-		eix::OffsetType counter_diff(counter);
-		counter = counter_save;
-		return (likely(write_num(counter_diff, errtext)) &&
-			likely(write_hash(hdr.depend_hash, errtext)));
+		WRITE_COUNTER(write_hash(hdr.depend_hash, NULLPTR));
+		return write_hash(hdr.depend_hash, errtext);
 	} else {
 		return write_num(0, errtext);
 	}

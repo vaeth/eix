@@ -95,7 +95,7 @@ PackageReader::skip()
 {
 	// only seek if needed
 	if(m_have != ALL) {
-		if(unlikely(m_db->seekabs(m_next, &m_errtext))) {
+		if(unlikely(!m_db->seekabs(m_next, &m_errtext))) {
 			m_error = true;
 			return false;
 		}

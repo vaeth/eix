@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-06-08 11:39+0200\n"
+"POT-Creation-Date: 2013-06-08 13:17+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -2154,28 +2154,28 @@ msgstr ""
 "Пересоберите eix, используя ключ --with-sqlite, чтобы добавить поддержку "
 "sqlite"
 
-#: src/database/io.cc:71
+#: src/database/io.cc:85
 msgid "fseek failed"
 msgstr "ошибка fseek"
 
-#: src/database/io.cc:114
+#: src/database/io.cc:127
 msgid "error while reading from database: end of file"
 msgstr "ошибка чтения базы данных: конец файла"
 
-#: src/database/io.cc:115
+#: src/database/io.cc:128
 msgid "error while reading from database"
 msgstr "ошибка чтения базы данных"
 
-#: src/database/io.cc:123
+#: src/database/io.cc:136
 msgid "error while writing to database"
 msgstr "ошибка записи в базу данных"
 
-#: src/database/io.cc:665
+#: src/database/io.cc:655
 #, c-format
 msgid "cachefile uses newer format %s (current is %s)"
 msgstr "Файл кэша использует более новый формат %s (текущий - %s)"
 
-#: src/database/io.cc:666
+#: src/database/io.cc:656
 #, c-format
 msgid "cachefile uses obsolete format %s (current is %s)"
 msgstr "Файл кэша использует устаревший формат %s (текущий - %s)"

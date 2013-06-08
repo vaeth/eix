@@ -27,6 +27,7 @@ class BasicPart;
 class DBHeader;
 class IUseSet;
 class Package;
+class PackageReader;
 class PackageTree;
 class PortageSettings;
 class Depend;
@@ -64,10 +65,10 @@ public:
 	bool write_string_plain(const std::string &str, std::string *errtext);
 
 	bool seekrel(eix::OffsetType offset, std::string *errtext)
-	{ return seek(offset, SEEK_SET, errtext); }
+	{ return seek(offset, SEEK_CUR, errtext); }
 
 	bool seekabs(eix::OffsetType offset, std::string *errtext)
-	{ return seek(offset, SEEK_CUR, errtext); }
+	{ return seek(offset, SEEK_SET, errtext); }
 
 	eix::OffsetType tell();
 
@@ -76,16 +77,17 @@ public:
 };
 
 class Database : public File {
+	friend class PackageReader;
+
 private:
 	bool counting;
 	eix::OffsetType counter;
 
 	bool read_Part(BasicPart *b, std::string *errtext) ATTRIBUTE_NONNULL((2));
+	bool write_Part(const BasicPart &n, std::string *errtext);
+	bool write_string_plain(const std::string &str, std::string *errtext);
 
-public:
-	Database() : counting(false), counter(0)
-	{ }
-
+protected:
 	bool readUChar(eix::UChar *c, std::string *errtext);
 	bool writeUChar(eix::UChar c, std::string *errtext);
 
@@ -138,6 +140,10 @@ public:
 	bool write_hash(const StringHash& hash, std::string *errtext);
 	bool read_hash(StringHash *hash, std::string *errtext) ATTRIBUTE_NONNULL((2));
 
+public:
+	Database() : counting(false), counter(0)
+	{ }
+
 	static void prep_header_hashs(DBHeader *hdr, const PackageTree& tree) ATTRIBUTE_NONNULL_;
 
 	bool write_header(const DBHeader &hdr, std::string *errtext);
@@ -145,9 +151,6 @@ public:
 
 	bool write_packagetree(const PackageTree &pkg, const DBHeader &hdr, std::string *errtext);
 	bool read_packagetree(PackageTree *tree, const DBHeader &hdr, PortageSettings *ps, std::string *errtext) ATTRIBUTE_NONNULL((2, 4));
-
-	bool write_Part(const BasicPart &n, std::string *errtext);
-	bool write_string_plain(const std::string &str, std::string *errtext);
 };
 
 template<typename m_Tp> bool
