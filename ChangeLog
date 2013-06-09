@@ -6,6 +6,7 @@
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Allow /etc/eix-sync.conf not ending with newline. Use read -r
+	- Fix some paths in manpage (regression from eix-0.28.3)
 	- Transform io namespace into class; automatic closing on cleanup
 
 *eix-0.28.5
