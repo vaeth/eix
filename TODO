@@ -9,7 +9,7 @@ Things to do perhaps:
 - Support searching for differences of DEPEND, RDEPEND, PDEPEND with
   values in installed packages.
 
-Ambitious tasks which will probably not be realized:
+Ambitious tasks which will probably not be implemented:
 - Support for Paludis.
   Would require rather different mask/keywords handling,
   in particular in connected with option -T and with overlays;
