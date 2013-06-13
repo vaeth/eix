@@ -322,6 +322,11 @@ AddOption(BOOLEAN, "CARE_RESTRICT_INSTALLED",
 	"If true, read RESTRICT for installed versions always from disk.\n"
 	"This is ignored if RESTRICT_INSTALLED=false."));
 
+AddOption(BOOLEAN, "DEPS_INSTALLED",
+	"true", _(
+	"If true, read *DEPEND for installed versions always from disk.\n"
+	"This is ignored if DEP=false."));
+
 AddOption(BOOLEAN, "DEP",
 	DEP_DEFAULT, _(
 	"If true, store/use {R,P,H,}DEPEND (e.g. shown with eix -lv).\n"
@@ -2595,6 +2600,32 @@ AddOption(STRING, "IVERBOSE",
 		"\\C<%{COLUMN_INST_CONTENT}>"
 		"%{?EIX_USE_EXPAND}<use*>%{else}<use>%{}"
 	"{}"
+	"%{?DEP}"
+		"{havedepend}"
+			"%{FORMAT_INST_LINESKIP}"
+			"(%{COLOR_INST_TITLE})DEPEND:(%{COLOR_RESET})"
+			"\\C<%{COLUMN_INST_CONTENT}>"
+			"%{FORMAT_DEPEND_VERBOSE}"
+		"{}"
+		"{haverdepend}"
+			"%{FORMAT_INST_LINESKIP}"
+			"(%{COLOR_INST_TITLE})RDEPEND:(%{COLOR_RESET})"
+			"\\C<%{COLUMN_INST_CONTENT}>"
+			"%{FORMAT_RDEPEND_VERBOSE}"
+		"{}"
+		"{havepdepend}"
+			"%{FORMAT_INST_LINESKIP}"
+			"(%{COLOR_INST_TITLE})PDEPEND:(%{COLOR_RESET})"
+			"\\C<%{COLUMN_INST_CONTENT}>"
+			"%{FORMAT_PDEPEND_VERBOSE}"
+		"{}"
+		"{havehdepend}"
+			"%{FORMAT_INST_LINESKIP}"
+			"(%{COLOR_INST_TITLE})HDEPEND:(%{COLOR_RESET})"
+			"\\C<%{COLUMN_INST_CONTENT}>"
+			"%{FORMAT_HDEPEND_VERBOSE}"
+		"{}"
+	"%{}"
 	"{!last}%{FORMAT_INST_LINESKIP}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the verbose format of installed versions."));

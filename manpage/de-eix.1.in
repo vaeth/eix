@@ -186,10 +186,18 @@ Beachten Sie, dass mit dieser Option eix und eix-diff falsche Posittreffer
 über Up-/Downgrade-Empfehlungen für diese Pakete ausgeben könnten.
 .TP
 .BR --care "    (nicht für B<eix-update>)"
-Deaktiviert --quick, und darüberhinaus werden Slots installiertet Versionen
+Deaktiviert B<--quick>, und darüberhinaus werden Slots installierter Versionen
 immer gelesen, auch dann wenn der Slotname vermutet werden kann.
 Dies stellt insbesondere sicher, dass Up-/Downgrade-Empfehungen auch dann
 ausgegben werden, wenn sich der Slotname einer installierten Version ändert.
+Beachten Sie, dass diese Option die Geschwindigkeit beim ersten Aufruf
+dramatisch reduziert. (Wenn das Dateisystem einen vernünftigen Cache hat,
+werden spätere Aufrufe kaum langsamer sein als ohne diese Option).
+.TP
+.BR --deps-installed  "    (nicht für B<eix-update>)"
+Dies ist das selbe wie B<DEPS_INSTALLED=true>.
+Abhängigkeiten installierter Versionen werden immer gelesen,
+auch dann, wenn sie von verfügbaren Versionen bekannt ist.
 Beachten Sie, dass diese Option die Geschwindigkeit beim ersten Aufruf
 dramatisch reduziert. (Wenn das Dateisystem einen vernünftigen Cache hat,
 werden spätere Aufrufe kaum langsamer sein als ohne diese Option).
@@ -1298,12 +1306,9 @@ Dies ist 1 oder leer, je nachdem ob eine entsprechendes B<PROPERTIES>-Attribut f
 .TP
 .BR depend ", " rdepend ", " pdepend ", " hdepend ", " depend* ", " rdepend* ", " pdepend* ", " hdepend*
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
-Die expandiert zum B<DEPEND>, B<RDEPEND>, B<PDEPEND> bzw. B<HDEPEND> einer vorhandenen Version
+Es expandiert zum B<DEPEND>, B<RDEPEND>, B<PDEPEND> bzw. B<HDEPEND> einer vorhandenen Version
 (der String wird nach Möglichkeit abgekürzt, falls die Variante mit B<*> benutzt wird).
 Die Expansion ist leer, falls B<DEP=true> nicht gesetzt ist (oder bei der Erzeugung der Datenbank nicht gesetzt war).
-Bei der Ausgabe installierter Versionen (im Gegensatz zu vorhandenen Versionen)
-ist diese Eigenschaft nicht verfügbar (d.h. sie ist leer).
-Letzteres kann sich möglicherweise in einer zukünftigen Version von eix ändern.
 .TP
 .BR havedepend ", " haverdepend ", " havepdepend ", " havehdepend ", " havedeps
 Wie oben mit dem Unterschied, dass nur 1 ausgegeben wird, wenn der
@@ -2261,6 +2266,13 @@ von Disk gelesen werden sollen, selbst dann wenn sie von einer
 entsprechenden verfügbaren Version bekannt sind.
 Dies ist langsamer, aber zuverlässiger, d.h. es wird auch herausfinden,
 ob sich die Restriktionen geändert haben.
+
+.TP
+.BR DEPS_INSTALLED " " (true / false)
+Legt fest, ob Abhängigkeitsinformationen installierter Versionen stets
+von Disk gelesen werden sollen, selbst dann wenn sie von einer
+entsprechenden verfügbaren Version bekannt sind.
+Die Option B<--deps-installed> tut dasselbe.
 
 .TP
 .BR DEP " " (true / false)

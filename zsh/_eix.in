@@ -8,6 +8,7 @@ local service_opts excl_opt ret i
 service_opts=(
 {'(--quick)-Q','(-Q)--quick'}'[do not try to read unguessable slots]'
 '--care[always read slots of installed packages]'
+'--deps-installed[always read deps of installed packages]'
 '--ansi[reset the ansi 256 color palette]'
 )
 

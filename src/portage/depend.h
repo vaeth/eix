@@ -78,6 +78,12 @@ class Depend
 			m_pdepend.clear();
 			m_hdepend.clear();
 		}
+
+		bool operator==(const Depend &d) const;
+
+		bool operator!=(const Depend &d) const
+		{ return !(*this == d); }
 };
+
 
 #endif  // SRC_PORTAGE_DEPEND_H_

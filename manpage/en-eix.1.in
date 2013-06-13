@@ -181,10 +181,18 @@ Note that with this option, eix and eix-diff might report false positives
 for up-/downgrade recommendations for these packages.
 .TP
 .BR --care "    (not for B<eix-update>)"
-This deactivates --quick, and moreover, slots of installed version are
+This deactivates B<--quick>, and moreover, slots of installed version are
 always read instead of relying on the guess of the slot.
 This will in particular make sure that you get an up-/downgrade
 recommendation if a slot name of an installed version changes.
+Note that this will dramatically decrease the speed at the first call.
+(If your filesystem has a reasonable cache, later calls are almost not
+slower than without this option.)
+.TP
+.BR --deps-installed "    (not for B<eix-update>)"
+This is the same as B<DEPS_INSTALLED=true>.
+Dependencies of installed version are always read, even if they are known
+from an available version.
 Note that this will dramatically decrease the speed at the first call.
 (If your filesystem has a reasonable cache, later calls are almost not
 slower than without this option.)
@@ -1274,10 +1282,7 @@ It returns 1 or empty depending on whether some or the corresponding B<PROPERTIE
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns the respective B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<HDEPEND> string of an available package
 (the string is shortened if possible if the variant with B<*> is used).
-This is empty unless  B<DEP=true> is set (now and if the cachefile was created).
-When printing installed versions (in contrast to available versions),
-these properties are not available (i.e. they are empty).
-The latter might change in a future release of eix.
+This is empty unless B<DEP=true> is set (now and if the cachefile was created).
 .TP
 .BR havedepend ", " haverdepend ", " havepdepend ", " havehdepend ", " havedeps
 This is like the above with the difference that only 1 is returned if the
@@ -2229,6 +2234,12 @@ If true, fetch and mirror restrictions for installed versions are calculated.
 If true, fetch and mirror restrictions for installed versions are
 always fetched from disk, even if it could be read from a corresponding version.
 This is slower but more reliable, i.e. it will also find out whether restrictions were changed.
+
+.TP
+.BR DEPS_INSTALLED " " (true / false)
+If true, depdendency information for installed versions are
+always fetched from disk, even if it could be read from a corresponding version.
+The option B<--deps-installed> does the same.
 
 .TP
 .BR DEP " " (true / false)

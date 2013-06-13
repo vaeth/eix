@@ -30,7 +30,7 @@ class VarDbPkg {
 		/** Mapping of [category][package] to list versions. */
 		std::map<std::string, std::map<std::string, std::vector<InstVersion> >* > installed;
 		std::string m_directory; /**< This is the db-directory. */
-		bool get_slots, care_of_slots;
+		bool get_slots, care_of_slots, care_of_deps;
 		bool get_restrictions, care_of_restrictions, use_build_time;
 
 		/** Find installed versions of packet "name" in category "category".
@@ -43,11 +43,12 @@ class VarDbPkg {
 
 	public:
 		/** Default constructor. */
-		VarDbPkg(std::string directory, bool read_slots, bool care_about_slots,
+		VarDbPkg(std::string directory, bool read_slots, bool care_about_slots, bool care_about_deps,
 			bool calc_restrictions, bool care_about_restrictions, bool build_time) :
 			m_directory(directory),
 			get_slots(read_slots || care_about_slots),
 			care_of_slots(care_about_slots),
+			care_of_deps(care_about_deps),
 			get_restrictions(calc_restrictions),
 			care_of_restrictions(care_about_restrictions),
 			use_build_time(build_time)
@@ -67,6 +68,7 @@ class VarDbPkg {
 		bool readUse(const Package &p, InstVersion *v) const ATTRIBUTE_NONNULL_;
 		void readRestricted(const Package &p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
 		void readInstDate(const Package &p, InstVersion *v) const ATTRIBUTE_NONNULL_;
+		void readDepend(const Package &p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
 
 		bool readOverlay(const Package &p, InstVersion *v, const DBHeader &header) const ATTRIBUTE_NONNULL_;
 		std::string readOverlayLabel(const Package *p, const BasicVersion *v) const ATTRIBUTE_NONNULL_;
@@ -91,7 +93,17 @@ class VarDbPkg {
 
 		/** Test if a particular version is installed from the correct overlay.
 		 * @return 1 (yes) or 0 (no) or -1 (might be - overlay unclear) */
-		eix::SignedBool isInstalledVersion(const Package &p, const Version *v, const DBHeader& header) ATTRIBUTE_NONNULL_;
+		eix::SignedBool isInstalledVersion(const Package &p, const Version *v, const DBHeader& header) ATTRIBUTE_NONNULL_
+		{
+			InstVersion *inst;
+			return isInstalledVersion(&inst, p, v, header);
+		}
+
+		/** As above and store pointer to installed version in *inst */
+		eix::SignedBool isInstalledVersion(InstVersion **inst, const Package &p, const Version *v, const DBHeader& header) ATTRIBUTE_NONNULL_;
+
+		/** Return matching available version or NULLPTR */
+		Version *getAvailable(const Package &p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
 
 		/** Returns number of installed versions of this package
 		 * @param p Check for this Package. */

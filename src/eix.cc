@@ -132,6 +132,7 @@ dump_help()
 "                           combined with -T to clean up /etc/portage/package.*\n"
 "     -Q, --quick (toggle)  don't read unguessable slots of installed packages\n"
 "         --care            always read slots of installed packages\n"
+"         --deps-installed  always read deps of installed packages\n"
 "         --cache-file      use another cache-file instead of %s\n"
 "     -R  --remote (toggle)  use remote cache-file %s\n"
 "     -Z  --remote2 (toggle) use remote cache-file %s\n"
@@ -288,6 +289,7 @@ static struct LocalOptions {
 		be_quiet,
 		quick,
 		care,
+		deps_installed,
 		verbose_output,
 		compact_output,
 		show_help,
@@ -336,6 +338,7 @@ EixOptionList::EixOptionList()
 	push_back(Option("quiet",         'q',     Option::BOOLEAN,       &rc_options.be_quiet));
 	push_back(Option("quick",         'Q',     Option::BOOLEAN,       &rc_options.quick));
 	push_back(Option("care",          O_CARE,  Option::BOOLEAN_T,     &rc_options.care));
+	push_back(Option("deps-installed", O_DEPS_INSTALLED, Option::BOOLEAN_T, &rc_options.deps_installed));
 
 	push_back(Option("nocolor",       'n',     Option::BOOLEAN_T,     &format->no_color));
 	push_back(Option("force-color",   'F',     Option::BOOLEAN_F,     &format->no_color));
@@ -492,6 +495,7 @@ setup_defaults(EixRc *rc)
 	rc_options.quick           = rc->getBool("QUICKMODE");
 	rc_options.be_quiet        = rc->getBool("QUIETMODE");
 	rc_options.care            = rc->getBool("CAREMODE");
+	rc_options.deps_installed  = rc->getBool("DEPS_INSTALLED");
 	switch(rc->getInteger("REMOTE_DEFAULT")) {
 		case 1:
 			remote_default = 1;
@@ -738,6 +742,7 @@ run_eix(int argc, char** argv)
 
 	string var_db_pkg(eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG);
 	VarDbPkg varpkg_db(var_db_pkg, !rc_options.quick, rc_options.care,
+		rc_options.deps_installed,
 		eixrc.getBool("RESTRICT_INSTALLED"),
 		eixrc.getBool("CARE_RESTRICT_INSTALLED"),
 		eixrc.getBool("USE_BUILD_TIME"));

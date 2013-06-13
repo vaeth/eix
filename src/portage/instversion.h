@@ -30,6 +30,8 @@ class InstVersion : public ExtendedVersion, public Keywords {
 		bool know_use;
 		/** And the same for restricted: */
 		bool know_restricted;
+		/** and for deps: */
+		bool know_deps;
 
 		time_t instDate;                   /**< Installation date according to vardbpkg */
 		std::vector<std::string> inst_iuse;/**< Useflags in iuse according to vardbpkg  */
@@ -43,6 +45,7 @@ class InstVersion : public ExtendedVersion, public Keywords {
 			read_failed = false;
 			know_use = false;
 			know_restricted = false;
+			know_deps = false;
 			instDate = 0;
 			know_overlay = false;
 		}

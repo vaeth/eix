@@ -517,7 +517,7 @@ PackageTest::stringMatch(Package *pkg) const
 		}
 	}
 
-	if((field & (USE_ENABLED | USE_DISABLED | INST_SLOT | INST_FULLSLOT)) == NONE)
+	if((field & (USE_ENABLED | USE_DISABLED | INST_SLOT | INST_FULLSLOT | DEPS)) == NONE)
 		return false;
 
 	vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*pkg));
@@ -562,6 +562,34 @@ PackageTest::stringMatch(Package *pkg) const
 					if((it->usedUse).find(*uit) == (it->usedUse).end())
 						return true;
 				}
+			}
+		}
+	}
+
+	if((field & DEPS) != NONE) {
+		bool depend((field & DEPEND) != NONE);
+		bool rdepend((field & RDEPEND) != NONE);
+		bool pdepend((field & PDEPEND) != NONE);
+		bool hdepend((field & HDEPEND) != NONE);
+		for(vector<InstVersion>::iterator it(installed_versions->begin());
+			it != installed_versions->end(); ++it) {
+			vardbpkg->readDepend(*pkg, &(*it), *header);
+			const Depend &dep(it->depend);
+			if(depend) {
+				if((*algorithm)(dep.get_depend().c_str(), pkg))
+				return true;
+			}
+			if(rdepend) {
+				if((*algorithm)(dep.get_rdepend().c_str(), pkg))
+				return true;
+			}
+			if(pdepend) {
+				if((*algorithm)(dep.get_pdepend().c_str(), pkg))
+				return true;
+			}
+			if(hdepend) {
+				if((*algorithm)(dep.get_hdepend().c_str(), pkg))
+				return true;
 			}
 		}
 	}

@@ -97,16 +97,42 @@ VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion *
 }
 
 eix::SignedBool
-VarDbPkg::isInstalledVersion(const Package &p, const Version *v, const DBHeader& header)
+VarDbPkg::isInstalledVersion(InstVersion **inst, const Package &p, const Version *v, const DBHeader& header)
 {
-	InstVersion *inst(NULLPTR);
-	if(!isInstalled(p, v, &inst))
+	*inst = NULLPTR;
+	if(!isInstalled(p, v, inst)) {
 		return 0;
-	if(!readOverlay(p, inst, header))
+	}
+	if(!readOverlay(p, *inst, header)) {
 		return -1;
-	if((inst->overlay_key) != (v->overlay_key))
+	}
+	if(((*inst)->overlay_key) != (v->overlay_key)) {
 		return 0;
+	}
 	return 1;
+}
+
+/** Return matching available version or NULLPTR */
+Version *
+VarDbPkg::getAvailable(const Package &p, InstVersion *v, const DBHeader& header) const
+{
+	for(Package::const_iterator it(p.begin()); likely(it != p.end()); ++it) {
+		if(BasicVersion::compare(**it, *v) != 0) {
+			continue;
+		}
+		if(readSlot(p, v)) {
+			if(unlikely(it->slotname != v->slotname) || unlikely(it->subslotname != v->subslotname)) {
+				continue;
+			}
+		}
+		if(readOverlay(p, v, header)) {
+			if(unlikely(it->overlay_key != v->overlay_key)) {
+				continue;
+			}
+		}
+		return *it;
+	}
+	return NULLPTR;
 }
 
 /** Returns number of installed versions of this package
@@ -207,14 +233,16 @@ VarDbPkg::readUse(const Package &p, InstVersion *v) const
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
 	vector<string> lines;
 	if(unlikely(!pushback_lines((dirname + "/IUSE").c_str(),
-		&lines, false, false, 1)))
+		&lines, false, false, 1))) {
 		return false;
+	}
 	join_and_split(&(v->inst_iuse), lines);
 
 	lines.clear();
 	if(unlikely(!pushback_lines((dirname + "/USE").c_str(),
-		&lines, false, false, 1)))
+		&lines, false, false, 1))) {
 		return false;
+	}
 	join_and_split(&alluse, lines);
 	for(vector<string>::iterator it(v->inst_iuse.begin());
 		it != v->inst_iuse.end(); ++it) {
@@ -249,26 +277,16 @@ VarDbPkg::readRestricted(const Package &p, InstVersion *v, const DBHeader& heade
 		return;
 	}
 	v->know_restricted = true;
-	v->restrictFlags = ExtendedVersion::RESTRICT_NONE;
-	v->propertiesFlags = ExtendedVersion::PROPERTIES_NONE;
-	for(Package::const_iterator it(p.begin()); likely(it != p.end()); ++it) {
-		if(BasicVersion::compare(**it, *v) != 0)
-			continue;
-		if(readSlot(p, v)) {
-			if(unlikely(it->slotname != v->slotname) || unlikely(it->subslotname != v->subslotname)) {
-				continue;
-			}
+	Version *av(getAvailable(p, v, header));
+	if(av == NULLPTR) {
+		v->restrictFlags = ExtendedVersion::RESTRICT_NONE;
+		v->propertiesFlags = ExtendedVersion::PROPERTIES_NONE;
+	} else {
+		v->restrictFlags = av->restrictFlags;
+		v->propertiesFlags = av->propertiesFlags;
+		if(!care_of_restrictions) {
+			return;
 		}
-		if(readOverlay(p, v, header)) {
-			if(unlikely(it->overlay_key != v->overlay_key))
-				continue;
-		}
-		v->restrictFlags = it->restrictFlags;
-		v->propertiesFlags = it->propertiesFlags;
-		break;
-	}
-	if(!care_of_restrictions) {
-		return;
 	}
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
 	vector<string> lines;
@@ -279,12 +297,11 @@ VarDbPkg::readRestricted(const Package &p, InstVersion *v, const DBHeader& heade
 		v->restrictFlags = ExtendedVersion::RESTRICT_NONE;
 		return;
 	}
-	if(lines.size() == 1) {
+	if(likely(lines.size() == 1)) {
 		v->set_restrict(lines[0]);
 	} else {
 		v->set_restrict(join_to_string(lines));
 	}
-	return;
 }
 
 void
@@ -308,6 +325,52 @@ GCC_DIAG_ON(sign-conversion)
 		}
 	}
 	v->instDate = get_mtime(dirname.c_str());
+}
+
+void
+VarDbPkg::readDepend(const Package &p, InstVersion *v, const DBHeader& header) const
+{
+	if(unlikely(!Depend::use_depend)) {
+		return;
+	}
+	if(likely(v->know_deps)) {
+		return;
+	}
+	v->know_deps = true;
+	Version *av(getAvailable(p, v, header));
+	if(av == NULLPTR) {
+		v->depend.clear();
+	} else {
+		v->depend = av->depend;
+		if(!care_of_deps) {
+			return;
+		}
+	}
+	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
+	vector<string> depend(4);
+	depend[0] = v->depend.get_depend();
+	depend[1] = v->depend.get_rdepend();
+	depend[2] = v->depend.get_pdepend();
+	depend[3] = v->depend.get_hdepend();
+	static const char *filenames[4] = {
+		"/DEPEND",
+		"/RDEPEND",
+		"/PDEPEND",
+		"/HDEPEND"
+	};
+	for(eix::TinyUnsigned i(0); likely(i < 4); ++i) {
+		vector<string> lines;
+		if(likely(pushback_lines((dirname + filenames[i]).c_str(),
+			&lines, false, false, 1))) {
+			if(likely(lines.size() == 1)) {
+				depend[i].assign(lines[0]);
+			} else {
+				depend[i].clear();
+				join_to_string(&(depend[i]), lines);
+			}
+		}
+	}
+	v->depend.set(depend[0], depend[1], depend[2], depend[3], true);
 }
 
 /** Read category from db-directory. */

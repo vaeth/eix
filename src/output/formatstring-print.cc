@@ -1535,135 +1535,151 @@ PrintFormat::VER_PROPERTIESSET(OutputString *s, Package *package) const
 }
 
 void
-PrintFormat::VER_HAVEDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
+PrintFormat::VER_HAVEDEPEND(OutputString *s, Package *package) const
 {
-	UNUSED(package);
-	if(!((unlikely(version_variables->isinst)) || version_variables->version()->depend.depend_empty())) {
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
+	}
+	if(!ver_version()->depend.depend_empty()) {
 		s->set_one();
 	}
 }
 
 void
-PrintFormat::VER_HAVERDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
+PrintFormat::VER_HAVERDEPEND(OutputString *s, Package *package) const
 {
-	UNUSED(package);
-	if(!((unlikely(version_variables->isinst)) || version_variables->version()->depend.rdepend_empty())) {
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
+	}
+	if(!ver_version()->depend.rdepend_empty()) {
 		s->set_one();
 	}
 }
 
 void
-PrintFormat::VER_HAVEPDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
+PrintFormat::VER_HAVEPDEPEND(OutputString *s, Package *package) const
 {
-	UNUSED(package);
-	if(!((unlikely(version_variables->isinst)) || version_variables->version()->depend.pdepend_empty())) {
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
+	}
+	if(!ver_version()->depend.pdepend_empty()) {
 		s->set_one();
 	}
 }
 
 void
-PrintFormat::VER_HAVEHDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
+PrintFormat::VER_HAVEHDEPEND(OutputString *s, Package *package) const
 {
-	UNUSED(package);
-	if(!((unlikely(version_variables->isinst)) || version_variables->version()->depend.hdepend_empty())) {
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
+	}
+	if(!ver_version()->depend.hdepend_empty()) {
 		s->set_one();
 	}
 }
 
 void
-PrintFormat::VER_HAVEDEPS(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
+PrintFormat::VER_HAVEDEPS(OutputString *s, Package *package) const
 {
-	UNUSED(package);
-	if(!((unlikely(version_variables->isinst)) || version_variables->version()->depend.empty())) {
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
+	}
+	if(!ver_version()->depend.empty()) {
 		s->set_one();
 	}
 }
 
 void
-PrintFormat::VER_DEPENDS(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
+PrintFormat::VER_DEPENDS(OutputString *s, Package *package) const
 {
-	UNUSED(package);
-	if(unlikely(version_variables->isinst)) {
-		return;
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
 	}
-	s->assign_smart(version_variables->version()->depend.get_depend_brief());
+	s->assign_smart(ver_version()->depend.get_depend_brief());
 }
 
 void
-PrintFormat::VER_DEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
+PrintFormat::VER_DEPEND(OutputString *s, Package *package) const
 {
-	UNUSED(package);
-	if(unlikely(version_variables->isinst)) {
-		return;
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
 	}
-	s->assign_smart(version_variables->version()->depend.get_depend());
+	s->assign_smart(ver_version()->depend.get_depend());
 }
 
 void
-PrintFormat::VER_RDEPENDS(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
+PrintFormat::VER_RDEPENDS(OutputString *s, Package *package) const
 {
-	UNUSED(package);
-	if(unlikely(version_variables->isinst)) {
-		return;
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
 	}
-	s->assign_smart(version_variables->version()->depend.get_rdepend_brief());
+	s->assign_smart(ver_version()->depend.get_rdepend_brief());
 }
 
 
 void
-PrintFormat::VER_RDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
+PrintFormat::VER_RDEPEND(OutputString *s, Package *package) const
 {
-	UNUSED(package);
-	if(unlikely(version_variables->isinst)) {
-		return;
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
 	}
-	s->assign_smart(version_variables->version()->depend.get_rdepend());
+	s->assign_smart(ver_version()->depend.get_rdepend());
 }
 
 void
-PrintFormat::VER_PDEPENDS(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
+PrintFormat::VER_PDEPENDS(OutputString *s, Package *package) const
 {
-	UNUSED(package);
-	if(unlikely(version_variables->isinst)) {
-		return;
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
 	}
-	s->assign_smart(version_variables->version()->depend.get_pdepend_brief());
+	s->assign_smart(ver_version()->depend.get_pdepend_brief());
 }
 
 void
-PrintFormat::VER_PDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
+PrintFormat::VER_PDEPEND(OutputString *s, Package *package) const
 {
-	UNUSED(package);
-	if(unlikely(version_variables->isinst)) {
-		return;
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
 	}
-	s->assign_smart(version_variables->version()->depend.get_pdepend());
+	s->assign_smart(ver_version()->depend.get_pdepend());
 }
 
 void
-PrintFormat::VER_HDEPENDS(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
+PrintFormat::VER_HDEPENDS(OutputString *s, Package *package) const
 {
-	UNUSED(package);
-	if(unlikely(version_variables->isinst)) {
-		return;
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
 	}
-	s->assign_smart(version_variables->version()->depend.get_hdepend_brief());
+	s->assign_smart(ver_version()->depend.get_hdepend_brief());
 }
 
 void
-PrintFormat::VER_HDEPEND(OutputString *s, Package *package ATTRIBUTE_UNUSED) const
+PrintFormat::VER_HDEPEND(OutputString *s, Package *package) const
 {
-	UNUSED(package);
-	if(unlikely(version_variables->isinst)) {
-		return;
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
 	}
-	s->assign_smart(version_variables->version()->depend.get_hdepend());
+	s->assign_smart(ver_version()->depend.get_hdepend());
 }
 
 const MaskFlags *
 PrintFormat::ver_maskflags() const
 {
-	return ((unlikely(version_variables->isinst)) ? NULLPTR : (&(version_variables->version()->maskflags)));
+	return ((unlikely(version_variables->isinst)) ?
+		NULLPTR : (&(version_variables->version()->maskflags)));
 }
 
 void
@@ -1699,7 +1715,8 @@ PrintFormat::VER_ISMASKED(OutputString *s, Package *package ATTRIBUTE_UNUSED) co
 const KeywordsFlags *
 PrintFormat::ver_keywordsflags() const
 {
-	return ((unlikely(version_variables->isinst)) ? NULLPTR : (&(version_variables->version()->keyflags)));
+	return ((unlikely(version_variables->isinst)) ?
+		NULLPTR : (&(version_variables->version()->keyflags)));
 }
 
 void

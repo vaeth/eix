@@ -93,3 +93,12 @@ Depend::subst(const string &in, const string &text)
 	ret.insert(pos, text);
 	return ret;
 }
+
+bool
+Depend::operator==(const Depend &d) const
+{
+	return ((get_depend() == d.get_depend()) &&
+		(get_rdepend() == d.get_rdepend()) &&
+		(get_pdepend() == d.get_pdepend()) &&
+		(get_hdepend() == d.get_hdepend()));
+}
