@@ -209,12 +209,12 @@ GCC_DIAG_ON(sign-conversion)
 			}
 			return true;
 		}
-		if(likely(putch(c) != EOF)) {
+		if(likely(putch(c))) {
 			if(likely(c != MAGICNUMCHAR)) {
 				return true;
 			}
 			// write leading 0 as flag:
-			if(likely(putch(0) != EOF)) {
+			if(likely(putch(0))) {
 				return true;
 			}
 		}
