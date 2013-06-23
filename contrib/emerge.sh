@@ -84,7 +84,7 @@ InstallEbuildVersion() {
 	Die "cannot execute emerge"
 }
 
-for j in tar.xz tar.bz2 tar.gz zip tar.Z shar.gz shar
+for j in tar.xz tar.bz2 tar.gz zip
 do	for i in "${curr}/${project}-"*."${j}"
 	do	test -e "${i}" || continue
 		v=${i##*/}

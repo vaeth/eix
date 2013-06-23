@@ -30,6 +30,9 @@
 
 .B eix-functions.sh
 
+.B eix-overlay [B<-s> I<sep>] [B<-f> I<file>]
+[B<-l> I<overlay>] [B<-p> I<overlay>] [B<-o> I<overlay>] ...
+
 .B eix-drop-permissions
 [B<-->] [I<command to execute>]
 
@@ -85,6 +88,11 @@ B<eix-functions.sh> are helper functions used by B<eix-sync>, B<eix-remote>, and
 You might want to use them for your own similar scripts.
 Note that immediately after sourcing B<eix-functions.sh> you will normally
 have to call B<ReadFunctions> for initialisation.
+
+B<eix-overlay> is a helper program for B<eix-remote> (and possibly your own scripts).
+It outputs the label, path, or both, of the specified I<overlay> within the
+eix database I<file>, each output followed by I<sep>.
+If I<sep> is not specified the null character is used.
 
 B<eix-drop-permissions> is a helper program for B<eix-remote> (and possibly your own scripts).
 It executes the command given as argument with permissions dropped according to
@@ -248,18 +256,6 @@ Print the 256 color palettes (assuming it follows ansi color scheme) and exit.
 With B<--256d>/B<--256l> (B<--256d0>/B<--256l0>, B<--256d1>/B<--256l1>) only the foreground palettes with dark/light background
 (or only the normal or bright dark/light foreground palette, respectively) is printed.
 With B<--256b> only the background palette is printed.
-.TP
-.BI "--print-overlay-path " OVERLAY
-Print the path of the first overlay matching I<OVERLAY>, followed by B<PRINT_APPEND>.
-I<OVERLAY> may be an overlay label, an overlay path (mask) or a number.
-.TP
-.BI "--print-overlay-label " OVERLAY
-Print the label of the first overlay matching I<OVERLAY>, followed by B<PRINT_APPEND>.
-I<OVERLAY> may be an overlay label, an overlay path (mask) or a number.
-.TP
-.BI "--print-overlay-data " OVERLAY
-Print label and path of the first overlay matching I<OVERLAY>, separated and followed by B<PRINT_APPEND>.
-I<OVERLAY> may be an overlay label, an overlay path (mask) or a number.
 .TP
 .B --print-all-useflags
 print all IUSE words used in some version.
@@ -2189,7 +2185,7 @@ If true, eix and eix-diff will use B<--quiet> by default.
 
 .TP
 .BR PRINT_APPEND " " (string)
-This string is appended to the output of B<--print>, B<--print-overlay-path>, and B<--print-overlay-label>.
+This string is appended to the output of B<--print>.
 Standard escape sequences in this string like \\n are interpreted.
 The default is a newline for reasonable output in an interactive shell.
 Note that command substitution in shell scripts removes all trailing spaces
@@ -3733,6 +3729,10 @@ In B<eix-remote> before eix-0.28.5 the current option B<-x> was on by default.
 This would still be a reasonable default, but some users were confused by the feature
 (some even believed it is a bug) so that it is now necessary to configure this default
 manually (by setting B<EIX_REMOTE_OPTS=-x> in I</etc/eixrc>).
+
+The tool B<eix-overlay> did not exist before eix-0.28.6; instead eix had the options
+B<--print-overlay-path>, B<--print-overlay-label>, B<--print-overlay-data>
+which are now redundant and have been removed.
 .\" }}}
 
 .\" {{{ AUTHORS

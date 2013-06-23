@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-06-14 01:27+0200\n"
+"POT-Creation-Date: 2013-06-24 08:13+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -45,7 +45,7 @@ msgstr "Проблема при запуске ${eixf_cmd}"
 msgid "Calling eix-update"
 msgstr "Запускаю eix-update"
 
-#: src/eix-functions.sh.in:320 src/eix-remote.sh:338
+#: src/eix-functions.sh.in:320 src/eix-remote.sh:345
 msgid "eix-update failed"
 msgstr "ошибка eix-update"
 
@@ -343,7 +343,7 @@ msgstr ""
 "-H            Подавить обновление строки состояния\n"
 "-q            Тихо"
 
-#: src/eix-layman.sh:133 src/eix-remote.sh:278 src/eix-update.cc:667
+#: src/eix-layman.sh:133 src/eix-remote.sh:279 src/eix-update.cc:667
 msgid "Analyzing"
 msgstr "Анализ"
 
@@ -572,36 +572,31 @@ msgstr "Распаковка данных"
 msgid "cannot unpack ${a}"
 msgstr "невозможно распаковать ${a}"
 
-#: src/eix-remote.sh:299
-#, sh-format
-msgid "problems occurred with cachefile ${i}"
-msgstr "возникли проблемы с файлом кэша ${i}"
-
-#: src/eix-remote.sh:322
+#: src/eix-remote.sh:329
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "невозможно прочесть все файлы кэша eix от ${a}"
 
-#: src/eix-remote.sh:329
+#: src/eix-remote.sh:336
 #, sh-format
 msgid "Output to remote database ${eix_remote}"
 msgstr "Вывод в удалённую БД ${eix_remote}"
 
-#: src/eix-remote.sh:348
+#: src/eix-remote.sh:355
 msgid "A temporary file makes only sense for update mode"
 msgstr "Временный файл имеет смысл только для режима обновления"
 
-#: src/eix-remote.sh:359
+#: src/eix-remote.sh:366
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
 msgstr "невозможно сделать копию ${file} временного файла"
 
-#: src/eix-remote.sh:371
+#: src/eix-remote.sh:378
 #, sh-format
 msgid "cannot read ${archive}"
 msgstr "невозможно прочесть ${archive}"
 
-#: src/eix-remote.sh:390
+#: src/eix-remote.sh:397
 #, sh-format
 msgid "mkdir ${tmpsub} failed"
 msgstr "ошибка создания каталога ${tmpsub}"
@@ -1310,9 +1305,6 @@ msgid ""
 "     --print-all-depends   print all words occurring in some {,R,P}DEPEND\n"
 "                           (needs DEP=true)\n"
 "     --print-world-sets    print the world sets\n"
-"     --print-overlay-path  print the path of specified overlay\n"
-"     --print-overlay-label print label of specified overlay\n"
-"     --print-overlay-data  print label and path of specified overlay\n"
 "     --print-profile-paths print all paths of current profile\n"
 "     --is-current          check for valid cache-file\n"
 "     --256                 Print all ansi color palettes\n"
@@ -1488,9 +1480,6 @@ msgstr ""
 "     --print-all-depends   показать все слова, встречающиеся в каком-то\n"
 "                           {,R,P}DEPEND (требует DEP=true)\n"
 "     --print-world-sets    показать world-наборы\n"
-"     --print-overlay-path  показать путь указанного оверлея\n"
-"     --print-overlay-label показать надпись указанного оверлея\n"
-"     --print-overlay-data  показать надпись и путь указанного оверлея\n"
 "     --print-profile-paths показать all paths of current profile\n"
 "     --is-current          проверить на наличие правильного файла кэша\n"
 "     --256                 Показать все цветовые палитры ANSI\n"
@@ -1635,16 +1624,16 @@ msgstr ""
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING "
 "для подробной информации.\n"
 
-#: src/eix.cc:580 src/eix-diff.cc:284
+#: src/eix.cc:571 src/eix-diff.cc:284
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Проблема при обработке %s: %s\n"
 
-#: src/eix.cc:676 src/eix-diff.cc:349 src/eix-update.cc:385
+#: src/eix.cc:667 src/eix-diff.cc:349 src/eix-update.cc:385
 msgid "cannot redirect to %r"
 msgstr "невозможно перенаправить в %r"
 
-#: src/eix.cc:757 src/eix.cc:1131
+#: src/eix.cc:748 src/eix.cc:1079
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1653,7 +1642,7 @@ msgstr ""
 "Невозможно открыть базу данных %s для чтения (режим = 'rb')\n"
 "Вы не забыли её создать с помощью 'eix-update'?"
 
-#: src/eix.cc:767
+#: src/eix.cc:758
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1664,31 +1653,31 @@ msgstr ""
 "Используется формат базы данных %s (текущий ― %s).\n"
 "Запустите 'eix-update' и попробуйте ещё раз."
 
-#: src/eix.cc:1076 src/eix.cc:1097
+#: src/eix.cc:1024 src/eix.cc:1045
 #, c-format
 msgid "Found %s matches."
 msgstr "Найдено %s совпадений."
 
-#: src/eix.cc:1079
+#: src/eix.cc:1027
 msgid "No matches found."
 msgstr "Совпадений не найдено."
 
-#: src/eix.cc:1088
+#: src/eix.cc:1036
 #, c-format
 msgid "Found %s match."
 msgstr "Найдено %s совпадение."
 
-#: src/eix.cc:1205
+#: src/eix.cc:1153
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Нет не совпадающих или пустых записей в %s.\n"
 
-#: src/eix.cc:1206
+#: src/eix.cc:1154
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Нет не совпадающих записей в %s.\n"
 
-#: src/eix.cc:1211
+#: src/eix.cc:1159
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1697,7 +1686,7 @@ msgstr ""
 "Не совпадающие или пустые записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1212
+#: src/eix.cc:1160
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1706,7 +1695,7 @@ msgstr ""
 "Не совпадающие записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1270
+#: src/eix.cc:1218
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1714,7 +1703,7 @@ msgstr ""
 "Имена всех установленных пакетов находятся в базе данных.\n"
 "\n"
 
-#: src/eix.cc:1273
+#: src/eix.cc:1221
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -1772,7 +1761,7 @@ msgstr ""
 msgid "error in database file %r: %s"
 msgstr "Запись файла базы данных %r: %s .."
 
-#: src/eix-diff.cc:157
+#: src/eix-diff.cc:157 src/eix-overlay.cc:177
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Невозможно открыть базу данных %r для чтения (режим = 'rb')"
 
@@ -1804,6 +1793,31 @@ msgstr ""
 #, c-format
 msgid "failed to execute %s\n"
 msgstr "ошибка выполнения %s\n"
+
+#: src/eix-overlay.cc:55
+#, c-format
+msgid ""
+"Usage: %s [-s SEP] [-f FILE] [-l OVERLAY] [-p OVERLAY] [-o OVERLAY] ...\n"
+"Print label or path or both of specified OVERLAY for eix database FILE,\n"
+"appending SEP to each data. If SEP is unspecified, the null symbol is used.\n"
+"\n"
+"This program is covered by the GNU General Public License. See COPYING for\n"
+"further information.\n"
+msgstr ""
+
+#: src/eix-overlay.cc:171
+#, c-format
+msgid ""
+"%s was created with an incompatible eix-update:\n"
+"It uses database format %s (current is %s)."
+msgstr ""
+"%s был создан несовместимым eix-update:\n"
+"Используется формат базы данных %s (текущий ― %s)."
+
+#: src/eix-overlay.cc:187
+#, c-format
+msgid "Can't find overlay %s in %s"
+msgstr ""
 
 #: src/eix-update.cc:120
 #, c-format
@@ -2158,28 +2172,28 @@ msgstr ""
 "Пересоберите eix, используя ключ --with-sqlite, чтобы добавить поддержку "
 "sqlite"
 
-#: src/database/io.cc:85
+#: src/database/io.cc:54
 msgid "fseek failed"
 msgstr "ошибка fseek"
 
-#: src/database/io.cc:127
+#: src/database/io.cc:96
 msgid "error while reading from database: end of file"
 msgstr "ошибка чтения базы данных: конец файла"
 
-#: src/database/io.cc:128
+#: src/database/io.cc:97
 msgid "error while reading from database"
 msgstr "ошибка чтения базы данных"
 
-#: src/database/io.cc:136
+#: src/database/io.cc:105
 msgid "error while writing to database"
 msgstr "ошибка записи в базу данных"
 
-#: src/database/io.cc:655
+#: src/database/io_header.cc:54
 #, c-format
 msgid "cachefile uses newer format %s (current is %s)"
 msgstr "Файл кэша использует более новый формат %s (текущий - %s)"
 
-#: src/database/io.cc:656
+#: src/database/io_header.cc:55
 #, c-format
 msgid "cachefile uses obsolete format %s (current is %s)"
 msgstr "Файл кэша использует устаревший формат %s (текущий - %s)"
@@ -5414,7 +5428,7 @@ msgstr "местно изменено, по умолчанию было:"
 msgid "locally added:"
 msgstr "местно добавлено:"
 
-#: src/main/main.cc:112
+#: src/main/main.cc:121
 #, c-format
 msgid ""
 "Received SIGSEGV - you probably found a bug in eix.\n"

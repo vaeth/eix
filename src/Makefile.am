@@ -17,11 +17,16 @@ $(SQLITE_CFLAGS)
 nobase_nodist_sysconf_DATA = \
 eixrc/00-eixrc
 
-database_src = \
+header_src = \
 database/io.cc \
 database/io.h \
+database/io_header.cc \
 database/header.cc \
-database/header.h \
+database/header.h
+
+database_src = \
+$(header_src) \
+database/io_portage.cc \
 database/package_reader.cc \
 database/package_reader.h
 
@@ -45,11 +50,14 @@ sysutils_src = \
 eixTk/sysutils.cc \
 eixTk/sysutils.h
 
-varsreader_src = \
+utils_src = \
 eixTk/filenames.cc \
 eixTk/filenames.h \
 eixTk/utils.cc \
-eixTk/utils.h \
+eixTk/utils.h
+
+varsreader_src = \
+$(utils_src) \
 eixTk/varsreader.cc \
 eixTk/varsreader.h
 
@@ -92,16 +100,23 @@ eixrc/global.h
 
 nodist_eixrc_src =
 
+depend_src = \
+portage/depend.cc \
+portage/depend.h
+
+overlay_src = \
+portage/overlay.cc \
+portage/overlay.h
+
 portage_src = \
 portage/conf/portagesettings.cc \
 portage/conf/portagesettings.h \
 portage/conf/cascadingprofile.cc \
 portage/conf/cascadingprofile.h \
 $(masklist_src) \
+$(depend_src) \
 portage/basicversion.cc \
 portage/basicversion.h \
-portage/depend.cc \
-portage/depend.h \
 portage/extendedversion.cc \
 portage/extendedversion_bin.cc \
 portage/extendedversion.h \
@@ -116,8 +131,7 @@ portage/packagetree.cc \
 portage/packagetree.h \
 portage/keywords.cc \
 portage/keywords.h \
-portage/overlay.cc \
-portage/overlay.h \
+$(overlay_src) \
 portage/set_stability.cc \
 portage/set_stability.h \
 portage/version.cc \
@@ -179,10 +193,13 @@ output/print-xml.h
 
 nodist_printxml_src =
 
-output_src = \
+outputstring_src = \
 eixTk/outputstring.cc \
 eixTk/outputstring.h \
-eixTk/stringlist_output.cc \
+eixTk/stringlist_output.cc
+
+output_src = \
+$(outputstring_src) \
 portage/version_output.cc \
 output/formatstring.cc \
 output/formatstring.h \
@@ -238,6 +255,7 @@ main/main_diff.cc \
 main/main_update.cc \
 main/main_update_tools.cc \
 main/main_output.cc \
+main/main_overlay.cc \
 main/main_all.cc \
 main/main_all_tools.cc \
 main/main_masked_packages.cc \
@@ -302,6 +320,7 @@ $(nodist_common_src) \
 $(nodist_extra_common_src) \
 eix-diff$(EXEEXT) \
 eix-update$(EXEEXT) \
+eix-overlay$(EXEEXT) \
 eix-drop-permissions$(EXEEXT) \
 masked-packages$(EXEEXT) \
 versionsort$(EXEEXT) \
@@ -327,7 +346,7 @@ cache/generate_cachemap.sh
 if SEPARATE_TOOLS
 # Generate separate tools binaries
 use_separate_tools = :
-tool_programs = masked-packages$(EXEEXT) versionsort$(EXEEXT) eix-drop-permissions$(EXEEXT)
+tool_programs = masked-packages$(EXEEXT) versionsort$(EXEEXT) eix-overlay$(EXEEXT) eix-drop-permissions$(EXEEXT)
 tool_noinst =
 main_all_src  = main/main_all.cc
 main_output_src = main/main_output.cc
@@ -345,12 +364,12 @@ else
 # main/main.cc should then react on this to a modified argv[0] filename).
 use_separate_tools = false
 tool_programs =
-noinst_tool = masked-packages$(EXEEXT) versionsort$(EXEEXT) eix-drop-permissions$(EXEEXT)
-main_all_src = masked-packages.cc versionsort.cc eix-drop-permissions.cc main/main_all_tools.cc
+noinst_tool = masked-packages$(EXEEXT) versionsort$(EXEEXT) eix-drop-permissions$(EXEEXT) eix-overlay$(EXEEXT)
+main_all_src = masked-packages.cc versionsort.cc eix-overlay.cc eix-drop-permissions.cc main/main_all_tools.cc
 main_output_src = main/main_output.cc
 main_eix_src = main/main_eix.cc
 main_diff_src = main/main_diff.cc
-main_update_src = masked-packages.cc versionsort.cc eix-drop-permissions.cc main/main_update_tools.cc
+main_update_src = masked-packages.cc versionsort.cc eix-overlay.cc eix-drop-permissions.cc main/main_update_tools.cc
 endif
 
 noinst_main_all_src =
@@ -366,6 +385,7 @@ if SEPARATE_UPDATE
 use_separate_update = :
 masked_link = eix-update$(EXEEXT)
 versionsort_link = eix-update$(EXEEXT)
+eix_overlay_link = eix-update$(EXEEXT)
 drop_permissions_link = eix-update$(EXEEXT)
 
 if SEPARATE_BINARIES
@@ -425,6 +445,7 @@ else
 use_separate_update = false
 masked_link = eix$(EXEEXT)
 versionsort_link = eix$(EXEEXT)
+eix_overlay_link = eix$(EXEEXT)
 drop_permissions_link = eix$(EXEEXT)
 
 # Generate neither eix-diff nor eix-update separately:
@@ -475,6 +496,17 @@ portage/basicversion.cc \
 versionsort.cc \
 main/main_versionsort.cc
 
+eix_overlay_LDADD = $(common_tools_ldadd)
+eix_overlay_SOURCES = \
+$(stringutils_src) \
+$(utils_src) \
+$(header_src) \
+$(depend_src) \
+$(overlay_src) \
+$(sysutils_src) \
+eix-overlay.cc \
+main/main_overlay.cc
+
 eix_drop_permissions_LDADD = $(common_tools_ldadd)
 eix_drop_permissions_SOURCES = \
 $(stringutils_src) \
@@ -496,6 +528,10 @@ versionsort$(EXEEXT): $(versionsort_link)
 	$(AM_V_at)test ! -e versionsort$(EXEEXT) || rm versionsort$(EXEEXT)
 	$(AM_V_GEN)$(LN_S) $(versionsort_link) versionsort$(EXEEXT)
 
+eix-overlay$(EXEEXT): $(eix_overlay_link)
+	$(AM_V_at)test ! -e eix-overlay$(EXEEXT) || rm eix-overlay$(EXEEXT)
+	$(AM_V_GEN)$(LN_S) $(eix_overlay_link) eix-overlay$(EXEEXT)
+
 eix-drop-permissions$(EXEEXT): $(drop_permissions_link)
 	$(AM_V_at)test ! -e eix-drop-permissions$(EXEEXT) || rm eix-drop-permissions$(EXEEXT)
 	$(AM_V_GEN)$(LN_S) $(drop_permissions_link) eix-drop-permissions$(EXEEXT)
@@ -509,6 +545,9 @@ uninstall-local:
 	$(AM_V_at)$(use_separate_tools) || \
 		test ! -e "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
+	$(AM_V_at)$(use_separate_tools) || \
+		test ! -e "$(DESTDIR)$(bindir)/eix-overlay$(EXEEXT)" || \
+		rm -- "$(DESTDIR)$(bindir)/eix-overlay$(EXEEXT)"
 	$(AM_V_at)$(use_separate_tools) || \
 		test ! -e "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)"
@@ -530,6 +569,11 @@ install-exec-hook:
 		rm -- "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
 	$(AM_V_at)$(use_separate_tools) || \
 		$(LN_S) "$(versionsort_link)" "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
+	$(AM_V_at)$(use_separate_tools) || \
+		test ! -e "$(DESTDIR)$(bindir)/eix-overlay$(EXEEXT)" || \
+		rm -- "$(DESTDIR)$(bindir)/eix-overlay$(EXEEXT)"
+	$(AM_V_at)$(use_separate_tools) || \
+		$(LN_S) "$(eix_overlay_link)" "$(DESTDIR)$(bindir)/eix-overlay$(EXEEXT)"
 	$(AM_V_at)$(use_separate_tools) || \
 		test ! -e "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)"

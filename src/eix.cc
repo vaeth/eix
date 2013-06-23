@@ -111,9 +111,6 @@ dump_help()
 "     --print-all-depends   print all words occurring in some {,R,P}DEPEND\n"
 "                           (needs DEP=true)\n"
 "     --print-world-sets    print the world sets\n"
-"     --print-overlay-path  print the path of specified overlay\n"
-"     --print-overlay-label print label of specified overlay\n"
-"     --print-overlay-data  print label and path of specified overlay\n"
 "     --print-profile-paths print all paths of current profile\n"
 "     --is-current          check for valid cache-file\n"
 "     --256                 Print all ansi color palettes\n"
@@ -255,9 +252,6 @@ dump_help()
 static const char *format_normal, *format_verbose, *format_compact;
 static const char *eix_cachefile(NULLPTR);
 static const char *var_to_print(NULLPTR);
-static const char *overlaypath_to_print(NULLPTR);
-static const char *overlaylabel_to_print(NULLPTR);
-static const char *overlaylabelpath_to_print(NULLPTR);
 
 enum OverlayMode
 {
@@ -373,9 +367,6 @@ EixOptionList::EixOptionList()
 	push_back(Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage));
 
 	push_back(Option("print",               O_PRINT_VAR,    Option::STRING,     &var_to_print));
-	push_back(Option("print-overlay-path",  O_PRINT_OPATH,  Option::STRING,     &overlaypath_to_print));
-	push_back(Option("print-overlay-label", O_PRINT_OLABEL, Option::STRING,     &overlaylabel_to_print));
-	push_back(Option("print-overlay-data",  O_PRINT_OLABELPATH, Option::STRING, &overlaylabelpath_to_print));
 
 	push_back(Option("format",         O_FMT,         Option::STRING,   &format_normal));
 	push_back(Option("format-verbose", O_FMT_VERBOSE, Option::STRING,   &format_verbose));
@@ -800,49 +791,6 @@ run_eix(int argc, char** argv)
 			likely(it != p->end()); ++it)
 			cout << *it << "\n";
 		return EXIT_SUCCESS;
-	}
-
-	{
-		typedef eix::TinyUnsigned PrintOverlayMode;
-		const PrintOverlayMode
-			PRINT_OVERLAY_NONE  = 0x00,
-			PRINT_OVERLAY_LABEL = 0x01,
-			PRINT_OVERLAY_PATH  = 0x02,
-			PRINT_OVERLAY_LABEL_PATH = (PRINT_OVERLAY_LABEL | PRINT_OVERLAY_PATH);
-		PrintOverlayMode print_overlay_mode;
-		const char *osearch;
-		if(unlikely(overlaylabelpath_to_print != NULLPTR)) {
-			print_overlay_mode = PRINT_OVERLAY_LABEL_PATH;
-			osearch = overlaylabelpath_to_print;
-		} else if(unlikely(overlaylabel_to_print != NULLPTR)) {
-			print_overlay_mode = PRINT_OVERLAY_LABEL;
-			osearch = overlaylabel_to_print;
-		} else if(unlikely(overlaypath_to_print != NULLPTR)) {
-			print_overlay_mode = PRINT_OVERLAY_PATH;
-			osearch = overlaypath_to_print;
-		} else {
-			print_overlay_mode = PRINT_OVERLAY_NONE;
-		}
-		if(unlikely(print_overlay_mode != PRINT_OVERLAY_NONE)) {
-			ExtendedVersion::Overlay num;
-			if(unlikely(!header.find_overlay(&num, osearch, NULLPTR, 0, DBHeader::OVTEST_ALL))) {
-				return EXIT_FAILURE;
-			}
-			const OverlayIdent& overlay(header.getOverlay(num));
-			string print_append(eixrc["PRINT_APPEND"]);
-			unescape_string(&print_append);
-			string result;
-			if((print_overlay_mode & PRINT_OVERLAY_LABEL) != PRINT_OVERLAY_NONE) {
-				result.assign(overlay.label);
-				result.append(print_append);
-			}
-			if((print_overlay_mode & PRINT_OVERLAY_PATH) != PRINT_OVERLAY_NONE) {
-				result.append(overlay.path);
-				result.append(print_append);
-			}
-			cout << result;
-			return EXIT_SUCCESS;
-		}
 	}
 
 	portagesettings.store_world_sets(&(header.world_sets));

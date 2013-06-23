@@ -15,6 +15,7 @@ extern const char *program_name;
 int run_eix(int argc, char *argv[]);
 int run_eix_update(int argc, char *argv[]);
 int run_eix_diff(int argc, char *argv[]);
+int run_eix_overlay(int argc, char *argv[]);
 int run_eix_drop_permissions(int argc, char *argv[]);
 int run_masked_packages(int argc, char *argv[]);
 int run_versionsort(int argc, char *argv[]);

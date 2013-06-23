@@ -30,6 +30,9 @@
 
 .B eix-functions.sh
 
+.B eix-overlay [B<-s> I<Trenner>] [B<-f> I<Datei>]
+[B<-l> I<Overlay>] [B<-p> I<Overlay>] [B<-o> I<Overlayl] ...
+
 .B eix-drop-permissions
 [B<-->] [I<Befehl zum Ausführen>]
 
@@ -86,6 +89,11 @@ B<eix-functions.sh> sind Hilfsfunktionen, die von B<eix-sync>, B<eix-remote>, un
 benutzt werden und die in ähnlichen Skripten benutzt werden können.
 Beachten Sie, dass unmittelbar nach dem Sourcen von B<eix-functions.sh> normalerweise
 zur Initialisierung B<ReadFunctions> aufgerufen werden muss.
+
+B<eix-overlay> ist ein Hilfsprogramm für B<eix-remote> (und möglicherweise eigene Skripte).
+Es gibt Label, Pfad, oder beides vom angegebenen I<Overlay> aus der eix-Datenbank I<Datei>
+aus, wobei I<Trenner> an jede Ausgabe angehängt wird.
+Wenn kein I<Trenner> angegeben ist, wird statt dessen das Nullzeichen benutzt.
 
 B<eix-drop-permissions> ist ein Hilfsprogramm für B<eix-remote> (und möglicherweise eigene Skripte).
 Es führt das im Argument angegebene Kommando mit eingeschränkten Rechten aus.
@@ -259,18 +267,6 @@ Ausgabe der 256-Farben-Paletten unter der Annahme, dass sie dem Ansi-Farbschema 
 Mit B<--256d>/B<--256l> (B<--256d0>/B<--256l0>, B<--256d1>/B<--256l1>) werden nur die Vordergrund-Farbpaletten mit dunklem/hellem Hintergrund ausgegeben
 (bzw. nur die normale oder fette Vordergrund-Farbpalette mit dunklem/hellen Hintergrund).
 Mit B<--256b> wird nur die Hintergrundfarbpalette ausgegeben.
-.TP
-.BI "--print-overlay-path " OVERLAY
-Gibt den Pfad (gefolgt von B<PRINT_APPEND>) des ersten Overlays aus, der auf I<OVERLAY> zutrifft.
-I<OVERLAY> kann ein Overlaylabel sein, ein Overlay-Pfad (Maske) oder eine Zahl.
-.TP
-.BI "--print-overlay-label " OVERLAY
-Gibt das Label (gefolgt von B<PRINT_APPEND>) des ersten Overlays aus, der auf I<OVERLAY> zutrifft.
-I<OVERLAY> kann ein Overlaylabel sein, ein Overlay-Pfad (Maske) oder eine Zahl.
-.TP
-.BI "--print-overlay-data " OVERLAY
-Gibt Label und Path (getrennt und gefolgt von B<PRINT_APPEND>) des ersten Overlays aus, der auf I<OVERLAY> zutrifft.
-I<OVERLAY> kann ein Overlaylabel sein, ein Overlay-Pfad (Maske) oder eine Zahl.
 .TP
 .B --print-all-useflags
 Gibt alle IUSE-Worte aus, die in irgendeiner Version benutzt werden.
@@ -2215,7 +2211,7 @@ Bestimmt, ob für eix und eix-diff die Option B<--quiet> der Default ist.
 
 .TP
 .BR PRINT_APPEND " " (string)
-Dieser String wir an die Ausgabe von B<--print>, B<--print-overlay-path> und B<--print-overlay-label> angehängt.
+Dieser String wir an die Ausgabe von B<--print>.
 Standard Escape-Sequences wie \\n in diesem String werden interpretiert.
 Der default ist ein Zeilenvorschub, um in interaktiven Shells eine
 vernünftige Ausgabe zu erzeugen.
@@ -3831,6 +3827,10 @@ In B<eix-remote> vor eix-0.28.5 war die jetzige Option B<-x> der Default.
 Diese erscheint nach wie vor ein vernünftiger Default, aber das Feature irritierte Benutzer
 (einige hielten es sogar für einen Bug), so dass es jetzt manuell als Default
 festgelegt werden muss (durch Setzen von B<EIX_REMOTE_OPTS=-x> in I</etc/eixrc>).
+
+Das Hilsprogramm B<eix-overlay> existiert erst seit eix-0.28.6; stattdessen hatte eix die
+Optionen B<--print-overlay-path>, B<--print-overlay-label> und B<--print-overlay-data>,
+die nun redundant wären und daher entfernt wurden.
 .\" }}}
 
 .\" {{{ AUTOREN

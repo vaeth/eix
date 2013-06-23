@@ -33,9 +33,6 @@ case $service in
 (*)
 	excl_opt='(* -)'
 	service_opts+=(
-"$excl_opt"'--print-overlay-path[OVERLAY (print path for OVERLAY)]:overlay for printing path:->overlay'
-"$excl_opt"'--print-overlay-label[OVERLAY (print label for OVERLAY)]:overlay for printing label:->overlay'
-"$excl_opt"'--print-overlay-data[OVERLAY (print label and path for OVERLAY)]:overlay for printing label and path:->overlay'
 "$excl_opt"'--print-all-useflags[print all IUSE words]'
 "$excl_opt"'--print-all-keywords[print all KEYWORDS words]'
 "$excl_opt"'--print-all-slots[print all SLOT strings]'
@@ -138,9 +135,10 @@ case $service in
 {'*--use','*-U'}'[match IUSE]'
 {'*--any','*-y'}'[match any field (same as -SACsHL...)]'
 '*--deps[match *DEPEND]'
-'*--depent[match DEPEND]'
-'*--rdepent[match RDEPEND]'
-'*--pdepent[match PDEPEND]'
+'*--depend[match DEPEND]'
+'*--rdepend[match RDEPEND]'
+'*--pdepend[match PDEPEND]'
+'*--hdepend[match HDEPEND]'
 '*--set[match setname]'
 '*--slot[match slotname]'
 '*--installed-slot[match installed slotname]'
@@ -166,7 +164,7 @@ case $service in
 		do	case $words[i] in
 			(--)
 				i=$CURRENT;;
-			(--print-overlay-(path|label)|--cache-file|--format(-compact|-verbose|)|--(only-|)in-overlay|--installed-(from|in)-overlay|--fuzzy|--print)
+			(--cache-file|--format(-compact|-verbose|)|--(only-|)in-overlay|--installed-(from|in)-overlay|--fuzzy|--print)
 				((++i));;
 			(--not|--open|--close|---*|[!-])
 				if $is_or
@@ -187,6 +185,8 @@ case $service in
 				field='rdepend';;
 			(--pdepend)
 				field='pdepend';;
+			(--hdepend)
+				field='hdepend';;
 			(--deps)
 				field='deps';;
 			(--set)

@@ -1,0 +1,8 @@
+#compdef eix-remote
+_arguments -s -A '-*' : \
+'(-*)-h[help]' \
+'*-s+[SEP (set seperator for next output)]:separator:("#")' \
+'*-f+[FILE (set database for next output)]:database:_files -g "*.eix"' \
+'*-l+[OVERLAY (output label)]:overlay:(0)' \
+'*-p+[OVERLAY (output path)]:overlay:(0)' \
+'*-o+[OVERLAY (output label and path)]:overlay:(0)'

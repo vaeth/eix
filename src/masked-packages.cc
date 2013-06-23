@@ -219,5 +219,4 @@ run_masked_packages(int argc, char *argv[])
 		}
 	}
 	return (rc_options.be_quiet ? EXIT_FAILURE : EXIT_SUCCESS);
-	// exit(EXIT_FAILURE); // make check_includes happy
 }

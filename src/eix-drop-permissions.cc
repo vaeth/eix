@@ -49,5 +49,5 @@ run_eix_drop_permissions(int argc, char *argv[])
 	}
 	execv(argv[0], argv);
 	fprintf(stderr, _("failed to execute %s\n"), argv[0]);
-	return EXIT_FAILURE;  // exit(EXIT_FAILURE); // make check_includes happy
+	return EXIT_FAILURE;
 }

@@ -9,6 +9,8 @@
 
 #include <config.h>
 
+#include <cstdlib>
+
 #include "eixTk/assert.h"
 #include "eixTk/i18n.h"
 #include "eixTk/null.h"

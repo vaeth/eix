@@ -11,6 +11,7 @@ src/eix-test-obsolete.sh
 src/eix.cc
 src/eix-diff.cc
 src/eix-drop-permissions.cc
+src/eix-overlay.cc
 src/eix-update.cc
 src/masked-packages.cc
 src/versionsort.cc
@@ -39,6 +40,8 @@ src/database/header.cc
 src/database/header.h
 src/database/io.cc
 src/database/io.h
+src/database/io_header.cc
+src/database/io_portage.cc
 src/database/package_reader.cc
 src/database/package_reader.h
 src/eixTk/ansicolor.cc
@@ -104,6 +107,7 @@ src/main/main_drop_permissions.cc
 src/main/main_eix.cc
 src/main/main_masked_packages.cc
 src/main/main_output.cc
+src/main/main_overlay.cc
 src/main/main_update.cc
 src/main/main_update_tools.cc
 src/main/main_versionsort.cc

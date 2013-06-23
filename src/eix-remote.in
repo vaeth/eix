@@ -274,7 +274,8 @@ AddArchive() {
 	}
 	ClearUpdateArgs
 	AddLocalMethods
-	export PRINT_APPEND=mAgIcsEp
+	Push -c eixoverlay
+	Push -c method
 	Statusline "`gettext 'Analyzing'`"
 	set +f
 	chmod a+r *
@@ -293,30 +294,36 @@ AddArchive() {
 		Replace -g n '_' '?'
 		n="*/${n}"
 		p="${2}/${i}"
-		l=`eix --cache-file "${p}" --print-overlay-data "${n}"` \
-			&& [ -n "${l:++}" ] || {
-			Echo "`eval_gettext \
-				'problems occurred with cachefile ${i}'`" >&2
+		Replace -g p '\' '\\'
+		Replace -g p ':' '\:'
+		Push eixoverlay "-f${p}" "-o${n}"
+		Push method "eix*:${p}:${n}"
+	done
+	set -f
+	sep=mAgIcsEp
+	eval "set -- ${eixoverlay}"
+	eixoverlay=`eix-overlay -s "${sep}" "${@}"` || exitcode=1
+	eval "set -- ${method}"
+	for i
+	do	l=${eixoverlay%%${sep}*}
+		eixoverlay=${eixoverlay#*${sep}}
+		name=${eixoverlay%%${sep}*}
+		eixoverlay=${eixoverlay#*${sep}}
+		[ -n "${l}${name}" ] || {
 			exitcode=1
 			continue
 		}
-		l=${l%${PRINT_APPEND}}
-		name=${l#*${PRINT_APPEND}}
 		name=${name##*/}
 		[ "${exclude}" = 'remote' ] && \
 			test -r "${local_layman}/${name}" && continue
-		l=${l%%${PRINT_APPEND}*}
 		virtual="layman/${name}"
 		printf '%s -> %s\n' "${virtual}" "${l:-no repo-name}"
-		Replace -g p '\' '\\'
-		Replace -g p ':' '\:'
-		AddMethod "${virtual}" "eix*:${p}:${n}"
+		AddMethod "${virtual}" "${i}"
 		AddOverlays "${virtual}"
 		[ -n "${l:++}" ] && AddRepoName "${virtual}" "${l}"
 		[ "${exclude}" = 'local' ] && \
 			AddExcludes "${local_layman}/${name}"
 	done
-	unset PRINT_APPEND
 	msg=
 	[ ${exitcode} -ne 0 ] && \
 		msg=`eval_gettext 'could not read all eix cachefiles of ${a}'`

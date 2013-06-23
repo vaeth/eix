@@ -7,6 +7,10 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Let dependency attribute work for installed versions
 	- Introduce --deps-installed, DEPS_INSTALLED
+	- Introduce new tool eix-overlay
+	- Remove now redundant --print-overlay-{path,label,data}
+	- eix-remote: speedup of add action due to single call of eix-overlay
+	- Fix -*depend in zsh-completion
 	- Allow /etc/eix-sync.conf not ending with newline. Use read -r
 	- Fix some paths in manpage (regression from eix-0.28.3)
 	- cleanup: Transform io namespace to class: automatic close on cleanup

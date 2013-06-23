@@ -3,8 +3,6 @@
 // terms of the GNU General Public License v2.
 //
 // Copyright (c)
-//   Wolfgang Frisch <xororand@users.sourceforge.net>
-//   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #ifndef SRC_DATABASE_IO_H_
