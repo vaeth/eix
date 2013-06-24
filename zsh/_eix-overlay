@@ -1,4 +1,4 @@
-#compdef eix-remote
+#compdef eix-overlay
 _arguments -s -A '-*' : \
 '(-*)-h[help]' \
 '*-s+[SEP (set seperator for next output)]:separator:("#")' \
