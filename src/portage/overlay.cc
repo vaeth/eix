@@ -33,8 +33,10 @@ OverlayIdent::init_static()
 	path_label_hash = new map<string, string>;
 }
 
-OverlayIdent::OverlayIdent(const char *Path, const char *Label)
+OverlayIdent::OverlayIdent(const char *Path, const char *Label, Priority prio, bool ismain)
 {
+	priority = prio;
+	is_main = ismain;
 	if(Path == NULLPTR) {
 		path.clear();
 		know_path = false;
@@ -148,4 +150,50 @@ RepoList::find_filename(const char *search, bool parent_ok, bool resolve_mask)
 		}
 	}
 	return ret;
+}
+
+void
+RepoList::set_priority(OverlayIdent *overlay)
+{
+	const char *path(NULLPTR);
+	if(likely(overlay->know_label)) {
+		path = get_path(overlay->label);
+	}
+	if(unlikely(path == NULLPTR)) {
+		if(likely(overlay->know_path)) {
+			path = overlay->path.c_str();
+		} else {
+			return;
+		}
+	}
+	iterator it(find_filename(path, false, true));
+	if(likely(it != end())) {
+		overlay->priority = it->priority;
+	}
+}
+
+void
+RepoList::push_back(const OverlayIdent &s, bool no_path_dupes)
+{
+	if(likely(no_path_dupes)) {
+		RepoList::iterator it(find_filename(s.path.c_str()));
+		if(it != end()) {
+			it->priority = s.priority;
+			if((!it->know_label) && s.know_label) {
+				it->setLabel(s.label);
+				trust_cache = false;
+			}
+			return;
+		}
+	}
+	trust_cache = false;
+	super::push_back(s);
+}
+
+void
+RepoList::clear()
+{
+	trust_cache = true;
+	super::clear();
+	cache.clear();
 }

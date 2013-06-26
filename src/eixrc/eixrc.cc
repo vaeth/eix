@@ -159,7 +159,7 @@ EixRc::getLocalMode(const string &key)
 const char *
 EixRc::cstr(const string &key) const
 {
-	map<string, string>::const_iterator s(main_map.find(key));
+	my_map::const_iterator s(main_map.find(key));
 	if(s == main_map.end()) {
 		return NULLPTR;
 	}
@@ -217,7 +217,7 @@ EixRc::read()
 const string &
 EixRc::operator[](const string &key)
 {
-	map<string, string>::const_iterator it(main_map.find(key));
+	my_map::const_iterator it(main_map.find(key));
 	if(it != main_map.end())
 		return it->second;
 	add_later_variable(key);
@@ -505,7 +505,7 @@ void
 EixRc::join_key(const string &key, set<string> *has_delayed, bool add_top_to_defaults, const set<string> *exclude_defaults)
 {
 	string &val(main_map[key]);
-	map<string, string>::const_iterator f(filevarmap.find(key));
+	my_map::const_iterator f(filevarmap.find(key));
 	if(unlikely(f != filevarmap.end())) {
 	// Note that if a variable is defined in a file and in ENV,
 	// its value was already overridden from ENV.

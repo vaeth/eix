@@ -520,7 +520,7 @@ run_eix_update(int argc, char *argv[])
 				% portage_settings["PORTDIR"]);
 		}
 
-		portage_settings.add_repo_vector(&add_overlays, false);
+		portage_settings.add_repo_vector(add_overlays, false);
 
 		RepoList repos(portage_settings.repos);
 		for(RepoList::const_iterator it(repos.second()); likely(it != repos.end()); ++it) {

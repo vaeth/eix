@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/inttypes.h"
 #include "eixTk/null.h"
 
 class OverlayIdent {
@@ -23,8 +24,11 @@ class OverlayIdent {
 	public:
 		bool know_path, know_label;
 		std::string path, label;
+		typedef int64_t Priority;
+		Priority priority;
+		bool is_main;
 
-		OverlayIdent(const char *Path, const char *Label = NULLPTR) ATTRIBUTE_NONNULL((2));
+		OverlayIdent(const char *Path, const char *Label = NULLPTR, Priority prio = 0, bool ismain = false) ATTRIBUTE_NONNULL((2));
 
 		void readLabel(const char *Path = NULLPTR)
 		{
@@ -59,6 +63,8 @@ class RepoList : public std::vector<OverlayIdent> {
 
 		RepoList::iterator find_filename(const char *search, bool parent_ok = false, bool resolve_mask = true) ATTRIBUTE_NONNULL_;
 
+		void set_priority(OverlayIdent *overlay);
+
 		RepoList::const_iterator second() const
 		{
 			RepoList::const_iterator i(begin());
@@ -68,18 +74,9 @@ class RepoList : public std::vector<OverlayIdent> {
 			return i;
 		}
 
-		void clear()
-		{
-			trust_cache = true;
-			super::clear();
-			cache.clear();
-		}
+		void push_back(const OverlayIdent &s, bool no_path_dupes = false);
 
-		void push_back(const char *s) ATTRIBUTE_NONNULL_
-		{
-			trust_cache = false;
-			super::push_back(OverlayIdent(s));
-		}
+		void clear();
 };
 
 #endif  // SRC_PORTAGE_OVERLAY_H_

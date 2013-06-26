@@ -38,6 +38,7 @@ src/cache/sqlite/sqlite.cc
 src/cache/sqlite/sqlite.h
 src/database/header.cc
 src/database/header.h
+src/database/header_portage.cc
 src/database/io.cc
 src/database/io.h
 src/database/io_header.cc

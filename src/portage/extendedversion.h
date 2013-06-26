@@ -17,6 +17,7 @@
 #include "eixTk/stringutils.h"
 #include "portage/basicversion.h"
 #include "portage/depend.h"
+#include "portage/overlay.h"
 
 class Package;
 class PortageSettings;
@@ -74,11 +75,15 @@ class ExtendedVersion : public BasicVersion
 		/** Key for Portagedb.overlays/overlaylist from header. */
 		Overlay overlay_key;
 
+		typedef OverlayIdent::Priority Priority;
+		/** Priority of overlay */
+		Priority priority;
+
 		ExtendedVersion() :
 			have_bin_pkg_m(HAVEBINPKG_UNKNOWN),
 			restrictFlags(RESTRICT_NONE),
 			propertiesFlags(PROPERTIES_NONE),
-			overlay_key(0)
+			overlay_key(0), priority(0)
 		{ }
 
 		static Restrict calcRestrict(const std::string& str);
@@ -108,6 +113,47 @@ class ExtendedVersion : public BasicVersion
 		{ *static_cast<BasicVersion *>(this) = b; }
 
 		bool have_bin_pkg(const PortageSettings *ps, const Package *pkg) const;
+
+		static eix::SignedBool compare(const ExtendedVersion& left, const ExtendedVersion& right);
 };
+
+
+// Short compare-stuff
+inline static bool
+operator<(const ExtendedVersion& left, const ExtendedVersion& right);
+inline static bool
+operator<(const ExtendedVersion& left, const ExtendedVersion& right)
+{ return ExtendedVersion::compare(left, right) < 0; }
+
+inline static bool
+operator>(const ExtendedVersion& left, const ExtendedVersion& right);
+inline static bool
+operator>(const ExtendedVersion& left, const ExtendedVersion& right)
+{ return ExtendedVersion::compare(left, right) > 0; }
+
+inline static bool
+operator==(const ExtendedVersion& left, const ExtendedVersion& right);
+inline static bool
+operator==(const ExtendedVersion& left, const ExtendedVersion& right)
+{ return ExtendedVersion::compare(left, right) == 0; }
+
+inline static bool
+operator!=(const ExtendedVersion& left, const ExtendedVersion& right);
+inline static bool
+operator!=(const ExtendedVersion& left, const ExtendedVersion& right)
+{ return ExtendedVersion::compare(left, right) != 0; }
+
+inline static bool
+operator>=(const ExtendedVersion& left, const ExtendedVersion& right);
+inline static bool
+operator>=(const ExtendedVersion& left, const ExtendedVersion& right)
+{ return ExtendedVersion::compare(left, right) >= 0; }
+
+inline static bool
+operator<=(const ExtendedVersion& left, const ExtendedVersion& right);
+inline static bool
+operator<=(const ExtendedVersion& left, const ExtendedVersion& right)
+{ return ExtendedVersion::compare(left, right) <= 0; }
+
 
 #endif  // SRC_PORTAGE_EXTENDEDVERSION_H_

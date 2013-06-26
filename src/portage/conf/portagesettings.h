@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/null.h"
 #include "portage/keywords.h"
 #include "portage/mask.h"
 #include "portage/mask_list.h"
@@ -39,6 +40,7 @@ class Version;
 #define USER_LICENSE_FILE       "/etc/portage/package.license"
 #define USER_RESTRICT_FILE      "/etc/portage/package.accept_restrict"
 #define USER_CFLAGS_FILE        "/etc/portage/package.cflags"
+#define USER_REPOS_CONF         "/etc/portage/repos.conf"
 #define USER_PROFILE_DIR        "/etc/portage/profile"
 #define PORTDIR_CATEGORIES_FILE "profiles/categories"
 #define PORTDIR_MASK_FILE       "profiles/package.mask"
@@ -124,6 +126,7 @@ class PortageSettings : public std::map<std::string, std::string> {
 		friend class CascadingProfile;
 		friend class PortageUserConfig;
 
+		typedef std::map<std::string, std::string> my_map;
 
 		EixRc *settings_rc;
 		std::vector<std::string> m_categories; /**< Vector of all allowed categories. */
@@ -144,7 +147,7 @@ class PortageSettings : public std::map<std::string, std::string> {
 		mutable MaskList<Mask> upgrade_policy_exceptions;
 
 		mutable bool know_expands;
-		mutable std::map<std::string, std::string> expand_vars;
+		mutable my_map expand_vars;
 
 		bool know_world_sets;
 		std::vector<std::string> world_sets;
@@ -187,10 +190,10 @@ class PortageSettings : public std::map<std::string, std::string> {
 #ifndef HAVE_SETENV
 		bool export_portdir_overlay;
 #endif
-		using std::map<std::string, std::string>::find;
-		using std::map<std::string, std::string>::erase;
-		using std::map<std::string, std::string>::end;
-		using std::map<std::string, std::string>::operator[];
+		using my_map::find;
+		using my_map::erase;
+		using my_map::end;
+		using my_map::operator[];
 
 		const std::string &operator[](const std::string &var) const ATTRIBUTE_PURE;
 
@@ -204,9 +207,9 @@ class PortageSettings : public std::map<std::string, std::string> {
 
 		std::string resolve_overlay_name(const std::string &path, bool resolve);
 
-		void add_repo(std::string *path, bool resolve, bool modify_path = false);
+		void add_repo(const std::string &path, bool resolve, const char *label = NULLPTR, OverlayIdent::Priority priority = 0, bool is_main = false);
 
-		void add_repo_vector(std::vector<std::string> *v, bool resolve, bool modify_v = false) ATTRIBUTE_NONNULL_;
+		void add_repo_vector(const std::vector<std::string> &v, bool resolve);
 
 		void store_world_sets(const std::vector<std::string> *s_world_sets, bool override = false);
 

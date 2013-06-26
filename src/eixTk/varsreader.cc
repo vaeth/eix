@@ -164,7 +164,7 @@ VarsReader::ASSIGN_KEY_VALUE()
 			}
 		}
 	} else {
-		(*vars)[string(key_begin, key_len)] = value;
+		(*vars)[string(key_begin, key_len) + section] = value;
 	}
 	if(INPUT_EOF) {
 		STOP;
@@ -185,8 +185,9 @@ VarsReader::JUMP_COMMENT()
 
 /** Jump whitespaces and tabs at begining of line.
  * Read while ' ' || '\t'
- * '#' -> [RV] JUMP_COMMENT | [A-Z_] -> (reset key) FIND_ASSIGNMENT |
+ * Comment line -> JUMP_WHITESPACE | [A-Z_] -> (reset key) FIND_ASSIGNMENT |
  * source or . -> EVAL_VALUE with sourcecmd=true | -> JUMP_NOISE
+ * '[' -> EVAL_SECTION
  * @see isValidKeyCharacter */
 void
 VarsReader::JUMP_WHITESPACE()
@@ -194,6 +195,10 @@ VarsReader::JUMP_WHITESPACE()
 	sourcecmd = false;
 	SKIP_SPACE;
 	switch(INPUT) {
+		case ';':
+			if((parse_flags & PORTAGE_ESCAPES) == NONE) {
+				break;
+			}
 		case '#':
 			NEXT_INPUT;
 			while(likely(INPUT != '\n')) {
@@ -204,12 +209,12 @@ VarsReader::JUMP_WHITESPACE()
 		case 's':
 			{
 				size_t i(0);
-				const char *begin(x);
+				const char *beginning(x);
 				while(likely(isalpha(INPUT, localeC))) {
 					NEXT_INPUT;
 					++i;
 				}
-				if(unlikely((i != 6) || strncmp("source", begin, 6) != 0)) {
+				if(unlikely((i != 6) || strncmp("source", beginning, 6) != 0)) {
 					CHSTATE(JUMP_NOISE);
 					break;
 				}
@@ -225,14 +230,20 @@ VarsReader::JUMP_WHITESPACE()
 				CHSTATE(JUMP_NOISE);
 			}
 			break;
-		default:
-			if(isValidKeyCharacterStart(INPUT)) {
-				key_begin = x;
-				CHSTATE(FIND_ASSIGNMENT);
+		case '[':
+			if((parse_flags & PORTAGE_ESCAPES) != NONE) {
+				NEXT_INPUT;
+				CHSTATE(EVAL_SECTION);
 			}
-			CHSTATE(JUMP_NOISE);
+			break;
+		default:
 			break;
 	}
+	if(isValidKeyCharacterStart(INPUT)) {
+		key_begin = x;
+		CHSTATE(FIND_ASSIGNMENT);
+	}
+	CHSTATE(JUMP_NOISE);
 }
 
 /** Find key .. if there is one :).
@@ -560,6 +571,55 @@ VarsReader::VALUE_WHITESPACE_PORTAGE()
 	}
 }
 
+/** Looks if the following input is a valid section-part -> JUMP_NOISE */
+void
+VarsReader::EVAL_SECTION()
+{
+	VALUE_CLEAR;
+	SKIP_SPACE;
+	for(;;) {
+		switch(INPUT) {
+			case ']':
+				if(value != "DEFAULT") {
+					section.assign(1, ':');
+					section.append(value);
+				}
+			case '\r':
+			case '\n':
+				CHSTATE(JUMP_NOISE);
+			case '\\':
+				NEXT_INPUT;
+				switch(INPUT) {
+					case '\\':
+						NEXT_INPUT;
+						if(INPUT == '\\') {
+							NEXT_INPUT;
+						}
+						switch(INPUT) {
+							case 'a':   VALUE_APPEND(ESC_A); break;
+							case 'b':   VALUE_APPEND(ESC_B); break;
+							case 'e':   VALUE_APPEND(ESC_E); break;
+							case 'f':
+							case 'n':   VALUE_APPEND(ESC_N); break;
+							case 'r':   VALUE_APPEND(ESC_R); break;
+							case 't':   VALUE_APPEND(ESC_T); break;
+							case 'v':   VALUE_APPEND(ESC_V); break;
+							case '\r':
+							case '\n':  CHSTATE(JUMP_NOISE); break;
+							default:    VALUE_APPEND(INPUT);
+						}
+						break;
+					default:    VALUE_APPEND(INPUT);
+				}
+				NEXT_INPUT;
+				break;
+			default:
+				VALUE_APPEND(INPUT);
+				NEXT_INPUT;
+		}
+	}
+}
+
 /** Cares about \\ in single-quote values.
  * \n is ignored, and everything else is put into buffer without the \\.
  * -> [RV] VALUE_SINGLE_QUOTE */
@@ -698,7 +758,7 @@ VarsReader::WHITESPACE_ESCAPE_PORTAGE()
 			NEXT_INPUT_EVAL;
 			if(INPUT == '\\') {
 				NEXT_INPUT_EVAL;
-			} else if(INPUT == '\n') {
+			} else if((INPUT == '\r') || (INPUT == '\n')) {
 				VALUE_APPEND(ESC_BS);
 			}
 			switch(INPUT) {
@@ -710,6 +770,7 @@ VarsReader::WHITESPACE_ESCAPE_PORTAGE()
 				case 'r':   VALUE_APPEND(ESC_R); break;
 				case 't':   VALUE_APPEND(ESC_T); break;
 				case 'v':   VALUE_APPEND(ESC_V); break;
+				case '\r':
 				case '\n':  break;
 				default:    VALUE_APPEND(INPUT);
 			}
@@ -765,31 +826,38 @@ void VarsReader::NOISE_DOUBLE_QUOTE()
 	}
 }
 
-static void
-var_append(std::string &value, const map<string, string>& vars, char *begin, size_t ref_key_length)
+void
+VarsReader::var_append(char *beginning, size_t ref_key_length)
 {
 	if(unlikely(!ref_key_length)) {
 		return;
 	}
-	map<string, string>::const_iterator it(vars.find(string(begin, ref_key_length)));
-	if(it == vars.end())
-		return;
-	value.append(it->second);
+	string varname(beginning, ref_key_length);
+	// map<string, string>::const_iterator it; make check_includes happy
+	const_iterator it;
+	if(likely(section.empty()) ||
+		((it = vars->find(varname + section)) == vars->end())) {
+		it = vars->find(varname);
+	}
+	if(it != vars->end()) {
+		value.append(it->second);
+	}
 }
 
 /** Try to resolve references to variables.
  * If we fail we recover from it. However, INPUT_EOF might be true at stop. */
-void VarsReader::resolveReference()
+void
+VarsReader::resolveReference()
 {
 	bool brace(false);
-	char *begin(x);
+	char *beginning(x);
 	if(INPUT == '{') {
 		brace = true;
 		NEXT_INPUT_OR_EOF;
 		if(INPUT_EOF) {
 			return;
 		}
-		begin = x;
+		beginning = x;
 	}
 	size_t ref_key_length(0);
 
@@ -806,11 +874,11 @@ void VarsReader::resolveReference()
 			return;
 		}
 		if(INPUT == '}') {
-			var_append(value, *vars, begin, ref_key_length);
+			var_append(beginning, ref_key_length);
 			NEXT_INPUT_OR_EOF;
 		}
 	} else {
-		var_append(value, *vars, begin, ref_key_length);
+		var_append(beginning, ref_key_length);
 	}
 }
 
@@ -841,6 +909,7 @@ VarsReader::initFsm()
 	sourcecmd = false;
 	x = filebuffer;
 	key_len = 0;
+	section.clear();
 }
 
 bool
@@ -917,7 +986,7 @@ GCC_DIAG_ON(old-style-cast)
 	if((parse_flags & APPEND_VALUES) != NONE) {
 		vector<pair<string, string> > incremental;
 		// Save and clear incremental keys
-		for(map<string, string>::iterator i(vars->begin());
+		for(iterator i(vars->begin());
 			i != vars->end(); ++i) {
 			if((!i->second.empty()) &&
 				isIncremental(i->first.c_str())) {
@@ -929,7 +998,7 @@ GCC_DIAG_ON(old-style-cast)
 		// Prepend previous content for incremental keys
 		for(vector<pair<string, string> >::const_iterator it(incremental.begin());
 			it != incremental.end(); ++it) {
-			map<string, string>::iterator f(vars->find(it->first));
+			iterator f(vars->find(it->first));
 			if(f->second.empty()) {
 				f->second = it->second;
 			} else {
@@ -972,7 +1041,7 @@ VarsReader::source(const string &filename, string *errtext)
 	if((parse_flags & ALLOW_SOURCE_VARNAME) == ALLOW_SOURCE_VARNAME) {
 		if(vars != NULLPTR) {
 			// Be careful to not declare the variable...
-			map<string, string>::iterator it(vars->find(source_prefix));
+			iterator it(vars->find(source_prefix));
 			if(it != vars->end())
 				currprefix = it->second;
 		}

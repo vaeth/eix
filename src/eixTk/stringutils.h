@@ -31,6 +31,7 @@ char *strndup(const char *s, size_t n) ATTRIBUTE_NONNULL_;
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 
+
 #ifdef HAVE_STRTOUL
 #define my_atoi(a) strtoul(a, NULLPTR, 10)
 #else
@@ -39,6 +40,11 @@ char *strndup(const char *s, size_t n) ATTRIBUTE_NONNULL_;
 #else
 #define my_atoi(a) atoi(a)
 #endif
+#endif
+#ifdef HAVE_STRTOL
+#define my_atois(a) strtol(a, NULLPTR, 10)
+#else
+#define my_atois(a) atoi(a)
 #endif
 
 /** Spaces for split strings */

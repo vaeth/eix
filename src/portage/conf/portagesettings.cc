@@ -63,7 +63,7 @@ inline static void increase(char *s) ATTRIBUTE_NONNULL_;
 const string &
 PortageSettings::operator[](const string &var) const
 {
-	map<string, string>::const_iterator it(find(var));
+	const_iterator it(find(var));
 	if(it == end()) {
 		return *emptystring;
 	}
@@ -73,7 +73,7 @@ PortageSettings::operator[](const string &var) const
 const char *
 PortageSettings::cstr(const string &var) const
 {
-	map<string, string>::const_iterator it(find(var));
+	const_iterator it(find(var));
 	if(it == end()) {
 		return NULLPTR;
 	}
@@ -184,23 +184,17 @@ PortageSettings::resolve_overlay_name(const string &path, bool resolve)
 }
 
 void
-PortageSettings::add_repo(string *path, bool resolve, bool modify)
+PortageSettings::add_repo(const string &path, bool resolve, const char *label, OverlayIdent::Priority priority, bool is_main)
 {
-	string name(resolve_overlay_name(*path, resolve));
-	if(modify)
-		*path = name;
-	/* If the overlay exists, don't add it */
-	if(repos.find_filename(name.c_str()) != repos.end()) {
-		return;
-	}
-	repos.push_back(name.c_str());
+	OverlayIdent o(resolve_overlay_name(path, resolve).c_str(), label, priority, is_main);
+	repos.push_back(o, true);
 }
 
 void
-PortageSettings::add_repo_vector(vector<string> *v, bool resolve, bool modify)
+PortageSettings::add_repo_vector(const vector<string> &v, bool resolve)
 {
-	for(vector<string>::iterator it(v->begin()); likely(it != v->end()); ++it) {
-		add_repo(&(*it), resolve, modify);
+	for(vector<string>::const_iterator it(v.begin()); likely(it != v.end()); ++it) {
+		add_repo(*it, resolve);
 	}
 }
 
@@ -232,7 +226,7 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, b
 	read_config(m_eprefixconf + MAKE_CONF_FILE_NEW, eprefixsource);
 	string *use_make_conf;
 	{
-		map<string, string>::iterator it(find("USE"));
+		iterator it(find("USE"));
 		if(likely(it != end())) {
 			use_make_conf = new string(it->second);
 			erase(it);
@@ -242,23 +236,72 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, b
 	}
 
 	override_by_env(test_in_env_early);
-	/* Normalize "PORTDIR": */
 	{
-		string &ref((*this)["PORTDIR"]);
-		string full(m_eprefixportdir);
-		if(ref.empty())
-			full.append("/usr/portage");
-		else
-			full.append(ref);
-		ref = normalize_path(full.c_str(), true, true);
-		add_repo(&ref, false, false);
-	}
-	/* Normalize overlays and erase duplicates */
-	{
+		/* Read repos.conf */
+		VarsReader reposfile(VarsReader::SUBST_VARS|VarsReader::ALLOW_SOURCE|VarsReader::PORTAGE_ESCAPES|VarsReader::RECURSE);
+		reposfile.setPrefix(eprefixsource);
+		string errtext;
+		bool have_repos(reposfile.read((m_eprefixconf + USER_REPOS_CONF).c_str(), &errtext, true));
+		const string *main_repo(NULLPTR);
+		OverlayIdent::Priority priority(0);
+		string &portdirref((*this)["PORTDIR"]);
+		if(likely(have_repos)) {
+			if(portdirref.empty()) {
+				main_repo = reposfile.find("main-repo");
+				const string *p(NULLPTR);
+				const string *prio(NULLPTR);
+				if(main_repo == NULLPTR) {
+					p = reposfile.find("location");
+					prio = reposfile.find("priority");
+				} else {
+					p = reposfile.find(string("location:") + *main_repo);
+					prio = reposfile.find(string("priority:") + *main_repo);
+				}
+				if(prio != NULLPTR) {
+					priority = my_atois(prio->c_str());
+				}
+				if(p != NULLPTR) {
+					portdirref = *p;
+					if(portdirref.empty()) {
+						portdirref = "/usr/portage";
+					}
+				}
+			}
+		}
+		/* Normalize "PORTDIR": */
+		portdirref = normalize_path((m_eprefixportdir + portdirref).c_str(), true, true);
+		add_repo(portdirref, false, (main_repo == NULLPTR) ? NULLPTR : main_repo->c_str(), priority, true);
+		/* Normalize overlays and erase duplicates */
 		string &ref((*this)["PORTDIR_OVERLAY"]);
 		vector<string> overlayvec;
 		split_string(&overlayvec, ref, true);
-		add_repo_vector(&overlayvec, true, true);
+		add_repo_vector(overlayvec, true);
+		overlayvec.clear();
+		if(likely(have_repos)) {
+			string main_repo_check;
+			if(main_repo != NULLPTR) {
+				main_repo_check.assign(*main_repo);
+			}
+			for(VarsReader::const_iterator it(reposfile.begin());
+				likely(it != reposfile.end()); ++it) {
+				if(strncmp(it->first.c_str(), "location:", 9)) {
+					continue;
+				}
+				string label(it->first.substr(9));
+				if(unlikely(label == main_repo_check)) {
+					continue;
+				}
+				const string *prio(reposfile.find(string("priority:") + label));
+				if(prio != NULLPTR) {
+					priority = my_atois(prio->c_str());
+				}
+				add_repo(it->second, true, label.c_str(), priority, false);
+			}
+		}
+		for(RepoList::const_iterator it(repos.second());
+			likely(it != repos.end()); ++it) {
+			overlayvec.push_back(it->path);
+		}
 		ref.clear();
 		ref = join_to_string(overlayvec);
 	}
@@ -447,7 +490,7 @@ PortageSettings::read_world_sets(const char *file)
 }
 
 void
-PortageSettings::store_world_sets(const std::vector<std::string> *s_world_sets, bool override)
+PortageSettings::store_world_sets(const vector<string> *s_world_sets, bool override)
 {
 	if(!s_world_sets) {
 		// set defaults:
@@ -509,7 +552,7 @@ PortageSettings::calc_world_sets(Package *p)
 			}
 		}
 		bool world(false);
-		for(std::vector<SetsIndex>::const_iterator sit(it->sets_indizes.begin());
+		for(vector<SetsIndex>::const_iterator sit(it->sets_indizes.begin());
 			sit != it->sets_indizes.end(); ++sit) {
 			if(std::find(world_setslist.begin(), world_setslist.end(), *sit) != world_setslist.end()) {
 				world = true;
@@ -527,7 +570,7 @@ PortageSettings::get_setnames(set<string> *names, const Package *p, bool also_no
 {
 	names->clear();
 	for(Package::const_iterator it(p->begin()); likely(it != p->end()); ++it) {
-		for(std::vector<SetsIndex>::const_iterator sit(it->sets_indizes.begin());
+		for(vector<SetsIndex>::const_iterator sit(it->sets_indizes.begin());
 			likely(sit != it->sets_indizes.end()); ++sit) {
 			names->insert(set_names[*sit]);
 		}
@@ -536,7 +579,7 @@ PortageSettings::get_setnames(set<string> *names, const Package *p, bool also_no
 		names->insert("system");
 }
 
-std::string
+string
 PortageSettings::get_setnames(const Package *p, bool also_nonlocal) const
 {
 	set<string> names;
@@ -1328,7 +1371,7 @@ PortageSettings::use_expand(string *var, string *expvar, const string &value) co
 				expand_vars[to_lower(*it)] = *it;
 			}
 		}
-		map<string, string>::const_iterator it(expand_vars.find(value.substr(0, pos)));
+		const_iterator it(expand_vars.find(value.substr(0, pos)));
 		if(it != expand_vars.end()) {
 			*var = it->second;
 			*expvar = value.substr(pos + 1);

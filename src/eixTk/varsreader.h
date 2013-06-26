@@ -24,6 +24,9 @@
  * The constructor inits, starts the FSM. Then you can access them .. The deconstructor deinits it. */
 class VarsReader {
 	public:
+		typedef std::map<std::string, std::string> my_map;
+		typedef my_map::const_iterator const_iterator;
+		typedef my_map::iterator iterator;
 		typedef uint16_t Flags;
 		static const Flags
 			NONE                 = 0x0000U,  /**< Flag: No flags set; normal behavior. */
@@ -31,7 +34,7 @@ class VarsReader {
 			KEYWORDS_READ        = 0x0002U,  /**< Flag: Have already read "KEYWORDS" once. */
 			SLOT_READ            = 0x0004U,  /**< Flag: Have already read "SLOT" once. */
 			SUBST_VARS           = 0x0008U,  /**< Flag: Allow references to variable in declarations of a variable. i.e.  USE="${USE} -kde" */
-			INTO_MAP             = 0x0010U,  /**< Flag: Init but don't parse .. you must first supply a pointer to std::map<string, string> with useMap (...) */
+			INTO_MAP             = 0x0010U,  /**< Flag: Init but don't parse .. you must first supply a pointer to my_map with useMap (...) */
 			APPEND_VALUES        = 0x0020U,  /**< Flag: Respect IncrementalKeys */
 			ALLOW_SOURCE         = 0x0040U,  /**< Flag: Allow "source"/"." command. */
 			ALLOW_SOURCE_VARNAME = 0x0080|ALLOW_SOURCE,  /**< Flag: Allow "source"/"." but Prefix is only a varname which might be modified during sourcing. */
@@ -46,7 +49,7 @@ class VarsReader {
 		{
 			parse_flags = flags;
 			if((parse_flags & INTO_MAP) == NONE) {
-				vars = new std::map<std::string, std::string>;
+				vars = new my_map;
 			}
 		}
 
@@ -62,7 +65,7 @@ class VarsReader {
 		bool read(const char *filename, std::string *errtext, bool noexist_ok, std::set<std::string> *sourced = NULLPTR, bool nodir = false) ATTRIBUTE_NONNULL((2));
 
 		/** Use a supplied map for variables. */
-		void useMap(std::map<std::string, std::string> *vars_map) ATTRIBUTE_NONNULL_
+		void useMap(my_map *vars_map) ATTRIBUTE_NONNULL_
 		{
 			vars = vars_map;
 		}
@@ -87,10 +90,20 @@ class VarsReader {
 
 		const std::string *find(const std::string& key) const ATTRIBUTE_PURE
 		{
-			std::map<std::string, std::string>::const_iterator i(vars->find(key));
+			const_iterator i(vars->find(key));
 			if(i == vars->end())
 				return NULLPTR;
 			return &(i->second);
+		}
+
+		VarsReader::const_iterator begin() const
+		{
+			return vars->begin();
+		}
+
+		VarsReader::const_iterator end() const
+		{
+			return vars->end();
 		}
 
 	private:
@@ -114,9 +127,11 @@ class VarsReader {
 		void JUMP_COMMENT();
 
 		/** Jump whitespaces and tabs at begining of line.
-		 * Read while ' ' || '\\t'
-		 * '#' -> [RV] JUMP_COMMENT | [A-Z_] -> (reset key) FIND_ASSIGNMENT | -> JUMP_NOISE
-		 * @see IS_STAB_KEY_CHARACTER */
+		 * Read while ' ' || '\t'
+		 * Comment line -> JUMP_WHITESPACE | [A-Z_] -> (reset key) FIND_ASSIGNMENT |
+		 * source or . -> EVAL_VALUE with sourcecmd=true | -> JUMP_NOISE
+		 * '[' -> EVAL_SECTION
+		 * @see isValidKeyCharacter */
 		void JUMP_WHITESPACE();
 
 		/** Find key .. if there is one :).
@@ -186,6 +201,9 @@ class VarsReader {
 		 * '"' -> VALUE_DOUBLE_QUOTE_PORTAGE */
 		void VALUE_WHITESPACE_PORTAGE();
 
+		/** Looks if the following input is a valid section-part -> JUMP_NOISE */
+		void EVAL_SECTION();
+
 		/** Cares about \\ in single-quote values.
 		 * \n is ignored, "\\'" transforms to "'" .. for everything
 		 * else the \\ is just put into buffer.
@@ -244,6 +262,8 @@ class VarsReader {
 		 * [RV] -> NOISE_DOUBLE_QUOTE */
 		void NOISE_DOUBLE_QUOTE_ESCAPE();
 
+		void var_append(char *beginning, size_t ref_key_length) ATTRIBUTE_NONNULL_;
+
 		/** Resolve references to a variable in declaration of a variable. */
 		void resolveReference();
 
@@ -260,6 +280,8 @@ class VarsReader {
 
 		std::string value; /**< Buffy for value */
 
+		std::string section; /**< current section */
+
 		Flags parse_flags; /**< Flags for configuration of parser. */
 
 	protected:
@@ -271,7 +293,7 @@ class VarsReader {
 		     *filebuffer_end; /**< Marks the end of the filebuffer. */
 		const char **incremental_keys;  /**< c-array of pattern for keys which values should be prepended to the new value. */
 		/** Mapping of key to value. */
-		std::map<std::string, std::string> *vars;
+		my_map *vars;
 
 		/** Prefix resp. varname used for sourcing */
 		std::string source_prefix;
@@ -283,7 +305,7 @@ class VarsReader {
 
 		/** True if c matches [A-Za-z0-9_] */
 		static bool isValidKeyCharacter(char c) ATTRIBUTE_PURE
-		{ return (isalnum(c, localeC) || (c == '_')); }
+		{ return (isalnum(c, localeC) || (c == '_') || (c == '-')); }
 
 		/** True if c matches [A-Za-z_] */
 		static bool isValidKeyCharacterStart(char c) ATTRIBUTE_PURE

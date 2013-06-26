@@ -19,6 +19,8 @@
 #include "portage/extendedversion.h"
 #include "portage/overlay.h"
 
+class PortageSettings;
+
 /** Representation of a database-header.
  * Contains your arch, the version of the db, the number of packages/categories
  * and a table of key->directory mappings. */
@@ -67,6 +69,9 @@ class DBHeader {
 		/** Add overlay to directory-table and return key. */
 		ExtendedVersion::Overlay addOverlay(const OverlayIdent& overlay);
 
+		/** Set Priorities of overlays */
+		void set_priorities(PortageSettings *ps);
+
 		/** Find first overlay-number >=minimal for name.
 		    Name might be either a label, a filename, or a number string.
 		    The special name portdir (if defined) matches 0 (if OVTEST_PATH)
@@ -81,4 +86,5 @@ class DBHeader {
 
 		bool isCurrent() const ATTRIBUTE_PURE;
 };
+
 #endif  // SRC_DATABASE_HEADER_H_

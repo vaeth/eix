@@ -796,6 +796,7 @@ run_eix(int argc, char** argv)
 	portagesettings.store_world_sets(&(header.world_sets));
 
 	if(header.countOverlays() != 0) {
+		header.set_priorities(&portagesettings);
 		format->clear_virtual(header.countOverlays());
 		for(ExtendedVersion::Overlay i(1); likely(i != header.countOverlays()); ++i)
 			format->set_as_virtual(i, is_virtual((eixrc["EPREFIX_VIRTUAL"] + header.getOverlay(i).path).c_str()));

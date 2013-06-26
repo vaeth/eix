@@ -147,6 +147,7 @@ load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *
 	if(likely(db.openread(file))) {
 		string errtext;
 		if(likely(db.read_header(header, &errtext))) {
+			header->set_priorities(ps);
 			ps->store_world_sets(&(header->world_sets));
 			if(likely(db.read_packagetree(body, *header, ps, &errtext))) {
 				return;

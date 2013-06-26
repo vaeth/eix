@@ -127,7 +127,9 @@ Database::read_version(Version *v, const DBHeader &hdr, string *errtext)
 	if(unlikely(!read_num(&(v->overlay_key), errtext))) {
 		return false;
 	}
-	v->reponame = hdr.getOverlay(v->overlay_key).label;
+	const OverlayIdent& overlay(hdr.getOverlay(v->overlay_key));
+	v->reponame = overlay.label;
+	v->priority = overlay.priority;
 
 	if(unlikely(!read_iuse(hdr.iuse_hash, &(v->iuse), errtext))) {
 		return false;

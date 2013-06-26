@@ -145,6 +145,7 @@ overlay_loop(string *result, const OverlayOptionList &options)
 			default:
 			// case 'p':
 				mode = PRINT_OVERLAY_PATH;
+				break;
 		}
 		if(unlikely(mode == PRINT_OVERLAY_NONE)) {
 			continue;

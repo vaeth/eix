@@ -11,6 +11,9 @@
 
 #include <string>
 
+#include "eixTk/eixint.h"
+#include "eixTk/likely.h"
+#include "portage/basicversion.h"
 #include "portage/extendedversion.h"
 #include "portage/package.h"
 
@@ -48,4 +51,28 @@ ExtendedVersion::get_longfullslot() const
 {
 	return (subslotname.empty() ? (slotname.empty() ? "0" : slotname) :
 		(slotname.empty() ? (string("0/") + subslotname) : (slotname + "/" + subslotname)));
+}
+
+eix::SignedBool
+ExtendedVersion::compare(const ExtendedVersion& left, const ExtendedVersion& right)
+{
+	eix::SignedBool r(BasicVersion::compare(left, right));
+	if(likely(r != 0)) {
+		return r;
+	}
+	if(unlikely(left.overlay_key == right.overlay_key)) {
+		return 0;  // Do not care about possibly unknown priorities
+	}
+	if(likely(left.priority == right.priority)) {
+		if(left.overlay_key < right.overlay_key) {
+			return -1;
+		}
+		// if(left.overlay_key > right.overlay_key)
+		return 1;
+	}
+	if(left.priority < right.priority) {
+		return -1;
+	}
+	// if(left.priority > right.priority)
+	return 1;
 }

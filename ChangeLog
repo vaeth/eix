@@ -1,16 +1,23 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.28.6
+*eix-0.29.0
 	Артём Воротников <skybon at gmail.com>:
 	- Russian translation updates
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Support /etc/portage/repos.conf, honouring priority values
+	- Currently, --print PORTDIR and --print PORTDIR_OVERLAY are modified
+	  by repos.conf: useful for scripts, and faster than portageq.
+	  If possible, this feature will be kept in future versons of eix
+	- PORTDIR and PORTDIR_OVERLAY are probably going to be supported
+	  as input variables for eix, even if perhaps deprecated by portage,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=474590
 	- Let dependency attribute work for installed versions
 	- Introduce --deps-installed, DEPS_INSTALLED
 	- Introduce new tool eix-overlay
 	- Remove now redundant --print-overlay-{path,label,data}
 	- eix-remote: speedup of add action due to single call of eix-overlay
-	- Fix -*depend in zsh-completion
+	- Fix --*depend in zsh-completion
 	- Allow /etc/eix-sync.conf not ending with newline. Use read -r
 	- Fix some paths in manpage (regression from eix-0.28.3)
 	- cleanup: Transform io namespace to class: automatic close on cleanup

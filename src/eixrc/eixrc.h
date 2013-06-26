@@ -82,9 +82,10 @@ class EixRc {
 		const std::string &operator[](const std::string &key);
 
 	private:
+		typedef std::map<std::string, std::string> my_map;
 		std::string varprefix;
-		std::map<std::string, std::string> main_map;
-		std::map<std::string, std::string> filevarmap;
+		my_map main_map;
+		my_map filevarmap;
 		std::vector<EixRcOption> defaults;
 		std::set<std::string> prefix_keys;
 

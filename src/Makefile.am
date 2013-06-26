@@ -26,6 +26,7 @@ database/header.h
 
 database_src = \
 $(header_src) \
+database/header_portage.cc \
 database/io_portage.cc \
 database/package_reader.cc \
 database/package_reader.h

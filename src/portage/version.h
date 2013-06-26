@@ -252,17 +252,4 @@ class Version : public ExtendedVersion, public Keywords {
 		EffectiveState effective_state;
 };
 
-/** The equality operator does *not* test the slots */
-inline static bool
-operator==(const Version& left, const Version &right) ATTRIBUTE_PURE;
-inline static bool
-operator==(const Version& left, const Version &right)
-{ return (!BasicVersion::compare(left, right)) && (left.overlay_key == right.overlay_key); }
-
-inline static bool
-operator!=(const Version& left, const Version &right) ATTRIBUTE_PURE;
-inline static bool
-operator!=(const Version& left, const Version &right)
-{ return (!BasicVersion::compare(left, right)) || (left.overlay_key != right.overlay_key); }
-
 #endif  // SRC_PORTAGE_VERSION_H_
