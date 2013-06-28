@@ -39,7 +39,8 @@ class VarsReader {
 			ALLOW_SOURCE         = 0x0040U,  /**< Flag: Allow "source"/"." command. */
 			ALLOW_SOURCE_VARNAME = 0x0080|ALLOW_SOURCE,  /**< Flag: Allow "source"/"." but Prefix is only a varname which might be modified during sourcing. */
 			PORTAGE_ESCAPES      = 0x0100U,  /**< Flag: Treat escapes like portage does. */
-			RECURSE              = 0x0200U,  /**< Flag: Allow recursive reading */
+			PORTAGE_SECTIONS     = 0x0200U|PORTAGE_ESCAPES,  /**< Flag: Section format of e.g. repos.conf */
+			RECURSE              = 0x0400U,  /**< Flag: Allow recursive reading */
 			HAVE_READ            = KEYWORDS_READ|SLOT_READ,       /**< Combination of previous "*_READ" */
 			ONLY_HAVE_READ       = ONLY_KEYWORDS_SLOT|HAVE_READ;  /**< Combination of HAVE_READ and ONLY_KEYWORDS_SLOT */
 
@@ -264,8 +265,13 @@ class VarsReader {
 
 		void var_append(char *beginning, size_t ref_key_length) ATTRIBUTE_NONNULL_;
 
-		/** Resolve references to a variable in declaration of a variable. */
+		/** Try to resolve $... references to variables.
+		 * If we fail we recover from it. However, INPUT_EOF might be true at stop. */
 		void resolveReference();
+
+		/** Try to resolve %(...)s references to variables.
+		 * If we fail we recover from it. However, INPUT_EOF might be true at stop. */
+		void resolveSectionReference();
 
 		/** Read file using a new instance of VarsReader with the same
 		    settings (except for APPEND_VALUES),

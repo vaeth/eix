@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-06-26 15:46+0200\n"
+"POT-Creation-Date: 2013-06-28 16:54+0200\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1502,12 +1502,12 @@ msgstr ""
 "     --256b                Ausgabe der Ansi Farbpalette für Hintergrund\n"
 "\n"
 "   Speziell:\n"
-"     -t  --test-non-matching Gib vor anderen Ausgaben nicht-passende "
+"     -t  --test-non-matching Gibt vor anderen Ausgaben nicht-passende "
 "Einträge\n"
 "                           aus /etc/portage/package.* und nicht-passende "
 "Namen\n"
-"                           installierte Pakete aus; am besten wird diese\n"
-"                           Option mit -T kombinier, um /etc/portage/package."
+"                           installierter Pakete aus; am besten wird diese\n"
+"                           Option mit -T kombiniert, um /etc/portage/package."
 "*\n"
 "                           aufzuräumen\n"
 "unbekannte Slots installierter Pakete\n"
@@ -2327,23 +2327,23 @@ msgstr "Lesefehler in %s: %s "
 msgid "Nesting level too deep in %r"
 msgstr "Zu tiefe Verschachtelung in %r"
 
-#: src/eixTk/varsreader.cc:145
+#: src/eixTk/varsreader.cc:151
 msgid "%s: failed to source %r (%s)"
 msgstr "%s: source %r ging nicht (%s)"
 
-#: src/eixTk/varsreader.cc:938
+#: src/eixTk/varsreader.cc:1015
 msgid "cannot read file %r"
 msgstr "Datei %r kann nicht gelesen werden"
 
-#: src/eixTk/varsreader.cc:946
+#: src/eixTk/varsreader.cc:1023
 msgid "cannot stat file %r"
 msgstr "Status der Datei %r kann nicht ermiitelt werden"
 
-#: src/eixTk/varsreader.cc:962
+#: src/eixTk/varsreader.cc:1039
 msgid "cannot map file %r"
 msgstr "Datei %r kann nicht gemapped werden"
 
-#: src/eixTk/varsreader.cc:977
+#: src/eixTk/varsreader.cc:1054
 msgid "recursively sourced file %r"
 msgstr "File %r wird rekursiv gesourced"
 

@@ -238,7 +238,7 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, b
 	override_by_env(test_in_env_early);
 	{
 		/* Read repos.conf */
-		VarsReader reposfile(VarsReader::SUBST_VARS|VarsReader::ALLOW_SOURCE|VarsReader::PORTAGE_ESCAPES|VarsReader::RECURSE);
+		VarsReader reposfile(VarsReader::SUBST_VARS|VarsReader::PORTAGE_SECTIONS|VarsReader::RECURSE);
 		reposfile.setPrefix(eprefixsource);
 		string errtext;
 		bool have_repos(reposfile.read((m_eprefixconf + USER_REPOS_CONF).c_str(), &errtext, true));

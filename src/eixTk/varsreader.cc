@@ -68,6 +68,11 @@
 		CHSTATE(EVAL_READ); \
 	} while(0)
 
+#define NEXT_INPUT_RETURN do { \
+	if(unlikely(++(x) == filebuffer_end)) \
+		return; \
+	} while(0)
+
 #define INPUT_EOF (unlikely((x) == filebuffer_end))
 
 #define NEXT_INPUT_OR_EOF do { \
@@ -102,6 +107,7 @@ const VarsReader::Flags
 	VarsReader::ALLOW_SOURCE,
 	VarsReader::ALLOW_SOURCE_VARNAME,
 	VarsReader::PORTAGE_ESCAPES,
+	VarsReader::PORTAGE_SECTIONS,
 	VarsReader::RECURSE,
 	VarsReader::HAVE_READ,
 	VarsReader::ONLY_HAVE_READ;
@@ -196,7 +202,7 @@ VarsReader::JUMP_WHITESPACE()
 	SKIP_SPACE;
 	switch(INPUT) {
 		case ';':
-			if((parse_flags & PORTAGE_ESCAPES) == NONE) {
+			if((parse_flags & PORTAGE_SECTIONS) == NONE) {
 				break;
 			}
 		case '#':
@@ -231,7 +237,7 @@ VarsReader::JUMP_WHITESPACE()
 			}
 			break;
 		case '[':
-			if((parse_flags & PORTAGE_ESCAPES) != NONE) {
+			if((parse_flags & PORTAGE_SECTIONS) != NONE) {
 				NEXT_INPUT;
 				CHSTATE(EVAL_SECTION);
 			}
@@ -262,11 +268,23 @@ VarsReader::FIND_ASSIGNMENT()
 	}
 	SKIP_SPACE;
 	switch(INPUT) {
-		case '=':  CHSTATE(EVAL_VALUE);
-		case '#':  NEXT_INPUT;
-		           CHSTATE(JUMP_COMMENT);
-		default:   CHSTATE(JUMP_NOISE);
+		case ':':
+			if((parse_flags & PORTAGE_SECTIONS) == NONE) {
+				break;
+			}
+		case '=':
+			CHSTATE(EVAL_VALUE);
+		case ';':
+			if((parse_flags & PORTAGE_SECTIONS) == NONE) {
+				break;
+			}
+		case '#':
+			NEXT_INPUT;
+			CHSTATE(JUMP_COMMENT);
+		default:
+			break;
 	}
+	CHSTATE(JUMP_NOISE);
 }
 
 /** Looks if the following input is a valid value-part.
@@ -401,9 +419,17 @@ void
 VarsReader::VALUE_SINGLE_QUOTE_PORTAGE ()
 {
 	while(likely((INPUT != '\'') && (INPUT != '\\'))) {
-		if(unlikely((INPUT == '$') && (parse_flags & SUBST_VARS))) {
+		if(unlikely((INPUT == '$') && ((parse_flags & SUBST_VARS) != NONE))) {
 			NEXT_INPUT_EVAL;
 			resolveReference();
+			if(INPUT_EOF) {
+				CHSTATE(EVAL_READ);
+			}
+			continue;
+		}
+		if(unlikely((INPUT == '%') && ((parse_flags & (SUBST_VARS|PORTAGE_SECTIONS)) == (SUBST_VARS|PORTAGE_SECTIONS)))) {
+			NEXT_INPUT_EVAL;
+			resolveSectionReference();
 			if(INPUT_EOF) {
 				CHSTATE(EVAL_READ);
 			}
@@ -417,10 +443,12 @@ VarsReader::VALUE_SINGLE_QUOTE_PORTAGE ()
 		NEXT_INPUT_EVAL;
 	}
 	switch(INPUT) {
-		case '\'':  NEXT_INPUT_EVAL;
-		            CHSTATE(EVAL_READ);
-		default:    NEXT_INPUT_EVAL;
-		            CHSTATE(SINGLE_QUOTE_ESCAPE_PORTAGE);
+		case '\'':
+			NEXT_INPUT_EVAL;
+			CHSTATE(EVAL_READ);
+		default:
+			NEXT_INPUT_EVAL;
+			CHSTATE(SINGLE_QUOTE_ESCAPE_PORTAGE);
 	}
 }
 
@@ -432,7 +460,7 @@ void
 VarsReader::VALUE_DOUBLE_QUOTE()
 {
 	while(likely(INPUT != '"' && INPUT != '\\')) {
-		if(unlikely(INPUT == '$' && (parse_flags & SUBST_VARS))) {
+		if(unlikely(INPUT == '$' && ((parse_flags & SUBST_VARS) != NONE))) {
 			NEXT_INPUT_EVAL;
 			resolveReference();
 			if(INPUT_EOF) {
@@ -459,9 +487,17 @@ void
 VarsReader::VALUE_DOUBLE_QUOTE_PORTAGE()
 {
 	while(likely(INPUT != '"' && INPUT != '\\')) {
-		if(unlikely(INPUT == '$' && (parse_flags & SUBST_VARS))) {
+		if(unlikely((INPUT == '$') && ((parse_flags & SUBST_VARS) != NONE))) {
 			NEXT_INPUT_EVAL;
 			resolveReference();
+			if(INPUT_EOF) {
+				CHSTATE(EVAL_READ);
+			}
+			continue;
+		}
+		if(unlikely((INPUT == '%') && ((parse_flags & (SUBST_VARS|PORTAGE_SECTIONS)) == (SUBST_VARS|PORTAGE_SECTIONS)))) {
+			NEXT_INPUT_EVAL;
+			resolveSectionReference();
 			if(INPUT_EOF) {
 				CHSTATE(EVAL_READ);
 			}
@@ -475,10 +511,12 @@ VarsReader::VALUE_DOUBLE_QUOTE_PORTAGE()
 		NEXT_INPUT_EVAL;
 	}
 	switch(INPUT) {
-		case '"':  NEXT_INPUT_EVAL;
-		           CHSTATE(EVAL_READ);
-		default:   NEXT_INPUT_EVAL;
-		           CHSTATE(DOUBLE_QUOTE_ESCAPE_PORTAGE);
+		case '"':
+			NEXT_INPUT_EVAL;
+			CHSTATE(EVAL_READ);
+		default:
+			NEXT_INPUT_EVAL;
+			CHSTATE(DOUBLE_QUOTE_ESCAPE_PORTAGE);
 	}
 }
 
@@ -513,7 +551,7 @@ void VarsReader::VALUE_WHITESPACE()
 				NEXT_INPUT_EVAL;
 				CHSTATE(VALUE_DOUBLE_QUOTE);
 			case '$':
-				if(parse_flags & SUBST_VARS) {
+				if((parse_flags & SUBST_VARS) != NONE) {
 					NEXT_INPUT_EVAL;
 					resolveReference();
 					if(INPUT_EOF) {
@@ -556,7 +594,7 @@ VarsReader::VALUE_WHITESPACE_PORTAGE()
 				NEXT_INPUT_EVAL;
 				CHSTATE(VALUE_DOUBLE_QUOTE_PORTAGE);
 			case '$':
-				if(parse_flags & SUBST_VARS) {
+				if((parse_flags & SUBST_VARS) != NONE) {
 					NEXT_INPUT_EVAL;
 					resolveReference();
 					if(INPUT_EOF) {
@@ -564,10 +602,22 @@ VarsReader::VALUE_WHITESPACE_PORTAGE()
 					}
 					continue;
 				}
+				break;
+			case '%':
+				if((parse_flags & (SUBST_VARS|PORTAGE_SECTIONS)) == (SUBST_VARS|PORTAGE_SECTIONS)) {
+					NEXT_INPUT_EVAL;
+					resolveSectionReference();
+					if(INPUT_EOF) {
+						CHSTATE(EVAL_READ);
+					}
+					continue;
+				}
+				break;
 			default:
-				VALUE_APPEND(INPUT);
-				NEXT_INPUT_EVAL;
+				break;
 		}
+		VALUE_APPEND(INPUT);
+		NEXT_INPUT_EVAL;
 	}
 }
 
@@ -829,7 +879,7 @@ void VarsReader::NOISE_DOUBLE_QUOTE()
 void
 VarsReader::var_append(char *beginning, size_t ref_key_length)
 {
-	if(unlikely(!ref_key_length)) {
+	if(unlikely(ref_key_length == 0)) {
 		return;
 	}
 	string varname(beginning, ref_key_length);
@@ -844,7 +894,7 @@ VarsReader::var_append(char *beginning, size_t ref_key_length)
 	}
 }
 
-/** Try to resolve references to variables.
+/** Try to resolve $... references to variables.
  * If we fail we recover from it. However, INPUT_EOF might be true at stop. */
 void
 VarsReader::resolveReference()
@@ -853,15 +903,15 @@ VarsReader::resolveReference()
 	char *beginning(x);
 	if(INPUT == '{') {
 		brace = true;
-		NEXT_INPUT_OR_EOF;
-		if(INPUT_EOF) {
-			return;
-		}
+		NEXT_INPUT_RETURN;
 		beginning = x;
 	}
 	size_t ref_key_length(0);
 
-	while(isValidKeyCharacter(INPUT)) {
+	while(isValidKeyCharacter(INPUT) || unlikely(INPUT == ':')) {
+		if(unlikely(INPUT == ':') && ((parse_flags & PORTAGE_SECTIONS) == NONE)) {
+			break;
+		}
 		++ref_key_length;
 		NEXT_INPUT_OR_EOF;
 		if(INPUT_EOF) {
@@ -880,6 +930,33 @@ VarsReader::resolveReference()
 	} else {
 		var_append(beginning, ref_key_length);
 	}
+}
+
+/** Try to resolve %(...)s references to variables.
+ * If we fail we recover from it. However, INPUT_EOF might be true at stop. */
+void
+VarsReader::resolveSectionReference()
+{
+	if(INPUT != '(') {
+		return;
+	}
+	NEXT_INPUT_RETURN;
+
+	char *beginning(x);
+	size_t ref_key_length(0);
+	while(isValidKeyCharacter(INPUT) || unlikely(INPUT == ':')) {
+		++ref_key_length;
+		NEXT_INPUT_RETURN;
+	}
+	if(unlikely(INPUT != ')')) {
+		return;
+	}
+	NEXT_INPUT_RETURN;
+	if(unlikely(INPUT != 's')) {
+		return;
+	}
+	var_append(beginning, ref_key_length);
+	NEXT_INPUT_OR_EOF;
 }
 
 /*************************** FSM ends here *******************************/
