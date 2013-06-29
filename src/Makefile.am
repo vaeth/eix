@@ -121,6 +121,7 @@ portage/basicversion.h \
 portage/extendedversion.cc \
 portage/extendedversion_bin.cc \
 portage/extendedversion.h \
+portage/instversion.cc \
 portage/instversion.h \
 portage/package.cc \
 portage/package_best.cc \

@@ -16,6 +16,7 @@
 #include <vector>
 #include <set>
 
+#include "eixTk/eixint.h"
 #include "portage/basicversion.h"
 #include "portage/extendedversion.h"
 #include "portage/version.h"
@@ -52,19 +53,121 @@ class InstVersion : public ExtendedVersion, public Keywords {
 
 		InstVersion()
 		{ init(); }
+
+		static eix::SignedBool compare(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+
+		static eix::SignedBool compare(const InstVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+
+		static eix::SignedBool compare(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
 };
 
-/** The equality operator does not test the additional data */
+// Short compare-stuff
 inline static bool
-operator==(const InstVersion& left, const InstVersion &right) ATTRIBUTE_PURE;
+operator<(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
 inline static bool
-operator==(const InstVersion& left, const InstVersion &right)
-{ return BasicVersion::compare(left, right) == 0; }
+operator<(const ExtendedVersion& left, const InstVersion& right)
+{ return InstVersion::compare(left, right) < 0; }
 
 inline static bool
-operator!=(const InstVersion& left, const InstVersion &right) ATTRIBUTE_PURE;
+operator>(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
 inline static bool
-operator!=(const InstVersion& left, const InstVersion &right)
-{ return BasicVersion::compare(left, right) != 0; }
+operator>(const ExtendedVersion& left, const InstVersion& right)
+{ return InstVersion::compare(left, right) > 0; }
+
+inline static bool
+operator==(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator==(const ExtendedVersion& left, const InstVersion& right)
+{ return InstVersion::compare(left, right) == 0; }
+
+inline static bool
+operator!=(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator!=(const ExtendedVersion& left, const InstVersion& right)
+{ return InstVersion::compare(left, right) != 0; }
+
+inline static bool
+operator>=(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator>=(const ExtendedVersion& left, const InstVersion& right)
+{ return InstVersion::compare(left, right) >= 0; }
+
+inline static bool
+operator<=(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator<=(const ExtendedVersion& left, const InstVersion& right)
+{ return InstVersion::compare(left, right) <= 0; }
+
+inline static bool
+operator<(const InstVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator<(const InstVersion& left, const ExtendedVersion& right)
+{ return InstVersion::compare(left, right) < 0; }
+
+inline static bool
+operator>(const InstVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator>(const InstVersion& left, const ExtendedVersion& right)
+{ return InstVersion::compare(left, right) > 0; }
+
+inline static bool
+operator==(const InstVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator==(const InstVersion& left, const ExtendedVersion& right)
+{ return InstVersion::compare(left, right) == 0; }
+
+inline static bool
+operator!=(const InstVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator!=(const InstVersion& left, const ExtendedVersion& right)
+{ return InstVersion::compare(left, right) != 0; }
+
+inline static bool
+operator>=(const InstVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator>=(const InstVersion& left, const ExtendedVersion& right)
+{ return InstVersion::compare(left, right) >= 0; }
+
+inline static bool
+operator<=(const InstVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator<=(const InstVersion& left, const ExtendedVersion& right)
+{ return InstVersion::compare(left, right) <= 0; }
+
+inline static bool
+operator<(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator<(const InstVersion& left, const InstVersion& right)
+{ return InstVersion::compare(left, right) < 0; }
+
+inline static bool
+operator>(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator>(const InstVersion& left, const InstVersion& right)
+{ return InstVersion::compare(left, right) > 0; }
+
+inline static bool
+operator==(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator==(const InstVersion& left, const InstVersion& right)
+{ return InstVersion::compare(left, right) == 0; }
+
+inline static bool
+operator!=(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator!=(const InstVersion& left, const InstVersion& right)
+{ return InstVersion::compare(left, right) != 0; }
+
+inline static bool
+operator>=(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator>=(const InstVersion& left, const InstVersion& right)
+{ return InstVersion::compare(left, right) >= 0; }
+
+inline static bool
+operator<=(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+inline static bool
+operator<=(const InstVersion& left, const InstVersion& right)
+{ return InstVersion::compare(left, right) <= 0; }
 
 #endif  // SRC_PORTAGE_INSTVERSION_H_

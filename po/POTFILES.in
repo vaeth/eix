@@ -129,6 +129,7 @@ src/portage/depend.h
 src/portage/extendedversion.cc
 src/portage/extendedversion.h
 src/portage/extendedversion_bin.cc
+src/portage/instversion.cc
 src/portage/instversion.h
 src/portage/keywords.cc
 src/portage/keywords.h

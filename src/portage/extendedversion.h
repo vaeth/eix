@@ -114,43 +114,43 @@ class ExtendedVersion : public BasicVersion
 
 		bool have_bin_pkg(const PortageSettings *ps, const Package *pkg) const;
 
-		static eix::SignedBool compare(const ExtendedVersion& left, const ExtendedVersion& right);
+		static eix::SignedBool compare(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
 };
 
 
 // Short compare-stuff
 inline static bool
-operator<(const ExtendedVersion& left, const ExtendedVersion& right);
+operator<(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
 inline static bool
 operator<(const ExtendedVersion& left, const ExtendedVersion& right)
 { return ExtendedVersion::compare(left, right) < 0; }
 
 inline static bool
-operator>(const ExtendedVersion& left, const ExtendedVersion& right);
+operator>(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
 inline static bool
 operator>(const ExtendedVersion& left, const ExtendedVersion& right)
 { return ExtendedVersion::compare(left, right) > 0; }
 
 inline static bool
-operator==(const ExtendedVersion& left, const ExtendedVersion& right);
+operator==(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
 inline static bool
 operator==(const ExtendedVersion& left, const ExtendedVersion& right)
 { return ExtendedVersion::compare(left, right) == 0; }
 
 inline static bool
-operator!=(const ExtendedVersion& left, const ExtendedVersion& right);
+operator!=(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
 inline static bool
 operator!=(const ExtendedVersion& left, const ExtendedVersion& right)
 { return ExtendedVersion::compare(left, right) != 0; }
 
 inline static bool
-operator>=(const ExtendedVersion& left, const ExtendedVersion& right);
+operator>=(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
 inline static bool
 operator>=(const ExtendedVersion& left, const ExtendedVersion& right)
 { return ExtendedVersion::compare(left, right) >= 0; }
 
 inline static bool
-operator<=(const ExtendedVersion& left, const ExtendedVersion& right);
+operator<=(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
 inline static bool
 operator<=(const ExtendedVersion& left, const ExtendedVersion& right)
 { return ExtendedVersion::compare(left, right) <= 0; }
