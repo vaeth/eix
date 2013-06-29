@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-06-28 16:54+0200\n"
+"POT-Creation-Date: 2013-06-29 02:12+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -2323,19 +2323,19 @@ msgstr "Уровень гнездования слишком глубок в %r"
 msgid "%s: failed to source %r (%s)"
 msgstr "%s: ошибка взятия %r в качестве источника (%s)"
 
-#: src/eixTk/varsreader.cc:1015
+#: src/eixTk/varsreader.cc:1039
 msgid "cannot read file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:1023
+#: src/eixTk/varsreader.cc:1047
 msgid "cannot stat file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:1039
+#: src/eixTk/varsreader.cc:1063
 msgid "cannot map file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:1054
+#: src/eixTk/varsreader.cc:1078
 msgid "recursively sourced file %r"
 msgstr "рекурсивно прочтён файл %r"
 

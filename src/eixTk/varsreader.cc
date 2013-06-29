@@ -262,11 +262,28 @@ void
 VarsReader::FIND_ASSIGNMENT()
 {
 	key_len = 0;
-	while(likely(isValidKeyCharacter(INPUT))) {
-		NEXT_INPUT;
-		++key_len;
+	if(likely((parse_flags & PORTAGE_SECTIONS) == NONE)) {
+		while(likely(isValidKeyCharacter(INPUT))) {
+			++key_len;
+			NEXT_INPUT;
+		}
+		SKIP_SPACE;
+	} else {
+		while(likely(isValidKeyCharacter(INPUT) || (INPUT == ' ') || (INPUT == '\t'))) {
+			if(unlikely((INPUT == ' ') || (INPUT == '\t'))) {
+				const char *beginning(x);
+				SKIP_SPACE;
+				if(isValidKeyCharacter(INPUT)) {
+GCC_DIAG_OFF(sign-conversion)
+					key_len += (x - beginning);
+GCC_DIAG_ON(sign-conversion)
+				}
+			} else {
+				++key_len;
+				NEXT_INPUT;
+			}
+		}
 	}
-	SKIP_SPACE;
 	switch(INPUT) {
 		case ':':
 			if((parse_flags & PORTAGE_SECTIONS) == NONE) {
@@ -908,14 +925,21 @@ VarsReader::resolveReference()
 	}
 	size_t ref_key_length(0);
 
-	while(isValidKeyCharacter(INPUT) || unlikely(INPUT == ':')) {
-		if(unlikely(INPUT == ':') && ((parse_flags & PORTAGE_SECTIONS) == NONE)) {
-			break;
+	if(likely((parse_flags & PORTAGE_SECTIONS) == NONE)) {
+		while(likely(isValidKeyCharacter(INPUT))) {
+			++ref_key_length;
+			NEXT_INPUT_OR_EOF;
+			if(INPUT_EOF) {
+				break;
+			}
 		}
-		++ref_key_length;
-		NEXT_INPUT_OR_EOF;
-		if(INPUT_EOF) {
-			break;
+	} else {
+		if(unlikely(!brace)) {
+			return;
+		}
+		while(likely(isValidKeyCharacter(INPUT) || (INPUT == ' ') || (INPUT == '\t') || (INPUT == ':'))) {
+			++ref_key_length;
+			NEXT_INPUT_RETURN;
 		}
 	}
 
@@ -944,7 +968,7 @@ VarsReader::resolveSectionReference()
 
 	char *beginning(x);
 	size_t ref_key_length(0);
-	while(isValidKeyCharacter(INPUT) || unlikely(INPUT == ':')) {
+	while(likely(isValidKeyCharacter(INPUT) || (INPUT == ' ') || (INPUT == '\t') || (INPUT == ':'))) {
 		++ref_key_length;
 		NEXT_INPUT_RETURN;
 	}

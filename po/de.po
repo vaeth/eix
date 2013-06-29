@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-06-28 16:54+0200\n"
+"POT-Creation-Date: 2013-06-29 02:12+0200\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -2331,19 +2331,19 @@ msgstr "Zu tiefe Verschachtelung in %r"
 msgid "%s: failed to source %r (%s)"
 msgstr "%s: source %r ging nicht (%s)"
 
-#: src/eixTk/varsreader.cc:1015
+#: src/eixTk/varsreader.cc:1039
 msgid "cannot read file %r"
 msgstr "Datei %r kann nicht gelesen werden"
 
-#: src/eixTk/varsreader.cc:1023
+#: src/eixTk/varsreader.cc:1047
 msgid "cannot stat file %r"
 msgstr "Status der Datei %r kann nicht ermiitelt werden"
 
-#: src/eixTk/varsreader.cc:1039
+#: src/eixTk/varsreader.cc:1063
 msgid "cannot map file %r"
 msgstr "Datei %r kann nicht gemapped werden"
 
-#: src/eixTk/varsreader.cc:1054
+#: src/eixTk/varsreader.cc:1078
 msgid "recursively sourced file %r"
 msgstr "File %r wird rekursiv gesourced"
 
