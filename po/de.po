@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-06-29 02:12+0200\n"
+"POT-Creation-Date: 2013-06-30 15:42+0200\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -334,7 +334,7 @@ msgstr ""
 "\n"
 "-C            Leert die obige Liste\n"
 "-c LAYMAN_CFG Benutzt layman.cfg-file zur Berechnung der Listeneinträge\n"
-"-v            Ausführliche Ausgabe (Default)\n"
+"-v            Ausführliche Ausgabe (ist Standardeinstellung)\n"
 "-H            Keine Ausgabe der Statuszeile\n"
 "-q            Keine Ausgabe"
 
@@ -486,7 +486,7 @@ msgstr ""
 "        ${addr1}\n"
 "        ${addr2}\n"
 "-i      Ignoriere all vorherigen Optionen (etwa von EIX_REMOTE_OPTS).\n"
-"-v      Ausführliche Ausgabe (Default)\n"
+"-v      Ausführliche Ausgabe (ist Standardeinstellung)\n"
 "-H      Keine Ausgabe der Statuszeile\n"
 "-q      Keine Ausgabe"
 
@@ -680,15 +680,15 @@ msgstr ""
 "    ${eixprevious}\n"
 "gespeichert.\n"
 "Die Datei ${eixsyncconf} und die (Environment) Variable EIX_SYNC_CONF\n"
-"(die wiederum als Default die verzögerte Ersetzung von EIX_SYNC_OPTS ist)\n"
-"bestimmen, für welche Overlays layman aufgerufen wird, welche Default-"
+"(die wiederum als Vorgabe die verzögerte Ersetzung von EIX_SYNC_OPTS ist)\n"
+"bestimmen, für welche Overlays layman aufgerufen wird, welche Vorgabe-"
 "Optionen\n"
 "benutzt werden, und sie können auch verschiedene Hooks enthalten:\n"
 "\"man eix\" erklärt Genaueres hierzu.\n"
 "\n"
-"Die Default-Optionen (z.B. aus EIX_SYNC_OPTS) werden evaluiert, also kann\n"
+"Die Vorgabe-Optionen (z.B. aus EIX_SYNC_OPTS) werden evaluiert, also kann\n"
 "falsches Quoten oder Kompromittierung zu einem Sicherheitsproblem werden.\n"
-"Natürlich wird \"--\" in den Default-Optionen alle Kommandozeilenoptionen\n"
+"Natürlich wird \"--\" in den Vorgabe-Optionen alle Kommandozeilenoptionen\n"
 "verhindern.\n"
 "Die Optionen sind:\n"
 "\n"
@@ -699,7 +699,7 @@ msgstr ""
 "-a   Es wird stets angenommen, dass ein Baum/Overlay verändert wurde\n"
 "     (Mit have_changed=: in einem !-Hook kann dies erzwungen werden).\n"
 "-s [USER@]SERVER[:DIR] Synce via rsync vom SERVER.\n"
-"     USER/DIR sind per Default der augenblickliche User und PORTDIR.\n"
+"     USER/DIR sind per Vorgabe der augenblickliche User und PORTDIR.\n"
 "     Ein leerer SERVER nimmt die Option zurück. Diese Option impliziert -0\n"
 "-0   Kein eix --sync. Dies impliziert -a\n"
 "-2 [USER@]CLIENT[:DIR] Synce via rsync *auf* den CLIENT, falls das Syncen\n"
@@ -724,9 +724,9 @@ msgstr ""
 "-S   Keine Hooks nach emerge --sync (@-Zeilen).\n"
 "-M   Mit emerge --metadata. Dies kann nätig sein, wenn die Cachemethode\n"
 "     \"sqlite\", \"sqlite*\" oder \"flat\" für PORTDIR oder einem\n"
-"     synchronisierten Overlay benutzt wird. Diese Option ist der Default,\n"
+"     synchronisierten Overlay benutzt wird. Diese Option ist die Vorgabe,\n"
 "     wenn PORTDIR_CACHE_METHOD einen dieser Werte hat.\n"
-"-N   Kein emerge --metadata. Dies ist normalerweise der Default, siehe -M.\n"
+"-N   Kein emerge --metadata. Dies ist normalerweise die Vorgabe, siehe -M.\n"
 "-t   Speichere die aktuelle Datenbank nur in Temporärdatei. Dies schließt\n"
 "     natürlich ein späteres eix-diff aus.\n"
 "-T   Keine Zeitmessungen\n"
@@ -742,7 +742,7 @@ msgstr ""
 "       Diese Option kann akkumulativ benutzt werden.\n"
 "-r   Löscht /var/cache/edb/dep/* vor dem Syncen. Dies ist nur sinnvoll,\n"
 "     wenn z.B. PORTDIR_CACHE_METHOD=flat und FEATURES=metadata-transfer\n"
-"     aktiv sind. (Diese Option ist kein Default mehr).\n"
+"     aktiv sind. (Diese Option ist keine Vorgabe mehr).\n"
 "-R   Löscht vorhergehendes -r (z.B. aus einem ${eixsyncconf}).\n"
 "-H   Keine Ausgabe der Statuszeile.\n"
 "-h   Zeigt diesen Text und beendet das Programm danach."
@@ -984,10 +984,10 @@ msgstr ""
 "Fällen werden die selben Tests gemacht; der Unterschied in der Ausgabe\n"
 "betrifft nur die Details für Treffer.\n"
 "Zur Ausgabe der Pakete wird das Format der Variablen FORMAT_TEST_OBSOLETE\n"
-"benutzt (deren Default %{FORMAT_ALL_COMPACT} ist).\n"
+"benutzt (deren Vorgabe %{FORMAT_ALL_COMPACT} ist).\n"
 "\n"
 "In jedem Fall hängt des Ergebnis von den Werten der Variablen TEST_FOR_*,\n"
-"REDUNDANT_IF_* und NONEXISTENT_IF_* ab. Insbesondere sind per Default die\n"
+"REDUNDANT_IF_* und NONEXISTENT_IF_* ab. Insbesondere sind per Vorgabe die\n"
 "Variablen REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} und REDUNDANT_IF_MIXED\n"
 "auf \"false\" gesetzt.\n"
 "Um also beispielsweise die beiden Tests für /etc/portage/package.use zu\n"
@@ -1003,11 +1003,11 @@ msgstr ""
 "\t-H  Keine Ausgabe der Statuszeile\n"
 "\t-h  Zeigt diesen Hilfetext an\n"
 "\n"
-"Optionen -d, -b und -q sind dafür gedacht, in EIX_TEST_OBSOLETE_OPTS zum\n"
-"Festlegen des Defaults benutzt zu werden.\n"
+"Die Optionen -d, -b und -q sind dazu gedacht, in EIX_TEST_OBSOLETE_OPTS\n"
+"zum Festlegen von Vorgaben benutzt zu werden.\n"
 "\n"
 "Ohne -c oder -C wird CHECK_INSTALLED_OVERLAYS nicht modifiziert.\n"
-"Der (empfohlene) Default für CHECK_INSTALLED_OVERLAYS ist \"repository\".\n"
+"Die (empfohlene) Vorgabe für CHECK_INSTALLED_OVERLAYS ist \"repository\".\n"
 "Dies ist viel schneller als CHECK_INSTALLED_OVERLAYS=true, funktioniert "
 "aber\n"
 "nur für diejenigen Pakete zuverlässig, die mit Repository-Information\n"
@@ -1320,7 +1320,6 @@ msgid ""
 "                           (needs DEP=true)\n"
 "     --print-world-sets    print the world sets\n"
 "     --print-profile-paths print all paths of current profile\n"
-"     --is-current          check for valid cache-file\n"
 "     --256                 Print all ansi color palettes\n"
 "     --256d                Print ansi color palettes for foreground (dark)\n"
 "     --256d0               Print ansi color palette dark (normal)\n"
@@ -1480,7 +1479,7 @@ msgstr ""
 "     -h, --help            Zeige diesen Text und stoppe dann\n"
 "     -V, --version         Zeige die Version und stoppe dann\n"
 "     --dump                Ausgabe aller internen Variablen auf stdout\n"
-"     --dump-defaults       Ausgabe der Default-Werte der internen Variables\n"
+"     --dump-defaults       Ausgabe der Vorgabewerte der internen Variables\n"
 "     --print               Ausgabe eines expandierten Variablenwerts\n"
 "     --known-vars          Ausgabe der --print bekannten Variablennamen\n"
 "     --print-all-useflags  Ausgabe aller irgendwo benutzten IUSE-Werte\n"
@@ -1491,7 +1490,6 @@ msgstr ""
 "DEP=true)\n"
 "     --print-world-sets    Ausgabe aller Sets in world\n"
 "     --print-profile-paths Ausgabe aller Pfade des aktuellen Profils\n"
-"     --is-current          Test auf gültiges cache-file\n"
 "     --256                 Ausgabe aller Ansi Farbpaletten\n"
 "     --256d                Ausgabe der dunklen Ansi Farbpaletten\n"
 "     --256d0               Ausgabe der dunklen Ansi Farbpalette (normal)\n"
@@ -1625,7 +1623,7 @@ msgstr ""
 "    --installed-without-use deaktiviertes Useflag (installierter Pakete)\n"
 "\n"
 "  Art des PATTERNs:\n"
-"    -r, --regex           PATTERN ist regulärer Ausdruck (Default)\n"
+"    -r, --regex           PATTERN ist regulärer Ausdruck (Vorgabe)\n"
 "    -e, --exact           PATTERN ist exakt\n"
 "    -z, --substring       PATTERN ist ein Teilstring\n"
 "    -b, --begin           PATTERN ist der Stringanfang\n"
@@ -1636,16 +1634,16 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:571 src/eix-diff.cc:285
+#: src/eix.cc:568 src/eix-diff.cc:285
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:667 src/eix-diff.cc:350 src/eix-update.cc:385
+#: src/eix.cc:664 src/eix-diff.cc:350 src/eix-update.cc:385
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
-#: src/eix.cc:748 src/eix.cc:1080
+#: src/eix.cc:745 src/eix.cc:1077
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1654,7 +1652,7 @@ msgstr ""
 "Datenbankfile %s kann nicht geöffnet werden (mode = 'rb')\n"
 "Wurde es denn mit 'eix-update' erzeugt?"
 
-#: src/eix.cc:758
+#: src/eix.cc:755
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1665,31 +1663,31 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit 'eix-update' neu erzeugen."
 
-#: src/eix.cc:1025 src/eix.cc:1046
+#: src/eix.cc:1022 src/eix.cc:1043
 #, c-format
 msgid "Found %s matches."
 msgstr "%s Treffer."
 
-#: src/eix.cc:1028
+#: src/eix.cc:1025
 msgid "No matches found."
 msgstr "Kein Treffer."
 
-#: src/eix.cc:1037
+#: src/eix.cc:1034
 #, c-format
 msgid "Found %s match."
 msgstr "%s Treffer."
 
-#: src/eix.cc:1154
+#: src/eix.cc:1151
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:1155
+#: src/eix.cc:1152
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:1160
+#: src/eix.cc:1157
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1698,7 +1696,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1161
+#: src/eix.cc:1158
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1707,7 +1705,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1219
+#: src/eix.cc:1216
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1715,7 +1713,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:1222
+#: src/eix.cc:1219
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -1757,7 +1755,7 @@ msgstr ""
 " -n, --nocolor           keine Farbausgaben\n"
 " -F, --force-color       Farbausgabe, unabhängig von Ausgabe auf Terminal\n"
 "     --dump              Ausgabe aller internen Variablen auf stdout\n"
-"     --dump-defaults     Ausgabe der Default-Werte der internen Variables\n"
+"     --dump-defaults     Ausgabe der Vorgabewerte der internen Variables\n"
 "     --print             Ausgabe eines expandierten Variablenwerts\n"
 "     --known-vars        Ausgabe der --print bekannten Variablennamen\n"
 "\n"
@@ -1771,7 +1769,7 @@ msgstr ""
 msgid "error in database file %r: %s"
 msgstr "Fehler in Datenbankfile %r: %s"
 
-#: src/eix-diff.cc:158 src/eix-overlay.cc:178
+#: src/eix-diff.cc:158 src/eix-header.cc:239
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Datenbankfile %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
 
@@ -1803,25 +1801,45 @@ msgstr ""
 msgid "failed to execute %s\n"
 msgstr "Konnte %s nicht ausführen\n"
 
-#: src/eix-overlay.cc:55
+#: src/eix-header.cc:55
 #, c-format
 msgid ""
-"Usage: %s [-s SEP] [-f FILE] [-l OVERLAY] [-p OVERLAY] [-o OVERLAY] ...\n"
-"Print label or path or both of specified OVERLAY for eix database FILE,\n"
-"appending SEP to each data. If SEP is unspecified, the null symbol is used.\n"
+"Usage: %s [-q] [-f FILE] [-s SEP] [-c] [-l OVERLAY] [-p OVERLAY] [-o "
+"OVERLAY] ...\n"
+"Check whether eix database FILE has current format, and print label, path,\n"
+"or both of specified OVERLAY in FILE, appending SEP to each data.\n"
+"All options can be used repeatedly: FILE and SEP are active until modified.\n"
+"FILE defaults to %s\n"
+"SEP defaults to the null character (to be distinguished from the empty "
+"string)\n"
+"-c can be used to check only whether FILE has current format\n"
+"without producing any output.\n"
+"After option -q no further output is made, usually.\n"
+"So specify -q first if you want no output at all.\n"
+"The special option -h outputs this help text and quits.\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
 "further information.\n"
 msgstr ""
-"Aufruf: %s [-s Trenner] [-f Datei] [-l Overlay] [-p Overlay] [-o "
-"Overlay] ...\n"
-"Gibt Label oder Pfad oder beides vom Overlay der Eix-Datenbank Datei aus,\n"
-"wobei jeweils der Trenner angehängt wird. Wenn kein Trenner angegeben ist,\n"
-"wird das Nullzeichen benutzt.\n"
+"Aufruf: %s [-q] [-f DATEI] [-s TRENNER] [-c] [-l OV] [-p OV] [-o OV] ...\n"
+"Prüft, ob die eix Datenbank DATEI aktuelles Format hat und gibt Label, Pfad\n"
+"bzw. beides des angebenen Overlay OV aus DATEI aus, wobei an jede\n"
+"Ausgabe der TRENNER angehängt wird.\n"
+"Alle Optionen können wiederholt werden:\n"
+"DATEI und TRENNER sind aktiv, bis sie neu gesetzt werden.\n"
+"DATEI ist zunächst %s\n"
+"TRENNER ist zunächst das Nullzeichen (zu unterscheiden vom Leerstring)\n"
+"-c kann benutzt werden, um nur zu überprüfen, ob DATEI aktuelles Format "
+"hat.\n"
+"Nach der Option -q erfolgt für gewöhnlich keine weitere Ausgabe.\n"
+"Falls gar keine Ausgabe gewünscht wird, sollte also die Option -q als\n"
+"erste angegeben werden.\n"
+"Die Option -h gibt diese Hilfeseite aus und beendet das Programm.\n"
+"\n"
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-overlay.cc:172
+#: src/eix-header.cc:231
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1830,7 +1848,7 @@ msgstr ""
 "%s wurd mit inkompatiblem eix-update erzeugt:\n"
 "Es benutzt Datenbank-Format %s (aktuell ist %s)."
 
-#: src/eix-overlay.cc:188
+#: src/eix-header.cc:252
 #, c-format
 msgid "Can't find overlay %s in %s"
 msgstr "Overlay %s ist nicht in %s"
@@ -1874,7 +1892,7 @@ msgstr ""
 " -h, --help              Ausgabe eines Hilfstexts\n"
 " -V, --version           Ausgabe der Versionsnummer\n"
 "     --dump              Ausgabe aller internen Variablen auf stdout\n"
-"     --dump-defaults     Ausgabe der Default-Werte der internen Variables\n"
+"     --dump-defaults     Ausgabe der Vorgabewerte der internen Variables\n"
 "     --print             Ausgabe eines expandierten Variablenwerts\n"
 "     --known-vars        Ausgabe der --print bekannten Variablennamen\n"
 " -H, --nostatus          Keine Ausgabe der Statuszeile\n"
@@ -2409,7 +2427,7 @@ msgid ""
 "Note that its content is evaluated, so quote correctly. Typical example:\n"
 "EIX_REMOTE_OPTS='-f /var/lib/layman/eix-caches.tar.bz2'"
 msgstr ""
-"Diese Variable enthält Default-Optionen für das Skript eix-remote.\n"
+"Diese Variable enthält Vorgabe-Optionen für das Skript eix-remote.\n"
 "Ihr Inhalt wird evaluiert, also Vorsicht! Typisches Beispiel:\n"
 "EIX_REMOTE_OPTS='-f /var/lib/layman/eix-caches.tar.bz2'"
 
@@ -2418,20 +2436,20 @@ msgid ""
 "This variable contains default options for the eix-layman script.\n"
 "Note that its content is evaluated, so quote correctly."
 msgstr ""
-"Diese Variable enthält Default-Optionen für das Skript eix-laman.\n"
+"Diese Variable enthält Vorgabe-Optionen für das Skript eix-laman.\n"
 "Ihr Inhalt wird evaluiert, also Vorsicht!"
 
 #: src/eixrc/defaults.cc:67
 msgid ""
 "This variable contains default options for the eix-test-obsolete script."
 msgstr ""
-"Diese Variable enthält Default-Optionen für das Skript eix-text-obsolete."
+"Diese Variable enthält Vorgabe-Optionen für das Skript eix-text-obsolete."
 
 #: src/eixrc/defaults.cc:71
 msgid ""
 "This variable contains default arguments for the eix-installed-after script."
 msgstr ""
-"Diese Variable enthält Default-Argumente für das Skript eix-installed-after."
+"Diese Variable enthält Vorgabe-Argumente für das Skript eix-installed-after."
 
 #: src/eixrc/defaults.cc:75
 msgid ""
@@ -2446,7 +2464,7 @@ msgstr ""
 "Suchpfaden für /etc/eixrc vorne angehängt. Falls sie nicht in der "
 "Environment\n"
 "gesetzt ist, wird statt dessen PORTAGE_CONFIGROOT dafür benutzt.\n"
-"Falls beides ungesetzt ist, wird der EIX_PREFIX Defaultwert benutzt.\n"
+"Falls beides ungesetzt ist, wird der EIX_PREFIX Vorgabewert benutzt.\n"
 "Außerdem wird EIX_PREFIX für verzögerte Ersetzung bei EPREFIX und\n"
 "EPREFIX_SOURCE benutzt."
 
@@ -2493,7 +2511,7 @@ msgstr ""
 "von ROOT beeinflusst werden sollen. Hier wird also festgelegt,\n"
 "was zu tun ist, wenn beide nichtleer sind.\n"
 "Beispielsweise wird %{EPREFIX}%{ROOT} beides anwenden;\n"
-"der Default wendet EPREFIX aber nicht ROOT an, wenn beides nichtleer ist."
+"die Vorgabe wendet EPREFIX aber nicht ROOT an, wenn beides nichtleer ist."
 
 #: src/eixrc/defaults.cc:110
 msgid "This path is prepended to the /etc paths."
@@ -2513,7 +2531,7 @@ msgid ""
 "It is used as prefix in the EXEC_EBUILD* and EBUILD_DEPEND_TEMP defaults."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie dient als Präfix in den Defaults für EXEC_EBUILD* und EBUILD_DEPEND_TEMP."
+"Sie dient als Präfix in den Vorgaben für EXEC_EBUILD* und EBUILD_DEPEND_TEMP."
 
 #: src/eixrc/defaults.cc:124
 msgid "This path is prepended to source commands in /etc/make.{conf,globals}."
@@ -2664,7 +2682,7 @@ msgstr ""
 
 #: src/eixrc/defaults.cc:249
 msgid "The default ARCH if none is specified by the profile."
-msgstr "Der Default-Wert für ARCH, falls keiner im Profile spezifiert ist."
+msgstr "Der Vorgabewert für ARCH, falls keiner im Profile spezifiert ist."
 
 #: src/eixrc/defaults.cc:253
 msgid ""
@@ -2684,7 +2702,7 @@ msgstr ""
 
 #: src/eixrc/defaults.cc:263
 msgid "Whether --quick is on by default."
-msgstr "Ob --quick per Default aktiviert ist."
+msgstr "Ob --quick als Vorgabe aktiviert ist."
 
 #: src/eixrc/defaults.cc:267
 msgid "Whether --care is on."
@@ -2704,7 +2722,7 @@ msgstr ""
 
 #: src/eixrc/defaults.cc:277
 msgid "Whether --quiet is on by default."
-msgstr "Ob --quiet per Default aktiviert ist."
+msgstr "Ob --quiet als Vorgabe aktiviert ist."
 
 #: src/eixrc/defaults.cc:281
 #, c-format
@@ -2794,7 +2812,7 @@ msgstr ""
 
 #: src/eixrc/defaults.cc:337
 msgid "Defines whether --compact or --verbose is on by default."
-msgstr "Soll --compact oder --verbose per Default an sein?"
+msgstr "Soll --compact oder --verbose als Vorgabe an sein?"
 
 #: src/eixrc/defaults.cc:341
 msgid ""
@@ -2823,7 +2841,7 @@ msgid ""
 "It is the default for FORCE_{COLORS,STATUSLINE,PERCENTAGE}."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie ist der Default für FORCE_{COLORS,STATUSLINE,PERCENTAGE}."
+"Sie ist die Vorgabe für FORCE_{COLORS,STATUSLINE,PERCENTAGE}."
 
 #: src/eixrc/defaults.cc:363
 msgid "Output colors even if not printing to a terminal."
@@ -2858,11 +2876,11 @@ msgstr ""
 
 #: src/eixrc/defaults.cc:386
 msgid "Defines whether --versionsorted is on by default."
-msgstr "Gibt an, ob --versionsorted per Default an sein soll."
+msgstr "Gibt an, ob --versionsorted als Vorgabe an sein soll."
 
 #: src/eixrc/defaults.cc:390
 msgid "Defines whether --versionlines is on by default."
-msgstr "Gibt an, ob --versionlines per Default an sein soll."
+msgstr "Gibt an, ob --versionlines als Vorgabe an sein soll."
 
 #: src/eixrc/defaults.cc:394
 msgid ""
@@ -2883,7 +2901,9 @@ msgstr ""
 
 #: src/eixrc/defaults.cc:404
 msgid "Whether default concatenation of queries is -o (or) or -a (and)"
-msgstr "Ist die Default-Verknüpfung von EXPRESSIONS -o (oder or -a (und)?"
+msgstr ""
+"Ist die Standard-Verknüpfung von EXPRESSIONS -o (oder)\n"
+"oder -a (und)?"
 
 #: src/eixrc/defaults.cc:408
 msgid "Whether checks for duplicate packages occur only among overlays"
@@ -2907,13 +2927,13 @@ msgid ""
 "The default maximal levensthein distance for which a string is\n"
 "considered a match for the fuzzy match algorithm."
 msgstr ""
-"Der Default für den maximalen Levensthein-Abstand beim fuzzy\n"
+"Die Vorgabe für den maximalen Levensthein-Abstand beim fuzzy\n"
 "Match-Algorithmus."
 
 #: src/eixrc/defaults.cc:425
 msgid "Whether eix-update -v is on by default (output cache method per ebuild)"
 msgstr ""
-"Legt fest, ob eix-update -v per Default an ist.\n"
+"Legt fest, ob eix-update -v als Vorgabe an ist.\n"
 "Dies führt zur Ausgabe der Cache-Methode pro Ebuild."
 
 #: src/eixrc/defaults.cc:429
@@ -2973,7 +2993,7 @@ msgid ""
 "and in addition it can override the choices made by KEEP_VIRTUALS."
 msgstr ""
 "Diese Variable kann die Angaben aus CACHE_METHOD und zusätzlich auch\n"
-"die von KEEP_VIRTUALS gesetzten Defaults überschreiben."
+"die von KEEP_VIRTUALS gesetzten Vorgaben überschreiben."
 
 #: src/eixrc/defaults.cc:463
 msgid ""
@@ -3056,7 +3076,7 @@ msgstr ""
 "neuen \"höheren\" Slot gibt?\n"
 "Mit den Dateien SLOT_UPGRADE_FORBID bzw. SLOT_UPGRADE_ALLOW können "
 "Ausnahmen\n"
-"dieses generellen Defaults spezifiziert werden."
+"dieser generellen Vorgaben spezifiziert werden."
 
 #: src/eixrc/defaults.cc:519
 msgid ""
@@ -3126,7 +3146,7 @@ msgid ""
 "It is unused by default."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung in PRINT_IUSE benutzt.\n"
-"Per Default wird sie nicht genutzt."
+"In der Standardeinstellung wird sie nicht genutzt."
 
 #: src/eixrc/defaults.cc:568
 msgid ""
@@ -3583,7 +3603,7 @@ msgid ""
 msgstr ""
 "Dies ist eine Stringliste von Ausdrücken der Gestalt Regexp[ ]Suchfeld.\n"
 "Falls Regexp auf das Suchpattern zutrifft, wird Suchfeld das\n"
-"Default-Suchfeld. Ein Fallback-Suchfeld kann als letzter Eintrag der\n"
+"Vorgabe-Suchfeld. Ein Fallback-Suchfeld kann als letzter Eintrag der\n"
 "Liste angegeben werden. Zulässige Werte für Suchfeld sind:\n"
 "name, category, category/name, description, license, homepage,\n"
 "set, slot, installed-slot, use, with-use, without-use."
@@ -3644,7 +3664,7 @@ msgstr ""
 "Dies ist eine Stringliste von Ausdrücken der Gestalt\n"
 "regexp[ ]Matchalgorithmus.\n"
 "Falls regexp auf das Suchpattern zutrifft, wird Matchalgorithmus der\n"
-"Default-Matchalgorithmus. Ein Fallback-Matchalgorithmus kann als letzter\n"
+"Vorgabe-Matchalgorithmus. Ein Fallback-Matchalgorithmus kann als letzter\n"
 "Eintrag der Liste angegeben werden. Zulässige Werte für\n"
 "Matchalgorithmus sind: regex, pattern, substring,\n"
 "begin, end, exact, fuzzy."
@@ -4045,7 +4065,7 @@ msgid ""
 "It is the color used for default colors."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie definiert die Farbe für Defaultfarben fest."
+"Sie legt die Farbe für Normalausgaben fest."
 
 #: src/eixrc/defaults.cc:1181
 msgid ""
@@ -4468,7 +4488,7 @@ msgid ""
 "It is the default for NO{COLORS,STATUSLINE,PERCENTAGE}."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie ist der Default für NO{COLORS,STATUSLINE,PERCENTAGE}."
+"Sie ist die Vorgabe für NO{COLORS,STATUSLINE,PERCENTAGE}."
 
 #: src/eixrc/defaults.cc:1460
 msgid ""
@@ -6503,7 +6523,7 @@ msgstr "lokal geändert auf:"
 
 #: src/eixrc/eixrc.cc:823
 msgid "changed locally, default was:"
-msgstr "lokal geändert. Default war:"
+msgstr "lokal geändert. Standardeinstellung war:"
 
 #: src/eixrc/eixrc.cc:852
 msgid "locally added:"

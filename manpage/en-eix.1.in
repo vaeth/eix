@@ -30,8 +30,7 @@
 
 .B eix-functions.sh
 
-.B eix-overlay [B<-s> I<sep>] [B<-f> I<file>]
-[B<-l> I<overlay>] [B<-p> I<overlay>] [B<-o> I<overlay>] ...
+.B eix-header
 
 .B eix-drop-permissions
 [B<-->] [I<command to execute>]
@@ -89,10 +88,9 @@ You might want to use them for your own similar scripts.
 Note that immediately after sourcing B<eix-functions.sh> you will normally
 have to call B<ReadFunctions> for initialisation.
 
-B<eix-overlay> is a helper program for B<eix-remote> (and possibly your own scripts).
-It outputs the label, path, or both, of the specified I<overlay> within the
-eix database I<file>, each output followed by I<sep>.
-If I<sep> is not specified the null character is used.
+B<eix-header> is a helper program for B<eix-remote> (and possibly your own scripts).
+It can check database file headers and can find/output overlay paths or labels stored in these files.
+For details how to use it, call B<eix-header -h>.
 
 B<eix-drop-permissions> is a helper program for B<eix-remote> (and possibly your own scripts).
 It executes the command given as argument with permissions dropped according to
@@ -280,11 +278,6 @@ print the world sets.
 Outputs all paths of the current profile.
 To each Path B<PRINT_APPEND> is appended.
 If B<PRINT_APPEND> is empty, the null character is appended.
-.TP
-.B --is-current
-This checks only whether B<@EIX_CACHEFILE@> is available and valid
-(i.e. in a version supported by the B<eix> binary).
-If this is the case, eix returns successful without printing anything.
 .\" }}}
 
 .\" {{{ -------- Output options
@@ -3730,8 +3723,8 @@ This would still be a reasonable default, but some users were confused by the fe
 (some even believed it is a bug) so that it is now necessary to configure this default
 manually (by setting B<EIX_REMOTE_OPTS=-x> in I</etc/eixrc>).
 
-The tool B<eix-overlay> did not exist before eix-0.28.6; instead eix had the options
-B<--print-overlay-path>, B<--print-overlay-label>, B<--print-overlay-data>
+The tool B<eix-header> did not exist before eix-0.28.6; instead eix had the options
+B<--is-current>, B<--print-overlay-path>, B<--print-overlay-label>, B<--print-overlay-data>
 which are now redundant and have been removed.
 .\" }}}
 

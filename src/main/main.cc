@@ -59,12 +59,12 @@
 #endif
 #endif
 
-#ifdef OVERLAY_BINARY
+#ifdef HEADER_BINARY
 #ifdef USE_BINARY
 #undef BINARY_COLLECTION
 #define BINARY_COLLECTION 1
 #else
-#define USE_BINARY run_eix_overlay
+#define USE_BINARY run_eix_header
 #endif
 #endif
 
@@ -166,29 +166,29 @@ run_program(int argc, char *argv[])
 		return run_eix_diff(argc, argv);
 #endif
 #ifdef UPDATE_BINARY
-#if defined(EIX_BINARY) || defined(OVERLAY_BINARY) || defined(VERSIONSORT_BINARY) || defined(MASKED_BINARY) || defined(DROP_PERMISSIONS_BINARY)
+#if defined(EIX_BINARY) || defined(HEADER_BINARY) || defined(VERSIONSORT_BINARY) || defined(MASKED_BINARY) || defined(DROP_PERMISSIONS_BINARY)
 	if(unlikely(program_lower.find("update") != string::npos))
 #endif
 		return run_eix_update(argc, argv);
 #endif
 #ifdef DROP_PERMISSIONS_BINARY
-#if defined(EIX_BINARY) || defined(OVERLAY_BINARY) || defined(VERSIONSORT_BINARY) || defined(MASKED_BINARY)
+#if defined(EIX_BINARY) || defined(HEADER_BINARY) || defined(VERSIONSORT_BINARY) || defined(MASKED_BINARY)
 	if(likely((program_lower.find("drop") != string::npos) ||
 		(program_lower.find("perm") != string::npos)))
 #endif
 		return run_eix_drop_permissions(argc, argv);
 #endif
 #ifdef MASKED_BINARY
-#if defined(EIX_BINARY) || defined(OVERLAY_BINARY) || defined(VERSIONSORT_BINARY)
+#if defined(EIX_BINARY) || defined(HEADER_BINARY) || defined(VERSIONSORT_BINARY)
 	if(likely(program_lower.find("mask") != string::npos))
 #endif
 		return run_masked_packages(argc, argv);
 #endif
-#ifdef OVERLAY_BINARY
+#ifdef HEADER_BINARY
 #if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY)
-	if(likely(program_lower.find("overlay") != string::npos))
+	if(likely(program_lower.find("header") != string::npos))
 #endif
-		return run_eix_overlay(argc, argv);
+		return run_eix_header(argc, argv);
 #endif
 #ifdef VERSIONSORT_BINARY
 #if defined(EIX_BINARY)

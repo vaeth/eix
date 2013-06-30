@@ -7,5 +7,5 @@
 
 #include <config.h>
 
-#define OVERLAY_BINARY 1
+#define HEADER_BINARY 1
 #include "main/main.cc"

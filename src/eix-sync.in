@@ -486,7 +486,7 @@ CondUpdate() {
 		MyVarCommand "${updatecmd}" -t iupdate
 		return
 	fi
-	eix --is-current || {
+	eix-header -qc || {
 		einfo "`gettext 'eix-cache format has changed.'`"
 		MyVarCommand "${updatecmd}" -t iupdate
 	}

@@ -30,8 +30,7 @@
 
 .B eix-functions.sh
 
-.B eix-overlay [B<-s> I<Trenner>] [B<-f> I<Datei>]
-[B<-l> I<Overlay>] [B<-p> I<Overlay>] [B<-o> I<Overlayl] ...
+.B eix-header
 
 .B eix-drop-permissions
 [B<-->] [I<Befehl zum Ausführen>]
@@ -63,14 +62,14 @@ B<eix-test-obsolete> ist ein Skript, das B<eix> mehrmals aufruft, um die Ausgabe
 
 B<eix-remote> kann eine Eix-Datenbank von einem externen Server syncen und ihn zum
 lokalen Cache hinzufügen und wieder entfernen.
-Per default benutzt es ein separates Datenbankfile.
-Bei diesem Default sollten Sie regelmäig B<eix-remote add1> und/oder <eix-remote add2> nach <eix-update>
+Falls nicht anders konfiguriert, benutzt es ein separates Datenbankfile.
+Bei dieser Vorgabe sollten Sie regelmäig B<eix-remote add1> und/oder <eix-remote add2> nach <eix-update>
 aufrufen, so dass das separate Cachefile mit der Hauptdatenbank synchron ist.
 (Beispielsweise ist es in diesem Fall sinnvoll, B<@@eix-remote add1> und/oder B<@@eix-remote add1> zu
 I<@SYSCONFDIR@/eix-sync.conf> hinzuzufügen.)
 Falls das selbe Datenbankfile benutzt wird, können dennoch solche Remote-Daten über
 B<eix-update>-Aufrufe hinweg erhalten werden, indem man B<KEEP_VIRTUALS=true> in I<@SYSCONFDIR@/eixrc> setzt.
-Per Default wird dieses Skript seine Rechte durch B<eix-drop-permissions> fallenlassen.
+Per Standardeinstellung wird dieses Skript seine Rechte durch B<eix-drop-permissions> fallenlassen.
 Mehr zu B<eix-remote> erfahren Sie durch den Aufruf B<eix-remote -h>.
 
 B<eix-installed-after> ist ein einfaches Skript (mit vielen Kommentaren),
@@ -90,10 +89,10 @@ benutzt werden und die in ähnlichen Skripten benutzt werden können.
 Beachten Sie, dass unmittelbar nach dem Sourcen von B<eix-functions.sh> normalerweise
 zur Initialisierung B<ReadFunctions> aufgerufen werden muss.
 
-B<eix-overlay> ist ein Hilfsprogramm für B<eix-remote> (und möglicherweise eigene Skripte).
-Es gibt Label, Pfad, oder beides vom angegebenen I<Overlay> aus der eix-Datenbank I<Datei>
-aus, wobei I<Trenner> an jede Ausgabe angehängt wird.
-Wenn kein I<Trenner> angegeben ist, wird statt dessen das Nullzeichen benutzt.
+B<eix-header> ist ein Hilfsprogramm für B<eix-remote> (und möglicherweise eigene Skripte).
+Es kann Datenbankdatei-Köpfe überprüfen und Overlay-Pfade oder -Labels aus diesen Dateien
+finden oder ausgeben.
+Eine detailliertere Beschreibung erhalten Sie mit B<eix-header -h>.
 
 B<eix-drop-permissions> ist ein Hilfsprogramm für B<eix-remote> (und möglicherweise eigene Skripte).
 Es führt das im Argument angegebene Kommando mit eingeschränkten Rechten aus.
@@ -218,10 +217,10 @@ kombiniert wird, und durch Setzen von B<COUNT_ONLY_PRINTED=false>.
 Siehe auch B<NOFOUND_STATUS> und B<MOREFOUND_STATUS>
 .TP
 .B --dump
-Ausgabe der aktuellen eixrc-Variablen und ihre Defaults als Kommentar; dann Ende.
+Ausgabe der aktuellen eixrc-Variablen und ihrer Vorgabewerte als Kommentar; dann Ende.
 .TP
 .B --dump-defaults
-Ausgabe der Default-eixrc-Variablen und ihrer aktuellen Werte als Kommentar; dann Ende.
+Ausgabe der Vorgabewerte der eixrc-Variablen und ihrer aktuellen Werte als Kommentar; dann Ende.
 .TP
 .BI "--print " VAR
 Ausgabe der spezifizierten Variablen I<VAR> aus eixrc oder der Portage-Konfiguration; dann Ende.
@@ -255,7 +254,7 @@ Sie sind einmalig und ausschließend, d.h. eix gibt nur die entsprechenden Daten
 .TP
 .BR --ansi " (auch für eix-diff)"
 Legt die 256-Farbpalette von Todd Larason fest (dem Author des 256-Farbsupports für xterm).
-Benutzen Sie diese Option, wenn ein Tool die Default-Palette umdefiniert hat.
+Benutzen Sie diese Option, wenn ein Tool die normalerweise eingestellte Palette umdefiniert hat.
 .TP
 .BR "--256" ", " "--256f" ", " "--256f0" ", " "--256f1" ", " "256b"
 Print the 256 color palettes (assuming it follows ansi color scheme) and exit.
@@ -291,11 +290,6 @@ Gibt die world sets aus.
 Gibt alle Pfade des aktuellen Profils aus.
 An jeden Pfad wird B<PRINT_APPEND> angehängt.
 Falls B<PRINT_APPEND> leer ist, wird das Nullzeichen angehängt.
-.TP
-.B --is-current
-Diese Option überprüft nur, ob B<@EIX_CACHEFILE@> vorhanden und zulässig ist
-(d.h. in einer Version, die von B<eix> gelesen werden kann).
-In diesem Fall kehrt eix erfolgreich zurück, ohne irgendetwas auszugeben.
 .\" }}}
 
 .\" {{{ -------- Ausgabe-Optionen
@@ -385,13 +379,13 @@ Diese Dateien (und wie ihre Namen geändert werden können) wird später beschri
 .BR -R ", " --remote
 Benutzt den Wert von EIX_REMOTE1 als Namen für das Cachefile.
 Diese Option sollten Sie benutzen, wenn Sie das Ergebnis von <eix-remote> sehen wollen.
-Sie können diese Option per Default aktivieren, indem Sie B<REMOTE_DEFAULT=1> setzen.
+Sie können diese Option als Standardeinstellung aktivieren, indem Sie B<REMOTE_DEFAULT=1> setzen.
 
 .TP
 .BR -Z ", " --remote2
 Benutzt den Wert von EIX_REMOTE2 als Namen für das Cachefile.
 Diese Option sollten Sie benutzen, wenn Sie das Ergebnis von <eix-remote> sehen wollen.
-Sie können diese Option per Default aktivieren, indem Sie B<REMOTE_DEFAULT=2> setzen.
+Sie können diese Option als Standardeinstellung aktivieren, indem Sie B<REMOTE_DEFAULT=2> setzen.
 
 .TP
 .BI "--cache-file " FILE
@@ -430,8 +424,8 @@ Insbesondere liefert B<X -o Y -a Z> keinen Treffer, falls B<Z> keinen Treffer li
 
 3. B<--not>|B<-!> negiert nur das Ergebnis des unmittelbar folgenden KLAMMER_ODER_TEST.
 
-4. Falls SUCHMUSTER weggelassen wird, ist der Default ein leeres SUCHMUSTER.
-Beispielsweise wird B<eix> mit den Default-Settings ohne Argument alle Pakete
+4. Falls SUCHMUSTER weggelassen wird, ist die Vorgabe ein leeres SUCHMUSTER.
+Beispielsweise wird B<eix> mit den Standardeinstellungen ohne Argument alle Pakete
 ausgeben, da der leere String in jedem Namen enthalten ist.
 Andererseits sollte B<eix -e> (normalerweise) nichts ausgeben,
 da kein Paketname (I<exakt>) leer sein sollte.
@@ -599,7 +593,7 @@ Falls diese Option wiederholt wird, werden die zusätzlichen I<overlay>-Argument
 zu einer Liste zulässiger Overlays zusammengefasst.
 
 I<overlay> kann entweder ein Wildcard-Muster oder eine Zahl sein.
-Beachten Sie, dass sie mit der Default-Einstellung B<OVERLAYS_LIST=all-used-renumbered>
+Beachten Sie, dass sie mit der Standardeinstellung B<OVERLAYS_LIST=all-used-renumbered>
 nicht die korrekten Overlaynummern sehen; für eine Liste der korrekten Overlaynummern
 können Sie beispielsweise den Aufruf
 
@@ -631,7 +625,7 @@ sondern nur in Overlays liegen.
 .BR -J ", " --installed-overlay
 Findet nur Pakete, die aus einem Overlay installiert wurden.
 Für vollkommen zuverlässige Ergebnisse sollte B<CHECK_INSTALLED_OVERLAYS=true>
-gesetzt werden (was nicht der Default ist, weil es Tests massiv verlangsamt).
+gesetzt werden (was nicht die Standardeinstellung ist, weil es Tests massiv verlangsamt).
 Siehe B<CHECK_INSTALLED_OVERLAYS> für Details.
 .TP
 .BI "--installed-from-overlay " overlay
@@ -718,7 +712,7 @@ installierten Versionen existieren (falls B<TEST_FOR_NONEXISTENT> gesetzt ist).
 Was als redundant gilt, wird durch die unten beschriebenen <REDUNDANT_IF>-Variablen festgelegt,
 und was als nicht-existent betrachtet wird, wird durch die B<NONEXISTENT_IF>-Variablen festgelegt.
 Der Test für Versionen von obsoleten Overlays funktioniert nur dann zuverlässig,
-wenn B<CHECK_INSTALLED_OVERLAYS=true> gesetzt ist (was nicht der Default ist,
+wenn B<CHECK_INSTALLED_OVERLAYS=true> gesetzt ist (was nicht die Standardeinstellung ist,
 weil es Tests dramatisch verlangsamt).
 Siehe B<CHECK_INSTALLED_OVERLAYS> für Details.
 
@@ -773,10 +767,10 @@ Benutzen Sie diese Option anstelle von B<--pipe> für ein zuverlässiges Ergebni
 Die nachfolgenden Optionen legen die Felder fest, auf die SUCHMUSTER passen soll.
 Mehrere Felder können in einem Ausdruck festgelegt werden (der Ausdruck passt,
 falls das Suchmuster auf mindestens eines der spezifierten Felder passt).
-Falls keine diese Optionen angegeben wird, wird der Default anhand einer
+Falls keine diese Optionen angegeben wird, wird die Vorgabeeinstellung anhand einer
 Heuristik gewählt, die von der Form von SUCHMUSTER abhängt.
-In den meisten Fällen wird das Default-Feld B<--name> sein, aber wenn das
-SUCHMUSTER "speziell" aussieht, etwa "cat/n" oder "@set", so wird das Default-Feld
+In den meisten Fällen wird das Vorgabefeld B<--name> sein, aber wenn das
+SUCHMUSTER "speziell" aussieht, etwa "cat/n" oder "@set", so wird das Vorgabefeld
 auf B<--category-name>, B<--set>, B<--description>, B<--homepage> oder B<--license> geändert.
 Details der Heuristik werden in der später erklärten B<DEFAULT_MATCH_FIELD>-Konfigurationsvariable festgelegt.
 .TP
@@ -870,11 +864,11 @@ die es noch in der Datenbank gibt.
 Die folgenden Optionen legen den Algorithmus fest, nach dem das Testfeld gegen das SUCHMUSTER
 getestet werden soll.
 Nur ein Algorithmus kann pro AUSDRUCK gewählt werden.
-Falls keine dieser Optionen benutzt wird, wird der Default anhand einer
+Falls keine dieser Optionen benutzt wird, wird die Vorgabe anhand einer
 Heuristik ausgewählt, der von der Gestelt der Suchmusters abhängt.
-In den meisten Fällen, wird dieser Default B<--regex> sein, außer wenn das
+In den meisten Fällen wird diese Vorgabe B<--regex> sein, außer wenn das
 Suchmuster aussieht wie "typischerweise" ein glob-Muster or ein Teilstring
-(in diesem Fall wird der entsprechende Algorithmus der Default), oder falls
+(in diesem Fall wird der entsprechende Algorithmus die Vorgabe), oder falls
 das Suchmuster einen speziellen Inhalt wie "@set" oder "cat/n" hat, in welchem
 Fall die meisten Benutzer erwarten, dass gegen den gesamten String bzw, gegen
 den Stringanfang getestet wird.
@@ -1005,7 +999,7 @@ in Klammern geschrieben.
 Der bevorzugte Modus wird in der Variable B<COLON_SLOTS> festgelegt.
 
 Falls B<PROPERTIES> oder B<RESTRICT> im Ebuild gesetzt sind, wird dies
-per Default im Versionsstring angezeigt; Details können durch Setzen
+bei Standardeinstellung im Versionsstring angezeigt; Details können durch Setzen
 von Konfigurationsvariablen beeinflusst werden.
 
 Einige Beispiele:
@@ -1032,7 +1026,7 @@ Dies ist Version 5.0-r3, die in Slot 5.0R3 installiert wird, und die RESTRICT="f
 Wer Gentoo für mehr als eine Woche benutzt hat, wird vermutlich sofort
 das Format für die Maskierung von Versionen verstehen.
 Nichtsdestotrotz wird es hier anhand einiger Beispiele erklärt.
-Es wird natürlich nur die Default-Ausgabe beschrieben; Details können
+Es wird natürlich nur die Ausgabe bei Standardeinstellungen beschrieben; Details können
 durch Konfigurationsvariablen beeinflusst werden.
 .TP
 .B [P]2.95.3-r8
@@ -1088,11 +1082,11 @@ Dies schließlich ist eine stabile Version (die auch ohne lokale Settings stabil
 .SS eix-diff
 Die Ausgabe von B<eix-diff> wird vollständig durch Konfigurations-Variablen kontrolliert
 (B<DIFF_FORMAT_NEW>, B<DIFF_FORMAT_DELETE>, B<DIFF_FORMAT_CHANGED> und eine Menge
-Variablen die - zumindest im Default-Setting - durch diese über verzögerte Ersetzung benutzt werden, s. unten).
-Die folggende Erklärung anhand von Beispielen kann daher nur das Verhalten
-der Default-Settings der aktuellen eix-Versin beschreiben.
-Obwohl dieses Default-Format lange Zeit unverändert blieb, wird keine
-Stabilität der Defaults für zukünftige eix-Versionen garantiert.
+Variablen die - zumindest in der Standardeinstellung - durch diese über verzögerte Ersetzung benutzt werden, s. unten).
+Die folgende Erklärung anhand von Beispielen kann daher nur das Verhalten
+der Standardeinstellung der aktuellen eix-Versin beschreiben.
+Obwohl dieses Standardeinstellung lange Zeit unverändert blieb, wird keine
+Stabilität der Standardeinstellungen für zukünftige eix-Versionen garantiert.
 .TP
 .B "[N]   >> foo/bar (~1.0): description of foo/bar"
 Das Paket B<foo/bar> ist neu im Baum.
@@ -1145,7 +1139,7 @@ Tatsächlich wäre der output
 konsistenter, weil zusätzlich ein Slot eine höhere stabile Version erhielt
 und die höchste stabile Version eines anderen Slots entfernt wurde.
 Aber weil dies tyopischerweise von "B<U>" bzw. "B<D>" impliziert ist,
-war es bei den Default-Settings eine Design-Entscheidung, dass bei der
+war es bei den Standardeinstellungen eine Design-Entscheidung, dass bei der
 Ausgabe von B<U> oder B<D> die Ausgabe der Symbole
 .B <
 bzw.
@@ -1188,7 +1182,7 @@ I<RHS> ist entweder eine Eigenschaft (falls in <> eingeschlossen), eine variable
 I<EIGENSCHAFT> kann entweder eine der unten spezifierten Paketeigenschaften sein
 oder ein Variablenzugriff.
 Ein Variablenzugriff hat die Gestalt B<$>I<VARIABLE>.
-I<VARIABLE> muss nicht initialisiert werden; der Default-Inhalt ist der Leerstring.
+I<VARIABLE> muss nicht initialisiert werden; der Vorgabewert ist der Leerstring.
 
 Um I<VARIABLE> zur Laufzeit zu ändern, dient diese Syntax:
 .TP
@@ -1286,7 +1280,7 @@ Für B<markedversions> schlägt dieser Test im Zusammenhang mit <installedversio
 .BR ishardmasked ", " washardmasked ", " isprofilemasked ", " wasprofilemasked ", " ismasked ", " wasmasked ", " isstable ", " wasstable ", " isunstable ", " wasunstable ", " isalienstable ", " wasalienstable ", " isalienunstable ", " wasalienunstable ", " ismissingkeyword ", " wasmissingkeyword ", " isminuskeyword ", " wasminuskeyword ", " isminusunstable ", " wasminusunstable  ", " isminusasterisk ", " wasminusasterisk
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 Expandiert zu 1 oder dem Leerstring, je nachdem ob die aktuelle Version (gemäß der
-lokelen bzw. Default-Konfiguration) die entsprechend Stabilitätseigenschaft hat.
+lokelen bzw. Standard-Konfiguration) die entsprechend Stabilitätseigenschaft hat.
 .TP
 .B isbinary
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
@@ -1535,12 +1529,12 @@ Die Zeilen haben die folgende Gestalt und werden in der gegebenen Reihenfolge
 vor B<emerge --sync> ausgeführt.
 
 Beachten Sie, dass der Inhalt der Variablen B<EIX_SYNC_CONF> an diese Datei angehängt wird.
-Per Default expandiert die Variable zu B<EIX_SYNC_OPTS>, so dass effektiv auch diese Variable an die Datei angehängt wird.
-Beide Variablen können benutzt werden, ob die Defaults aus I<@SYSCONFDIR@/eix-sync.conf> zu modifizieren.
+Per Vorgabe expandiert die Variable zu B<EIX_SYNC_OPTS>, so dass effektiv auch diese Variable an die Datei angehängt wird.
+Beide Variablen können benutzt werden, um die Einstellungen aus I<@SYSCONFDIR@/eix-sync.conf> zu modifizieren.
 Machen Sie sich bitte bewusst, dass der Code dieser Zeilen bei B<eix-sync> innerhalb einer Shell mit "eval" ausgeführt wird, also Vorsicht bzgl. Sicherheitsproblemen!
 .TP
 .I Option(en)
-Die I<Option(en)> werden als Default für eix-sync ausgeführt (vor allen anderen Optionen).
+Die I<Option(en)> werden als Standardeinstellung für eix-sync ausgeführt (vor allen anderen Optionen).
 Wie üblich muss I<Option(en)> mit "B<->" beginnen. I<option(en)> wird von der Shell mit "eval" ermittelt:
 Daher also Vorsicht bzgl. Sicherheit! Quoten von Shell-Commando-Trennern ist ebenfalls geboten.
 .TP
@@ -1595,7 +1589,7 @@ aktuellen B<SSH_AUTH_SOCK> und B<SSH_AGENT_PID> auszugeben.
 Es ist ebenfalls zulässig, dass die Ausgabe von I<Kommando> ein Kommando ist,
 das die Variablen B<PORTAGE_RSYNC_OPTS>, B<PORTAGE_RSYNC_EXTRA_OPTS>,
 B<PORTDIR>, B<PORTDIR_SERVER>, B<PORTDIR_CLIENT>, B<SERVER> oder B<CLIENT> modifiziert.
-Diese variables werden mit ihrem Default gefüllt, wenn I<Kommando> aufgerufen wird
+Diese variables werden mit Standardvorgaben gefüllt, wenn I<Kommando> aufgerufen wird
 und werden später im B<rsync> Kommando mit ihrer offensichtlichen Bedeutung benutzt.
 .TP
 .BI @ Kommando
@@ -1641,8 +1635,8 @@ Wie oben, setzt aber nur die Statuszeile.
 Wie oben, gibt aber nur die Information für den Benutzer aus.
 .TP
 .B @@eix-remote add1
-Diese Zeile sollte bei Benutzung des Defaults (nichtleeres B<EIX_REMOTE1>)
-im File stehen, so dass die B<EIX_REMOTE1> Datenbank mit der Hauptdatenbank von
+Diese Zeile sollte bei Benutzung des Standardeinstellung (nichtleeres B<EIX_REMOTE1>)
+in der Datei stehen, so dass die B<EIX_REMOTE1>-Datenbank mit der Hauptdatenbank von
 eix am Ende von B<eix-sync> synchronisiert wird.
 .TP
 .B @eix-remote fetch1
@@ -1761,7 +1755,7 @@ Dies muss benutzt werden, falls B<%{> im Variablentext stehen soll
 Falls die verzögerte Referenz eine Variablennamen benutzt, der mit B<*> beginnt,
 so wird dieses B<*> durch B<EIX_>, B<DIFF_>, B<UPDATE_> oder B<DROP_> ersetzt,
 je nachdem ob es von B<eix>/B<eix-diff>/B<eix-update> bzw. B<eix-drop-permissions> benutzt wird.
-Auf diese Weise kann man verschiedene Defaults für diese Programme festlegen.
+Auf diese Weise kann man verschiedene Standardeinstellungen für diese Programme festlegen.
 
 Beispielsweise wird die verzögerte Referenz B<%{*>I<VARIABLE>B<}> die Expansion
 der Variablen B<EIX_>I<VARIABLE>, B<DIFF_>I<VARIABLE>, B<UPDATE_>I<VARIABLE>
@@ -1772,7 +1766,7 @@ und sie können auch mit einem I<APPENDIX> kombiniert werden.
 
 Ein praktisches Beispiel: Falls B<EIX_USER> den Wert "nobody" haben soll,
 falls es von B<eix-drop-permissions> (also etwa durch B<eix-remote>)
-aufgerufen wird, aber den Defaultwert "portage" in allen anderen Fällen,
+aufgerufen wird, aber den Vorgabewert "portage" in allen anderen Fällen,
 kann man folgendes Setzen:
 
 B<EIX_USER="%{*EIX_USER}">
@@ -1890,7 +1884,7 @@ Falls sietrotzdem ausgegeben werden sollen, etwa für Kommentare oder leichtere 
 so können Referenzen auf sie in der B<DUMMY>-Variable gespeichert werden.
 
 Die folgenden Variablenliste enthält nicht die Variablen, die in verspäteter Ersetzung benutzt werden.
-Um eine Beschreibung der Letzteren (und ihrer Defaults) zu erhalten, benutzen Sie bitte B<eix --dump>.
+Um eine Beschreibung der Letzteren (und ihrer Vorgabewerte) zu erhalten, benutzen Sie bitte B<eix --dump>.
 .TP
 .B DUMMY " " (string)
 Diese Variable hat keinen direkten Einfluss auf das Programm, aber ihr Inhalt
@@ -1941,7 +1935,7 @@ Beachten Sie, dass noch keine verzögerte Ersetzung stattfindet, wenn diese Vari
 Dies ist i.W. dazu gedacht in der Environment gesetzt zu werden, falls eine chroot benutzt wird:
 Es wird dem Pfad vorangestellt, in dem I<@SYSCONFDIR@/eixrc> gesucht wird.
 Falls es nicht gesetzt ist, wird der Wert der Environment-Variable B<PORTAGE_CONFIGROOT> vorangestellt.
-Der Defaultwert (typischerweise leer) dieser Variable wird benutzt, falls keines
+Der Vorgabewert (typischerweise leer) dieser Variable wird benutzt, falls keines
 von beiden in der Environment gesetzt ist.
 
 Darüberhinaus wird dieser Variable in der verzögerten Ersetzung benutzt,
@@ -1950,13 +1944,13 @@ mit B<eix --dump> erfährt man im Detail, in welchen anderen Variablen sie vorko
 
 .TP
 .BR EPREFIX " " (prefix-string)
-Der Defaultwert dieser Variable kommt von EIX_PREFIX, wobei ein
-configure-spezifischer Default (für prefix-portage) angehängt wird.
+Der Vorgabewert dieser Variable kommt von EIX_PREFIX, wobei ein
+zur Compilezeit angegebener Vorgabewert (für prefix-portage) angehängt wird.
 Diese Variable hat alleine keine Bedeutung, aber sie wird
 mit verzögerte Ersetzung benutzt, um den Präfix einer Reihe von Pfaden
-in den folgen Variablen festzulegen (wenn ihr Default nicht geändert wird);
+in den folgen Variablen festzulegen (wenn ihr Vorgabewert nicht geändert wird);
 mit B<eix --dump> erfährt man im Detail, in welchen anderen Variablen sie vorkommt.
-Im derzeitigne Default beeinflusst sie alle Pfade mit den folgenden Ausnahmen:
+In den derzeitigen Vorgabewerten beeinflusst sie alle Pfade mit den folgenden Ausnahmen:
 
 .RS
 .RS
@@ -2021,7 +2015,7 @@ in dem I<@SYSCONFDIR@/eixrc> gesucht wird.
 Falls diese Datei existiert, so wird sie anstelle von
 B<%{PORTAGE_CONFIGROOT}/etc/make.globals>
 benutzt.
-Der Defaultwert entspricht dem Verhalten von >=portage-2.2*
+Der Vorgabewert entspricht dem Verhalten von >=portage-2.2*
 
 .TP
 .BR EPREFIX_SOURCE " " (prefix-string)
@@ -2069,11 +2063,11 @@ normalerweise B<%{EPREFIX}@EIX_PREVIOUS@>
 .BR EIX_REMOTE1 ", " EIX_REMOTE1 " " (string)
 Die eix-Cachedatei, die bei B<-R> bzw. B<-Z> benutzt wird.
 Falls der String nichtleer ist, benutzt eix-remote diese Datanbank zur Ausgabe.
-Der Default-Wert ist B<%{EPREFIX}@EIX_REMOTECACHEFILE1@> bzw. B<%{EPREFIX}@EIX_REMOTECACHEFILE2@>
+Der Vorgabewert ist B<%{EPREFIX}@EIX_REMOTECACHEFILE1@> bzw. B<%{EPREFIX}@EIX_REMOTECACHEFILE2@>
 
 .TP
 .BR REMOTE_DEFAULT " " (integer)
-Der Wert 1, 2 oder 0 bedeutet, dass per Default die Option
+Der Wert 1, 2 oder 0 bedeutet, dass als Vorgabe die Option
 B<-R> bzw. B<-Z> bzw. weder noch aktiviert ist.
 
 .TP
@@ -2107,7 +2101,7 @@ Pfade zu den Overlays in umgekehrter Ordnung durchläuft
 in B<EIX_LOCAL_SETS> spätere überschreiben, während man für B<PORTDIR_OVERLAY>
 das Umgekehrte erwartet).
 
-Der Default dieser Variable enthält B</etc/portage/sets>, B</etc/portage/sets.eix>, B<sets>
+Die Vorgabe dieser Variable enthält B</etc/portage/sets>, B</etc/portage/sets.eix>, B<sets>
 (d.h. ungefähr B<${PORTDIR}/sets> nach dem vorherigen Absatz),
 B<*/sets> (d.h. ungefähr B<${PORTIDR_OVERLAY}/sets> nach dem vorherigen Absatz)
 sowie B<%{EIX_LOCAL_SETS_ADD}>.
@@ -2168,7 +2162,7 @@ Werte extrem sicherheitsrelevant sind!
 
 .TP
 .BR DEFAULT_ARCH " " (string)
-Der Default-Wert für ARCH, falls keiner im Profile spezifiert ist.
+Der Vorgabewert für ARCH, falls keiner im Profile spezifiert ist.
 
 .TP
 .BR NOFOUND_STATUS " " (integer)
@@ -2182,11 +2176,11 @@ Der Wert von B<COUNT_ONLY_PRINTED> wird dabei berücksichtigt.
 
 .TP
 .BR QUICKMODE " " (true / false)
-Bestimmt, ob für eix und eix-diff die Option B<--quick> der Default ist.
+Bestimmt, ob für eix und eix-diff die Option B<--quick> die Vorgabe ist.
 
 .TP
 .BR CAREMODE " " (true / false)
-Bestimmt, ob für eix und eix-diff die Option B<--care> der Default ist.
+Bestimmt, ob für eix und eix-diff die Option B<--care> die Vorgabe ist.
 
 .TP
 .BR USE_BUILD_TIME " " (true / false)
@@ -2207,7 +2201,7 @@ Geschwindigkeit wichtiger ist als eine verlässliche BUILD_TIME-Information.
 
 .TP
 .BR QUIETMODE " " (true / false)
-Bestimmt, ob für eix und eix-diff die Option B<--quiet> der Default ist.
+Bestimmt, ob für eix und eix-diff die Option B<--quiet> die Vorgabe ist.
 
 .TP
 .BR PRINT_APPEND " " (string)
@@ -2226,7 +2220,7 @@ B<VAR=`PRINT_APPEND=x eix --print VAR` ; VAR=${VAR%x}>
 
 .TP
 .BR DEFAULT_FORMAT " " (normal / compact / verbose)
-Legt fest, ob B<--compact> oder B<--verbose> per Default gewählt wird.
+Legt fest, ob B<--compact> oder B<--verbose> als Vorgabe gewählt wird.
 
 .TP
 .BR DIFF_ONLY_INSTALLED " " (true / false)
@@ -2281,16 +2275,16 @@ Im positiven Fall verdoppelt sich ungefähr der Disk- und Speicherbedarf von eix
 .BR FORMAT ", " FORMAT_COMPACT ", " FORMAT_VERBOSE " " (string)
 Das normale, kompakte bzw. ausführliche Layout für die Ausgabe von B<eix>.
 Siehe B<FORMATSTRING>.
-Seit eix-0.13.4 expandieren diese Variablen per Default über verzögerte Ersetzung
+Seit eix-0.13.4 expandieren diese Variablen als Vorgabe über verzögerte Ersetzung
 zu den Variablen B<FORMAT_ALL>, B<FORMAT_ALL_COMPACT> bzw. B<FORMAT_ALL_VERBOSE>.
 Der Zweck dieser einfachen Definition ist, dass es leicht ist, auf die
-Default-Definition mit verzögerter Ersetzung zu verweisen,
+Vorgabedefinitionen mit verzögerter Ersetzung zu verweisen,
 wenn die Definition von B<FORMAT> geändert werden soll.
 
 .TP
 .B FORMAT_TEST_OBSOLETE (string)
 Das Format, das vom Script B<eix-test-obsolete> benutzt wird;
-der Defaultwert ist die verzögerte Ersetzung von B<FORMAT_ALL_COMPACT>.
+der Vorgabewert ist die verzögerte Ersetzung von B<FORMAT_ALL_COMPACT>.
 Es ist nicht erlaubt here verzögerte Ersetzung von B<FORMAT> zu benutzen;
 falls dies gewünscht ist, sollte man statt dessen die verzögerte Ersetzung
 von B<FORMAT_ALL> benutzen.
@@ -2301,7 +2295,7 @@ Diese Variablen werden nur von B<eix-diff> benutzt.
 Sie beschreiben das Format für Pakete die neu sind, entfernt wurden, oder für
 die sich die höchste stabile Version geändert hat.
 Siehe B<FORMATSTRING>.
-Seit eix-0.13.4 expandieren diese Variablen per Default über verzögerte Ersetzung
+Seit eix-0.13.4 expandieren diese Variablen als Vorgabe über verzögerte Ersetzung
 zu den Variablen B<DIFF_FORMAT_ALL_NEW>, B<DIFF_FORMAT_ALL_DELETE> bzw. B<DIFF_FORMAT_ALL_CHANGED>.
 
 .TP
@@ -2362,11 +2356,11 @@ Ausgabe der Prozent-Fortschrittsanzeige, selbst wenn stdout kein Terminal ist.
 
 .TP
 .BR STYLE_VERSION_SORTED " " (true / false)
-Legt fest, ob B<--versionsort> per Default aktiv ist.
+Legt fest, ob B<--versionsort> als Vorgabe aktiv ist.
 
 .TP
 .BR STYLE_VERSION_LINES " " (true / false)
-Legt fest, ob B<--versionlines> per Default aktiv ist.
+Legt fest, ob B<--versionlines> als Vorgabe aktiv ist.
 
 .TP
 .BR DUP_PACKAGES_ONLY_OVERLAYS " " (true / false)
@@ -2399,7 +2393,7 @@ Der Wert wird folgendermaßen interpretiert:
 .TP
 .BR all-if-used / if-used / if
 Listet alle Overlays, wenn zumindest einer benutzt wurde.
-Dies war des Default-Verhalten vor eix-0.6.0.
+Dies war des Standardverhalten vor eix-0.6.0.
 .TP
 .BR used-renumbered / renumber / renumbered / number
 Listet nur die Overlay, die tatsächlich benutzt wurden, wobei die
@@ -2452,17 +2446,17 @@ bzw. B<COLORSCHEME3> statt B<COLORSCHEME0> benutzt,
 wobei die größte passende Zahl Vorrang hat.
 
 Natürlich steht es Ihnen frei, andere Bedeutungen zuzuweisen, aber die Absicht der
-Defaults ist, dass ein Nicht-passendes Terminal 8/16 Farben hat, B<TERM_ALT1> die 256-farbigen
+Vorgaben ist, dass ein Nicht-passendes Terminal 8/16 Farben hat, B<TERM_ALT1> die 256-farbigen
 Terminals spezifiziert, B<TERM_ALT2> die 88-farbigen Terminals, und B<TERM_ALT3> für den
 Benutzer frei bleibt (so dass damit alles andere überschrieben werden kann).
 
-Der Defaultersetzung von B<TERM_ALT1> und B<TERM_ALT2> berücksichtigt
+Die Vorgabeersetzung von B<TERM_ALT1> und B<TERM_ALT2> berücksichtigt
 B<TERM_ALT1_ADD> bzw. B<TERM_ALT2_ADD> durch verzögerte Ersetzung.
-Insbesondere können Sie eine Erweiterung der Defaultwerte dadurch erreichen,
+Insbesondere können Sie eine Erweiterung der Vorgabewerte dadurch erreichen,
 dass Sie B<TERM_ALT?_ADD> entsprechend definieren.
 
 B<BEISPIEL 1:> Falls auf allen Terminals 8/16 Farben erzwungen werden sollen, können
-Sie B<TERM_ALT3=.> setzen um für alle Terminals den B<COLORSCHEME3>-Default
+Sie B<TERM_ALT3=.> setzen um für alle Terminals die B<COLORSCHEME3>-Vorgabe
 zu wählen (der B<COLORSCHEME0> ist, s. unten).
 Benutzer von Ethan Schoonovers B<solarized> Farbschema sollten dies nur dann tun,
 wenn Sie das original 16-farbige Farbscheme von Solarized erzwingen wollen.
@@ -2470,13 +2464,13 @@ In jedem Fall hat hat das Setzen von B<SOLARIZED> (getrennt beschrieben) Auswirk
 
 B<BEISPIEL 2:> Wenn Sie eix mitteilen wollen, dass TERM=rxvt ein 256-Farben Terminal ist,
 setzen Sie B<TERM_ALT1_ADD=rxvt>.
-(Dies ist nicht mehr der Default, weil es rxvt-Versionen gibt, die nur 88 Farben unterstützen
+(Dies ist nicht mehr die Standardeinstellung, weil es rxvt-Versionen gibt, die nur 88 Farben unterstützen
 und TERM=rxvt setzen; daher würde es kaputte Farben geben, wenn 256 Farben angenommen würden).
 .TP
 .BR SOLARIZED " " (true / light / dark / false)
-Diese Variable wird nur bei verzögerter Ersetzung in den Defaultwerten der B<COLORSCHEME?>-Variablen benutzt:
+Diese Variable wird nur bei verzögerter Ersetzung in den Vorgabewerten der B<COLORSCHEME?>-Variablen benutzt:
 Wenn B<SOLARIZED> gesetzt ist (B<true>, B<light>, und B<dark> sind für eix derzeit äquivalent),
-wählt dieser Default ein Farbschema, das annimmt dass
+wählt diese Vorgabe ein Farbschema, das annimmt, dass
 der Terminaloutput Ethan Schoonovers Solarized Farbscheme benutzt (helles oder dunkles Schema).
 Es gibt sogar ein Solarized-Farbschema für 256 Farben: Wenn das Terminal es unterstützt,
 werden neben den 16 Farben von Solarized noch weitere benutzt.
@@ -2496,14 +2490,14 @@ Der Wert 0 bedeutet, dass der erste I<COLORSTRING> von Farbspezifikationen benut
 für höhere Zahlen wird ein entsprechend späterer I<COLORSTRING> benutzt.
 Falls die Zahl zu hoch ist, wird der erste I<COLORSTRING> benutzt.
 
-Die Defaultwerte der B<COLORSCHEME?>-Variablen berücksichtigen den Wert der Variablen B<SOLARIZED>:
-Wenn B<SOLARIZED> gesetzt ist, dann wird per Default ein Farbschema benutzt, das auf
+Die Vorgabewerte der B<COLORSCHEME?>-Variablen berücksichtigen den Wert der Variablen B<SOLARIZED>:
+Wenn B<SOLARIZED> gesetzt ist, dann wird als Vorgabe ein Farbschema benutzt, das auf
 Ethan Schoonovers Solarized Systemfarben besiert (helles und dunkles Scheme werden beide unterstützt;
 in 256-farbigen Terminal werden zusätzliche Farben benutzt).
 Beachten Sie, dass dies nur dann eine vernünftige Ausgabe erzeugt,
 wenn das Terminal konfiguriert ist, die Solarized Systemfarben zu benutzen.
 
-Die Zahlen für die Default-Settings sind:
+Die Zahlen für die Standardeinstellungen sind:
 
 0: Dunkles Basisschema (für schwarzen Hintergrund)
 
@@ -2517,9 +2511,9 @@ Die Zahlen für die Default-Settings sind:
 
 5: Solarized original (16 Farben, light oder dark)
 
-Die Variablen B<BG0>, B<BG1>, B<BG2>, B<BG3> werden von den Defaults zur
+Die Variablen B<BG0>, B<BG1>, B<BG2>, B<BG3> werden von den Vorgaben zur
 verzögerten Ersetzung berücksichtigt, um die Hintergrundfarbe der entsprechenden Schemata zu erzwingen.
-Der Default der B<BG?>-Variablen ist "none": Keine Hintegrundfarbe soll erzwungen werden.
+Die Vorgabe der B<BG?>-Variablen ist "none": Keine Hintegrundfarbe soll erzwungen werden.
 Um die korrekten Hintergrundfarben zu erzwingen, setzen Sie die Variablen wie folgt:
 
 B<BG0=black>
@@ -2530,12 +2524,12 @@ B<BG2=white>
 
 B<BG3=white>
 
-(Je nach eix-Version sind einige davon sogar der Default).
+(Je nach eix-Version sind einige davon sogar die Standardeinstellung).
 Dies kann jedoch unerwünschte Effekte auf transparenten Terminals haben oder falls Scrollen notwendig ist, siehe den Abschnitt B<FEHLER>.
 Für diese Nebeneffekte kann es - je nach Geschmack und Terminal - nützlich/hinderlich sein, B<RESET_ALL_LINES=false> oder B<RESET_ALL_LINES=true> zu setzen
-(der Default kann von der eix-Version abhängen).
+(die Vorgabe kann von der eix-Version abhängen).
 
-Die Default-Werte der  B<COLORSCHEME?>-Variablen sind:
+Die Standardwerte der  B<COLORSCHEME?>-Variablen sind:
 
 B<COLORSCHEME0>: 0 2; dies ist für Terminals mit 8/16 Farben gedacht.
 
@@ -2543,7 +2537,7 @@ B<COLORSCHEME1>: 1 3; dies ist für 256-farbige Terminals gedacht.
 
 B<COLORSCHEME2>: wie B<COLORSCHEME0>, für 88-farbige Terminals gedacht.
 
-B<COLORSCHEME3>: wie B<COLORSCHEME0>, gedacht als vernünftiger Defaultwert für Änderungen durch den Benutzer.
+B<COLORSCHEME3>: wie B<COLORSCHEME0>, gedacht als vernünftiger Vorgabewert für Änderungen durch den Benutzer.
 
 .TP
 .BR DARK " " (true / false / auto)
@@ -2553,7 +2547,7 @@ Für den Wert B<auto> hängt das Ergebnis von einer Heuristik ab, die durch die 
 .TP
 .B TERM_DARK " " "(Stringliste)"
 Dies ist eine Liste von Paaren der Form I<regulärer Ausdruck 1> I<Dunkelmodus 1> I<regulärer Ausdruck 2> B<Dunkelmodus 2> ... wobei B<Dunkelmodus> jeweils einer der Werte B<true>, B<false>, B<true*>, B<false*> sein muss;
-optional kann ein Default-Wert für I<Dunkelmodus> als letzter Eintrag spezifiziert werden (wenn keiner spezifiziert ist, ist B<true*> der Default).
+optional kann ein Vorgabewert für I<Dunkelmodus> als letzter Eintrag spezifiziert werden (wenn keiner spezifiziert ist, ist B<true*> die Vorgabe).
 Wenn B<DARK=auto> ist, wird diese Liste benutzt, um den Dunkelmodus wie folgt festzulegen:
 
 Der erste B<reguläre Ausdruck> wird betrachtet, der auf B<TERM> passt, und der entsprechende I<Dunkelmodus> beschreibt, was zu tun ist
@@ -2573,11 +2567,11 @@ Beachten Sie, dass B<COLORFGBG> eine Environment-Variable ist, die von einigen T
 
 .TP
 .BR LEVENSHTEIN_DISTANCE " " (integer)
-Legt den Default Levenshtein-Abstand fest.
+Legt die Vorgabe für den Levenshtein-Abstand fest.
 
 .TP
 .BR UPDATE_VERBOSE " " (true / false)
-Legt fest, ob eix-update -v per Default an ist
+Legt fest, ob eix-update -v als Vorgabe an ist
 (Ausgabe der effektiven Cachemethode pro Version).
 
 .TP
@@ -2600,8 +2594,8 @@ dieser Overlays für die Cachemethoden eix und eix* hinzugefügt/entfernt werden
 .TP
 .BR CACHE_METHOD_PARSE " " (string)
 Dieser String wird an alle Cachemethoden angehängt, die parse/parse*/ebuild/ebuild* benutzen.
-Der Default enthält B<#metadata-md5#metadata-flat>.
-Außer für spezielle Setups ist dies meist erwünscht:
+Die Vorgabe enthält B<#metadata-md5#metadata-flat>.
+Außer für spezielle Situationen ist dies meist erwünscht:
 Es bedeutet, dass wenn aktuelle Metadaten (in einem metadata/*cache Unterverzeichnis)
 verfügbar sind, so werden diese anstelle des Parsens/Ausführens des ebuilds benutzt.
 
@@ -2612,8 +2606,8 @@ Näheres dazu findet sich im Abschnitt B<BESCHLEUNIGUNG>.
 .TP
 .BR PORTDIR_CACHE_METHOD ", " OVERLAY_CACHE_METHOD " " (string)
 Legt den Cachetyp für Portage und Overlays fest.
-Der Default für B<PORTDIR_CACHE_METHOD> ist to I<@PORTDIR_CACHE_METHOD@>,
-der für B<OVERLAY_CACHE_METHOD> ist I<parse|ebuild*>.
+Die Vorgabe für B<PORTDIR_CACHE_METHOD> ist I<@PORTDIR_CACHE_METHOD@>,
+die für B<OVERLAY_CACHE_METHOD> ist I<parse|ebuild*>.
 
 Aus Geschwindigkeitsgründen sind auch für Overlays grundsätzlich Metadaten vorzuziehen.
 Näheres dazu findet sich im Abschnitt B<BESCHLEUNIGUNG>.
@@ -2623,7 +2617,7 @@ Falls die .ebuilds der Overlays nicht vollständig vertrauenswürdig sind,
 sollte man B<OVERLAY_CACHE_METHOD=parse> benutzen.
 
 Man kann auch temporär B<OVERLAY_CACHE_METHOD=eix*::~> setzen:
-Wie später erklärt, wird eix dann per Default die Overlay-Daten aus der
+Wie später erklärt, wird eix dann als Vorgabe die Overlay-Daten aus der
 vorherigen eix Datenbank nehmen.
 
 Die möglichen Cachemethoden werden weiter unten beschrieben.
@@ -2634,7 +2628,7 @@ Dies kann über die folgenden Variablen geschehen:
 .BR CACHE_METHOD ", " OVERRIDE_CACHE_METHOD " " "(Stringliste)"
 Diese Variablen sind Stringlisten der Gestalt "I<Overlay> I<Methode> I<Overlay> I<Methode> ...".
 Die Cachmethode eines jeden I<Overlay> wird auf die darauffolgende I<Methode> gesetzt;
-dies überschreibt also den Default von B<OVERLAY_CACHE_METHOD>,
+dies überschreibt also die Vorgabe von B<OVERLAY_CACHE_METHOD>,
 (oder von B<PORTDIR_CACHE_METHOD> falls I<Overlay> das B<PORTDIR>-Verzeichnis ist).
 I<Overlay> wird als ein Wildcard-Muster interpretiert, das auf den I<Pfad>
 (mit aufgelösten symbolischen Links) des Overlays passen sollte.
@@ -2648,7 +2642,7 @@ dass das erste sofort angewandt wird, während das letzte auch benutzt werden ka
 um Änderungen zu überschreiben/erweitern, die implizit gemacht werden, wenn B<KEEP_VIRTUALS>
 gesetzt ist (siehe unten).
 
-Die Default-Definitionen von B<CACHE_METHOD> und B<OVERRIDE_CACHE_METHOD>
+Die Standarddefinitionen von B<CACHE_METHOD> und B<OVERRIDE_CACHE_METHOD>
 enthalten B<%{ADD_CACHE_METHOD}> bzw. B<%{ADD_OVERRIDE_CACHE_METHOD}>.
 Durch verspätete Ersetzung, die in einem anderen Abschnitt erklärt wird,
 bewirkt dies, dass die Variables B<ADD_CACHE_METHOD> bzw.
@@ -2707,7 +2701,7 @@ I<http://gentoo-wiki.com/TIP_speed_up_portage_with_sqlite>
 beschrieben, was möglicherweise noch über
 I<http://gentoo-wiki.info/TIP_speed_up_portage_with_sqlite>
 erreichbar ist).
-Beachte, dass im Gegensatz zur Default B<metadata> Cachemethode
+Beachten Sie, dass im Gegensatz zur Vorgabe-Cachemethode B<metadata>
 zunächst B<emerge --metadata> ausgeführt werden muss, bevor
 B<eix-update> diese Methode benutzen kann.
 
@@ -2732,22 +2726,22 @@ die nicht in einer profile/categories-Datei aufgelistet wurden.
 .BR flat " oder " flat:I<PFAD>
 Die ist ähnlich zu B<metadata-flat> mit dem Unterschied, dass die Metadaten
 im Verzeichnis I<PFAD>I<${PORTAGE_OR_OVERLAY_DIR}> erwartet werden.
-Falls I<PFAD> weggelassen wird, ist sein Default B</var/cache/edb/dep>.
+Falls I<PFAD> weggelassen wird, ist seine Vorgabe B</var/cache/edb/dep>.
 
 .RS
-Diese Methode kann mit <portage-2.1 und dem Default-Backend benutzt werden.
+Diese Methode kann mit <portage-2.1 und dessen Standard-Backend benutzt werden.
 .RE
 .TP
 .BR assign " oder " assign:I<PFAD>
 Dies ist analog zu B<flat> mit dem Unterchied, dass die Dateien
 im "assignment format" (TYP=Wert) erwartet werden.
-Dies ist bei portage-2.1 mit dem Default-Backend der Fall.
+Dies ist bei portage-2.1 mit dem Standard-Backend der Fall.
 
 .RS
-Wenn >=portage-2.1 mit dem Default-Backend benutzt wird, kann dies
+Wenn >=portage-2.1 mit dem Standard-Backend benutzt wird, kann dies
 die Cachemethode der Wahl sein, wenn man für eix-update keinen Zugang
 zum Portagebaum hat.
-Beachte, dass im Gegensatz zur Deult B<metadata-*>-Methode
+Beachten Sie, dass im Gegensatz zur Vorgabe-Methode B<metadata-*>
 zunächst B<emerge --metadata> ausgeführt werden muss, bevor
 man diese Methode mit B<eix-update> benutzen kann.
 In diesem Fall wird man vermutlich eine entsprechende Option für eix-sync angeben.
@@ -2792,7 +2786,7 @@ auf den neuesten Stand gebracht werden.
 für lokale Overlays kann man natürlich das obige Kommando manuell ausführen).
 
 Da dies normalerweise das Gewünschte ist, wird der String aus B<CACHE_METHOD_PARSE>
-per Default an die Cachemethode B<parse> angehängt.
+als Vorgabe an die Cachemethode B<parse> angehängt.
 
 Falls man natürlich im voraus weiß, dass die Metadaten des Overlays aktuell sind,
 ist es (etwas) shcneller, direkt die entsprechende Metadatenmethode (meist B<metadata-flat>)
@@ -2862,7 +2856,7 @@ Natürlich hat sie die selben sicherheitsprobleme wie B<ebuild>/B<ebuild*>.
 .TP
 .BR eix "  oder   "  eix:I<DATEI> "  oder  " eix:I<DATEI>:I<Overlay>
 Benutzt die Cachedatei I<DATEI>, die durch einen frühren Aufruf von B<eix-update> erzeugt wurde.
-Falls I<DATEI> leer ist oder weggelassen wird, ist der Default @EIX_CACHEFILE@.
+Falls I<DATEI> leer ist oder weggelassen wird, ist die Vorgabe @EIX_CACHEFILE@.
 
 .RS
 Wie für andere Cachemethoden auch werden nur diejenigen Kategorien
@@ -2901,8 +2895,8 @@ auf dem lokalen Rechner unbekannt oder nicht notwendigerweise aktuell ist.
 
 Dies wird für B<eix-remote> benutzt.
 
-Beachte insbesondere dass mit B<PORTDIR_CACHE_METHOD="eix*::~">
-die Overlaydaten per Default einfach von der vorherigen eix-Cachedatei
+Beachten Sie insbesondere, dass mit B<PORTDIR_CACHE_METHOD="eix*::~">
+die Overlaydaten als Vorgabe einfach von der vorherigen eix-Cachedatei
 "kopiert" werden.
 .RE
 .RE
@@ -2930,12 +2924,12 @@ Spätere Einträge überschreiben frühere: Der letzte passende Eintrag gewinnt.
 .TP
 .BR LOCAL_PORTAGE_CONFIG " " (true / false)
 Falls nicht gesetzt, werden /etc/portage und B<ACCEPT_KEYWORDS> (aus make.conf bzw. der Environment) ignoriert.
-Seit eix-0.7.9 wird empfohlen, den Wert dieser Variable auf dem Defaultwert "true" zu belassen,
+Seit eix-0.7.9 wird empfohlen, den Wert dieser Variable auf dem Vorgabewert "true" zu belassen,
 weil durch das Setzen auf "false" nur Informationen vor dem Benutzer versteckt werden.
 .TP
 .BR ALWAYS_ACCEPT_KEYWORDS " " (true / false)
 Entscheidet, ob B<ACCEPT_KEYWORDS> selbst ohne B<LOCAL_PORTAGE_CONFIG> benutzt wird,
-etwa um die "Default"-Stabilität zu berechnen.
+etwa um die "Standard"-Stabilität zu berechnen.
 .TP
 .BR UPGRADE_LOCAL_MODE " " (+ " oder " local / - " oder " non-local "/etwas anderes" )
 Falls diese Variable B<+> / B<-> ist, wird sich die B<--upgrade>-Option von eix
@@ -3020,13 +3014,13 @@ beispielsweise B<FORMAT=''> benutzt werden kann.
 .\" {{{ Default match fields and algorithms
 .BR DEFAULT_MATCH_FIELD " " "(Stringliste)"
 Dies ist eine Stringliste der Gestalt I<regulärer_Ausdruck>[\\n\\r\\t ]I<Operandenfeld>,
-die benutzt wird, um den Default für das Operandenfeld
+die benutzt wird, um die Vorgaben für das Operandenfeld
 (gegen das das Suchmuster getestet wird) zu ermitteln.
 Das Suchmuster der Kommandozeile wird dazu gegen alle Werte aus I<regulärer_Ausdruck>
 der Liste (in der Reihenfolge der Liste) getestet.
-Für den ersten Treffer wird das entsprechende I<Operandenfeld> als Default benutzt.
+Für den ersten Treffer wird das entsprechende I<Operandenfeld> als Vorgabe benutzt.
 Es kann ein abschließendes I<Operandenfeld> (ohne I<regulärer_Ausdruck>) in der Liste angegeben werden,
-das als Default dient, wenn es keinen anderen Treffer gab; wenn es keinen solchen
+das als Vorgabe dient, wenn es keinen anderen Treffer gab; wenn es keinen solchen
 letzten Eintrag gibt, wird B<name> angenommen.
 Für die Angaben von I<regulärer_Ausdruck> kann die verspätete Ersetzung vom Typ ${\\VAR}
 praktisch sein, da man sich so das händische Escapen spart.
@@ -3040,15 +3034,15 @@ Sie entsprechen den analogen Kommandozeilenoptionen für die Operandenwahl.
 .TP
 .BR DEFAULT_MATCH_ALGORITHM " " "(Stringliste)"
 Dies ist eine Stringliste der Gestalt I<regulärer_Ausdruck>[\\n\\r\\t ]I<Matchalgorithmus>,
-die benutzt wird, um den Default für den Matchalgorithmus
+die benutzt wird, um die Vorgabe für den Matchalgorithmus
 (für den das Suchmuster gedacht ist) zu ermitteln.
 Dies ist analog wie bei B<DEFAULT_MATCH_FIELD>, nur mit dem Unterschied,
-dass natürlich I<Matchalgorithmus> den Default-Matchalgorithmus angibt.
+dass natürlich I<Matchalgorithmus> den Vorgabe-Matchalgorithmus angibt.
 
 Die möglichen Werte für I<Matchalgorithmus> sind:
 B<regex>, B<pattern>, B<substring>, B<begin>, B<end>, B<exact>, B<fuzzy>.
 Sie entsprechen den analogen Kommandozeilenoptionen für die Wahl des Matchalgorithmus.
-Falls kein anderer Default für den Matchalgorithmus spezifiziert wird, wird B<regex> benutzt.
+Falls keine andere Vorgabe für den Matchalgorithmus spezifiziert wird, wird B<regex> benutzt.
 .TP
 .\" }}}
 .\" {{{ Definition of Redundancy
@@ -3383,7 +3377,7 @@ entspricht.
 .SS @EIX_CACHEFILE@
 Dies ist die Binärdatenbank für eix.
 Der Pfad kann mit der Variablen B<EIX_CACHEFILE> geändert werden
-(deren Default B<EPREFIX> über verzögerte Ersetzung berücksichtigt).
+(deren Vorgabe B<EPREFIX> über verzögerte Ersetzung berücksichtigt).
 .\" }}}
 
 .\" {{{ -------- @EIX_PREVIOUS@
@@ -3391,14 +3385,14 @@ Der Pfad kann mit der Variablen B<EIX_CACHEFILE> geändert werden
 Dies ist die vorhergehende Version von @EIX_CACHEFILE@,
 die von eix-diff und eix-sync benutzt wird.
 Der Pfad kann mit der Variablen B<EIX_PREVIOUS> geändert werden
-(deren Default B<EPREFIX> über verzögerte Ersetzung berücksichtigt).
+(deren Vorgabe B<EPREFIX> über verzögerte Ersetzung berücksichtigt).
 .\" }}}
 
 .\" {{{ -------- @EIX_REMOTEARCHIVE1@ und @EIX_REMOTEARCHIVE2@
 .SS @EIX_REMOTEARCHIVE1@ und @EIX_REMOTEARCHIVE2@
 Dies ist eine lokale Kopie des Remote-Archivs, das von eix-remote benutzt wird.
 Der Pfad kann mit der Variablen B<EIX_REMOTEARCHIVE1> bzw. B<EIX_REMOTEARCHIVE2>
-geändert werden (deren Defaults B<EPREFIX> über verzögerte Ersetzung berücksichtigen).
+geändert werden (deren Vorgaben B<EPREFIX> über verzögerte Ersetzung berücksichtigen).
 .\" }}}
 .\" }}}
 
@@ -3409,7 +3403,7 @@ eine Liste von Paketmasken testet.
 Die Masken werden durch die Optionen spezifiert; sie sollten im selben Format
 sein wie /etc/portage/package.mask
 Die Argumente werden in der Form I<Kategorie>B</>I<Name>B<->I<Version>[B<:>I<Slot>][B<::>I<Repo>] erwartet.
-Per Default werden die Argumente ausgegeben, die auf eine Maske passen.
+Als Vorgabe werden die Argumente ausgegeben, die auf eine Maske passen.
 
 .SS Beispiele:
 .TP
@@ -3530,7 +3524,7 @@ Viele Cache-Methoden sind prinzipbedingt sehr langsam.
 Benutzen Sie die Hinweise im speziellen Abschnitt B<BESCHLEUNIGUNG> weiter unten.
 
 eix kann nicht zuverlässig die Farbmöglichkeiten und Hintergrundfarbe Ihres Terminal feststellen;
-dies ist gerade dann besonders ärgerlich, wenn Sie ein transparentes Terminal benutzen oder die Default-Hintergrundfarbe von
+dies ist gerade dann besonders ärgerlich, wenn Sie ein transparentes Terminal benutzen oder die Vorgabe-Hintergrundfarbe von
 beispielsweise xterm auf Schwarz geändert haben.
 Hier sind einige einfache Methoden, wie sie einige ungewünschte Farbprobleme vermeiden können:
 
@@ -3538,7 +3532,7 @@ Hier sind einige einfache Methoden, wie sie einige ungewünschte Farbprobleme ve
 1. Benutzen Sie das Farbschema zu ihrer tatsächlichen Hintergrundfarbe, indem Sie B<DARK=true> oder B<DARK=false> in I<@SYSCONFDIR@/eixrc> setzen (oder in indem Sie die Heuristik aus B<TERM_DARK> an Ihr System anpassen.)
 
 .TP
-2. Erzwingen Sie die korrekte Hintergrundfarbe (oder vermeiden Sie deren Setzen), indem Sie B<BG0=black>, B<BG1=black>, B<BG2=white>, B<BG3=white> (oder B<BG0=none>, B<BG1=none>, B<BG2=none>, B<BG3=none>) in I<@SYSCONFDIR@/eixrc> setzen. Beachten Sie, dass das Erzwingen der Hintergrundfarbe transparente Terminals intransparent machen kann und dass darüberhinaus bei einige Terminals auch neu hereingescrollte Zeilen in dieser Hintergrundfarbe sein können. Um die erzwungene Hintergrundfarbe bei jedem Zeilenende (nicht) zurückzusetzen, können Sie B<RESET_ALL_LINES=false> bzw. B<RESET_ALL_LINES=true> setzen (der Default kann von der eix-Version abhängen).
+2. Erzwingen Sie die korrekte Hintergrundfarbe (oder vermeiden Sie deren Setzen), indem Sie B<BG0=black>, B<BG1=black>, B<BG2=white>, B<BG3=white> (oder B<BG0=none>, B<BG1=none>, B<BG2=none>, B<BG3=none>) in I<@SYSCONFDIR@/eixrc> setzen. Beachten Sie, dass das Erzwingen der Hintergrundfarbe transparente Terminals intransparent machen kann und dass darüberhinaus bei einige Terminals auch neu hereingescrollte Zeilen in dieser Hintergrundfarbe sein können. Um die erzwungene Hintergrundfarbe bei jedem Zeilenende (nicht) zurückzusetzen, können Sie B<RESET_ALL_LINES=false> bzw. B<RESET_ALL_LINES=true> setzen (die Vorgabe kann von der eix-Version abhängen).
 
 .TP
 3. Erzwingen Sie ein gewünschtes Farbschema auf allen Terminals indem Sie B<TERM_ALT3=.> in I<@SYSCONFDIR@/eixrc> setzen; dies kann mit B<COLORSCHEME3=0> (oder B<=1>, ..., B<=5>) kombiniert werden. Beachten Sie, dass die Farbschemas 0 und 2 sehr armselig sind, da sie nur die wenigen Systemfarben benutzen und daher verschiedene Dinge farblich nicht immer unterscheidbar sind. Dennoch kann dies sinnvoll sein, wenn Sie beispielsweise regelmäßig verschiedene Terminals benutzen und sich nur an ein einziges Farbschema gewöhnen wollen oder wenn Sie Ethan Schoonovers B<originales> Farbschema erzwingen wollen. Benutzer von Solarized sollten in jedem Fall B<SOLARIZED> setzen und Farbscheme 5 (oder 4) benutzen:
@@ -3580,21 +3574,21 @@ aber nicht das Profil selbst.
 Andererseits kann /etc/portage/profile nur dann interpretiert werden, wenn
 das Profil bekannt ist).
 
-Die Ausgabe mit dem Default B<OVERLAYS_LIST=all-used-renumbered> ist irritierend,
+Die Ausgabe mit der Standardeinstellung B<OVERLAYS_LIST=all-used-renumbered> ist irritierend,
 wenn man die Overlaynummer in einer eix-Variablen oder -Kommando-Argument benutzen will.
 
 Es gibt keine Cachemethode, das die Information aller Overlays
 (für die es keinen Portage-Metadatencache gibt) schnell und zuverlässig holt:
 Man muss immer eines dieser beiden Extreme wählen.
-Der Default ist schnell, aber er liefert oft falsche Slots und hat andere Probleme.
+Die Standardeinstellung ist schnell, aber sie liefert oft falsche Slots und hat andere Probleme.
 
 Das ganze B<EPREFIX>/B<ROOT>-Zeugs ist sehr verwirrend.
 Insbesondere wird eix durch die bloße Tatsache, viele dieser Variablen zu berücksichtigen,
 stets verwundbar gegen lokale Angriffe sein, wenn es in einer möglicherweise kompromitierten
 Environment gestartet wird.
 
-Der frühere Default B<KEEP_VIRTUALS=true> verwirrte viele Leute.
-Mit dem neuen Default findet leider fast niemand heraus, dass dieses Feature existiert.
+Die frühere Vorgabe B<KEEP_VIRTUALS=true> verwirrte viele Leute.
+Mit der neuen Vorgabe findet leider fast niemand heraus, dass dieses Feature existiert.
 :(
 
 Es gibt zu viele Features: Dokumentation und Konfiguration sind zu kompliziert geworden.
@@ -3606,7 +3600,7 @@ Andererseits gibt es immer noch eine Menge Dinge, die nicht konfiguriert werden 
 .LP
 Alle Nicht-Metadaten-basierten Cachemethoden für B<eix-update> sind entweder unzuverlässig (B<parse>, B<parse*>) oder langsam und unsicher (B<eix>, B<eix*>).
 Daher wird es empfohlen, Metadaten zu erzeugen und sie für den Hauptbaum und aller Overlays zu benutzen.
-Die Default von eix sind so, dass diese Metadaten benutzt werden, sofern vorhanden (siehe B<CACHE_METHOD_PARSE>)
+Die Vorgaben von eix sind so, dass diese Metadaten benutzt werden, sofern vorhanden (siehe B<CACHE_METHOD_PARSE>)
 (Konfiguration ist nur im Falle des sqlite-Backends von Portage erforderlich).
 Im Wesentlichen gibt es zwei Arten möglicher Metdaten, die benutzt werden können:
 
@@ -3753,7 +3747,7 @@ Um dies zu vermeiden, hatte eix-sync den alten Cache gelöscht
 (rm -rf /var/cache/edb/dep/*).
 Da die meisten Nutzer diese Cachemethode nicht mehr benutzen müssen,
 und das Löschen des alten Caches den nächsten Start von Portage verlangsamt,
-ist dies nicht mehr der Default (aber immer noch als Option verfügbar,
+ist dies nicht mehr die Vorgabe (aber immer noch als Option verfügbar,
 die man nach I<@SYSCONFDIR@/eix-sync.conf> schreiben kann).
 
 eix-sync benutzte früher gensync statt layman.
@@ -3768,7 +3762,7 @@ Der Mechanismus, der jetzt über B<DEFAULT_MATCH_FIELD> funktioniert, hat sich g
 Die früheren (weniger mächtigen) Variablen B<MATCH_.*_IF> und B<MATCH_ORDER> werden nicht mehr unterstützt.
 
 Die Variablen B<ADD_CACHE_METHOD> und B<ADD_OVERRIDE_CACHE_METHOD> sind nicht länger
-fest eingebaut, sondern werden nur implizit durch verzögerte Ersetzung in den Defaults
+fest eingebaut, sondern werden nur implizit durch verzögerte Ersetzung in den Vorgaben
 von B<CACHE_METHOD> und B<OVERRIDE_CACHE_METHOD> ausgewertet.
 Insbesondere wird also Setzen der letzten beiden Variablen in I<@SYSCONFDIR@/eixrc> ohne
 Hinzufügen der verzögerten Ersetzung " B<%{ADD_CACHE_METHOD}>" bzw. " B<%{ADD_OVERRIDE_CACHE_METHOD}>"
@@ -3804,9 +3798,9 @@ und nicht mehr als Teil der TEST_OPTIONEN (was oft zu Konfusion geführt hatte).
 Jetzt wird auch B<--pipe> als Teil der TEST_OPTIONEN behandelt und induziert nicht mehr implizit logische Verknüpfungen.
 
 Seit eix-0.20.1 werden die früher benutzten Dateien /etc/portage/package.*.nowarn
-per Default nicht mehr unterstützt: Sie wurden durch die einzige Datei/Verzeichnis
+als Standardeinstellung nicht mehr unterstützt: Sie wurden durch die einzige Datei/Verzeichnis
 /etc/portage/package.nowarn ersetzt.
-Um die alten Dateien weiter zu unterstützen kann man B<OBSOLETE_NOWARN=true> setzen.
+Um die alten Dateien weiterhin zu nutzen, kann man B<OBSOLETE_NOWARN=true> setzen.
 Mit der Beschreibung der Variablen B<PACKAGE_NOWARN> (in der Ausgabe von B<eix --dump>)
 kann man verstehen, weshalb dies funktioniert.
 
@@ -3823,13 +3817,13 @@ Dieser Hack war nur für obsolete FORMAT-Strings eingeführt worden und wurde wi
 Die Variablen B<COLORSTRING>, B<COLORSTRING_ALT> und B<TERM_ALT> wurden durch die flexibleren
 Variablen B<COLORSTRING?> und B<TERM_ALT?> ersetzt.
 
-In B<eix-remote> vor eix-0.28.5 war die jetzige Option B<-x> der Default.
-Diese erscheint nach wie vor ein vernünftiger Default, aber das Feature irritierte Benutzer
-(einige hielten es sogar für einen Bug), so dass es jetzt manuell als Default
+In B<eix-remote> vor eix-0.28.5 war die jetzige Option B<-x> die Standardeinstellung.
+Diese erscheint nach wie vor ein vernünftige Standardeinstellung, aber das Feature irritierte Benutzer
+(einige hielten es sogar für einen Bug), so dass es jetzt manuell als Vorgabe
 festgelegt werden muss (durch Setzen von B<EIX_REMOTE_OPTS=-x> in I</etc/eixrc>).
 
-Das Hilsprogramm B<eix-overlay> existiert erst seit eix-0.28.6; stattdessen hatte eix die
-Optionen B<--print-overlay-path>, B<--print-overlay-label> und B<--print-overlay-data>,
+Das Hilsprogramm B<eix-header> existiert erst seit eix-0.28.6; stattdessen hatte eix die
+Optionen B<--is-current>, B<--print-overlay-path>, B<--print-overlay-label> und B<--print-overlay-data>,
 die nun redundant wären und daher entfernt wurden.
 .\" }}}
 

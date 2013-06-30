@@ -322,7 +322,7 @@ $(nodist_common_src) \
 $(nodist_extra_common_src) \
 eix-diff$(EXEEXT) \
 eix-update$(EXEEXT) \
-eix-overlay$(EXEEXT) \
+eix-header$(EXEEXT) \
 eix-drop-permissions$(EXEEXT) \
 masked-packages$(EXEEXT) \
 versionsort$(EXEEXT) \
@@ -348,7 +348,7 @@ cache/generate_cachemap.sh
 if SEPARATE_TOOLS
 # Generate separate tools binaries
 use_separate_tools = :
-tool_programs = masked-packages$(EXEEXT) versionsort$(EXEEXT) eix-overlay$(EXEEXT) eix-drop-permissions$(EXEEXT)
+tool_programs = masked-packages$(EXEEXT) versionsort$(EXEEXT) eix-header$(EXEEXT) eix-drop-permissions$(EXEEXT)
 tool_noinst =
 main_all_src  = main/main_all.cc
 main_output_src = main/main_output.cc
@@ -366,12 +366,12 @@ else
 # main/main.cc should then react on this to a modified argv[0] filename).
 use_separate_tools = false
 tool_programs =
-noinst_tool = masked-packages$(EXEEXT) versionsort$(EXEEXT) eix-drop-permissions$(EXEEXT) eix-overlay$(EXEEXT)
-main_all_src = masked-packages.cc versionsort.cc eix-overlay.cc eix-drop-permissions.cc main/main_all_tools.cc
+noinst_tool = masked-packages$(EXEEXT) versionsort$(EXEEXT) eix-drop-permissions$(EXEEXT) eix-header$(EXEEXT)
+main_all_src = masked-packages.cc versionsort.cc eix-header.cc eix-drop-permissions.cc main/main_all_tools.cc
 main_output_src = main/main_output.cc
 main_eix_src = main/main_eix.cc
 main_diff_src = main/main_diff.cc
-main_update_src = masked-packages.cc versionsort.cc eix-overlay.cc eix-drop-permissions.cc main/main_update_tools.cc
+main_update_src = masked-packages.cc versionsort.cc eix-header.cc eix-drop-permissions.cc main/main_update_tools.cc
 endif
 
 noinst_main_all_src =
@@ -387,7 +387,7 @@ if SEPARATE_UPDATE
 use_separate_update = :
 masked_link = eix-update$(EXEEXT)
 versionsort_link = eix-update$(EXEEXT)
-eix_overlay_link = eix-update$(EXEEXT)
+eix_header_link = eix-update$(EXEEXT)
 drop_permissions_link = eix-update$(EXEEXT)
 
 if SEPARATE_BINARIES
@@ -447,7 +447,7 @@ else
 use_separate_update = false
 masked_link = eix$(EXEEXT)
 versionsort_link = eix$(EXEEXT)
-eix_overlay_link = eix$(EXEEXT)
+eix_header_link = eix$(EXEEXT)
 drop_permissions_link = eix$(EXEEXT)
 
 # Generate neither eix-diff nor eix-update separately:
@@ -498,15 +498,15 @@ portage/basicversion.cc \
 versionsort.cc \
 main/main_versionsort.cc
 
-eix_overlay_LDADD = $(common_tools_ldadd)
-eix_overlay_SOURCES = \
+eix_header_LDADD = $(common_tools_ldadd)
+eix_header_SOURCES = \
 $(stringutils_src) \
 $(utils_src) \
 $(header_src) \
 $(depend_src) \
 $(overlay_src) \
 $(sysutils_src) \
-eix-overlay.cc \
+eix-header.cc \
 main/main_overlay.cc
 
 eix_drop_permissions_LDADD = $(common_tools_ldadd)
@@ -530,9 +530,9 @@ versionsort$(EXEEXT): $(versionsort_link)
 	$(AM_V_at)test ! -e versionsort$(EXEEXT) || rm versionsort$(EXEEXT)
 	$(AM_V_GEN)$(LN_S) $(versionsort_link) versionsort$(EXEEXT)
 
-eix-overlay$(EXEEXT): $(eix_overlay_link)
-	$(AM_V_at)test ! -e eix-overlay$(EXEEXT) || rm eix-overlay$(EXEEXT)
-	$(AM_V_GEN)$(LN_S) $(eix_overlay_link) eix-overlay$(EXEEXT)
+eix-header$(EXEEXT): $(eix_header_link)
+	$(AM_V_at)test ! -e eix-header$(EXEEXT) || rm eix-header$(EXEEXT)
+	$(AM_V_GEN)$(LN_S) $(eix_header_link) eix-header$(EXEEXT)
 
 eix-drop-permissions$(EXEEXT): $(drop_permissions_link)
 	$(AM_V_at)test ! -e eix-drop-permissions$(EXEEXT) || rm eix-drop-permissions$(EXEEXT)
@@ -548,8 +548,8 @@ uninstall-local:
 		test ! -e "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
 	$(AM_V_at)$(use_separate_tools) || \
-		test ! -e "$(DESTDIR)$(bindir)/eix-overlay$(EXEEXT)" || \
-		rm -- "$(DESTDIR)$(bindir)/eix-overlay$(EXEEXT)"
+		test ! -e "$(DESTDIR)$(bindir)/eix-header$(EXEEXT)" || \
+		rm -- "$(DESTDIR)$(bindir)/eix-header$(EXEEXT)"
 	$(AM_V_at)$(use_separate_tools) || \
 		test ! -e "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)"
@@ -572,10 +572,10 @@ install-exec-hook:
 	$(AM_V_at)$(use_separate_tools) || \
 		$(LN_S) "$(versionsort_link)" "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
 	$(AM_V_at)$(use_separate_tools) || \
-		test ! -e "$(DESTDIR)$(bindir)/eix-overlay$(EXEEXT)" || \
-		rm -- "$(DESTDIR)$(bindir)/eix-overlay$(EXEEXT)"
+		test ! -e "$(DESTDIR)$(bindir)/eix-header$(EXEEXT)" || \
+		rm -- "$(DESTDIR)$(bindir)/eix-header$(EXEEXT)"
 	$(AM_V_at)$(use_separate_tools) || \
-		$(LN_S) "$(eix_overlay_link)" "$(DESTDIR)$(bindir)/eix-overlay$(EXEEXT)"
+		$(LN_S) "$(eix_header_link)" "$(DESTDIR)$(bindir)/eix-header$(EXEEXT)"
 	$(AM_V_at)$(use_separate_tools) || \
 		test ! -e "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)"

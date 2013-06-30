@@ -112,7 +112,6 @@ dump_help()
 "                           (needs DEP=true)\n"
 "     --print-world-sets    print the world sets\n"
 "     --print-profile-paths print all paths of current profile\n"
-"     --is-current          check for valid cache-file\n"
 "     --256                 Print all ansi color palettes\n"
 "     --256d                Print ansi color palettes for foreground (dark)\n"
 "     --256d0               Print ansi color palette dark (normal)\n"
@@ -353,8 +352,6 @@ EixOptionList::EixOptionList()
 	push_back(Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &rc_options.known_vars));
 	push_back(Option("test-non-matching", 't', Option::BOOLEAN_T,     &rc_options.test_unused));
 	push_back(Option("debug",         O_DEBUG, Option::BOOLEAN_T,     &rc_options.do_debug));
-
-	push_back(Option("is-current",   O_CURRENT, Option::BOOLEAN_T,   &rc_options.is_current));
 
 	push_back(Option("print-all-useflags",  O_HASH_IUSE,     Option::BOOLEAN_T, &rc_options.hash_iuse));
 	push_back(Option("print-all-keywords",  O_HASH_KEYWORDS, Option::BOOLEAN_T, &rc_options.hash_keywords));

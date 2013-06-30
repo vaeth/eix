@@ -302,7 +302,7 @@ AddArchive() {
 	set -f
 	sep=mAgIcsEp
 	eval "set -- ${eixoverlay}"
-	eixoverlay=`eix-overlay -s "${sep}" "${@}"` || exitcode=1
+	eixoverlay=`eix-header -s"${sep}" "${@}"` || exitcode=1
 	eval "set -- ${method}"
 	for i
 	do	l=${eixoverlay%%${sep}*}

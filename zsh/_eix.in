@@ -40,7 +40,6 @@ case $service in
 "$excl_opt"'--print-all-depends[print all *DEPEND words]'
 "$excl_opt"'--print-world-sets[print the world sets]'
 "$excl_opt"'--print-profile-paths[print the profile paths]'
-"$excl_opt"'--is-current[is @EIX_CACHEFILE@ readable?]'
 "$excl_opt"'--256[print all ansi color palettes]'
 "$excl_opt"'--256l[print light ansi color palettes]'
 "$excl_opt"'--256l0[print light ansi color palette (normal)]'

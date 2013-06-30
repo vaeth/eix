@@ -11,7 +11,7 @@ src/eix-test-obsolete.sh
 src/eix.cc
 src/eix-diff.cc
 src/eix-drop-permissions.cc
-src/eix-overlay.cc
+src/eix-header.cc
 src/eix-update.cc
 src/masked-packages.cc
 src/versionsort.cc

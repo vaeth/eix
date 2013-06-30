@@ -14,14 +14,14 @@
 	  see http://bugs.gentoo.org/show_bug.cgi?id=474590
 	- Let dependency attribute work for installed versions
 	- Introduce --deps-installed, DEPS_INSTALLED
-	- Introduce new tool eix-overlay
-	- Remove now redundant --print-overlay-{path,label,data}
-	- eix-remote: speedup of add action due to single call of eix-overlay
+	- Introduce new tool eix-header
+	- Remove now redundant --print-overlay-{path,label,data}, --is-current
+	- eix-remote: speedup of add action due to single call of eix-header
 	- Fix --*depend in zsh-completion
 	- Allow /etc/eix-sync.conf not ending with newline. Use read -r
 	- Fix some paths in manpage (regression from eix-0.28.3)
 	- cleanup: Transform io namespace to class: automatic close on cleanup
-	- German translation updates and fixes, see e.g.
+	- German translation updates, improvements, and fixes, see e.g.
 	  http://bugs.gentoo.org/show_bug.cgi?id=475076
 
 *eix-0.28.5
