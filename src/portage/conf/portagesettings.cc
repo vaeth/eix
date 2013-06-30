@@ -303,7 +303,7 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, b
 			overlayvec.push_back(it->path);
 		}
 		ref.clear();
-		ref = join_to_string(overlayvec);
+		join_to_string(&ref, overlayvec);
 	}
 
 	user_config = NULLPTR;

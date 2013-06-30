@@ -68,11 +68,6 @@
 		CHSTATE(EVAL_READ); \
 	} while(0)
 
-#define NEXT_INPUT_RETURN do { \
-	if(unlikely(++(x) == filebuffer_end)) \
-		return; \
-	} while(0)
-
 #define INPUT_EOF (unlikely((x) == filebuffer_end))
 
 #define NEXT_INPUT_OR_EOF do { \
@@ -80,7 +75,17 @@
 			++(x); \
 	} while(0)
 
-#define PREV_INPUT (--(x))
+#define APPEND_RET do { \
+		x = backup; \
+		VALUE_APPEND(INPUT); \
+		NEXT_INPUT_OR_EOF; \
+		return; \
+	} while(0);
+
+#define NEXT_INPUT_APPEND_RET do { \
+	if(unlikely(++(x) == filebuffer_end)) \
+		APPEND_RET; \
+	} while(0)
 
 /** Check value-buffer for overrun and push c into the current value-buffer . */
 #define VALUE_APPEND(c) do { \
@@ -437,7 +442,6 @@ VarsReader::VALUE_SINGLE_QUOTE_PORTAGE ()
 {
 	while(likely((INPUT != '\'') && (INPUT != '\\'))) {
 		if(unlikely((INPUT == '$') && ((parse_flags & SUBST_VARS) != NONE))) {
-			NEXT_INPUT_EVAL;
 			resolveReference();
 			if(INPUT_EOF) {
 				CHSTATE(EVAL_READ);
@@ -445,7 +449,6 @@ VarsReader::VALUE_SINGLE_QUOTE_PORTAGE ()
 			continue;
 		}
 		if(unlikely((INPUT == '%') && ((parse_flags & (SUBST_VARS|PORTAGE_SECTIONS)) == (SUBST_VARS|PORTAGE_SECTIONS)))) {
-			NEXT_INPUT_EVAL;
 			resolveSectionReference();
 			if(INPUT_EOF) {
 				CHSTATE(EVAL_READ);
@@ -478,7 +481,6 @@ VarsReader::VALUE_DOUBLE_QUOTE()
 {
 	while(likely(INPUT != '"' && INPUT != '\\')) {
 		if(unlikely(INPUT == '$' && ((parse_flags & SUBST_VARS) != NONE))) {
-			NEXT_INPUT_EVAL;
 			resolveReference();
 			if(INPUT_EOF) {
 				CHSTATE(EVAL_READ);
@@ -505,7 +507,6 @@ VarsReader::VALUE_DOUBLE_QUOTE_PORTAGE()
 {
 	while(likely(INPUT != '"' && INPUT != '\\')) {
 		if(unlikely((INPUT == '$') && ((parse_flags & SUBST_VARS) != NONE))) {
-			NEXT_INPUT_EVAL;
 			resolveReference();
 			if(INPUT_EOF) {
 				CHSTATE(EVAL_READ);
@@ -513,7 +514,6 @@ VarsReader::VALUE_DOUBLE_QUOTE_PORTAGE()
 			continue;
 		}
 		if(unlikely((INPUT == '%') && ((parse_flags & (SUBST_VARS|PORTAGE_SECTIONS)) == (SUBST_VARS|PORTAGE_SECTIONS)))) {
-			NEXT_INPUT_EVAL;
 			resolveSectionReference();
 			if(INPUT_EOF) {
 				CHSTATE(EVAL_READ);
@@ -569,7 +569,6 @@ void VarsReader::VALUE_WHITESPACE()
 				CHSTATE(VALUE_DOUBLE_QUOTE);
 			case '$':
 				if((parse_flags & SUBST_VARS) != NONE) {
-					NEXT_INPUT_EVAL;
 					resolveReference();
 					if(INPUT_EOF) {
 						CHSTATE(EVAL_READ);
@@ -612,7 +611,6 @@ VarsReader::VALUE_WHITESPACE_PORTAGE()
 				CHSTATE(VALUE_DOUBLE_QUOTE_PORTAGE);
 			case '$':
 				if((parse_flags & SUBST_VARS) != NONE) {
-					NEXT_INPUT_EVAL;
 					resolveReference();
 					if(INPUT_EOF) {
 						CHSTATE(EVAL_READ);
@@ -622,7 +620,6 @@ VarsReader::VALUE_WHITESPACE_PORTAGE()
 				break;
 			case '%':
 				if((parse_flags & (SUBST_VARS|PORTAGE_SECTIONS)) == (SUBST_VARS|PORTAGE_SECTIONS)) {
-					NEXT_INPUT_EVAL;
 					resolveSectionReference();
 					if(INPUT_EOF) {
 						CHSTATE(EVAL_READ);
@@ -916,11 +913,13 @@ VarsReader::var_append(char *beginning, size_t ref_key_length)
 void
 VarsReader::resolveReference()
 {
+	char *backup(x);
+	NEXT_INPUT_APPEND_RET;
 	bool brace(false);
 	char *beginning(x);
 	if(INPUT == '{') {
 		brace = true;
-		NEXT_INPUT_RETURN;
+		NEXT_INPUT_APPEND_RET;
 		beginning = x;
 	}
 	size_t ref_key_length(0);
@@ -935,22 +934,20 @@ VarsReader::resolveReference()
 		}
 	} else {
 		if(unlikely(!brace)) {
-			return;
+			APPEND_RET;
 		}
 		while(likely(isValidKeyCharacter(INPUT) || (INPUT == ' ') || (INPUT == '\t') || (INPUT == ':'))) {
 			++ref_key_length;
-			NEXT_INPUT_RETURN;
+			NEXT_INPUT_APPEND_RET;
 		}
 	}
 
 	if(brace) {
-		if(unlikely(INPUT_EOF)) {
-			return;
+		if(unlikely(INPUT_EOF) || (INPUT != '}')) {
+			APPEND_RET;
 		}
-		if(INPUT == '}') {
-			var_append(beginning, ref_key_length);
-			NEXT_INPUT_OR_EOF;
-		}
+		var_append(beginning, ref_key_length);
+		NEXT_INPUT_OR_EOF;
 	} else {
 		var_append(beginning, ref_key_length);
 	}
@@ -961,23 +958,25 @@ VarsReader::resolveReference()
 void
 VarsReader::resolveSectionReference()
 {
+	char *backup(x);
+	NEXT_INPUT_APPEND_RET;
 	if(INPUT != '(') {
-		return;
+		APPEND_RET;
 	}
-	NEXT_INPUT_RETURN;
+	NEXT_INPUT_APPEND_RET;
 
 	char *beginning(x);
 	size_t ref_key_length(0);
 	while(likely(isValidKeyCharacter(INPUT) || (INPUT == ' ') || (INPUT == '\t') || (INPUT == ':'))) {
 		++ref_key_length;
-		NEXT_INPUT_RETURN;
+		NEXT_INPUT_APPEND_RET;
 	}
 	if(unlikely(INPUT != ')')) {
-		return;
+		NEXT_INPUT_APPEND_RET;
 	}
-	NEXT_INPUT_RETURN;
+	NEXT_INPUT_APPEND_RET;
 	if(unlikely(INPUT != 's')) {
-		return;
+		APPEND_RET;
 	}
 	var_append(beginning, ref_key_length);
 	NEXT_INPUT_OR_EOF;

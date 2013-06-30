@@ -37,9 +37,9 @@ class VarsReader {
 			INTO_MAP             = 0x0010U,  /**< Flag: Init but don't parse .. you must first supply a pointer to my_map with useMap (...) */
 			APPEND_VALUES        = 0x0020U,  /**< Flag: Respect IncrementalKeys */
 			ALLOW_SOURCE         = 0x0040U,  /**< Flag: Allow "source"/"." command. */
-			ALLOW_SOURCE_VARNAME = 0x0080|ALLOW_SOURCE,  /**< Flag: Allow "source"/"." but Prefix is only a varname which might be modified during sourcing. */
+			ALLOW_SOURCE_VARNAME = 0x0080U|ALLOW_SOURCE,  /**< Flag: Allow "source"/"." but Prefix is only a varname which might be modified during sourcing. */
 			PORTAGE_ESCAPES      = 0x0100U,  /**< Flag: Treat escapes like portage does. */
-			PORTAGE_SECTIONS     = 0x0200U|PORTAGE_ESCAPES,  /**< Flag: Section format of e.g. repos.conf */
+			PORTAGE_SECTIONS     = 0x0200U,  /**< Flag: Section format of e.g. repos.conf */
 			RECURSE              = 0x0400U,  /**< Flag: Allow recursive reading */
 			HAVE_READ            = KEYWORDS_READ|SLOT_READ,       /**< Combination of previous "*_READ" */
 			ONLY_HAVE_READ       = ONLY_KEYWORDS_SLOT|HAVE_READ;  /**< Combination of HAVE_READ and ONLY_KEYWORDS_SLOT */
@@ -48,6 +48,9 @@ class VarsReader {
 		/** Init and parse the FSM depending on supplied flags. */
 		explicit VarsReader(Flags flags)
 		{
+			if((flags & PORTAGE_SECTIONS) != NONE) {
+				flags |= PORTAGE_ESCAPES;
+			}
 			parse_flags = flags;
 			if((parse_flags & INTO_MAP) == NONE) {
 				vars = new my_map;
