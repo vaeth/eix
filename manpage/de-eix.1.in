@@ -65,10 +65,9 @@ lokalen Cache hinzufügen und wieder entfernen.
 Falls nicht anders konfiguriert, benutzt es ein separates Datenbankfile.
 Bei dieser Vorgabe sollten Sie regelmäig B<eix-remote add1> und/oder <eix-remote add2> nach <eix-update>
 aufrufen, so dass das separate Cachefile mit der Hauptdatenbank synchron ist.
-(Beispielsweise ist es in diesem Fall sinnvoll, B<@@eix-remote add1> und/oder B<@@eix-remote add1> zu
-I<@SYSCONFDIR@/eix-sync.conf> hinzuzufügen.)
-Falls das selbe Datenbankfile benutzt wird, können dennoch solche Remote-Daten über
-B<eix-update>-Aufrufe hinweg erhalten werden, indem man B<KEEP_VIRTUALS=true> in I<@SYSCONFDIR@/eixrc> setzt.
+(Bei Benutzung von B<eix-sync> geschieht dies per Default.)
+Falls das selbe Datenbankfile benutzt wird, können Remote-Daten über
+B<eix-update>-Aufrufe hinweg erhalten werden, wenn Sie B<KEEP_VIRTUALS=true> in I<@SYSCONFDIR@/eixrc> setzen.
 Per Standardeinstellung wird dieses Skript seine Rechte durch B<eix-drop-permissions> fallenlassen.
 Mehr zu B<eix-remote> erfahren Sie durch den Aufruf B<eix-remote -h>.
 
@@ -1624,25 +1623,6 @@ layman-Aufrufe und B<!>-Hooks in der Reihenfolge von I<@SYSCONFDIR@/eix-sync.con
 .TP
 Einige Beispiele nützlicher Zeilen in I<@SYSCONFDIR@/eix-sync.conf>:
 .TP
-.B @@StatusInfo 'eix-remote add1'
-Ankündigung, dass das nächste Kommando eix-remote add1 ist
-(Setzt die Statuszeile nd gibt die Information für den Benutzer aus).
-.TP
-.B @@Statusline 'eix-remote add1'
-Wie oben, setzt aber nur die Statuszeile.
-.TP
-.B @@einfo 'eix-remote add1'
-Wie oben, gibt aber nur die Information für den Benutzer aus.
-.TP
-.B @@eix-remote add1
-Diese Zeile sollte bei Benutzung des Standardeinstellung (nichtleeres B<EIX_REMOTE1>)
-in der Datei stehen, so dass die B<EIX_REMOTE1>-Datenbank mit der Hauptdatenbank von
-eix am Ende von B<eix-sync> synchronisiert wird.
-.TP
-.B @eix-remote fetch1
-Dies empfiehlt sich zusätzlich zur obigen Zeile, falls gewünscht ist, dass die
-aktuellsten Remote-Daten regelmäßig bei jedem Aufruf von B<eix-sync> heruntergeladen werden.
-.TP
 .B -F
 Stets ein Fehlerabbruch, falls layman/hook fehlschlägt.
 Dies war bei früheren eix versionen stets der Fall.
@@ -1657,6 +1637,19 @@ B<FEATURES=metadata-transfer> inaktiv oder ausgeschaltet ist
 (Letzteres ist bei neueren Portage-Versionen der Fall).
 Je nach Bedarf kann auch B<-r> oder B<-M> alleine angegeben werden.
 Oder man kann -M durch die Zeile
+.TP
+.BI @StatusInfo ...
+Ankündigung, dass das nächste Kommando I<...> ist
+(Setzt die Statuszeile und gibt die Information für den Benutzer aus).
+.TP
+.BI @Statusline ...
+Wie oben, setzt aber nur die Statuszeile.
+.TP
+.BI @einfo ...
+Wie oben, gibt aber nur die Information für den Benutzer aus.
+.TP
+.B @eix-remote fetch1
+Herunterladen der Remote1-Daten bei jedem Aufruf von B<eix-sync>.
 .TP
 .B @emerge --regen
 ersetzen, um B<emerge --regen> statt B<emerge --metadata> zu benutzen.

@@ -64,7 +64,7 @@ B<eix-test-obsolete> - сценарий, несколько раз вызыва�
 B<eix-remote> позволяет синхронизировать текущую базу eix с внешним сервером, добавляя/удаляя из неё данные.
 With this default you should regularly call B<eix-remote add1> and/or B<eix-remote add2> after B<eix-update>
 so that the separate cachefile is synchronized with your main database.
-(E.g. it is useful to put B<@@eix-remote add1> and/or B<@@eix-remote add2> to your I<@SYSCONFDIR@/eix-sync.conf> in this case.)
+(If you use B<eix-sync> this is done by default.)
 If you use the same cachefile: Заметьте, что чтобы сохранять эти удалённые данные между вызовами eix-update, нужно установить
 B<KEEP_VIRTUALS=true> в I<@SYSCONFDIR@/eixrc>.
 По умолчанью этот сценарий сбрасывает разрешенья используя B<eix-drop-permissions>.
@@ -1601,24 +1601,6 @@ layman calls and B<!> hooks in order of I<@SYSCONFDIR@/eix-sync.conf>
 .TP
 Some examples of useful lines in I<@SYSCONFDIR@/eix-sync.conf>:
 .TP
-.B @@StatusInfo 'eix-remote add1'
-Announce that the next command will be eix-remote add1
-(sets hardstatus line and output info for user.)
-.TP
-.B @@Statusline 'eix-remote add1'
-As above, but set only hardstatus line.
-.TP
-.B @@einfo 'eix-remote add1'
-As above, but output only info to user.
-.TP
-.B @@eix-remote add1
-This should be put into the file if you use the default (a nonempty B<EIX_REMOTE1>)
-so that your B<EIX_REMOTE1> database is synchronized with your main eix database at the end of B<eix-sync>.
-.TP
-.B @eix-remote fetch1
-Use this in addition to the above line if you want that the most current
-remote data is downloaded with every call of B<eix-sync>.
-.TP
 .B -F
 Always error out on layman/hook errors.
 This was always the case in earlier eix versions.
@@ -1633,6 +1615,19 @@ B<FEATURES=metadata-transfer> is inactive or disabled
 (the latter is the default in newer portage versions).
 Depending on your needs you might want to use also B<-r> or B<-M> alone or
 replace B<-M> by the line
+.TP
+.BI @StatusInfo ...
+Announce that the next command will be I<...>
+(sets hardstatus line and output info for user.)
+.TP
+.BI @Statusline ...
+As above, but set only hardstatus line.
+.TP
+.BI @einfo ...
+As above, but output only info to user.
+.TP
+.B @eix-remote fetch1
+Download remote1 data with every call of B<eix-sync>.
 .TP
 .B @emerge --regen
 to use B<emerge --regen> instead of B<emerge --metadata>.

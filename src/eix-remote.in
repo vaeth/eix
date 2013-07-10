@@ -68,17 +68,12 @@ add1 (=add) or add2:
         Only do the second task (add EIX_REMOTEARCHIVE? without fetching).
         If EIX_REMOTE? is nonempty, it makes sense to call this regularly
         after eix-update so that eix -R? will show synchronized data.
-        It makes sense in this case to put this into your eix-sync.conf:
-        @@eix-remote add1
-        @@eix-remote add2
 fetch1 (=fetch) or fetch2:
         Only do the first task (fetch eix-caches to EIX_REMOTEARCHIVE).
         If you want to download the most current remote data at every call of
-        eix-sync put the following lines to your eix-sync.conf:
+        eix-sync put e.g. the following lines to your /etc/eix-sync.conf:
+        @StatusInfo Downloading remote1
         @eix-remote fetch1
-        @@eix-remote add1
-        @eix-remote fetch2
-        @@eix-remote add2
 remove: Remove all temporarily added virtual overlays from the eix database.
         This makes only sense if EIX_REMOTE? is empty.
         The effect is similar to

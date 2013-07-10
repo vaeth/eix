@@ -51,12 +51,13 @@ The following options are available:
      If you already have synced you might want to combine this option with -uU.
 -U   Do not touch the database and omit the hooks after eix-update (@ entries)
      and do not show differences. This option implies -R
--u   Update database only and show differences. This is equivalent to -0l@s ""
+-u   Update database only and show differences. This is equivalent to -0l@As ""
 -F   Make layman or failed hooks (! !! ~ @ @@ entries) fatal. This can be
      forced/overridden in hooks by (un)setting FATAL_HOOKS or calling die.
 -l   Do not call layman (and the !commands in ${eixsyncconf}).
      However, the !! lines and postponed hooks (@ and @@ entries)
      will be executed anyway.
+-A   Do not call eix-remote add1/add2
 -@   Do not execute the hooks (@ and @@ entries) of ${eixsyncconf}.
 -S   Do not execute the hooks after emerge --sync (@ entries).
 -M   Run emerge --metadata.  You might need this when you use the cache method
@@ -113,6 +114,22 @@ LaymanHooksInfo() {
 }
 }
 
+CheckAdd() {
+	${remoteadd} || return 0
+	case ${1} in
+	'eix-remote'*'add'*|'eix-remote'*'update'*)
+		PerLineArg "`gettext \
+'Your eix-sync configuration contains an obsolete hook
+\"eix-remote*add*\" or \"eix-remote*update*\"
+Since eix-0.29.0, \"eix-remote add*\" is called automatically by eix-sync
+if appropriate, so this is usually not needed and probably a mistake.
+Remove this hook from EIX_SYNC_CONF or /etc/eix-sync.conf to proceed.
+If you know what you are doing you can suppress this error by using
+a different syntax like quoting eix-remote.'`" eerror
+		Exit 1;;
+	esac
+}
+
 ParseConfigLine() {
 	j=${2}
 	while :
@@ -129,22 +146,28 @@ ParseConfigLine() {
 	done
 	case ${j} in
 	'!!'*)
+		j=${j#??}
 		if [ "${1}" = 'opts' ]
 		then	ConfigHooksInfo
-			DoExecute "${j#??}"
+			CheckAdd "${j}"
+			DoExecute "${j}"
 		fi
 		return;;
 	'!'*)
 		j=${j#?}
+		CheckAdd "${j}"
 		mycmd='!';;
 	'@@'*)
 		j=${j#??}
+		CheckAdd "${j}"
 		mycmd='@@';;
 	'@'*)
 		j=${j#?}
+		CheckAdd "${j}"
 		mycmd='@';;
 	'~'*)
 		j=${j#?}
+		CheckAdd "${j}"
 		mycmd='~';;
 	'-'*)
 		config_opts="${config_opts} ${j}"
@@ -230,6 +253,7 @@ DefaultOpts() {
 	client=
 	doupdate=:
 	synchooks=:
+	remoteadd=:
 	FATAL_HOOKS=
 }
 
@@ -242,7 +266,7 @@ Push opt "${@}"
 eval "set -- ${opt}"
 set +f
 OPTIND=1
-while getopts 'ias:02:UuFl@SMNtTqwWL:c:C:o:rRHh?' opt
+while getopts 'ias:02:UuFlA@SMNtTqwWL:c:C:o:rRHh?' opt
 do	case ${opt} in
 	i)	DefaultOpts;;
 	a)	have_changed=:;;
@@ -253,9 +277,11 @@ do	case ${opt} in
 	u)	nolayman=:
 		nohooks=:
 		skip_sync=:
+		remoteadd=false
 		server=;;
 	F)	FATAL_HOOKS=':';;
 	l)	nolayman=:;;
+	A)	remoteadd=false;;
 	'@')	nohooks=:;;
 	S)	synchooks=false;;
 	M)	metadata=:;;
@@ -515,6 +541,28 @@ CopyPrevious() {
 	fi
 }
 
+RemoteAdd() {
+	${remoteadd} || return 0
+	for remote_num in 1 2
+	do	ReadVar archive${remote_num} EIX_REMOTEARCHIVE${remote_num}
+		eval archive=\${archive${remote_num}}
+		[ -n "${archive}" ] && test -r "${archive}" || continue
+		[ -n "${eixcache}" ] && test -r "${eixcache}" || continue
+		ReadVar eixremote${remote_num} EIX_REMOTE${remote_num}
+		eval eixremote=\${eixremote${remote_num}}
+		[ -z "${eixremote}" ] && continue
+		[ "${eixremote}" = "${eixcache}" ] && continue
+		test -r "${eixremote}" && {
+			test "${eixremote}" -nt "${eixcache}" && \
+			test "${eixremote}" -nt "${archive}"
+		} >/dev/null 2>&1 && continue
+		StatusInfo eix-remote add${remote_num}
+		eix-remote add${remote_num} || WarnOrDie "`eval_gettext \
+			'eix-remote add${remote_num} failed'`"
+	done
+	return 0
+}
+
 UpdateDiff() {
 	${doupdate} || return 0
 	if ${usetemp}
@@ -527,6 +575,7 @@ UpdateDiff() {
 	else	MyVarCommand "${updatecmd}" -t update
 	fi
 	DoHook "${after_update}" "`gettext 'Running @@-hooks'`"
+	RemoteAdd
 	MyRunCommand "`gettext 'Calling eix-diff'`" \
 		-t diff eix-diff -- "${d}" || \
 		die "`gettext 'Failed to diff against current cache'`"

@@ -5,6 +5,7 @@
 	- Russian translation updates
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- eix-sync now calls eix-remote add1/add2 by default if necessary
 	- Support /etc/portage/repos.conf, honouring priority values
 	- Currently, --print PORTDIR and --print PORTDIR_OVERLAY are modified
 	  by repos.conf: useful for scripts, and faster than portageq.
