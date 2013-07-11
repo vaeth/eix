@@ -5,6 +5,8 @@
 	- Make --installed-slot work.
 	  Thanks to Vikraman <vikraman at gentoo.org> for finding and fixing,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=475564
+	- Fix md5 algorithm for files of 8192 bytes or longer
+	- Fix possible memory leaks.
 
 *eix-0.29.0
 	Артём Воротников <skybon at gmail.com>:

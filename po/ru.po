@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-07-10 10:33+0200\n"
+"POT-Creation-Date: 2013-07-11 22:44+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -2065,50 +2065,50 @@ msgstr "Неизвестный кэш %r для каталога %r"
 msgid "Can't read cache file %s: %s"
 msgstr "Невозможно прочесть файл кэша %s: %s"
 
-#: src/cache/common/ebuild_exec.cc:164
+#: src/cache/common/ebuild_exec.cc:160
 #, c-format
 msgid "Can't unlink tempfile %s"
 msgstr "Невозможно разлинковать временный файл %s"
 
-#: src/cache/common/ebuild_exec.cc:166
+#: src/cache/common/ebuild_exec.cc:162
 #, c-format
 msgid "Tempfile %s still there after unlink"
 msgstr "Временный файл %s всё ещё на месте после разлинковки"
 
-#: src/cache/common/ebuild_exec.cc:168
+#: src/cache/common/ebuild_exec.cc:164
 #, c-format
 msgid "Tempfile %s is not a file"
 msgstr "Временный файл %s не является файлом"
 
-#: src/cache/common/ebuild_exec.cc:240
+#: src/cache/common/ebuild_exec.cc:236
 msgid "Creation of tempfile failed"
 msgstr "Ошибка создания временного файла"
 
-#: src/cache/common/ebuild_exec.cc:257
+#: src/cache/common/ebuild_exec.cc:253
 msgid "Forking failed"
 msgstr "Ошибка форкинга"
 
-#: src/cache/common/ebuild_exec.cc:283
+#: src/cache/common/ebuild_exec.cc:279
 #, c-format
 msgid "Got signal %s"
 msgstr "Получен сигнал %s"
 
-#: src/cache/common/ebuild_exec.cc:287
+#: src/cache/common/ebuild_exec.cc:283
 #, c-format
 msgid "Ebuild got signal %s"
 msgstr "Ебилд получил сигнал %s"
 
-#: src/cache/common/ebuild_exec.cc:298
+#: src/cache/common/ebuild_exec.cc:294
 #, c-format
 msgid "Could not start %s"
 msgstr "Не получилось запустить %s"
 
-#: src/cache/common/ebuild_exec.cc:300
+#: src/cache/common/ebuild_exec.cc:296
 #, c-format
 msgid "Ebuild failed with status %s"
 msgstr "Ошибка ебилда с состоянием %s"
 
-#: src/cache/common/ebuild_exec.cc:302
+#: src/cache/common/ebuild_exec.cc:298
 msgid "Child aborted in a strange way"
 msgstr "Дитя прервано в странной манере"
 

@@ -136,19 +136,15 @@ EbuildExec::remove_handler()
 bool
 EbuildExec::make_tempfile()
 {
-	char *temp(new char[256]);
-	if(unlikely(temp == NULLPTR))
-		return false;
+	char temp[256];
 	strcpy(temp, "/tmp/ebuild-cache.XXXXXXXX");  // NOLINT(runtime/printf)
 	int fd(mkstemp(temp));
 	if(fd == -1) {
-		delete temp;
 		return false;
 	}
 	calc_settings();
-	cachefile = temp;
+	cachefile.assign(temp);
 	cache_defined = true;
-	delete temp;
 	close(fd);
 	return true;
 }
@@ -274,7 +270,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	while(waitpid(child, &exec_status, 0) != child ) { }
 
 	// Free memory needed only for the child process:
-	delete c_env;
+	delete[] c_env;
 	delete envstrings;
 
 GCC_DIAG_OFF(old-style-cast)

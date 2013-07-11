@@ -5,6 +5,7 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+// #define DEBUG_MD5
 #include <config.h>
 
 #include <fcntl.h>
@@ -239,13 +240,12 @@ calc_md5sum(const char *buffer, Md5DataLen totalsize, uint32_t *resarr)
 	while(len < 14) {
 		mybuf[len++] = 0;
 	}
-	mybuf[14] = (totalsize % 8192) * 8;
-	mybuf[15] = totalsize / 8192;
+	mybuf[14] = (totalsize % 0x20000000UL) * 8;
+	mybuf[15] = (totalsize / 0x20000000UL) & 0xFFFFFFFFUL;
 	md5chunk(mybuf, resarr);
 }
 
 #ifdef DEBUG_MD5
-#include "eixTk/unused.h"
 
 using std::cout;
 using std::endl;
@@ -255,7 +255,6 @@ static void debug_md5(const uint32_t *resarr) ATTRIBUTE_NONNULL_;
 static void
 debug_md5(const uint32_t *resarr)
 {
-	cout << "MD5 Debug: ";
 	for(int i(0); i < 4; ++i) {
 		uint32_t res(resarr[i]);
 		for(int j(0); j < 8; ++j) {
@@ -276,19 +275,7 @@ debug_md5(const uint32_t *resarr)
 	}
 	cout << endl;
 }
-
-bool
-verify_md5sum(const char *file ATTRIBUTE_UNUSED, const char *md5sum ATTRIBUTE_UNUSED)
-{
-	UNUSED(file);
-	UNUSED(md5sum);
-	const char buffer[] = "";
-	uint32_t resarr[4];
-	calc_md5sum(buffer, 0, resarr);
-	debug_md5(resarr);
-	return false;
-}
-#else
+#endif
 
 bool
 verify_md5sum(const char *file, const string &md5sum)
@@ -327,6 +314,9 @@ GCC_DIAG_OFF(sign-conversion)
 		munmap(filebuffer, st.st_size);
 GCC_DIAG_ON(sign-conversion)
 	}
+#ifdef DEBUG_MD5
+	cout << "file: " << file << " size: "<< st.st_size << " should be: " <<  md5sum << " is: "; debug_md5(resarr);
+#endif
 	string::size_type curr(0);
 	for(int i(0); i < 4; ++i) {
 		uint32_t res(resarr[i]);
@@ -354,5 +344,3 @@ GCC_DIAG_ON(sign-conversion)
 	}
 	return true;
 }
-
-#endif
