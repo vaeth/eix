@@ -446,7 +446,7 @@ EixOptionList::EixOptionList()
 	push_back(Option("name",          's'));
 	push_back(Option("slot",          O_SEARCH_SLOT));
 	push_back(Option("fullslot",      O_SEARCH_FULLSLOT));
-	push_back(Option("installed-slot", O_INSTALLED_SLOT));
+	push_back(Option("installed-slot", O_SEARCH_INST_SLOT));
 	push_back(Option("installed-fullslot", O_SEARCH_INST_FULLSLOT));
 	push_back(Option("category",      'C'));
 	push_back(Option("category-name", 'A'));

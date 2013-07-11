@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.29.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Make --installed-slot work.
+	  Thanks to Vikraman <vikraman at gentoo.org> for finding and fixing,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=475564
+
 *eix-0.29.0
 	Артём Воротников <skybon at gmail.com>:
 	- Russian translation updates
