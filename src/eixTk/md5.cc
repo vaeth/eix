@@ -27,7 +27,7 @@
 
 using std::string;
 
-typedef off_t Md5DataLen;
+typedef size_t Md5DataLen;
 
 inline static uint32_t md5F(uint32_t x, uint32_t y, uint32_t z);
 inline static uint32_t md5G(uint32_t x, uint32_t y, uint32_t z);
@@ -291,15 +291,19 @@ verify_md5sum(const char *file, const string &md5sum)
 	if(fd == -1) {
 		return false;
 	}
-	struct stat st;
-	if(fstat(fd, &st)) {
-		close(fd);
-		return false;
-	}
-	if(st.st_size != 0) {
+	Md5DataLen filesize;
+	{
+		struct stat st;
+		if(fstat(fd, &st)) {
+			close(fd);
+			return false;
+		}
 GCC_DIAG_OFF(sign-conversion)
-		filebuffer = static_cast<char *>(mmap(NULLPTR, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
+		filesize = st.st_size;
 GCC_DIAG_ON(sign-conversion)
+	}
+	if(filesize != 0) {
+		filebuffer = static_cast<char *>(mmap(NULLPTR, filesize, PROT_READ, MAP_SHARED, fd, 0));
 		close(fd);
 GCC_DIAG_OFF(old-style-cast)
 		if (filebuffer == MAP_FAILED) {
@@ -308,14 +312,12 @@ GCC_DIAG_ON(old-style-cast)
 		}
 	}
 	uint32_t resarr[4];
-	calc_md5sum(filebuffer, st.st_size, resarr);
+	calc_md5sum(filebuffer, filesize, resarr);
 	if(filebuffer != NULLPTR) {
-GCC_DIAG_OFF(sign-conversion)
-		munmap(filebuffer, st.st_size);
-GCC_DIAG_ON(sign-conversion)
+		munmap(filebuffer, filesize);
 	}
 #ifdef DEBUG_MD5
-	cout << "file: " << file << " size: "<< st.st_size << " should be: " <<  md5sum << " is: "; debug_md5(resarr);
+	cout << "file: " << file << " size: "<< filesize << " should be: " <<  md5sum << " is: "; debug_md5(resarr);
 #endif
 	string::size_type curr(0);
 	for(int i(0); i < 4; ++i) {

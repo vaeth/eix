@@ -262,11 +262,11 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, b
 				}
 				if(p != NULLPTR) {
 					portdirref = *p;
-					if(portdirref.empty()) {
-						portdirref = "/usr/portage";
-					}
 				}
 			}
+		}
+		if(portdirref.empty()) {
+			portdirref = "/usr/portage";
 		}
 		/* Normalize "PORTDIR": */
 		portdirref = normalize_path((m_eprefixportdir + portdirref).c_str(), true, true);

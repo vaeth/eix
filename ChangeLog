@@ -2,10 +2,13 @@
 
 *eix-0.29.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Make --installed-slot work.
+	- Fallback to PORTDIR=/usr/portage, see
+	  http://forums.gentoo.org/viewtopic-p-7349870.html
+	- Make --installed-slot work again (regression from 0.26.0).
 	  Thanks to Vikraman <vikraman at gentoo.org> for finding and fixing,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=475564
-	- Fix md5 algorithm for files of 8192 bytes or longer
+	- Fix md5 algorithm for files of 8192 bytes or longer (serious bug
+	  from the beginning which made md5-cache for longer ebuilds invalid).
 	- Fix possible memory leaks.
 
 *eix-0.29.0
