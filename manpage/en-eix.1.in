@@ -3534,7 +3534,7 @@ Be aware that generating metadata is a security risk, since all ebuilds of the t
 However, you must be trusting the overlays anyway if you use them...
 
 I do B<not> recommend to use B<emerge --metadata> (although this could be automatically
-called at the correct time by using B<eix-sync> with the B<-M> option: put e.g. the line <-M> into B</etc/eix-sync.conf>),
+called at the correct time by using B<eix-sync> with the B<-M> option: put e.g. the line B<-M> into B</etc/eix-sync.conf>),
 because it would be a waste of disk space to store the metadata of the whole portage tree in duplicate into I</var/cache/edb>.
 
 Instead, I B<do> recommend to update the metadata in the overlays at each B<eix-sync>.

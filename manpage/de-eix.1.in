@@ -3623,7 +3623,7 @@ Andererseits müssen Sie Overlays ohnehin vertrauen, wenn Sie sie nutzen...
 
 Ich empfehle B<nicht> die Benutzung von B<emerge --metadata> (obwohl dies automatisiert leich
 zum richtigen Zeitpunkt ausgeführt werden könnte, indem man B<eix-sync> mit der Option B<-M> benutzt:
-Man müsste nur die Zeile <-M> in B</etc/eix-sync.conf> einfügen),
+Man müsste nur die Zeile B<-M> in B</etc/eix-sync.conf> einfügen),
 denn es wäre eine Verschwendung von Plattenplatz, die Metadaten des ganzen Portage-Baums
 als Duplikat nach I</var/cache/edb> zu speichern.
 
