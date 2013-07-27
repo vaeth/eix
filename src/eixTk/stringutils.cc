@@ -44,7 +44,7 @@ using std::cout;
 using std::endl;
 
 const char *spaces(" \t\r\n");
-const char *shellspecial(" \t\r\n\"'`${};|&");
+const char *shellspecial(" \t\r\n\"'`${}()[]<>?*~;|&#");
 const char *doublequotes("\"$\\");
 
 std::locale localeC("C");
