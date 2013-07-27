@@ -50,6 +50,8 @@ char *strndup(const char *s, size_t n) ATTRIBUTE_NONNULL_;
 /** Spaces for split strings */
 extern const char *spaces;
 
+extern const char *shellspecial;
+
 /** Necessary escapes for shell-like strings in "..." */
 extern const char *doublequotes;
 

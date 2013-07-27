@@ -2,6 +2,8 @@
 
 *eix-0.29.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- cache-method ebuild*: support a rudimentary PORTAGE_ECLASS_LOCATIONS
+	  See http://bugs.gentoo.org/show_bug.cgi?id=478320
 	- Cosmetical fixed in manpage
 
 *eix-0.29.1

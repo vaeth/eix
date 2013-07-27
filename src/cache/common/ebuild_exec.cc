@@ -203,6 +203,22 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 		if(likely(!portage_bin_path.empty())) {
 			env["PORTAGE_BIN_PATH"] = portage_bin_path;
 		}
+		vector<string> eclasses;
+		eclasses.push_back(base->getPrefixedPath());
+		RepoList &repos(base->portagesettings->repos);
+		// eclasses.push_back((*(base->portagesettings))["PORTDIR"]);
+		// for(RepoList::const_iterator it(repos.second());
+		for(RepoList::const_iterator it(repos.begin());
+			likely(it != repos.end()); ++it) {
+			if(likely(it->path != eclasses[0])) {
+				eclasses.push_back(it->path);
+			}
+		}
+		for(vector<string>::iterator it(eclasses.begin());
+			likely(it != eclasses.end()); ++it) {
+			escape_string(&*it, shellspecial);
+		}
+		join_to_string(&env["PORTAGE_ECLASS_LOCATIONS"], eclasses);
 	}
 
 	// transform env into c_env (pointing to envstrings[i].c_str())

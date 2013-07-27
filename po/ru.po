@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-07-11 22:44+0200\n"
+"POT-Creation-Date: 2013-07-27 20:10+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -2080,35 +2080,35 @@ msgstr "Временный файл %s всё ещё на месте после 
 msgid "Tempfile %s is not a file"
 msgstr "Временный файл %s не является файлом"
 
-#: src/cache/common/ebuild_exec.cc:236
+#: src/cache/common/ebuild_exec.cc:252
 msgid "Creation of tempfile failed"
 msgstr "Ошибка создания временного файла"
 
-#: src/cache/common/ebuild_exec.cc:253
+#: src/cache/common/ebuild_exec.cc:269
 msgid "Forking failed"
 msgstr "Ошибка форкинга"
 
-#: src/cache/common/ebuild_exec.cc:279
+#: src/cache/common/ebuild_exec.cc:295
 #, c-format
 msgid "Got signal %s"
 msgstr "Получен сигнал %s"
 
-#: src/cache/common/ebuild_exec.cc:283
+#: src/cache/common/ebuild_exec.cc:299
 #, c-format
 msgid "Ebuild got signal %s"
 msgstr "Ебилд получил сигнал %s"
 
-#: src/cache/common/ebuild_exec.cc:294
+#: src/cache/common/ebuild_exec.cc:310
 #, c-format
 msgid "Could not start %s"
 msgstr "Не получилось запустить %s"
 
-#: src/cache/common/ebuild_exec.cc:296
+#: src/cache/common/ebuild_exec.cc:312
 #, c-format
 msgid "Ebuild failed with status %s"
 msgstr "Ошибка ебилда с состоянием %s"
 
-#: src/cache/common/ebuild_exec.cc:298
+#: src/cache/common/ebuild_exec.cc:314
 msgid "Child aborted in a strange way"
 msgstr "Дитя прервано в странной манере"
 
@@ -2294,35 +2294,35 @@ msgstr "отсутствует указатель формата"
 msgid "unknown format specifier '%%%s'"
 msgstr "неизвестный указатель формата '%%%s'"
 
-#: src/eixTk/stringutils.cc:434
+#: src/eixTk/stringutils.cc:435
 #, c-format
 msgid "flags should not start with a '+': %s"
 msgstr "флаги не должны начинаться с '+': %s"
 
-#: src/eixTk/stringutils.cc:475
+#: src/eixTk/stringutils.cc:476
 #, c-format
 msgid "Internal error: Storing required after finalizing"
 msgstr "Внутренняя ошибка: Требуется хранение после финализации"
 
-#: src/eixTk/stringutils.cc:485
+#: src/eixTk/stringutils.cc:486
 #, c-format
 msgid "Internal error: Hashing required after finalizing"
 msgstr "Внутренняя ошибка: Требуется хеширование после финализации"
 
-#: src/eixTk/stringutils.cc:489
+#: src/eixTk/stringutils.cc:490
 #, c-format
 msgid "Internal error: Hashing required in non-hash mode"
 msgstr "Внутренняя ошибка: Требуется хеширование в нехешевом режиме"
 
-#: src/eixTk/stringutils.cc:519
+#: src/eixTk/stringutils.cc:520
 msgid "Internal error: Index required before sorting."
 msgstr "Внутренняя ошибка: Требуется индекс перед сортировкой."
 
-#: src/eixTk/stringutils.cc:524
+#: src/eixTk/stringutils.cc:525
 msgid "Internal error: Trying to shortcut non-hashed string."
 msgstr "Внутренняя ошибка: Попытка создать ярлык на нехешированную строку."
 
-#: src/eixTk/stringutils.cc:534
+#: src/eixTk/stringutils.cc:535
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "База данных испорчена: требуется несуществующий хеш"
 
