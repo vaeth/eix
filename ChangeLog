@@ -7,6 +7,7 @@
 	  PORTAGE_ECLASS_LOCATIONS (>=portage-2.2.0_alpha89 needs it),
 	  see http://bugs.gentoo.org/show_bug.cgi?id=478320
 	- Read also PORTAGE_REPOS_CONF /usr/share/portage/config/repos.conf
+	- zsh-completion: use _call_program, force DEFAULT_FORMAT=normal
 	- manpage: cosmetical fixes
 
 *eix-0.29.1
