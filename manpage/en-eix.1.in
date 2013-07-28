@@ -1989,6 +1989,10 @@ B<%{PORTAGE_CONFIGROOT}/etc/make.globals>
 The default value corresponds to >=portage-2.2* behavior.
 
 .TP
+.BR PORTAGE_REPOS_CONF " " (string)
+This file is used to set the default repository information.
+
+.TP
 .BR EPREFIX_SOURCE " " (prefix-string)
 This path is prepended to paths occurring as the argument of source commands
 in /etc/make.conf and /etc/make.globals.

@@ -109,10 +109,19 @@ AddOption(PREFIXSTRING, "PORTAGE_CONFIGROOT",
 	"%{EPREFIX}", _(
 	"This path is prepended to the /etc paths."));
 
-AddOption(PREFIXSTRING, "MAKE_GLOBALS",
-	"%{EPREFIX}/usr/share/portage/config/make.globals", _(
+AddOption(PREFIXSTRING, "PORTAGE_DEFAULTS",
+	"%{EPREFIX}/usr/share/portage/config", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the path prepended to MAKE_GLOBALS and PORTAGE_REPOS_CONF."));
+
+AddOption(STRING, "MAKE_GLOBALS",
+	"%{PORTAGE_DEFAULTS}/make.globals", _(
 	"This file is used instead of %{PORTAGE_CONFIGROOT}/etc/make.globals\n"
 	"if it exists. This is reasonable for >=portage-2.2*"));
+
+AddOption(STRING, "PORTAGE_REPOS_CONF",
+	"%{PORTAGE_DEFAULTS}/repos.conf", _(
+	"This file is used to set the default repository information."));
 
 AddOption(PREFIXSTRING, "EPREFIX_PORTAGE_EXEC",
 	"%{EPREFIX}", _(

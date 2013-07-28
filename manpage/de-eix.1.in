@@ -2011,6 +2011,10 @@ benutzt.
 Der Vorgabewert entspricht dem Verhalten von >=portage-2.2*
 
 .TP
+.BR PORTAGE_REPOS_CONF " " (string)
+Diese Datei wird als Default für Repository-Informationen eingelesen.
+
+.TP
 .BR EPREFIX_SOURCE " " (prefix-string)
 Dies Pfad wird allen Pfaden vorangestellt, die als Argumente von Source-Kommandos
 in /etc/make.conf und /etc/make.globals auftauchen.

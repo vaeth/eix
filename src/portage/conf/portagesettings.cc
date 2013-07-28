@@ -241,7 +241,10 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, b
 		VarsReader reposfile(VarsReader::SUBST_VARS|VarsReader::PORTAGE_SECTIONS|VarsReader::RECURSE);
 		reposfile.setPrefix(eprefixsource);
 		string errtext;
-		bool have_repos(reposfile.read((m_eprefixconf + USER_REPOS_CONF).c_str(), &errtext, true));
+		bool have_repos(reposfile.read((*eixrc)["PORTAGE_REPOS_CONF"].c_str(), &errtext, true));
+		if(reposfile.read((m_eprefixconf + USER_REPOS_CONF).c_str(), &errtext, true)) {
+			have_repos = true;
+		}
 		const string *main_repo(NULLPTR);
 		OverlayIdent::Priority priority(0);
 		string &portdirref((*this)["PORTDIR"]);
