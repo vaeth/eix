@@ -175,23 +175,25 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 {
 	c_env = NULLPTR;
 	envstrings = NULLPTR;
-#ifdef HAVE_SETENV
-	if(!use_ebuild_sh)
-		return;
+	// non-sh: environment is kept except for possibly new PORTDIR_OVERLAY
+	if(!use_ebuild_sh) {  // Shortcut if this is done globally or undesired
+#ifndef HAVE_SETENV
+		if(!(base->portagesettings->export_portdir_overlay))
 #endif
+		return;
+	}
 	map<string, string> env;
 #ifndef HAVE_SETENV
 	if(!use_ebuild_sh) {
-		if(!(base->portagesettings->export_portdir_overlay))
-			return;
 		for(char **e(environ); likely(*e != NULLPTR); ++e) {
 			const char *s(strchr(*e, '='));
 			if(likely(s != NULLPTR))
 				env[string(*e, s - (*e))] = s + 1;
 		}
-		env["PORTDIR_OVERLAY"] = (*(base->portagesettings))["PORTDIR_OVERLAY"].c_str();
 	} else  // NOLINT(readability/braces)
+	// ifndef HAVE_SETENV if(!use_ebuild_sh) we have already returned
 #endif
+	// if(use_ebuild_sh)
 	{
 		base->env_add_package(env, package, version, dir, name);
 		env["dbkey"] = cachefile;
@@ -203,6 +205,7 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 		if(likely(!portage_bin_path.empty())) {
 			env["PORTAGE_BIN_PATH"] = portage_bin_path;
 		}
+		env["PORTAGE_REPO_NAME"] = base->getOverlayName();
 		vector<string> eclasses;
 		eclasses.push_back(base->getPrefixedPath());
 		RepoList &repos(base->portagesettings->repos);
@@ -220,6 +223,7 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 		}
 		join_to_string(&env["PORTAGE_ECLASS_LOCATIONS"], eclasses);
 	}
+	env["PORTDIR_OVERLAY"] = (*(base->portagesettings))["PORTDIR_OVERLAY"].c_str();
 
 	// transform env into c_env (pointing to envstrings[i].c_str())
 	c_env = new const char *[env.size() + 1];

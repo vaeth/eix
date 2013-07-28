@@ -2,9 +2,11 @@
 
 *eix-0.29.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- cache-method ebuild*: support a rudimentary PORTAGE_ECLASS_LOCATIONS
-	  See http://bugs.gentoo.org/show_bug.cgi?id=478320
-	- Cosmetical fixed in manpage
+	- eix-update: Make long option --override-method work
+	- eix-update: ebuild*: export PORTAGE_REPO_NAME and a rudimentary
+	  PORTAGE_ECLASS_LOCATIONS (>=portage-2.2.0_alpha89 needs it),
+	  see http://bugs.gentoo.org/show_bug.cgi?id=478320
+	- manpage: cosmetical fixes
 
 *eix-0.29.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

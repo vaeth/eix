@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-07-27 20:10+0200\n"
+"POT-Creation-Date: 2013-07-28 11:17+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -2080,35 +2080,35 @@ msgstr "Временный файл %s всё ещё на месте после 
 msgid "Tempfile %s is not a file"
 msgstr "Временный файл %s не является файлом"
 
-#: src/cache/common/ebuild_exec.cc:252
+#: src/cache/common/ebuild_exec.cc:256
 msgid "Creation of tempfile failed"
 msgstr "Ошибка создания временного файла"
 
-#: src/cache/common/ebuild_exec.cc:269
+#: src/cache/common/ebuild_exec.cc:273
 msgid "Forking failed"
 msgstr "Ошибка форкинга"
 
-#: src/cache/common/ebuild_exec.cc:295
+#: src/cache/common/ebuild_exec.cc:299
 #, c-format
 msgid "Got signal %s"
 msgstr "Получен сигнал %s"
 
-#: src/cache/common/ebuild_exec.cc:299
+#: src/cache/common/ebuild_exec.cc:303
 #, c-format
 msgid "Ebuild got signal %s"
 msgstr "Ебилд получил сигнал %s"
 
-#: src/cache/common/ebuild_exec.cc:310
+#: src/cache/common/ebuild_exec.cc:314
 #, c-format
 msgid "Could not start %s"
 msgstr "Не получилось запустить %s"
 
-#: src/cache/common/ebuild_exec.cc:312
+#: src/cache/common/ebuild_exec.cc:316
 #, c-format
 msgid "Ebuild failed with status %s"
 msgstr "Ошибка ебилда с состоянием %s"
 
-#: src/cache/common/ebuild_exec.cc:314
+#: src/cache/common/ebuild_exec.cc:318
 msgid "Child aborted in a strange way"
 msgstr "Дитя прервано в странной манере"
 

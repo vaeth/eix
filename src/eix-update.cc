@@ -195,7 +195,7 @@ EixUpdateOptionList::EixUpdateOptionList()
 
 	push_back(Option("exclude-overlay", 'x',    Option::STRINGLIST, exclude_args));
 	push_back(Option("add-overlay",    'a',     Option::STRINGLIST, add_args));
-	push_back(Option("method",         'm',     Option::PAIRLIST,   method_args));
+	push_back(Option("override-method", 'm',    Option::PAIRLIST,   method_args));
 	push_back(Option("repo-name",      'r',     Option::PAIRLIST,   repo_args));
 	push_back(Option("output",         'o',     Option::STRING,     &outputname));
 }
