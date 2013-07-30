@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-07-28 12:53+0200\n"
+"POT-Creation-Date: 2013-07-30 22:01+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -1630,16 +1630,16 @@ msgstr ""
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING "
 "для подробной информации.\n"
 
-#: src/eix.cc:568 src/eix-diff.cc:285
+#: src/eix.cc:563 src/eix-diff.cc:285
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Проблема при обработке %s: %s\n"
 
-#: src/eix.cc:664 src/eix-diff.cc:350 src/eix-update.cc:385
+#: src/eix.cc:659 src/eix-diff.cc:350 src/eix-update.cc:385
 msgid "cannot redirect to %r"
 msgstr "невозможно перенаправить в %r"
 
-#: src/eix.cc:745 src/eix.cc:1077
+#: src/eix.cc:740 src/eix.cc:1072
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1648,7 +1648,7 @@ msgstr ""
 "Невозможно открыть базу данных %s для чтения (режим = 'rb')\n"
 "Вы не забыли её создать с помощью 'eix-update'?"
 
-#: src/eix.cc:755
+#: src/eix.cc:750
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1659,31 +1659,31 @@ msgstr ""
 "Используется формат базы данных %s (текущий ― %s).\n"
 "Запустите 'eix-update' и попробуйте ещё раз."
 
-#: src/eix.cc:1022 src/eix.cc:1043
+#: src/eix.cc:1017 src/eix.cc:1038
 #, c-format
 msgid "Found %s matches."
 msgstr "Найдено %s совпадений."
 
-#: src/eix.cc:1025
+#: src/eix.cc:1020
 msgid "No matches found."
 msgstr "Совпадений не найдено."
 
-#: src/eix.cc:1034
+#: src/eix.cc:1029
 #, c-format
 msgid "Found %s match."
 msgstr "Найдено %s совпадение."
 
-#: src/eix.cc:1151
+#: src/eix.cc:1146
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Нет не совпадающих или пустых записей в %s.\n"
 
-#: src/eix.cc:1152
+#: src/eix.cc:1147
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Нет не совпадающих записей в %s.\n"
 
-#: src/eix.cc:1157
+#: src/eix.cc:1152
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1692,7 +1692,7 @@ msgstr ""
 "Не совпадающие или пустые записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1158
+#: src/eix.cc:1153
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1701,7 +1701,7 @@ msgstr ""
 "Не совпадающие записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1216
+#: src/eix.cc:1211
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1709,7 +1709,7 @@ msgstr ""
 "Имена всех установленных пакетов находятся в базе данных.\n"
 "\n"
 
-#: src/eix.cc:1219
+#: src/eix.cc:1214
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -2065,50 +2065,50 @@ msgstr "Неизвестный кэш %r для каталога %r"
 msgid "Can't read cache file %s: %s"
 msgstr "Невозможно прочесть файл кэша %s: %s"
 
-#: src/cache/common/ebuild_exec.cc:160
+#: src/cache/common/ebuild_exec.cc:161
 #, c-format
 msgid "Can't unlink tempfile %s"
 msgstr "Невозможно разлинковать временный файл %s"
 
-#: src/cache/common/ebuild_exec.cc:162
+#: src/cache/common/ebuild_exec.cc:163
 #, c-format
 msgid "Tempfile %s still there after unlink"
 msgstr "Временный файл %s всё ещё на месте после разлинковки"
 
-#: src/cache/common/ebuild_exec.cc:164
+#: src/cache/common/ebuild_exec.cc:165
 #, c-format
 msgid "Tempfile %s is not a file"
 msgstr "Временный файл %s не является файлом"
 
-#: src/cache/common/ebuild_exec.cc:256
+#: src/cache/common/ebuild_exec.cc:257
 msgid "Creation of tempfile failed"
 msgstr "Ошибка создания временного файла"
 
-#: src/cache/common/ebuild_exec.cc:273
+#: src/cache/common/ebuild_exec.cc:274
 msgid "Forking failed"
 msgstr "Ошибка форкинга"
 
-#: src/cache/common/ebuild_exec.cc:299
+#: src/cache/common/ebuild_exec.cc:300
 #, c-format
 msgid "Got signal %s"
 msgstr "Получен сигнал %s"
 
-#: src/cache/common/ebuild_exec.cc:303
+#: src/cache/common/ebuild_exec.cc:304
 #, c-format
 msgid "Ebuild got signal %s"
 msgstr "Ебилд получил сигнал %s"
 
-#: src/cache/common/ebuild_exec.cc:314
+#: src/cache/common/ebuild_exec.cc:315
 #, c-format
 msgid "Could not start %s"
 msgstr "Не получилось запустить %s"
 
-#: src/cache/common/ebuild_exec.cc:316
+#: src/cache/common/ebuild_exec.cc:317
 #, c-format
 msgid "Ebuild failed with status %s"
 msgstr "Ошибка ебилда с состоянием %s"
 
-#: src/cache/common/ebuild_exec.cc:318
+#: src/cache/common/ebuild_exec.cc:319
 msgid "Child aborted in a strange way"
 msgstr "Дитя прервано в странной манере"
 
@@ -5494,58 +5494,58 @@ msgstr "Свойство %r использовано вне контекста �
 msgid "Variable %r calls itself for printing"
 msgstr "Переменная %r вызывает себя для печати"
 
-#: src/output/formatstring.cc:221
+#: src/output/formatstring.cc:216
 #, c-format
 msgid "DARK_TERM has illegal format: %s"
 msgstr "DARK_TERM имеет неправильный формат: %s"
 
-#: src/output/formatstring.cc:479
+#: src/output/formatstring.cc:476
 msgid "Internal error: bad node for parse_colors."
 msgstr "Внутренняя ошибка: плохой узел для parse_colors."
 
-#: src/output/formatstring.cc:547
+#: src/output/formatstring.cc:544
 msgid "'(' without closing ')'"
 msgstr "'(' без закрывающего ')'"
 
-#: src/output/formatstring.cc:556
+#: src/output/formatstring.cc:553
 #, c-format
 msgid "Error while parsing color: %s"
 msgstr "Ошибка при обработке цвета: %s"
 
-#: src/output/formatstring.cc:579
+#: src/output/formatstring.cc:576
 msgid "'<' without closing '>'"
 msgstr "'<' без закрывающего '>'"
 
-#: src/output/formatstring.cc:649
+#: src/output/formatstring.cc:646
 msgid "No name of property/variable found after '{'."
 msgstr "Не найдено имя свойства/переменной после '{'."
 
-#: src/output/formatstring.cc:653 src/output/formatstring.cc:674
-#: src/output/formatstring.cc:733
+#: src/output/formatstring.cc:650 src/output/formatstring.cc:671
+#: src/output/formatstring.cc:730
 msgid "Found '{' without closing '}'."
 msgstr "Найден '{' без закрывающего '}'."
 
-#: src/output/formatstring.cc:668
+#: src/output/formatstring.cc:665
 msgid "Unexpected symbol %r found after '{'."
 msgstr "Неожиданный символ %r найден после '{'."
 
-#: src/output/formatstring.cc:754
+#: src/output/formatstring.cc:751
 msgid "Found ELSE without IF."
 msgstr "Найден ELSE без IF"
 
-#: src/output/formatstring.cc:781
+#: src/output/formatstring.cc:778
 msgid "Found FI without IF."
 msgstr "Найден FI без IF."
 
-#: src/output/formatstring.cc:803
+#: src/output/formatstring.cc:800
 msgid "Check your syntax"
 msgstr "Проверьте синтаксис"
 
-#: src/output/formatstring.cc:826
+#: src/output/formatstring.cc:823
 msgid "Bad state: undefined"
 msgstr "Плохое состояние: не определено"
 
-#: src/output/formatstring.cc:840
+#: src/output/formatstring.cc:837
 #, c-format
 msgid "Line %s, column %s: %s"
 msgstr "Строка %s, столбец %s: %s"

@@ -543,16 +543,11 @@ print_overlay_table(PrintFormat *fmt, DBHeader *header, vector<bool> *overlay_us
 		}
 		OutputString s;
 		fmt->overlay_keytext(&s, i);
-		cout << s.as_string() << " ";
-		if(fmt->no_color) {
-			cout << header->getOverlay(i).human_readable();
-		} else {
-			cout
-				<< fmt->color_overlayname
-				<< header->getOverlay(i).human_readable()
-				<< fmt->color_overlaynameend;
-		}
-		cout << "\n";
+		cout << s.as_string() << " "
+			<< fmt->color_overlayname
+			<< header->getOverlay(i).human_readable()
+			<< fmt->color_overlaynameend
+			<< "\n";
 		printed_overlay = true;
 	}
 	return printed_overlay;

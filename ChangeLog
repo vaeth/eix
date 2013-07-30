@@ -2,12 +2,13 @@
 
 *eix-0.29.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- eix-update: Make long option --override-method work
-	- eix-update: ebuild*: export PORTAGE_REPO_NAME and a rudimentary
+	- Fix eix-update: Make long option --override-method work
+	- Fix eix-update: ebuild*: export PORTAGE_REPO_NAME and a rudimentary
 	  PORTAGE_ECLASS_LOCATIONS (>=portage-2.2.0_alpha89 needs it),
 	  see http://bugs.gentoo.org/show_bug.cgi?id=478320
+	- Fix colorless output: http://bugs.gentoo.org/show_bug.cgi?id=478818
 	- Read also PORTAGE_REPOS_CONF /usr/share/portage/config/repos.conf
-	- zsh-completion: use _call_program, force DEFAULT_FORMAT=normal
+	- Fix zsh-completion: use _call_program, force DEFAULT_FORMAT=normal
 	- manpage: cosmetical fixes
 
 *eix-0.29.1

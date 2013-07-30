@@ -46,7 +46,7 @@ using std::endl;
 string::size_type PrintFormat::currcolumn = 0;
 
 static void parse_color(OutputString *color, bool use_color) ATTRIBUTE_NONNULL_;
-static void colorstring(string *color) ATTRIBUTE_NONNULL_;
+static void colorstring(string *color, bool use_color) ATTRIBUTE_NONNULL_;
 static bool parse_colors(OutputString *ret, const string &colorstring, bool colors, string *errtext) ATTRIBUTE_NONNULL_;
 static void parse_termdark(vector<Darkmode> *mode, vector<string> *regexp, const string &termdark) ATTRIBUTE_NONNULL_;
 inline static const char *seek_character(const char *fmt) ATTRIBUTE_PURE;
@@ -157,16 +157,11 @@ PrintFormat::overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay, 
 		s->assign_fast(onum);
 		return;
 	}
-	bool color(!no_color);
-	if(color) {
-		s->assign(((is_virtual(overlay)) ? color_virtualkey : color_overlaykey), 0);
-	}
+	s->assign(((is_virtual(overlay)) ? color_virtualkey : color_overlaykey), 0);
 	s->append_fast('[');
 	s->append_fast(onum);
 	s->append_fast(']');
-	if(color) {
-		s->append(color_keyend, 0);
-	}
+	s->append(color_keyend, 0);
 }
 
 class Darkmode {
@@ -314,8 +309,12 @@ parse_color(OutputString *color, bool use_color)
 }
 
 static void
-colorstring(string *color)
+colorstring(string *color, bool use_color)
 {
+	if(!use_color) {
+		color->clear();
+		return;
+	}
 	string errtext;
 	AnsiColor ac;
 	if(likely(ac.initcolor(*color, &errtext))) {
@@ -329,16 +328,14 @@ void
 PrintFormat::setupColors()
 {
 	bool use_color(!no_color);
-	if(use_color) {
-		colorstring(&color_overlaykey);
-		colorstring(&color_virtualkey);
-		colorstring(&color_keyend);
-		colorstring(&color_overlayname);
-		colorstring(&color_overlaynameend);
-		colorstring(&color_numbertext);
-		colorstring(&color_numbertextend);
-		colorstring(&color_end);
-	}
+	colorstring(&color_overlaykey, use_color);
+	colorstring(&color_virtualkey, use_color);
+	colorstring(&color_keyend, use_color);
+	colorstring(&color_overlayname, use_color);
+	colorstring(&color_overlaynameend, use_color);
+	colorstring(&color_numbertext, use_color);
+	colorstring(&color_numbertextend, use_color);
+	colorstring(&color_end, use_color);
 	parse_color(&before_use_start, use_color);
 	parse_color(&before_use_end, use_color);
 	parse_color(&after_use, use_color);

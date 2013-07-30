@@ -29,6 +29,7 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringutils.h"
 #include "eixTk/sysutils.h"
 #include "eixrc/eixrc.h"
 #include "eixrc/global.h"
