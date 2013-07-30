@@ -40,7 +40,9 @@ commit)
 gc)
 	ExecWarn git prune
 	ExecWarn git repack -a -d
-	ExecWarn git gc --aggressive;;
+	ExecWarn git gc --aggressive
+	ExecWarn git repack -a -d
+	ExecWarn git prune;;
 l|log)
 	ExecDie git log --decorate --graph --all --full-history "${@}";;
 h|help)
