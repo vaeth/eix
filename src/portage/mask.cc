@@ -146,6 +146,8 @@ GCC_DIAG_ON(sign-conversion)
 		m_test_reponame = !(m_reponame.empty());
 		if(slot_subslot(&m_slotname, &m_subslotname)) {
 			m_test_subslot = m_test_slot;
+		} else {
+			m_test_subslot = false;
 		}
 	} else {
 		m_test_slot = m_test_reponame = false;

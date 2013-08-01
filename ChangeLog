@@ -2,6 +2,7 @@
 
 *eix-0.29.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix random bugs for masks with slot and no subslot
 	- Fix eix-update: Make long option --override-method work
 	- Fix eix-update: ebuild*: export PORTAGE_REPO_NAME and a rudimentary
 	  PORTAGE_ECLASS_LOCATIONS (>=portage-2.2.0_alpha89 needs it),
