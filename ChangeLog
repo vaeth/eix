@@ -1,5 +1,8 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.29.3
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+
 *eix-0.29.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix random bugs for masks with slot and no subslot

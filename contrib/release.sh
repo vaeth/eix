@@ -97,12 +97,12 @@ Otherwise, this would be just a waste of space.
 To use this option, you must have created the tarball first.
 
 Have you done this, and do you want to update the tarball branch' || exit 0
-for j in tar.xz tar.bz2 tar.gz zip tar.Z shar.gz shar
+for j in tar.xz tar.bz2 tar.gz zip
 do	tarball="${proj}-${ver}.${j}"
 	test -f "${tarball}" && break
 done
 test -f "${tarball}" || \
-	Die "You must first create the tarball with ./contrib/tarball.sh"
+	Die "You must first create the tarball with contrib/tarball.sh"
 
 # The rest must be a function, since the original file
 # will be removed during execution, and so parsing of this file might fail
