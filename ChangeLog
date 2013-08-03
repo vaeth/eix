@@ -2,6 +2,8 @@
 
 *eix-0.29.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Add EIX_LIMIT{,_COMPACT} as a safety measurement for typos.
+	  This solves somewhat http://bugs.gentoo.org/show_bug.cgi?id=346665
 
 *eix-0.29.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

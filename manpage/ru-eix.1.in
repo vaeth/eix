@@ -2148,6 +2148,14 @@ This value is used as exit status if there are 2 or more matches.
 The value of B<COUNT_ONLY_PRINTED> is honoured.
 
 .TP
+.BR EIX_LIMIT ", " EIX_LIMIT_COMPACT " " (integer)
+As a safety measurement for typos there are never more packages displayed
+than specified here:
+There are two different variables, depending on whether B<--compact> is active.
+There is no limit if the output is not sent to a terminal or if
+the value of the variable is B<0>.
+
+.TP
 .BR QUICKMODE " " (true / false)
 If true, eix and eix-diff will use B<--quick> by default.
 

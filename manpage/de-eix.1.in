@@ -2172,6 +2172,14 @@ Dieser Wert wird als Exit-Status für 2 oder mehr Treffer benutzt.
 Der Wert von B<COUNT_ONLY_PRINTED> wird dabei berücksichtigt.
 
 .TP
+.BR EIX_LIMIT ", " EIX_LIMIT_COMPACT " " (integer)
+Als Sicherheitsmaßnahme für Vertipper werden auf dem Terminal niemals mehr
+als die entsprechende Anzahl von Paketen ausgegeben:
+Es gibt zwei verschiedene Variablen, je nachdem, ob B<--compact> aktiv ist oder nicht.
+Es gibt keinen solchen Limit, falls die Ausgabe nicht auf das Terminal geht,
+oder falls die Variable den Wert B<0> enthält.
+
+.TP
 .BR QUICKMODE " " (true / false)
 Bestimmt, ob für eix und eix-diff die Option B<--quick> die Vorgabe ist.
 

@@ -216,12 +216,15 @@ Output() {
 # Note that all the following variables are automatically exported, since
 # they immediately preceed the command (the \ at the line-ends is crucial):
 NOCOLORS=: \
+DEFAULT_FORMAT=normal \
+EIX_LIMIT=0 \
 VERSION_NEWLINE= \
 DATE_FORMAT='%s' \
 DATE_OUTPUT='%x %X' \
 NAME='<category>/<package>' \
 LINE='<date:DATE_FORMAT>\t%{'${input}'}\t%{'${output}'}'${date_output}'\n' \
-	eix '-I*' --format '<installedversions:LINE>' \
+FORMAT='<installedversions:LINE>' \
+eix '-I*' \
 | sort -n \
 | {
 	while read -r line

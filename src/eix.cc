@@ -73,7 +73,7 @@ using std::endl;
 static bool print_overlay_table(PrintFormat *fmt, DBHeader *header, vector<bool> *overlay_used) ATTRIBUTE_NONNULL((1, 2));
 static void parseFormat(const char *varname, const char *varcontent) ATTRIBUTE_NONNULL_;
 static void set_format();
-static void setup_defaults(EixRc *rc) ATTRIBUTE_NONNULL_;
+static void setup_defaults(EixRc *rc, bool is_tty) ATTRIBUTE_NONNULL_;
 static bool is_current_dbversion(const char *filename) ATTRIBUTE_NONNULL_;
 static void print_vector(const vector<string> &vec);
 static void print_unused(const string &filename, const string &excludefiles, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
@@ -473,7 +473,7 @@ EixOptionList::EixOptionList()
 
 /** Setup default values for all global variables. */
 static void
-setup_defaults(EixRc *rc)
+setup_defaults(EixRc *rc, bool is_tty)
 {
 	// Setup defaults
 	memset(&rc_options, 0, sizeof(rc_options));
@@ -511,7 +511,7 @@ setup_defaults(EixRc *rc)
 	}
 	format->setupResources(rc);
 	format->no_color            = (rc->getBool("NOCOLORS") ? true :
-		(rc->getBool("FORCE_COLORS") ? false : (isatty(1) == 0)));
+		(rc->getBool("FORCE_COLORS") ? false : (!is_tty)));
 	format->style_version_lines = rc->getBool("STYLE_VERSION_LINES");
 	format->slot_sorted         = !rc->getBool("STYLE_VERSION_SORTED");
 	format->recommend_mode      = rc->getLocalMode("RECOMMEND_LOCAL_MODE");
@@ -592,7 +592,8 @@ run_eix(int argc, char** argv)
 	drop_permissions(&eixrc);
 
 	// Setup defaults for all global variables like rc_options
-	setup_defaults(&eixrc);
+	bool is_tty(isatty(1) != 0);
+	setup_defaults(&eixrc, is_tty);
 
 	// Read our options from the commandline.
 	ArgumentReader argreader(argc, argv, EixOptionList());
@@ -933,6 +934,9 @@ run_eix(int argc, char** argv)
 		print_xml->start();
 	}
 	bool have_printed(false);
+	bool reached_limit(false);
+	string limit_var(rc_options.compact_output ? "EIX_LIMIT_COMPACT" : "EIX_LIMIT");
+	eix::Treesize limit(is_tty ? eixrc.getInteger(limit_var) : 0);
 	for(eix::ptr_list<Package>::iterator it(matches.begin());
 		likely(it != matches.end()); ++it) {
 		stability.set_stability(*it);
@@ -955,11 +959,14 @@ run_eix(int argc, char** argv)
 			}
 		}
 		if(overlay_mode != mode_list_used_renumbered) {
-			if(format->print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
+			if(reached_limit || format->print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
 				have_printed = true;
 				++count;
 				if(unlikely(rc_options.brief || (rc_options.brief2 && count > 1))) {
 					break;
+				}
+				if(unlikely(count == limit)) {
+					reached_limit = true;
 				}
 			}
 		}
@@ -982,11 +989,14 @@ run_eix(int argc, char** argv)
 		format->set_overlay_translations(&overlay_num);
 		for(eix::ptr_list<Package>::iterator it(matches.begin());
 			likely(it != matches.end()); ++it) {
-			if(format->print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
+			if(reached_limit || format->print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
 				have_printed = true;
 				++count;
 				if(unlikely(rc_options.brief || (rc_options.brief2 && count > 1))) {
 					break;
+				}
+				if(unlikely(count == limit)) {
+					reached_limit = true;
 				}
 			}
 		}
@@ -1042,8 +1052,14 @@ run_eix(int argc, char** argv)
 		have_printed = true;
 		cout << format->color_numbertextend << "\n";
 	}
-	if(have_printed) {
+	if(likely(have_printed)) {
 		cout << format->color_end;
+		if(unlikely(reached_limit)) {
+			cout << eix::format(_(
+			"Only %s matches displayed on terminal.\n"
+			"Set %s=0 to show all matches.\n"))
+			% limit % limit_var;
+		}
 	}
 
 	// Delete matches

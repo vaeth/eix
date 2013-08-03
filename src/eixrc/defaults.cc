@@ -267,6 +267,16 @@ AddOption(INTEGER, "MOREFOUND_STATUS",
 	"This value is used as exit status if there are 2 or more matches.\n"
 	"The value of COUNT_ONLY_PRINTED is honoured."));
 
+AddOption(INTEGER, "EIX_LIMIT",
+	"50", _(
+	"The maximal number of matches shown on terminal in non-compact mode.\n"
+	"The value 0 means all matches are shown."));
+
+AddOption(INTEGER, "EIX_LIMIT_COMPACT",
+	"200", _(
+	"The maximal number of matches shown on terminal in compact mode.\n"
+	"The value 0 means all matches are shown."));
+
 AddOption(BOOLEAN, "QUICKMODE",
 	"false", _(
 	"Whether --quick is on by default."));
