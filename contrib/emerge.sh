@@ -71,8 +71,7 @@ InstallEbuildVersion() {
 	(	cd -- "${edir}" || Die "cannot change to ${edir}"
 		RmOpt "Manifest" || Die "cannot remove Manifest"
 		Echo "ebuild ${edir}/${project}-${2}.ebuild manifest"
-		ebuild -- "${project}-${2}.ebuild" manifest \
-			|| Die "ebuild failed"
+		ebuild "${project}-${2}.ebuild" manifest || Die "ebuild failed"
 	) || exit
 	if [ -n "${repo_name:++}" ] && command -v egencache >/dev/null 2>&1
 	then	Echo "egencache --repo=${repo_name} --update"
@@ -80,7 +79,7 @@ InstallEbuildVersion() {
 			Die "egencache failed"
 	fi
 	Echo "emerge -1O =${category}/${project}-${2}"
-	exec emerge -1O -- "=${category}/${project}-${2}"
+	exec emerge -1O "=${category}/${project}-${2}"
 	Die "cannot execute emerge"
 }
 
