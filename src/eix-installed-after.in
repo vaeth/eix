@@ -14,7 +14,7 @@
 . ./eix-functions.sh.in
 ReadFunctions
 
-# Prepend content of eix variable EIX_INSTALLED after to the arguments
+# Prepend content of eix variable EIX_INSTALLED_AFTER to the arguments
 
 ReadVar EIX_INSTALLED_AFTER EIX_INSTALLED_AFTER
 eval "set -- ${EIX_INSTALLED_AFTER} \"\${@}\""
@@ -34,7 +34,7 @@ Be aware that only packages in the eix database are considered.
 The argument can use shell pattern matching (* and ?; do not forget to quote
 them if you call this script from a shell); the first match is chosen.
 The :slot part can be omitted if the corresponding package has only one slot.
-(Options -l and -L have different rules).
+(Options -l and -L have different rules.)
 The argument is not needed if option -f, -e or -F is used.
 
 The eix (or environment) variable EIX_INSTALLED_AFTER is prepended to the
@@ -43,7 +43,7 @@ aware about security risks!
 
 The following options are available:
 
--i   Ignore all previous options (useful if EIX_INSTALLED_AFTER is set).
+-i   Ignore all previous options (useful if EIX_INSTALLED_AFTER is set.)
 -f   Output full list of all packages.
 -e TIME Use TIME as "install" date.
      TIME is in seconds since epoch (see e.g. "date +%s")
@@ -207,9 +207,16 @@ Output() {
 #
 # We set NOCOLORS to avoid the "reset color string" at the very end.
 #
+# We make sure by forcing the default DEFAULT_FORMAT=normal that the "normal"
+# format (passed by --format or set in FORMAT) and corresponding EIX_LIMIT
+# is used.  The latter is set to 0 to force output of really all packages.
+#
+# The FORMAT refers implicitly to the LINE variable which in turn refers
+# implicitly to DATE_FORMAT, DATE_OUTPUT, and NAME:
+#
 # The name of the variables DATE_FORMAT, DATE_OUTPUT, NAME, and LINE
-# could also be any other unused name; it is only important that in LINE
-# resp. in the --format argument we use the corresponding variable names.
+# could also be any other unused names; it is only important that in LINE
+# resp. in the --FORMAT argument we use the corresponding variable names.
 #
 # We have to quote \ for the shell when we use "..." to set variables.
 #

@@ -18,7 +18,7 @@ It outputs all installed packages, or packages installed with/without
 repository or buildtime information.
 Packages emerged with new version of portage contain repository and buildtime
 information. It is advantageous but not mandatory for eix to have this
-(see CHECK_INSTALLED_OVERLAYS and USE_BUILD_TIME in the eix manpage).
+(see CHECK_INSTALLED_OVERLAYS and USE_BUILD_TIME in the eix manpage.)
 
 ARG determines which packages are output:
 
