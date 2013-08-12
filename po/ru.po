@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-08-03 22:34+0200\n"
+"POT-Creation-Date: 2013-08-12 18:07+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -2172,21 +2172,21 @@ msgstr "набор данных sqlite для %s слишком мал"
 msgid "%r not of the form package/category-version"
 msgstr "%r не в форме пакет/категория-версия"
 
-#: src/cache/sqlite/sqlite.cc:289
+#: src/cache/sqlite/sqlite.cc:290
 msgid "Database path incorrect"
 msgstr "Неверный путь к базе данных"
 
-#: src/cache/sqlite/sqlite.cc:300
+#: src/cache/sqlite/sqlite.cc:301
 #, c-format
 msgid "Can't open cache file %s"
 msgstr "Невозможно открыть файл кэша %s"
 
-#: src/cache/sqlite/sqlite.cc:314
+#: src/cache/sqlite/sqlite.cc:315
 #, c-format
 msgid "sqlite error: %s"
 msgstr "ошибка sqlite: %s"
 
-#: src/cache/sqlite/sqlite.cc:331
+#: src/cache/sqlite/sqlite.cc:332
 msgid ""
 "Cache method sqlite is not compiled in.\n"
 "Recompile eix, using configure option --with-sqlite to add sqlite support"

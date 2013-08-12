@@ -263,6 +263,7 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::PDEPEND),
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::HDEPEND),
 			false);
+		version->overlay_key = m_overlay_key;
 		pkg->addVersion(version);
 
 		/* For the newest version, add all remaining data */

@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.29.4
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix cache-method sqlite: Set overlay_key in read versions, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=480604
+
 *eix-0.29.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add EIX_LIMIT{,_COMPACT} as a safety measurement for typos.

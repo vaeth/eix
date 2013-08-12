@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-08-03 22:34+0200\n"
+"POT-Creation-Date: 2013-08-12 18:07+0200\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -2207,21 +2207,21 @@ msgstr "sqlite Datensatz für %s ist zu klein"
 msgid "%r not of the form package/category-version"
 msgstr "%r hat nicht die Gestalt package/category-version"
 
-#: src/cache/sqlite/sqlite.cc:289
+#: src/cache/sqlite/sqlite.cc:290
 msgid "Database path incorrect"
 msgstr "Falscher Datenbank-Pfad"
 
-#: src/cache/sqlite/sqlite.cc:300
+#: src/cache/sqlite/sqlite.cc:301
 #, c-format
 msgid "Can't open cache file %s"
 msgstr "Cachefile %s kann nicht geöffnet werden"
 
-#: src/cache/sqlite/sqlite.cc:314
+#: src/cache/sqlite/sqlite.cc:315
 #, c-format
 msgid "sqlite error: %s"
 msgstr "sqlite Fehler: %s"
 
-#: src/cache/sqlite/sqlite.cc:331
+#: src/cache/sqlite/sqlite.cc:332
 msgid ""
 "Cache method sqlite is not compiled in.\n"
 "Recompile eix, using configure option --with-sqlite to add sqlite support"
