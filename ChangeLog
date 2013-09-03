@@ -2,6 +2,8 @@
 
 *eix-0.29.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix wrong usage of ATTRIBUTE_NONNULL for Node *root, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=483392
 	- Fix cache-method sqlite: Set overlay_key in read versions, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=480604
 

@@ -187,16 +187,16 @@ class PrintFormat {
 		const SetStability *stability;
 
 		/* return true if something was actually printed */
-		bool recPrint(OutputString *result, void *entity, GetProperty get_property, Node *root) const ATTRIBUTE_NONNULL((3, 5));
+		bool recPrint(OutputString *result, void *entity, GetProperty get_property, Node *root) const ATTRIBUTE_NONNULL((3));
 
 		bool parse_variable(Node **rootnode, const std::string &varname, std::string *errtext) const ATTRIBUTE_NONNULL((2));
 		Node *parse_variable(const std::string &varname) const;
 
 		void iuse_expand(OutputString *s, const IUseSet &iuse, bool coll) const;
 		void get_inst_use(OutputString *s, const Package &package, InstVersion *i, bool expand) const ATTRIBUTE_NONNULL_;
-		void get_installed(Package *package, Node *root) const ATTRIBUTE_NONNULL_;
-		void get_versions_versorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2, 3));
-		void get_versions_slotsorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2, 3));
+		void get_installed(Package *package, Node *root) const ATTRIBUTE_NONNULL((2));
+		void get_versions_versorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2));
+		void get_versions_slotsorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2));
 		void get_pkg_property(OutputString *s, Package *package, const std::string &name) const ATTRIBUTE_NONNULL_;
 
 		// It follows a list of indirect functions called in get_pkg_property():
@@ -406,10 +406,10 @@ class PrintFormat {
 		void overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay, bool plain = false) const ATTRIBUTE_NONNULL_;
 
 		/* return true if something was actually printed */
-		bool print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL_;
+		bool print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL((2, 5, 6, 7, 8));
 
 		/* return true if something was actually printed */
-		bool print(void *entity, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL_
+		bool print(void *entity, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL((2, 4, 5, 6, 7))
 		{ return print(entity, m_get_property, root, dbheader, vardbpkg, ps, s); }
 
 		/* return true if something was actually printed */
