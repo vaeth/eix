@@ -2402,7 +2402,7 @@ An optional leading space in this string is ignored.
 .TP
 .BR TERM_ALT1 ", " TERM_ALT2 ", " TERM_ALT3 " " "(string list)"
 This is a list of regular expressions; if one of it matches B<TERM>, then
-B<COLORSCHEME1>, B<COLORSCHEME2>, or B<COLORSCHEME3, respectively,
+B<COLORSCHEME1>, B<COLORSCHEME2>, or B<COLORSCHEME3>, respectively,
 is used instead of B<COLORSCHEME0>, the biggest matching number taking precedence.
 
 You are of course free to assign any meaning, but the intention of the defaults is
