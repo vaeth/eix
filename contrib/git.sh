@@ -35,7 +35,7 @@ mode=${1}
 [ -n "${mode}" ] && shift
 case ${mode} in
 commit)
-	ExecDie git add .
+	ExecDie git add --all .
 	ExecDie git commit -a "${@}";;
 gc)
 	ExecWarn git prune
