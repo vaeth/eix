@@ -6,6 +6,8 @@
 	  segfaults), see http://bugs.gentoo.org/show_bug.cgi?id=483392
 	- Fix cache-method sqlite: Set overlay_key in read versions, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=480604
+	- Fix: deep StringList comparison; fixes duplicate occurence of
+	  mask reasons in certain cases
 
 *eix-0.29.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

@@ -21,9 +21,29 @@
 #include "eixTk/null.h"
 
 class StringList;
+class StringListContent;
 class OutputString;
 
+inline static bool
+operator<(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
+inline static bool
+operator>(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
+inline static bool
+operator<=(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
+inline static bool
+operator>=(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
+inline static bool
+operator==(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
+inline static bool
+operator!=(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
+
 class StringListContent {
+		friend bool operator<(const StringListContent &a, const StringListContent &b);
+		friend bool operator>(const StringListContent &a, const StringListContent &b);
+		friend bool operator<=(const StringListContent &a, const StringListContent &b);
+		friend bool operator>=(const StringListContent &a, const StringListContent &b);
+		friend bool operator==(const StringListContent &a, const StringListContent &b);
+		friend bool operator!=(const StringListContent &a, const StringListContent &b);
 		friend class StringList;
 	private:
 		std::vector<std::string> m_list;
@@ -43,11 +63,62 @@ class StringListContent {
 		void append_to_string(OutputString *s, const OutputString &skip) const ATTRIBUTE_NONNULL_;
 };
 
-inline static
-bool operator<(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
+inline static bool
+operator<(const StringListContent &a, const StringListContent &b)
+{
+	return (a.m_list < b.m_list);
+}
+
+inline static bool
+operator>(const StringListContent &a, const StringListContent &b)
+{
+	return (a.m_list > b.m_list);
+}
+
+inline static bool
+operator<=(const StringListContent &a, const StringListContent &b)
+{
+	return (a.m_list <= b.m_list);
+}
+
+inline static bool
+operator>=(const StringListContent &a, const StringListContent &b)
+{
+	return (a.m_list >= b.m_list);
+}
+
+inline static bool
+operator==(const StringListContent &a, const StringListContent &b)
+{
+	return (a.m_list == b.m_list);
+}
+
+inline static bool
+operator!=(const StringListContent &a, const StringListContent &b)
+{
+	return (a.m_list != b.m_list);
+}
+
+inline static bool
+operator<(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
+inline static bool
+operator>(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
+inline static bool
+operator<=(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
+inline static bool
+operator>=(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
+inline static bool
+operator==(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
+inline static bool
+operator!=(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
 
 class StringList {
 		friend bool operator<(const StringList &a, const StringList &b);
+		friend bool operator>(const StringList &a, const StringList &b);
+		friend bool operator<=(const StringList &a, const StringList &b);
+		friend bool operator>=(const StringList &a, const StringList &b);
+		friend bool operator==(const StringList &a, const StringList &b);
+		friend bool operator!=(const StringList &a, const StringList &b);
 
 	private:
 		StringListContent *ptr;
@@ -82,7 +153,36 @@ class StringList {
 inline static bool
 operator<(const StringList &a, const StringList &b)
 {
-	return (a.ptr < b.ptr);
+	return (*(a.ptr) < *(b.ptr));
+}
+
+inline static bool
+operator>(const StringList &a, const StringList &b)
+{
+	return (*(a.ptr) > *(b.ptr));
+}
+
+inline static bool
+operator<=(const StringList &a, const StringList &b)
+{
+	return (*(a.ptr) <= *(b.ptr));
+}
+
+inline static bool
+operator>=(const StringList &a, const StringList &b)
+{
+	return (*(a.ptr) >= *(b.ptr));
+}
+
+inline static bool
+operator==(const StringList &a, const StringList &b)
+{
+	return (*(a.ptr) == *(b.ptr));
+}
+inline static bool
+operator!=(const StringList &a, const StringList &b)
+{
+	return (*(a.ptr) != *(b.ptr));
 }
 
 #endif  // SRC_EIXTK_STRINGLIST_H_
