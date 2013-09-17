@@ -509,13 +509,10 @@ CallEmergeMetadata() {
 CondUpdate() {
 	if test ! -f "${eixcache}"
 	then	einfo "`gettext 'eix-cache does not exist.'`"
-		MyVarCommand "${updatecmd}" -t iupdate
-		return
-	fi
-	eix-header -qc || {
+	else	eix-header -f "${eixcache}" -qc && return
 		einfo "`gettext 'eix-cache format has changed.'`"
-		MyVarCommand "${updatecmd}" -t iupdate
-	}
+	fi
+	MyVarCommand "${updatecmd}" -t iupdate
 }
 
 CopyToTemp() {

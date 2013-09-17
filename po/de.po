@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-09-10 00:53+0200\n"
+"POT-Creation-Date: 2013-09-17 21:36+0200\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -885,52 +885,52 @@ msgstr "Konnte nicht auf ${hostdir} rsyncen"
 msgid "eix-cache does not exist."
 msgstr "Eix-Cache existiert nicht."
 
-#: src/eix-sync.sh:516
+#: src/eix-sync.sh:513
 msgid "eix-cache format has changed."
 msgstr "Eix-Cache-Format hat sich geändert."
 
-#: src/eix-sync.sh:523
+#: src/eix-sync.sh:520
 #, sh-format
 msgid "Copying old ${eixcache} cache to temporary file"
 msgstr "Kopiere alten ${eixcache} Cache in Temporärdatei"
 
-#: src/eix-sync.sh:527
+#: src/eix-sync.sh:524
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Konnte die Datenbank nicht in Temporärdatei ${tmpfile} kopieren"
 
-#: src/eix-sync.sh:531
+#: src/eix-sync.sh:528
 #, sh-format
 msgid "Copying old database to ${eixprevious}"
 msgstr "Kopiere alte Datenbank nach ${eixprevious}"
 
-#: src/eix-sync.sh:533
+#: src/eix-sync.sh:530
 #, sh-format
 msgid "Could not copy database to ${eixprevious}"
 msgstr "Konnte die Datenbank nicht nach ${eixprevious} kopieren"
 
-#: src/eix-sync.sh:561
+#: src/eix-sync.sh:558
 #, sh-format
 msgid "eix-remote add${remote_num} failed"
 msgstr "eix-remote add${remote_num} schlug fehl"
 
-#: src/eix-sync.sh:574
+#: src/eix-sync.sh:571
 msgid "eix-update was apparently already called in a hook"
 msgstr "eix-update wurde anscheinend bereits in einem Hook aufgerufen"
 
-#: src/eix-sync.sh:577
+#: src/eix-sync.sh:574
 msgid "Running @@-hooks"
 msgstr "Starte @@-Hooks"
 
-#: src/eix-sync.sh:579
+#: src/eix-sync.sh:576
 msgid "Calling eix-diff"
 msgstr "Starte eix-diff"
 
-#: src/eix-sync.sh:581
+#: src/eix-sync.sh:578
 msgid "Failed to diff against current cache"
 msgstr "Konnte nicht mit aktuellem Cache vergleichen."
 
-#: src/eix-sync.sh:596
+#: src/eix-sync.sh:593
 msgid ""
 "Main gentoo tree does not appear to have changed: exiting\n"
 "Use -a or set have_changed=: in a ! hook to override this check"
@@ -939,7 +939,7 @@ msgstr ""
 "Benutzen Sie -a oder setzen Sie have_changed=: in einem !-Hook, um diesen\n"
 "Test zu verhindern"
 
-#: src/eix-sync.sh:610
+#: src/eix-sync.sh:607
 msgid "Running @-hooks"
 msgstr "Starte @-Hooks"
 
