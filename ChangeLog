@@ -1,7 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.29.4
+*eix-0.29.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- eix -R/-Z: Print clearer error message,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=485488
 	- eix-sync: Fix checking EIX_CACHEFILE when path changed,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=485152
 

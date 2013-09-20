@@ -70,11 +70,12 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
+static bool opencache(Database *db, const char *filename, const char *tooltext) ATTRIBUTE_NONNULL_;
 static bool print_overlay_table(PrintFormat *fmt, DBHeader *header, vector<bool> *overlay_used) ATTRIBUTE_NONNULL((1, 2));
 static void parseFormat(const char *varname, const char *varcontent) ATTRIBUTE_NONNULL_;
 static void set_format();
 static void setup_defaults(EixRc *rc, bool is_tty) ATTRIBUTE_NONNULL_;
-static bool is_current_dbversion(const char *filename) ATTRIBUTE_NONNULL_;
+static bool is_current_dbversion(const char *filename, const char *tooltext) ATTRIBUTE_NONNULL_;
 static void print_vector(const vector<string> &vec);
 static void print_unused(const string &filename, const string &excludefiles, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
 static void print_removed(const string &dirname, const string &excludefiles, const eix::ptr_list<Package> &packagelist);
@@ -627,6 +628,7 @@ run_eix(int argc, char** argv)
 	}
 
 	string cachefile;
+	const char *tooltext("eix-update");
 	if(unlikely(eix_cachefile != NULLPTR)) {
 		cachefile = eix_cachefile;
 	} else {
@@ -635,8 +637,10 @@ run_eix(int argc, char** argv)
 		}
 		if(rc_options.remote) {
 			cachefile = eixrc["EIX_REMOTE1"];
+			tooltext = "eix-remote add1/update1";
 		} else if(rc_options.remote2) {
 			cachefile = eixrc["EIX_REMOTE2"];
+			tooltext = "eix-remote add2/update2";
 		}
 		if(cachefile.empty()) {
 			cachefile = eixrc["EIX_CACHEFILE"];
@@ -645,7 +649,7 @@ run_eix(int argc, char** argv)
 
 	// Only check if the versions uses the current layout
 	if(unlikely(rc_options.is_current)) {
-		return (is_current_dbversion(cachefile.c_str()) ? EXIT_SUCCESS : EXIT_FAILURE);
+		return (is_current_dbversion(cachefile.c_str(), tooltext) ? EXIT_SUCCESS : EXIT_FAILURE);
 	}
 
 	// Show version
@@ -736,23 +740,18 @@ run_eix(int argc, char** argv)
 
 	/* Open database file */
 	Database db;
-	if(unlikely(!db.openread(cachefile.c_str()))) {
-		cerr << eix::format(_(
-			"Can't open the database file %s for reading (mode = 'rb')\n"
-			"Did you forget to create it with 'eix-update'?"))
-			% cachefile << endl;
+	if(unlikely(!opencache(&db, cachefile.c_str(), tooltext))) {
 		return EXIT_FAILURE;
 	}
-
 	DBHeader header;
 
 	if(unlikely(!db.read_header(&header, NULLPTR))) {
 		cerr << eix::format(_(
 			"%s was created with an incompatible eix-update:\n"
 			"It uses database format %s (current is %s).\n"
-			"Please run 'eix-update' and try again."))
+			"Please run %r and try again."))
 			% cachefile % header.version % DBHeader::current
-			<< endl;
+			% tooltext << endl;
 		return EXIT_FAILURE;
 	}
 
@@ -1080,18 +1079,26 @@ GCC_DIAG_ON(sign-conversion)
 }
 
 static bool
-is_current_dbversion(const char *filename) {
-	DBHeader header;
-	Database db;
-	if(unlikely(!db.openread(filename))) {
-		cerr << eix::format(_(
-			"Can't open the database file %s for reading (mode = 'rb')\n"
-			"Did you forget to create it with 'eix-update'?"))
-			% filename << endl;
-		return EXIT_FAILURE;
+opencache(Database *db, const char *filename, const char *tooltext)
+{
+	if(likely(db->openread(filename))) {
+		return true;
 	}
-	bool is_current(db.read_header(&header, NULLPTR));
-	return is_current;
+	cerr << eix::format(_(
+		"Cannot open the database file %s for reading.\n"
+		"Did you forget to create it with %r?"))
+		% filename % tooltext << endl;
+	return false;
+}
+
+static bool
+is_current_dbversion(const char *filename, const char *tooltext) {
+	Database db;
+	if(unlikely(!opencache(&db, filename, tooltext))) {
+		return false;
+	}
+	DBHeader header;
+	return db.read_header(&header, NULLPTR);
 }
 
 static void

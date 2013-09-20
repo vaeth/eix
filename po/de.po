@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-09-17 21:36+0200\n"
+"POT-Creation-Date: 2013-09-20 20:05+0200\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1310,7 +1310,7 @@ msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 msgid "Skipping check: installed but not in the database"
 msgstr "Übergehe Check für installierte Pakete nicht in der Datenbank"
 
-#: src/eix.cc:86
+#: src/eix.cc:87
 #, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
@@ -1656,50 +1656,40 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:563 src/eix-diff.cc:285
+#: src/eix.cc:564 src/eix-diff.cc:285
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:660 src/eix-diff.cc:350 src/eix-update.cc:385
+#: src/eix.cc:664 src/eix-diff.cc:350 src/eix-update.cc:385
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
-#: src/eix.cc:741 src/eix.cc:1088
-#, c-format
-msgid ""
-"Can't open the database file %s for reading (mode = 'rb')\n"
-"Did you forget to create it with 'eix-update'?"
-msgstr ""
-"Datenbankfile %s kann nicht geöffnet werden (mode = 'rb')\n"
-"Wurde es denn mit 'eix-update' erzeugt?"
-
-#: src/eix.cc:751
-#, c-format
+#: src/eix.cc:750
 msgid ""
 "%s was created with an incompatible eix-update:\n"
 "It uses database format %s (current is %s).\n"
-"Please run 'eix-update' and try again."
+"Please run %r and try again."
 msgstr ""
 "%s wurd mit inkompatiblem eix-update erzeugt:\n"
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
-"Bitte mit 'eix-update' neu erzeugen."
+"Bitte mit %r neu erzeugen."
 
-#: src/eix.cc:1027 src/eix.cc:1048
+#: src/eix.cc:1026 src/eix.cc:1047
 #, c-format
 msgid "Found %s matches."
 msgstr "%s Treffer."
 
-#: src/eix.cc:1030
+#: src/eix.cc:1029
 msgid "No matches found."
 msgstr "Kein Treffer."
 
-#: src/eix.cc:1039
+#: src/eix.cc:1038
 #, c-format
 msgid "Found %s match."
 msgstr "%s Treffer."
 
-#: src/eix.cc:1059
+#: src/eix.cc:1058
 #, c-format
 msgid ""
 "Only %s matches displayed on terminal.\n"
@@ -1708,17 +1698,25 @@ msgstr ""
 "Auf dem Terminal werden nur %s Treffer angezeigt.\n"
 "Setzen Sie %s=0 um alle anzuzeigen.\n"
 
-#: src/eix.cc:1162
+#: src/eix.cc:1088
+msgid ""
+"Cannot open the database file %s for reading.\n"
+"Did you forget to create it with %r?"
+msgstr ""
+"Datenbankfile %s kann nicht geöffnet werden.\n"
+"Wurde es denn mit %r erzeugt?"
+
+#: src/eix.cc:1169
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:1163
+#: src/eix.cc:1170
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:1168
+#: src/eix.cc:1175
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1727,7 +1725,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1169
+#: src/eix.cc:1176
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1736,7 +1734,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1227
+#: src/eix.cc:1234
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1744,7 +1742,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:1230
+#: src/eix.cc:1237
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"

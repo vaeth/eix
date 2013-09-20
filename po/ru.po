@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-09-17 21:36+0200\n"
+"POT-Creation-Date: 2013-09-20 20:05+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -1282,7 +1282,7 @@ msgstr "Установленные пакеты с версией не в баз
 msgid "Skipping check: installed but not in the database"
 msgstr "Пропускаю проверку: установлено, но не в базе данных"
 
-#: src/eix.cc:86
+#: src/eix.cc:87
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
@@ -1630,67 +1630,65 @@ msgstr ""
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING "
 "для подробной информации.\n"
 
-#: src/eix.cc:563 src/eix-diff.cc:285
+#: src/eix.cc:564 src/eix-diff.cc:285
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Проблема при обработке %s: %s\n"
 
-#: src/eix.cc:660 src/eix-diff.cc:350 src/eix-update.cc:385
+#: src/eix.cc:664 src/eix-diff.cc:350 src/eix-update.cc:385
 msgid "cannot redirect to %r"
 msgstr "невозможно перенаправить в %r"
 
-#: src/eix.cc:741 src/eix.cc:1088
-#, c-format
-msgid ""
-"Can't open the database file %s for reading (mode = 'rb')\n"
-"Did you forget to create it with 'eix-update'?"
-msgstr ""
-"Невозможно открыть базу данных %s для чтения (режим = 'rb')\n"
-"Вы не забыли её создать с помощью 'eix-update'?"
-
-#: src/eix.cc:751
-#, c-format
+#: src/eix.cc:750
 msgid ""
 "%s was created with an incompatible eix-update:\n"
 "It uses database format %s (current is %s).\n"
-"Please run 'eix-update' and try again."
+"Please run %r and try again."
 msgstr ""
 "%s был создан несовместимым eix-update:\n"
 "Используется формат базы данных %s (текущий ― %s).\n"
-"Запустите 'eix-update' и попробуйте ещё раз."
+"Запустите %r и попробуйте ещё раз."
 
-#: src/eix.cc:1027 src/eix.cc:1048
+#: src/eix.cc:1026 src/eix.cc:1047
 #, c-format
 msgid "Found %s matches."
 msgstr "Найдено %s совпадений."
 
-#: src/eix.cc:1030
+#: src/eix.cc:1029
 msgid "No matches found."
 msgstr "Совпадений не найдено."
 
-#: src/eix.cc:1039
+#: src/eix.cc:1038
 #, c-format
 msgid "Found %s match."
 msgstr "Найдено %s совпадение."
 
-#: src/eix.cc:1059
+#: src/eix.cc:1058
 #, c-format
 msgid ""
 "Only %s matches displayed on terminal.\n"
 "Set %s=0 to show all matches.\n"
 msgstr ""
 
-#: src/eix.cc:1162
+#: src/eix.cc:1088
+msgid ""
+"Cannot open the database file %s for reading.\n"
+"Did you forget to create it with %r?"
+msgstr ""
+"Невозможно открыть базу данных %s для чтения.\n"
+"Вы не забыли её создать с помощью %r?"
+
+#: src/eix.cc:1169
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Нет не совпадающих или пустых записей в %s.\n"
 
-#: src/eix.cc:1163
+#: src/eix.cc:1170
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Нет не совпадающих записей в %s.\n"
 
-#: src/eix.cc:1168
+#: src/eix.cc:1175
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1699,7 +1697,7 @@ msgstr ""
 "Не совпадающие или пустые записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1169
+#: src/eix.cc:1176
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1708,7 +1706,7 @@ msgstr ""
 "Не совпадающие записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1227
+#: src/eix.cc:1234
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1716,7 +1714,7 @@ msgstr ""
 "Имена всех установленных пакетов находятся в базе данных.\n"
 "\n"
 
-#: src/eix.cc:1230
+#: src/eix.cc:1237
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
