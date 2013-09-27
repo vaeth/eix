@@ -270,6 +270,7 @@ print all LICENSE strings used in some package.
 .B --print-all-depends
 print all words occurring in some B<{,R,P}DEPEND>.
 This only works if B<DEP=true> is active (and was so when the cachefile was created).
+The doublequote symbol in the output has the meaning that one of the other string is inserted at this place.
 .TP
 .B --print-world-sets
 print the world sets.
@@ -3408,10 +3409,12 @@ to let the argument(s) start with a non-number (like B<X> in the above example)
 to make sure that versionsort will really cut the version from the argument
 and cannot misinterpret the whole argument as a version.
 
-Since eix-0.25.6, versionsort supports some options if only one argument is used:
+Since eix-0.25.6, versionsort supports some options:
 With B<-n>, B<-p>, B<-v>, or B<-r> only the name (without version appendix),
 name with version (without revision appendix), the pure version (without revision appendix)
-or only the revision will be output.
+or only the revision corresponding to the argument will be output.
+(Since eix-0.29.5 an arbitrary number of arguments is admissible after these
+options; the output data is in this case separated by newlines.)
 For example, after
 
 .RS

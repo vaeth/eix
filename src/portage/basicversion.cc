@@ -146,9 +146,9 @@ BasicVersion::getRevision() const
 		if(unlikely(it->parttype == BasicPart::revision)) {
 			ss << "r" << it->partcontent;
 			if(unlikely(++it != m_parts.end())) {
-				copy(++it, m_parts.end(), std::ostream_iterator<BasicPart>(ss));
-				break;
+				copy(it, m_parts.end(), std::ostream_iterator<BasicPart>(ss));
 			}
+			break;
 		}
 	}
 	return ss.str();

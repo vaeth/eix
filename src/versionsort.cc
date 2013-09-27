@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -33,7 +34,7 @@ using std::endl;
 
 static void failparse(const char *v) ATTRIBUTE_NONNULL_ ATTRIBUTE_NORETURN;
 static const char *get_version(const char *v) ATTRIBUTE_NONNULL_;
-static const char *get_version(const char *&name, const char *v) ATTRIBUTE_NONNULL_;
+static const char *get_version(const char **name, const char *v) ATTRIBUTE_NONNULL_;
 static void parse_version(BasicVersion *b, const char *v) ATTRIBUTE_NONNULL_;
 
 static void
@@ -63,7 +64,7 @@ get_version(const char *v)
 }
 
 static const char *
-get_version(const char *&name, const char *v)
+get_version(const char **name, const char *v)
 {
 	static string *r = NULLPTR;
 	static string *n = NULLPTR;
@@ -75,7 +76,7 @@ get_version(const char *&name, const char *v)
 	}
 	if(name != NULLPTR) {
 		n = new string(s[0]);
-		name = n->c_str();
+		*name = n->c_str();
 	}
 	free(s[0]);
 	r = new string(s[1]);
@@ -105,35 +106,50 @@ run_versionsort(int argc, char *argv[])
 		cout << get_version(argv[1]);
 		return EXIT_SUCCESS;
 	}
-	if((argc == 3) && (argv[1][0] == '-') && (argv[1][1]) && !argv[1][2]) {
-		char c(argv[1][1]);
-		const char *s(argv[2]);
-		switch(c) {
-			case 'n':
+	if((argc >= 2) && (argv[1][0] == '-') && (argv[1][1] != '\0') && (argv[1][2] == '\0')) {
+		eix::SignedBool mode(0);
+		bool full(false);
+		switch(argv[1][1]) {
 			case 'p':
-				{
+				full = true;
+			case 'n':
+				mode = 1;
+				break;
+			case 'v':
+				full = true;
+			case 'r':
+				mode = -1;
+				break;
+			default:
+				break;
+		}
+		if(mode) {
+			if(unlikely(argc == 2)) {
+				return EXIT_SUCCESS;
+			}
+			for(int curr(2); ;) {
+				const char *s(argv[curr]);
+				if(mode > 0) {
 					const char *n;
-					const char *v(get_version(n, s));
+					const char *v(get_version(&n, s));
 					string r(n);
-					if(c != 'n') {
+					if(full) {
 						r.append("-");
 						BasicVersion b;
 						parse_version(&b, v);
 						r.append(b.getPlain());
 					}
 					cout << r;
-				}
-				return EXIT_SUCCESS;
-			case 'v':
-			case 'r':
-				{
+				} else {
 					BasicVersion b;
 					parse_version(&b, get_version(s));
-					cout << ((c == 'v') ? b.getPlain() : b.getRevision());
+					cout << (full ? b.getPlain() : b.getRevision());
 				}
-				return EXIT_SUCCESS;
-			default:
-				break;
+				if(unlikely(++curr == argc)) {
+					return EXIT_SUCCESS;
+				}
+				cout << "\n";
+			}
 		}
 	}
 	vector<BasicVersion> versions;

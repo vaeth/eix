@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-09-20 20:05+0200\n"
+"POT-Creation-Date: 2013-09-27 14:33+0200\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -2090,7 +2090,7 @@ msgstr ""
 msgid "warning: ignoring %r: %s"
 msgstr "Warnung: Ignoriere %r: %s"
 
-#: src/versionsort.cc:42
+#: src/versionsort.cc:43
 #, c-format
 msgid "cannot determine version of %s"
 msgstr "kann Version von '%s' nicht bestimmen"

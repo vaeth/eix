@@ -280,7 +280,8 @@ Gibt alle LICENSE-Strings aus, die in irgendeiner Version benutzt werden.
 .TP
 .B --print-all-depends
 Gibt alle Worte aus, die in einem B<{,R,P}DEPEND> auftauchen.
-Die geht nur, falls B<DEP=true> aktiv ist (und bei der Erzeugung der Cachedatei aktiv war).
+Dies geht nur, falls B<DEP=true> aktiv ist (und bei der Erzeugung der Cachedatei aktiv war).
+Das Gänsefüßchen-Symbol in der Ausgabe bedeutet, dass einer der anderen Strings an dieser Stelle eingefügt wird.
 .TP
 .B --print-world-sets
 Gibt die world sets aus.
@@ -3493,9 +3494,11 @@ beginnen zu lassen, um sicherzustellen, dass versionsort tatsächlich
 die Version abtrennt und nicht fälschlicherweise das gesamte Argument
 als eine einzige Version interpretiert.
 
-Seit eix-0.25.6 unterstützt versionsort auch einige Optionen, wenn nur ein Argument
-benutzt wird: Mit B<-n>, B<-p>, B<-v> bzw. B<-r> wird nur der Name (ohne Versionsanhang),
+Seit eix-0.25.6 unterstützt versionsort auch einige Optionen:
+Mit B<-n>, B<-p>, B<-v> bzw. B<-r> wird nur der Name (ohne Versionsanhang),
 Name mit Version (ohne Revisionsanhang), die reine Version (ohne Revisionsanhang) bzw. nur die Revision ausgegeben.
+(Seit eix-0.29.5 ist es zulässig, nach diesen Optionen eine beliebige Anzahl
+von Argumented anzugeben; die ausgegebenen Daten werden dann durch Zeilenvorschübe getrennt).
 Beispielsweise wird
 
 .RS
@@ -3514,7 +3517,7 @@ die Variablen B<PN>, B<P>, B<PV>, B<PR> analog wie in ebuilds definieren:
 Als B<1-font-adobe-75dpi>, B<1-font-adobe-75dpi-1.3>, B<1.3> bzw. B<r1>
 (falls B<-r1> nicht angegeben worden wäre, wäre B<PR> leer: Dies ist anders als in ebuilds).
 
-Beachte, dass B<versionsort> nur bei den Optionen B<-n> und B<-p> erwartet, dass das Argument einen Paketnamen enthält:
+Beachten Sie, dass B<versionsort> nur bei den Optionen B<-n> und B<-p> erwartet, dass das Argument einen Paketnamen enthält:
 Bei allen anderen Optionen (oder ohne Option) wird durch Vorstellen des "X" klargemacht, dass es sich nicht um eine "reine" Versionsnummer handelt.
 .\" }}}
 

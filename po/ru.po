@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-09-20 20:05+0200\n"
+"POT-Creation-Date: 2013-09-27 14:33+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -2055,7 +2055,7 @@ msgstr ""
 msgid "warning: ignoring %r: %s"
 msgstr "внимание: игнорируется %r: %s"
 
-#: src/versionsort.cc:42
+#: src/versionsort.cc:43
 #, c-format
 msgid "cannot determine version of %s"
 msgstr "Невозможно определить версию %s"

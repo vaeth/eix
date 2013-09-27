@@ -1,4 +1,4 @@
-# /etc/eixrc/00-eirc
+# /etc/eixrc/00-eixrc
 #
 # All non-hidden files in /etc/eixrc
 # (or a subdirectory thereof) are read in alphabetical order.

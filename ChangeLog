@@ -2,10 +2,15 @@
 
 *eix-0.29.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- versionsort: Fix type of first argument of get_version(,);
+	  this could cause various problems with versionsort -[pn]
+	- versionsort: Let eix -[pnvr] support more than one argument
+	- fix calculation of output of revision text
 	- eix -R/-Z: Print clearer error message,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=485488
 	- eix-sync: Fix checking EIX_CACHEFILE when path changed,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=485152
+	- manpage: Clarify output of --print-all-depends
 
 *eix-0.29.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
