@@ -76,6 +76,9 @@ class ExplodeAtom {
 /** Check string if it only contains digits. */
 bool is_numeric(const char *str) ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
 
+/** return pointer to first alphanumeric or to 0 symbol */
+const char *first_alnum(const char *s);
+
 /** Add symbol if it is not already the last one */
 void optional_append(std::string *s, char symbol) ATTRIBUTE_NONNULL_;
 

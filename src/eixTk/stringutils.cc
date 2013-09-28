@@ -579,3 +579,13 @@ match_list(const char **str_list, const char *str)
 	}
 	return false;
 }
+
+const char *first_alnum(const char *s)
+{
+	for(char c(*s); likely(c != '\0'); c = *(++s)) {
+		if(isalnum(c, localeC)) {
+			return s;
+		}
+	}
+	return s;
+}

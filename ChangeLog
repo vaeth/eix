@@ -2,9 +2,8 @@
 
 *eix-0.29.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- versionsort: Fix type of first argument of get_version(,);
-	  this could cause various problems with versionsort -[pn]
-	- versionsort: Let eix -[pnvr] support more than one argument
+	- versionsort: Fix versionsort -[pn], introduce -[fV], let -? support
+	  more than one argument, ignore some non-alphanumeric rubbish
 	- fix calculation of output of revision text
 	- eix -R/-Z: Print clearer error message,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=485488

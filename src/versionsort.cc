@@ -75,7 +75,7 @@ get_version(const char **name, const char *v)
 		failparse(v);
 	}
 	if(name != NULLPTR) {
-		n = new string(s[0]);
+		n = new string(first_alnum(s[0]));
 		*name = n->c_str();
 	}
 	free(s[0]);
@@ -109,15 +109,20 @@ run_versionsort(int argc, char *argv[])
 	if((argc >= 2) && (argv[1][0] == '-') && (argv[1][1] != '\0') && (argv[1][2] == '\0')) {
 		eix::SignedBool mode(0);
 		bool full(false);
+		bool revision(false);
 		switch(argv[1][1]) {
+			case 'f':
+				revision = true;
 			case 'p':
 				full = true;
 			case 'n':
 				mode = 1;
 				break;
-			case 'v':
+			case 'V':
 				full = true;
 			case 'r':
+				revision = true;
+			case 'v':
 				mode = -1;
 				break;
 			default:
@@ -137,18 +142,20 @@ run_versionsort(int argc, char *argv[])
 						r.append("-");
 						BasicVersion b;
 						parse_version(&b, v);
-						r.append(b.getPlain());
+						r.append(revision ? b.getFull() : b.getPlain());
 					}
 					cout << r;
 				} else {
 					BasicVersion b;
 					parse_version(&b, get_version(s));
-					cout << (full ? b.getPlain() : b.getRevision());
+					cout << (full ? b.getFull() : (revision ? b.getRevision() : b.getPlain()));
+				}
+				if(argc != 3) {
+					cout << "\n";
 				}
 				if(unlikely(++curr == argc)) {
 					return EXIT_SUCCESS;
 				}
-				cout << "\n";
 			}
 		}
 	}

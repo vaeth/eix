@@ -39,7 +39,7 @@
 [I<options>] I<category>B</>I<name>B<->I<version>[B<:>I<slot>][B<::>I<repo>] ...
 
 .B versionsort
-[B<-n>|B<-p>|B<-v>|B<-r>] [I<package->]I<version> ...
+[B<-n>|B<-p>|B<-f>|B<-v>|B<-r>|B<-V>] [I<(rubbish)>I<package->]I<version> ...
 .\" }}}
 
 .\" {{{ DESCRIPTION
@@ -3367,7 +3367,8 @@ a directory is read recursively.
 .\" {{{ versionsort
 .SH versionsort
 B<versionsort> is a helper tool for scripts which serves two purposes.
-It cuts the version strings from its arguments or interprets the arguments
+It cuts the version strings and certain non-alphanumeric garbage
+from its arguments and interprets the arguments
 themselves as version strings (depending on some heuristics).
 Then it outputs the version strings in a sorted order, according to the
 portage rules of version sorting.
@@ -3376,7 +3377,7 @@ is followed by a newline.
 For example,
 
 .RS
-.B versionsort gcc-4.4 4.4_alpha0 sys-devel/gcc-4.05 4.5
+.B versionsort '>=gcc-4.4' 4.4_alpha0 '<sys-devel/gcc-4.05' 4.5
 .RE
 
 will output
@@ -3410,11 +3411,12 @@ to make sure that versionsort will really cut the version from the argument
 and cannot misinterpret the whole argument as a version.
 
 Since eix-0.25.6, versionsort supports some options:
-With B<-n>, B<-p>, B<-v>, or B<-r> only the name (without version appendix),
-name with version (without revision appendix), the pure version (without revision appendix)
-or only the revision corresponding to the argument will be output.
-(Since eix-0.29.5 an arbitrary number of arguments is admissible after these
-options; the output data is in this case separated by newlines.)
+With B<-n>, B<-p>, B<-f>,  B<-v>, B<-r>, B<-V> only the name (without version appendix),
+name with version (without revision appendix), name with version including revision appendix,
+the pure version (without revision appendix),  the revision, or
+version including appendix corresponding to the argument will be output, respectively.
+(Since eix-0.29.5 an arbitrary number of arguments is admissible after these options;
+if more than one argument is specified, on each output a newline is appended.)
 For example, after
 
 .RS
@@ -3424,16 +3426,20 @@ B<PN=`versionsort -n "${split}"`>
 
 B<P=`versionsort -p "${split}"`>
 
+B<PF=`versionsort -f "${split}"`>
+
 B<PV=`versionsort -v "X${split}"`>
 
 B<PR=`versionsort -r "X${split}"`>
+
+B<PVR=`versionsort -V "X${split}"`>
 .RE
 
-the variables B<PN>, B<P>, B<PV>, and B<PR> have an analogous meaning as in ebuilds, namely
-B<1-font-adobe-75dpi>, B<1-font-adobe-75dpi-1.3>, B<1.3>, or B<r1>, respectively.
+the variables B<PN>, B<P>, B<PF>,  B<PV>, B<PR>, and B<PVR> have an analogous meaning as in ebuilds, namely
+B<1-font-adobe-75dpi>, B<1-font-adobe-75dpi-1.3>, B<1-font-adobe-75dpi-1.3-r1>, B<1.3>, B<r1>, or B<1.3-r1>, respectively.
 (if B<-r1> would not have been specified, B<PR> would be empty: This differs from ebuilds).
 
-Be aware that B<versionsort> expects only for the options B<-n> and B<-p> that the argument contains a package name:
+Be aware that B<versionsort> expects only for the options B<-n>, B<p>, and B<-f> that the argument contains a package name:
 For all other options (or without option), it is made clear by prepending of "X" that the argument is not a "pure" version number.
 .\" }}}
 

@@ -39,7 +39,7 @@
 I<Kategorie>B</>I<Name>B<->I<Version>[B<:>I<Slot>][B<::>I<Repo>]
 
 .B versionsort
-[B<-n>|B<-p>|B<-v>|B<-r>] [I<Paket->]I<Version> ...
+[B<-n>|B<-p>|B<-f>|B<-v>|B<-r>|B<-V>] [I<(Müll)>I<Paket->]I<Version> ...
 .\" }}}
 
 .\" {{{ BESCHREIBUNG
@@ -3450,8 +3450,9 @@ ein Verzeichnis wird rekursiv gelesen.
 .\" {{{ versionsort
 .SH versionsort
 B<versionsort> ist ein Hilfstool für Skripte, das zwei Zwecken dient:
-Es schneidet den Versionsstring von seinen Argumenten ab und
-interpretiert diese Argumente selbst als Versionsstrings (nach einer Heuristik).
+Es schneidet den Versionsstring und verschiedenen nicht-alphanumerischen Müll
+von seinen Argumenten ab und interpretiert diese Argumente selbst als
+Versionsstrings (nach einer Heuristik).
 Dann gibt es alle diese Versionsstrings in sortierter Reihenfolge aus,
 wobei die Portage-Regeln der Versionssortierung berücksichtigt werden.
 Bei mehr als einem Argument wird nach jeder Version (einschließlich der letzten)
@@ -3459,7 +3460,7 @@ ein Zeilenvorschub ausgegeben.
 Beispiel:
 
 .RS
-.B versionsort gcc-4.4 4.4_alpha0 sys-devel/gcc-4.05 4.5
+.B versionsort '>=gcc-4.4' 4.4_alpha0 '<sys-devel/gcc-4.05' 4.5
 .RE
 
 wird folgendes ausgeben:
@@ -3495,10 +3496,11 @@ die Version abtrennt und nicht fälschlicherweise das gesamte Argument
 als eine einzige Version interpretiert.
 
 Seit eix-0.25.6 unterstützt versionsort auch einige Optionen:
-Mit B<-n>, B<-p>, B<-v> bzw. B<-r> wird nur der Name (ohne Versionsanhang),
-Name mit Version (ohne Revisionsanhang), die reine Version (ohne Revisionsanhang) bzw. nur die Revision ausgegeben.
-(Seit eix-0.29.5 ist es zulässig, nach diesen Optionen eine beliebige Anzahl
-von Argumented anzugeben; die ausgegebenen Daten werden dann durch Zeilenvorschübe getrennt).
+Mit B<-n>, B<-p>, B<-f>, B<-v>, B<-r> bzw. B<-V> wird nur der Name (ohne Versionsanhang),
+Name mit Version (ohne Revisionsanhang), Name mit Version und Revisionsanhang,
+die reine Version (ohne Revisionsanhang), die Revision bzw. Version mit Revisionsanhang ausgegeben.
+(Seit eix-0.29.5 ist es zulässig, nach diesen Optionen eine beliebige Anzahl von Argumenten anzugeben;
+bei mehr als einem Argument wird an jede Ausgabe ein Zeilenvorschub angehängt).
 Beispielsweise wird
 
 .RS
