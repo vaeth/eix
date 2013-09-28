@@ -3510,17 +3510,21 @@ B<PN=`versionsort -n "${split}"`>
 
 B<P=`versionsort -p "${split}"`>
 
+B<PF=`versionsort -f "${split}"`>
+
 B<PV=`versionsort -v "X${split}"`>
 
 B<PR=`versionsort -r "X${split}"`>
+
+B<PVR=`versionsort -V "X${split}"`>
 .RE
 
-die Variablen B<PN>, B<P>, B<PV>, B<PR> analog wie in ebuilds definieren:
-Als B<1-font-adobe-75dpi>, B<1-font-adobe-75dpi-1.3>, B<1.3> bzw. B<r1>
+die Variablen B<PN>, B<P>, B<PF>, B<PV>, B<PR>, B<PVR> analog wie in ebuilds definieren:
+Als B<1-font-adobe-75dpi>, B<1-font-adobe-75dpi-1.3>, B<1-font-adobe-75dpi-1.3-r1>, B<1.3>, B<r1> bzw. B<1.3-r1>
 (falls B<-r1> nicht angegeben worden wäre, wäre B<PR> leer: Dies ist anders als in ebuilds).
 
-Beachten Sie, dass B<versionsort> nur bei den Optionen B<-n> und B<-p> erwartet, dass das Argument einen Paketnamen enthält:
-Bei allen anderen Optionen (oder ohne Option) wird durch Vorstellen des "X" klargemacht, dass es sich nicht um eine "reine" Versionsnummer handelt.
+Beachten Sie, dass B<versionsort> nur bei den Optionen B<-n>, B<-p> und B<f> erwartet, dass das Argument einen Paketnamen enthält:
+Bei allen anderen Optionen (oder ohne Option) wird durch Vorstellen des "X" klargestellt, dass es sich nicht um eine "reine" Versionsnummer handelt.
 .\" }}}
 
 
