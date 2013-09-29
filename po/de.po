@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-09-27 14:33+0200\n"
+"POT-Creation-Date: 2013-09-29 11:27+0200\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1675,21 +1675,21 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit %r neu erzeugen."
 
-#: src/eix.cc:1026 src/eix.cc:1047
+#: src/eix.cc:1024 src/eix.cc:1045
 #, c-format
 msgid "Found %s matches."
 msgstr "%s Treffer."
 
-#: src/eix.cc:1029
+#: src/eix.cc:1027
 msgid "No matches found."
 msgstr "Kein Treffer."
 
-#: src/eix.cc:1038
+#: src/eix.cc:1036
 #, c-format
 msgid "Found %s match."
 msgstr "%s Treffer."
 
-#: src/eix.cc:1058
+#: src/eix.cc:1056
 #, c-format
 msgid ""
 "Only %s matches displayed on terminal.\n"
@@ -1698,7 +1698,7 @@ msgstr ""
 "Auf dem Terminal werden nur %s Treffer angezeigt.\n"
 "Setzen Sie %s=0 um alle anzuzeigen.\n"
 
-#: src/eix.cc:1088
+#: src/eix.cc:1086
 msgid ""
 "Cannot open the database file %s for reading.\n"
 "Did you forget to create it with %r?"
@@ -1706,17 +1706,17 @@ msgstr ""
 "Datenbankfile %s kann nicht geöffnet werden.\n"
 "Wurde es denn mit %r erzeugt?"
 
-#: src/eix.cc:1169
+#: src/eix.cc:1167
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:1170
+#: src/eix.cc:1168
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:1175
+#: src/eix.cc:1173
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1725,7 +1725,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1176
+#: src/eix.cc:1174
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1734,7 +1734,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1234
+#: src/eix.cc:1232
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1742,7 +1742,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:1237
+#: src/eix.cc:1235
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"

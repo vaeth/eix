@@ -9,7 +9,8 @@
 	  see http://bugs.gentoo.org/show_bug.cgi?id=485488
 	- eix-sync: Fix checking EIX_CACHEFILE when path changed,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=485152
-	- manpage: Clarify output of --print-all-depends
+	- Improve storage of depends (simpler and better compression)
+	- --print-all-depends works now as documented (no doublequote symbols)
 
 *eix-0.29.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

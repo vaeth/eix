@@ -231,6 +231,7 @@ Database::read_depend(Depend *dep, const DBHeader &hdr, string *errtext)
 		} else if(unlikely(!read_hash_words(hdr.depend_hash, &(dep->m_hdepend), errtext))) {
 			return false;
 		}
+		dep->obsolete = (hdr.version <= 32);
 	} else {
 		dep->clear();
 GCC_DIAG_OFF(sign-conversion)

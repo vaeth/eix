@@ -281,7 +281,6 @@ Gibt alle LICENSE-Strings aus, die in irgendeiner Version benutzt werden.
 .B --print-all-depends
 Gibt alle Worte aus, die in einem B<{,R,P}DEPEND> auftauchen.
 Dies geht nur, falls B<DEP=true> aktiv ist (und bei der Erzeugung der Cachedatei aktiv war).
-Das Gänsefüßchen-Symbol in der Ausgabe bedeutet, dass einer der anderen Strings an dieser Stelle eingefügt wird.
 .TP
 .B --print-world-sets
 Gibt die world sets aus.

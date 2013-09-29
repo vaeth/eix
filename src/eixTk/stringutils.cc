@@ -539,14 +539,35 @@ StringHash::operator[](StringHash::size_type i) const
 }
 
 void
-StringHash::output(const set<string> *skip) const
+StringHash::output() const
 {
 	for(vector<string>::const_iterator i(begin()); likely(i != end()); ++i) {
-		if(skip != NULLPTR) {
-			if(skip->find(*i) != skip->end()) {
-				continue;
-			}
+		cout << *i << "\n";
+	}
+}
+
+void
+StringHash::output_depends() const
+{
+	set<string> out;
+	for(vector<string>::const_iterator i(begin()); likely(i != end()); ++i) {
+		string::size_type q(i->find('"'));
+		if(q == string::npos) {
+			out.insert(*i);
+			continue;
 		}
+		if(q == 0) {
+			if(i->length() != 1) {
+				out.insert(string(*i, 1));
+			}
+			continue;
+		}
+		out.insert(string(*i, 0, q));
+		if(++q != i->length()) {
+			out.insert(string(*i, q));
+		}
+	}
+	for(set<string>::const_iterator i(out.begin()); likely(i != out.end()); ++i) {
 		cout << *i << "\n";
 	}
 }

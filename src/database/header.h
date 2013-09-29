@@ -57,7 +57,7 @@ class DBHeader {
 		static const char *magic;
 
 		/** Current version of database-format and what we accept */
-		static const DBVersion current = 32;
+		static const DBVersion current = 33;
 		static const DBVersion accept[];
 
 		DBVersion version; /**< Version of the db. */

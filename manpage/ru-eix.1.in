@@ -268,7 +268,6 @@ print all LICENSE strings used in some package.
 .B --print-all-depends
 print all words occurring in some B<{,R,P}DEPEND>.
 This only works if B<DEP=true> is active (and was so when the cachefile was created).
-The doublequote symbol in the output has the meaning that one of the other string is inserted at this place.
 .TP
 .B --print-world-sets
 print the world sets.

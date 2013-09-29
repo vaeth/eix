@@ -229,7 +229,8 @@ class StringHash : public std::vector<std::string>
 
 		StringHash::size_type get_index(const std::string &s) const;
 
-		void output(const std::set<std::string> *s = NULLPTR) const;
+		void output() const;
+		void output_depends() const;
 
 		const std::string& operator[](StringHash::size_type i) const;
 	private:

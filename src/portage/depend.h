@@ -21,11 +21,12 @@ class Depend
 
 	private:
 		std::string m_depend, m_rdepend, m_pdepend, m_hdepend;
+		bool obsolete;
 
 		static const char c_depend[];
 		static const char c_rdepend[];
 
-		static std::string subst(const std::string &in, const std::string &text);
+		static std::string subst(const std::string &in, const std::string &text, bool obs);
 
 	public:
 		static bool use_depend;
@@ -33,16 +34,16 @@ class Depend
 		void set(const std::string &depend, const std::string &rdepend, const std::string &pdepend, const std::string &hdepend, bool normspace);
 
 		std::string get_depend() const
-		{ return subst(m_depend, m_rdepend); }
+		{ return subst(m_depend, m_rdepend, obsolete); }
 
 		std::string get_depend_brief() const
-		{ return subst(m_depend, c_rdepend); }
+		{ return subst(m_depend, c_rdepend, obsolete); }
 
 		std::string get_rdepend() const
-		{ return subst(m_rdepend, m_depend); }
+		{ return subst(m_rdepend, m_depend, obsolete); }
 
 		std::string get_rdepend_brief() const
-		{ return subst(m_rdepend, c_depend); }
+		{ return subst(m_rdepend, c_depend, obsolete); }
 
 		std::string get_pdepend() const
 		{ return m_pdepend; }
@@ -77,6 +78,7 @@ class Depend
 			m_rdepend.clear();
 			m_pdepend.clear();
 			m_hdepend.clear();
+			obsolete = false;
 		}
 
 		bool operator==(const Depend &d) const;

@@ -38,14 +38,11 @@ subst_the_same(string &in, const string &from) {
 		if(in[next] != ' ') {
 			return false;
 		}
-		++len;
 	}
 	if(pos > 0) {
 		if(in[pos - 1] != ' ') {
 			return false;
 		}
-		--pos;
-		++len;
 	}
 	in.erase(pos, len - 1);
 	in[pos] = the_same;
@@ -70,22 +67,23 @@ Depend::set(const string &depend, const string &rdepend, const string &pdepend, 
 	}
 	subst_the_same(m_depend, m_rdepend) || \
 		subst_the_same(m_rdepend, m_depend);
+	obsolete = false;
 }
 
 string
-Depend::subst(const string &in, const string &text)
+Depend::subst(const string &in, const string &text, bool obs)
 {
 	string::size_type pos(in.find(the_same));
 	if(pos == string::npos) {
 		return in;
 	}
 	string ret(in);
-	if((pos + 1) != ret.size()) {
+	if(unlikely(obs) && ((pos + 1) != ret.size())) {
 		ret[pos] = ' ';
 		if(pos > 0) {
 			ret.insert(++pos, 1, ' ');
 		}
-	} else if(pos > 0) {
+	} else if(unlikely(obs) && (pos > 0)) {
 		ret[pos++] = ' ';
 	} else {
 		ret.erase(pos);
