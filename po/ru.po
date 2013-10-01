@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-09-29 11:27+0200\n"
+"POT-Creation-Date: 2013-10-01 09:06+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -2299,35 +2299,35 @@ msgstr "отсутствует указатель формата"
 msgid "unknown format specifier '%%%s'"
 msgstr "неизвестный указатель формата '%%%s'"
 
-#: src/eixTk/stringutils.cc:435
+#: src/eixTk/stringutils.cc:438
 #, c-format
 msgid "flags should not start with a '+': %s"
 msgstr "флаги не должны начинаться с '+': %s"
 
-#: src/eixTk/stringutils.cc:476
+#: src/eixTk/stringutils.cc:479
 #, c-format
 msgid "Internal error: Storing required after finalizing"
 msgstr "Внутренняя ошибка: Требуется хранение после финализации"
 
-#: src/eixTk/stringutils.cc:486
+#: src/eixTk/stringutils.cc:489
 #, c-format
 msgid "Internal error: Hashing required after finalizing"
 msgstr "Внутренняя ошибка: Требуется хеширование после финализации"
 
-#: src/eixTk/stringutils.cc:490
+#: src/eixTk/stringutils.cc:493
 #, c-format
 msgid "Internal error: Hashing required in non-hash mode"
 msgstr "Внутренняя ошибка: Требуется хеширование в нехешевом режиме"
 
-#: src/eixTk/stringutils.cc:520
+#: src/eixTk/stringutils.cc:524
 msgid "Internal error: Index required before sorting."
 msgstr "Внутренняя ошибка: Требуется индекс перед сортировкой."
 
-#: src/eixTk/stringutils.cc:525
+#: src/eixTk/stringutils.cc:529
 msgid "Internal error: Trying to shortcut non-hashed string."
 msgstr "Внутренняя ошибка: Попытка создать ярлык на нехешированную строку."
 
-#: src/eixTk/stringutils.cc:535
+#: src/eixTk/stringutils.cc:539
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "База данных испорчена: требуется несуществующий хеш"
 

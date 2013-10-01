@@ -236,6 +236,8 @@ class StringHash : public std::vector<std::string>
 	private:
 		bool hashing, finalized;
 		std::map<std::string, StringHash::size_type> str_map;
+		static StringHash *comparison_this;
+		static bool frequency_comparison(const std::string a, const std::string b);
 };
 
 // Implementation of the templates:
@@ -308,6 +310,19 @@ make_vector(std::vector<T> *the_list, const std::set<T> &the_set)
 			it_end(the_set.end());
 		likely(it != it_end); ++it) {
 		the_list->push_back(*it);
+	}
+}
+
+/** Make a vector from map->first */
+template<typename T, typename Y>
+inline static void
+make_vector(std::vector<T> *the_list, const std::map<T, Y> &the_map)
+{
+	the_list->clear();
+	for(typename std::map<T, Y>::const_iterator it(the_map.begin()),
+			it_end(the_map.end());
+		likely(it != it_end); ++it) {
+		the_list->push_back(it->first);
 	}
 }
 

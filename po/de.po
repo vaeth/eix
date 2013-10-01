@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-09-29 11:27+0200\n"
+"POT-Creation-Date: 2013-10-01 09:06+0200\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -2333,35 +2333,35 @@ msgstr "Format-Zeichen fehlt"
 msgid "unknown format specifier '%%%s'"
 msgstr "Unbekannte Formatangabe '%%%s'"
 
-#: src/eixTk/stringutils.cc:435
+#: src/eixTk/stringutils.cc:438
 #, c-format
 msgid "flags should not start with a '+': %s"
 msgstr "Flags sollten nicht mit einem '+' beginnen: %s"
 
-#: src/eixTk/stringutils.cc:476
+#: src/eixTk/stringutils.cc:479
 #, c-format
 msgid "Internal error: Storing required after finalizing"
 msgstr "Interner Fehler: Storing required after finalizing"
 
-#: src/eixTk/stringutils.cc:486
+#: src/eixTk/stringutils.cc:489
 #, c-format
 msgid "Internal error: Hashing required after finalizing"
 msgstr "Interner Fehler: Hashing required after finalizing"
 
-#: src/eixTk/stringutils.cc:490
+#: src/eixTk/stringutils.cc:493
 #, c-format
 msgid "Internal error: Hashing required in non-hash mode"
 msgstr "Interner Fehler: Hashing required in non-hash mode"
 
-#: src/eixTk/stringutils.cc:520
+#: src/eixTk/stringutils.cc:524
 msgid "Internal error: Index required before sorting."
 msgstr "Interner Fehler: Index required before sorting."
 
-#: src/eixTk/stringutils.cc:525
+#: src/eixTk/stringutils.cc:529
 msgid "Internal error: Trying to shortcut non-hashed string."
 msgstr "Interner Fehler: Trying to shortcut non-hashed string."
 
-#: src/eixTk/stringutils.cc:535
+#: src/eixTk/stringutils.cc:539
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "Datenbank defekt: Nichtexistierender Hash angefordert"
 

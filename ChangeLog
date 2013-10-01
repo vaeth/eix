@@ -2,6 +2,7 @@
 
 *eix-0.29.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Shorten database size dramatically (sort StringHashs by frequency)
 	- versionsort: Fix versionsort -[pn], introduce -[fV], let -? support
 	  more than one argument, ignore some non-alphanumeric rubbish
 	- fix calculation of output of revision text

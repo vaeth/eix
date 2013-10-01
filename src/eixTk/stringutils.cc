@@ -21,6 +21,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <algorithm>
 #include <iostream>
 #include <map>
 #include <set>
@@ -46,6 +47,8 @@ using std::endl;
 const char *spaces(" \t\r\n");
 const char *shellspecial(" \t\r\n\"'`${}()[]<>?*~;|&#");
 const char *doublequotes("\"$\\");
+
+StringHash *StringHash::comparison_this;
 
 std::locale localeC("C");
 
@@ -490,12 +493,13 @@ StringHash::hash_string(const string &s)
 		fprintf(stderr, _("Internal error: Hashing required in non-hash mode"));
 		exit(EXIT_FAILURE);
 	}
-	map<string, StringHash::size_type>::const_iterator i(str_map.find(s));
-	if(i != str_map.end())
-		return;
-	// For the moment, use str_map only as a set: Wait for finalize()
-	str_map[s] = 0;  // size();
-	// store_string(s);
+	// During hashing, we use str_map as a frequency counter to optimize
+	map<string, StringHash::size_type>::iterator i(str_map.find(s));
+	if(i != str_map.end()) {
+		++(i->second);
+	} else {
+		str_map[s] = 0;
+	}
 }
 
 void
@@ -572,19 +576,29 @@ StringHash::output_depends() const
 	}
 }
 
+bool
+StringHash::frequency_comparison(const string a, const string b)
+{
+	return ((comparison_this->str_map)[b] < (comparison_this->str_map)[a]);
+}
+
 void
 StringHash::finalize()
 {
-	if(finalized)
+	if(finalized) {
 		return;
+	}
 	finalized = true;
-	if(!hashing)
+	if(!hashing) {
 		return;
-	clear();
-	for(map<string, size_type>::iterator it(str_map.begin());
-		likely(it != str_map.end()); ++it) {
-		it->second = size();
-		push_back(it->first);
+	}
+	make_vector(this, str_map);
+	comparison_this = this;
+	sort(begin(), end(), StringHash::frequency_comparison);
+	// For get_index(), we use str_map as the index map
+	size_type i(0);
+	for(const_iterator it(begin()); likely(it != end()); ++it) {
+		str_map[*it] = i++;
 	}
 }
 
