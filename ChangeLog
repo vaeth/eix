@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.29.6
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix regression of eix-0.29.5: Do not cut after ${DEPEND}/${RDEPEND}
+
 *eix-0.29.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Shorten database size dramatically (sort StringHashs by frequency)

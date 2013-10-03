@@ -86,7 +86,7 @@ Depend::subst(const string &in, const string &text, bool obs)
 	} else if(unlikely(obs) && (pos > 0)) {
 		ret[pos++] = ' ';
 	} else {
-		ret.erase(pos);
+		ret.erase(pos, 1);
 	}
 	ret.insert(pos, text);
 	return ret;
