@@ -1,4 +1,4 @@
-#! /usr/bin/env sh
+#!/usr/bin/env sh
 export LC_ALL=C
 command -v cpplint.py >/dev/null 2>&1 || {
 	echo 'Cannot find cpplint.py.  Please download it from

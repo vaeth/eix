@@ -1,4 +1,4 @@
-#! /usr/bin/env sh
+#!/usr/bin/env sh
 
 project='eix'
 mkclean='contrib/clean.sh'

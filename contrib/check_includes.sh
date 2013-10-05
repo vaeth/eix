@@ -1,4 +1,4 @@
-#! /usr/bin/env sh
+#!/usr/bin/env sh
 # Check whether the #include directives are reasonable.
 # This is only a very heuristic test and does certainly not cover all cases.
 # Note that from the tests (after the functions) you can see which #include's

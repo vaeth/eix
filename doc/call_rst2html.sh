@@ -1,4 +1,4 @@
-#! /usr/bin/env sh
+#!/usr/bin/env sh
 if command -v rst2html.py >/dev/null 2>&1
 then	rst2html.py \
 		'--input-encoding=UTF-8:strict' \
