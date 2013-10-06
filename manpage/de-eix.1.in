@@ -371,7 +371,9 @@ Oder sie kann mit B<-e> kombiniert werden, um weitere Ausgaben zu verhindern.
 
 Falls es einen Grund gibt, bestimmte Einträge/Pakete von diesem Test auszuschließen,
 können diese Einträge in eine Datei /etc/portage/package.*.nonexistent eingefügt werden.
-Hier steht * für eines der Worte {accept_,}keywords, mask, unmask, use, env, license, accept_restrict, cflags, installed.
+Hier steht B<*> für eines der Worte B<accept_keywords> (oder das
+obsolete B<keywords>), B<mask>, B<unmask>, B<use>, B<env>, B<license>,
+B<accept_restrict>, B<cflags> oder B<installed>.
 Diese Dateien (und wie ihre Namen geändert werden können) wird später beschrieben.
 
 .TP
@@ -912,13 +914,19 @@ Vorsicht bei der Übergabe des Suchmusters in einer Shell (Quoting!).
 .SS Layouts festlegen \fP(siehe B<FORMATSTRING> weiter unten)
 .TP
 .BR --format " " I<FORMAT>
-Define das normale Layout zur Ausgabe als I<FORMAT>
+Definiert das normale Layout zur Ausgabe als I<FORMAT>.
+Es empfiehlt sich, die Environment-Variable B<DEFAULT_FORMAT=normal>
+zu setzen, um sicherzustellen, dass das Format benutzt wird.
 .TP
 .BR --format-compact " " I<FORMAT>
-Define das kompakte Layout zur Ausgabe als I<FORMAT>
+Definiert das kompakte Layout zur Ausgabe als I<FORMAT>.
+Es empfiehlt sich, die Environment-Variable B<DEFAULT_FORMAT=compact>
+zu setzen, um sicherzustellen, dass das Format benutzt wird.
 .TP
 .BR --format-verbose " " I<FORMAT>
-Define das ausführliche Layout zur Ausgabe als I<FORMAT>
+Definiert das ausführliche Layout zur Ausgabe als I<FORMAT>.
+Es empfiehlt sich, die Environment-Variable B<DEFAULT_FORMAT=verbose>
+zu setzen, um sicherzustellen, dass das Format benutzt wird.
 .\" }}}
 .\" }}}
 .\" {{{ -------- Options for eix-update
@@ -1480,7 +1488,7 @@ Falls weder Ausgabe noch ein Reset gewünscht ist, kann man den Markennamen B<(n
 .\" {{{ -------- Beispiele
 .SS Beispiele:
 
-\fBFORMAT='{installed}(yellow,1;underline){else}(yellow,0){}<name>()}\\n' eix ...\fR
+\fBeix --format '{installed}(yellow,1;underline){else}(yellow,0){}<name>()\\n' ...\fR
 
 Falls das Paket B<...> installiert ist, wird der Name unterstrichen in Hellgelb ausgegeben,
 sonst in normalem Gelb.
@@ -2226,6 +2234,9 @@ B<VAR=`PRINT_APPEND=x eix --print VAR` ; VAR=${VAR%x}>
 .TP
 .BR DEFAULT_FORMAT " " (normal / compact / verbose)
 Legt fest, ob B<--compact> oder B<--verbose> als Vorgabe gewählt wird.
+Da diese Variable vom Benutzer in B</etc/eixrc> oder B<~/.eixrc> geändert
+werden kann, empfiehlt es sich für Skripte mit vorgegebenem Format stets
+B<DEFAULT_FORMAT=normal> zu exportieren.
 
 .TP
 .BR DIFF_ONLY_INSTALLED " " (true / false)
@@ -2280,6 +2291,9 @@ Im positiven Fall verdoppelt sich ungefähr der Disk- und Speicherbedarf von eix
 .BR FORMAT ", " FORMAT_COMPACT ", " FORMAT_VERBOSE " " (string)
 Das normale, kompakte bzw. ausführliche Layout für die Ausgabe von B<eix>.
 Siehe B<FORMATSTRING>.
+Wenn eine dieser Variablen in einem Skript gesetzt wird, empfiehlt es sich,
+gleichzeitig den entsprechenden Wert für B<DEFAULT_FORMAT> zu setzen.
+
 Seit eix-0.13.4 expandieren diese Variablen als Vorgabe über verzögerte Ersetzung
 zu den Variablen B<FORMAT_ALL>, B<FORMAT_ALL_COMPACT> bzw. B<FORMAT_ALL_VERBOSE>.
 Der Zweck dieser einfachen Definition ist, dass es leicht ist, auf die

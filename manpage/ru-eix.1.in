@@ -356,7 +356,9 @@ Or you can combine it with B<-e> to have no other output.
 
 If you have a reason to exclude certain entries/packages from this test,
 you can write those entries into a file /etc/portage/package.*.nonexistent
-where *={accept_,}keywords,mask,unmask,use,env,license,accept_restrict,cflags,installed.
+where B<*> is one of B<accept_keywords> (or the obsolete B<keywords>),
+B<mask>, B<unmask>, B<use>, B<env>, B<license>, B<accept_restrict>, B<cflags>,
+and B<installed>.
 These files (and how to modify their filenames) are described later.
 
 .TP
@@ -891,13 +893,19 @@ Again, be sure to use single quotes around patterns.
 .SS Defining layouts \fP(see B<FORMATSTRING> below)
 .TP
 .BR --format " " I<FORMAT>
-Define the normal layout for results as I<FORMAT>
+Define the normal layout for results as I<FORMAT>.
+You might want to export the environment variable B<DEFAULT_FORMAT=normal> to
+make sure that this format is used.
 .TP
 .BR --format-compact " " I<FORMAT>
-Define the compact layout for results as I<FORMAT>
+Define the compact layout for results as I<FORMAT>.
+You might want to export the environment variable B<DEFAULT_FORMAT=compact> to
+make sure that this format is used.
 .TP
 .BR --format-verbose " " I<FORMAT>
-Define the verbose layout for results as I<FORMAT>
+Define the verbose layout for results as I<FORMAT>.
+You might want to export the environment variable B<DEFAULT_FORMAT=verbose> to
+make sure that this format is used.
 .\" }}}
 .\" }}}
 .\" {{{ -------- Options for eix-update
@@ -1457,7 +1465,7 @@ specify the attribute B<(none)>.
 .\" {{{ -------- Example
 .SS Examples:
 
-\fBFORMAT='{installed}(yellow,1;underline){else}(yellow,0){}<name>()}\\n' eix ...\fR
+\fBeix --format '{installed}(yellow,1;underline){else}(yellow,0){}<name>()\\n' ...\fR
 
 If the package B<...> is installed, print the name underlined in bright yellow,
 else in normal yellow.
@@ -2197,6 +2205,8 @@ B<VAR=`PRINT_APPEND=x eix --print VAR` ; VAR=${VAR%x}>
 .TP
 .BR DEFAULT_FORMAT " " (normal / compact / verbose)
 Defines whether B<--compact> or B<--verbose> is on by default.
+Since this variable can be changed by the user in B</etc/eixrc> or B<~/.eixrc>,
+it is recommended for scripts with a fixed format to export B<DEFAULT_FORMAT=normal>.
 
 .TP
 .BR DIFF_ONLY_INSTALLED " " (true / false)
@@ -2244,6 +2254,9 @@ Usage of B<DEP> roughly doubles disk resp. memory requirements.
 .BR FORMAT ", " FORMAT_COMPACT ", " FORMAT_VERBOSE " " (string)
 Define the normal, compact and verbose layout for results printed by B<eix>.
 See B<FORMATSTRING>.
+If one of these variables is set in a script, it is recommended to set
+simultaneously the corresponding value of B<DEFAULT_FORMAT>.
+
 Since eix-0.13.4 these variables just expand to delayed substitution of the
 variables B<FORMAT_ALL>, B<FORMAT_ALL_COMPACT>, or B<FORMAT_ALL_VERBOSE>,
 respectively.

@@ -2,7 +2,10 @@
 
 *eix-0.29.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Fix regression of eix-0.29.5: Do not cut after ${DEPEND}/${RDEPEND}
+	- Fix: Do not cut rest of dependency strings after ${DEPEND}/${RDEPEND}
+	  (Regression of eix-0.29.5)
+	- manpages: Recommend DEFAULT_FORMAT=normal with FORMAT or --format
+	- manpages: Avoid some warnings with groff-1.22.2
 
 *eix-0.29.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
