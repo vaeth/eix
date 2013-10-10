@@ -300,14 +300,17 @@ Note that if B<IUSE> is not printed per version then it is only collected
 for the whole package which can give the wrong impression, since often
 B<IUSE> changes dramatically with versions.
 .TP
-.BR -c ", " --compact "   (toggle)"
+.BR -c ", " --compact
 Causes eix to use a compact layout for search results. Useful for obtaining a better
 overview in the case of a long list of results, and also to help speed up searching over
 slow connections such as a serial console.
 .TP
-.BR -v ", " --verbose "   (toggle)"
+.BR -v ", " --verbose
 Use a verbose layout with additional information about search results such as the license
 of a package.
+.TP
+.B --normal
+Use the normal layout which is the default if B<DEFAULT_FORMAT> was not explicitly changed.
 .TP
 .BR --xml "   (toggle)"
 Output in XML format.
@@ -894,20 +897,14 @@ Again, be sure to use single quotes around patterns.
 .\" {{{ -------- Defining layouts
 .SS Defining layouts \fP(see B<FORMATSTRING> below)
 .TP
-.BR --format " " I<FORMAT>
-Define the normal layout for results as I<FORMAT>.
-You might want to export the environment variable B<DEFAULT_FORMAT=normal> to
-make sure that this format is used.
-.TP
-.BR --format-compact " " I<FORMAT>
-Define the compact layout for results as I<FORMAT>.
-You might want to export the environment variable B<DEFAULT_FORMAT=compact> to
-make sure that this format is used.
-.TP
-.BR --format-verbose " " I<FORMAT>
-Define the verbose layout for results as I<FORMAT>.
-You might want to export the environment variable B<DEFAULT_FORMAT=verbose> to
-make sure that this format is used.
+.BR --format " " I<FORMATSTRING>
+Defines the I<FORMATSTRING>.
+Since eix-0.29.6, all other possibilities to modify the format string like
+the setting of B<DEFAULT_FORMAT> or B<FORMAT> are overridden by this option.
+In contrast, if this option is not used, whether the B<FORMAT>,
+B<FORMAT_VERBOSE> or B<FORMAT_COMPACT> variable is used depends on
+the setting of B<DEFAULT_FORMAT> and/or whether the options B<--verbose>,
+B<--compact>, or B<--normal> are used.
 .\" }}}
 .\" }}}
 .\" {{{ -------- Options for eix-update
@@ -1472,10 +1469,10 @@ specify the attribute B<(none)>.
 If the package B<...> is installed, print the name underlined in bright yellow,
 else in normal yellow.
 
-\fBFORMAT='<category>/<name><installedversions:INSTFORMAT>\\n' INSTFORMAT='{first}:{}<version><date:DATEFORMAT>{!last}\\n\\t{}' DATEFORMAT='%x' eix autom*\fR
+\fBINSTFORMAT='{first}:{}<version> <date:DATEFORMAT>{!last}\\n\\t{}' DATEFORMAT='%x' eix --format '<category>/<name><installedversions:INSTFORMAT>\\n' 'autom*'\fR
 
 This will print for every B<autom*> package the category name, and if it is installed,
-it will also print the installed versions and the installation dates.
+it will also print the installed versions and the installation day.
 One could have obtained the same result by omitting B<{!last}\\t\\n{}> and writing instead B<{first}:{else}\\t\\n{}>,
 since it is of course the same whether B<\\t\\n> is printed at the end of each version except the last
 or at the beginning of each version except the first.
@@ -1502,6 +1499,17 @@ B<FORMAT_COMPACT='{downgrade}%{FORMAT_ALL_COMPACT}{}' eix -Ic>
 or even simpler and with the same effect:
 
 B<FORMAT='{downgrade}%{FORMAT_ALL_COMPACT}{}' eix -I>
+
+A much simpler possibility to avoid the self-reference is in the above example
+usage of the B<--format> option:
+
+B<eix --format '{downgrade}%{FORMAT}{}' -I>
+
+or, for compact output,
+
+B<eix --format '{downgrade}%{FORMAT_COMPACT}{}' -I>
+
+respectively.
 .\" }}}
 .\" }}}
 
@@ -2208,7 +2216,11 @@ B<VAR=`PRINT_APPEND=x eix --print VAR` ; VAR=${VAR%x}>
 .BR DEFAULT_FORMAT " " (normal / compact / verbose)
 Defines whether B<--compact> or B<--verbose> is on by default.
 Since this variable can be changed by the user in B</etc/eixrc> or B<~/.eixrc>,
-it is recommended for scripts with a fixed format to export B<DEFAULT_FORMAT=normal>.
+this might have undesired side effects for scripts setting B<FORMAT> with the
+intention to get a fixed B<FORMATSTRING>: Such scripts should better use the
+B<--format> option (which ignores B<DEFAULT_FORMAT> since eix-0.29.6),
+use the B<--normal> option (available since eix-0.29.6),
+and/or export B<DEFAULT_FORMAT=normal> to override such user settings.
 
 .TP
 .BR DIFF_ONLY_INSTALLED " " (true / false)
@@ -3754,6 +3766,15 @@ manually (by setting B<EIX_REMOTE_OPTS=-x> in I</etc/eixrc>).
 The tool B<eix-header> did not exist before eix-0.28.6; instead eix had the options
 B<--is-current>, B<--print-overlay-path>, B<--print-overlay-label>, B<--print-overlay-data>
 which are now redundant and have been removed.
+
+Since eix-0.29.6 the options B<--format-vrebose> and B<--format-compact> habe been removed,
+because their effect can be better obtained by exporting the environment variables
+B<FORMAT_VERBOSE> or B<FORMAT_COMPACT>, respectively.
+Instead, the option B<--format> overrides now the B<FORMATSTRING> independently
+of the chosen format.
+
+Since eix-0.29.6 the options B<--verbose> and B<--compact> are no longer toggling;
+for switching off, there is the new option B<--normal>.
 .\" }}}
 
 .\" {{{ AUTHORS

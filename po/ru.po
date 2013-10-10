@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-10-01 09:06+0200\n"
+"POT-Creation-Date: 2013-10-10 18:39+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -1350,14 +1350,13 @@ msgid ""
 "                            Usually faster with COUNT_ONLY_PRINTED=false\n"
 "         --brief2 (toggle)  Print at most two packages then stop\n"
 "     --xml (toggle)         output results in XML format\n"
-"     -c, --compact (toggle) compact search results\n"
-"     -v, --verbose (toggle) verbose search results\n"
+"     -c, --compact          compact search results\n"
+"     -v, --verbose          verbose search results\n"
+"         --normal           ignores -c, -v, and DEFAULT_FORMAT\n"
+"         --format           format string\n"
 "     -x, --versionsort  (toggle) sort output by slots/versions\n"
 "     -l, --versionlines (toggle) print available versions line-by-line\n"
 "                            (and print additional data for each version)\n"
-"         --format           format string for normal output\n"
-"         --format-compact   format string for compact output\n"
-"         --format-verbose   format string for verbose output\n"
 "\n"
 "TEST_OPTIONS:\n"
 "  Miscellaneous:\n"
@@ -1522,14 +1521,13 @@ msgstr ""
 "                           Обычно быстрее с COUNT_ONLY_PRINTED=false\n"
 "         --brief2 (вкл.)   Показать не более двух пакетов и выйти.\n"
 "     --xml (вкл.)          вывод в формате XML\n"
-"     -c, --compact (вкл.)  компактные результаты поиска\n"
-"     -v, --verbose (вкл.)  подробные результаты поиска\n"
+"     -c, --compact         компактные результаты поиска\n"
+"     -v, --verbose         подробные результаты поиска\n"
+"         --normal          ignores -c, -v, and DEFAULT_FORMAT\n"
+"         --format          форматировать строку\n"
 "     -x, --versionsort  (вкл.) сортировать вывод по слотам/версиям\n"
 "     -l, --versionlines (вкл.) показывать доступные версии линия за линией\n"
 "                           (а также дополнительные данные о каждой версии)\n"
-"         --format          форматировать строку под нормальный вывод\n"
-"         --format-compact  форматировать строку под компактный вывод\n"
-"         --format-verbose  форматировать строку под подробный вывод\n"
 "\n"
 "КЛЮЧИ_ТЕСТИРОВАНИЯ:\n"
 "  Разное:\n"
@@ -1630,16 +1628,16 @@ msgstr ""
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING "
 "для подробной информации.\n"
 
-#: src/eix.cc:564 src/eix-diff.cc:285
+#: src/eix.cc:553 src/eix-diff.cc:285
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Проблема при обработке %s: %s\n"
 
-#: src/eix.cc:664 src/eix-diff.cc:350 src/eix-update.cc:385
+#: src/eix.cc:671 src/eix-diff.cc:350 src/eix-update.cc:385
 msgid "cannot redirect to %r"
 msgstr "невозможно перенаправить в %r"
 
-#: src/eix.cc:750
+#: src/eix.cc:757
 msgid ""
 "%s was created with an incompatible eix-update:\n"
 "It uses database format %s (current is %s).\n"
@@ -1649,28 +1647,28 @@ msgstr ""
 "Используется формат базы данных %s (текущий ― %s).\n"
 "Запустите %r и попробуйте ещё раз."
 
-#: src/eix.cc:1024 src/eix.cc:1045
+#: src/eix.cc:1031 src/eix.cc:1052
 #, c-format
 msgid "Found %s matches."
 msgstr "Найдено %s совпадений."
 
-#: src/eix.cc:1027
+#: src/eix.cc:1034
 msgid "No matches found."
 msgstr "Совпадений не найдено."
 
-#: src/eix.cc:1036
+#: src/eix.cc:1043
 #, c-format
 msgid "Found %s match."
 msgstr "Найдено %s совпадение."
 
-#: src/eix.cc:1056
+#: src/eix.cc:1063
 #, c-format
 msgid ""
 "Only %s matches displayed on terminal.\n"
 "Set %s=0 to show all matches.\n"
 msgstr ""
 
-#: src/eix.cc:1086
+#: src/eix.cc:1093
 msgid ""
 "Cannot open the database file %s for reading.\n"
 "Did you forget to create it with %r?"
@@ -1678,17 +1676,17 @@ msgstr ""
 "Невозможно открыть базу данных %s для чтения.\n"
 "Вы не забыли её создать с помощью %r?"
 
-#: src/eix.cc:1167
+#: src/eix.cc:1174
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Нет не совпадающих или пустых записей в %s.\n"
 
-#: src/eix.cc:1168
+#: src/eix.cc:1175
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Нет не совпадающих записей в %s.\n"
 
-#: src/eix.cc:1173
+#: src/eix.cc:1180
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1697,7 +1695,7 @@ msgstr ""
 "Не совпадающие или пустые записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1174
+#: src/eix.cc:1181
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1706,7 +1704,7 @@ msgstr ""
 "Не совпадающие записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1232
+#: src/eix.cc:1239
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1714,7 +1712,7 @@ msgstr ""
 "Имена всех установленных пакетов находятся в базе данных.\n"
 "\n"
 
-#: src/eix.cc:1235
+#: src/eix.cc:1242
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -2065,7 +2063,7 @@ msgid "Unknown cache %r for directory %r"
 msgstr "Неизвестный кэш %r для каталога %r"
 
 #: src/cache/common/assign_reader.cc:88 src/cache/common/assign_reader.cc:108
-#: src/cache/common/flat_reader.cc:40 src/cache/eixcache/eixcache.cc:249
+#: src/cache/common/flat_reader.cc:40 src/cache/eixcache/eixcache.cc:250
 #, c-format
 msgid "Can't read cache file %s: %s"
 msgstr "Невозможно прочесть файл кэша %s: %s"
@@ -2123,21 +2121,21 @@ msgstr "Дитя прервано в странной манере"
 msgid "Can't open %s: %s"
 msgstr "Невозможно открыть %s: %s"
 
-#: src/cache/eixcache/eixcache.cc:143
+#: src/cache/eixcache/eixcache.cc:144
 msgid "Cache file %s does not contain overlay %r [%s]"
 msgstr "Файл кэша %s не содержит оверлей %r [%s]"
 
-#: src/cache/eixcache/eixcache.cc:148
+#: src/cache/eixcache/eixcache.cc:149
 #, c-format
 msgid "Cache file %s does not contain overlay %s"
 msgstr "Файл кэша %s не содержит оверлей %s"
 
-#: src/cache/eixcache/eixcache.cc:259 src/cache/eixcache/eixcache.cc:301
+#: src/cache/eixcache/eixcache.cc:260 src/cache/eixcache/eixcache.cc:302
 #, c-format
 msgid "error in file %s: %s"
 msgstr "Ошибка чтения %s: %s"
 
-#: src/cache/metadata/metadata.cc:323 src/cache/metadata/metadata.cc:369
+#: src/cache/metadata/metadata.cc:318 src/cache/metadata/metadata.cc:364
 #: src/cache/sqlite/sqlite.cc:235
 msgid "Can't split %r into package and version"
 msgstr "Невозможно разделить %r на пакет и версию"
@@ -2299,35 +2297,35 @@ msgstr "отсутствует указатель формата"
 msgid "unknown format specifier '%%%s'"
 msgstr "неизвестный указатель формата '%%%s'"
 
-#: src/eixTk/stringutils.cc:438
+#: src/eixTk/stringutils.cc:439
 #, c-format
 msgid "flags should not start with a '+': %s"
 msgstr "флаги не должны начинаться с '+': %s"
 
-#: src/eixTk/stringutils.cc:479
+#: src/eixTk/stringutils.cc:480
 #, c-format
 msgid "Internal error: Storing required after finalizing"
 msgstr "Внутренняя ошибка: Требуется хранение после финализации"
 
-#: src/eixTk/stringutils.cc:489
+#: src/eixTk/stringutils.cc:490
 #, c-format
 msgid "Internal error: Hashing required after finalizing"
 msgstr "Внутренняя ошибка: Требуется хеширование после финализации"
 
-#: src/eixTk/stringutils.cc:493
+#: src/eixTk/stringutils.cc:494
 #, c-format
 msgid "Internal error: Hashing required in non-hash mode"
 msgstr "Внутренняя ошибка: Требуется хеширование в нехешевом режиме"
 
-#: src/eixTk/stringutils.cc:524
+#: src/eixTk/stringutils.cc:525
 msgid "Internal error: Index required before sorting."
 msgstr "Внутренняя ошибка: Требуется индекс перед сортировкой."
 
-#: src/eixTk/stringutils.cc:529
+#: src/eixTk/stringutils.cc:530
 msgid "Internal error: Trying to shortcut non-hashed string."
 msgstr "Внутренняя ошибка: Попытка создать ярлык на нехешированную строку."
 
-#: src/eixTk/stringutils.cc:539
+#: src/eixTk/stringutils.cc:540
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "База данных испорчена: требуется несуществующий хеш"
 
@@ -5418,40 +5416,40 @@ msgid ""
 "locally added (unused) variables so that they are printed with --dump."
 msgstr ""
 
-#: src/eixrc/eixrc.cc:249
+#: src/eixrc/eixrc.cc:256
 #, c-format
 msgid "fatal config error: %s in delayed substitution of %s"
 msgstr "смертельная ошибка конфигурации: %s в отложенной замене %s"
 
-#: src/eixrc/eixrc.cc:276
+#: src/eixrc/eixrc.cc:283
 msgid "FI without IF"
 msgstr "FI без IF"
 
-#: src/eixrc/eixrc.cc:280
+#: src/eixrc/eixrc.cc:287
 msgid "ELSE without IF"
 msgstr "ELSE без IF"
 
-#: src/eixrc/eixrc.cc:296
+#: src/eixrc/eixrc.cc:303
 msgid "self-reference"
 msgstr "самоуказание"
 
-#: src/eixrc/eixrc.cc:374
+#: src/eixrc/eixrc.cc:381
 msgid "double ELSE"
 msgstr "двойной ELSE"
 
-#: src/eixrc/eixrc.cc:396
+#: src/eixrc/eixrc.cc:403
 msgid "IF without FI"
 msgstr "IF без FI"
 
-#: src/eixrc/eixrc.cc:455
+#: src/eixrc/eixrc.cc:462
 msgid "No $HOME found in environment."
 msgstr "$HOME не найден в environment. "
 
-#: src/eixrc/eixrc.cc:776
+#: src/eixrc/eixrc.cc:781
 msgid "or"
 msgstr "или"
 
-#: src/eixrc/eixrc.cc:792
+#: src/eixrc/eixrc.cc:798
 msgid ""
 "%s has unknown value %r\n"
 "\tassuming value 'all-installed' instead."
@@ -5459,15 +5457,15 @@ msgstr ""
 "%s имеет неизвестное значение %r\n"
 "\tвместо этого предполагаю значение 'all-installed'."
 
-#: src/eixrc/eixrc.cc:822
+#: src/eixrc/eixrc.cc:828
 msgid "was locally changed to:"
 msgstr "было местно изменено на:"
 
-#: src/eixrc/eixrc.cc:823
+#: src/eixrc/eixrc.cc:829
 msgid "changed locally, default was:"
 msgstr "местно изменено, по умолчанию было:"
 
-#: src/eixrc/eixrc.cc:852
+#: src/eixrc/eixrc.cc:858
 msgid "locally added:"
 msgstr "местно добавлено:"
 

@@ -2,9 +2,15 @@
 
 *eix-0.29.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- --format now overrides all format related options/variables like
+	  e.g. FORMAT or DEFAULT_FORMAT. In contrast, without this option,
+	  which of the FORMAT* variable takes effect depends on DEFAULT_FORMAT.
+	- New option --normal instead of letting -c or -v be toggling
 	- Fix: Do not cut rest of dependency strings after ${DEPEND}/${RDEPEND}
 	  (Regression of eix-0.29.5)
-	- manpages: Recommend DEFAULT_FORMAT=normal with FORMAT or --format
+	- Avoid strcasecmp() which is not in C++ standard and unspecified
+	  outside POSIX locale. Also be more tolerant (match substrings only).
+	- manpages: Prefer --format in the examples now since it is simpler
 	- manpages: Avoid some warnings with groff-1.22.2
 
 *eix-0.29.5

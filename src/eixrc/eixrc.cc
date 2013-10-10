@@ -67,23 +67,23 @@ EixRcOption::EixRcOption(OptionType t, string name, string val, string desc) {
 eix::SignedBool
 EixRc::getBoolText(const string &key, const char *text)
 {
-	const char *s((*this)[key].c_str());
-	if(!strcasecmp(s, text)) {
+	const string &s((*this)[key]);
+	if(casecontains(s, text)) {
 		return -1;
 	}
-	return (istrue(s) ? 1 : 0);
+	return (istrue(s.c_str()) ? 1 : 0);
 }
 
 eix::TinySigned
 EixRc::getTinyTextlist(const string &key, const char **text)
 {
-	const char *s((*this)[key].c_str());
+	const string &s((*this)[key]);
 	for(eix::TinySigned i(-1); likely(*text != NULLPTR); ++text, --i) {
-		if(!strcasecmp(s, *text)) {
+		if(casecontains(s, *text)) {
 			return i;
 		}
 	}
-	return (istrue(s) ? 1 : 0);
+	return (istrue(s.c_str()) ? 1 : 0);
 }
 
 bool
@@ -103,37 +103,44 @@ EixRc::getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom *r)
 		r->only |= type;
 		r->oins &= ~type;
 	}
-	if((strcasecmp(s, "no") == 0) ||
-	   (strcasecmp(s, "false") == 0)) {
+	if(casecontains(s, "no") || casecontains(s, "false")) {
 		r->red &= ~type;
-	} else if(strcasecmp(s, "some") == 0) {
-		r->red |= type;
-		r->all &= ~type;
-		r->spc &= ~type;
-	} else if(strcasecmp(s, "some-installed") == 0) {
-		r->red |= type;
-		r->all &= ~type;
-		r->spc |= type;
-		r->ins |= type;
-	} else if(strcasecmp(s, "some-uninstalled") == 0) {
-		r->red |= type;
-		r->all &= ~type;
-		r->spc |= type;
-		r->ins &= ~type;
-	} else if(strcasecmp(s, "all") == 0) {
-		r->red |= type;
-		r->all |= type;
-		r->spc &= ~type;
-	} else if(strcasecmp(s, "all-installed") == 0) {
-		r->red |= type;
-		r->all |= type;
-		r->spc |= type;
-		r->ins |= type;
-	} else if(strcasecmp(s, "all-uninstalled") == 0) {
-		r->red |= type;
-		r->all |= type;
-		r->spc |= type;
-		r->ins &= ~type;
+	} else if(casecontains(s, "all")) {
+		if(casecontains(s, "installed")) {
+			if(casecontains(s, "un")) {
+				r->red |= type;
+				r->all |= type;
+				r->spc |= type;
+				r->ins &= ~type;
+			} else {
+				r->red |= type;
+				r->all |= type;
+				r->spc |= type;
+				r->ins |= type;
+			}
+		} else {
+			r->red |= type;
+			r->all |= type;
+			r->spc &= ~type;
+		}
+	} else if(casecontains(s, "some")) {
+		if(casecontains(s, "installed")) {
+			if(casecontains(s, "un")) {
+				r->red |= type;
+				r->all &= ~type;
+				r->spc |= type;
+				r->ins &= ~type;
+			} else {
+				r->red |= type;
+				r->all &= ~type;
+				r->spc |= type;
+				r->ins |= type;
+			}
+		} else {
+			r->red |= type;
+			r->all &= ~type;
+			r->spc &= ~type;
+		}
 	} else {
 		return false;
 	}
@@ -144,14 +151,14 @@ LocalMode
 EixRc::getLocalMode(const string &key)
 {
 	const char *s((*this)[key].c_str());
-	if((*s == '+') || (strcasecmp(s, "local") == 0)) {
-		return LOCALMODE_LOCAL;
-	}
-	if((*s == '-') || (strcasecmp(s, "non-local") == 0) ||
-		(strcasecmp(s, "nonlocal") == 0) ||
-		(strcasecmp(s, "global") == 0) ||
-		(strcasecmp(s, "original") == 0)) {
+	if((*s == '-') || casecontains(s, "non-local") ||
+		casecontains(s, "nonlocal") ||
+		casecontains(s, "global") ||
+		casecontains(s, "original")) {
 		return LOCALMODE_NONLOCAL;
+	}
+	if((*s == '+') || casecontains(s, "local")) {
+		return LOCALMODE_LOCAL;
 	}
 	return LOCALMODE_DEFAULT;
 }
@@ -671,9 +678,7 @@ EixRc::find_next_delayed(const string &str, string::size_type *posref, string::s
 				}
 				varlen = i - varstart - 1;
 			}
-			if(strcasecmp(
-				(str.substr(pos + 2, i - pos - 3)).c_str(),
-				"else") == 0) {
+			if(caseequal(str.substr(pos + 2, i - pos - 3), "else")) {
 				type = DelayedElse;
 			} else {
 				if(varlen == 0) {
@@ -758,11 +763,11 @@ EixRc::getRedundantFlags(const string &key, Keywords::Redundant type, RedPair *p
 	vector<string> a;
 	split_string(&a, value);
 
-	for(vector<string>::iterator it(a.begin()); likely(it != a.end()); )
-	// a dummy loop for break on errors
-	{
-		if(unlikely(!getRedundantFlagAtom(it->c_str(), type, &(p->first))))
+	for(vector<string>::iterator it(a.begin()); likely(it != a.end()); ) {
+		// a dummy loop for break on error
+		if(unlikely(!getRedundantFlagAtom(it->c_str(), type, &(p->first)))) {
 			break;
+		}
 		++it;
 		if(it == a.end())
 		{
@@ -770,21 +775,22 @@ EixRc::getRedundantFlags(const string &key, Keywords::Redundant type, RedPair *p
 			return;
 		}
 		const char *s(it->c_str());
-		if((strcasecmp(s, "or") == 0) ||
-			(strcasecmp(s, "||") == 0) ||
-			(strcasecmp(s, "|") == 0) ||
-			(strcasecmp(s, _("or")) == 0))
-		{
+		if(caseequal(*it, "or") ||
+			(strcmp(s, "||") == 0) ||
+			(strcmp(s, "|") == 0) ||
+			(strcmp(s, _("or")) == 0)) {
 			++it;
-			if(unlikely(it == a.end()))
+			if(unlikely(it == a.end())) {
 				break;
-			s = it->c_str();
+			}
 		}
-		if(unlikely(!getRedundantFlagAtom(s, type, &(p->first))))
+		if(unlikely(!getRedundantFlagAtom(s, type, &(p->first)))) {
 			break;
+		}
 		++it;
-		if(likely(it == a.end()))
+		if(likely(it == a.end())) {
 			return;
+		}
 		break;
 	}
 

@@ -72,8 +72,8 @@ using std::endl;
 
 static bool opencache(Database *db, const char *filename, const char *tooltext) ATTRIBUTE_NONNULL_;
 static bool print_overlay_table(PrintFormat *fmt, DBHeader *header, vector<bool> *overlay_used) ATTRIBUTE_NONNULL((1, 2));
-static void parseFormat(const char *varname, const char *varcontent) ATTRIBUTE_NONNULL_;
-static void set_format();
+static void parseFormat(const char *sourcename, const char *content) ATTRIBUTE_NONNULL_;
+static void set_format(EixRc *rc) ATTRIBUTE_NONNULL_;
 static void setup_defaults(EixRc *rc, bool is_tty) ATTRIBUTE_NONNULL_;
 static bool is_current_dbversion(const char *filename, const char *tooltext) ATTRIBUTE_NONNULL_;
 static void print_vector(const vector<string> &vec);
@@ -145,14 +145,13 @@ dump_help()
 "                            Usually faster with COUNT_ONLY_PRINTED=false\n"
 "         --brief2 (toggle)  Print at most two packages then stop\n"
 "     --xml (toggle)         output results in XML format\n"
-"     -c, --compact (toggle) compact search results\n"
-"     -v, --verbose (toggle) verbose search results\n"
+"     -c, --compact          compact search results\n"
+"     -v, --verbose          verbose search results\n"
+"         --normal           ignores -c, -v, and DEFAULT_FORMAT\n"
+"         --format           format string\n"
 "     -x, --versionsort  (toggle) sort output by slots/versions\n"
 "     -l, --versionlines (toggle) print available versions line-by-line\n"
 "                            (and print additional data for each version)\n"
-"         --format           format string for normal output\n"
-"         --format-compact   format string for compact output\n"
-"         --format-verbose   format string for verbose output\n"
 "\n"
 "TEST_OPTIONS:\n"
 "  Miscellaneous:\n"
@@ -249,7 +248,7 @@ dump_help()
 	EIX_REMOTECACHEFILE2);
 }
 
-static const char *format_normal, *format_verbose, *format_compact;
+static const char *formatstring;
 static const char *eix_cachefile(NULLPTR);
 static const char *var_to_print(NULLPTR);
 
@@ -286,6 +285,7 @@ static struct LocalOptions {
 		deps_installed,
 		verbose_output,
 		compact_output,
+		normal_output,
 		show_help,
 		show_version,
 		pure_packages,
@@ -343,8 +343,9 @@ EixOptionList::EixOptionList()
 	push_back(Option("brief",         '0',     Option::BOOLEAN,       &rc_options.brief));
 	push_back(Option("brief2",       O_BRIEF2, Option::BOOLEAN,       &rc_options.brief2));
 
-	push_back(Option("verbose",       'v',     Option::BOOLEAN,       &rc_options.verbose_output));
-	push_back(Option("compact",       'c',     Option::BOOLEAN,       &rc_options.compact_output));
+	push_back(Option("verbose",       'v',     Option::BOOLEAN_T,     &rc_options.verbose_output));
+	push_back(Option("compact",       'c',     Option::BOOLEAN_T,     &rc_options.compact_output));
+	push_back(Option("normal",       O_NORMAL, Option::BOOLEAN_T,     &rc_options.normal_output));
 	push_back(Option("xml",           O_XML,   Option::BOOLEAN,       &rc_options.xml));
 	push_back(Option("help",          'h',     Option::BOOLEAN_T,     &rc_options.show_help));
 	push_back(Option("version",       'V',     Option::BOOLEAN_T,     &rc_options.show_version));
@@ -366,9 +367,7 @@ EixOptionList::EixOptionList()
 
 	push_back(Option("print",               O_PRINT_VAR,    Option::STRING,     &var_to_print));
 
-	push_back(Option("format",         O_FMT,         Option::STRING,   &format_normal));
-	push_back(Option("format-verbose", O_FMT_VERBOSE, Option::STRING,   &format_verbose));
-	push_back(Option("format-compact", O_FMT_COMPACT, Option::STRING,   &format_compact));
+	push_back(Option("format",         O_FMT,         Option::STRING,   &formatstring));
 
 	push_back(Option("cache-file",     O_EIX_CACHEFILE, Option::STRING, &eix_cachefile));
 	push_back(Option("remote",         'R', Option::BOOLEAN, &rc_options.remote));
@@ -499,17 +498,7 @@ setup_defaults(EixRc *rc, bool is_tty)
 			break;
 	}
 
-	format_verbose             = (*rc)["FORMAT_VERBOSE"].c_str();
-	format_compact             = (*rc)["FORMAT_COMPACT"].c_str();
-	format_normal              = (*rc)["FORMAT"].c_str();
-	string s((*rc)["DEFAULT_FORMAT"]);
-	if(unlikely(strcasecmp(s.c_str(), "FORMAT_VERBOSE") == 0) ||
-		unlikely(strcasecmp(s.c_str(), "verbose") == 0)) {
-		rc_options.verbose_output = true;
-	} else if(unlikely(strcasecmp(s.c_str(), "FORMAT_COMPACT") == 0) ||
-		unlikely(strcasecmp(s.c_str(), "compact") == 0)) {
-		rc_options.compact_output = true;
-	}
+	formatstring               = NULLPTR;
 	format->setupResources(rc);
 	format->no_color            = (rc->getBool("NOCOLORS") ? true :
 		(rc->getBool("FORCE_COLORS") ? false : (!is_tty)));
@@ -555,27 +544,45 @@ print_overlay_table(PrintFormat *fmt, DBHeader *header, vector<bool> *overlay_us
 }
 
 static void
-parseFormat(const char *varname, const char *varcontent)
+parseFormat(const char *sourcename, const char *content)
 {
 	string errtext;
-	if(likely(format->parseFormat(varcontent, &errtext))) {
+	if(likely(format->parseFormat(content, &errtext))) {
 		return;
 	}
 	cerr << eix::format(_("Problems while parsing %s: %s\n"))
-			% varname % errtext << endl;
+			% sourcename % errtext << endl;
 	exit(EXIT_FAILURE);
 }
 
-
 static void
-set_format()
+set_format(EixRc *rc)
 {
-	if(unlikely(rc_options.verbose_output)) {
-		parseFormat("FORMAT_VERBOSE", format_verbose);
-	} else if(unlikely(rc_options.compact_output)) {
-		parseFormat("FORMAT_COMPACT", format_compact);
+	if(unlikely(formatstring != NULLPTR)) {
+		parseFormat("--format", formatstring);
+		return;
+	}
+	eix::SignedBool use_verbose(0);
+	if(likely(!rc_options.normal_output)) {
+		if(unlikely(rc_options.verbose_output)) {
+			use_verbose = 1;
+		} else if(unlikely(rc_options.compact_output)) {
+			use_verbose = -1;
+		} else {
+			const string &s((*rc)["DEFAULT_FORMAT"]);
+			if(unlikely(casecontains(s, "verb"))) {
+				use_verbose = 1;
+			} else if(unlikely(casecontains(s, "comp"))) {
+				use_verbose = -1;
+			}
+		}
+	}
+	if(likely(use_verbose == 0)) {
+		parseFormat("FORMAT", (*rc)["FORMAT"].c_str());
+	} else if(likely(use_verbose > 0)) {
+		parseFormat("FORMAT_VERBOSE", (*rc)["FORMAT_VERBOSE"].c_str());
 	} else {
-		parseFormat("FORMAT", format_normal);
+		parseFormat("FORMAT_COMPACT", (*rc)["FORMAT_COMPACT"].c_str());
 	}
 }
 
@@ -714,7 +721,7 @@ run_eix(int argc, char** argv)
 		rc_options.pure_packages = format->no_color = true;
 		format->parseFormat("<category>/<name>\n", NULLPTR);
 	} else {
-		set_format();
+		set_format(&eixrc);
 	}
 
 	format->setupColors();

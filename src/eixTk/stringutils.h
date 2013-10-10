@@ -98,7 +98,7 @@ void rtrim(std::string *str, const char *delims = spaces) ATTRIBUTE_NONNULL_;
 void trim(std::string *str, const char *delims = spaces) ATTRIBUTE_NONNULL_;
 
 /** Replaces all characters of delims by c (counting several delims as one).
- * delims on the beginning of end of the strig are removed.
+ * delims on the beginning of end of the string are removed.
  * @param str String that should be trimmed
  * @param delims characters that should me removed
  * @param c character that should be inserted */
@@ -200,6 +200,23 @@ template<typename T> inline static void make_vector(std::vector<T> *the_list, co
 
 /** Match str against a null-terminated list of patterns */
 bool match_list(const char **str_list, const char *str);
+
+/** Match str against a lowercase pattern case-insensitively */
+bool caseequal(const char *str, const char *pattern) ATTRIBUTE_NONNULL_;
+
+/** Match str against a lowercase pattern case-insensitively */
+inline static bool caseequal(const std::string &str, const char *pattern) ATTRIBUTE_NONNULL_;
+inline static bool caseequal(const std::string &str, const char *pattern)
+{ return caseequal(str.c_str(), pattern); }
+
+/** Check whether str contains a nonempty lowercase pattern case-insensitively */
+bool casecontains(const char *str, const char *pattern) ATTRIBUTE_NONNULL_;
+
+/** Check whether str contains a nonempty lowercase pattern case-insensitively */
+inline static bool casecontains(const std::string &str, const char *pattern) ATTRIBUTE_NONNULL_;
+inline static bool
+casecontains(const std::string &str, const char *pattern)
+{ return casecontains(str.c_str(), pattern); }
 
 class StringHash : public std::vector<std::string>
 {

@@ -9,6 +9,7 @@
 
 #include <string>
 
+#include "eixTk/likely.h"
 #include "eixTk/stringutils.h"
 #include "portage/depend.h"
 

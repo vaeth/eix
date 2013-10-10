@@ -310,15 +310,19 @@ Beachten Sie: Falls B<IUSE> nicht für jede Version ausgegeben wird, so wird es
 nur gesammelt für das gesamte Paket ausgegeben, was einen falschen Eindruck geben kann,
 da sich B<IUSE> von Version zu Version zuweilen dramatisch ändert.
 .TP
-.BR -c ", " --compact "   (toggle)"
+.BR -c ", " --compact
 Wählt ein kompaktes Layout für die Ausgabe von Suchergebnissen.
 Nützlich, um einen besseren Überblick über eine lange Ergebnisliste zu erhalten,
 und es hilft auch, die Suche über eine lansame Verbindung (wie etwa eine serielle Konsole)
 zu beschleunigen.
 .TP
-.BR -v ", " --verbose "   (toggle)"
+.BR -v ", " --verbose
 Benutzt ein ausführliches Layout mit zusätzlichen Informationen über Suchergebnisse
 (wie etwa die Lizenz eines Pakets).
+.TP
+.B --normal
+Benutzt das normale Layout, das der Default ist, wenn B<DEFAULT_FORMAT> nicht
+ausdrücklich anders gesetzt wurde.
 .TP
 .BR --xml "   (toggle)"
 Ausgabe im XML format.
@@ -913,20 +917,14 @@ Vorsicht bei der Übergabe des Suchmusters in einer Shell (Quoting!).
 .\" {{{ -------- Layouts festlegen
 .SS Layouts festlegen \fP(siehe B<FORMATSTRING> weiter unten)
 .TP
-.BR --format " " I<FORMAT>
-Definiert das normale Layout zur Ausgabe als I<FORMAT>.
-Es empfiehlt sich, die Environment-Variable B<DEFAULT_FORMAT=normal>
-zu setzen, um sicherzustellen, dass das Format benutzt wird.
-.TP
-.BR --format-compact " " I<FORMAT>
-Definiert das kompakte Layout zur Ausgabe als I<FORMAT>.
-Es empfiehlt sich, die Environment-Variable B<DEFAULT_FORMAT=compact>
-zu setzen, um sicherzustellen, dass das Format benutzt wird.
-.TP
-.BR --format-verbose " " I<FORMAT>
-Definiert das ausführliche Layout zur Ausgabe als I<FORMAT>.
-Es empfiehlt sich, die Environment-Variable B<DEFAULT_FORMAT=verbose>
-zu setzen, um sicherzustellen, dass das Format benutzt wird.
+.BR --format " " I<FORMATSTRING>
+Definiert den I<FORMATSTRING>.
+Seit eix-0.29.6 überschreibt diese Option alle anderen Möglichkeiten
+zur Wahl des Formatstrings wie etwa das Setzen von B<DEFAULT_FORMAT> oder B<FORMAT>.
+Wird diese Option hingegen nicht benutzt, sondern statt dessen eine der Variablen
+B<FORMAT>, B<FORMAT_VERBOSE>, oder B<FORMAT_COMPACT> gesetzt, so hängt die
+Wahl des Formats vom wert von B<DEFAULT_FORMAT> ab und kann zusätzlich noch
+durch die Optionen B<--verbose>, B<--compact> bzw. B<--normal> beeinflusst werden.
 .\" }}}
 .\" }}}
 .\" {{{ -------- Options for eix-update
@@ -1493,10 +1491,10 @@ Falls weder Ausgabe noch ein Reset gewünscht ist, kann man den Markennamen B<(n
 Falls das Paket B<...> installiert ist, wird der Name unterstrichen in Hellgelb ausgegeben,
 sonst in normalem Gelb.
 
-\fBFORMAT='<category>/<name><installedversions:INSTFORMAT>\\n' INSTFORMAT='{first}:{}<version><date:DATEFORMAT>{!last}\\n\\t{}' DATEFORMAT='%x' eix autom*\fR
+\fBINSTFORMAT='{first}:{}<version> <date:DATEFORMAT>{!last}\\n\\t{}' DATEFORMAT='%x' eix --format '<category>/<name><installedversions:INSTFORMAT>\\n' 'autom*'\fR
 
 Gibt für jedes B<autom*>-Paket den Kategoriennamen aus sowie, wenn das Paket installiert ist,
-die installierten Versionen und die Installationszeit.
+die installierten Versionen und die Installationstag.
 Man hätte das selbe Ergebnis auch durch Ersetzen von B<{!last}\\t\\n{}> durch B<{first}:{else}\\t\\n{}>
 erreichen können, weil es natürlich auf dasselbe hinausläuft, ob B<\\t\\n> am Ende jeder Version
 mit Ausnahme der letzten oder am Anfang jeder Version mit Ausnahme der ersten ausgegeben wird.
@@ -1512,16 +1510,25 @@ sehr einfach: Es ist einfach B<%{FORMAT_ALL}> (und analog für andere Variablen)
 Daher kann man einfach die vollständige Definition des ursprünglichen Werts von B<FORMAT> einfügen
 (was wir in obigem Beispiel getan haben).
 
-Für kompakte Ausgabe ist es in obigem Beipsiel nicht möglich, einfach die Option B<-c>
+Für kompakte Ausgabe ist es in obigem Beispiel nicht möglich, einfach die Option B<-c>
 zu benutzen, denn die Benutzung dieser Option hat nur den Effekt, dass
 für den Formatstring die Variable B<FORMAT_COMPACT> statt B<FORMAT> benutzt wird.
-Für kompakte Ausgabe, muss man also entweder
+Für kompakte Ausgabe muss man also entweder
 
 B<FORMAT_COMPACT='{downgrade}%{FORMAT_ALL_COMPACT}{}' eix -Ic>
 
 benutzen, oder einfacher und mit dem gleichen Effekt:
 
 B<FORMAT='{downgrade}%{FORMAT_ALL_COMPACT}{}' eix -I>
+
+Eine viel einfachere Möglichkeit, die Selbstreferenz zu umgehen,
+ist in obigem Beispiel die Benuzung der B<--format> Option:
+
+B<eix --format '{downgrade}%{FORMAT}{}' -I>
+
+bzw. für kompakte Ausgabe
+
+B<eix --format '{downgrade}%{FORMAT_COMPACT}{}' -I>
 .\" }}}
 .\" }}}
 
@@ -2235,8 +2242,11 @@ B<VAR=`PRINT_APPEND=x eix --print VAR` ; VAR=${VAR%x}>
 .BR DEFAULT_FORMAT " " (normal / compact / verbose)
 Legt fest, ob B<--compact> oder B<--verbose> als Vorgabe gewählt wird.
 Da diese Variable vom Benutzer in B</etc/eixrc> oder B<~/.eixrc> geändert
-werden kann, empfiehlt es sich für Skripte mit vorgegebenem Format stets
-B<DEFAULT_FORMAT=normal> zu exportieren.
+werden kann, kann dies ungewünschte Nebenwirkungen auf Skripte haben, die
+B<FORMAT> mit der Intention setzen, einen festen B<FORMATSTRING> vorzugeben:
+Solche Skripte sollten besser die B<--format> Option benutzen (die seit
+eix-0.29.6 B<DEFAULT_FORMAT> ignoriert), die B<--normal> Option benutzen
+(die seit eix-0.29.6 existiert) und/oder B<DEFAULT_FORMAT=normal> exportieren.
 
 .TP
 .BR DIFF_ONLY_INSTALLED " " (true / false)
@@ -3852,6 +3862,14 @@ festgelegt werden muss (durch Setzen von B<EIX_REMOTE_OPTS=-x> in I</etc/eixrc>)
 Das Hilsprogramm B<eix-header> existiert erst seit eix-0.28.6; stattdessen hatte eix die
 Optionen B<--is-current>, B<--print-overlay-path>, B<--print-overlay-label> und B<--print-overlay-data>,
 die nun redundant wären und daher entfernt wurden.
+
+Seit eix-0.29.6 gibt es die Optionen B<--format-verbose> und B<--format-compact> nicht mehr,
+denn deren Wirkung kann besser durch Exportieren der Environment-Variablen
+B<FORMAT_VERBOSE> bzw. B<FORMAT_COMPACT> erreicht werden.
+Statt dessen überschreibt die Option B<--format> jetzt den B<FORMATSTRING> unabhängig vom gewählten Format.
+
+Sei eix-0.29.6 haben die Optionen B<--verbose> und B<--compact> nur noch Einschalt-Funktion;
+zum Ausschalten gibt es die neue Option B<--normal>.
 .\" }}}
 
 .\" {{{ AUTOREN

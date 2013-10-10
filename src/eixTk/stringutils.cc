@@ -53,6 +53,7 @@ StringHash *StringHash::comparison_this;
 std::locale localeC("C");
 
 static void erase_escapes(string *s, const char *at) ATTRIBUTE_NONNULL_;
+template <typename S, typename T> inline static S calc_table_pos(const vector<S> &table, S pos, const T *pattern, T c) ATTRIBUTE_PURE ATTRIBUTE_NONNULL_;
 template <typename T> inline static void split_string_template(T *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty) ATTRIBUTE_NONNULL_;
 template <typename T> inline static void join_to_string_template(string *s, const T &vec, const string &glue) ATTRIBUTE_NONNULL_;
 
@@ -615,7 +616,8 @@ match_list(const char **str_list, const char *str)
 	return false;
 }
 
-const char *first_alnum(const char *s)
+const char *
+first_alnum(const char *s)
 {
 	for(char c(*s); likely(c != '\0'); c = *(++s)) {
 		if(isalnum(c, localeC)) {
@@ -623,4 +625,52 @@ const char *first_alnum(const char *s)
 		}
 	}
 	return s;
+}
+
+/** Match str against a lowercase pattern case-insensitively */
+bool
+caseequal(const char *str, const char *pattern)
+{
+	for(char c(*str); c != '\0'; c = *(++str)) {
+		if(tolower(c, localeC) != *pattern) {
+			return false;
+		}
+		++pattern;
+	}
+	return(*pattern == '\0');
+}
+
+/** Subroutine for Knuth-Morris-Pratt algorithm */
+template <typename S, typename T>
+inline static S
+calc_table_pos(const vector<S> &table, S pos, const T *pattern, T c)
+{
+	while(pattern[pos] != c) {
+		if(pos == 0) {
+			return 0;
+		}
+		pos = table[pos];
+	}
+	return pos + 1;
+}
+
+/** Check whether str contains a nonempty lowercase pattern case-insensitively */
+bool
+casecontains(const char *str, const char *pattern)
+{
+	// Knuth-Morris-Pratt algorithm
+	string::size_type l(strlen(pattern));
+	vector<string::size_type> table(l, 0);
+	string::size_type pos(0);
+	for(string::size_type i(1); likely(i < l); ++i) {
+		pos = table[i] = calc_table_pos(table, pos, pattern, pattern[i]);
+	}
+	pos = 0;
+	for(char c(*str); likely(c != '\0'); c = *(++str)) {
+		pos = calc_table_pos(table, pos, pattern, tolower(c, localeC));
+		if(pos == l) {
+			return true;
+		}
+	}
+	return false;
 }

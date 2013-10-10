@@ -49,13 +49,14 @@ bool EixCache::initialize(const string &name)
 {
 	vector<string> args;
 	split_string(&args, name, true, ":", false);
-	if(strcasecmp(args[0].c_str(), "eix") == 0) {
-		m_name = "eix";
-		never_add_categories = true;
-	} else if((strcasecmp(args[0].c_str(), "eix*") == 0) ||
-		(strcasecmp(args[0].c_str(), "*eix") == 0)) {
-		m_name = "eix*";
-		never_add_categories = false;
+	if(casecontains(args[0], "eix")) {
+		if(args[0].find('*') == string::npos) {
+			m_name = "eix";
+			never_add_categories = true;
+		} else {
+			m_name = "eix*";
+			never_add_categories = false;
+		}
 	} else {
 		return false;
 	}

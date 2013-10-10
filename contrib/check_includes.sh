@@ -121,7 +121,7 @@ Check '"eixTk/inttypes\.h"' -e int8 -e int16 -e int32 -e int64
 Check '"eixTk/likely\.h"' -e 'likely('
 Check '"eixTk/null\.h"' -e 'NULLPTR'
 Check '"eixTk/ptr_list\.h"' -e 'eix::ptr'
-Check '"eixTk/stringutils\.h"' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e is_numeric -e to_lower -e trim -e StringHash -e escape_string -e localeC -e match_list -e slot_subslot
+Check '"eixTk/stringutils\.h"' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e is_numeric -e to_lower -e trim -e StringHash -e escape_string -e localeC -e match_list -e slot_subslot -e casecontains -e caseequal
 Check '"eixTk/unused\.h"' -e '[^_]UNUSED' -e 'ATTRIBUTE_UNUSED'
 Check '"portage/basicversion\.h"' -e 'BasicVersion' -e 'BasicPart'
 
@@ -148,7 +148,7 @@ Check '<cassert>' -e 'assert('
 Check '<cstddef>' -e '[^_N]NULL\([^P]\|$\)'
 Check '<cstdio>' -e fopen -e fclose -e fflush -e '[^A-Z_]FILE[^A-Z_]' -e 'printf(' -e fseek
 Check '<cstdlib>' -e '[^_a-z]exit[^_]' -e '[^.>]free[^a-z]' -e malloc -e getenv -e strtol -e EXIT_SUCCESS -e EXIT_FAILURE
-Check '<cstring>' -e strdup -e strlen -e strndup -e strcmp -e strncmp -e strncpy -e strchr -e strrchr -e strcase -e strerror -e memset -e memcpy
+Check '<cstring>' -e strdup -e strlen -e strndup -e strcmp -e strncmp -e strncpy -e strchr -e strrchr -e strerror -e memset -e memcpy
 Check '<csignal>' -e signal -e sigaction
 Check '<cerrno>' -e '[^c]errno'
 Check '<ctime>' -e time_t

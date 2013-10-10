@@ -207,11 +207,14 @@ Output() {
 #
 # We set NOCOLORS to avoid the "reset color string" at the very end.
 #
-# We make sure by forcing the default DEFAULT_FORMAT=normal that the "normal"
-# format (passed by --format or set in FORMAT) and corresponding EIX_LIMIT
-# is used.  The latter is set to 0 to force output of really all packages.
+# We set EIX_LIMIT to 0 to force output of really all packages.
 #
-# The FORMAT refers implicitly to the LINE variable which in turn refers
+# To define the output format, we use the --format argument.
+# If we would have used the FORMAT variable instead (or in <eix-0.29.6)
+# we would have to set additionally DEFAULT_FORMAT=normal to make sure
+# the a user's setting of DEFAULT_FORMAT is overridden.
+#
+# The --format refers implicitly to the LINE variable which in turn refers
 # implicitly to DATE_FORMAT, DATE_OUTPUT, and NAME:
 #
 # The name of the variables DATE_FORMAT, DATE_OUTPUT, NAME, and LINE
@@ -223,15 +226,13 @@ Output() {
 # Note that all the following variables are automatically exported, since
 # they immediately preceed the command (the \ at the line-ends is crucial):
 NOCOLORS=: \
-DEFAULT_FORMAT=normal \
 EIX_LIMIT=0 \
 VERSION_NEWLINE= \
 DATE_FORMAT='%s' \
 DATE_OUTPUT='%x %X' \
 NAME='<category>/<package>' \
 LINE='<date:DATE_FORMAT>\t%{'${input}'}\t%{'${output}'}'${date_output}'\n' \
-FORMAT='<installedversions:LINE>' \
-eix '-I*' \
+eix --format '<installedversions:LINE>' '-I*' \
 | sort -n \
 | {
 	while read -r line

@@ -71,57 +71,52 @@ MetadataCache::initialize(const string &name)
 	} else {
 		have_override_path = false;
 	}
-	if(strcasecmp(pure_name.c_str(), "metadata-md5") == 0) {
-		checkmd5 = true;
-		setType(PATH_METADATAMD5, false);
-		return true;
-	}
 	checkmd5 = false;
-	if(strcasecmp(pure_name.c_str(), "metadata-md5-or-flat") == 0) {
-		if(have_override_path) {
-			setType(PATH_METADATAMD5, false);
+	if(casecontains(pure_name, "metadata")) {
+		bool s_flat(casecontains(pure_name, "flat"));
+		bool s_assign((!s_flat) && casecontains(pure_name, "assign"));
+		if(casecontains(pure_name, "md5")) {
+			if(s_flat) {
+				if(have_override_path) {
+					setType(PATH_METADATAMD5, false);
+				} else {
+					setType(PATH_METADATAMD5OR, true);
+				}
+			} else if(s_assign) {
+				if(have_override_path) {
+					setType(PATH_METADATAMD5, false);
+				} else {
+					setType(PATH_METADATAMD5OR, false);
+				}
+			} else {
+				checkmd5 = true;
+				setType(PATH_METADATAMD5, false);
+			}
 		} else {
-			setType(PATH_METADATAMD5OR, true);
+			setType(PATH_METADATA, s_assign ||
+				(pure_name.find('*') != string::npos));
 		}
 		return true;
 	}
-	if(strcasecmp(pure_name.c_str(), "metadata-md5-or-assign") == 0) {
-		if(have_override_path) {
-			setType(PATH_METADATAMD5, false);
-		} else {
-			setType(PATH_METADATAMD5OR, false);
+	if(casecontains(pure_name, "repo")) {
+		if(casecontains(pure_name, "flat")) {
+			setType(PATH_REPOSITORY, true);
+			return true;
 		}
-		return true;
+		if(casecontains(pure_name, "assign")) {
+			setType(PATH_REPOSITORY, false);
+			return true;
+		}
 	}
-	if((strcasecmp(pure_name.c_str(), "metadata") == 0) ||
-		(strcasecmp(pure_name.c_str(), "metadata-flat") == 0)) {
-		setType(PATH_METADATA, true);
-		return true;
-	}
-	if((strcasecmp(pure_name.c_str(), "metadata*") == 0) ||
-		(strcasecmp(pure_name.c_str(), "metadata-assign") == 0)) {
-		setType(PATH_METADATA, false);
-		return true;
-	}
-	if((strcasecmp(pure_name.c_str(), "flat") == 0) ||
-		(strcasecmp(pure_name.c_str(), "portage-2.0") == 0) ||
-		(strcasecmp(pure_name.c_str(), "portage-2.0.51") == 0)) {
+	if(caseequal(pure_name, "flat") ||
+		casecontains(pure_name, "portage-2.0")) {
 		setType(PATH_FULL, true);
 		return true;
 	}
-	if((strcasecmp(pure_name.c_str(), "assign") == 0) ||
-		(strcasecmp(pure_name.c_str(), "backport") == 0) ||
-		(strcasecmp(pure_name.c_str(), "portage-2.1") == 0) ||
-		(strcasecmp(pure_name.c_str(), "portage-2.1.0") == 0)) {
+	if(caseequal(pure_name, "assign") ||
+		casecontains(pure_name, "backport") ||
+		casecontains(pure_name, "portage-2.1")) {
 		setType(PATH_FULL, false);
-		return true;
-	}
-	if(strcasecmp(pure_name.c_str(), "repo-flat") == 0) {
-		setType(PATH_REPOSITORY, true);
-		return true;
-	}
-	if(strcasecmp(pure_name.c_str(), "repo-assign") == 0) {
-		setType(PATH_REPOSITORY, false);
 		return true;
 	}
 	return false;

@@ -61,19 +61,19 @@ PrintXml::clear(EixRc *eixrc)
 		static const char *values[] = {
 			"none",
 			"both",
-			"effective",
 			"effective*",
-			"full",
+			"effective",
 			"full*",
+			"full",
 			NULLPTR };
 		switch(eixrc->getTinyTextlist("XML_KEYWORDS", values)) {
 			case 0:
 			case -1: keywords_mode = KW_NONE;  break;
 			case -2: keywords_mode = KW_BOTH;  break;
-			case -3: keywords_mode = KW_EFF;   break;
-			case -4: keywords_mode = KW_EFFS;  break;
-			case -5: keywords_mode = KW_FULL;  break;
-			default: keywords_mode = KW_FULLS; break;
+			case -3: keywords_mode = KW_EFFS;  break;
+			case -4: keywords_mode = KW_EFF;   break;
+			case -5: keywords_mode = KW_FULLS; break;
+			default: keywords_mode = KW_FULL;  break;
 		}
 	}
 	runclear();
