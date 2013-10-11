@@ -307,7 +307,7 @@ slow connections such as a serial console.
 Use a verbose layout with additional information about search results such as the license
 of a package.
 .TP
-.B --normal
+.BR -N ", " --normal
 Use the normal layout which is the default if B<DEFAULT_FORMAT> was not explicitly changed.
 .TP
 .BR --xml "   (toggle)"
@@ -3765,7 +3765,7 @@ The tool B<eix-header> did not exist before eix-0.28.6; instead eix had the opti
 B<--is-current>, B<--print-overlay-path>, B<--print-overlay-label>, B<--print-overlay-data>
 which are now redundant and have been removed.
 
-Since eix-0.29.6 the options B<--format-vrebose> and B<--format-compact> habe been removed,
+Since eix-0.29.6 the options B<--format-verbose> and B<--format-compact> have been removed,
 because their effect can be better obtained by exporting the environment variables
 B<FORMAT_VERBOSE> or B<FORMAT_COMPACT>, respectively.
 Instead, the option B<--format> overrides now the B<FORMATSTRING> independently

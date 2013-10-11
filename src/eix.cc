@@ -147,7 +147,7 @@ dump_help()
 "     --xml (toggle)         output results in XML format\n"
 "     -c, --compact          compact search results\n"
 "     -v, --verbose          verbose search results\n"
-"         --normal           ignores -c, -v, and DEFAULT_FORMAT\n"
+"     -N, --normal           ignores -c, -v, and DEFAULT_FORMAT\n"
 "         --format           format string\n"
 "     -x, --versionsort  (toggle) sort output by slots/versions\n"
 "     -l, --versionlines (toggle) print available versions line-by-line\n"
@@ -345,7 +345,7 @@ EixOptionList::EixOptionList()
 
 	push_back(Option("verbose",       'v',     Option::BOOLEAN_T,     &rc_options.verbose_output));
 	push_back(Option("compact",       'c',     Option::BOOLEAN_T,     &rc_options.compact_output));
-	push_back(Option("normal",       O_NORMAL, Option::BOOLEAN_T,     &rc_options.normal_output));
+	push_back(Option("normal",        'N',     Option::BOOLEAN_T,     &rc_options.normal_output));
 	push_back(Option("xml",           O_XML,   Option::BOOLEAN,       &rc_options.xml));
 	push_back(Option("help",          'h',     Option::BOOLEAN_T,     &rc_options.show_help));
 	push_back(Option("version",       'V',     Option::BOOLEAN_T,     &rc_options.show_version));

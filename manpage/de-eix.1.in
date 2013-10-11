@@ -320,7 +320,7 @@ zu beschleunigen.
 Benutzt ein ausführliches Layout mit zusätzlichen Informationen über Suchergebnisse
 (wie etwa die Lizenz eines Pakets).
 .TP
-.B --normal
+.BR -N ", " --normal
 Benutzt das normale Layout, das der Default ist, wenn B<DEFAULT_FORMAT> nicht
 ausdrücklich anders gesetzt wurde.
 .TP

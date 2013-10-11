@@ -32,8 +32,6 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 
 enum cli_options {
 	O_FMT = 256,
-	O_FMT_VERBOSE,
-	O_FMT_COMPACT,
 	O_XML,
 	O_PRINT_VAR,
 	O_PIPE_MASK,
@@ -52,7 +50,6 @@ enum cli_options {
 	O_CARE,
 	O_DEPS_INSTALLED,
 	O_IGNORE_ETC_PORTAGE,
-	O_NORMAL,
 	O_BRIEF2,
 	O_HASH_IUSE,
 	O_HASH_KEYWORDS,
