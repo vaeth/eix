@@ -2,6 +2,9 @@
 
 *eix-0.29.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce {mainrepo} attribute; "Find open bugs" only for those, see
+	  http://developer.berlios.de/bugs/?func=detailbug&bug_id=19160&
+	  group_id=11597
 	- Use gettext-0.18.3: allows to specify GNU sed
 
 *eix-0.29.6

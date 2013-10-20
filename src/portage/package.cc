@@ -31,17 +31,20 @@ const Package::Versioncollects
 	Package::COLLECT_HAVE_NONTRIVIAL_SLOTS,
 	Package::COLLECT_HAVE_SAME_OVERLAY_KEY,
 	Package::COLLECT_AT_LEAST_TWO_OVERLAYS,
+	Package::COLLECT_HAVE_MAIN_REPO_KEY,
 	Package::COLLECT_DEFAULT;
 
 /** Check if a package has duplicated versions. */
 void
 Package::checkDuplicates(const Version *version)
 {
-	if(have_duplicate_versions == DUP_OVERLAYS)
+	if(have_duplicate_versions == DUP_OVERLAYS) {
 		return;
+	}
 	bool no_overlay(!(version->overlay_key));
-	if(no_overlay && (have_duplicate_versions == DUP_SOME))
+	if(no_overlay && (have_duplicate_versions == DUP_SOME)) {
 		return;
+	}
 	for(iterator i(begin()); likely(i != end()); ++i) {
 		if(unlikely(BasicVersion::compare(**i, *version) == 0)) {
 			if(i->overlay_key) {
@@ -85,10 +88,13 @@ Package::addVersionFinalize(Version *version)
 {
 	ExtendedVersion::Overlay key(version->overlay_key);
 
+	if(key == 0) {
+		version_collects |= COLLECT_HAVE_MAIN_REPO_KEY;
+	}
+
 	/* This guarantees that we pushed our first version */
 	if(size() != 1) {
-		if(largest_overlay != key)
-		{
+		if(largest_overlay != key) {
 			version_collects &= ~COLLECT_HAVE_SAME_OVERLAY_KEY;
 			if(largest_overlay && key)
 				version_collects |= COLLECT_AT_LEAST_TWO_OVERLAYS;

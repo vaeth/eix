@@ -1337,6 +1337,9 @@ With B<allsetnames> also the "system" set name is included.
 Is 1 or empty, depending on whether at least one version (available or installed) has a corresponding *.tbz2 file.
 See the remarks for B<--binary>.
 .TP
+.B mainrepo
+Is 1 or empty, depending on whether at least one available version belongs to the main repository 0 (typically: gentoo).
+.TP
 .B overlaykey
 If all versions are in the same overlay, "[overlaykey]" is output with corresponding colors.
 .TP

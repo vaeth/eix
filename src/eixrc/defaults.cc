@@ -2995,16 +2995,16 @@ AddOption(STRING, "FORMATLINE_HOMEPAGE",
 	"It defines the format for a line with the package homepage."));
 
 AddOption(STRING, "FORMATLINE_BUGS",
-	"%{?PRINT_BUGS}"
+	"%{?PRINT_BUGS}%{!PRINT_ALWAYS}{mainrepo}%{}"
 		"\\C<%{COLUMN_TITLE}>"
 		"(%{COLOR_TITLE})Find open bugs:(%{COLOR_RESET})"
+		"%{?PRINT_ALWAYS}{mainrepo}%{}"
 		"\\C<%{COLUMN_CONTENT}>"
 		"(%{COLOR_NORMAL})"
 		"http://bugs.gentoo.org/buglist.cgi?quicksearch="
 		"<category>%2F<name>"
 		"%{!RESET_ALL_LINES}(%{COLOR_NORMAL_END})%{}"
-		"%{FORMAT_NEWLINE}"
-	"%{}", _(
+	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the package bug-reference."));
 

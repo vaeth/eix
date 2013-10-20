@@ -404,6 +404,7 @@ class Scanner {
 			prop_pkg("description", &PrintFormat::PKG_DESCRIPTION);
 			prop_pkg("homepage", &PrintFormat::PKG_HOMEPAGE);
 			prop_pkg("licenses", &PrintFormat::PKG_LICENSES);
+			prop_pkg("mainrepo", &PrintFormat::PKG_MAINREPO);
 			prop_pkg("overlaykey", &PrintFormat::PKG_OVERLAYKEY);
 			prop_pkg("binary", &PrintFormat::PKG_BINARY);
 			prop_pkg("system", &PrintFormat::PKG_SYSTEM);
@@ -867,6 +868,14 @@ PrintFormat::PKG_OVERLAYKEY(OutputString *s, Package *package) const
 	ExtendedVersion::Overlay ov_key(package->largest_overlay);
 	if(ov_key && package->have_same_overlay_key()) {
 		overlay_keytext(s, ov_key, false);
+	}
+}
+
+void
+PrintFormat::PKG_MAINREPO(OutputString *s, Package *package) const
+{
+	if(package->have_main_repo_key()) {
+		s->set_one();
 	}
 }
 

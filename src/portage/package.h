@@ -97,6 +97,7 @@ class Package
 			COLLECT_HAVE_NONTRIVIAL_SLOTS = 0x01U,
 			COLLECT_HAVE_SAME_OVERLAY_KEY = 0x02U,
 			COLLECT_AT_LEAST_TWO_OVERLAYS = 0x04U,
+			COLLECT_HAVE_MAIN_REPO_KEY    = 0x08U,
 			COLLECT_DEFAULT               = COLLECT_HAVE_SAME_OVERLAY_KEY;
 		Versioncollects version_collects;
 
@@ -130,6 +131,10 @@ class Package
 		/** True if all versions come from one overlay. */
 		bool have_same_overlay_key() const
 		{ return (version_collects & COLLECT_HAVE_SAME_OVERLAY_KEY); }
+
+		/** True if any version comes from main repository. */
+		bool have_main_repo_key() const
+		{ return (version_collects & COLLECT_HAVE_MAIN_REPO_KEY); }
 
 		/** True if all versions come from at least two overlays. */
 		bool at_least_two_overlays() const

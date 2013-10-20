@@ -1331,6 +1331,9 @@ option is used, this will be empty.
 The name of all local sets to which the package belongs, separated by spaces.
 With B<allsetnames> also the "system" set name is included.
 .TP
+.B mainrepo
+Is 1 or empty, depending on whether at least one available version belongs to the main repository 0 (typically: gentoo).
+.TP
 .B binary
 Is 1 or empty, depending on whether at least one version (available or installed) has a corresponding *.tbz2 file.
 See the remarks for B<--binary>.
