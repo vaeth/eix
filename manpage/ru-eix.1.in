@@ -1286,7 +1286,7 @@ For available versions, B<maskreasons> outputs the mask reasons and B<havemaskre
 Separators used are B<FORMAT_MASKREASONS_LINESKIP> and B<FORMAT_MASKREASONS_SEP>;
 for B<maskreasons*> separators used are <FORMAT_MASKREASONSS_LINESKIP> and B<FORMAT_MASKREASONSS_SEP>.
 .TP
-.BR haveuse ", " use ", " use*
+.BR haveuse ", " use ", " use* ", " use0
 This must occur only in I<VARIABLE> in the context of version printing.
 For available versions, B<use> outputs the B<IUSE> variable.
 For installed versions, B<use> outputs the B<USE> flags and whether they are set
@@ -1297,6 +1297,7 @@ using the content of B<FORMAT_BEFORE_USE_EXPAND_START>, B<FORMAT_BEFORE_USE_EXPA
 B<FORMAT_AFTER_USE_EXPAND>, B<FORMAT_BEFORE_IUSE_EXPAND_START>,
 B<FORMAT_BEFORE_IUSE_EXPAND_END> and B<FORMAT_AFTER_IUSE_EXPAND>
 at the appropriate places.
+The B<use0> variant suppresses the output of B<USE_EXPAND> variables.
 B<haveuse> can be used to test whether an output would be nonempty
 (in this case it is 1, otherwise empty).
 .TP
@@ -1331,12 +1332,12 @@ option is used, this will be empty.
 The name of all local sets to which the package belongs, separated by spaces.
 With B<allsetnames> also the "system" set name is included.
 .TP
-.B mainrepo
-Is 1 or empty, depending on whether at least one available version belongs to the main repository 0 (typically: gentoo).
-.TP
 .B binary
 Is 1 or empty, depending on whether at least one version (available or installed) has a corresponding *.tbz2 file.
 See the remarks for B<--binary>.
+.TP
+.B mainrepo
+Is 1 or empty, depending on whether at least one available version belongs to the main repository 0 (typically: gentoo).
 .TP
 .B overlaykey
 If all versions are in the same overlay, "[overlaykey]" is output with corresponding colors.
@@ -1364,13 +1365,14 @@ Note that it is possible that a package is marked although none of its available
 .BR slots ", " slotted
 expands to 1 if there are at least two slots resp. at least one nontrivial slot.
 .TP
-.BR colliuse ", "  colliuse* ", " havecolliuse
+.BR colliuse ", "  colliuse* ", "  colliuse0 ", " havecolliuse
 The collected IUSE flags (i.e. their union) of all available versions
 of the package, separated by spaces.
 The B<colliuse*> variant outputs USE_EXPAND variables separately, using
 B<FORMAT_BEFORE_COLL_EXPAND_START>,
 B<FORMAT_BEFORE_COLL_EXPAND_END> and B<FORMAT_AFTER_COLL_EXPAND>
 at the appropriate places.
+The B<colliuse0> variant omits the output of USE_EXPAND variables.
 havecolliuse expands to 1 if colliuse is nonempty; this is faster than colliuse.
 .TP
 .BR havebest ", " havebest*

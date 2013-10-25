@@ -332,6 +332,11 @@ AddOption(BOOLEAN, "EIX_USE_EXPAND",
 	"This variable is only used for delayed substitution.\n"
 	"If true, USE_EXPAND variables are output separately."));
 
+AddOption(BOOLEAN, "OMIT_EXPAND",
+	"false", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, USE_EXPAND variables are omitted."));
+
 AddOption(BOOLEAN, "RESTRICT_INSTALLED",
 	"true", _(
 	"If true, calculate RESTRICT/PROPERTIES for installed versions."));
@@ -1860,12 +1865,22 @@ AddOption(STRING, "FORMAT_HDEPEND_VERBOSE",
 	"It defines the format of the HDEPEND output with --verbose."));
 
 AddOption(STRING, "FORMAT_VERSION_IUSE",
-	"(%{COLOR_VERSION_IUSE})%{?EIX_USE_EXPAND}<use*>%{else}<use>%{}", _(
+	"(%{COLOR_VERSION_IUSE})"
+		"%{?OMIT_EXPAND}"
+			"<use0>"
+		"%{else}"
+			"%{?EIX_USE_EXPAND}<use*>%{else}<use>%{}"
+		"%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is used for colored <use> in available versions; color is not reset."));
 
 AddOption(STRING, "FORMAT_COLLIUSE",
-	"(%{COLOR_COLL_IUSE})%{?EIX_USE_EXPAND}<colliuse*>%{else}<colliuse>%{}", _(
+	"(%{COLOR_COLL_IUSE})"
+		"%{?OMIT_EXPAND}"
+			"<colliuse0>"
+		"%{else}"
+			"%{?EIX_USE_EXPAND}<colliuse*>%{else}<colliuse>%{}"
+		"%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is used for colored <colliuse>; color is not reset."));
 
@@ -2617,7 +2632,11 @@ AddOption(STRING, "IVERBOSE",
 		"%{FORMAT_INST_LINESKIP}"
 		"(%{COLOR_INST_TITLE})USE:(%{COLOR_RESET})"
 		"\\C<%{COLUMN_INST_CONTENT}>"
-		"%{?EIX_USE_EXPAND}<use*>%{else}<use>%{}"
+		"%{?OMIT_EXPAND}"
+			"<use0>"
+		"%{else}"
+			"%{?EIX_USE_EXPAND}<use*>%{else}<use>%{}"
+		"%{}"
 	"{}"
 	"%{?DEP}"
 		"{havedepend}"
@@ -2665,7 +2684,11 @@ AddOption(STRING, "FORMAT_AVAILABLEVERSIONS",
 AddOption(STRING, "FORMAT_INST_USEFLAGS",
 	"{haveuse}"
 		"(%{COLOR_NORMAL})\\("
-		"%{?EIX_USE_EXPAND}<use*>%{else}<use>%{}"
+		"%{?OMIT_EXPAND}"
+			"<use0>"
+		"%{else}"
+			"%{?EIX_USE_EXPAND}<use*>%{else}<use>%{}"
+		"%{}"
 		"(%{COLOR_NORMAL})\\)(%{COLOR_NORMAL_END})"
 	"{}", _(
 	"This variable is only used for delayed substitution.\n"

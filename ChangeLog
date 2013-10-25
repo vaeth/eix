@@ -5,6 +5,8 @@
 	- Introduce {mainrepo} attribute; "Find open bugs" only for those, see
 	  http://developer.berlios.de/bugs/?func=detailbug&bug_id=19160&
 	  group_id=11597
+	- Introduce OMIT_EXPAND and <{colli,}use0> attributes to omit output of
+	  USE_EXPAND variables: http://bugs.gentoo.org/show_bug.cgi?id=489306
 	- Use gettext-0.18.3: allows to specify GNU sed
 
 *eix-0.29.6

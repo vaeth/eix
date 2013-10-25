@@ -159,6 +159,8 @@ class PrintFormat {
 		typedef void (*GetProperty)(OutputString *s, const PrintFormat *fmt, void *entity, const std::string &property) ATTRIBUTE_NONNULL_;
 
 	protected:
+		enum HandleExpand { EXPAND_NO, EXPAND_YES, EXPAND_OMIT };
+
 		static std::string::size_type currcolumn;
 
 		mutable std::map<std::string, OutputString> user_variables;
@@ -192,8 +194,8 @@ class PrintFormat {
 		bool parse_variable(Node **rootnode, const std::string &varname, std::string *errtext) const ATTRIBUTE_NONNULL((2));
 		Node *parse_variable(const std::string &varname) const;
 
-		void iuse_expand(OutputString *s, const IUseSet &iuse, bool coll) const;
-		void get_inst_use(OutputString *s, const Package &package, InstVersion *i, bool expand) const ATTRIBUTE_NONNULL_;
+		void iuse_expand(OutputString *s, const IUseSet &iuse, bool coll, HandleExpand expand) const;
+		void get_inst_use(OutputString *s, const Package &package, InstVersion *i, HandleExpand expand) const ATTRIBUTE_NONNULL_;
 		void get_installed(Package *package, Node *root) const ATTRIBUTE_NONNULL((2));
 		void get_versions_versorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2));
 		void get_versions_slotsorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2));
@@ -256,8 +258,9 @@ class PrintFormat {
 		void PKG_HAVEVIRTUAL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_HAVENONVIRTUAL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_HAVECOLLIUSE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_COLLIUSES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_COLLIUSE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_COLLIUSES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_COLLIUSE0(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		const ExtendedVersion *ver_version() const ATTRIBUTE_PURE;
 		void VER_FIRST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_LAST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
@@ -290,6 +293,7 @@ class PrintFormat {
 		void VER_HAVEUSE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_USE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_USES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_USE0(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_VIRTUAL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_ISBINARY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		const ExtendedVersion *ver_restrict(Package *package) const ATTRIBUTE_NONNULL_;

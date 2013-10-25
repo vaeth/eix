@@ -1315,7 +1315,7 @@ Für verfügbare Versionen gibt B<maskreasons> die Gründe für Maskierungen aus
 Als Trenner werden B<FORMAT_MASKREASONS_LINESKIP> und B<FORMAT_MASKREASONS_SEP> benutzt;
 bei B<maskreasons*> werden hingegen B<FORMAT_MASKREASONSS_LINESKIP> und B<FORMAT_MASKREASONSS_SEP> benutzt.
 .TP
-.BR haveuse ", " use ", " use*
+.BR haveuse ", " use ", " use* ", " use0
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 Für verfügbare Versionen gibt B<use> die B<IUSE> Variable aus.
 Für installierte Versionen gibt B<use> die B<USE>-Flags an, und ob sie gesetzt sind
@@ -1327,6 +1327,7 @@ B<FORMAT_BEFORE_USE_EXPAND_START>, B<FORMAT_BEFORE_USE_EXPAND_END>,
 B<FORMAT_AFTER_USE_EXPAND>, B<FORMAT_BEFORE_IUSE_EXPAND_START>,
 B<FORMAT_BEFORE_IUSE_EXPAND_END> bzw. B<FORMAT_AFTER_IUSE_EXPAND> an den
 entsprechenden Stellen aus.
+Die B<use0>-Variante unterdrückt die Ausgabe der B<USE_EXPAND>-Variablen.
 B<haveuse> kann benutzt werden, um zu testen, ob die Ausgabe nichtleer ist (in diesem Fall ist die Ausgabe 1, sonst leer).
 .TP
 .BR "date:I<VAR>"
@@ -1391,12 +1392,13 @@ Es ist möglich, dass ein Paket markiert wurde, obwohl keine der verfügbaren Ve
 .BR slots ", " slotted
 1, falls es mindestens zwei Slots bzw. mindestens einen nichttrivialen Slotnamen gibt.
 .TP
-.BR colliuse ", "  colliuse* ", " havecolliuse
+.BR colliuse ", "  colliuse* ", "  colliuse0 ", " havecolliuse
 Die gesammelten IUSE-Flags (d.h. ihre Vereinigung) aller verfügbaren Versionen des Pakets, durch Leerzeichen separiert.
-The Variante B<colliuse*> gibt die USE_EXPAND-Variablen separat aus und benutzt dabei
+Die Variante B<colliuse*> gibt die USE_EXPAND-Variablen separat aus und benutzt dabei
 B<FORMAT_BEFORE_COLL_EXPAND_START>,
-B<FORMAT_BEFORE_COLL_EXPAND_END> and B<FORMAT_AFTER_COLL_EXPAND>
+B<FORMAT_BEFORE_COLL_EXPAND_END> und B<FORMAT_AFTER_COLL_EXPAND>
 an den entsprechenden Stellen.
+Die Variante B<colliuse0> vermeidet die Ausgabe von USE_EXPAND-Variablen.
 havecolliuse ist 1, falls colliuse nichtleer ist; dies ist schneller als colliuse.
 .TP
 .BR havebest ", " havebest*

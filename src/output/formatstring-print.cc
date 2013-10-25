@@ -85,8 +85,12 @@ class VersionVariables {
 };
 
 void
-PrintFormat::iuse_expand(OutputString *s, const IUseSet &iuse, bool coll) const
+PrintFormat::iuse_expand(OutputString *s, const IUseSet &iuse, bool coll, HandleExpand expand) const
 {
+	if(expand == EXPAND_NO) {
+		s->assign_smart(iuse.asString());
+		return;
+	}
 	map<string, OutputString> expvars;
 	const set<IUse> &iuse_set(iuse.asSet());
 	for(set<IUse>::const_iterator it(iuse_set.begin());
@@ -94,6 +98,9 @@ PrintFormat::iuse_expand(OutputString *s, const IUseSet &iuse, bool coll) const
 		string var, expval;
 		const string &name(it->name());
 		if(portagesettings->use_expand(&var, &expval, name)) {
+			if(expand == EXPAND_OMIT) {
+				continue;
+			}
 			OutputString &r(expvars[var]);
 			if(!r.empty()) {
 				r.append_fast(' ');
@@ -124,7 +131,7 @@ PrintFormat::iuse_expand(OutputString *s, const IUseSet &iuse, bool coll) const
 }
 
 void
-PrintFormat::get_inst_use(OutputString *s, const Package &package, InstVersion *i, bool expand) const
+PrintFormat::get_inst_use(OutputString *s, const Package &package, InstVersion *i, HandleExpand expand) const
 {
 	if((!(vardb->readUse(package, i))) || i->inst_iuse.empty()) {
 		return;
@@ -142,9 +149,12 @@ PrintFormat::get_inst_use(OutputString *s, const Package &package, InstVersion *
 			unset_list = true;
 			curr = &add;
 		}
-		if(expand) {
+		if(expand != EXPAND_NO) {
 			string var;
 			if(portagesettings->use_expand(&var, &expval, *value)) {
+				if(expand == EXPAND_OMIT) {
+					continue;
+				}
 				value = &expval;
 				pair<OutputString, OutputString> &r(expvars[var]);
 				curr = (unset_list ? &(r.second) : &(r.first));
@@ -429,6 +439,7 @@ class Scanner {
 			prop_pkg("havevirtual", &PrintFormat::PKG_HAVEVIRTUAL);
 			prop_pkg("havenonvirtual", &PrintFormat::PKG_HAVENONVIRTUAL);
 			prop_pkg("havecolliuse", &PrintFormat::PKG_HAVECOLLIUSE);
+			prop_pkg("colliuse0", &PrintFormat::PKG_COLLIUSE0);
 			prop_pkg("colliuse*", &PrintFormat::PKG_COLLIUSES);
 			prop_pkg("colliuse", &PrintFormat::PKG_COLLIUSE);
 			prop_ver("first", &PrintFormat::VER_FIRST);
@@ -457,6 +468,7 @@ class Scanner {
 			prop_ver("markedversion", &PrintFormat::VER_MARKEDVERSION);
 			prop_ver("installedversion", &PrintFormat::VER_INSTALLEDVERSION);
 			prop_ver("haveuse", &PrintFormat::VER_HAVEUSE);
+			prop_ver("use0", &PrintFormat::VER_USE0);
 			prop_ver("use*", &PrintFormat::VER_USES);
 			prop_ver("use", &PrintFormat::VER_USE);
 			prop_ver("virtual", &PrintFormat::VER_VIRTUAL);
@@ -1064,15 +1076,21 @@ PrintFormat::PKG_HAVECOLLIUSE(OutputString *s, Package *package) const
 }
 
 void
-PrintFormat::PKG_COLLIUSES(OutputString *s, Package *package) const
+PrintFormat::PKG_COLLIUSE(OutputString *s, Package *package) const
 {
-	iuse_expand(s, package->iuse, true);
+	iuse_expand(s, package->iuse, true, EXPAND_NO);
 }
 
 void
-PrintFormat::PKG_COLLIUSE(OutputString *s, Package *package) const
+PrintFormat::PKG_COLLIUSES(OutputString *s, Package *package) const
 {
-	s->assign_smart(package->iuse.asString());
+	iuse_expand(s, package->iuse, true, EXPAND_YES);
+}
+
+void
+PrintFormat::PKG_COLLIUSE0(OutputString *s, Package *package) const
+{
+	iuse_expand(s, package->iuse, true, EXPAND_OMIT);
 }
 
 const ExtendedVersion *
@@ -1375,9 +1393,9 @@ void
 PrintFormat::VER_USE(OutputString *s, Package *package) const
 {
 	if(version_variables->isinst) {
-		get_inst_use(s, *package, version_variables->instver(), false);
+		get_inst_use(s, *package, version_variables->instver(), EXPAND_NO);
 	} else {
-		s->assign_smart(version_variables->version()->iuse.asString());
+		iuse_expand(s, version_variables->version()->iuse, false, EXPAND_YES);
 	}
 }
 
@@ -1385,9 +1403,19 @@ void
 PrintFormat::VER_USES(OutputString *s, Package *package) const
 {
 	if(version_variables->isinst) {
-		get_inst_use(s, *package, version_variables->instver(), true);
+		get_inst_use(s, *package, version_variables->instver(), EXPAND_YES);
 	} else {
-		iuse_expand(s, version_variables->version()->iuse, false);
+		iuse_expand(s, version_variables->version()->iuse, false, EXPAND_YES);
+	}
+}
+
+void
+PrintFormat::VER_USE0(OutputString *s, Package *package) const
+{
+	if(version_variables->isinst) {
+		get_inst_use(s, *package, version_variables->instver(), EXPAND_OMIT);
+	} else {
+		iuse_expand(s, version_variables->version()->iuse, false, EXPAND_OMIT);
 	}
 }
 
