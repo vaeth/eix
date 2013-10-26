@@ -44,13 +44,15 @@ class EixCache : public BasicCache {
 		// @return true if successful
 		bool initialize(const std::string &name);
 
-		bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL
-		{ return true; }
+		bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL {
+			return true;
+		}
 
 		bool readCategories(PackageTree *packagetree, const char *name, Category *category);
 
-		const char *getType() const
-		{ return m_name.c_str(); }
+		const char *getType() const {
+			return m_name.c_str();
+		}
 };
 
 #endif  // SRC_CACHE_EIXCACHE_EIXCACHE_H_

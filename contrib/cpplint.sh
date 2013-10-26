@@ -7,5 +7,5 @@ or install it from the mv overlay to execute C++ style test.' >&2
 	exit 1
 }
 exec find . '-(' -name '*.cc' -o -name '*.h' '-)' '-!' -name 'config.h' '-!' -name 'confdefs.h' -exec cpplint.py \
-	--filter=-whitespace/tab,-whitespace/braces,-whitespace/parens,-whitespace/labels,-whitespace/line_length,-readability/streams \
+	--filter=-whitespace/tab,-whitespace/parens,-whitespace/line_length,-readability/streams \
 	'{}' '+'

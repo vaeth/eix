@@ -24,9 +24,7 @@ using std::string;
 
 using std::cout;
 
-void
-EixRc::known_vars()
-{
+void EixRc::known_vars() {
 	set<string> vars;
 	for(map<string, string>::const_iterator it(main_map.begin());
 		it != main_map.end(); ++it) {
@@ -43,9 +41,7 @@ EixRc::known_vars()
 	}
 }
 
-bool
-EixRc::print_var(const string &key)
-{
+bool EixRc::print_var(const string &key) {
 	string print_append((*this)["PRINT_APPEND"]);
 	unescape_string(&print_append);
 	const char *s;

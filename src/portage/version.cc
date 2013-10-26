@@ -29,9 +29,7 @@ const IUse::Flags
 	IUse::USEFLAGS_PLUS,
 	IUse::USEFLAGS_MINUS;
 
-IUse::Flags
-IUse::parse(string *s)
-{
+IUse::Flags IUse::parse(string *s) {
 	Flags ret(USEFLAGS_NIL);
 	string::size_type c(0);
 	for( ; likely(c < s->length()); ++c) {
@@ -64,9 +62,7 @@ IUse::parse(string *s)
 	return ret;
 }
 
-const char *
-IUse::prefix() const
-{
+const char *IUse::prefix() const {
 /*
 	For the case that you want to make prefixes/postfixes(?) customizable,
 	you might need to do this independently of this function.
@@ -97,9 +93,7 @@ IUse::prefix() const
 	}
 }
 
-string
-IUse::asString() const
-{
+string IUse::asString() const {
 	const char *p(prefix());
 	if(p == NULLPTR) {
 		return name();
@@ -109,9 +103,7 @@ IUse::asString() const
 	return ret;
 }
 
-string
-IUseSet::asString() const
-{
+string IUseSet::asString() const {
 	string ret;
 	for(set<IUse>::const_iterator it(m_iuse.begin());
 		likely(it != m_iuse.end()); ++it) {
@@ -122,28 +114,24 @@ IUseSet::asString() const
 	return ret;
 }
 
-vector<string>
-IUseSet::asVector() const
-{
+vector<string> IUseSet::asVector() const {
 	vector<string> ret(m_iuse.size());
 	vector<string>::size_type i(0);
 	for(set<IUse>::const_iterator it(m_iuse.begin());
-		likely(it != m_iuse.end()); ++i, ++it)
+		likely(it != m_iuse.end()); ++i, ++it) {
 		ret[i] = it->asString();
+	}
 	return ret;
 }
 
-void
-IUseSet::insert(const std::set<IUse> &iuse)
-{
+void IUseSet::insert(const std::set<IUse> &iuse) {
 	for(set<IUse>::const_iterator it(iuse.begin());
-		likely(it != iuse.end()); ++it)
+		likely(it != iuse.end()); ++it) {
 		insert(*it);
+	}
 }
 
-void
-IUseSet::insert(const string &iuse)
-{
+void IUseSet::insert(const string &iuse) {
 	vector<string> vec;
 	split_string(&vec, iuse);
 	for(vector<string>::const_iterator it(vec.begin());
@@ -152,9 +140,7 @@ IUseSet::insert(const string &iuse)
 	}
 }
 
-void
-IUseSet::insert(const IUse &iuse)
-{
+void IUseSet::insert(const IUse &iuse) {
 	set<IUse>::iterator it(m_iuse.find(iuse));
 	if(it == m_iuse.end()) {
 		m_iuse.insert(iuse);
@@ -173,13 +159,12 @@ const Version::EffectiveState
 	Version::EFFECTIVE_USED,
 	Version::EFFECTIVE_UNUSED;
 
-void
-Version::modify_effective_keywords(const string &modify_keys)
-{
+void Version::modify_effective_keywords(const string &modify_keys) {
 	if(effective_state == EFFECTIVE_UNUSED) {
-		if(!modify_keywords(effective_keywords, full_keywords, modify_keys))
+		if(!modify_keywords(&effective_keywords, full_keywords, modify_keys)) {
 			return;
-	} else if(!modify_keywords(effective_keywords, effective_keywords, modify_keys)) {
+		}
+	} else if(!modify_keywords(&effective_keywords, effective_keywords, modify_keys)) {
 		return;
 	}
 	if(likely(effective_keywords == full_keywords)) {
@@ -190,18 +175,14 @@ Version::modify_effective_keywords(const string &modify_keys)
 	}
 }
 
-void
-Version::add_accepted_keywords(const std::string &accepted_keywords)
-{
+void Version::add_accepted_keywords(const std::string &accepted_keywords) {
 	if(!m_accepted_keywords.empty()) {
 		m_accepted_keywords.append(" ");
 	}
 	m_accepted_keywords.append(accepted_keywords);
 }
 
-void
-Version::add_reason(const StringList& reason)
-{
+void Version::add_reason(const StringList& reason) {
 	if(reason.empty()) {
 		return;
 	}

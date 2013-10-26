@@ -30,15 +30,13 @@ class OverlayIdent {
 
 		OverlayIdent(const char *Path, const char *Label = NULLPTR, Priority prio = 0, bool ismain = false) ATTRIBUTE_NONNULL((2));
 
-		void readLabel(const char *Path = NULLPTR)
-		{
+		void readLabel(const char *Path = NULLPTR) {
 			if(!know_label) {
 				readLabel_internal(Path);
 			}
 		}
 
-		void setLabel(const std::string &Label)
-		{
+		void setLabel(const std::string &Label) {
 			label = Label;
 			know_label = true;
 		}
@@ -56,8 +54,8 @@ class RepoList : public std::vector<OverlayIdent> {
 	public:
 		typedef std::vector<OverlayIdent> super;
 
-		RepoList() : trust_cache(true)
-		{ }
+		RepoList() : trust_cache(true) {
+		}
 
 		const char *get_path(const std::string &label);
 
@@ -65,8 +63,7 @@ class RepoList : public std::vector<OverlayIdent> {
 
 		void set_priority(OverlayIdent *overlay);
 
-		RepoList::const_iterator second() const
-		{
+		RepoList::const_iterator second() const {
 			RepoList::const_iterator i(begin());
 			if(i != end()) {
 				++i;

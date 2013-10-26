@@ -38,46 +38,55 @@ class IUse : public std::string {
 
 		static Flags parse(std::string *s) ATTRIBUTE_NONNULL_;
 
-		std::string &name()
-		{ return *static_cast<std::string *>(this); }
+		std::string &name() {
+			return *static_cast<std::string *>(this);
+		}
 
-		const std::string &name() const
-		{ return *static_cast<const std::string *>(this); }
+		const std::string &name() const {
+			return *static_cast<const std::string *>(this);
+		}
 
-		explicit IUse(const std::string &s) : std::string(s)
-		{ flags = parse(&name()); }
+		explicit IUse(const std::string &s) : std::string(s) {
+			flags = parse(&name());
+		}
 
-		IUse(const std::string &s, Flags f) : std::string(s), flags(f)
-		{ }
+		IUse(const std::string &s, Flags f) : std::string(s), flags(f) {
+		}
 
 		const char *prefix() const ATTRIBUTE_PURE;
 
 		std::string asString() const;
 
-		bool operator=(const IUse& c) const
-		{ return (name() == c.name()); }
+		bool operator=(const IUse& c) const {
+			return (name() == c.name());
+		}
 };
 
 class IUseSet {
 	public:
-		bool empty() const
-		{ return m_iuse.empty(); }
+		bool empty() const {
+			return m_iuse.empty();
+		}
 
-		void clear()
-		{ m_iuse.clear(); }
+		void clear() {
+			m_iuse.clear();
+		}
 
-		const std::set<IUse> &asSet() const
-		{ return m_iuse; }
+		const std::set<IUse> &asSet() const {
+			return m_iuse;
+		}
 
 		void insert(const std::set<IUse> &iuse);
 
-		void insert(const IUseSet &iuse)
-		{ insert(iuse.asSet()); }
+		void insert(const IUseSet &iuse) {
+			insert(iuse.asSet());
+		}
 
 		void insert(const std::string &iuse);
 
-		void insert_fast(const std::string &iuse)
-		{ insert(IUse(iuse)); }
+		void insert_fast(const std::string &iuse) {
+			insert(IUse(iuse));
+		}
 
 		std::string asString() const;
 
@@ -136,30 +145,27 @@ class Version : public ExtendedVersion, public Keywords {
 			saved_effective(SAVEEFFECTIVE_SIZE, ""),
 			saved_accepted(SAVEEFFECTIVE_SIZE, ""),
 			states_effective(SAVEEFFECTIVE_SIZE, EFFECTIVE_UNSAVED),
-			effective_state(EFFECTIVE_UNUSED)
-		{ }
+			effective_state(EFFECTIVE_UNUSED) {
+		}
 
-		void save_keyflags(SavedKeyIndex i)
-		{
+		void save_keyflags(SavedKeyIndex i) {
 			have_saved_keywords[i] = true;
 			saved_keywords[i] = keyflags;
 		}
 
-		void save_maskflags(SavedMaskIndex i)
-		{
+		void save_maskflags(SavedMaskIndex i) {
 			have_saved_masks[i] = true;
 			saved_masks[i] = maskflags;
 		}
 
-		void save_accepted_effective(SavedEffectiveIndex i)
-		{
+		void save_accepted_effective(SavedEffectiveIndex i) {
 			saved_accepted[i] = m_accepted_keywords;
-			if((states_effective[i] = effective_state) == EFFECTIVE_USED)
+			if((states_effective[i] = effective_state) == EFFECTIVE_USED) {
 				saved_effective[i] = effective_keywords;
+			}
 		}
 
-		bool restore_keyflags(SavedKeyIndex i)
-		{
+		bool restore_keyflags(SavedKeyIndex i) {
 			if(have_saved_keywords[i]) {
 				keyflags = saved_keywords[i];
 				return true;
@@ -167,8 +173,7 @@ class Version : public ExtendedVersion, public Keywords {
 			return false;
 		}
 
-		bool restore_maskflags(SavedMaskIndex i)
-		{
+		bool restore_maskflags(SavedMaskIndex i) {
 			if(have_saved_masks[i]) {
 				maskflags = saved_masks[i];
 				return true;
@@ -176,42 +181,44 @@ class Version : public ExtendedVersion, public Keywords {
 			return false;
 		}
 
-		void set_iuse(const std::string &s)
-		{
+		void set_iuse(const std::string &s) {
 			iuse.clear();
 			iuse.insert(s);
 		}
 
-		bool restore_accepted_effective(SavedEffectiveIndex i)
-		{
+		bool restore_accepted_effective(SavedEffectiveIndex i) {
 			EffectiveState s(states_effective[i]);
-			if(s == EFFECTIVE_UNSAVED)
+			if(s == EFFECTIVE_UNSAVED) {
 				return false;
+			}
 			m_accepted_keywords = saved_accepted[i];
-			if((effective_state = s) == EFFECTIVE_USED)
+			if((effective_state = s) == EFFECTIVE_USED) {
 				effective_keywords = saved_effective[i];
-			else
+			} else {
 				effective_keywords.clear();
+			}
 			return true;
 		}
 
-		bool is_in_set(SetsIndex m_set) const
-		{ return (std::find(sets_indizes.begin(), sets_indizes.end(), m_set) != sets_indizes.end()); }
-
-		void add_to_set(SetsIndex m_set)
-		{
-			if(!is_in_set(m_set))
-				sets_indizes.push_back(m_set);
+		bool is_in_set(SetsIndex m_set) const {
+			return (std::find(sets_indizes.begin(), sets_indizes.end(), m_set) != sets_indizes.end());
 		}
 
-		void set_full_keywords(const std::string &keywords)
-		{ full_keywords = keywords; }
+		void add_to_set(SetsIndex m_set) {
+			if(!is_in_set(m_set)) {
+				sets_indizes.push_back(m_set);
+			}
+		}
 
-		std::string get_full_keywords() const
-		{ return full_keywords; }
+		void set_full_keywords(const std::string &keywords) {
+			full_keywords = keywords;
+		}
 
-		void reset_accepted_effective_keywords()
-		{
+		std::string get_full_keywords() const {
+			return full_keywords;
+		}
+
+		void reset_accepted_effective_keywords() {
 			effective_state = EFFECTIVE_UNUSED;
 			m_accepted_keywords.clear();
 			effective_keywords.clear();
@@ -223,28 +230,28 @@ class Version : public ExtendedVersion, public Keywords {
 
 		void add_accepted_keywords(const std::string &accepted_keywords);
 
-		const std::string get_effective_keywords() const
-		{
-			if(effective_state == EFFECTIVE_USED)
-				return effective_keywords;
-			return full_keywords;
+		const std::string get_effective_keywords() const {
+			return ((effective_state == EFFECTIVE_USED) ? effective_keywords : full_keywords);
 		}
 
-		KeywordsFlags::KeyType get_keyflags(const std::set<std::string> &accepted_keywords) const
-		{
-			if(effective_state == EFFECTIVE_USED)
+		KeywordsFlags::KeyType get_keyflags(const std::set<std::string> &accepted_keywords) const {
+			if(effective_state == EFFECTIVE_USED) {
 				return KeywordsFlags::get_keyflags(accepted_keywords, effective_keywords);
+			}
 			return KeywordsFlags::get_keyflags(accepted_keywords, full_keywords);
 		}
 
-		void set_keyflags(const std::set<std::string> &accepted_keywords)
-		{ keyflags.set_keyflags(get_keyflags(accepted_keywords)); }
+		void set_keyflags(const std::set<std::string> &accepted_keywords) {
+			keyflags.set_keyflags(get_keyflags(accepted_keywords));
+		}
 
 		void add_reason(const StringList &reason);
 
 		void reasons_string(OutputString *s, const OutputString &skip, const OutputString &sep) const ATTRIBUTE_NONNULL_;
-		bool have_reasons() const ATTRIBUTE_NONNULL_
-		{ return !reasons.empty(); }
+
+		bool have_reasons() const ATTRIBUTE_NONNULL_ {
+			return !reasons.empty();
+		}
 
 	protected:
 		std::set<StringList> reasons;

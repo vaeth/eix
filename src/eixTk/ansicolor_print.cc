@@ -27,46 +27,41 @@ const AnsiColor::WhichPalette
 	AnsiColor::PALETTE_ALL;
 
 class Display {
-private:
-	bool bold, printed_palette;
-	eix::SignedBool foreground;
+	private:
+		bool bold, printed_palette;
+		eix::SignedBool foreground;
 
-	void output(CalcType color, CalcType fg, CalcType dark, CalcType light);
+		void output(CalcType color, CalcType fg, CalcType dark, CalcType light);
 
-	void syscol();
+		void syscol();
 
-	void cube(CalcType red_s, CalcType red_e);
+		void cube(CalcType red_s, CalcType red_e);
 
-	void cube();
+		void cube();
 
-	void ramp();
+		void ramp();
 
-	static void nl();
+		static void nl();
 
-	static void resetnl();
+		static void resetnl();
 
-public:
-	Display()
-	{ printed_palette = false; }
+	public:
+		Display() {
+			printed_palette = false;
+		}
 
-	void palette(eix::SignedBool f, bool b, const char *s);
+		void palette(eix::SignedBool f, bool b, const char *s);
 };
 
-void
-Display::resetnl()
-{
+void Display::resetnl() {
 	puts(AnsiColor::reset());
 }
 
-void
-Display::nl()
-{
+void Display::nl() {
 	puts("");
 }
 
-void
-Display::output(CalcType color, CalcType fg, CalcType dark, CalcType light)
-{
+void Display::output(CalcType color, CalcType fg, CalcType dark, CalcType light) {
 	printf("\x1B[%s38;5;%d;48;5;%dm%3d ",
 		(bold ? "1;" : ""),
 		static_cast<int>(foreground ? color : fg),
@@ -74,9 +69,7 @@ Display::output(CalcType color, CalcType fg, CalcType dark, CalcType light)
 		static_cast<int>(color));
 }
 
-void
-Display::syscol()
-{
+void Display::syscol() {
 	CalcType fg(7), dark(238), light;
 	for(CalcType color(0); color < 16; fg = dark = 0, ++color) {
 		switch(color) {
@@ -97,9 +90,7 @@ Display::syscol()
 	nl();
 }
 
-void
-Display::cube(CalcType red_s, CalcType red_e)
-{
+void Display::cube(CalcType red_s, CalcType red_e) {
 	for(CalcType green(0); green < 6; ++green) {
 		for(CalcType red(red_s);;) {
 			for(CalcType blue(0); blue < 6; ++blue) {
@@ -119,16 +110,12 @@ Display::cube(CalcType red_s, CalcType red_e)
 	nl();
 }
 
-void
-Display::cube()
-{
+void Display::cube() {
 	cube(0, 3);
 	cube(3, 6);
 }
 
-void
-Display::ramp()
-{
+void Display::ramp() {
 	CalcType fg(7), dark(238), light(7);
 	for(CalcType color(232); color < 256; ++color) {
 		output(color, fg, dark, light);
@@ -150,9 +137,7 @@ Display::ramp()
 	resetnl();
 }
 
-void
-Display::palette(eix::SignedBool f, bool b, const char *s)
-{
+void Display::palette(eix::SignedBool f, bool b, const char *s) {
 	foreground = f;
 	bold = b;
 	if(printed_palette) {
@@ -168,9 +153,7 @@ Display::palette(eix::SignedBool f, bool b, const char *s)
 	ramp();
 }
 
-void
-AnsiColor::PrintPalette(WhichPalette which)
-{
+void AnsiColor::PrintPalette(WhichPalette which) {
 	Display display;
 	if((which & PALETTE_L0) != PALETTE_NONE) {
 		display.palette(-1, false, _("light, normal"));

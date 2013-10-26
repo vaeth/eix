@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/constexpr.h"
 #include "eixTk/eixint.h"
 #include "eixTk/stringutils.h"
 #include "portage/extendedversion.h"
@@ -57,7 +58,7 @@ class DBHeader {
 		static const char *magic;
 
 		/** Current version of database-format and what we accept */
-		static const DBVersion current = 33;
+		static CONSTEXPR DBVersion current = 33;
 		static const DBVersion accept[];
 
 		DBVersion version; /**< Version of the db. */
@@ -81,8 +82,9 @@ class DBHeader {
 		/** Add all overlay-numbers >=minimal for name to vec (name might be a number string). */
 		void get_overlay_vector(std::set<ExtendedVersion::Overlay> *overlays, const char *name, const char *portdir, ExtendedVersion::Overlay minimal = 0, OverlayTest testmode = OVTEST_NOT_SAVED_PORTDIR) const ATTRIBUTE_NONNULL((2, 3));
 
-		ExtendedVersion::Overlay countOverlays() const
-		{ return ExtendedVersion::Overlay(overlays.size()); }
+		ExtendedVersion::Overlay countOverlays() const {
+			return ExtendedVersion::Overlay(overlays.size());
+		}
 
 		bool isCurrent() const ATTRIBUTE_PURE;
 };

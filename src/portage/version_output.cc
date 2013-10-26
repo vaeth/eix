@@ -15,9 +15,7 @@
 
 using std::set;
 
-void
-Version::reasons_string(OutputString *s, const OutputString &skip, const OutputString &sep) const
-{
+void Version::reasons_string(OutputString *s, const OutputString &skip, const OutputString &sep) const {
 	bool psep(false);
 	for(set<StringList>::const_iterator it(reasons.begin());
 		it != reasons.end(); ++it) {

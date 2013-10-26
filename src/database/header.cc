@@ -40,9 +40,7 @@ const DBHeader::DBVersion DBHeader::accept[] = { DBHeader::current, 32, 31, 0 };
 const char *DBHeader::magic = "eix\n";
 
 /** Get overlay for key from table. */
-const OverlayIdent &
-DBHeader::getOverlay(ExtendedVersion::Overlay key) const
-{
+const OverlayIdent &DBHeader::getOverlay(ExtendedVersion::Overlay key) const {
 	static const OverlayIdent *not_found = NULLPTR;
 	if(key > countOverlays()) {
 		if(unlikely(not_found == NULLPTR)) {
@@ -54,16 +52,12 @@ DBHeader::getOverlay(ExtendedVersion::Overlay key) const
 }
 
 /** Add overlay to directory-table and return key. */
-ExtendedVersion::Overlay
-DBHeader::addOverlay(const OverlayIdent& overlay)
-{
+ExtendedVersion::Overlay DBHeader::addOverlay(const OverlayIdent& overlay) {
 	overlays.push_back(overlay);
 	return countOverlays() - 1;
 }
 
-bool
-DBHeader::find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const
-{
+bool DBHeader::find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const {
 	if(unlikely(minimal > countOverlays()))
 		return false;
 	if(*name == '\0') {
@@ -113,18 +107,14 @@ DBHeader::find_overlay(ExtendedVersion::Overlay *num, const char *name, const ch
 	return true;
 }
 
-void
-DBHeader::get_overlay_vector(set<ExtendedVersion::Overlay> *overlayset, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const
-{
+void DBHeader::get_overlay_vector(set<ExtendedVersion::Overlay> *overlayset, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const {
 	for(ExtendedVersion::Overlay curr(minimal);
 		find_overlay(&curr, name, portdir, curr, testmode); ++curr) {
 		overlayset->insert(curr);
 	}
 }
 
-bool
-DBHeader::isCurrent() const
-{
+bool DBHeader::isCurrent() const {
 	for(const DBVersion *acc(accept); *acc != 0; ++acc) {
 		if(version == *acc) {
 			return true;

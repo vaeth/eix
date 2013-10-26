@@ -29,24 +29,18 @@ static string percent_to_string(PercentStatus::Percentage i);
 static string percent_to_string(PercentStatus::Percentage i, string::size_type wanted);
 static void flush_total();
 
-static string
-percent_to_string(PercentStatus::Percentage i)
-{
+static string percent_to_string(PercentStatus::Percentage i) {
 	std::ostringstream o;
 	o << i;
 	return o.str();
 }
 
-static void
-flush_total()
-{
+static void flush_total() {
 	cout.flush();
 	fflush(stdout);
 }
 
-static string
-percent_to_string(PercentStatus::Percentage i, string::size_type wanted)
-{
+static string percent_to_string(PercentStatus::Percentage i, string::size_type wanted) {
 	string s(percent_to_string(i));
 	if(s.size() < wanted) {
 		return string(wanted - s.size(), ' ') + s;
@@ -54,9 +48,7 @@ percent_to_string(PercentStatus::Percentage i, string::size_type wanted)
 	return s;
 }
 
-void
-PercentStatus::init()
-{
+void PercentStatus::init() {
 	m_finished = false;
 	m_size = 0;
 	m_total = m_current = 0;
@@ -65,17 +57,13 @@ PercentStatus::init()
 	m_total_s.clear();
 }
 
-void
-PercentStatus::init(const string &header)
-{
+void PercentStatus::init(const string &header) {
 	m_verbose = false;
 	m_format = header;
 	reprint();
 }
 
-void
-PercentStatus::init(const string &format, Percentage total)
-{
+void PercentStatus::init(const string &format, Percentage total) {
 	m_verbose = true;
 	m_format = format;
 	m_total = total;
@@ -83,17 +71,13 @@ PercentStatus::init(const string &format, Percentage total)
 	reprint();
 }
 
-void
-PercentStatus::next(const string &append_string)
-{
+void PercentStatus::next(const string &append_string) {
 	m_append = append_string;
 	next();
 	reprint();
 }
 
-void
-PercentStatus::next()
-{
+void PercentStatus::next() {
 	if((!m_verbose) || m_finished)
 		return;
 	if(m_current != m_total) {
@@ -104,9 +88,7 @@ PercentStatus::next()
 	}
 }
 
-void
-PercentStatus::finish(const string &append_string)
-{
+void PercentStatus::finish(const string &append_string) {
 	m_append.clear();
 	m_finished = true;
 	if(m_verbose)  {
@@ -116,9 +98,7 @@ PercentStatus::finish(const string &append_string)
 	flush_total();
 }
 
-void
-PercentStatus::reprint()
-{
+void PercentStatus::reprint() {
 	string out;
 	if(m_verbose) {
 		if(m_finished) {
@@ -157,9 +137,7 @@ PercentStatus::reprint()
 	flush_total();
 }
 
-void
-PercentStatus::interprint_start()
-{
+void PercentStatus::interprint_start() {
 	cout << endl;
 	flush_total();
 	m_size = 0;

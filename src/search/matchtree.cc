@@ -29,9 +29,7 @@ using std::cout;
 #endif
 using std::endl;
 
-bool
-MatchAtom::match(PackageReader *p ATTRIBUTE_UNUSED)
-{
+bool MatchAtom::match(PackageReader *p ATTRIBUTE_UNUSED) {
 	UNUSED(p);
 #ifdef DEBUG_MATCHTREE
 	cout << (m_negate ? " '!' " : " '' ");
@@ -40,15 +38,12 @@ MatchAtom::match(PackageReader *p ATTRIBUTE_UNUSED)
 	return !m_negate;
 }
 
-MatchAtomOperator::~MatchAtomOperator()
-{
+MatchAtomOperator::~MatchAtomOperator() {
 	delete m_left;
 	delete m_right;
 }
 
-bool
-MatchAtomOperator::match(PackageReader *p)
-{
+bool MatchAtomOperator::match(PackageReader *p) {
 #ifdef DEBUG_MATCHTREE
 	cout << (m_negate ? " !(" : " (");
 	if(m_left == NULLPTR)
@@ -79,16 +74,13 @@ MatchAtomOperator::match(PackageReader *p)
 	return is_match;
 }
 
-MatchAtomTest::~MatchAtomTest()
-{
+MatchAtomTest::~MatchAtomTest() {
 #ifndef DEBUG_MATCHTREE
 	delete m_test;
 #endif
 }
 
-bool
-MatchAtomTest::match(PackageReader *p)
-{
+bool MatchAtomTest::match(PackageReader *p) {
 #ifdef DEBUG_MATCHTREE
 	cout << (m_negate ? " [!" : " [");
 	if(m_pipe != NULLPTR) cout << "|";
@@ -111,9 +103,7 @@ MatchAtomTest::match(PackageReader *p)
 #endif
 }
 
-void
-MatchAtomTest::set_test(PackageTest *gtest)
-{
+void MatchAtomTest::set_test(PackageTest *gtest) {
 #ifdef DEBUG_MATCHTREE
 	static int t_count(0);
 	delete gtest;
@@ -128,30 +118,24 @@ MatchAtomTest::set_test(PackageTest *gtest)
 #endif
 }
 
-MatchTree::MatchTree(bool default_is_or)
-{
+MatchTree::MatchTree(bool default_is_or) {
 	root = piperoot = NULLPTR;
 	default_operator = (default_is_or ? MatchAtomOperator::AtomOr : MatchAtomOperator::AtomAnd);
 	local_negate = local_finished = false;
 	parser_stack.push(MatchParseData(&root));
 }
 
-MatchTree::~MatchTree()
-{
+MatchTree::~MatchTree() {
 	end_parse();
 	delete root;
 	delete piperoot;
 }
 
-bool
-MatchTree::match(PackageReader *p)
-{
+bool MatchTree::match(PackageReader *p) {
 	return ((root == NULLPTR) || root->match(p));
 }
 
-void
-MatchTree::set_pipetest(PackageTest *gtest)
-{
+void MatchTree::set_pipetest(PackageTest *gtest) {
 	MatchAtomTest *p(new MatchAtomTest);
 	p->set_test(gtest);
 	if(unlikely(piperoot == NULLPTR)) {
@@ -164,9 +148,7 @@ MatchTree::set_pipetest(PackageTest *gtest)
 	piperoot = o;
 }
 
-MatchAtomTest *
-MatchTree::parse_new_leaf()
-{
+MatchAtomTest *MatchTree::parse_new_leaf() {
 	MatchParseData &top(parser_stack.top());
 	MatchAtom **r(top.useright ?
 		&(top.subroot->as_operator()->m_right) :
@@ -181,9 +163,7 @@ MatchTree::parse_new_leaf()
 
 /// Update parser_stack.top() according to local_negate
 /// Clear local_negate afterwards.
-void
-MatchTree::parse_local_negate()
-{
+void MatchTree::parse_local_negate() {
 	if(!local_negate) {
 		return;
 	}
@@ -202,9 +182,7 @@ MatchTree::parse_local_negate()
 
 /// Modifies parser_stack.top() according to op.
 /// Ignores local_negate and local_finished.
-void
-MatchTree::parse_new_operator(MatchAtomOperator::AtomOperator op)
-{
+void MatchTree::parse_new_operator(MatchAtomOperator::AtomOperator op) {
 	MatchAtomOperator *p(new MatchAtomOperator(op));
 	MatchParseData &top(parser_stack.top());
 	top.useright = true;
@@ -212,26 +190,19 @@ MatchTree::parse_new_operator(MatchAtomOperator::AtomOperator op)
 	top.subroot = p;
 }
 
-void
-MatchTree::parse_and()
-{
+void MatchTree::parse_and() {
 	parse_local_negate();
 	parse_new_operator(MatchAtomOperator::AtomAnd);
 	local_finished = false;
 }
 
-void
-MatchTree::parse_or()
-{
+void MatchTree::parse_or() {
 	parse_local_negate();
 	parse_new_operator(MatchAtomOperator::AtomOr);
 	local_finished = false;
 }
 
-
-void
-MatchTree::parse_test(PackageTest *gtest, bool with_pipe)
-{
+void MatchTree::parse_test(PackageTest *gtest, bool with_pipe) {
 	if(local_finished) {
 		parse_new_operator(default_operator);
 	}
@@ -244,9 +215,7 @@ MatchTree::parse_test(PackageTest *gtest, bool with_pipe)
 	parse_local_negate();
 }
 
-void
-MatchTree::parse_negate()
-{
+void MatchTree::parse_negate() {
 	if(local_negate) {
 		parse_new_operator(default_operator);
 		local_finished = false;
@@ -255,9 +224,7 @@ MatchTree::parse_negate()
 	}
 }
 
-void
-MatchTree::parse_open()
-{
+void MatchTree::parse_open() {
 	if(local_finished) {
 		parse_new_operator(default_operator);
 		local_finished = false;
@@ -274,9 +241,7 @@ MatchTree::parse_open()
 
 /// Internal form of parse_close() which can also clear the
 /// first (root) element on parser_stack() and ignores local_negate.
-void
-MatchTree::parse_closeforce()
-{
+void MatchTree::parse_closeforce() {
 	MatchParseData &top(parser_stack.top());
 	if(top.negatebrace) {
 		if(top.subroot != NULLPTR) {
@@ -289,9 +254,7 @@ MatchTree::parse_closeforce()
 	parser_stack.pop();
 }
 
-void
-MatchTree::parse_close()
-{
+void MatchTree::parse_close() {
 	if(parser_stack.size() <= 1) {
 		cerr << _("warning: ignoring --close without --open") << endl;
 		return;
@@ -304,9 +267,7 @@ MatchTree::parse_close()
 	parse_closeforce();
 }
 
-void
-MatchTree::end_parse()
-{
+void MatchTree::end_parse() {
 	parse_local_negate();
 	while(!parser_stack.empty()) {
 		parse_closeforce();

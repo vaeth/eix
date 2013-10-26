@@ -41,9 +41,7 @@ using std::endl;
  * the "saved" data is stored in Version, and we must make sure
  * that our calculated index really is correct in all cases... */
 
-Version::SavedKeyIndex
-SetStability::keyword_index(bool get_local) const
-{
+Version::SavedKeyIndex SetStability::keyword_index(bool get_local) const {
 	if(get_local)
 		return Version::SAVEKEY_ACCEPT;
 	if(m_always_accept_keywords)
@@ -51,9 +49,7 @@ SetStability::keyword_index(bool get_local) const
 	return Version::SAVEKEY_ARCH;
 }
 
-Version::SavedMaskIndex
-SetStability::mask_index(bool get_local) const
-{
+Version::SavedMaskIndex SetStability::mask_index(bool get_local) const {
 	if(m_filemask_is_profile)
 		return Version::SAVEMASK_FILE;
 	if(get_local)
@@ -63,9 +59,7 @@ SetStability::mask_index(bool get_local) const
 
 #endif
 
-void
-SetStability::set_stability(bool get_local, Package *package) const
-{
+void SetStability::set_stability(bool get_local, Package *package) const {
 	if(get_local) {
 		portagesettings->user_config->setMasks(package, m_filemask_is_profile);
 		portagesettings->user_config->setKeyflags(package);
@@ -75,9 +69,7 @@ SetStability::set_stability(bool get_local, Package *package) const
 	}
 }
 
-void
-SetStability::calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsFlags *keyflags, const Version *v, Package *p) const
-{
+void SetStability::calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsFlags *keyflags, const Version *v, Package *p) const {
 #ifndef ALWAYS_RECALCULATE_STABILITY
 	// Can we avoid the calculation by getting the saved flags?
 	Version::SavedMaskIndex mi(mask_index(get_local));
@@ -123,18 +115,16 @@ SetStability::calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsF
 #endif
 }
 
-void
-SetStability::set_stability(Category *category) const
-{
+void SetStability::set_stability(Category *category) const {
 	for(Category::iterator it(category->begin());
-		likely(it != category->end()); ++it)
+		likely(it != category->end()); ++it) {
 		set_stability(*it);
+	}
 }
 
-void
-SetStability::set_stability(PackageTree *tree) const
-{
+void SetStability::set_stability(PackageTree *tree) const {
 	for(PackageTree::iterator it(tree->begin());
-		likely(it != tree->end()); ++it)
+		likely(it != tree->end()); ++it) {
 		set_stability(it->second);
+	}
 }

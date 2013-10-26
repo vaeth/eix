@@ -41,9 +41,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-bool
-ParseCache::initialize(const string &name)
-{
+bool ParseCache::initialize(const string &name) {
 	vector<string> names;
 	split_string(&names, name, true, "#");
 	vector<string>::const_iterator it_name(names.begin());
@@ -87,9 +85,7 @@ ParseCache::initialize(const string &name)
 	return true;
 }
 
-const char *
-ParseCache::getType() const
-{
+const char *ParseCache::getType() const {
 	static string *s = NULLPTR;
 	if(s == NULLPTR) {
 		s = new string;
@@ -125,8 +121,7 @@ ParseCache::getType() const
 	return s->c_str();
 }
 
-ParseCache::~ParseCache()
-{
+ParseCache::~ParseCache() {
 	for(std::vector<BasicCache*>::iterator it(further.begin());
 		likely(it != further.end()); ++it) {
 		delete *it;
@@ -138,9 +133,7 @@ ParseCache::~ParseCache()
 	}
 }
 
-void
-ParseCache::setScheme(const char *prefix, const char *prefixport, const std::string &scheme)
-{
+void ParseCache::setScheme(const char *prefix, const char *prefixport, const std::string &scheme) {
 	BasicCache::setScheme(prefix, prefixport, scheme);
 	for(std::vector<BasicCache*>::iterator it(further.begin());
 		likely(it != further.end()); ++it) {
@@ -148,9 +141,7 @@ ParseCache::setScheme(const char *prefix, const char *prefixport, const std::str
 	}
 }
 
-void
-ParseCache::setKey(ExtendedVersion::Overlay key)
-{
+void ParseCache::setKey(ExtendedVersion::Overlay key) {
 	BasicCache::setKey(key);
 	for(std::vector<BasicCache*>::iterator it(further.begin());
 		likely(it != further.end()); ++it) {
@@ -158,9 +149,7 @@ ParseCache::setKey(ExtendedVersion::Overlay key)
 	}
 }
 
-void
-ParseCache::setOverlayName(const std::string &name)
-{
+void ParseCache::setOverlayName(const std::string &name) {
 	BasicCache::setOverlayName(name);
 	for(std::vector<BasicCache*>::iterator it(further.begin());
 		likely(it != further.end()); ++it) {
@@ -168,9 +157,7 @@ ParseCache::setOverlayName(const std::string &name)
 	}
 }
 
-void
-ParseCache::setErrorCallback(ErrorCallback error_callback)
-{
+void ParseCache::setErrorCallback(ErrorCallback error_callback) {
 	BasicCache::setErrorCallback(error_callback);
 	for(std::vector<BasicCache*>::iterator it(further.begin());
 		likely(it != further.end()); ++it) {
@@ -178,9 +165,7 @@ ParseCache::setErrorCallback(ErrorCallback error_callback)
 	}
 }
 
-void
-ParseCache::set_checking(string *str, const char *item, const VarsReader &ebuild, bool *ok)
-{
+void ParseCache::set_checking(string *str, const char *item, const VarsReader &ebuild, bool *ok) {
 	bool check((ebuild_exec != NULLPTR) && (ok != NULLPTR) && (*ok));
 	const string *s(ebuild.find(item));
 	str->clear();
@@ -200,9 +185,7 @@ ParseCache::set_checking(string *str, const char *item, const VarsReader &ebuild
 	}
 }
 
-void
-ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_onetime_info, bool &have_onetime_info, Package *pkg, Version *version)
-{
+void ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_onetime_info, bool *have_onetime_info, Package *pkg, Version *version) {
 	version->overlay_key = m_overlay_key;
 	string keywords, restr, props, iuse, slot;
 	bool ok(try_parse);
@@ -214,7 +197,7 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 		map<string, string> env;
 		if(!nosubst) {
 			flags |= VarsReader::INTO_MAP | VarsReader::SUBST_VARS;
-			env_add_package(env, *pkg, *version, dirpath, fullpath);
+			env_add_package(&env, *pkg, *version, dirpath, fullpath);
 		}
 		VarsReader ebuild(flags);
 		if(flags & VarsReader::INTO_MAP) {
@@ -246,7 +229,7 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 			set_checking(&(pkg->homepage), "HOMEPAGE",    ebuild, &ok);
 			set_checking(&(pkg->licenses), "LICENSE",     ebuild, &ok);
 			set_checking(&(pkg->desc),     "DESCRIPTION", ebuild, &ok);
-			have_onetime_info = true;
+			*have_onetime_info = true;
 		}
 	}
 	if(verbose) {
@@ -278,9 +261,7 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 	pkg->addVersionFinalize(version);
 }
 
-void
-ParseCache::readPackage(Category *cat, const string &pkg_name, const string &directory_path, const vector<string> &files)
-{
+void ParseCache::readPackage(Category *cat, const string &pkg_name, const string &directory_path, const vector<string> &files) {
 	bool have_onetime_info, have_pkg;
 
 	Package *pkg(cat->findPackage(pkg_name));
@@ -348,7 +329,7 @@ ParseCache::readPackage(Category *cat, const string &pkg_name, const string &dir
 			}
 		}
 		if(it == further.end()) {
-			parse_exec(full_path.c_str(), directory_path, read_onetime_info, have_onetime_info, pkg, version);
+			parse_exec(full_path.c_str(), directory_path, read_onetime_info, &have_onetime_info, pkg, version);
 		} else {
 			if(verbose) {
 				m_error_callback(eix::format("%s/%s-%s: %s") %
@@ -374,9 +355,7 @@ ParseCache::readPackage(Category *cat, const string &pkg_name, const string &dir
 	}
 }
 
-bool
-ParseCache::readCategoryPrepare(const char *cat_name)
-{
+bool ParseCache::readCategoryPrepare(const char *cat_name) {
 	m_catname = cat_name;
 	further_works.clear();
 	for(std::vector<BasicCache*>::iterator it(further.begin());
@@ -386,9 +365,7 @@ ParseCache::readCategoryPrepare(const char *cat_name)
 	return scandir_cc(m_catpath, &m_packages, package_selector);
 }
 
-void
-ParseCache::readCategoryFinalize()
-{
+void ParseCache::readCategoryFinalize() {
 	further_works.clear();
 	for(std::vector<BasicCache*>::iterator it(further.begin());
 		likely(it != further.end()); ++it)
@@ -398,9 +375,7 @@ ParseCache::readCategoryFinalize()
 	m_packages.clear();
 }
 
-bool
-ParseCache::readCategory(Category *cat)
-{
+bool ParseCache::readCategory(Category *cat) {
 	for(vector<string>::const_iterator pit(m_packages.begin());
 		likely(pit != m_packages.end()); ++pit) {
 		vector<string> files;

@@ -31,10 +31,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-template <>
-bool
-MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines)
-{
+template<> bool MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines) {
 	vector<string> lines;
 	if(!pushback_lines(file, &lines, recursive, true, (keep_commentlines ? (-1) : 0))) {
 		return false;
@@ -90,11 +87,8 @@ MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive,
 	return added;
 }
 
-	// return true if some mask matches
-template <>
-bool
-MaskList<Mask>::MaskMatches(Package *p) const
-{
+// return true if some mask matches
+template<> bool MaskList<Mask>::MaskMatches(Package *p) const {
 	Get *masks(get(p));
 	if(likely(masks == NULLPTR)) {
 		return false;
@@ -112,10 +106,7 @@ MaskList<Mask>::MaskMatches(Package *p) const
 }
 
 // return true if some mask potentially applied
-template <>
-bool
-MaskList<Mask>::applyMasks(Package *p, Keywords::Redundant check) const
-{
+template<> bool MaskList<Mask>::applyMasks(Package *p, Keywords::Redundant check) const {
 	Get *masks(get(p));
 	if(masks == NULLPTR) {
 		return false;
@@ -125,8 +116,7 @@ MaskList<Mask>::applyMasks(Package *p, Keywords::Redundant check) const
 	for(Get::const_iterator it(masks->begin());
 		likely(it != masks->end()); ++it) {
 		it->checkMask(p, check);
-		switch(it->get_type())
-		{
+		switch(it->get_type()) {
 			case Mask::maskMask:
 				had_mask = true;
 				break;
@@ -160,10 +150,7 @@ MaskList<Mask>::applyMasks(Package *p, Keywords::Redundant check) const
 	return true;
 }
 
-template<>
-void
-MaskList<Mask>::applySetMasks(Version *v, const string &set_name) const
-{
+template<> void MaskList<Mask>::applySetMasks(Version *v, const string &set_name) const {
 	Get *masks(get_setname(set_name));
 	if(masks == NULLPTR) {
 		return;
@@ -175,8 +162,7 @@ MaskList<Mask>::applySetMasks(Version *v, const string &set_name) const
 	delete masks;
 }
 
-PreListFilename::PreListFilename(const string &n, const char *label)
-{
+PreListFilename::PreListFilename(const string &n, const char *label) {
 	filename = n;
 	if(label == NULLPTR) {
 		know_repo = false;
@@ -186,18 +172,14 @@ PreListFilename::PreListFilename(const string &n, const char *label)
 	m_repo = label;
 }
 
-const char *
-PreListFilename::repo() const
-{
+const char *PreListFilename::repo() const {
 	if(know_repo) {
 		return m_repo.c_str();
 	}
 	return NULLPTR;
 }
 
-bool
-PreList::handle_lines(const vector<string> &lines, FilenameIndex file, const bool only_add, LineNumber *num, bool keep_commentlines)
-{
+bool PreList::handle_lines(const vector<string> &lines, FilenameIndex file, const bool only_add, LineNumber *num, bool keep_commentlines) {
 	bool changed(false);
 	LineNumber number((num == NULLPTR) ? 1 : (*num));
 	for(vector<string>::const_iterator it(lines.begin());
@@ -212,9 +194,7 @@ PreList::handle_lines(const vector<string> &lines, FilenameIndex file, const boo
 	return changed;
 }
 
-bool
-PreList::handle_line(const std::string &line, FilenameIndex file, LineNumber number, bool only_add, bool keep_commentlines)
-{
+bool PreList::handle_line(const std::string &line, FilenameIndex file, LineNumber number, bool only_add, bool keep_commentlines) {
 	if(line.empty()) {
 		if(keep_commentlines) {
 			return add_line(line, file, number, keep_commentlines);
@@ -227,9 +207,7 @@ PreList::handle_line(const std::string &line, FilenameIndex file, LineNumber num
 	return remove_line(line.c_str() + 1);
 }
 
-bool
-PreList::add_line(const std::string &line, FilenameIndex file, LineNumber number, bool keep_commentlines)
-{
+bool PreList::add_line(const std::string &line, FilenameIndex file, LineNumber number, bool keep_commentlines) {
 	static string *unique = NULLPTR;
 	vector<string> l;
 	if(keep_commentlines) {
@@ -261,17 +239,13 @@ PreList::add_line(const std::string &line, FilenameIndex file, LineNumber number
 	return add_splitted(l, file, number);
 }
 
-bool
-PreList::remove_line(const std::string &line)
-{
+bool PreList::remove_line(const std::string &line) {
 	vector<string> l;
 	split_string(&l, line);
 	return remove_splitted(l);
 }
 
-bool
-PreList::add_splitted(const std::vector<std::string> &line, FilenameIndex file, LineNumber number)
-{
+bool PreList::add_splitted(const std::vector<std::string> &line, FilenameIndex file, LineNumber number) {
 	if(line.empty()) {
 		return false;
 	}
@@ -293,9 +267,7 @@ PreList::add_splitted(const std::vector<std::string> &line, FilenameIndex file, 
 	}
 }
 
-bool
-PreList::remove_splitted(const std::vector<std::string> &line)
-{
+bool PreList::remove_splitted(const std::vector<std::string> &line) {
 	if(line.empty()) {
 		return false;
 	}
@@ -307,9 +279,7 @@ PreList::remove_splitted(const std::vector<std::string> &line)
 	return true;
 }
 
-void
-PreList::finalize()
-{
+void PreList::finalize() {
 	if(finalized) {
 		return;
 	}
@@ -358,9 +328,7 @@ PreList::finalize()
 	have.clear();
 }
 
-void
-PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines)
-{
+void PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines) {
 	finalize();
 	StringList *comments(NULLPTR);
 	bool finishcomment(false);
@@ -425,9 +393,7 @@ PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines)
 	clear();
 }
 
-void
-PreList::initialize(MaskList<KeywordMask> *l, string raised_arch)
-{
+void PreList::initialize(MaskList<KeywordMask> *l, string raised_arch) {
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		KeywordMask m(repo(it->filename_index));
@@ -451,9 +417,7 @@ PreList::initialize(MaskList<KeywordMask> *l, string raised_arch)
 	clear();
 }
 
-void
-PreList::initialize(MaskList<PKeywordMask> *l)
-{
+void PreList::initialize(MaskList<PKeywordMask> *l) {
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		PKeywordMask m(repo(it->filename_index));

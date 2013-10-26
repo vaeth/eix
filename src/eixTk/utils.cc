@@ -37,36 +37,33 @@ using std::string;
 using std::vector;
 
 class Directory {
-private:
-	DIR *dh;
+	private:
+		DIR *dh;
 
-public:
-	Directory() : dh(NULLPTR)
-	{ }
-
-	bool opendirectory(const char *name) {
-		return ((dh = opendir(name)) != NULLPTR);
-	}
-
-	struct dirent *read() {
-		return readdir(dh);  // NOLINT(runtime/threadsafe_fn)
-	}
-
-	~Directory() {
-		if(dh != NULLPTR) {
-			closedir(dh);
+	public:
+		Directory() : dh(NULLPTR) {
 		}
-	}
+
+		bool opendirectory(const char *name) {
+			return ((dh = opendir(name)) != NULLPTR);
+		}
+
+		struct dirent *read() {
+			return readdir(dh);  // NOLINT(runtime/threadsafe_fn)
+		}
+
+		~Directory() {
+			if(dh != NULLPTR) {
+				closedir(dh);
+			}
+		}
 };
 
 static bool pushback_lines_file(const char *file, vector<string> *v, bool keep_empty, eix::SignedBool keep_comments, string *errtext) ATTRIBUTE_NONNULL((1, 2));
 static int pushback_files_selector(SCANDIR_ARG3 dir_entry);
 
-bool
-scandir_cc(const string &dir, vector<string> *namelist, select_dirent select, bool sorted)
-{
-	namelist->clear();
-	{
+bool scandir_cc(const string &dir, vector<string> *namelist, select_dirent select, bool sorted) {
+	namelist->clear(); {
 		Directory my_dir;
 		if(!my_dir.opendirectory(dir.c_str())) {
 			return false;
@@ -87,9 +84,7 @@ scandir_cc(const string &dir, vector<string> *namelist, select_dirent select, bo
 }
 
 /** push_back every line of file into v. */
-static bool
-pushback_lines_file(const char *file, vector<string> *v, bool keep_empty, eix::SignedBool keep_comments, string *errtext)
-{
+static bool pushback_lines_file(const char *file, vector<string> *v, bool keep_empty, eix::SignedBool keep_comments, string *errtext) {
 	string line;
 	std::ifstream ifstr(file);
 	if(!ifstr.is_open()) {
@@ -127,9 +122,7 @@ pushback_lines_file(const char *file, vector<string> *v, bool keep_empty, eix::S
 const char *pushback_lines_exclude[] = { "..", ".", "CVS", "RCS", "SCCS", NULLPTR };
 
 /** push_back every line of file or dir into v. */
-bool
-pushback_lines(const char *file, vector<string> *v, bool recursive, bool keep_empty, eix::SignedBool keep_comments, string *errtext)
-{
+bool pushback_lines(const char *file, vector<string> *v, bool recursive, bool keep_empty, eix::SignedBool keep_comments, string *errtext) {
 	static int depth(0);
 	vector<string> files;
 	string dir(file);
@@ -163,41 +156,47 @@ static const char **pushback_files_exclude;
 static bool pushback_files_no_hidden;
 static size_t pushback_files_only_type;
 static const string *pushback_files_dir_path;  // defined if pushback_files_only_type is nonzero
-static int
-pushback_files_selector(SCANDIR_ARG3 dir_entry)
-{
+static int pushback_files_selector(SCANDIR_ARG3 dir_entry) {
 	// Empty names shouldn't occur. Just to be sure, we ignore them:
-	if(!((dir_entry->d_name)[0]))
+	if(!((dir_entry->d_name)[0])) {
 		return 0;
+	}
 
 	if(likely(pushback_files_no_hidden)) {
 		// files starting with '.' are hidden.
-		if((dir_entry->d_name)[0] == '.')
+		if((dir_entry->d_name)[0] == '.') {
 			return 0;
+		}
 		// files ending with '~' are hidden.
 		// (Note that we already excluded the bad case of empty names).
-		if((dir_entry->d_name)[strlen(dir_entry->d_name) - 1] == '~')
+		if((dir_entry->d_name)[strlen(dir_entry->d_name) - 1] == '~') {
 			return 0;
+		}
 	}
-	if(pushback_files_exclude)
-	{
+	if(pushback_files_exclude) {
 		// Look if it's in exclude
-		for(const char **p(pushback_files_exclude); likely(*p != NULLPTR); ++p)
-			if(unlikely(strcmp(*p, dir_entry->d_name) == 0))
+		for(const char **p(pushback_files_exclude); likely(*p != NULLPTR); ++p) {
+			if(unlikely(strcmp(*p, dir_entry->d_name) == 0)) {
 				return 0;
+			}
+		}
 	}
-	if(likely(pushback_files_only_type == 0))
+	if(likely(pushback_files_only_type == 0)) {
 		return 1;
+	}
 	struct stat static_stat;
-	if(unlikely(stat(((*pushback_files_dir_path) + dir_entry->d_name).c_str(), &static_stat)))
+	if(unlikely(stat(((*pushback_files_dir_path) + dir_entry->d_name).c_str(), &static_stat))) {
 		return 0;
+	}
 	if(pushback_files_only_type & 1) {
-		if(S_ISREG(static_stat.st_mode))
+		if(S_ISREG(static_stat.st_mode)) {
 			return 1;
+		}
 	}
 	if(pushback_files_only_type & 2) {
-		if(S_ISDIR(static_stat.st_mode))
+		if(S_ISDIR(static_stat.st_mode)) {
 			return 1;
+		}
 	}
 	return 0;
 }
@@ -212,31 +211,31 @@ pushback_files_selector(SCANDIR_ARG3 dir_entry)
  * @param no_hidden ignore hidden files
  * @param full_path return full pathnames
  * @return true if everything is ok */
-bool
-pushback_files(const string &dir_path, vector<string> *into, const char *exclude[], unsigned char only_type, bool no_hidden, bool full_path)
-{
+bool pushback_files(const string &dir_path, vector<string> *into, const char *exclude[], unsigned char only_type, bool no_hidden, bool full_path) {
 	pushback_files_exclude = exclude;
 	pushback_files_no_hidden = no_hidden;
 	pushback_files_only_type = only_type;
-	if(only_type)
+	if(only_type) {
 		pushback_files_dir_path = &dir_path;
+	}
 	vector<string> namelist;
-	if(!scandir_cc(dir_path, &namelist, pushback_files_selector))
+	if(!scandir_cc(dir_path, &namelist, pushback_files_selector)) {
 		return false;
+	}
 	for(vector<string>::const_iterator it(namelist.begin());
 		likely(it != namelist.end()); ++it) {
-		if(full_path)
+		if(full_path) {
 			into->push_back(dir_path + (*it));
-		else
+		} else {
 			into->push_back(*it);
+		}
 	}
 	return true;
 }
 
 /** Cycle through map using it, until it is it_end, append all values from it
  * to the value with the same key in append_to. */
-void join_map(map<string, string> *append_to, map<string, string>::iterator it, map<string, string>::iterator it_end)
-{
+void join_map(map<string, string> *append_to, map<string, string>::iterator it, map<string, string>::iterator it_end) {
 	while(likely(it != it_end)) {
 		(*append_to)[it->first] =
 			( ((*append_to)[it->first].size() != 0)
@@ -245,8 +244,7 @@ void join_map(map<string, string> *append_to, map<string, string>::iterator it, 
 	}
 }
 
-void dump_version()
-{
+void dump_version() {
 	fputs(PACKAGE_STRING
 #if defined(GCC_VERSION) || defined(TARGET)
 		" ("

@@ -31,40 +31,39 @@ class PortageSettings;
 
 /** A sorted list of pointer to Versions */
 
-class VersionList : public std::list<Version*>  // null entries are not allowed
-{
+class VersionList : public std::list<Version*> {  // null entries are not allowed
 	public:
-		explicit VersionList(Version *v) ATTRIBUTE_NONNULL_ :
-			std::list<Version*>(1, v)
-		{ }
+		explicit VersionList(Version *v) ATTRIBUTE_NONNULL_ : std::list<Version*>(1, v) {
+		}
 
 		Version* best(bool allow_unstable = false) const ATTRIBUTE_PURE;
 };
 
-class SlotVersions
-{
+class SlotVersions {
 	private:
 		const char  *m_slotname;
 		VersionList  m_version_list;
 
 	public:
-		const char *slotname() const
-		{ return m_slotname; }
+		const char *slotname() const {
+			return m_slotname;
+		}
 
-		const VersionList &const_version_list() const
-		{ return m_version_list; }
+		const VersionList &const_version_list() const {
+			return m_version_list;
+		}
 
-		VersionList &version_list()
-		{ return m_version_list; }
+		VersionList &version_list() {
+			return m_version_list;
+		}
 
 		SlotVersions(const char *s, Version *v)  ATTRIBUTE_NONNULL((2, 3)) :
-			m_slotname(s), m_version_list(v)
-		{ }
+			m_slotname(s), m_version_list(v) {
+		}
 };
 
 /** This list is always sorted with respect to the first version for each slot */
-class SlotList : public std::vector<SlotVersions>
-{
+class SlotList : public std::vector<SlotVersions> {
 	public:
 		void push_back_largest(Version *version) ATTRIBUTE_NONNULL_;
 		const VersionList *operator[](const char *s) const ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
@@ -72,9 +71,7 @@ class SlotList : public std::vector<SlotVersions>
 
 /** A class to represent a package in portage It contains various information
  * about a package, including a sorted(!) list of versions. */
-class Package
-	: public eix::ptr_list<Version>
-{
+class Package : public eix::ptr_list<Version> {
 	public:
 		friend class PackageReader;
 
@@ -115,9 +112,8 @@ class Package
 		mutable bool allow_upgrade_slots, know_upgrade_slots;
 		bool calc_allow_upgrade_slots(const PortageSettings *ps) const ATTRIBUTE_NONNULL_;
 
-		const SlotList& slotlist() const
-		{
-			if (!m_has_cached_slotlist) {
+		const SlotList& slotlist() const {
+			if(!m_has_cached_slotlist) {
 				build_slotlist();
 				m_has_cached_slotlist = true;
 			}
@@ -125,43 +121,50 @@ class Package
 		}
 
 		/** True if at least one slot is nonempty (different from "0") */
-		bool have_nontrivial_slots() const
-		{ return (version_collects & COLLECT_HAVE_NONTRIVIAL_SLOTS); }
+		bool have_nontrivial_slots() const {
+			return (version_collects & COLLECT_HAVE_NONTRIVIAL_SLOTS);
+		}
 
 		/** True if all versions come from one overlay. */
-		bool have_same_overlay_key() const
-		{ return (version_collects & COLLECT_HAVE_SAME_OVERLAY_KEY); }
+		bool have_same_overlay_key() const {
+			return (version_collects & COLLECT_HAVE_SAME_OVERLAY_KEY);
+		}
 
 		/** True if any version comes from main repository. */
-		bool have_main_repo_key() const
-		{ return (version_collects & COLLECT_HAVE_MAIN_REPO_KEY); }
+		bool have_main_repo_key() const {
+			return (version_collects & COLLECT_HAVE_MAIN_REPO_KEY);
+		}
 
 		/** True if all versions come from at least two overlays. */
-		bool at_least_two_overlays() const
-		{ return (version_collects & COLLECT_AT_LEAST_TWO_OVERLAYS); }
+		bool at_least_two_overlays() const {
+			return (version_collects & COLLECT_AT_LEAST_TWO_OVERLAYS);
+		}
 
 		/** True if any version is in the system profile. */
-		bool is_system_package() const
-		{ return local_collects.isSystem(); }
+		bool is_system_package() const {
+			return local_collects.isSystem();
+		}
 
 		/** True if any version is in the world file. */
-		bool is_world_package() const
-		{ return local_collects.isWorld(); }
+		bool is_world_package() const {
+			return local_collects.isWorld();
+		}
 
 		/** True if any version is in the world sets. */
-		bool is_world_sets_package() const
-		{ return local_collects.isWorldSets(); }
+		bool is_world_sets_package() const {
+			return local_collects.isWorldSets();
+		}
 
 		/// Preset with defaults
-		Package() :
-			saved_collects(Version::SAVEMASK_SIZE, MaskFlags(MaskFlags::MASK_NONE))
-		{ defaults(); }
+		Package() : saved_collects(Version::SAVEMASK_SIZE, MaskFlags(MaskFlags::MASK_NONE)) {
+			defaults();
+		}
 
 		/// Fill in name and category and preset with defaults
 		Package(const std::string& c, const std::string& n) :
-			saved_collects(Version::SAVEMASK_SIZE, MaskFlags(MaskFlags::MASK_NONE)),
-			category(c), name(n)
-		{ defaults(); }
+			saved_collects(Version::SAVEMASK_SIZE, MaskFlags(MaskFlags::MASK_NONE)), category(c), name(n) {
+			defaults();
+		}
 
 		/** De-constructor, delete content of Version-list. */
 		~Package();
@@ -170,8 +173,7 @@ class Package
 		    Only BasicVersion needs to be filled here.
 		    You must call addVersionFinalize() after filling
 		    the remaining data */
-		void addVersionStart(Version *version)
-		{
+		void addVersionStart(Version *version) {
 			checkDuplicates(version);
 			sortedPushBack(version);
 		}
@@ -181,8 +183,7 @@ class Package
 		void addVersionFinalize(Version *version) ATTRIBUTE_NONNULL_;
 
 		/** Adds a version to "the versions" list. */
-		void addVersion(Version *version) ATTRIBUTE_NONNULL_
-		{
+		void addVersion(Version *version) ATTRIBUTE_NONNULL_ {
 			addVersionStart(version);
 			addVersionFinalize(version);
 		}
@@ -190,30 +191,26 @@ class Package
 		/** Call this after modifying system or world state of versions. */
 		void finalize_masks();
 
-		void save_keyflags(Version::SavedKeyIndex i)
-		{
+		void save_keyflags(Version::SavedKeyIndex i) {
 			for(iterator it(begin()); likely(it != end()); ++it) {
 				it->save_keyflags(i);
 			}
 		}
 
-		void save_maskflags(Version::SavedMaskIndex i)
-		{
+		void save_maskflags(Version::SavedMaskIndex i) {
 			saved_collects[i] = local_collects;
 			for(iterator it(begin()); likely(it != end()); ++it) {
 				it->save_maskflags(i);
 			}
 		}
 
-		void save_accepted_effective(Version::SavedEffectiveIndex i)
-		{
+		void save_accepted_effective(Version::SavedEffectiveIndex i) {
 			for(iterator it(begin()); likely(it != end()); ++it) {
 				it->save_accepted_effective(i);
 			}
 		}
 
-		bool restore_keyflags(Version::SavedKeyIndex i)
-		{
+		bool restore_keyflags(Version::SavedKeyIndex i) {
 			local_collects = saved_collects[i];
 			for(iterator it(begin()); likely(it != end()); ++it) {
 				if(unlikely(!(it->restore_keyflags(i)))) {
@@ -223,8 +220,7 @@ class Package
 			return true;
 		}
 
-		bool restore_maskflags(Version::SavedMaskIndex i)
-		{
+		bool restore_maskflags(Version::SavedMaskIndex i) {
 			for(iterator it(begin()); likely(it != end()); ++it) {
 				if(unlikely(!(it->restore_maskflags(i)))) {
 					return false;
@@ -233,8 +229,7 @@ class Package
 			return true;
 		}
 
-		bool restore_accepted_effective(Version::SavedEffectiveIndex i)
-		{
+		bool restore_accepted_effective(Version::SavedEffectiveIndex i) {
 			for(iterator it(begin()); likely(it != end()); ++it) {
 				if(unlikely(!(it->restore_accepted_effective(i)))) {
 					return false;
@@ -282,18 +277,18 @@ class Package
 		eix::TinySigned compare_best(const Package &p, bool test_slot) const ATTRIBUTE_PURE;
 
 		/** has p a worse/missing best/best_slot/different overlay? */
-		bool have_worse(const Package &p, bool test_slots) const
-		{
-			if(test_slots)
+		bool have_worse(const Package &p, bool test_slots) const {
+			if(test_slots) {
 				return (worse_best_slots(p) > 0);
+			}
 			return (compare_best(p, false) > 0);
 		}
 
 		/** differs p in at least one best/best_slot? */
-		bool differ(const Package &p, bool test_slots) const
-		{
-			if(test_slots)
+		bool differ(const Package &p, bool test_slots) const {
+			if(test_slots) {
 				return compare_best_slots(p);
+			}
 			return compare_best(p, false);
 		}
 
@@ -327,20 +322,20 @@ class Package
 		eix::TinySigned check_best(VarDbPkg *v, bool only_installed, bool test_slot) const;
 
 		/** can we upgrade v or has v different slots? */
-		bool can_upgrade(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const ATTRIBUTE_NONNULL((3))
-		{
-			if(!test_slots)
+		bool can_upgrade(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const ATTRIBUTE_NONNULL((3)) {
+			if(!test_slots) {
 				return (check_best(v, only_installed, false) > 0);
+			}
 			if(calc_allow_upgrade_slots(ps)) {
-				if(check_best(v, only_installed, true) > 0)
+				if(check_best(v, only_installed, true) > 0) {
 					return true;
+				}
 			}
 			return (check_best_slots(v, only_installed) > 0);
 		}
 
 		/** must we downgrade v or has v different categories/slots? */
-		bool must_downgrade(VarDbPkg *v, bool test_slots) const
-		{
+		bool must_downgrade(VarDbPkg *v, bool test_slots) const {
 			eix::TinySigned c(check_best(v, true, test_slots));
 			if((c < 0) || (c == 3))
 				return true;
@@ -351,16 +346,15 @@ class Package
 		}
 
 		/** do we have an upgrade/downgrade recommendation? */
-		bool recommend(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const ATTRIBUTE_NONNULL((3))
-		{
+		bool recommend(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const ATTRIBUTE_NONNULL((3)) {
 			return can_upgrade(v, ps, only_installed, test_slots) ||
 				must_downgrade(v, test_slots);
 		}
 
-		bool differ(const Package &p, VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool testvardb, bool test_slots) const
-		{
-			if(testvardb)
+		bool differ(const Package &p, VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool testvardb, bool test_slots) const {
+			if(testvardb) {
 				return recommend(v, ps, only_installed, test_slots);
+			}
 			return differ(p, test_slots);
 		}
 
@@ -374,8 +368,9 @@ class Package
 		    (v.know_slot determines whether we had full success). */
 		bool guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *force = NULLPTR) const ATTRIBUTE_NONNULL((2));
 
-		Version *latest() const
-		{ return *rbegin(); }
+		Version *latest() const {
+			return *rbegin();
+		}
 
 	protected:
 		/** \c slotlist is always sorted with respect to the
@@ -402,8 +397,7 @@ class Package
 
 		void sortedPushBack(Version *version) ATTRIBUTE_NONNULL_;
 
-		void defaults()
-		{
+		void defaults() {
 			know_upgrade_slots = m_has_cached_slotlist =
 				m_has_cached_subslots = false;
 			have_duplicate_versions = DUP_NONE;
@@ -417,8 +411,9 @@ class PackageSave {
 		DataType data;
 
 	public:
-		explicit PackageSave(const Package *p = NULLPTR)
-		{ store(p); }
+		explicit PackageSave(const Package *p = NULLPTR) {
+			store(p);
+		}
 
 		void store(const Package *p = NULLPTR);
 

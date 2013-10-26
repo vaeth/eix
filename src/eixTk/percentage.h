@@ -15,35 +15,37 @@
 #include "eixTk/eixint.h"
 
 class PercentStatus {
-public:
-	typedef eix::Treesize Percentage;
+	public:
+		typedef eix::Treesize Percentage;
 
-	PercentStatus()
-	{ init(); }
+		PercentStatus() {
+			init();
+		}
 
-	void init(const std::string &header);
+		void init(const std::string &header);
 
-	void init(const std::string &format, Percentage total);
+		void init(const std::string &format, Percentage total);
 
-	void next();
+		void next();
 
-	void next(const std::string &append_string);
+		void next(const std::string &append_string);
 
-	void finish(const std::string &append_string);
+		void finish(const std::string &append_string);
 
-	void interprint_start();
+		void interprint_start();
 
-	void interprint_end()
-	{ reprint(); }
+		void interprint_end() {
+			reprint();
+		}
 
-private:
-	void init();
-	void reprint();
+	private:
+		void init();
+		void reprint();
 
-	Percentage m_total, m_current;
-	std::string m_format, m_append, m_total_s;
-	std::string::size_type m_size;
-	bool m_verbose, m_finished;
+		Percentage m_total, m_current;
+		std::string m_format, m_append, m_total_s;
+		std::string::size_type m_size;
+		bool m_verbose, m_finished;
 };
 
 

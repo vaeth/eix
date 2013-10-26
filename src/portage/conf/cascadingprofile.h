@@ -28,15 +28,17 @@ class ProfileFile {
 	public:
 		std::vector<OverlayIdent>::size_type reponum;
 
-		ProfileFile(const std::string &s, std::vector<OverlayIdent>::size_type repo_num) :
-			filename(s), reponum(repo_num)
-		{ }
+		ProfileFile(const std::string &s, std::vector<OverlayIdent>::size_type repo_num)
+			: filename(s), reponum(repo_num) {
+		}
 
-		const std::string &name() const
-		{ return filename; }
+		const std::string &name() const {
+			return filename;
+		}
 
-		const char *c_str() const
-		{ return filename.c_str(); }
+		const char *c_str() const {
+			return filename.c_str();
+		}
 };
 
 /** Access to the cascading profile pointed to by /etc/make.profile. */
@@ -99,8 +101,8 @@ class CascadingProfile {
 			print_profile_paths(false),
 			use_world(false), finalized(false),
 			m_init_world(init_world),
-			m_portagesettings(portagesettings)
-		{ }
+			m_portagesettings(portagesettings) {
+		}
 
 		/** Populate MaskLists from PreLists.
 		    All files must have been read and m_raised_arch
@@ -120,12 +122,14 @@ class CascadingProfile {
 		void listaddProfile(const char *profile_dir = NULLPTR);
 
 		/** Put file into m_profile_files */
-		void listaddFile(const std::string &file, std::vector<OverlayIdent>::size_type i)
-		{ m_profile_files.push_back(ProfileFile(file, i)); }
+		void listaddFile(const std::string &file, std::vector<OverlayIdent>::size_type i) {
+			m_profile_files.push_back(ProfileFile(file, i));
+		}
 
 		/** Clear m_profile_files */
-		void listclear()
-		{ m_profile_files.clear(); }
+		void listclear() {
+			m_profile_files.clear();
+		}
 
 		void applyMasks(Package *p) const ATTRIBUTE_NONNULL_;
 		void applyKeywords(Package *p) const ATTRIBUTE_NONNULL_;

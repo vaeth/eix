@@ -40,17 +40,13 @@ const PrintXml::XmlVersion PrintXml::current;
 
 static void print_iuse(const set<IUse> &s, IUse::Flags wanted, const char *dflt);
 
-void
-PrintXml::runclear()
-{
+void PrintXml::runclear() {
 	started = false;
 	curcat.clear();
 	count = 0;
 }
 
-void
-PrintXml::clear(EixRc *eixrc)
-{
+void PrintXml::clear(EixRc *eixrc) {
 	if(unlikely(eixrc == NULLPTR)) {
 		print_overlay = false;
 		keywords_mode = KW_NONE;
@@ -79,22 +75,20 @@ PrintXml::clear(EixRc *eixrc)
 	runclear();
 }
 
-void
-PrintXml::start()
-{
-	if(unlikely(started))
+void PrintXml::start() {
+	if(unlikely(started)) {
 		return;
+	}
 	started = true;
 
 	cout << "<?xml version='1.0' encoding='UTF-8'?>\n"
 		"<eixdump version=\"" << current << "\">\n";
 }
 
-void
-PrintXml::finish()
-{
-	if(!started)
+void PrintXml::finish() {
+	if(!started) {
 		return;
+	}
 
 	if (count) {
 		cout << "\t</category>\n";
@@ -104,9 +98,7 @@ PrintXml::finish()
 	runclear();
 }
 
-static void
-print_iuse(const set<IUse> &s, IUse::Flags wanted, const char *dflt)
-{
+static void print_iuse(const set<IUse> &s, IUse::Flags wanted, const char *dflt) {
 	bool have_found(false);
 	for(set<IUse>::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
 		if(!((it->flags) & wanted))
@@ -126,9 +118,7 @@ print_iuse(const set<IUse> &s, IUse::Flags wanted, const char *dflt)
 		cout << "</iuse>\n";
 }
 
-void
-PrintXml::package(Package *pkg)
-{
+void PrintXml::package(Package *pkg) {
 	if(unlikely(!started))
 		start();
 	if(unlikely(curcat != pkg->category)) {
@@ -400,9 +390,7 @@ PrintXml::package(Package *pkg)
 	++count;
 }
 
-string
-PrintXml::escape_xmlstring(const string &s)
-{
+string PrintXml::escape_xmlstring(const string &s) {
 	string ret;
 	string::size_type prev(0);
 	string::size_type len(s.length());
@@ -422,9 +410,11 @@ PrintXml::escape_xmlstring(const string &s)
 			prev = i + 1;
 		}
 	}
-	if(likely(prev == 0))
+	if(likely(prev == 0)) {
 		return s;
-	if(prev < len)
+	}
+	if(prev < len) {
 		ret.append(s, prev, len - prev);
+	}
 	return ret;
 }

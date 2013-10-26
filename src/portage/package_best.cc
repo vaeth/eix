@@ -29,22 +29,20 @@
 using std::set;
 using std::vector;
 
-Version *
-VersionList::best(bool allow_unstable) const
-{
+Version *VersionList::best(bool allow_unstable) const {
 	for(const_reverse_iterator ri(rbegin()); likely(ri != rend()); ++ri) {
-		if((*ri)->maskflags.isHardMasked())
+		if((*ri)->maskflags.isHardMasked()) {
 			continue;
+		}
 		if((*ri)->keyflags.isStable() ||
-			(allow_unstable && (*ri)->keyflags.isUnstable()))
+			(allow_unstable && (*ri)->keyflags.isUnstable())) {
 			return *ri;
+		}
 	}
 	return NULLPTR;
 }
 
-void
-SlotList::push_back_largest(Version *version)
-{
+void SlotList::push_back_largest(Version *version) {
 	const char *name((version->slotname).c_str());
 	for(iterator it(begin()); likely(it != end()); ++it) {
 		if(unlikely(strcmp(name, it->slotname()) == 0)) {
@@ -55,28 +53,23 @@ SlotList::push_back_largest(Version *version)
 	push_back(SlotVersions(name, version));
 }
 
-const VersionList *
-SlotList::operator[](const char *s) const
-{
+const VersionList *SlotList::operator[](const char *s) const {
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
-		if(unlikely(strcmp(s, it->slotname()) == 0))
+		if(unlikely(strcmp(s, it->slotname()) == 0)) {
 			return &(it->const_version_list());
+		}
 	}
 	return NULLPTR;
 }
 
-bool
-Package::calc_allow_upgrade_slots(const PortageSettings *ps) const
-{
+bool Package::calc_allow_upgrade_slots(const PortageSettings *ps) const {
 	if(likely(know_upgrade_slots))
 		return allow_upgrade_slots;
 	know_upgrade_slots = true;
 	return (allow_upgrade_slots = ps->calc_allow_upgrade_slots(this));
 }
 
-Version *
-Package::best(bool allow_unstable) const
-{
+Version *Package::best(bool allow_unstable) const {
 	for(const_reverse_iterator ri(rbegin()); likely(ri != rend()); ++ri) {
 		if(ri->maskflags.isHardMasked())
 			continue;
@@ -87,9 +80,7 @@ Package::best(bool allow_unstable) const
 	return NULLPTR;
 }
 
-void
-Package::build_slotlist() const
-{
+void Package::build_slotlist() const {
 	m_slotlist.clear();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		m_slotlist.push_back_largest(*it);
@@ -97,18 +88,15 @@ Package::build_slotlist() const
 }
 
 
-Version *
-Package::best_slot(const char *slot_name, bool allow_unstable) const
-{
+Version *Package::best_slot(const char *slot_name, bool allow_unstable) const {
 	const VersionList *vl(slotlist()[slot_name]);
-	if(vl == NULLPTR)
+	if(vl == NULLPTR) {
 		return NULLPTR;
+	}
 	return vl->best(allow_unstable);
 }
 
-void
-Package::best_slots(vector<Version*> *l, bool allow_unstable) const
-{
+void Package::best_slots(vector<Version*> *l, bool allow_unstable) const {
 	l->clear();
 	for(SlotList::const_iterator sit(slotlist().begin());
 		likely(sit != slotlist().end()); ++sit) {
@@ -119,9 +107,7 @@ Package::best_slots(vector<Version*> *l, bool allow_unstable) const
 	}
 }
 
-void
-Package::best_slots_upgrade(vector<Version*> *versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const
-{
+void Package::best_slots_upgrade(vector<Version*> *versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const {
 	versions->clear();
 	if(unlikely(v == NULLPTR))
 		return;
@@ -147,11 +133,13 @@ Package::best_slots_upgrade(vector<Version*> *versions, VarDbPkg *v, const Porta
 	}
 	if(need_best) {
 		Version *bv(best(allow_unstable));
-		if(bv != NULLPTR)
+		if(bv != NULLPTR) {
 			versionset.insert(bv);
+		}
 	}
-	if(versionset.empty())
+	if(versionset.empty()) {
 		return;
+	}
 	// Return only uninstalled versions:
 	for(set<Version*>::const_iterator it(versionset.begin());
 		likely(it != versionset.end()); ++it) {
@@ -163,46 +151,48 @@ Package::best_slots_upgrade(vector<Version*> *versions, VarDbPkg *v, const Porta
 				break;
 			}
 		}
-		if(!found)
+		if(!found) {
 			versions->push_back(*it);
+		}
 	}
 }
 
-bool
-Package::is_best_upgrade(bool check_slots, const Version *version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const
-{
-	if(unlikely(v == NULLPTR))
+bool Package::is_best_upgrade(bool check_slots, const Version *version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const {
+	if(unlikely(v == NULLPTR)) {
 		return false;
+	}
 	vector<InstVersion> *ins(v->getInstalledVector(*this));
-	if(ins == NULLPTR)
+	if(ins == NULLPTR) {
 		return false;
+	}
 	bool need_best(!check_slots);
 	if(check_slots) {
 		for(vector<InstVersion>::iterator it(ins->begin());
 			likely(it != ins->end()); ++it) {
 			if(guess_slotname(&(*it), v)) {
-				if(version == best_slot((it->slotname).c_str(), allow_unstable))
+				if(version == best_slot((it->slotname).c_str(), allow_unstable)) {
 					return true;
+				}
 			} else {
 				// Perhaps the slot was removed:
 				need_best = true;
 			}
 		}
 		if(!need_best) {
-			if(calc_allow_upgrade_slots(ps))
+			if(calc_allow_upgrade_slots(ps)) {
 				need_best = true;
+			}
 		}
 	}
 	if(need_best) {
-		if(version == best(allow_unstable))
+		if(version == best(allow_unstable)) {
 			return true;
+		}
 	}
 	return false;
 }
 
-const char *
-Package::slotname(const ExtendedVersion &v) const
-{
+const char *Package::slotname(const ExtendedVersion &v) const {
 	for(const_iterator i(begin()); likely(i != end()); ++i) {
 		if(**i == v) {
 			return (i->slotname).c_str();
@@ -211,9 +201,7 @@ Package::slotname(const ExtendedVersion &v) const
 	return NULLPTR;
 }
 
-bool
-Package::guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *force) const
-{
+bool Package::guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *force) const {
 	if(vardbpkg != NULLPTR) {
 		if(vardbpkg->care_slots()) {
 			if(vardbpkg->readSlot(*this, v)) {
@@ -224,15 +212,17 @@ Package::guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *fo
 			}
 			return false;
 		}
-		if(likely(v->know_slot))
+		if(likely(v->know_slot)) {
 			return true;
+		}
 		const char *s(slotname(*v));
 		if(s != NULLPTR) {
 			v->slotname = s;
 			v->know_slot = true;
 		}
-		if(vardbpkg->readSlot(*this, v))
+		if(vardbpkg->readSlot(*this, v)) {
 			return true;
+		}
 	} else {
 		if(v->know_slot) {
 			return true;
@@ -278,24 +268,27 @@ Package::guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *fo
 	-  3: p has no worse best_slot, but an identical
 	      from a different overlay
 	-  0: else */
-eix::TinySigned
-Package::worse_best_slots(const Package &p) const
-{
+eix::TinySigned Package::worse_best_slots(const Package &p) const {
 	eix::TinySigned ret(0);
 	for(SlotList::const_iterator it(slotlist().begin());
 		it != slotlist().end(); ++it) {
 		Version *t_best((it->const_version_list()).best());
-		if(!t_best)
+		if(!t_best) {
 			continue;
+		}
 		Version *p_best(p.best_slot(it->slotname()));
-		if(!p_best)
+		if(!p_best) {
 			return 1;
-		if(*t_best > *p_best)
+		}
+		if(*t_best > *p_best) {
 			return 1;
-		if(*t_best < *p_best)
+		}
+		if(*t_best < *p_best) {
 			continue;
-		if(t_best->overlay_key != p_best->overlay_key)
+		}
+		if(t_best->overlay_key != p_best->overlay_key) {
 			ret = 3;
+		}
 	}
 	return ret;
 }
@@ -307,21 +300,21 @@ Package::worse_best_slots(const Package &p) const
 	- -1: *this has a worse/missing best_slot, and p has not
 	-  2: p and *this both have a worse/missing best_slot
 	-  3: all matches, but at least one overlay differs */
-eix::TinySigned
-Package::compare_best_slots(const Package &p) const
-{
+eix::TinySigned Package::compare_best_slots(const Package &p) const {
 	eix::TinySigned worse(worse_best_slots(p));
 	eix::TinySigned better(p.worse_best_slots(*this));
-	if(worse == 1)
-	{
-		if(better == 1)
+	if(worse == 1) {
+		if(better == 1) {
 			return 2;
+		}
 		return 1;
 	}
-	if(better == 1)
+	if(better == 1) {
 		return -1;
-	if(worse || better)
+	}
+	if(worse || better) {
 		return 3;
+	}
 	return 0;
 }
 
@@ -332,26 +325,30 @@ Package::compare_best_slots(const Package &p) const
 	- -1: p is larger
 	-  3: same, but overlays (or slots if test_slot)
 	      are different */
-eix::TinySigned
-Package::compare_best(const Package &p, bool test_slot) const
-{
+eix::TinySigned Package::compare_best(const Package &p, bool test_slot) const {
 	Version *t_best(best());
 	Version *p_best(p.best());
 	if((t_best != NULLPTR) && (p_best != NULLPTR)) {
-		if(*t_best > *p_best)
+		if(*t_best > *p_best) {
 			return 1;
-		if(*t_best < *p_best)
+		}
+		if(*t_best < *p_best) {
 			return -1;
-		if(t_best->overlay_key != p_best->overlay_key)
+		}
+		if(t_best->overlay_key != p_best->overlay_key) {
 			return 3;
-		if(test_slot && (t_best->slotname != p_best->slotname))
+		}
+		if(test_slot && (t_best->slotname != p_best->slotname)) {
 			return 3;
+		}
 		return 0;
 	}
-	if(t_best != NULLPTR)
+	if(t_best != NULLPTR) {
 		return 1;
-	if(p_best != NULLPTR)
+	}
+	if(p_best != NULLPTR) {
 		return -1;
+	}
 	return 0;
 }
 
@@ -367,16 +364,15 @@ Package::compare_best(const Package &p, bool test_slot) const
 	-  2: upgrade and downgrade necessary
 	-  4: (if only_installed) nothing is installed,
 	      but one can be installed */
-eix::TinySigned
-Package::check_best_slots(VarDbPkg *v, bool only_installed) const
-{
+eix::TinySigned Package::check_best_slots(VarDbPkg *v, bool only_installed) const {
 	vector<InstVersion> *ins(NULLPTR);
 	if(likely(v != NULLPTR))
 		ins = v->getInstalledVector(*this);
 	if((ins == NULLPTR) || ins->empty()) {
 		if(!only_installed) {
-			if(best())
+			if(best()) {
 				return 4;
+			}
 		}
 		return 0;
 	}
@@ -412,8 +408,9 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 		return 2;
 	if(upgrade)
 		return 1;
-	if(downgrade)
+	if(downgrade) {
 		return -1;
+	}
 	return 0;
 }
 
@@ -430,59 +427,63 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 	      but slots are different.
 	-  4: (if only_installed) nothing is installed,
 	      but one can be installed */
-eix::TinySigned
-Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
-{
+eix::TinySigned Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const {
 	ExtendedVersion *t_best(best());
 	vector<InstVersion> *ins(NULLPTR);
 	if(likely(v != NULLPTR))
 		ins = v->getInstalledVector(*this);
 	if((ins != NULLPTR) && !ins->empty()) {
-		if(!t_best)
+		if(!t_best) {
 			return -1;
+		}
 		for(vector<InstVersion>::iterator it(ins->begin());
 			likely(it != ins->end()); ++it) {
 			eix::SignedBool vgl(BasicVersion::compare(*t_best, *it));
-			if(vgl > 0)
+			if(vgl > 0) {
 				continue;
-			if(vgl < 0)
+			}
+			if(vgl < 0) {
 				return -1;
-			if(!test_slot)
+			}
+			if(!test_slot) {
 				return 0;
+			}
 			if(guess_slotname(&(*it), v)) {
-				if(t_best->slotname == it->slotname)
+				if(t_best->slotname == it->slotname) {
 					return 0;
+				}
 			}
 			return 3;
 		}
 		return 1;
 	}
-	if((!only_installed) && t_best)
+	if((!only_installed) && t_best) {
 		return 4;
+	}
 	return 0;
 }
 
-void
-PackageSave::store(const Package *p)
-{
+void PackageSave::store(const Package *p) {
 	data.clear();
-	if(p == NULLPTR)
+	if(p == NULLPTR) {
 		return;
+	}
 	for(Package::const_iterator it(p->begin());
-		likely(it != p->end()); ++it)
+		likely(it != p->end()); ++it) {
 		data[*it] = KeywordSave(*it);
+	}
 }
 
-void
-PackageSave::restore(Package *p) const
-{
-	if(unlikely(data.empty()))
+void PackageSave::restore(Package *p) const {
+	if(unlikely(data.empty())) {
 		return;
+	}
 	for(Package::iterator it(p->begin());
 		likely(it != p->end()); ++it) {
 		DataType::const_iterator d(data.find(*it));
-		if(d == data.end())
+		if(d == data.end()) {
 			continue;
+		}
 		d->second.restore(*it);
 	}
 }

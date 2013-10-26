@@ -17,9 +17,7 @@
 using std::string;
 using std::vector;
 
-void
-StringListContent::finalize()
-{
+void StringListContent::finalize() {
 	if(likely(m_list.empty())) {
 		return;
 	}
@@ -46,9 +44,7 @@ StringListContent::finalize()
 }
 
 #ifdef STRINGLIST_FREE
-StringList&
-StringList::operator=(const StringList &s)
-{
+StringList& StringList::operator=(const StringList &s) {
 	ptr = s.ptr;
 	if(ptr != NULLPTR) {
 		++(ptr->usage);
@@ -56,8 +52,7 @@ StringList::operator=(const StringList &s)
 	return *this;
 }
 
-StringList::~StringList()
-{
+StringList::~StringList() {
 	if(ptr != NULLPTR) {
 		if(--(ptr->usage) == 0) {
 			delete ptr;
@@ -66,9 +61,7 @@ StringList::~StringList()
 }
 #endif
 
-void
-StringList::finalize()
-{
+void StringList::finalize() {
 	if(ptr != NULLPTR) {
 		ptr->finalize();
 		if(ptr->empty()) {
@@ -78,9 +71,7 @@ StringList::finalize()
 	}
 }
 
-void
-StringList::push_back(const std::string &s)
-{
+void StringList::push_back(const std::string &s) {
 	if(ptr == NULLPTR) {
 		ptr = new StringListContent;
 #ifdef STRINGLIST_FREE

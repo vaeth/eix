@@ -28,12 +28,12 @@ using std::vector;
 
 class RestrictMap : public map<string, ExtendedVersion::Restrict> {
 	private:
-		void mapinit(const char *s, ExtendedVersion::Restrict r) ATTRIBUTE_NONNULL_
-		{ (*this)[s] = r; }
+		void mapinit(const char *s, ExtendedVersion::Restrict r) ATTRIBUTE_NONNULL_ {
+			(*this)[s] = r;
+		}
 
 	public:
-		RestrictMap()
-		{
+		RestrictMap() {
 			mapinit("fetch",          ExtendedVersion::RESTRICT_FETCH);
 			mapinit("mirror",         ExtendedVersion::RESTRICT_MIRROR);
 			mapinit("primaryuri",     ExtendedVersion::RESTRICT_PRIMARYURI);
@@ -46,8 +46,7 @@ class RestrictMap : public map<string, ExtendedVersion::Restrict> {
 			mapinit("parallel",       ExtendedVersion::RESTRICT_PARALLEL);
 		}
 
-		ExtendedVersion::Restrict getRestrict(const string& s) const ATTRIBUTE_PURE
-		{
+		ExtendedVersion::Restrict getRestrict(const string& s) const ATTRIBUTE_PURE {
 			RestrictMap::const_iterator i(find(s));
 			if(i != end())
 				return i->second;
@@ -59,40 +58,36 @@ static RestrictMap *restrict_map = NULLPTR;
 
 class PropertiesMap : public map<string, ExtendedVersion::Properties> {
 	private:
-		void mapinit(const char *s, ExtendedVersion::Properties p) ATTRIBUTE_NONNULL_
-		{ (*this)[s] = p; }
+		void mapinit(const char *s, ExtendedVersion::Properties p) ATTRIBUTE_NONNULL_ {
+			(*this)[s] = p;
+		}
 	public:
-		PropertiesMap()
-		{
+		PropertiesMap() {
 			mapinit("interactive", ExtendedVersion::PROPERTIES_INTERACTIVE);
 			mapinit("live",        ExtendedVersion::PROPERTIES_LIVE);
 			mapinit("virtual",     ExtendedVersion::PROPERTIES_VIRTUAL);
 			mapinit("set",         ExtendedVersion::PROPERTIES_SET);
 		}
 
-		ExtendedVersion::Properties getProperties(const string& s) const ATTRIBUTE_PURE
-		{
+		ExtendedVersion::Properties getProperties(const string& s) const ATTRIBUTE_PURE {
 			PropertiesMap::const_iterator i(find(s));
-			if(i != end())
+			if(i != end()) {
 				return i->second;
+			}
 			return ExtendedVersion::PROPERTIES_NONE;
 		}
 };
 
 static PropertiesMap *properties_map = NULLPTR;
 
-void
-ExtendedVersion::init_static()
-{
+void ExtendedVersion::init_static() {
 	if(unlikely(restrict_map != NULLPTR))
 		return;
 	restrict_map = new RestrictMap;
 	properties_map = new PropertiesMap;
 }
 
-ExtendedVersion::Restrict
-ExtendedVersion::calcRestrict(const string &str)
-{
+ExtendedVersion::Restrict ExtendedVersion::calcRestrict(const string &str) {
 	eix_assert_static(restrict_map != NULLPTR);
 	Restrict r(RESTRICT_NONE);
 	vector<string> restrict_words;
@@ -104,9 +99,7 @@ ExtendedVersion::calcRestrict(const string &str)
 	return r;
 }
 
-ExtendedVersion::Properties
-ExtendedVersion::calcProperties(const string &str)
-{
+ExtendedVersion::Properties ExtendedVersion::calcProperties(const string &str) {
 	eix_assert_static(properties_map != NULLPTR);
 	Properties p(PROPERTIES_NONE);
 	vector<string> properties_words;
@@ -118,12 +111,9 @@ ExtendedVersion::calcProperties(const string &str)
 	return p;
 }
 
-bool
-ExtendedVersion::have_bin_pkg(const PortageSettings *ps, const Package *pkg) const
-{
+bool ExtendedVersion::have_bin_pkg(const PortageSettings *ps, const Package *pkg) const {
 	switch(have_bin_pkg_m) {
-		case HAVEBINPKG_UNKNOWN:
-			{
+		case HAVEBINPKG_UNKNOWN: {
 				const string &s((*ps)["PKGDIR"]);
 				if((s.empty()) || !is_file((s + "/" + pkg ->category + "/" + pkg->name + "-" + getFull() + ".tbz2").c_str())) {
 					have_bin_pkg_m = HAVEBINPKG_NO;

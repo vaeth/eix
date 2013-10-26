@@ -37,9 +37,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-static void
-print_help()
-{
+static void print_help() {
 	printf(_("Usage: %s [options] category/name-version[:slot][::repo] ...\n"
 "Output all arguments matching a list of mask\n"
 "Options:\n"
@@ -69,8 +67,7 @@ class MaskedOptionList : public OptionList {
 		MaskedOptionList();
 };
 
-MaskedOptionList::MaskedOptionList()
-{
+MaskedOptionList::MaskedOptionList() {
 	push_back(Option("help",      'h', Option::BOOLEAN, &rc_options.help));
 	push_back(Option("quiet",     'q', Option::BOOLEAN, &rc_options.be_quiet));
 	push_back(Option("file",      'f', Option::KEEP_STRING_OPTIONAL));
@@ -82,12 +79,10 @@ static void read_stdin(vector<string> *lines, string *name) ATTRIBUTE_NONNULL((1
 static void add_file(vector<string> *lines, const string &name, string *new_name = NULLPTR) ATTRIBUTE_NONNULL((1));
 static void add_file(PreList *pre_list, const string &name) ATTRIBUTE_NONNULL_;
 static void add_words(vector<string> *lines, const string &name) ATTRIBUTE_NONNULL_;
-static void read_args(MaskList<Mask> *mask_list, vector<string> &args, const ArgumentReader &ar) ATTRIBUTE_NONNULL_;
+static void read_args(MaskList<Mask> *mask_list, vector<string> *args, const ArgumentReader &ar) ATTRIBUTE_NONNULL_;
 static const char *opt_arg(ArgumentReader::const_iterator *arg, const ArgumentReader &ar) ATTRIBUTE_NONNULL_;
 
-static void
-read_stdin(vector<string> *lines, string *name)
-{
+static void read_stdin(vector<string> *lines, string *name) {
 	static size_t stdin_count(0);
 	while(likely(!std::cin.eof())) {
 		string line;
@@ -106,9 +101,7 @@ read_stdin(vector<string> *lines, string *name)
 	}
 }
 
-static void
-add_file(vector<string> *lines, const string &name, string *new_name)
-{
+static void add_file(vector<string> *lines, const string &name, string *new_name) {
 	if(name.empty() || (name == "-")) {
 		read_stdin(lines, new_name);
 	} else {
@@ -119,18 +112,14 @@ add_file(vector<string> *lines, const string &name, string *new_name)
 	}
 }
 
-static void
-add_file(PreList *pre_list, const string &name)
-{
+static void add_file(PreList *pre_list, const string &name) {
 	vector<string> lines;
 	string new_name;
 	add_file(&lines, name, &new_name);
 	pre_list->handle_file(lines, new_name, NULLPTR, false);
 }
 
-static void
-add_words(vector<string> *words, const string &name)
-{
+static void add_words(vector<string> *words, const string &name) {
 	vector<string> lines;
 	add_file(&lines, name);
 	for(vector<string>::const_iterator it(lines.begin());
@@ -139,9 +128,7 @@ add_words(vector<string> *words, const string &name)
 	}
 }
 
-static const char *
-opt_arg(ArgumentReader::const_iterator *arg, const ArgumentReader &ar)
-{
+static const char *opt_arg(ArgumentReader::const_iterator *arg, const ArgumentReader &ar) {
 	if(unlikely(++(*arg) == ar.end())) {
 		--(*arg);
 		return "";
@@ -149,9 +136,7 @@ opt_arg(ArgumentReader::const_iterator *arg, const ArgumentReader &ar)
 	return (*arg)->m_argument;
 }
 
-static void
-read_args(MaskList<Mask> *mask_list, vector<string> &args, const ArgumentReader &ar)
-{
+static void read_args(MaskList<Mask> *mask_list, vector<string> *args, const ArgumentReader &ar) {
 	PreList::LineNumber linenr(0);
 	PreList pre_list;
 	PreListEntry::FilenameIndex argindex;
@@ -170,19 +155,17 @@ read_args(MaskList<Mask> *mask_list, vector<string> &args, const ArgumentReader 
 				pre_list.handle_line(opt_arg(&arg, ar), argindex, ++linenr, false, false);
 				break;
 			case 'F':
-				add_words(&args, opt_arg(&arg, ar));
+				add_words(args, opt_arg(&arg, ar));
 				break;
 			default:
-				args.push_back(arg->m_argument);
+				args->push_back(arg->m_argument);
 				break;
 		}
 	}
 	pre_list.initialize(mask_list, Mask::maskMask);
 }
 
-int
-run_masked_packages(int argc, char *argv[])
-{
+int run_masked_packages(int argc, char *argv[]) {
 	memset(&rc_options, 0, sizeof(rc_options));
 	ArgumentReader argreader(argc, argv, MaskedOptionList());
 
@@ -193,7 +176,7 @@ run_masked_packages(int argc, char *argv[])
 
 	MaskList<Mask> mask_list;
 	vector<string> args;
-	read_args(&mask_list, args, argreader);
+	read_args(&mask_list, &args, argreader);
 
 	for(vector<string>::const_iterator it(args.begin());
 		likely(it != args.end()); ++it) {

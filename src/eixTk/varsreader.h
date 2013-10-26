@@ -46,8 +46,7 @@ class VarsReader {
 
 
 		/** Init and parse the FSM depending on supplied flags. */
-		explicit VarsReader(Flags flags)
-		{
+		explicit VarsReader(Flags flags) {
 			if((flags & PORTAGE_SECTIONS) != NONE) {
 				flags |= PORTAGE_ESCAPES;
 			}
@@ -58,8 +57,7 @@ class VarsReader {
 		}
 
 		/** Free memory. */
-		~VarsReader()
-		{
+		~VarsReader() {
 			if((parse_flags & INTO_MAP) == NONE)
 				delete vars;
 		}
@@ -69,44 +67,37 @@ class VarsReader {
 		bool read(const char *filename, std::string *errtext, bool noexist_ok, std::set<std::string> *sourced = NULLPTR, bool nodir = false) ATTRIBUTE_NONNULL((2));
 
 		/** Use a supplied map for variables. */
-		void useMap(my_map *vars_map) ATTRIBUTE_NONNULL_
-		{
+		void useMap(my_map *vars_map) ATTRIBUTE_NONNULL_ {
 			vars = vars_map;
 		}
 
 		/** Prefix (path resp. varname) used for sourcing */
-		void setPrefix(const std::string &prefix)
-		{
+		void setPrefix(const std::string &prefix) {
 			source_prefix = prefix;
 		}
 
 		/** Set array of keys which values should be prepended to the new value. */
-		void accumulatingKeys(const char **keys)
-		{
+		void accumulatingKeys(const char **keys) {
 			incremental_keys = keys;
 		}
 
 		/** Operator that helps us to be used like a map. */
-		std::string& operator[](const std::string& key)
-		{
+		std::string& operator[](const std::string& key) {
 			return (*vars)[key];
 		}
 
-		const std::string *find(const std::string& key) const ATTRIBUTE_PURE
-		{
+		const std::string *find(const std::string& key) const ATTRIBUTE_PURE {
 			const_iterator i(vars->find(key));
 			if(i == vars->end())
 				return NULLPTR;
 			return &(i->second);
 		}
 
-		VarsReader::const_iterator begin() const
-		{
+		VarsReader::const_iterator begin() const {
 			return vars->begin();
 		}
 
-		VarsReader::const_iterator end() const
-		{
+		VarsReader::const_iterator end() const {
 			return vars->end();
 		}
 
@@ -313,12 +304,14 @@ class VarsReader {
 		void initFsm();
 
 		/** True if c matches [A-Za-z0-9_] */
-		static bool isValidKeyCharacter(char c) ATTRIBUTE_PURE
-		{ return (isalnum(c, localeC) || (c == '_') || (c == '-')); }
+		static bool isValidKeyCharacter(char c) ATTRIBUTE_PURE {
+			return (isalnum(c, localeC) || (c == '_') || (c == '-'));
+		}
 
 		/** True if c matches [A-Za-z_] */
-		static bool isValidKeyCharacterStart(char c) ATTRIBUTE_PURE
-		{ return (isalpha(c, localeC) || (c == '_')); }
+		static bool isValidKeyCharacterStart(char c) ATTRIBUTE_PURE {
+			return (isalpha(c, localeC) || (c == '_'));
+		}
 
 		const char *file_name; /**< Name of parsed file. */
 
@@ -327,8 +320,9 @@ class VarsReader {
 		 * and returns if the state is STOP. */
 		bool runFsm();
 
-		bool isIncremental(const char *key)
-		{ return match_list(incremental_keys, key); }
+		bool isIncremental(const char *key) {
+			return match_list(incremental_keys, key);
+		}
 };
 
 #endif  // SRC_EIXTK_VARSREADER_H_

@@ -56,28 +56,28 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-inline static void
-INFO(const string &s)
-{ cout << s; }
+inline static void INFO(const string &s) {
+	cout << s;
+}
 
 class Pathname {
 	private:
 		string name;
 		bool must_resolve;
 	public:
-		bool is_a_match(const string &s) const
-		{
+		bool is_a_match(const string &s) const {
 			if(must_resolve) {
 				return !fnmatch(name.c_str(), s.c_str(), 0);
 			}
 			return s == name;
 		}
 
-		string resolve(PortageSettings *portage_settings) ATTRIBUTE_NONNULL_
-		{ return portage_settings->resolve_overlay_name(name, must_resolve); }
+		string resolve(PortageSettings *portage_settings) ATTRIBUTE_NONNULL_ {
+			return portage_settings->resolve_overlay_name(name, must_resolve);
+		}
 
-		Pathname(string n, bool r) : name(n), must_resolve(r)
-		{ }
+		Pathname(string n, bool r) : name(n), must_resolve(r) {
+		}
 };
 
 class Override {
@@ -85,11 +85,11 @@ class Override {
 		Pathname name;
 		string method;
 
-		explicit Override(Pathname n) : name(n)
-		{ }
+		explicit Override(Pathname n) : name(n) {
+		}
 
-		Override(Pathname n, string m) : name(n), method(m)
-		{ }
+		Override(Pathname n, string m) : name(n), method(m) {
+		}
 };
 
 class RepoName {
@@ -97,11 +97,11 @@ class RepoName {
 		Pathname name;
 		string repo_name;
 
-		explicit RepoName(Pathname n) : name(n)
-		{ }
+		explicit RepoName(Pathname n) : name(n) {
+		}
 
-		RepoName(Pathname n, string r) : name(n), repo_name(r)
-		{ }
+		RepoName(Pathname n, string r) : name(n), repo_name(r) {
+		}
 };
 
 static bool update(const char *outputfile, CacheTable *cache_table, PortageSettings *portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline *statusline, string *errtext) ATTRIBUTE_NONNULL_;
@@ -114,9 +114,7 @@ static void override_label(OverlayIdent *overlay, const vector<RepoName> &repo_n
 static bool stringstart_in_wordlist(const string &to_check, const vector<string> &wordlist);
 static void print_help();
 
-static void
-print_help()
-{
+static void print_help() {
 	printf(_("Usage: %s [options]\n"
 "\n"
 " -h, --help              show a short help screen\n"
@@ -178,8 +176,7 @@ class EixUpdateOptionList : public OptionList {
 		EixUpdateOptionList();
 };
 
-EixUpdateOptionList::EixUpdateOptionList()
-{
+EixUpdateOptionList::EixUpdateOptionList() {
 	push_back(Option("quiet",          'q',     Option::BOOLEAN,    &quiet));
 	push_back(Option("dump",            O_DUMP, Option::BOOLEAN_T,  &dump_eixrc));
 	push_back(Option("dump-defaults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &dump_defaults));
@@ -203,17 +200,13 @@ EixUpdateOptionList::EixUpdateOptionList()
 static PercentStatus *reading_percent_status;
 
 
-static void
-add_pathnames(vector<Pathname> *add_list, const vector<string> &to_add, bool must_resolve)
-{
+static void add_pathnames(vector<Pathname> *add_list, const vector<string> &to_add, bool must_resolve) {
 	for(vector<string>::const_iterator it(to_add.begin());
 		unlikely(it != to_add.end()); ++it)
 		add_list->push_back(Pathname(*it, must_resolve));
 }
 
-static void
-add_override(vector<Override> *override_list, EixRc *eixrc, const char *s)
-{
+static void add_override(vector<Override> *override_list, EixRc *eixrc, const char *s) {
 	vector<string> v;
 	split_string(&v, (*eixrc)[s], true);
 	if(unlikely(v.size() & 1)) {
@@ -227,9 +220,7 @@ add_override(vector<Override> *override_list, EixRc *eixrc, const char *s)
 	}
 }
 
-static void
-add_reponames(vector<RepoName> *repo_names, EixRc *eixrc, const char *s)
-{
+static void add_reponames(vector<RepoName> *repo_names, EixRc *eixrc, const char *s) {
 	vector<string> v;
 	split_string(&v, (*eixrc)[s], true);
 	if(unlikely(v.size() & 1)) {
@@ -243,9 +234,7 @@ add_reponames(vector<RepoName> *repo_names, EixRc *eixrc, const char *s)
 	}
 }
 
-static void
-add_virtuals(vector<Override> *override_list, vector<Pathname> *add, vector<RepoName> *repo_names, const string &cachefile, const string &eprefix_virtual)
-{
+static void add_virtuals(vector<Override> *override_list, vector<Pathname> *add, vector<RepoName> *repo_names, const string &cachefile, const string &eprefix_virtual) {
 	Database db;
 	if(unlikely(!db.openread(cachefile.c_str()))) {
 		INFO(eix::format(_(
@@ -274,9 +263,7 @@ add_virtuals(vector<Override> *override_list, vector<Pathname> *add, vector<Repo
 	}
 }
 
-static void
-override_label(OverlayIdent *overlay, const vector<RepoName> &repo_names)
-{
+static void override_label(OverlayIdent *overlay, const vector<RepoName> &repo_names) {
 	for(vector<RepoName>::const_iterator it(repo_names.begin());
 		it != repo_names.end(); ++it) {
 		if(it->name.is_a_match(overlay->path)) {
@@ -285,9 +272,7 @@ override_label(OverlayIdent *overlay, const vector<RepoName> &repo_names)
 	}
 }
 
-static bool
-stringstart_in_wordlist(const string &to_check, const vector<string> &wordlist)
-{
+static bool stringstart_in_wordlist(const string &to_check, const vector<string> &wordlist) {
 	for(vector<string>::const_iterator it(wordlist.begin());
 		it != wordlist.end(); ++it) {
 		if(to_check.compare(0, it->size(), *it) == 0) {
@@ -297,9 +282,7 @@ stringstart_in_wordlist(const string &to_check, const vector<string> &wordlist)
 	return false;
 }
 
-int
-run_eix_update(int argc, char *argv[])
-{
+int run_eix_update(int argc, char *argv[]) {
 	// Initialize static classes
 	ExtendedVersion::init_static();
 	PortageSettings::init_static();
@@ -312,9 +295,8 @@ run_eix_update(int argc, char *argv[])
 	EixRc &eixrc(get_eixrc(UPDATE_VARS_PREFIX));
 	drop_permissions(&eixrc);
 	Depend::use_depend = eixrc.getBool("DEP");
-	string eix_cachefile(eixrc["EIX_CACHEFILE"]);
-
-	{ /* calculate defaults for use_{percentage,status} */
+	string eix_cachefile(eixrc["EIX_CACHEFILE"]); {
+	/* calculate defaults for use_{percentage,status} */
 		bool percentage_tty(false);
 		if(eixrc.getBool("NOPERCENTAGE")) {
 			use_percentage = false;
@@ -501,8 +483,7 @@ run_eix_update(int argc, char *argv[])
 	}
 
 	/* Create CacheTable and fill with PORTDIR and PORTDIR_OVERLAY. */
-	CacheTable table(eixrc["CACHE_METHOD_PARSE"]);
-	{
+	CacheTable table(eixrc["CACHE_METHOD_PARSE"]); {
 		map<string, string> *override_ptr(override.size() ? &override : NULLPTR);
 		if(likely(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 				portage_settings["PORTDIR"].c_str(), true) == excluded_overlays.end())) {
@@ -555,17 +536,13 @@ run_eix_update(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
-static void
-error_callback(const string &str)
-{
+static void error_callback(const string &str) {
 	reading_percent_status->interprint_start();
 	cerr << str << endl;
 	reading_percent_status->interprint_end();
 }
 
-static bool
-update(const char *outputfile, CacheTable *cache_table, PortageSettings *portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline *statusline, string *errtext)
-{
+static bool update(const char *outputfile, CacheTable *cache_table, PortageSettings *portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline *statusline, string *errtext) {
 	DBHeader dbheader;
 	vector<string> categories;
 	portage_settings->pushback_categories(&categories);

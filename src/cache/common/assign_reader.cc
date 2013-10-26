@@ -32,9 +32,7 @@ using std::ifstream;
 
 static map<string, string> *get_map_from_cache(const char *file) ATTRIBUTE_NONNULL_;
 
-static map<string, string> *
-get_map_from_cache(const char *file)
-{
+static map<string, string> *get_map_from_cache(const char *file) {
 	static string *oldfile = NULLPTR;
 	static map<string, string> *cf;
 	if(unlikely(oldfile == NULLPTR)) {
@@ -64,9 +62,7 @@ get_map_from_cache(const char *file)
 	return cf;
 }
 
-const char *
-assign_get_md5sum(const string &filename)
-{
+const char *assign_get_md5sum(const string &filename) {
 	map<string, string> *cf(get_map_from_cache(filename.c_str()));
 	if(unlikely(cf == NULLPTR)) {
 		return NULLPTR;
@@ -79,10 +75,8 @@ assign_get_md5sum(const string &filename)
 }
 
 /** Read stability and other data from an "assign type" cache file. */
-void
-assign_get_keywords_slot_iuse_restrict(const string &filename, string *keywords, string *slotname, string *iuse, string *restr, string *props,
-	Depend *dep, BasicCache::ErrorCallback error_callback)
-{
+void assign_get_keywords_slot_iuse_restrict(const string &filename, string *keywords, string *slotname, string *iuse, string *restr, string *props,
+	Depend *dep, BasicCache::ErrorCallback error_callback) {
 	map<string, string> *cf(get_map_from_cache(filename.c_str()));
 	if(unlikely(cf == NULLPTR)) {
 		error_callback(eix::format(_("Can't read cache file %s: %s"))
@@ -100,9 +94,7 @@ assign_get_keywords_slot_iuse_restrict(const string &filename, string *keywords,
 }
 
 /** Read an "assign type" cache file. */
-void
-assign_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback)
-{
+void assign_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback) {
 	map<string, string> *cf(get_map_from_cache(filename));
 	if(unlikely(cf == NULLPTR)) {
 		error_callback(eix::format(_("Can't read cache file %s: %s"))

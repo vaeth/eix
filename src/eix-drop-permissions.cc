@@ -19,9 +19,7 @@
 #include "main/main.h"
 #include "various/drop_permissions.h"
 
-static void
-print_help()
-{
+static void print_help() {
 	printf(_("Usage: %s [--] command [options]\n"
 "Executes command [options] with the permissions according to the eix variables\n"
 "EIX_USER, EIX_GROUP, EIX_UID, and EIX_GID.\n"
@@ -30,9 +28,7 @@ print_help()
 "further information.\n"), program_name);
 }
 
-int
-run_eix_drop_permissions(int argc, char *argv[])
-{
+int run_eix_drop_permissions(int argc, char *argv[]) {
 	EixRc &eixrc(get_eixrc(DROP_VARS_PREFIX));
 	drop_permissions(&eixrc);
 	if(argc > 0) {

@@ -24,18 +24,12 @@ class StringList;
 class StringListContent;
 class OutputString;
 
-inline static bool
-operator<(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
-inline static bool
-operator>(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
-inline static bool
-operator<=(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
-inline static bool
-operator>=(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
-inline static bool
-operator==(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
-inline static bool
-operator!=(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
+inline static bool operator<(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
+inline static bool operator>(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
+inline static bool operator<=(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
+inline static bool operator>=(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
+inline static bool operator==(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
+inline static bool operator!=(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
 
 class StringListContent {
 		friend bool operator<(const StringListContent &a, const StringListContent &b);
@@ -54,63 +48,47 @@ class StringListContent {
 #endif
 		void finalize();
 
-		bool empty()
-		{ return m_list.empty(); }
+		bool empty() {
+			return m_list.empty();
+		}
 
-		void push_back(const std::string &s)
-		{ m_list.push_back(s); }
+		void push_back(const std::string &s) {
+			m_list.push_back(s);
+		}
 
 		void append_to_string(OutputString *s, const OutputString &skip) const ATTRIBUTE_NONNULL_;
 };
 
-inline static bool
-operator<(const StringListContent &a, const StringListContent &b)
-{
+inline static bool operator<(const StringListContent &a, const StringListContent &b) {
 	return (a.m_list < b.m_list);
 }
 
-inline static bool
-operator>(const StringListContent &a, const StringListContent &b)
-{
+inline static bool operator>(const StringListContent &a, const StringListContent &b) {
 	return (a.m_list > b.m_list);
 }
 
-inline static bool
-operator<=(const StringListContent &a, const StringListContent &b)
-{
+inline static bool operator<=(const StringListContent &a, const StringListContent &b) {
 	return (a.m_list <= b.m_list);
 }
 
-inline static bool
-operator>=(const StringListContent &a, const StringListContent &b)
-{
+inline static bool operator>=(const StringListContent &a, const StringListContent &b) {
 	return (a.m_list >= b.m_list);
 }
 
-inline static bool
-operator==(const StringListContent &a, const StringListContent &b)
-{
+inline static bool operator==(const StringListContent &a, const StringListContent &b) {
 	return (a.m_list == b.m_list);
 }
 
-inline static bool
-operator!=(const StringListContent &a, const StringListContent &b)
-{
+inline static bool operator!=(const StringListContent &a, const StringListContent &b) {
 	return (a.m_list != b.m_list);
 }
 
-inline static bool
-operator<(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
-inline static bool
-operator>(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
-inline static bool
-operator<=(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
-inline static bool
-operator>=(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
-inline static bool
-operator==(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
-inline static bool
-operator!=(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
+inline static bool operator<(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
+inline static bool operator>(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
+inline static bool operator<=(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
+inline static bool operator>=(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
+inline static bool operator==(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
+inline static bool operator!=(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
 
 class StringList {
 		friend bool operator<(const StringList &a, const StringList &b);
@@ -124,64 +102,54 @@ class StringList {
 		StringListContent *ptr;
 
 	public:
-		StringList() : ptr(NULLPTR)
-		{ }
+		StringList() : ptr(NULLPTR) {
+		}
 
 #ifdef STRINGLIST_FREE
 		StringList& operator=(const StringList &s);
 
-		StringList(const StringList &s)
-		{ *this = s; }
+		StringList(const StringList &s) {
+			*this = s;
+		}
 
 		~StringList();
 #endif
 		void finalize();
 
-		bool empty() const
-		{ return (ptr == NULLPTR); }
+		bool empty() const {
+			return (ptr == NULLPTR);
+		}
 
 		void push_back(const std::string &s);
 
-		void append_to_string(OutputString *s, const OutputString &skip) const ATTRIBUTE_NONNULL_
-		{
+		void append_to_string(OutputString *s, const OutputString &skip) const ATTRIBUTE_NONNULL_ {
 			if(ptr != NULLPTR) {
 				ptr->append_to_string(s, skip);
 			}
 		}
 };
 
-inline static bool
-operator<(const StringList &a, const StringList &b)
-{
+inline static bool operator<(const StringList &a, const StringList &b) {
 	return (*(a.ptr) < *(b.ptr));
 }
 
-inline static bool
-operator>(const StringList &a, const StringList &b)
-{
+inline static bool operator>(const StringList &a, const StringList &b) {
 	return (*(a.ptr) > *(b.ptr));
 }
 
-inline static bool
-operator<=(const StringList &a, const StringList &b)
-{
+inline static bool operator<=(const StringList &a, const StringList &b) {
 	return (*(a.ptr) <= *(b.ptr));
 }
 
-inline static bool
-operator>=(const StringList &a, const StringList &b)
-{
+inline static bool operator>=(const StringList &a, const StringList &b) {
 	return (*(a.ptr) >= *(b.ptr));
 }
 
-inline static bool
-operator==(const StringList &a, const StringList &b)
-{
+inline static bool operator==(const StringList &a, const StringList &b) {
 	return (*(a.ptr) == *(b.ptr));
 }
-inline static bool
-operator!=(const StringList &a, const StringList &b)
-{
+
+inline static bool operator!=(const StringList &a, const StringList &b) {
 	return (*(a.ptr) != *(b.ptr));
 }
 

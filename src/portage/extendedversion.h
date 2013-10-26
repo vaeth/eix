@@ -22,8 +22,7 @@
 class Package;
 class PortageSettings;
 
-class ExtendedVersion : public BasicVersion
-{
+class ExtendedVersion : public BasicVersion {
 	private:
 		typedef eix::UChar HaveBinPkg;
 		static const HaveBinPkg
@@ -83,8 +82,8 @@ class ExtendedVersion : public BasicVersion
 			have_bin_pkg_m(HAVEBINPKG_UNKNOWN),
 			restrictFlags(RESTRICT_NONE),
 			propertiesFlags(PROPERTIES_NONE),
-			overlay_key(0), priority(0)
-		{ }
+			overlay_key(0), priority(0) {
+		}
 
 		static Restrict calcRestrict(const std::string& str);
 
@@ -92,25 +91,31 @@ class ExtendedVersion : public BasicVersion
 
 		static void init_static();
 
-		void set_restrict(const std::string& str)
-		{ restrictFlags = calcRestrict(str); }
+		void set_restrict(const std::string& str) {
+			restrictFlags = calcRestrict(str);
+		}
 
-		void set_properties(const std::string& str)
-		{ propertiesFlags = calcProperties(str); }
+		void set_properties(const std::string& str) {
+			propertiesFlags = calcProperties(str);
+		}
 
-		void set_slotname(const std::string& str)
-		{ slot_subslot(str, &slotname, &subslotname); }
+		void set_slotname(const std::string& str) {
+			slot_subslot(str, &slotname, &subslotname);
+		}
 
-		std::string get_shortfullslot() const
-		{ return (subslotname.empty() ? slotname : (slotname + "/" + subslotname)); }
+		std::string get_shortfullslot() const {
+			return (subslotname.empty() ? slotname : (slotname + "/" + subslotname));
+		}
 
 		std::string get_longfullslot() const;
 
-		std::string get_longslot() const
-		{ return (slotname.empty() ? "0" : slotname); }
+		std::string get_longslot() const {
+			return (slotname.empty() ? "0" : slotname);
+		}
 
-		void assign_basic_version(const BasicVersion &b)
-		{ *static_cast<BasicVersion *>(this) = b; }
+		void assign_basic_version(const BasicVersion &b) {
+			*static_cast<BasicVersion *>(this) = b;
+		}
 
 		bool have_bin_pkg(const PortageSettings *ps, const Package *pkg) const;
 
@@ -119,41 +124,23 @@ class ExtendedVersion : public BasicVersion
 
 
 // Short compare-stuff
-inline static bool
-operator<(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
-inline static bool
-operator<(const ExtendedVersion& left, const ExtendedVersion& right)
-{ return ExtendedVersion::compare(left, right) < 0; }
+inline static bool operator<(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+inline static bool operator<(const ExtendedVersion& left, const ExtendedVersion& right) { return ExtendedVersion::compare(left, right) < 0; }
 
-inline static bool
-operator>(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
-inline static bool
-operator>(const ExtendedVersion& left, const ExtendedVersion& right)
-{ return ExtendedVersion::compare(left, right) > 0; }
+inline static bool operator>(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+inline static bool operator>(const ExtendedVersion& left, const ExtendedVersion& right) { return ExtendedVersion::compare(left, right) > 0; }
 
-inline static bool
-operator==(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
-inline static bool
-operator==(const ExtendedVersion& left, const ExtendedVersion& right)
-{ return ExtendedVersion::compare(left, right) == 0; }
+inline static bool operator==(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+inline static bool operator==(const ExtendedVersion& left, const ExtendedVersion& right) { return ExtendedVersion::compare(left, right) == 0; }
 
-inline static bool
-operator!=(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
-inline static bool
-operator!=(const ExtendedVersion& left, const ExtendedVersion& right)
-{ return ExtendedVersion::compare(left, right) != 0; }
+inline static bool operator!=(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+inline static bool operator!=(const ExtendedVersion& left, const ExtendedVersion& right) { return ExtendedVersion::compare(left, right) != 0; }
 
-inline static bool
-operator>=(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
-inline static bool
-operator>=(const ExtendedVersion& left, const ExtendedVersion& right)
-{ return ExtendedVersion::compare(left, right) >= 0; }
+inline static bool operator>=(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+inline static bool operator>=(const ExtendedVersion& left, const ExtendedVersion& right) { return ExtendedVersion::compare(left, right) >= 0; }
 
-inline static bool
-operator<=(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
-inline static bool
-operator<=(const ExtendedVersion& left, const ExtendedVersion& right)
-{ return ExtendedVersion::compare(left, right) <= 0; }
+inline static bool operator<=(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+inline static bool operator<=(const ExtendedVersion& left, const ExtendedVersion& right) { return ExtendedVersion::compare(left, right) <= 0; }
 
 
 #endif  // SRC_PORTAGE_EXTENDEDVERSION_H_

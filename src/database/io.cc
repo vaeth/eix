@@ -14,7 +14,7 @@
 
 #include "database/header.h"
 #include "database/io.h"
-#include "eixTk/auto_ptr.h"
+#include "eixTk/auto_list.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/i18n.h"
@@ -25,25 +25,21 @@
 using std::string;
 using std::vector;
 
-bool File::openread(const char *name)
-{
+bool File::openread(const char *name) {
 	return ((fp = fopen(name, "rb")) != NULLPTR);
 }
 
-bool File::openwrite(const char *name)
-{
+bool File::openwrite(const char *name) {
 	return ((fp = fopen(name, "wb")) != NULLPTR);
 }
 
-File::~File()
-{
+File::~File() {
 	if(likely(fp != NULLPTR)) {
 		fclose(fp);
 	}
 }
 
-bool File::seek(eix::OffsetType offset, int whence, std::string *errtext)
-{
+bool File::seek(eix::OffsetType offset, int whence, std::string *errtext) {
 #ifdef HAVE_FSEEKO
 	if(likely(fseeko(fp, offset, whence) == 0))
 #else
@@ -56,9 +52,7 @@ bool File::seek(eix::OffsetType offset, int whence, std::string *errtext)
 	return false;
 }
 
-eix::OffsetType
-File::tell()
-{
+eix::OffsetType File::tell() {
 #ifdef HAVE_FSEEKO
 	// We rely on autoconf whose documentation states:
 	// All systems with fseeko() also supply ftello()
@@ -68,9 +62,7 @@ File::tell()
 #endif
 }
 
-bool
-File::read_string_plain(char *s, string::size_type len, string *errtext)
-{
+bool File::read_string_plain(char *s, string::size_type len, string *errtext) {
 	if(likely(read(s, len))) {
 		return true;
 	}
@@ -78,9 +70,7 @@ File::read_string_plain(char *s, string::size_type len, string *errtext)
 	return false;
 }
 
-bool
-File::write_string_plain(const string &str, string *errtext)
-{
+bool File::write_string_plain(const string &str, string *errtext) {
 	if(likely(write(str))) {
 		return true;
 	}
@@ -88,9 +78,7 @@ File::write_string_plain(const string &str, string *errtext)
 	return false;
 }
 
-void
-File::readError(string *errtext)
-{
+void File::readError(string *errtext) {
 	if(errtext != NULLPTR) {
 		*errtext = (feof(fp) ?
 			_("error while reading from database: end of file") :
@@ -98,17 +86,13 @@ File::readError(string *errtext)
 	}
 }
 
-void
-File::writeError(string *errtext)
-{
+void File::writeError(string *errtext) {
 	if(errtext != NULLPTR) {
 		*errtext = _("error while writing to database");
 	}
 }
 
-bool
-Database::readUChar(eix::UChar *c, string *errtext)
-{
+bool Database::readUChar(eix::UChar *c, string *errtext) {
 	int ch(getch());
 	if(likely(ch != EOF)) {
 		*c = eix::UChar(ch);
@@ -118,9 +102,7 @@ Database::readUChar(eix::UChar *c, string *errtext)
 	return false;
 }
 
-bool
-Database::writeUChar(eix::UChar c, string *errtext)
-{
+bool Database::writeUChar(eix::UChar c, string *errtext) {
 	if(counting) {
 		++counter;
 	} else if(unlikely(!putch(c))) {
@@ -130,9 +112,7 @@ Database::writeUChar(eix::UChar c, string *errtext)
 	return true;
 }
 
-bool
-Database::write_string_plain(const string &str, string *errtext)
-{
+bool Database::write_string_plain(const string &str, string *errtext) {
 	if(counting) {
 GCC_DIAG_OFF(sign-conversion)
 		counter += str.size();
@@ -142,9 +122,7 @@ GCC_DIAG_ON(sign-conversion)
 	return File::write_string_plain(str, errtext);
 }
 
-bool
-Database::read_string(string *s, string *errtext)
-{
+bool Database::read_string(string *s, string *errtext) {
 	string::size_type len;
 	if(unlikely(!read_num(&len, errtext))) {
 		return false;
@@ -158,16 +136,12 @@ Database::read_string(string *s, string *errtext)
 	return false;
 }
 
-bool
-Database::write_string(const string &str, string *errtext)
-{
+bool Database::write_string(const string &str, string *errtext) {
 	return (likely(write_num(str.size(), errtext)) &&
 		likely(write_string_plain(str, errtext)));
 }
 
-bool
-Database::write_hash_words(const StringHash& hash, const vector<string>& words, string *errtext)
-{
+bool Database::write_hash_words(const StringHash& hash, const vector<string>& words, string *errtext) {
 	if(unlikely(!write_num(words.size(), errtext))) {
 		return false;
 	}
@@ -179,9 +153,7 @@ Database::write_hash_words(const StringHash& hash, const vector<string>& words, 
 	return true;
 }
 
-bool
-Database::read_hash_words(const StringHash& hash, vector<string> *s, string *errtext)
-{
+bool Database::read_hash_words(const StringHash& hash, vector<string> *s, string *errtext) {
 	vector<string>::size_type e;
 	if(unlikely(!read_num(&e, errtext))) {
 		return false;
@@ -195,9 +167,7 @@ Database::read_hash_words(const StringHash& hash, vector<string> *s, string *err
 	return true;
 }
 
-bool
-Database::read_hash_words(const StringHash& hash, string *s, string *errtext)
-{
+bool Database::read_hash_words(const StringHash& hash, string *s, string *errtext) {
 	s->clear();
 	vector<string>::size_type e;
 	if(unlikely(!read_num(&e, errtext))) {
@@ -208,8 +178,9 @@ Database::read_hash_words(const StringHash& hash, string *s, string *errtext)
 		if(unlikely(!read_hash_string(hash, &r, errtext))) {
 			return false;
 		}
-		if(!s->empty())
+		if(!s->empty()) {
 			s->append(1, ' ');
+		}
 		s->append(r);
 	}
 	return true;

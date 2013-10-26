@@ -38,6 +38,7 @@
 
 #include <string>
 
+#include "eixTk/constexpr.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/sysutils.h"
@@ -49,9 +50,7 @@ using std::string;
  * @param u pointer to uid_t .. uid is stored there.
  * @param name name of user
  * @return true if user exists */
-bool
-get_uid_of(const char *name, uid_t *u)
-{
+bool get_uid_of(const char *name, uid_t *u) {
 	struct passwd ps, *pwd;
 	char c[5000];
 	if((getpwnam_r(name, &ps, c, 4999, &pwd) != 0) || (pwd == NULLPTR)) {
@@ -65,9 +64,7 @@ get_uid_of(const char *name, uid_t *u)
  * @param g pointer to gid_t .. gid is stored there.
  * @param name name of group
  * @return true if group exists */
-bool
-get_gid_of(const char *name, gid_t *g)
-{
+bool get_gid_of(const char *name, gid_t *g) {
 	struct group gs, *grp;
 	char c[5000];
 	if((getgrnam_r(name, &gs, c, 4999, &grp) != 0) || (grp == NULLPTR)) {
@@ -78,9 +75,7 @@ get_gid_of(const char *name, gid_t *g)
 }
 
 /** @return true if file is a directory or a symlink to some. */
-bool
-is_dir(const char *file)
-{
+bool is_dir(const char *file) {
 	struct stat stat_buf;
 	if(unlikely(stat(file, &stat_buf) != 0))
 		return false;
@@ -88,9 +83,7 @@ is_dir(const char *file)
 }
 
 /** @return true if file is a plain file or a symlink to some. */
-bool
-is_file(const char *file)
-{
+bool is_file(const char *file) {
 	struct stat stat_buf;
 	if(unlikely(stat(file, &stat_buf) != 0))
 		return false;
@@ -98,9 +91,7 @@ is_file(const char *file)
 }
 
 /** @return true if file is a plain file (and not a symlink). */
-bool
-is_pure_file(const char *file)
-{
+bool is_pure_file(const char *file) {
 	struct stat stat_buf;
 	if(unlikely(lstat(file, &stat_buf) != 0))
 		return false;
@@ -108,9 +99,7 @@ is_pure_file(const char *file)
 }
 
 /** @return mtime of file. */
-time_t
-get_mtime(const char *file)
-{
+time_t get_mtime(const char *file) {
 	struct stat stat_b;
 	if(unlikely(stat(file, &stat_b)))
 		return 0;
@@ -118,10 +107,8 @@ get_mtime(const char *file)
 }
 
 /** @return mydate formatted according to locales and dateFormat */
-const char *
-date_conv(const char *dateFormat, time_t mydate)
-{
-	static const int max_datelen = 256;
+const char *date_conv(const char *dateFormat, time_t mydate) {
+	static CONSTEXPR int max_datelen = 256;
 	static char buffer[max_datelen];
 	string old_lcall = setlocale(LC_ALL, NULLPTR);
 	setlocale(LC_ALL, "");
@@ -133,9 +120,7 @@ date_conv(const char *dateFormat, time_t mydate)
 
 /** @return true in case of success */
 #ifdef TIOCGWINSZ
-bool
-get_geometry(unsigned int *lines, unsigned int *columns)
-{
+bool get_geometry(unsigned int *lines, unsigned int *columns) {
 	struct winsize win;
 	if(ioctl(1, TIOCGWINSZ, &win) == 0) {
 		if((win.ws_row >= 0) && (win.ws_col >= 0)) {
@@ -147,9 +132,7 @@ get_geometry(unsigned int *lines, unsigned int *columns)
 	return false;
 }
 #else
-bool
-get_geometry(unsigned int *lines ATTRIBUTE_UNUSED, unsigned int *columns ATTRIBUTE_UNUSED)
-{
+bool get_geometry(unsigned int *lines ATTRIBUTE_UNUSED, unsigned int *columns ATTRIBUTE_UNUSED) {
 	UNUSED(lines);
 	UNUSED(columns);
 	return false;

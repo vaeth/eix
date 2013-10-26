@@ -30,8 +30,7 @@ namespace eix {
 	typedef off_t OffsetType;
 
 	inline static eix::SignedBool
-	toSignedBool(int a)
-	{
+	toSignedBool(int a) {
 		if(a == 0) {
 			return 0;
 		} else {

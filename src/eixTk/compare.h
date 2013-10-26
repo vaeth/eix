@@ -19,10 +19,7 @@ namespace eix {
 	/// @return 0 if equal, 1 if left > right or -1 if left < right.
 	template<typename T> inline static eix::SignedBool default_compare(const T& left, const T& right);
 
-	template<typename T>
-	inline static eix::SignedBool
-	default_compare(const T& left, const T& right)
-	{
+	template<typename T> inline static eix::SignedBool default_compare(const T& left, const T& right) {
 		if(left == right) {
 			return 0;
 		}

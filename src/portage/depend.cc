@@ -9,6 +9,7 @@
 
 #include <string>
 
+#include "eixTk/constexpr.h"
 #include "eixTk/likely.h"
 #include "eixTk/stringutils.h"
 #include "portage/depend.h"
@@ -20,39 +21,36 @@ bool Depend::use_depend;
 const char Depend::c_depend[] = "${DEPEND}";
 const char Depend::c_rdepend[] = "${RDEPEND}";
 
-static const char the_same = '"';
+static CONSTEXPR char the_same = '"';
 
-static bool subst_the_same(string &in, const string &from);
+static bool subst_the_same(string *in, const string &from);
 
-static bool
-subst_the_same(string &in, const string &from) {
+static bool subst_the_same(string *in, const string &from) {
 	if(from.empty()) {
 		return false;
 	}
-	string::size_type pos(in.find(from));
+	string::size_type pos(in->find(from));
 	if(pos == string::npos) {
 		return false;
 	}
 	string::size_type len(from.size());
 	string::size_type next(pos + len);
-	if(next < in.size()) {
-		if(in[next] != ' ') {
+	if(next < in->size()) {
+		if((*in)[next] != ' ') {
 			return false;
 		}
 	}
 	if(pos > 0) {
-		if(in[pos - 1] != ' ') {
+		if((*in)[pos - 1] != ' ') {
 			return false;
 		}
 	}
-	in.erase(pos, len - 1);
-	in[pos] = the_same;
+	in->erase(pos, len - 1);
+	(*in)[pos] = the_same;
 	return true;
 }
 
-void
-Depend::set(const string &depend, const string &rdepend, const string &pdepend, const string &hdepend, bool normspace)
-{
+void Depend::set(const string &depend, const string &rdepend, const string &pdepend, const string &hdepend, bool normspace) {
 	if(!use_depend) {
 		return;
 	}
@@ -66,14 +64,12 @@ Depend::set(const string &depend, const string &rdepend, const string &pdepend, 
 		trimall(&m_pdepend);
 		trimall(&m_hdepend);
 	}
-	subst_the_same(m_depend, m_rdepend) || \
-		subst_the_same(m_rdepend, m_depend);
+	subst_the_same(&m_depend, m_rdepend) || \
+		subst_the_same(&m_rdepend, m_depend);
 	obsolete = false;
 }
 
-string
-Depend::subst(const string &in, const string &text, bool obs)
-{
+string Depend::subst(const string &in, const string &text, bool obs) {
 	string::size_type pos(in.find(the_same));
 	if(pos == string::npos) {
 		return in;
@@ -93,9 +89,7 @@ Depend::subst(const string &in, const string &text, bool obs)
 	return ret;
 }
 
-bool
-Depend::operator==(const Depend &d) const
-{
+bool Depend::operator==(const Depend &d) const {
 	return ((get_depend() == d.get_depend()) &&
 		(get_rdepend() == d.get_rdepend()) &&
 		(get_pdepend() == d.get_pdepend()) &&

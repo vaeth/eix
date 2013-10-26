@@ -42,9 +42,8 @@ class EixRc {
 	public:
 		std::string m_eprefixconf;
 
-		explicit EixRc(const char *prefix) ATTRIBUTE_NONNULL_ :
-			varprefix(prefix)
-		{ }
+		explicit EixRc(const char *prefix) ATTRIBUTE_NONNULL_ : varprefix(prefix) {
+		}
 
 		typedef std::vector<EixRcOption>::size_type default_index;
 		typedef std::pair<RedAtom, RedAtom> RedPair;
@@ -55,8 +54,9 @@ class EixRc {
 
 		void addDefault(EixRcOption option);
 
-		bool getBool(const std::string &key)
-		{ return istrue((*this)[key].c_str()); }
+		bool getBool(const std::string &key) {
+			return istrue((*this)[key].c_str());
+		}
 
 		eix::SignedBool getBoolText(const std::string &key, const char *text) ATTRIBUTE_NONNULL_;
 
@@ -94,7 +94,7 @@ class EixRc {
 		static bool istrue(const char *s) ATTRIBUTE_PURE;
 		static bool getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom *r) ATTRIBUTE_NONNULL((3));
 
-		void modify_value(std::string &value, const std::string &key);
+		void modify_value(std::string *value, const std::string &key);
 
 		/** This will fetch a variable which was not set in the
 		    defaults (or its modification or its delayed references),

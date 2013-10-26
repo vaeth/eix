@@ -15,9 +15,7 @@
 
 using std::string;
 
-eix::SignedBool
-eix::numeric_compare(const string& left, const string& right)
-{
+eix::SignedBool eix::numeric_compare(const string& left, const string& right) {
 	// strip leading 0's
 	string::size_type lstart(left.find_first_not_of('0'));
 	string::size_type rstart(right.find_first_not_of('0'));

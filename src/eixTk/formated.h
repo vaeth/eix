@@ -53,8 +53,7 @@ Example usage:
   // problems while parsing "/etc/make.conf" in line 10, column 20 -- something bad happend
 \endcode */
 
-class format
-{
+class format {
 	private:
 		/// Currently processed specifier, 0 if there are no more specifiers.
 		char m_spec;
@@ -62,16 +61,16 @@ class format
 		std::ostringstream m_stream;
 		/// What is left of the format string.
 		std::string m_format;
+
 	public:
 		/// Set the template string.
-		explicit format(const std::string& format_string) : m_spec(0),
-			m_stream(), m_format(format_string)
-		{ goto_next_spec(); }
+		explicit format(const std::string& format_string) : m_spec(0), m_stream(), m_format(format_string) {
+			goto_next_spec();
+		}
 
 		/// Copy current state into new formater.
-		format(const format& e) : m_spec(e.m_spec),
-			m_stream(e.m_stream.str()), m_format(e.m_format)
-		{ }
+		format(const format& e) : m_spec(e.m_spec), m_stream(e.m_stream.str()), m_format(e.m_format) {
+		}
 
 		/// Copy current state of formater.
 		format& operator=(const format& e);
@@ -80,9 +79,7 @@ class format
 		format& reset(const std::string& format_string);
 
 		/// Insert the value for the next placeholder.
-		template<typename T>
-		format& operator%(const T& s)
-		{
+		template<typename T> format& operator%(const T& s) {
 			switch(m_spec) {
 				case 's':
 					m_stream << s;
@@ -109,44 +106,47 @@ class format
 		}
 
 		/// Return the formated string.
-		std::string str() const
-		{
+		std::string str() const {
 			eix_assert_paranoic(m_spec == 0);
 			return m_stream.str();
 		}
 
 		/// Convenience wrapper for str().
-		operator std::string ()
-		{ return str(); }
+		operator std::string() {
+			return str();
+		}
 
 		/// Write formated string to ostream os.
-		friend std::ostream& operator<<(std::ostream& os, const format& formater)
-		{ return os << formater.str(); }
+		friend std::ostream& operator<<(std::ostream& os, const format& formater) {
+			return os << formater.str();
+		}
 
 	protected:
 		/// Find the next specifiers in the format string.
 		void goto_next_spec();
 
 		/// Write string t enclosed in single quotes into stream s.
-		std::ostream& write_representation(std::ostream& s, const char *t)  // NOLINT(runtime/references)
-		{ return s << "'" << t << "'"; }
+		std::ostream& write_representation(std::ostream& s, const char *t) {  // NOLINT(runtime/references)
+			return s << "'" << t << "'";
+		}
 
 		/// Write string t enclosed in single quotes into stream s.
-		std::ostream& write_representation(std::ostream& s, const std::string &t)  // NOLINT(runtime/references)
-		{ return s << "'" << t << "'"; }
+		std::ostream& write_representation(std::ostream& s, const std::string &t) {  // NOLINT(runtime/references)
+			return s << "'" << t << "'";
+		}
 
 		/// Write size_type or "<string::npos>" to stream.
-		std::ostream& write_representation(std::ostream& s, const std::string::size_type &t)  // NOLINT(runtime/references)
-		{
-			if(t == std::string::npos)
+		std::ostream& write_representation(std::ostream& s, const std::string::size_type &t) {  // NOLINT(runtime/references)
+			if(t == std::string::npos) {
 				return s << "<string::npos>";
+			}
 			return s << t;
 		}
 
 		/// Write t into stream s.
-		template<typename T>
-		std::ostream& write_representation(std::ostream& s, const T& t)  // NOLINT(runtime/references)
-		{ return s << t; }
+		template<typename T> std::ostream& write_representation(std::ostream& s, const T& t) {  // NOLINT(runtime/references)
+			return s << t;
+		}
 };
 
 }/* namespace eix */

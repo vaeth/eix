@@ -37,16 +37,12 @@ static const char *get_version(const char *v) ATTRIBUTE_NONNULL_;
 static const char *get_version(const char **name, const char *v) ATTRIBUTE_NONNULL_;
 static void parse_version(BasicVersion *b, const char *v) ATTRIBUTE_NONNULL_;
 
-static void
-failparse(const char *v)
-{
+static void failparse(const char *v) {
 	cerr << eix::format(_("cannot determine version of %s")) % v << endl;
 	exit(EXIT_FAILURE);
 }
 
-static const char *
-get_version(const char *v)
-{
+static const char *get_version(const char *v) {
 	static string *r = NULLPTR;
 	delete r;
 	BasicVersion b;
@@ -63,9 +59,7 @@ get_version(const char *v)
 	return r->c_str();
 }
 
-static const char *
-get_version(const char **name, const char *v)
-{
+static const char *get_version(const char **name, const char *v) {
 	static string *r = NULLPTR;
 	static string *n = NULLPTR;
 	delete r;
@@ -84,9 +78,7 @@ get_version(const char **name, const char *v)
 	return r->c_str();
 }
 
-static void
-parse_version(BasicVersion *b, const char *v)
-{
+static void parse_version(BasicVersion *b, const char *v) {
 	string errtext;
 	BasicVersion::ParseResult r(b->parseVersion(v, &errtext, true));
 	if(unlikely(r != BasicVersion::parsedOK)) {
@@ -97,9 +89,7 @@ parse_version(BasicVersion *b, const char *v)
 	}
 }
 
-int
-run_versionsort(int argc, char *argv[])
-{
+int run_versionsort(int argc, char *argv[]) {
 	if(unlikely(argc <= 1))
 		return EXIT_SUCCESS;
 	if(likely(argc == 2)) {

@@ -33,12 +33,12 @@ class ParseCache : public BasicCache {
 		std::string m_catpath;
 
 		void set_checking(std::string *str, const char *item, const VarsReader &ebuild, bool *ok = NULLPTR) ATTRIBUTE_NONNULL((2, 3));
-		void parse_exec(const char *fullpath, const std::string &dirpath, bool read_onetime_info, bool &have_onetime_info, Package *pkg, Version *version) ATTRIBUTE_NONNULL_;
+		void parse_exec(const char *fullpath, const std::string &dirpath, bool read_onetime_info, bool *have_onetime_info, Package *pkg, Version *version) ATTRIBUTE_NONNULL_;
 		void readPackage(Category *cat, const std::string &pkg_name, const std::string &directory_path, const std::vector<std::string> &files) ATTRIBUTE_NONNULL_;
 
 	public:
-		ParseCache() : BasicCache(), verbose(false), ebuild_exec(NULLPTR)
-		{ }
+		ParseCache() : BasicCache(), verbose(false), ebuild_exec(NULLPTR) {
+		}
 
 		bool initialize(const std::string &name);
 
@@ -48,15 +48,17 @@ class ParseCache : public BasicCache {
 		void setKey(ExtendedVersion::Overlay key);
 		void setOverlayName(const std::string &name);
 		void setErrorCallback(ErrorCallback error_callback);
-		void setVerbose()
-		{ verbose = true; }
+		void setVerbose() {
+			verbose = true;
+		}
 
 		bool readCategoryPrepare(const char *cat_name) ATTRIBUTE_NONNULL_;
 		bool readCategory(Category *cat) ATTRIBUTE_NONNULL_;
 		void readCategoryFinalize();
 
-		bool use_prefixport() const ATTRIBUTE_CONST_VIRTUAL
-		{ return true; }
+		bool use_prefixport() const ATTRIBUTE_CONST_VIRTUAL {
+			return true;
+		}
 
 		const char *getType() const;
 };

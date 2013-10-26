@@ -16,6 +16,7 @@
 
 #include "eixTk/ansicolor.h"
 #include "eixTk/assert.h"
+#include "eixTk/constexpr.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -57,9 +58,7 @@ static const ColorType
 	fg256        = fgFirst + 8,
 	bgFirst      = 40;
 
-void
-AnsiColor::init_static()
-{
+void AnsiColor::init_static() {
 	eix_assert_static(static_color_map == NULLPTR);
 	static_color_map = new map<string, ColorType>;
 	map<string, ColorType> &color_map(*static_color_map);
@@ -84,9 +83,7 @@ AnsiColor::init_static()
 	color_map["white"]      = fgGray;
 }
 
-bool
-AnsiColor::initcolor(const string &str, string *errtext)
-{
+bool AnsiColor::initcolor(const string &str, string *errtext) {
 	if(likely(str.empty())) {
 		code.assign(reset_string);
 		return true;
@@ -156,7 +153,7 @@ AnsiColor::initcolor(const string &str, string *errtext)
 					col += (bgFirst - fgFirst);
 				}
 			}
-			static const unsigned int kLen = 10;
+			static CONSTEXPR unsigned int kLen = 10;
 			char buf[kLen];
 			if(iscol < 0) {
 				snprintf(buf, kLen, ";%d;5;%s", static_cast<int>(col), curr.c_str());
@@ -235,15 +232,11 @@ AnsiColor::initcolor(const string &str, string *errtext)
 	return ok;
 }
 
-static CalcType
-transcalc(CalcType color)
-{
+static CalcType transcalc(CalcType color) {
 	return ((color != 0) ? ((color * 40) + 55) : 0);
 }
 
-void
-AnsiColor::AnsiPalette()
-{
+void AnsiColor::AnsiPalette() {
 	for(CalcType red(0); red < 6; ++red) {
 		for(CalcType green(0); green < 6; ++green) {
 			for(CalcType blue(0); blue < 6; ++blue) {

@@ -53,23 +53,22 @@ StringHash *StringHash::comparison_this;
 std::locale localeC("C");
 
 static void erase_escapes(string *s, const char *at) ATTRIBUTE_NONNULL_;
-template <typename S, typename T> inline static S calc_table_pos(const vector<S> &table, S pos, const T *pattern, T c) ATTRIBUTE_PURE ATTRIBUTE_NONNULL_;
-template <typename T> inline static void split_string_template(T *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty) ATTRIBUTE_NONNULL_;
-template <typename T> inline static void join_to_string_template(string *s, const T &vec, const string &glue) ATTRIBUTE_NONNULL_;
+template<typename S, typename T> inline static S calc_table_pos(const vector<S> &table, S pos, const T *pattern, T c) ATTRIBUTE_PURE ATTRIBUTE_NONNULL_;
+template<typename T> inline static void split_string_template(T *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty) ATTRIBUTE_NONNULL_;
+template<typename T> inline static void join_to_string_template(string *s, const T &vec, const string &glue) ATTRIBUTE_NONNULL_;
 
 #ifndef HAVE_STRNDUP
 /* If we don't have strndup, we use our own ..
  * darwin (macos) doesn't have strndup, it's a GNU extension
  * See http://bugs.gentoo.org/show_bug.cgi?id=111912 */
 
-char *
-strndup(const char *s, size_t n)
-{
+char *strndup(const char *s, size_t n) {
 	const char *p(s);
-	while(likely(*p++ && n--)) {}
+	while(likely(*p++ && n--)) {
+	}
 	n = p - s - 1;
 	char *r(static_cast<char *>(malloc(n + 1)));
-	if(r) {
+	if(r != NULLPTR) {
 		memcpy(r, s, n);
 		r[n] = 0;
 	}
@@ -78,30 +77,26 @@ strndup(const char *s, size_t n)
 #endif /* HAVE_STRNDUP */
 
 /** Check string if it only contains digits. */
-bool
-is_numeric(const char *str)
-{
+bool is_numeric(const char *str) {
 	for(char c(*str); likely(c != '\0'); c = *(++str)) {
-		if(!isdigit(c, localeC))
+		if(!isdigit(c, localeC)) {
 			return false;
+		}
 	}
 	return true;
 }
 
 /** Add symbol if it is not already the last one */
-void
-optional_append(std::string *s, char symbol)
-{
-	if(s->empty() || ((*(s->rbegin()) != symbol)))
+void optional_append(std::string *s, char symbol) {
+	if(s->empty() || ((*(s->rbegin()) != symbol))) {
 		s->append(1, symbol);
+	}
 }
 
 /** Trim characters on left side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed */
-void
-ltrim(std::string *str, const char *delims)
-{
+void ltrim(std::string *str, const char *delims) {
 	// trim leading whitespace
 	std::string::size_type notwhite(str->find_first_not_of(delims));
 	if(notwhite != std::string::npos)
@@ -113,9 +108,7 @@ ltrim(std::string *str, const char *delims)
 /** Trim characters on right side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed */
-void
-rtrim(std::string *str, const char *delims)
-{
+void rtrim(std::string *str, const char *delims) {
 	// trim trailing whitespace
 	std::string::size_type notwhite(str->find_last_not_of(delims));
 	if(notwhite != std::string::npos)
@@ -127,9 +120,7 @@ rtrim(std::string *str, const char *delims)
 /** Trim characters on left and right side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed */
-void
-trim(string *str, const char *delims)
-{
+void trim(string *str, const char *delims) {
 	ltrim(str, delims);
 	rtrim(str, delims);
 }
@@ -137,9 +128,7 @@ trim(string *str, const char *delims)
 /** Trim characters on left and right side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed */
-void
-trimall(string *str, const char *delims, char c)
-{
+void trimall(string *str, const char *delims, char c) {
 	string::size_type pos(0);
 	while(unlikely((pos = str->find_first_of(delims, pos)) != string::npos)) {
 		string::size_type end(str->find_first_not_of(spaces, pos + 1));
@@ -159,9 +148,7 @@ trimall(string *str, const char *delims, char c)
 
 /** Check if slot contains a subslot and if yes, split it away.
     Also turn slot "0" into nothing */
-bool
-slot_subslot(string *slot, string *subslot)
-{
+bool slot_subslot(string *slot, string *subslot) {
 	string::size_type sep(slot->find('/'));
 	if(sep == string::npos) {
 		subslot->clear();
@@ -180,9 +167,7 @@ slot_subslot(string *slot, string *subslot)
 
 /** Split full to slot and subslot. Also turn slot "0" into nothing
  * @return true if subslot exists */
-bool
-slot_subslot(const string &full, string *slot, string *subslot)
-{
+bool slot_subslot(const string &full, string *slot, string *subslot) {
 	string::size_type sep(full.find('/'));
 	if(sep == string::npos) {
 		if(full != "0") {
@@ -201,9 +186,7 @@ slot_subslot(const string &full, string *slot, string *subslot)
 	return true;
 }
 
-const char *
-ExplodeAtom::get_start_of_version(const char *str, bool allow_star)
-{
+const char *ExplodeAtom::get_start_of_version(const char *str, bool allow_star) {
 	// There must be at least one symbol before the version:
 	if(unlikely(*(str++) == '\0'))
 		return NULLPTR;
@@ -219,18 +202,14 @@ ExplodeAtom::get_start_of_version(const char *str, bool allow_star)
 	return x;
 }
 
-char *
-ExplodeAtom::split_version(const char *str)
-{
+char *ExplodeAtom::split_version(const char *str) {
 	const char *x(get_start_of_version(str, false));
 	if(likely(x != NULLPTR))
 		return strdup(x);
 	return NULLPTR;
 }
 
-char *
-ExplodeAtom::split_name(const char *str)
-{
+char *ExplodeAtom::split_name(const char *str) {
 	const char *x(get_start_of_version(str, false));
 	if(likely(x != NULLPTR)) {
 GCC_DIAG_OFF(sign-conversion)
@@ -240,9 +219,7 @@ GCC_DIAG_ON(sign-conversion)
 	return NULLPTR;
 }
 
-char **
-ExplodeAtom::split(const char *str)
-{
+char **ExplodeAtom::split(const char *str) {
 	static char* out[2] = { NULLPTR, NULLPTR };
 	const char *x(get_start_of_version(str, false));
 
@@ -255,9 +232,7 @@ GCC_DIAG_ON(sign-conversion)
 	return out;
 }
 
-string
-to_lower(const string &str)
-{
+string to_lower(const string &str) {
 	string::size_type s(str.size());
 	string res;
 	for(string::size_type c(0); c != s; ++c) {
@@ -266,9 +241,7 @@ to_lower(const string &str)
 	return res;
 }
 
-char
-get_escape(char c)
-{
+char get_escape(char c) {
 	switch(c) {
 		case 0:
 		case '\\': return '\\';
@@ -283,9 +256,7 @@ get_escape(char c)
 	return c;
 }
 
-void
-unescape_string(string *str)
-{
+void unescape_string(string *str) {
 	string::size_type pos(0);
 	while(unlikely((pos = str->find('\\', pos)) != string::npos)) {
 		string::size_type p(pos + 1);
@@ -295,9 +266,7 @@ unescape_string(string *str)
 	}
 }
 
-void
-escape_string(string *str, const char *at)
-{
+void escape_string(string *str, const char *at) {
 	string my_at(at);
 	my_at.append("\\");
 	string::size_type pos(0);
@@ -307,9 +276,7 @@ escape_string(string *str, const char *at)
 	}
 }
 
-static void
-erase_escapes(string *s, const char *at)
-{
+static void erase_escapes(string *s, const char *at) {
 	string::size_type pos(0);
 	while((pos = s->find('\\', pos)) != string::npos) {
 		++pos;
@@ -323,10 +290,7 @@ erase_escapes(string *s, const char *at)
 	}
 }
 
-template <typename T>
-inline static void
-split_string_template(T *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
-{
+template<typename T> inline static void split_string_template(T *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty) {
 	string::size_type last_pos(0), pos(0);
 	while((pos = str.find_first_of(at, pos)) != string::npos) {
 		if(unlikely(handle_escape)) {
@@ -360,17 +324,15 @@ split_string_template(T *vec, const string &str, const bool handle_escape, const
 	}
 }
 
-void
-split_string(vector<string> *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
-{ split_string_template< vector<string> >(vec, str, handle_escape, at, ignore_empty); }
+void split_string(vector<string> *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty) {
+	split_string_template< vector<string> >(vec, str, handle_escape, at, ignore_empty);
+}
 
-void
-split_string(set<string> *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
-{ split_string_template< set<string> >(vec, str, handle_escape, at, ignore_empty); }
+void split_string(set<string> *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty) {
+	split_string_template< set<string> >(vec, str, handle_escape, at, ignore_empty);
+}
 
-vector<string>
-split_string(const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
-{
+vector<string> split_string(const string &str, const bool handle_escape, const char *at, const bool ignore_empty) {
 	std::vector<std::string> vec;
 	split_string(&vec, str, handle_escape, at, ignore_empty);
 	return vec;
@@ -379,9 +341,7 @@ split_string(const string &str, const bool handle_escape, const char *at, const 
 /** Calls split_string() with a vector and then join_to_string().
  * @param source string to split
  * @param dest   result. May be identical to source. */
-void
-split_and_join(string *dest, const string &source, const string &glue, const bool handle_escape, const char *at, const bool ignore_empty)
-{
+void split_and_join(string *dest, const string &source, const string &glue, const bool handle_escape, const char *at, const bool ignore_empty) {
 	vector<string> vec;
 	split_string(&vec, source, handle_escape, at, ignore_empty);
 	join_to_string(dest, vec, glue);
@@ -390,27 +350,20 @@ split_and_join(string *dest, const string &source, const string &glue, const boo
 /** Calls split_string() with a vector and then join_to_string().
  * @param source string to split
  * @return result. */
-string
-split_and_join_string(const string &source, const string &glue, const bool handle_escape, const char *at, const bool ignore_empty)
-{
+string split_and_join_string(const string &source, const string &glue, const bool handle_escape, const char *at, const bool ignore_empty) {
 	string r;
 	split_and_join(&r, source, glue, handle_escape, at, ignore_empty);
 	return r;
 }
 
 /** Resolve a string of -/+ keywords to a set of actually set keywords */
-bool
-resolve_plus_minus(set<string> *s, const string &str, const set<string> *warnignore)
-{
+bool resolve_plus_minus(set<string> *s, const string &str, const set<string> *warnignore) {
 	vector<string> l;
 	split_string(&l, str);
 	return resolve_plus_minus(s, l, warnignore);
 }
 
-template <typename T>
-inline static void
-join_to_string_template(string *s, const T &vec, const string &glue)
-{
+template<typename T> inline static void join_to_string_template(string *s, const T &vec, const string &glue) {
 	for(typename T::const_iterator it(vec.begin()); likely(it != vec.end()); ++it) {
 		if(likely(!s->empty())) {
 			s->append(glue);
@@ -419,17 +372,11 @@ join_to_string_template(string *s, const T &vec, const string &glue)
 	}
 }
 
-void
-join_to_string(string *s, const vector<string> &vec, const string &glue)
-{ join_to_string_template< vector<string> >(s, vec, glue); }
+void join_to_string(string *s, const vector<string> &vec, const string &glue) { join_to_string_template< vector<string> >(s, vec, glue); }
 
-void
-join_to_string(string *s, const set<string> &vec, const string &glue)
-{ join_to_string_template< set<string> >(s, vec, glue); }
+void join_to_string(string *s, const set<string> &vec, const string &glue) { join_to_string_template< set<string> >(s, vec, glue); }
 
-bool
-resolve_plus_minus(set<string> *s, const vector<string> &l, const set<string> *warnignore)
-{
+bool resolve_plus_minus(set<string> *s, const vector<string> &l, const set<string> *warnignore) {
 	bool minuskeyword(false);
 	for(vector<string>::const_iterator it(l.begin()); likely(it != l.end()); ++it) {
 		if(unlikely(it->empty())) {
@@ -473,9 +420,7 @@ resolve_plus_minus(set<string> *s, const vector<string> &l, const set<string> *w
 	return minuskeyword;
 }
 
-void
-StringHash::store_string(const string &s)
-{
+void StringHash::store_string(const string &s) {
 	if(finalized) {
 		fprintf(stderr, _("Internal error: Storing required after finalizing"));
 		exit(EXIT_FAILURE);
@@ -483,9 +428,7 @@ StringHash::store_string(const string &s)
 	push_back(s);
 }
 
-void
-StringHash::hash_string(const string &s)
-{
+void StringHash::hash_string(const string &s) {
 	if(finalized) {
 		fprintf(stderr, _("Internal error: Hashing required after finalizing"));
 		exit(EXIT_FAILURE);
@@ -503,24 +446,18 @@ StringHash::hash_string(const string &s)
 	}
 }
 
-void
-StringHash::store_words(const vector<string> &v)
-{
+void StringHash::store_words(const vector<string> &v) {
 	for(vector<string>::const_iterator i(v.begin()); likely(i != v.end()); ++i) {
 		store_string(*i);
 	}
 }
 
-void
-StringHash::hash_words(const vector<string> &v)
-{
+void StringHash::hash_words(const vector<string> &v) {
 	for(vector<string>::const_iterator i(v.begin()); likely(i != v.end()); ++i)
 		hash_string(*i);
 }
 
-StringHash::size_type
-StringHash::get_index(const string &s) const
-{
+StringHash::size_type StringHash::get_index(const string &s) const {
 	if(!finalized) {
 		cerr << _("Internal error: Index required before sorting.") << endl;
 		exit(EXIT_FAILURE);
@@ -533,9 +470,7 @@ StringHash::get_index(const string &s) const
 	return i->second;
 }
 
-const string&
-StringHash::operator[](StringHash::size_type i) const
-{
+const string& StringHash::operator[](StringHash::size_type i) const {
 	if(i >= size()) {
 		cerr << _("Database corrupt: Nonexistent hash required");
 		exit(EXIT_FAILURE);
@@ -543,17 +478,13 @@ StringHash::operator[](StringHash::size_type i) const
 	return vector<string>::operator[](i);
 }
 
-void
-StringHash::output() const
-{
+void StringHash::output() const {
 	for(vector<string>::const_iterator i(begin()); likely(i != end()); ++i) {
 		cout << *i << "\n";
 	}
 }
 
-void
-StringHash::output_depends() const
-{
+void StringHash::output_depends() const {
 	set<string> out;
 	for(vector<string>::const_iterator i(begin()); likely(i != end()); ++i) {
 		string::size_type q(i->find('"'));
@@ -577,15 +508,11 @@ StringHash::output_depends() const
 	}
 }
 
-bool
-StringHash::frequency_comparison(const string a, const string b)
-{
+bool StringHash::frequency_comparison(const string a, const string b) {
 	return ((comparison_this->str_map)[b] < (comparison_this->str_map)[a]);
 }
 
-void
-StringHash::finalize()
-{
+void StringHash::finalize() {
 	if(finalized) {
 		return;
 	}
@@ -603,9 +530,7 @@ StringHash::finalize()
 	}
 }
 
-bool
-match_list(const char **str_list, const char *str)
-{
+bool match_list(const char **str_list, const char *str) {
 	if(str_list != NULLPTR) {
 		while(likely(*str_list != NULLPTR)) {
 			if(fnmatch(*(str_list++), str, 0) == 0) {
@@ -616,9 +541,7 @@ match_list(const char **str_list, const char *str)
 	return false;
 }
 
-const char *
-first_alnum(const char *s)
-{
+const char *first_alnum(const char *s) {
 	for(char c(*s); likely(c != '\0'); c = *(++s)) {
 		if(isalnum(c, localeC)) {
 			return s;
@@ -628,9 +551,7 @@ first_alnum(const char *s)
 }
 
 /** Match str against a lowercase pattern case-insensitively */
-bool
-caseequal(const char *str, const char *pattern)
-{
+bool caseequal(const char *str, const char *pattern) {
 	for(char c(*str); c != '\0'; c = *(++str)) {
 		if(tolower(c, localeC) != *pattern) {
 			return false;
@@ -641,10 +562,7 @@ caseequal(const char *str, const char *pattern)
 }
 
 /** Subroutine for Knuth-Morris-Pratt algorithm */
-template <typename S, typename T>
-inline static S
-calc_table_pos(const vector<S> &table, S pos, const T *pattern, T c)
-{
+template<typename S, typename T> inline static S calc_table_pos(const vector<S> &table, S pos, const T *pattern, T c) {
 	while(pattern[pos] != c) {
 		if(pos == 0) {
 			return 0;
@@ -655,9 +573,7 @@ calc_table_pos(const vector<S> &table, S pos, const T *pattern, T c)
 }
 
 /** Check whether str contains a nonempty lowercase pattern case-insensitively */
-bool
-casecontains(const char *str, const char *pattern)
-{
+bool casecontains(const char *str, const char *pattern) {
 	// Knuth-Morris-Pratt algorithm
 	string::size_type l(strlen(pattern));
 	vector<string::size_type> table(l, 0);

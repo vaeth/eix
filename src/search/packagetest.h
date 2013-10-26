@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "database/package_reader.h"
+#include "eixTk/constexpr.h"
 #include "eixTk/inttypes.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -41,7 +42,7 @@ class PackageTest {
 
 	public:
 		typedef uint32_t MatchField;
-		static const MatchField
+		static CONSTEXPR MatchField
 			NONE          = 0x00000U,  /**< Search in name */
 			NAME          = 0x00001U,  /**< Search in name */
 			DESCRIPTION   = 0x00002U,  /**< Search in description */
@@ -75,7 +76,7 @@ class PackageTest {
 		};
 
 		typedef uint8_t TestInstalled;
-		static const TestInstalled
+		static CONSTEXPR TestInstalled
 			INS_NONE        = 0x00U,
 			INS_NONEXISTENT = 0x01U,  /**< Test for nonexistent installed packages */
 			INS_OVERLAY     = 0x02U,  /**< Test for nonexistent overlays of installed packages */
@@ -83,7 +84,7 @@ class PackageTest {
 			INS_SOME        = INS_NONEXISTENT|INS_OVERLAY|INS_MASKED;
 
 		typedef uint8_t TestStability;
-		static const TestStability
+		static CONSTEXPR TestStability
 			STABLE_NONE         = 0x00U,
 			STABLE_FULL         = 0x01U,  /**< Test for stable keyword */
 			STABLE_TESTING      = 0x02U,  /**< Test for testing keyword */
@@ -95,8 +96,7 @@ class PackageTest {
 
 		~PackageTest();
 
-		void setAlgorithm(BaseAlgorithm *p)
-		{
+		void setAlgorithm(BaseAlgorithm *p) {
 			delete algorithm;
 			algorithm = p;
 		}
@@ -118,133 +118,148 @@ class PackageTest {
 		// We thus name the variables such that the less restrictive version
 		// corresponds to false/NULLPTR and let the constructor set all to false/NULLPTR.
 
-		void Installed()
-		{ installed = true; }
+		void Installed() {
+			installed = true;
+		}
 
-		void MultiInstalled()
-		{ installed = multi_installed = true; }
+		void MultiInstalled() {
+			installed = multi_installed = true;
+		}
 
-		void Slotted()
-		{ slotted = true; }
+		void Slotted() {
+			slotted = true;
+		}
 
-		void MultiSlotted()
-		{ slotted = multi_slot = true; }
+		void MultiSlotted() {
+			slotted = multi_slot = true;
+		}
 
-		void Upgrade(LocalMode local_mode)
-		{
+		void Upgrade(LocalMode local_mode) {
 			upgrade = true;
 			upgrade_local_mode = local_mode;
 		}
 
-		void SetStabilityDefault(TestStability require)
-		{  test_stability_default |= require; }
+		void SetStabilityDefault(TestStability require) {
+			test_stability_default |= require;
+		}
 
-		void SetStabilityLocal(TestStability require)
-		{  test_stability_local |= require; }
+		void SetStabilityLocal(TestStability require) {
+			test_stability_local |= require;
+		}
 
-		void SetStabilityNonlocal(TestStability require)
-		{  test_stability_nonlocal |= require; }
+		void SetStabilityNonlocal(TestStability require) {
+			test_stability_nonlocal |= require;
+		}
 
-		void SetInstability(TestStability avoid)
-		{  test_instability |= avoid; }
+		void SetInstability(TestStability avoid) {
+			test_instability |= avoid;
+		}
 
-		void SetMarkedList(MaskList<Mask> *markedlist)
-		{  marked_list = markedlist; }
+		void SetMarkedList(MaskList<Mask> *markedlist) {
+			marked_list = markedlist;
+		}
 
-		void Virtual()
-		{ have_virtual = true; }
+		void Virtual() {
+			have_virtual = true;
+		}
 
-		void Nonvirtual()
-		{ have_nonvirtual = true; }
+		void Nonvirtual() {
+			have_nonvirtual = true;
+		}
 
-		void Overlay()
-		{ overlay = true; }
+		void Overlay() {
+			overlay = true;
+		}
 
-		void Restrictions(ExtendedVersion::Restrict flags)
-		{ restrictions |= flags; }
+		void Restrictions(ExtendedVersion::Restrict flags) {
+			restrictions |= flags;
+		}
 
-		void Properties(ExtendedVersion::Properties flags)
-		{ properties |= flags; }
+		void Properties(ExtendedVersion::Properties flags) {
+			properties |= flags;
+		}
 
-		void Binary()
-		{ binary = true; }
+		void Binary() {
+			binary = true;
+		}
 
-		void WorldAll()
-		{ world = true; }
+		void WorldAll() {
+			world = true;
+		}
 
-		void WorldFile()
-		{ world = world_only_file = true; }
+		void WorldFile() {
+			world = world_only_file = true;
+		}
 
-		void SelectedAll()
-		{ world = world_only_selected = true; }
+		void SelectedAll() {
+			world = world_only_selected = true;
+		}
 
-		void SelectedFile()
-		{ world = world_only_selected = world_only_file = true; }
+		void SelectedFile() {
+			world = world_only_selected = world_only_file = true;
+		}
 
-		void WorldSet()
-		{ worldset = true; }
+		void WorldSet() {
+			worldset = true;
+		}
 
-		void SelectedSet()
-		{ worldset = worldset_only_selected = true; }
+		void SelectedSet() {
+			worldset = worldset_only_selected = true;
+		}
 
-		void StabilityDefault(Package *p) const ATTRIBUTE_NONNULL_
-		{ stability->set_stability(p); }
+		void StabilityDefault(Package *p) const ATTRIBUTE_NONNULL_ {
+			stability->set_stability(p);
+		}
 
-		void StabilityLocal(Package *p) const ATTRIBUTE_NONNULL_
-		{ stability->set_stability(true, p); }
+		void StabilityLocal(Package *p) const ATTRIBUTE_NONNULL_ {
+			stability->set_stability(true, p);
+		}
 
-		void StabilityNonlocal(Package *p) const ATTRIBUTE_NONNULL_
-		{ stability->set_stability(false, p); }
+		void StabilityNonlocal(Package *p) const ATTRIBUTE_NONNULL_ {
+			stability->set_stability(false, p);
+		}
 
-		std::set<ExtendedVersion::Overlay> *OverlayList()
-		{
+		std::set<ExtendedVersion::Overlay> *OverlayList() {
 			if(likely(overlay_list == NULLPTR))
 				overlay_list = new std::set<ExtendedVersion::Overlay>;
 			return overlay_list;
 		}
 
-		std::set<ExtendedVersion::Overlay> *OverlayOnlyList()
-		{
+		std::set<ExtendedVersion::Overlay> *OverlayOnlyList() {
 			if(likely(overlay_only_list == NULLPTR))
 				overlay_only_list = new std::set<ExtendedVersion::Overlay>;
 			return overlay_only_list;
 		}
 
-		std::set<ExtendedVersion::Overlay> *InOverlayInstList()
-		{
+		std::set<ExtendedVersion::Overlay> *InOverlayInstList() {
 			if(likely(in_overlay_inst_list == NULLPTR))
 				in_overlay_inst_list = new std::set<ExtendedVersion::Overlay>;
 			return in_overlay_inst_list;
 		}
 
-		std::set<ExtendedVersion::Overlay> *FromOverlayInstList()
-		{
+		std::set<ExtendedVersion::Overlay> *FromOverlayInstList() {
 			if(likely(from_overlay_inst_list == NULLPTR))
 				from_overlay_inst_list = new std::set<ExtendedVersion::Overlay>;
 			return from_overlay_inst_list;
 		}
 
-		std::vector<std::string> *FromForeignOverlayInstList()
-		{
+		std::vector<std::string> *FromForeignOverlayInstList() {
 			if(likely(from_foreign_overlay_inst_list == NULLPTR))
 				from_foreign_overlay_inst_list = new std::vector<std::string>;
 			return from_foreign_overlay_inst_list;
 		}
 
-		void DuplVersions(bool only_overlay)
-		{
+		void DuplVersions(bool only_overlay) {
 			dup_versions = true;
 			dup_versions_overlay = only_overlay;
 		}
 
-		void DuplPackages(bool only_overlay)
-		{
+		void DuplPackages(bool only_overlay) {
 			dup_packages = true;
 			dup_packages_overlay = only_overlay;
 		}
 
-		void ObsoleteCfg(const RedAtom &first, const RedAtom &second, TestInstalled test_ins)
-		{
+		void ObsoleteCfg(const RedAtom &first, const RedAtom &second, TestInstalled test_ins) {
 			obsolete           = true;
 			redundant_flags    = first.red|second.red;
 			first_test         = first;
@@ -252,11 +267,13 @@ class PackageTest {
 			test_installed     = test_ins;
 		}
 
-		MatchField operator |= (const MatchField m)
-		{ return field |= m; }
+		MatchField operator |= (const MatchField m) {
+			return field |= m;
+		}
 
-		MatchField operator = (const MatchField m)
-		{ return field = m; }
+		MatchField operator = (const MatchField m) {
+			return field = m;
+		}
 
 		static void init_static();
 
@@ -320,10 +337,10 @@ class PackageTest {
 
 		bool stringMatch(Package *pkg) const ATTRIBUTE_NONNULL_;
 
-		void setNeeds(const PackageReader::Attributes i)
-		{
-			if(need < i)
+		void setNeeds(const PackageReader::Attributes i) {
+			if(need < i) {
 				need = i;
+			}
 		}
 
 		/** Get the Fetched-value that is required to determine the match */

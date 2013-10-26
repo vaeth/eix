@@ -38,33 +38,23 @@ static void md5fill(const char *buffer, uint32_t *mybuf, unsigned int len) ATTRI
 static void md5chunk(const uint32_t *mybuf, uint32_t *resarr) ATTRIBUTE_NONNULL_;
 static void calc_md5sum(const char *buffer, Md5DataLen totalsize, uint32_t *resarr) ATTRIBUTE_NONNULL_;
 
-inline static uint32_t
-md5F(uint32_t x, uint32_t y, uint32_t z)
-{
+inline static uint32_t md5F(uint32_t x, uint32_t y, uint32_t z) {
 	return (x & y) | ((~x) & z);
 }
 
-inline static uint32_t
-md5G(uint32_t x, uint32_t y, uint32_t z)
-{
+inline static uint32_t md5G(uint32_t x, uint32_t y, uint32_t z) {
 	return (x & z) | (y & (~z));
 }
 
-inline static uint32_t
-md5H(uint32_t x, uint32_t y, uint32_t z)
-{
+inline static uint32_t md5H(uint32_t x, uint32_t y, uint32_t z) {
 	return x ^ y ^ z;
 }
 
-inline static uint32_t
-md5I(uint32_t x, uint32_t y, uint32_t z)
-{
+inline static uint32_t md5I(uint32_t x, uint32_t y, uint32_t z) {
 	return y ^ (x | (~z));
 }
 
-inline static uint32_t
-md5rotate(uint32_t x, unsigned int c)
-{
+inline static uint32_t md5rotate(uint32_t x, unsigned int c) {
 	x &= 0xFFFFFFFFUL;
 	return (x << c) | (x >> (32-c));
 }
@@ -118,9 +108,7 @@ static const uint32_t md5init[4] = {
 	0x67452301UL, 0xEFCDAB89UL, 0x98BADCFEUL, 0x10325476UL
 };
 
-static void
-md5fill(const char *buffer, uint32_t *mybuf, unsigned int len)
-{
+static void md5fill(const char *buffer, uint32_t *mybuf, unsigned int len) {
 	while(len != 0) {
 		*(mybuf++) =
 			buffer[3] * 0x1000000UL +
@@ -132,9 +120,7 @@ md5fill(const char *buffer, uint32_t *mybuf, unsigned int len)
 	}
 }
 
-static void
-md5chunk(const uint32_t *mybuf, uint32_t *resarr)
-{
+static void md5chunk(const uint32_t *mybuf, uint32_t *resarr) {
 	uint32_t a(resarr[0]);
 	uint32_t b(resarr[1]);
 	uint32_t c(resarr[2]);
@@ -191,9 +177,7 @@ md5chunk(const uint32_t *mybuf, uint32_t *resarr)
 	resarr[3] = (resarr[3] + d) & 0xFFFFFFFFUL;
 }
 
-static void
-calc_md5sum(const char *buffer, Md5DataLen totalsize, uint32_t *resarr)
-{
+static void calc_md5sum(const char *buffer, Md5DataLen totalsize, uint32_t *resarr) {
 	resarr[0] = md5init[0];
 	resarr[1] = md5init[1];
 	resarr[2] = md5init[2];
@@ -252,9 +236,7 @@ using std::endl;
 
 static void debug_md5(const uint32_t *resarr) ATTRIBUTE_NONNULL_;
 
-static void
-debug_md5(const uint32_t *resarr)
-{
+static void debug_md5(const uint32_t *resarr) {
 	for(int i(0); i < 4; ++i) {
 		uint32_t res(resarr[i]);
 		for(int j(0); j < 8; ++j) {
@@ -277,9 +259,7 @@ debug_md5(const uint32_t *resarr)
 }
 #endif
 
-bool
-verify_md5sum(const char *file, const string &md5sum)
-{
+bool verify_md5sum(const char *file, const string &md5sum) {
 	if(md5sum.size() != 32) {
 		return false;
 	}
@@ -291,8 +271,7 @@ verify_md5sum(const char *file, const string &md5sum)
 	if(fd == -1) {
 		return false;
 	}
-	Md5DataLen filesize;
-	{
+	Md5DataLen filesize; {
 		struct stat st;
 		if(fstat(fd, &st)) {
 			close(fd);

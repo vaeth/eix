@@ -24,94 +24,72 @@ using std::vector;
 
 using std::cout;
 
-bool
-OutputString::is_equal(const OutputString &t) const
-{
+bool OutputString::is_equal(const OutputString &t) const {
 	return ((m_string == t.m_string) && likely(m_insert == t.m_insert));
 }
 
-void
-OutputString::assign(const OutputString &s)
-{
+void OutputString::assign(const OutputString &s) {
 	m_string.assign(s.m_string);
 	m_size = s.m_size;
 	m_insert = s.m_insert;
 	absolute = s.absolute;
 }
 
-void
-OutputString::assign_fast(const string &t)
-{
+void OutputString::assign_fast(const string &t) {
 	m_string.assign(t);
 	m_size = t.size();
 	absolute = false;
 	m_insert.clear();
 }
 
-void
-OutputString::assign_fast(const char *s)
-{
+void OutputString::assign_fast(const char *s) {
 	m_string.assign(s);
 	m_size = m_string.size();
 	absolute = false;
 	m_insert.clear();
 }
 
-void
-OutputString::assign_fast(char s)
-{
+void OutputString::assign_fast(char s) {
 	m_string.assign(1, s);
 	m_size = 1;
 	absolute = false;
 	m_insert.clear();
 }
 
-void
-OutputString::assign(const string &t, string::size_type s)
-{
+void OutputString::assign(const string &t, string::size_type s) {
 	m_string.assign(t);
 	m_size = s;
 	absolute = false;
 	m_insert.clear();
 }
 
-void
-OutputString::assign_smart(const string &t)
-{
+void OutputString::assign_smart(const string &t) {
 	m_string.assign(t);
 	m_insert.clear();
 	append_internal(t);
 }
 
-void
-OutputString::assign_smart(const char *s)
-{
+void OutputString::assign_smart(const char *s) {
 	m_string = s;
 	m_insert.clear();
 	append_internal(m_string);
 }
 
-void
-OutputString::clear()
-{
+void OutputString::clear() {
 	m_string.clear();
 	m_size = 0;
 	absolute = false;
 	m_insert.clear();
 }
 
-void
-OutputString::set_one()
-{
+void OutputString::set_one() {
 	m_string.assign(1, '1');
 	m_size = 1;
 	absolute = false;
 	m_insert.clear();
 }
 
-void
-OutputString::append_column(string::size_type s)
-{
+void OutputString::append_column(string::size_type s) {
 	if(unlikely(absolute)) {
 		if(likely(m_size < s)) {
 			m_string.append(s - m_size, ' ');
@@ -124,9 +102,7 @@ OutputString::append_column(string::size_type s)
 	}
 }
 
-void
-OutputString::append_escape(const char **pos)
-{
+void OutputString::append_escape(const char **pos) {
 	const char *band_position = ++*pos;
 	char ch(*band_position);
 	if(ch == 'C') {
@@ -151,16 +127,12 @@ GCC_DIAG_ON(sign-conversion)
 	append_smart(get_escape(ch));
 }
 
-void
-OutputString::append_fast(char s)
-{
+void OutputString::append_fast(char s) {
 	m_string.append(1, s);
 	++m_size;
 }
 
-void
-OutputString::append_smart(char s)
-{
+void OutputString::append_smart(char s) {
 	m_string.append(1, s);
 	switch(s) {
 		case '\a':
@@ -186,9 +158,7 @@ OutputString::append_smart(char s)
 	}
 }
 
-void
-OutputString::append_internal(const string &t, string::size_type ts, string::size_type s, bool a)
-{
+void OutputString::append_internal(const string &t, string::size_type ts, string::size_type s, bool a) {
 	string::size_type lastpos(0);
 	for(string::size_type currpos;
 		unlikely((currpos = t.find_first_of("\a\b\n\r\t", lastpos)) != string::npos);
@@ -220,38 +190,28 @@ OutputString::append_internal(const string &t, string::size_type ts, string::siz
 	absolute = a;
 }
 
-void
-OutputString::append_fast(const string &t)
-{
+void OutputString::append_fast(const string &t) {
 	m_string.append(t);
 	m_size += t.size();
 }
 
-void
-OutputString::append_fast(const char *s)
-{
+void OutputString::append_fast(const char *s) {
 	string::size_type old(m_string.size());
 	m_string.append(s);
 	m_size += (m_string.size() - old);
 }
 
-void
-OutputString::append(const string &t, string::size_type s)
-{
+void OutputString::append(const string &t, string::size_type s) {
 	m_string.append(t);
 	m_size += s;
 }
 
-void
-OutputString::append_smart(const string &t)
-{
+void OutputString::append_smart(const string &t) {
 	append_internal(t, t.size(), m_size, absolute);
 	m_string.append(t);
 }
 
-void
-OutputString::append(const OutputString &a)
-{
+void OutputString::append(const OutputString &a) {
 	if(a.empty()) {
 		return;
 	}
@@ -273,9 +233,7 @@ OutputString::append(const OutputString &a)
 	m_string.append(a.m_string);
 }
 
-void
-OutputString::print(std::string *dest, std::string::size_type *s) const
-{
+void OutputString::print(std::string *dest, std::string::size_type *s) const {
 	std::string::size_type inserted(0);
 	if(likely(m_insert.empty())) {
 		dest->append(m_string);
@@ -311,9 +269,7 @@ OutputString::print(std::string *dest, std::string::size_type *s) const
 	}
 }
 
-void
-OutputString::print(std::string::size_type *s) const
-{
+void OutputString::print(std::string::size_type *s) const {
 	string d;
 	print(&d, s);
 	cout << d;

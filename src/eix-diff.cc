@@ -68,9 +68,7 @@ static VarDbPkg       *varpkg_db;
 static DBHeader       *old_header, *new_header;
 static Node           *format_new, *format_delete, *format_changed;
 
-static void
-print_help()
-{
+static void print_help() {
 	printf(_("Usage: %s [options] old-cache [new-cache]\n"
 "\n"
 " -Q, --quick (toggle)    do (not) read unguessable slots of installed packages\n"
@@ -123,8 +121,7 @@ class EixDiffOptionList : public OptionList {
 		EixDiffOptionList();
 };
 
-EixDiffOptionList::EixDiffOptionList()
-{
+EixDiffOptionList::EixDiffOptionList() {
 	push_back(Option("help",         'h',    Option::BOOLEAN_T, &cli_show_help)); /* show a short help screen */
 	push_back(Option("version",      'V',    Option::BOOLEAN_T, &cli_show_version));
 	push_back(Option("dump",         O_DUMP, Option::BOOLEAN_T, &cli_dump_eixrc));
@@ -140,9 +137,7 @@ EixDiffOptionList::EixDiffOptionList()
 	push_back(Option("ansi",         O_ANSI, Option::BOOLEAN_T, &cli_ansi));
 }
 
-static void
-load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps)
-{
+static void load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps) {
 	Database db;
 	if(likely(db.openread(file))) {
 		string errtext;
@@ -160,9 +155,7 @@ load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *
 	exit(EXIT_FAILURE);
 }
 
-static void
-set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix_virtual)
-{
+static void set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix_virtual) {
 	if(header.countOverlays() == 0) {
 		return;
 	}
@@ -183,12 +176,11 @@ class DiffTrees {
 
 		DiffTrees(VarDbPkg *vardbpkg, PortageSettings *portage_settings, bool only_installed, bool compare_slots, bool separate_deleted) ATTRIBUTE_NONNULL_ :
 			m_vardbpkg(vardbpkg), m_portage_settings(portage_settings), m_only_installed(only_installed),
-			m_slots(compare_slots), m_separate_deleted(separate_deleted)
-		{ }
+			m_slots(compare_slots), m_separate_deleted(separate_deleted) {
+		}
 
 		/// Diff the trees and run callbacks
-		void diff(PackageTree *old_tree, PackageTree *new_tree) ATTRIBUTE_NONNULL_
-		{
+		void diff(PackageTree *old_tree, PackageTree *new_tree) ATTRIBUTE_NONNULL_ {
 			// Diff every category from the old tree with the category from the new tree
 			for(PackageTree::iterator old_cat(old_tree->begin());
 				likely(old_cat != old_tree->end()); ++old_cat) {
@@ -215,13 +207,13 @@ class DiffTrees {
 		PortageSettings *m_portage_settings;
 		bool m_only_installed, m_slots, m_separate_deleted;
 
-		bool best_differs(const Package *new_pkg, const Package *old_pkg) ATTRIBUTE_NONNULL_
-		{ return new_pkg->differ(*old_pkg, m_vardbpkg, m_portage_settings, true, m_only_installed, m_slots); }
+		bool best_differs(const Package *new_pkg, const Package *old_pkg) ATTRIBUTE_NONNULL_ {
+			return new_pkg->differ(*old_pkg, m_vardbpkg, m_portage_settings, true, m_only_installed, m_slots);
+		}
 
 		/// Diff two categories and run callbacks.
 		/// Remove already diffed packages from both categories.
-		void diff_category(Category *old_cat, Category *new_cat) ATTRIBUTE_NONNULL_
-		{
+		void diff_category(Category *old_cat, Category *new_cat) ATTRIBUTE_NONNULL_ {
 			Category::iterator old_pkg(old_cat->begin());
 
 			while(likely(old_pkg != old_cat->end())) {
@@ -256,28 +248,20 @@ class DiffTrees {
  * a) the package does not exist in the new tree :) or
  * b) the new package has a different best-match than the old. */
 
-static void
-print_changed_package(Package *op, Package *np)
-{
+static void print_changed_package(Package *op, Package *np) {
 	Package *p[2] = { op, np };
 	format_for_new->print(p, get_diff_package_property, format_changed, new_header, varpkg_db, portagesettings, set_stability_new);
 }
 
-static void
-print_found_package(Package *p)
-{
+static void print_found_package(Package *p) {
 	format_for_new->print(p, format_new, new_header, varpkg_db, portagesettings, set_stability_new);
 }
 
-static void
-print_lost_package(Package *p)
-{
+static void print_lost_package(Package *p) {
 	format_for_old->print(p, format_delete, old_header, varpkg_db, portagesettings, set_stability_old);
 }
 
-static void
-parseFormat(Node **format, const char *varname, EixRc *rc)
-{
+static void parseFormat(Node **format, const char *varname, EixRc *rc) {
 	string errtext;
 	if(likely((format_for_new->parseFormat(format, (*rc)[varname].c_str(), &errtext)))) {
 		return;
@@ -287,9 +271,7 @@ parseFormat(Node **format, const char *varname, EixRc *rc)
 	exit(EXIT_FAILURE);
 }
 
-int
-run_eix_diff(int argc, char *argv[])
-{
+int run_eix_diff(int argc, char *argv[]) {
 	// Initialize static classes
 	ExtendedVersion::init_static();
 	PortageSettings::init_static();

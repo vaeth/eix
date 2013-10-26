@@ -16,9 +16,7 @@
 
 using std::vector;
 
-void
-DBHeader::set_priorities(PortageSettings *ps)
-{
+void DBHeader::set_priorities(PortageSettings *ps) {
 	for(vector<OverlayIdent>::iterator it(overlays.begin());
 		likely(it != overlays.end()); ++it) {
 		ps->repos.set_priority(&(*it));

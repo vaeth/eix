@@ -46,16 +46,12 @@ const ExtendedVersion::HaveBinPkg
 	ExtendedVersion::HAVEBINPKG_NO,
 	ExtendedVersion::HAVEBINPKG_YES;
 
-string
-ExtendedVersion::get_longfullslot() const
-{
+string ExtendedVersion::get_longfullslot() const {
 	return (subslotname.empty() ? (slotname.empty() ? "0" : slotname) :
 		(slotname.empty() ? (string("0/") + subslotname) : (slotname + "/" + subslotname)));
 }
 
-eix::SignedBool
-ExtendedVersion::compare(const ExtendedVersion& left, const ExtendedVersion& right)
-{
+eix::SignedBool ExtendedVersion::compare(const ExtendedVersion& left, const ExtendedVersion& right) {
 	eix::SignedBool r(BasicVersion::compare(left, right));
 	if(likely(r != 0)) {
 		return r;

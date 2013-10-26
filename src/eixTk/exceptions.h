@@ -22,10 +22,7 @@ void portage_parse_error(const std::string &file, std::vector<std::string>::size
 
 template<class Iterator> inline static void portage_parse_error(const std::string &file, const Iterator &begin, const Iterator &line, const std::string &errtext);
 
-template<class Iterator>
-inline static void
-portage_parse_error(const std::string &file, const Iterator &begin, const Iterator &line, const std::string &errtext)
-{
+template<class Iterator> inline static void portage_parse_error(const std::string &file, const Iterator &begin, const Iterator &line, const std::string &errtext) {
 GCC_DIAG_OFF(sign-conversion)
 	portage_parse_error(file, std::distance(begin, line) + 1, *line, errtext);
 GCC_DIAG_ON(sign-conversion)

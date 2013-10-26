@@ -63,9 +63,7 @@ using std::cerr;
 
 static string NORMALIZE_PATH(const char *path, bool resolve, bool want_slash) ATTRIBUTE_NONNULL_;
 
-string
-normalize_path(const char *path, bool resolve, bool want_slash)
-{
+string normalize_path(const char *path, bool resolve, bool want_slash) {
 	cerr << "Debug: Calling normalize_path(\"" << path << "\", " << resolve << ")...\nDebug: (with";
 #ifndef HAVE_CANONICALIZE_FILE_NAME
 	cerr << "out";
@@ -90,9 +88,7 @@ normalize_path(const char *path, bool resolve, bool want_slash)
 #define NORMALIZE_PATH normalize_path
 #endif
 
-NORMALIZE_PATH_EXPORT string
-NORMALIZE_PATH(const char *path, bool resolve, bool want_slash)
-{
+NORMALIZE_PATH_EXPORT string NORMALIZE_PATH(const char *path, bool resolve, bool want_slash) {
 	if(*path == 0) {
 		return "";
 	}
@@ -174,9 +170,7 @@ NORMALIZE_PATH(const char *path, bool resolve, bool want_slash)
 }
 
 /** Compare whether two (normalized) filenames are identical */
-bool
-same_filenames(const char *mask, const char *name, bool glob, bool resolve_mask)
-{
+bool same_filenames(const char *mask, const char *name, bool glob, bool resolve_mask) {
 	string m(normalize_path(mask, resolve_mask, false));
 	string n(normalize_path(name, false, false));
 	if(!glob)
@@ -185,9 +179,7 @@ same_filenames(const char *mask, const char *name, bool glob, bool resolve_mask)
 }
 
 /** Compare whether (normalized) filename starts with mask */
-bool
-filename_starts_with(const char *mask, const char *name, bool resolve_mask)
-{
+bool filename_starts_with(const char *mask, const char *name, bool resolve_mask) {
 	string m(normalize_path(mask, resolve_mask, true));
 	string n(normalize_path(name, false, true));
 	if(m == n) {
@@ -197,11 +189,9 @@ filename_starts_with(const char *mask, const char *name, bool resolve_mask)
 }
 
 /** Return first match in a list of filenames/patterns. */
-vector<string>::const_iterator
-find_filenames(const vector<string>::const_iterator start,
+vector<string>::const_iterator find_filenames(const vector<string>::const_iterator start,
 		const vector<string>::const_iterator end, const char *search,
-		bool list_of_patterns, bool resolve_list)
-{
+		bool list_of_patterns, bool resolve_list) {
 	for(vector<string>::const_iterator i(start); likely(i != end); ++i) {
 		if(unlikely(same_filenames(i->c_str(), search, list_of_patterns, resolve_list))) {
 			return i;
@@ -211,10 +201,9 @@ find_filenames(const vector<string>::const_iterator start,
 }
 
 /** Test whether filename appears to be a "virtual" overlay */
-bool
-is_virtual(const char *name)
-{
-	if(*name != '/')
+bool is_virtual(const char *name) {
+	if(*name != '/') {
 		return true;
+	}
 	return !is_dir(name);
 }

@@ -19,8 +19,7 @@
 typedef std::pair<const char *, const char *> ArgPair;
 
 /// Maps longopt->shortopt.
-class Option
-{
+class Option {
 	public:
 	enum Type {
 		BOOLEAN_T,             /**< Boolean. Will be set to true if found. */
@@ -43,35 +42,39 @@ class Option
 	} type;
 
 	Option(const char *l, int s, enum Type t, int *i) ATTRIBUTE_NONNULL((2, 5))
-		: type(t), longopt(l), shortopt(s)
-	{ u.integer = i; }
+		: type(t), longopt(l), shortopt(s) {
+		u.integer = i;
+	}
 
 	Option(const char *l, int s, enum Type t, bool *b) ATTRIBUTE_NONNULL((2, 5))
-		: type(t), longopt(l), shortopt(s)
-	{ u.boolean = b; }
+		: type(t), longopt(l), shortopt(s) {
+		u.boolean = b;
+	}
 
 	Option(const char *l, int s, enum Type t, const char **c) ATTRIBUTE_NONNULL((2, 5))
-		: type(t), longopt(l), shortopt(s)
-	{ u.str = c; }
+		: type(t), longopt(l), shortopt(s) {
+		u.str = c;
+	}
 
 	Option(const char *l, int s, enum Type t, const char **c1, const char **c2) ATTRIBUTE_NONNULL((2, 5, 6))
-		: type(t), longopt(l), shortopt(s)
-	{
+		: type(t), longopt(l), shortopt(s) {
 		u.pr.first = c1;
 		u.pr.second = c2;
 	}
 
 	Option(const char *l, int s, enum Type t, std::list<const char*> *c) ATTRIBUTE_NONNULL((2, 5))
-		: type(t), longopt(l), shortopt(s)
-	{ u.strlist = c; }
+		: type(t), longopt(l), shortopt(s) {
+		u.strlist = c;
+	}
 
 	Option(const char *l, int s, enum Type t, std::list<ArgPair> *c) ATTRIBUTE_NONNULL((2, 5))
-		: type(t), longopt(l), shortopt(s)
-	{ u.prlist = c; }
+		: type(t), longopt(l), shortopt(s) {
+		u.prlist = c;
+	}
 
 	Option(const char *l, int s, enum Type t = KEEP) ATTRIBUTE_NONNULL((2))
-		: type(t), longopt(l), shortopt(s)
-	{ }
+		: type(t), longopt(l), shortopt(s) {
+	}
 
 	const char *longopt;  /**< longopt of this pair. */
 	int  shortopt;        /**< shortopt of this pair. */
@@ -89,13 +92,11 @@ class Option
 	} u;
 };
 
-class OptionList : public std::vector<Option>
-{
+class OptionList : public std::vector<Option> {
 };
 
 /// Represents a parameter.
-class Parameter
-{
+class Parameter {
 	public:
 		/// Type of argument. ARGUMENT, OPTION, or PAIR.
 		const enum Type {
@@ -109,22 +110,20 @@ class Parameter
 		/// If type is OPTION this holds the option-key.
 		int m_option;
 
-		explicit Parameter(int option)
-			: type(Parameter::OPTION), m_option(option)
-		{ }
+		explicit Parameter(int option) : type(Parameter::OPTION), m_option(option) {
+		}
 
 		explicit Parameter(const char *argument) ATTRIBUTE_NONNULL((2))
-			: type(Parameter::ARGUMENT), m_argument(argument)
-		{ }
+			: type(Parameter::ARGUMENT), m_argument(argument) {
+		}
 
-		int operator*() const
-		{ return (type == OPTION) ? m_option : -1; }
+		int operator*() const {
+			return (type == OPTION) ? m_option : -1;
+		}
 };
 
 /// Main class for argument parsing.
-class ArgumentReader
-	: public std::list<Parameter>
-{
+class ArgumentReader : public std::list<Parameter> {
 	public:
 		char *name;  /**< Name of called program. */
 

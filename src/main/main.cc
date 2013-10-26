@@ -113,9 +113,7 @@ static void sig_handler(int sig) ATTRIBUTE_SIGNAL ATTRIBUTE_NORETURN;
 static void sanitize_filename(string *s) ATTRIBUTE_NONNULL_;
 
 /** On segfault: show some instructions to help us find the bug. */
-static void
-sig_handler(int sig)
-{
+static void sig_handler(int sig) {
 	if(sig == SIGSEGV)
 		fprintf(stderr, _(
 				"Received SIGSEGV - you probably found a bug in eix.\n"
@@ -134,9 +132,7 @@ sig_handler(int sig)
 }
 
 /** Cut program path (if there is one) to get only the program name. */
-static void
-sanitize_filename(string *s)
-{
+static void sanitize_filename(string *s) {
 	for(;;) {
 		string::size_type i(s->find_last_of('/'));
 		if(unlikely(i == string::npos)) {
@@ -157,9 +153,7 @@ sanitize_filename(string *s)
 #ifdef BINARY_COLLECTION
 inline static int run_program(int argc, char *argv[]) ATTRIBUTE_NONNULL_;
 
-inline static int
-run_program(int argc, char *argv[])
-{
+inline static int run_program(int argc, char *argv[]) {
 	const string program_lower(to_lower(program_name));
 #ifdef DIFF_BINARY
 	if(unlikely(program_lower.find("diff") != string::npos))
@@ -202,9 +196,7 @@ run_program(int argc, char *argv[])
 }
 #endif
 
-int
-main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 #ifdef ENABLE_NLS
 	/* Initialize GNU gettext support */
 	setlocale (LC_ALL, "");

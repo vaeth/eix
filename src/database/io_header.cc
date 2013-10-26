@@ -16,7 +16,7 @@
 
 #include "database/header.h"
 #include "database/io.h"
-#include "eixTk/auto_ptr.h"
+#include "eixTk/auto_list.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
@@ -30,9 +30,7 @@
 using std::string;
 using std::vector;
 
-bool
-Database::read_header(DBHeader *hdr, string *errtext)
-{
+bool Database::read_header(DBHeader *hdr, string *errtext) {
 	size_t magic_len(strlen(DBHeader::magic));
 	eix::auto_list<char> buf(new char[magic_len + 1]);
 	buf.get()[magic_len] = 0;
@@ -125,9 +123,7 @@ GCC_DIAG_ON(sign-conversion)
 	return true;
 }
 
-bool
-Database::read_hash(StringHash *hash, string *errtext)
-{
+bool Database::read_hash(StringHash *hash, string *errtext) {
 	hash->init(false);
 	StringHash::size_type i;
 	if(unlikely(!read_num(&i, errtext))) {

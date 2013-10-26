@@ -83,36 +83,31 @@ class PortageUserConfig {
 		bool setKeyflags(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const ATTRIBUTE_NONNULL_;
 
 		/// @return true if something from /etc/portage/package.use applied
-		bool CheckUse(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_
-		{
+		bool CheckUse(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
 			if(check & Keywords::RED_ALL_USE)
 				return CheckFile(p, USER_USE_FILE, &m_use, &read_use, check & Keywords::RED_DOUBLE_USE, check & Keywords::RED_IN_USE);
 			return false;
 		}
 		/// @return true if something from /etc/portage/package.env applied
-		bool CheckEnv(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_
-		{
+		bool CheckEnv(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
 			if(check & Keywords::RED_ALL_ENV)
 				return CheckFile(p, USER_ENV_FILE, &m_env, &read_env, check & Keywords::RED_DOUBLE_ENV, check & Keywords::RED_IN_ENV);
 			return false;
 		}
 		/// @return true if something from /etc/portage/package.license applied
-		bool CheckLicense(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_
-		{
+		bool CheckLicense(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
 			if(check & Keywords::RED_ALL_LICENSE)
 				return CheckFile(p, USER_LICENSE_FILE, &m_license, &read_license, check & Keywords::RED_DOUBLE_LICENSE, check & Keywords::RED_IN_LICENSE);
 			return false;
 		}
 		// @return true if something from /etc/portage/package.accept_restrict applied
-		bool CheckAcceptRestrict(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_
-		{
+		bool CheckAcceptRestrict(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
 			if(check & Keywords::RED_ALL_RESTRICT)
 				return CheckFile(p, USER_RESTRICT_FILE, &m_restrict, &read_restrict, check & Keywords::RED_DOUBLE_RESTRICT, check & Keywords::RED_IN_RESTRICT);
 			return false;
 		}
 		/// @return true if something from /etc/portage/package.cflags applied
-		bool CheckCflags(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_
-		{
+		bool CheckCflags(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
 			if(check & Keywords::RED_ALL_CFLAGS)
 				return CheckFile(p, USER_CFLAGS_FILE, &m_cflags, &read_cflags, check & Keywords::RED_DOUBLE_CFLAGS, check & Keywords::RED_IN_CFLAGS);
 			return false;
@@ -169,8 +164,9 @@ class PortageSettings : public std::map<std::string, std::string> {
 
 		void update_world_setslist();
 
-		const MaskList<SetMask> *getPackageSets() const
-		{ return &m_package_sets; }
+		const MaskList<SetMask> *getPackageSets() const {
+			return &m_package_sets;
+		}
 
 	public:
 		bool m_recurse_sets;
@@ -219,8 +215,9 @@ class PortageSettings : public std::map<std::string, std::string> {
 
 		void read_local_sets(const std::vector<std::string> &dir_list);
 
-		const std::vector<std::string> *get_world_sets() const
-		{ return &world_sets; }
+		const std::vector<std::string> *get_world_sets() const {
+			return &world_sets;
+		}
 
 		/** pushback categories from profiles to vec. Categories may be duplicate.
 		    Result is not cashed, i.e. this should be called only once. */
@@ -237,8 +234,7 @@ class PortageSettings : public std::map<std::string, std::string> {
 
 		void calc_local_sets(Package *p) const ATTRIBUTE_NONNULL_;
 
-		void finalize(Package *p) ATTRIBUTE_NONNULL_
-		{
+		void finalize(Package *p) ATTRIBUTE_NONNULL_ {
 			calc_world_sets(p);
 			p->finalize_masks();
 		}

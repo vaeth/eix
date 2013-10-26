@@ -40,11 +40,10 @@ class Node {
 		enum Type { TEXT, OUTPUT, SET, IF } type;
 		Node *next;
 
-		explicit Node(Type t) : type(t), next(NULLPTR)
-		{ }
+		explicit Node(Type t) : type(t), next(NULLPTR) {
+		}
 
-		~Node()
-		{
+		~Node() {
 			delete next;
 		}
 };
@@ -53,14 +52,14 @@ class Text : public Node {
 	public:
 		OutputString text;
 
-		Text() : Node(TEXT)
-		{ }
+		Text() : Node(TEXT) {
+		}
 
-		explicit Text(const OutputString &t) : Node(TEXT), text(t)
-		{ }
+		explicit Text(const OutputString &t) : Node(TEXT), text(t) {
+		}
 
-		Text(const std::string &t, std::string::size_type s) : Node(TEXT), text(t, s)
-		{ }
+		Text(const std::string &t, std::string::size_type s) : Node(TEXT), text(t, s) {
+		}
 };
 
 class Property : public Node {
@@ -68,8 +67,8 @@ class Property : public Node {
 		std::string name;
 		bool user_variable;
 
-		Property(const std::string &n = "", bool user_var = false) : Node(OUTPUT), name(n), user_variable(user_var)
-		{ }
+		Property(const std::string &n = "", bool user_var = false) : Node(OUTPUT), name(n), user_variable(user_var) {
+		}
 };
 
 class ConditionBlock : public Node {
@@ -126,8 +125,9 @@ class FormatParser {
 	public:
 		bool start(const char *fmt, bool colors, bool parse_only_colors, std::string *errtext) ATTRIBUTE_NONNULL((2));
 
-		Node *rootnode()
-		{ return root_node; }
+		Node *rootnode() {
+			return root_node;
+		}
 
 		/** Calculate line and column of current position. */
 		void getPosition(size_t *line, size_t *column);
@@ -138,11 +138,10 @@ class VarParserCacheNode {
 		FormatParser m_parser;
 		bool in_use;
 
-		bool init(Node *&rootnode, const char *fmt, bool colors, bool use, std::string *errtext) ATTRIBUTE_NONNULL((3));
+		bool init(Node **rootnode, const char *fmt, bool colors, bool use, std::string *errtext) ATTRIBUTE_NONNULL((3));
 };
 
-class VarParserCache : public std::map<std::string, VarParserCacheNode>
-{
+class VarParserCache : public std::map<std::string, VarParserCacheNode> {
 	public:
 		void clear_use();
 };
@@ -396,17 +395,18 @@ class PrintFormat {
 
 		bool have_virtual(const Package *p, bool nonvirtual) const ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
 
-		void set_overlay_translations(std::vector<ExtendedVersion::Overlay> *translations)
-		{ overlay_translations = translations; }
+		void set_overlay_translations(std::vector<ExtendedVersion::Overlay> *translations) {
+			overlay_translations = translations;
+		}
 
-		void set_overlay_used(std::vector<bool> *used, bool *some)
-		{
+		void set_overlay_used(std::vector<bool> *used, bool *some) {
 			overlay_used = used;
 			some_overlay_used = some;
 		}
 
-		void set_marked_list(MaskList<Mask> *m_list)
-		{ marked_list = m_list; }
+		void set_marked_list(MaskList<Mask> *m_list) {
+			marked_list = m_list;
+		}
 
 		void overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay, bool plain = false) const ATTRIBUTE_NONNULL_;
 
@@ -414,29 +414,33 @@ class PrintFormat {
 		bool print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL((2, 5, 6, 7, 8));
 
 		/* return true if something was actually printed */
-		bool print(void *entity, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL((2, 4, 5, 6, 7))
-		{ return print(entity, m_get_property, root, dbheader, vardbpkg, ps, s); }
+		bool print(void *entity, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL((2, 4, 5, 6, 7)) {
+			return print(entity, m_get_property, root, dbheader, vardbpkg, ps, s);
+		}
 
 		/* return true if something was actually printed */
-		bool print(void *entity, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL_
-		{ return print(entity, m_parser.rootnode(), dbheader, vardbpkg, ps, s); }
+		bool print(void *entity, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL_ {
+			return print(entity, m_parser.rootnode(), dbheader, vardbpkg, ps, s);
+		}
 
-		bool parseFormat(const char *fmt, std::string *errtext) ATTRIBUTE_NONNULL((2))
-		{ return m_parser.start(fmt, !no_color, false, errtext); }
+		bool parseFormat(const char *fmt, std::string *errtext) ATTRIBUTE_NONNULL((2)) {
+			return m_parser.start(fmt, !no_color, false, errtext);
+		}
 
 		bool parseFormat(Node **rootnode, const char *fmt, std::string *errtext) ATTRIBUTE_NONNULL((2, 3));
 
-		void StabilityLocal(Package *p) const ATTRIBUTE_NONNULL_
-		{ stability->set_stability(true, p); }
+		void StabilityLocal(Package *p) const ATTRIBUTE_NONNULL_ {
+			stability->set_stability(true, p);
+		}
 
-		void StabilityNonlocal(Package *p) const ATTRIBUTE_NONNULL_
-		{ stability->set_stability(false, p); }
+		void StabilityNonlocal(Package *p) const ATTRIBUTE_NONNULL_ {
+			stability->set_stability(false, p);
+		}
 
 		static void init_static();
 };
 
-class LocalCopy : public PackageSave
-{
+class LocalCopy : public PackageSave {
 	public:
 		LocalCopy(const PrintFormat *fmt, Package *pkg) ATTRIBUTE_NONNULL_;
 };

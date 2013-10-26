@@ -51,9 +51,10 @@ src/eixTk/ansicolor_print.cc
 src/eixTk/argsreader.cc
 src/eixTk/argsreader.h
 src/eixTk/assert.h
-src/eixTk/auto_ptr.h
+src/eixTk/auto_list.h
 src/eixTk/compare.cc
 src/eixTk/compare.h
+src/eixTk/constexpr.h
 src/eixTk/diagnostics.h
 src/eixTk/eixint.h
 src/eixTk/exceptions.cc

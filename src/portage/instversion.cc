@@ -13,9 +13,7 @@
 #include "portage/extendedversion.h"
 #include "portage/instversion.h"
 
-eix::SignedBool
-InstVersion::compare(const InstVersion& left, const InstVersion& right)
-{
+eix::SignedBool InstVersion::compare(const InstVersion& left, const InstVersion& right) {
 	if(likely(left.know_overlay && right.know_overlay && (!left.overlay_failed) && (!right.overlay_failed))) {
 		return ExtendedVersion::compare(left, right);
 	} else {
@@ -23,9 +21,7 @@ InstVersion::compare(const InstVersion& left, const InstVersion& right)
 	}
 }
 
-eix::SignedBool
-InstVersion::compare(const InstVersion& left, const ExtendedVersion& right)
-{
+eix::SignedBool InstVersion::compare(const InstVersion& left, const ExtendedVersion& right) {
 	if(likely(left.know_overlay && !left.overlay_failed)) {
 		return ExtendedVersion::compare(left, right);
 	} else {
@@ -33,9 +29,7 @@ InstVersion::compare(const InstVersion& left, const ExtendedVersion& right)
 	}
 }
 
-eix::SignedBool
-InstVersion::compare(const ExtendedVersion& left, const InstVersion& right)
-{
+eix::SignedBool InstVersion::compare(const ExtendedVersion& left, const InstVersion& right) {
 	if(likely(right.know_overlay && !right.overlay_failed)) {
 		return ExtendedVersion::compare(left, right);
 	} else {

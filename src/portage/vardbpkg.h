@@ -51,8 +51,8 @@ class VarDbPkg {
 			care_of_deps(care_about_deps),
 			get_restrictions(calc_restrictions),
 			care_of_restrictions(care_about_restrictions),
-			use_build_time(build_time)
-		{ }
+			use_build_time(build_time) {
+		}
 
 		~VarDbPkg() {
 			for(std::map<std::string, std::map<std::string, std::vector<InstVersion> >* >::iterator it(installed.begin());
@@ -61,8 +61,9 @@ class VarDbPkg {
 			}
 		}
 
-		bool care_slots() const
-		{ return care_of_slots; }
+		bool care_slots() const {
+			return care_of_slots;
+		}
 
 		bool readSlot(const Package &p, InstVersion *v) const ATTRIBUTE_NONNULL_;
 		bool readUse(const Package &p, InstVersion *v) const ATTRIBUTE_NONNULL_;
@@ -88,13 +89,13 @@ class VarDbPkg {
 		 * @param p Check for this Package.
 		 * @param v If not NULLPTR, check for this BasicVersion.
 		   If a particular version is found and r is nonzero, r points to that version */
-		bool isInstalled(const Package &p, const BasicVersion *v = NULLPTR, InstVersion **r = NULLPTR)
-		{ return isInVec(getInstalledVector(p), v, r); }
+		bool isInstalled(const Package &p, const BasicVersion *v = NULLPTR, InstVersion **r = NULLPTR) {
+			return isInVec(getInstalledVector(p), v, r);
+		}
 
 		/** Test if a particular version is installed from the correct overlay.
 		 * @return 1 (yes) or 0 (no) or -1 (might be - overlay unclear) */
-		eix::SignedBool isInstalledVersion(const Package &p, const Version *v, const DBHeader& header) ATTRIBUTE_NONNULL_
-		{
+		eix::SignedBool isInstalledVersion(const Package &p, const Version *v, const DBHeader& header) ATTRIBUTE_NONNULL_ {
 			InstVersion *inst;
 			return isInstalledVersion(&inst, p, v, header);
 		}

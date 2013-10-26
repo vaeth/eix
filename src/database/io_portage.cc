@@ -14,7 +14,7 @@
 #include "database/header.h"
 #include "database/io.h"
 #include "database/package_reader.h"
-#include "eixTk/auto_ptr.h"
+#include "eixTk/auto_list.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
@@ -47,9 +47,7 @@ using std::vector;
 	} \
 } while(0)
 
-bool
-Database::read_Part(BasicPart *b, string *errtext)
-{
+bool Database::read_Part(BasicPart *b, string *errtext) {
 	string::size_type len;
 	if(unlikely(!read_num(&len, errtext))) {
 		return false;
@@ -69,9 +67,7 @@ Database::read_Part(BasicPart *b, string *errtext)
 	return true;
 }
 
-bool
-Database::read_iuse(const StringHash& hash, IUseSet *iuse, string *errtext)
-{
+bool Database::read_iuse(const StringHash& hash, IUseSet *iuse, string *errtext) {
 	iuse->clear();
 	eix::UNumber e;
 	if(unlikely(!read_num(&e, errtext))) {
@@ -87,9 +83,7 @@ Database::read_iuse(const StringHash& hash, IUseSet *iuse, string *errtext)
 	return true;
 }
 
-bool
-Database::read_version(Version *v, const DBHeader &hdr, string *errtext)
-{
+bool Database::read_version(Version *v, const DBHeader &hdr, string *errtext) {
 	// read masking
 	MaskFlags::MaskType mask;
 	if(unlikely(!read_num(&mask, errtext))) {
@@ -145,9 +139,7 @@ Database::read_version(Version *v, const DBHeader &hdr, string *errtext)
 	return true;
 }
 
-bool
-Database::write_Part(const BasicPart &n, string *errtext)
-{
+bool Database::write_Part(const BasicPart &n, string *errtext) {
 	const string &content(n.partcontent);
 	if(unlikely(!write_num(content.size()*BasicPart::max_type + string::size_type(n.parttype), errtext))) {
 		return false;
@@ -160,9 +152,7 @@ Database::write_Part(const BasicPart &n, string *errtext)
 	return true;
 }
 
-bool
-Database::write_version(const Version *v, const DBHeader &hdr, string *errtext)
-{
+bool Database::write_version(const Version *v, const DBHeader &hdr, string *errtext) {
 	// write masking
 	if(unlikely(!writeUChar(v->maskflags.get(), errtext))) {
 		return false;
@@ -209,9 +199,7 @@ Database::write_version(const Version *v, const DBHeader &hdr, string *errtext)
 	return true;
 }
 
-bool
-Database::read_depend(Depend *dep, const DBHeader &hdr, string *errtext)
-{
+bool Database::read_depend(Depend *dep, const DBHeader &hdr, string *errtext) {
 	string::size_type len;
 	if(unlikely(!read_num(&len, errtext))) {
 		return false;
@@ -243,33 +231,24 @@ GCC_DIAG_ON(sign-conversion)
 	return true;
 }
 
-bool
-Database::write_depend(const Depend &dep, const DBHeader &hdr, string *errtext)
-{
+bool Database::write_depend(const Depend &dep, const DBHeader &hdr, string *errtext) {
 	return (likely(write_hash_words(hdr.depend_hash, dep.m_depend, errtext)) &&
 		likely(write_hash_words(hdr.depend_hash, dep.m_rdepend, errtext)) &&
 		likely(write_hash_words(hdr.depend_hash, dep.m_pdepend, errtext)) &&
 		likely(write_hash_words(hdr.depend_hash, dep.m_hdepend, errtext)));
 }
 
-bool
-Database::read_category_header(string *name, eix::Treesize *h, string *errtext)
-{
+bool Database::read_category_header(string *name, eix::Treesize *h, string *errtext) {
 	return (likely(read_string(name, errtext)) &&
 		likely(read_num(h, errtext)));
 }
 
-bool
-Database::write_category_header(const string &name, eix::Treesize size, string *errtext)
-{
+bool Database::write_category_header(const string &name, eix::Treesize size, string *errtext) {
 	return (likely(write_string(name, errtext)) &&
 		likely(write_num(size, errtext)));
 }
 
-
-bool
-Database::write_package_pure(const Package &pkg, const DBHeader &hdr, string *errtext)
-{
+bool Database::write_package_pure(const Package &pkg, const DBHeader &hdr, string *errtext) {
 	if(unlikely(!write_string(pkg.name, errtext))) {
 		return false;
 	}
@@ -296,16 +275,12 @@ Database::write_package_pure(const Package &pkg, const DBHeader &hdr, string *er
 	return true;
 }
 
-bool
-Database::write_package(const Package &pkg, const DBHeader &hdr, string *errtext)
-{
+bool Database::write_package(const Package &pkg, const DBHeader &hdr, string *errtext) {
 	WRITE_COUNTER(write_package_pure(pkg, hdr, NULLPTR));
 	return write_package_pure(pkg, hdr, errtext);
 }
 
-bool
-Database::write_hash(const StringHash& hash, string *errtext)
-{
+bool Database::write_hash(const StringHash& hash, string *errtext) {
 	StringHash::size_type e(hash.size());
 	if(unlikely(!write_num(e, errtext))) {
 		return false;
@@ -318,9 +293,7 @@ Database::write_hash(const StringHash& hash, string *errtext)
 	return true;
 }
 
-void
-Database::prep_header_hashs(DBHeader *hdr, const PackageTree &tree)
-{
+void Database::prep_header_hashs(DBHeader *hdr, const PackageTree &tree) {
 	hdr->license_hash.init(true);
 	hdr->keywords_hash.init(true);
 	hdr->slot_hash.init(true);
@@ -357,9 +330,7 @@ Database::prep_header_hashs(DBHeader *hdr, const PackageTree &tree)
 	}
 }
 
-bool
-Database::write_header(const DBHeader &hdr, string *errtext)
-{
+bool Database::write_header(const DBHeader &hdr, string *errtext) {
 	if(unlikely(!write_string_plain(DBHeader::magic, errtext))) {
 		return false;
 	}
@@ -416,9 +387,7 @@ Database::write_header(const DBHeader &hdr, string *errtext)
 	}
 }
 
-bool
-Database::write_packagetree(const PackageTree &tree, const DBHeader &hdr, string *errtext)
-{
+bool Database::write_packagetree(const PackageTree &tree, const DBHeader &hdr, string *errtext) {
 	for(PackageTree::const_iterator c(tree.begin()); likely(c != tree.end()); ++c) {
 		Category *ci(c->second);
 		// Write category-header followed by a list of the packages.
@@ -436,9 +405,7 @@ Database::write_packagetree(const PackageTree &tree, const DBHeader &hdr, string
 	return true;
 }
 
-bool
-Database::read_packagetree(PackageTree *tree, const DBHeader &hdr, PortageSettings *ps, string *errtext)
-{
+bool Database::read_packagetree(PackageTree *tree, const DBHeader &hdr, PortageSettings *ps, string *errtext) {
 	PackageReader reader(this, hdr, ps);
 	while(reader.nextCategory()) {
 		Category &cat((*tree)[reader.category()]);

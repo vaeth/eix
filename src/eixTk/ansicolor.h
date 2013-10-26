@@ -36,17 +36,20 @@ class AnsiColor {
 	public:
 		static unsigned int colorscheme;
 
-		AnsiColor()
-		{ }
+		AnsiColor() {
+		}
 
-		AnsiColor(const std::string &str, std::string *errtext)
-		{ initcolor(str, errtext); }
+		AnsiColor(const std::string &str, std::string *errtext) {
+			initcolor(str, errtext);
+		}
 
-		static const char *reset()
-		{ return reset_string; }
+		static const char *reset() {
+			return reset_string;
+		}
 
-		const std::string &asString() const
-		{ return code; }
+		const std::string &asString() const {
+			return code;
+		}
 
 		bool initcolor(const std::string &str, std::string *errtext);
 
@@ -70,9 +73,7 @@ class AnsiColor {
 		static void PrintPalette(WhichPalette which);
 };
 
-inline static std::ostream&
-operator<<(std::ostream& os, const AnsiColor &ac)
-{
+inline static std::ostream& operator<<(std::ostream& os, const AnsiColor &ac) {
 	os << ac.asString();
 	return os;
 }

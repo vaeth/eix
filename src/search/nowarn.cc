@@ -32,69 +32,65 @@ using std::set;
 using std::string;
 using std::vector;
 
-class NowarnKeywords
-{
-private:
-	typedef map<string, NowarnFlags> NameMap;
-	NameMap name_map;
-public:
-	void init_red(const char *s, Keywords::Redundant red) ATTRIBUTE_NONNULL_
-	{ name_map.insert(pair<string, NowarnFlags>(s, NowarnFlags(red))); }
+class NowarnKeywords {
+	private:
+		typedef map<string, NowarnFlags> NameMap;
+		NameMap name_map;
 
-	void init_ins(const std::string &s, PackageTest::TestInstalled ins)
-	{ name_map.insert(pair<string, NowarnFlags>(s, NowarnFlags(Keywords::RED_NOTHING, ins))); }
-
-	void apply(const std::string &s, NowarnFlags &f) const
-	{
-		NameMap::const_iterator it(name_map.find(s));
-		if(it != name_map.end()) {
-			f.setbits(it->second);
+	public:
+		void init_red(const char *s, Keywords::Redundant red) ATTRIBUTE_NONNULL_ {
+			name_map.insert(pair<string, NowarnFlags>(s, NowarnFlags(red)));
 		}
-	}
 
-	NowarnKeywords()
-	{
-		init_red("in_keywords",      Keywords::RED_IN_KEYWORDS);
-		init_red("no_change",        Keywords::RED_NO_CHANGE);
-		init_red("double",           Keywords::RED_DOUBLE);
-		init_red("mixed",            Keywords::RED_MIXED);
-		init_red("weaker",           Keywords::RED_WEAKER);
-		init_red("strange",          Keywords::RED_STRANGE);
-		init_red("double_line",      Keywords::RED_DOUBLE_LINE);
-		init_red("in_mask",          Keywords::RED_IN_MASK);
-		init_red("mask_no_change",   Keywords::RED_MASK);
-		init_red("double_masked",    Keywords::RED_DOUBLE_MASK);
-		init_red("in_unmask",        Keywords::RED_IN_UNMASK);
-		init_red("unmask_no_change", Keywords::RED_UNMASK);
-		init_red("double_unmasked",  Keywords::RED_DOUBLE_UNMASK);
-		init_red("in_use",           Keywords::RED_IN_USE);
-		init_red("double_use",       Keywords::RED_DOUBLE_USE);
-		init_red("in_env",           Keywords::RED_IN_ENV);
-		init_red("double_env",       Keywords::RED_DOUBLE_ENV);
-		init_red("in_license",       Keywords::RED_IN_LICENSE);
-		init_red("double_license",   Keywords::RED_DOUBLE_LICENSE);
-		init_red("in_restrict",      Keywords::RED_IN_RESTRICT);
-		init_red("double_restrict",  Keywords::RED_DOUBLE_RESTRICT);
-		init_red("in_cflags",        Keywords::RED_IN_CFLAGS);
-		init_red("double_cflags",    Keywords::RED_DOUBLE_CFLAGS);
-		init_ins("nonexistent",      PackageTest::INS_NONEXISTENT);
-		init_ins("masked",           PackageTest::INS_MASKED);
-		init_ins("other_overlay",    PackageTest::INS_OVERLAY);
-	}
+		void init_ins(const std::string &s, PackageTest::TestInstalled ins) {
+			name_map.insert(pair<string, NowarnFlags>(s, NowarnFlags(Keywords::RED_NOTHING, ins)));
+		}
+
+		void apply(const std::string &s, NowarnFlags *f) const {
+			NameMap::const_iterator it(name_map.find(s));
+			if(it != name_map.end()) {
+				f->setbits(it->second);
+			}
+		}
+
+		NowarnKeywords() {
+			init_red("in_keywords",      Keywords::RED_IN_KEYWORDS);
+			init_red("no_change",        Keywords::RED_NO_CHANGE);
+			init_red("double",           Keywords::RED_DOUBLE);
+			init_red("mixed",            Keywords::RED_MIXED);
+			init_red("weaker",           Keywords::RED_WEAKER);
+			init_red("strange",          Keywords::RED_STRANGE);
+			init_red("double_line",      Keywords::RED_DOUBLE_LINE);
+			init_red("in_mask",          Keywords::RED_IN_MASK);
+			init_red("mask_no_change",   Keywords::RED_MASK);
+			init_red("double_masked",    Keywords::RED_DOUBLE_MASK);
+			init_red("in_unmask",        Keywords::RED_IN_UNMASK);
+			init_red("unmask_no_change", Keywords::RED_UNMASK);
+			init_red("double_unmasked",  Keywords::RED_DOUBLE_UNMASK);
+			init_red("in_use",           Keywords::RED_IN_USE);
+			init_red("double_use",       Keywords::RED_DOUBLE_USE);
+			init_red("in_env",           Keywords::RED_IN_ENV);
+			init_red("double_env",       Keywords::RED_DOUBLE_ENV);
+			init_red("in_license",       Keywords::RED_IN_LICENSE);
+			init_red("double_license",   Keywords::RED_DOUBLE_LICENSE);
+			init_red("in_restrict",      Keywords::RED_IN_RESTRICT);
+			init_red("double_restrict",  Keywords::RED_DOUBLE_RESTRICT);
+			init_red("in_cflags",        Keywords::RED_IN_CFLAGS);
+			init_red("double_cflags",    Keywords::RED_DOUBLE_CFLAGS);
+			init_ins("nonexistent",      PackageTest::INS_NONEXISTENT);
+			init_ins("masked",           PackageTest::INS_MASKED);
+			init_ins("other_overlay",    PackageTest::INS_OVERLAY);
+		}
 };
 
 NowarnKeywords *NowarnMask::nowarn_keywords = NULLPTR;
 
-void
-NowarnMask::init_static()
-{
+void NowarnMask::init_static() {
 	eix_assert_static(nowarn_keywords == NULLPTR);
 	nowarn_keywords = new NowarnKeywords;
 }
 
-void
-NowarnMask::init_nowarn(const vector<string> &flagstrings)
-{
+void NowarnMask::init_nowarn(const vector<string> &flagstrings) {
 	eix_assert_static(nowarn_keywords != NULLPTR);
 	set_flags.clear();
 	clear_flags.clear();
@@ -104,15 +100,13 @@ NowarnMask::init_nowarn(const vector<string> &flagstrings)
 			continue;
 		}
 		if((*it)[0] == '-') {
-			nowarn_keywords->apply(it->substr(1), clear_flags);
+			nowarn_keywords->apply(it->substr(1), &clear_flags);
 		}
-		nowarn_keywords->apply(*it, set_flags);
+		nowarn_keywords->apply(*it, &set_flags);
 	}
 }
 
-void
-NowarnMaskList::apply(Package *p, Keywords::Redundant *r, PackageTest::TestInstalled *i, PortageSettings *portagesettings) const
-{
+void NowarnMaskList::apply(Package *p, Keywords::Redundant *r, PackageTest::TestInstalled *i, PortageSettings *portagesettings) const {
 	super::Get *masks(get(p));
 	if(masks == NULLPTR) {
 		return;
@@ -165,9 +159,7 @@ NowarnMaskList::apply(Package *p, Keywords::Redundant *r, PackageTest::TestInsta
 	set_flags.apply_ins(i);
 }
 
-void
-NowarnPreList::initialize(NowarnMaskList *l)
-{
+void NowarnPreList::initialize(NowarnMaskList *l) {
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		string errtext;

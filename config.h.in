@@ -111,6 +111,9 @@
 /* Define to 1 if you have the <climits> header file. */
 #undef HAVE_CLIMITS
 
+/* Define if C++ dialect has constexpr modifier */
+#undef HAVE_CONSTEXPR
+
 /* Define to 1 if you have the <cstdint> header file. */
 #undef HAVE_CSTDINT
 

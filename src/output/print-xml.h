@@ -11,6 +11,7 @@
 
 #include <string>
 
+#include "eixTk/constexpr.h"
 #include "eixTk/eixint.h"
 #include "eixTk/null.h"
 #include "eixTk/ptr_list.h"
@@ -27,7 +28,7 @@ class PrintXml {
 	protected:
 		bool started;
 		bool print_overlay;
-		enum{ KW_NONE, KW_BOTH, KW_FULL, KW_EFF, KW_FULLS, KW_EFFS } keywords_mode;
+		enum { KW_NONE, KW_BOTH, KW_FULL, KW_EFF, KW_FULLS, KW_EFFS } keywords_mode;
 
 		const DBHeader *hdr;
 		VarDbPkg *var_db_pkg;
@@ -44,10 +45,9 @@ class PrintXml {
 
 	public:
 		typedef eix::UNumber XmlVersion;
-		static const XmlVersion current = 10;
+		static CONSTEXPR XmlVersion current = 10;
 
-		void init(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir) ATTRIBUTE_NONNULL_
-		{
+		void init(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir) ATTRIBUTE_NONNULL_ {
 			hdr = header;
 			var_db_pkg = vardb;
 			print_format = printformat;
@@ -56,19 +56,22 @@ class PrintXml {
 			clear(eixrc);
 		}
 
-		PrintXml(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir) ATTRIBUTE_NONNULL_
-		{ init(header, vardb, printformat, set_stability, eixrc, port_dir); }
+		PrintXml(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir) ATTRIBUTE_NONNULL_ {
+			init(header, vardb, printformat, set_stability, eixrc, port_dir);
+		}
 
-		PrintXml() : hdr(NULLPTR), var_db_pkg(NULLPTR), print_format(NULLPTR), stability(NULLPTR)
-		{ clear(NULLPTR); }
+		PrintXml() : hdr(NULLPTR), var_db_pkg(NULLPTR), print_format(NULLPTR), stability(NULLPTR) {
+			clear(NULLPTR);
+		}
 
 		void start();
 		void package(Package *pkg) ATTRIBUTE_NONNULL_;
 		void finish();
 		static std::string escape_xmlstring(const std::string &s);
 
-		~PrintXml()
-		{ finish(); }
+		~PrintXml() {
+			finish();
+		}
 };
 
 #endif  // SRC_OUTPUT_PRINT_XML_H_

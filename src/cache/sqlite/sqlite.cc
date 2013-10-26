@@ -54,19 +54,13 @@ using std::cout;
 
 SqliteCache *SqliteCache::callback_arg;
 
-inline static const char *
-welldefine(const char *s) ATTRIBUTE_CONST;
-inline static const char *
-welldefine(const char *s)
-{
-	if(s != NULLPTR)
-		return s;
-	return "";
+inline static const char *welldefine(const char *s) ATTRIBUTE_CONST;
+
+inline static const char *welldefine(const char *s) {
+	return ((s != NULLPTR) ? s : "");
 }
 
-int
-sqlite_callback(void *NotUsed ATTRIBUTE_UNUSED, int argc, char **argv, char **azColName)
-{
+int sqlite_callback(void *NotUsed ATTRIBUTE_UNUSED, int argc, char **argv, char **azColName) {
 	UNUSED(NotUsed);
 #ifdef SQLITE_ONLY_DEBUG
 	for(int i(0); likely(i < argc); ++i) {
@@ -122,15 +116,13 @@ class TrueIndex : public map<string, vector<int>::size_type> {
 		vector<int> default_trueindex;
 
 	private:
-		void mapinit(int true_index, vector<int>::size_type my_index, const char *s) ATTRIBUTE_NONNULL_
-		{
+		void mapinit(int true_index, vector<int>::size_type my_index, const char *s) ATTRIBUTE_NONNULL_ {
 			(*this)[s] = my_index;
 			default_trueindex[my_index] = true_index;
 		}
 
 	public:
-		TrueIndex() : default_trueindex(LAST, -1)
-		{
+		TrueIndex() : default_trueindex(LAST, -1) {
 			mapinit( 1, NAME,        "portage_package_key");
 			mapinit( 3, DEPEND,      "DEPEND");
 			mapinit( 4, DESCRIPTION, "DESCRIPTION");
@@ -146,8 +138,7 @@ class TrueIndex : public map<string, vector<int>::size_type> {
 			mapinit(18, SLOT,        "SLOT");
 		}
 
-		int calc(int argc, const char **azColName, vector<int> *trueindex) const ATTRIBUTE_NONNULL_
-		{
+		int calc(int argc, const char **azColName, vector<int> *trueindex) const ATTRIBUTE_NONNULL_ {
 			*trueindex = default_trueindex;
 			for(int i(0); i < argc; ++i) {
 				map<string, vector<int>::size_type>::const_iterator it(find(azColName[i]));
@@ -172,23 +163,22 @@ class TrueIndex : public map<string, vector<int>::size_type> {
 			return max_index;
 		}
 
-		static const char *c_str(const char **argv, vector<int> *trueindex, const vector<int>::size_type i) ATTRIBUTE_NONNULL((2))
-		{
+		static const char *c_str(const char **argv, vector<int> *trueindex, const vector<int>::size_type i) ATTRIBUTE_NONNULL((2)) {
 			int t((*trueindex)[i]);
-			if(t < 0)
+			if(t < 0) {
 				return "";
+			}
 			return welldefine(argv[t]);
 		}
 };
 
 TrueIndex *SqliteCache::true_index = NULLPTR;
 
-void
-SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azColName)
-{
+void SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azColName) {
 	// If an earlier error occurred, we ignore later calls:
-	if(unlikely(sqlite_callback_error))
+	if(unlikely(sqlite_callback_error)) {
 		return;
+	}
 
 	if(maxindex == 0) {
 		if(unlikely(true_index == NULLPTR)) {
@@ -267,8 +257,7 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 		pkg->addVersion(version);
 
 		/* For the newest version, add all remaining data */
-		if(*(pkg->latest()) == *version)
-		{
+		if(*(pkg->latest()) == *version) {
 			pkg->homepage = TrueIndex::c_str(argv, &trueindex, TrueIndex::HOMEPAGE);
 			pkg->licenses = TrueIndex::c_str(argv, &trueindex, TrueIndex::LICENSE);
 			pkg->desc     = TrueIndex::c_str(argv, &trueindex, TrueIndex::DESCRIPTION);
@@ -279,9 +268,7 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 	free(aux[1]);
 }
 
-bool
-SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category *cat)
-{
+bool SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category *cat) {
 	char *errormessage(NULLPTR);
 	string sqlitefile(m_prefix + PORTAGE_CACHE_PATH + m_scheme);
 	// Cut all trailing '/' and append ".sqlite" to the name
@@ -295,8 +282,7 @@ SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category 
 
 	sqlite3 *db;
 	int rc(sqlite3_open(sqlitefile.c_str(), &db));
-	if(rc)
-	{
+	if(rc) {
 		sqlite3_close(db);
 		m_error_callback(eix::format(_("Can't open cache file %s")) % sqlitefile);
 		return false;
@@ -323,9 +309,7 @@ SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category 
 #include "eixTk/i18n.h"  // NOLINT(build/include)
 #include "eixTk/unused.h"  // NOLINT(build/include)
 
-bool
-SqliteCache::readCategories(PackageTree *pkgtree ATTRIBUTE_UNUSED, const char *catname ATTRIBUTE_UNUSED, Category *cat ATTRIBUTE_UNUSED)
-{
+bool SqliteCache::readCategories(PackageTree *pkgtree ATTRIBUTE_UNUSED, const char *catname ATTRIBUTE_UNUSED, Category *cat ATTRIBUTE_UNUSED) {
 	UNUSED(pkgtree);
 	UNUSED(catname);
 	UNUSED(cat);

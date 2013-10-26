@@ -12,12 +12,12 @@
 #ifdef HAVE_TR1_CSTDINT
 #include <tr1/cstdint>
 #else
-#ifdef HAVE_CSTDINT
-#include <cstdint>
-#else
+#ifndef HAVE_CSTDINT
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif
+#else
+#include <cstdint>
 #endif
 #endif
 

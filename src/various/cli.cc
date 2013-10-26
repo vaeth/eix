@@ -35,9 +35,7 @@ using std::vector;
 
 static bool optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader &ar) ATTRIBUTE_NONNULL_;
 
-static bool
-optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader &ar)
-{
+static bool optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader &ar) {
 	ArgumentReader::const_iterator next(*arg);
 	if(unlikely(++next == ar.end()))
 		return false;
@@ -68,9 +66,7 @@ optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader &ar)
 	} \
 } while(0)
 
-void
-parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, MaskList<Mask> **marked_list, const ArgumentReader& ar)
-{
+void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, MaskList<Mask> **marked_list, const ArgumentReader& ar) {
 	bool	use_pipe(false),      // A pipe is used somewhere
 		force_test(false),    // There is a current test or a pipe
 		curr_pipe(false),     // There is a current pipe
@@ -303,8 +299,7 @@ parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettin
 			case O_PROPERTIES_SET: USE_TEST;
 				test->Properties(ExtendedVersion::PROPERTIES_SET);
 				break;
-			case 'T': USE_TEST;
-			{
+			case 'T': USE_TEST; {
 				EixRc::RedPair red;
 				red.first = red.second = RedAtom();
 				if(likely(eixrc->getBool("TEST_FOR_REDUNDANCY"))) {

@@ -51,8 +51,7 @@ using std::endl;
 static const char *profile_exclude[] = { "parent", "..", "." , NULLPTR };
 
 /** Add all files from profile and its parents to m_profile_files. */
-bool CascadingProfile::addProfile(const char *profile, set<string> *sourced_files)
-{
+bool CascadingProfile::addProfile(const char *profile, set<string> *sourced_files) {
 	string truename(normalize_path(profile, true, true));
 	if(unlikely(print_profile_paths)) {
 		if(likely(is_dir(truename.c_str()))) {
@@ -125,51 +124,46 @@ bool CascadingProfile::addProfile(const char *profile, set<string> *sourced_file
 	return r;
 }
 
-class ProfileFilenames
-{
-	typedef CascadingProfile::Handler Handler;
-	typedef map<string, Handler> NameMap;
-	NameMap name_map;
-public:
-	void initstring(const std::string &s, Handler h)
-	{ name_map.insert(pair<string, Handler>(s, h)); }
+class ProfileFilenames {
+		typedef CascadingProfile::Handler Handler;
+		typedef map<string, Handler> NameMap;
+		NameMap name_map;
 
-	Handler operator[](const std::string s) const ATTRIBUTE_PURE
-	{
-		NameMap::const_iterator it(name_map.find(s));
-		if(it != name_map.end()) {
-			return it->second;
+	public:
+		void initstring(const std::string &s, Handler h) {
+			name_map.insert(pair<string, Handler>(s, h));
 		}
-		return NULLPTR;
-	}
 
-	ProfileFilenames()
-	{
-		initstring("packages",   &CascadingProfile::readPackages);
-		initstring("packages.d", &CascadingProfile::readPackages);
-		initstring("package.mask",   &CascadingProfile::readPackageMasks);
-		initstring("package.mask.d", &CascadingProfile::readPackageMasks);
-		initstring("package.unmask",   &CascadingProfile::readPackageUnmasks);
-		initstring("package.unmask.d", &CascadingProfile::readPackageUnmasks);
-		initstring("package.keywords",   &CascadingProfile::readPackageKeywords);
-		initstring("package.keywords.d", &CascadingProfile::readPackageKeywords);
-		initstring("package.accept_keywords",   &CascadingProfile::readPackageAcceptKeywords);
-		initstring("package.accept_keywords.d", &CascadingProfile::readPackageAcceptKeywords);
-	}
+		Handler operator[](const std::string s) const ATTRIBUTE_PURE {
+			NameMap::const_iterator it(name_map.find(s));
+			if(it != name_map.end()) {
+				return it->second;
+			}
+			return NULLPTR;
+		}
+
+		ProfileFilenames() {
+			initstring("packages",   &CascadingProfile::readPackages);
+			initstring("packages.d", &CascadingProfile::readPackages);
+			initstring("package.mask",   &CascadingProfile::readPackageMasks);
+			initstring("package.mask.d", &CascadingProfile::readPackageMasks);
+			initstring("package.unmask",   &CascadingProfile::readPackageUnmasks);
+			initstring("package.unmask.d", &CascadingProfile::readPackageUnmasks);
+			initstring("package.keywords",   &CascadingProfile::readPackageKeywords);
+			initstring("package.keywords.d", &CascadingProfile::readPackageKeywords);
+			initstring("package.accept_keywords",   &CascadingProfile::readPackageAcceptKeywords);
+			initstring("package.accept_keywords.d", &CascadingProfile::readPackageAcceptKeywords);
+		}
 };
 
 static ProfileFilenames *profile_filenames = NULLPTR;
 
-void
-CascadingProfile::init_static()
-{
+void CascadingProfile::init_static() {
 	eix_assert_static(profile_filenames == NULLPTR);
 	profile_filenames = new ProfileFilenames;
 }
 
-bool
-CascadingProfile::readremoveFiles()
-{
+bool CascadingProfile::readremoveFiles() {
 	eix_assert_static(profile_filenames != NULLPTR);
 	bool ret(false);
 	for(vector<ProfileFile>::iterator file(m_profile_files.begin());
@@ -194,9 +188,7 @@ CascadingProfile::readremoveFiles()
 	return ret;
 }
 
-bool
-CascadingProfile::readPackages(const string &filename, const char *repo)
-{
+bool CascadingProfile::readPackages(const string &filename, const char *repo) {
 	vector<string> lines;
 	pushback_lines(filename.c_str(), &lines, true, true);
 	bool ret(false);
@@ -230,42 +222,32 @@ CascadingProfile::readPackages(const string &filename, const char *repo)
 	return ret;
 }
 
-bool
-CascadingProfile::readPackageMasks(const string &filename, const char *repo)
-{
+bool CascadingProfile::readPackageMasks(const string &filename, const char *repo) {
 	vector<string> lines;
 	pushback_lines(filename.c_str(), &lines, true, true, -1);
 	return p_package_masks.handle_file(lines, filename, repo, false, true);
 }
 
-bool
-CascadingProfile::readPackageUnmasks(const string &filename, const char *repo)
-{
+bool CascadingProfile::readPackageUnmasks(const string &filename, const char *repo) {
 	vector<string> lines;
 	pushback_lines(filename.c_str(), &lines, true, true);
 	return p_package_unmasks.handle_file(lines, filename, repo, false);
 }
 
-bool
-CascadingProfile::readPackageKeywords(const string &filename, const char *repo)
-{
+bool CascadingProfile::readPackageKeywords(const string &filename, const char *repo) {
 	vector<string> lines;
 	pushback_lines(filename.c_str(), &lines, true, true);
 	return p_package_keywords.handle_file(lines, filename, repo, false);
 }
 
-bool
-CascadingProfile::readPackageAcceptKeywords(const string &filename, const char *repo)
-{
+bool CascadingProfile::readPackageAcceptKeywords(const string &filename, const char *repo) {
 	vector<string> lines;
 	pushback_lines(filename.c_str(), &lines, true, true);
 	return p_package_accept_keywords.handle_file(lines, filename, repo, true);
 }
 
 /** Read all "make.defaults" files found in profile. */
-void
-CascadingProfile::readMakeDefaults()
-{
+void CascadingProfile::readMakeDefaults() {
 	for(vector<string>::size_type i(0); likely(i < m_profile_files.size()); ++i) {
 		if(unlikely(strcmp(strrchr(m_profile_files[i].c_str(), '/'), "/make.defaults") == 0)) {
 			m_portagesettings->read_config(m_profile_files[i].name(), "");
@@ -276,9 +258,7 @@ CascadingProfile::readMakeDefaults()
 /** Populate MaskLists from PreLists.
     All files must have been read and m_raised_arch
     must be known when this is called. */
-void
-CascadingProfile::finalize()
-{
+void CascadingProfile::finalize() {
 	if(finalized) {
 		return;
 	}
@@ -292,9 +272,7 @@ CascadingProfile::finalize()
 }
 
 /** Cycle through profile and put path to files into this->m_profile_files. */
-void
-CascadingProfile::listaddProfile(const char *profile_dir)
-{
+void CascadingProfile::listaddProfile(const char *profile_dir) {
 	if(profile_dir) {
 		addProfile(profile_dir);
 		return;
@@ -311,9 +289,7 @@ CascadingProfile::listaddProfile(const char *profile_dir)
 	addProfile(((m_portagesettings->m_eprefixconf) + PROFILE_LINK2).c_str());
 }
 
-void
-CascadingProfile::applyMasks(Package *p) const
-{
+void CascadingProfile::applyMasks(Package *p) const {
 	if(m_init_world || use_world) {
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 			(*it)->maskflags.set(MaskFlags::MASK_NONE);
@@ -353,9 +329,7 @@ GCC_DIAG_ON(sign-conversion)
 	m_portagesettings->finalize(p);
 }
 
-void
-CascadingProfile::applyKeywords(Package *p) const
-{
+void CascadingProfile::applyKeywords(Package *p) const {
 	for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 		it->reset_accepted_effective_keywords();
 	}

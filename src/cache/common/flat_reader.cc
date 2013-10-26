@@ -31,9 +31,7 @@ using std::ifstream;
 
 static bool skip_lines(const eix::TinyUnsigned nr, ifstream *is, const string &filename, BasicCache::ErrorCallback error_callback) ATTRIBUTE_NONNULL_;
 
-static bool
-skip_lines(const eix::TinyUnsigned nr, ifstream *is, const string &filename, BasicCache::ErrorCallback error_callback)
-{
+static bool skip_lines(const eix::TinyUnsigned nr, ifstream *is, const string &filename, BasicCache::ErrorCallback error_callback) {
 	for(eix::TinyUnsigned i(nr); likely(i != 0); --i) {
 		is->ignore(std::numeric_limits<int>::max(), '\n');
 		if(is->fail()) {
@@ -46,9 +44,7 @@ skip_lines(const eix::TinyUnsigned nr, ifstream *is, const string &filename, Bas
 }
 
 /** Read the keywords and slot from a flat cache file. */
-void
-flat_get_keywords_slot_iuse_restrict(const string &filename, string *keywords, string *slotname, string *iuse, string *restr, string *props, Depend *dep, BasicCache::ErrorCallback error_callback)
-{
+void flat_get_keywords_slot_iuse_restrict(const string &filename, string *keywords, string *slotname, string *iuse, string *restr, string *props, Depend *dep, BasicCache::ErrorCallback error_callback) {
 	ifstream is(filename.c_str());
 	if(!is.is_open()) {
 		error_callback(eix::format(_("Can't open %s: %s"))
@@ -87,9 +83,7 @@ flat_get_keywords_slot_iuse_restrict(const string &filename, string *keywords, s
 }
 
 /** Read a flat cache file. */
-void
-flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback)
-{
+void flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback) {
 	ifstream is(filename);
 	if(!is.is_open()) {
 		error_callback(eix::format(_("Can't open %s: %s"))

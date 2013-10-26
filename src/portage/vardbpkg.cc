@@ -44,9 +44,7 @@ using std::endl;
 inline static void sort_installed(map<string, vector<InstVersion> > *maping) ATTRIBUTE_NONNULL_;
 
 
-inline static void
-sort_installed(map<string, vector<InstVersion> > *maping)
-{
+inline static void sort_installed(map<string, vector<InstVersion> > *maping) {
 	for(map<string, vector<InstVersion> >::iterator it(maping->begin());
 		likely(it != maping->end()); ++it) {
 		sort(it->second.begin(), it->second.end());
@@ -55,9 +53,7 @@ sort_installed(map<string, vector<InstVersion> > *maping)
 
 /** Find installed versions of packet "name" in category "category".
  * @return NULLPTR if not found .. else pointer to vector of versions. */
-vector<InstVersion> *
-VarDbPkg::getInstalledVector(const string &category, const string &name)
-{
+vector<InstVersion> *VarDbPkg::getInstalledVector(const string &category, const string &name) {
 	map<string, map<string, vector<InstVersion> >* >::iterator map_it(installed.find(category));
 	/* Not yet read */
 	if(map_it == installed.end()) {
@@ -79,9 +75,7 @@ VarDbPkg::getInstalledVector(const string &category, const string &name)
 
 /** Returns true if v is in vec. v=NULLPTR is always in vec.
     If a serious result is found and r is nonzero, r points to that result */
-bool
-VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion **r)
-{
+bool VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion **r) {
 	if(likely(vec != NULLPTR)) {
 		if(unlikely(v == NULLPTR))
 			return true;
@@ -96,9 +90,7 @@ VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion *
 	return false;
 }
 
-eix::SignedBool
-VarDbPkg::isInstalledVersion(InstVersion **inst, const Package &p, const Version *v, const DBHeader& header)
-{
+eix::SignedBool VarDbPkg::isInstalledVersion(InstVersion **inst, const Package &p, const Version *v, const DBHeader& header) {
 	*inst = NULLPTR;
 	if(!isInstalled(p, v, inst)) {
 		return 0;
@@ -113,9 +105,7 @@ VarDbPkg::isInstalledVersion(InstVersion **inst, const Package &p, const Version
 }
 
 /** Return matching available version or NULLPTR */
-Version *
-VarDbPkg::getAvailable(const Package &p, InstVersion *v, const DBHeader& header) const
-{
+Version *VarDbPkg::getAvailable(const Package &p, InstVersion *v, const DBHeader& header) const {
 	for(Package::const_iterator it(p.begin()); likely(it != p.end()); ++it) {
 		if(BasicVersion::compare(**it, *v) != 0) {
 			continue;
@@ -137,18 +127,14 @@ VarDbPkg::getAvailable(const Package &p, InstVersion *v, const DBHeader& header)
 
 /** Returns number of installed versions of this package
  * @param p Check for this Package. */
-vector<InstVersion>::size_type
-VarDbPkg::numInstalled(const Package &p)
-{
+vector<InstVersion>::size_type VarDbPkg::numInstalled(const Package &p) {
 	vector<InstVersion> *vec(getInstalledVector(p));
 	if(vec == NULLPTR)
 		return 0;
 	return vec->size();
 }
 
-bool
-VarDbPkg::readOverlay(const Package &p, InstVersion *v, const DBHeader& header) const
-{
+bool VarDbPkg::readOverlay(const Package &p, InstVersion *v, const DBHeader& header) const {
 	if(likely(v->know_overlay))
 		return !v->overlay_failed;
 
@@ -178,9 +164,7 @@ VarDbPkg::readOverlay(const Package &p, InstVersion *v, const DBHeader& header) 
 	return false;
 }
 
-string
-VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
-{
+string VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const {
 	vector<string> lines;
 	string dirname(m_directory);
 	dirname.append(p->category);
@@ -197,9 +181,7 @@ VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
 	return lines[0];
 }
 
-bool
-VarDbPkg::readSlot(const Package &p, InstVersion *v) const
-{
+bool VarDbPkg::readSlot(const Package &p, InstVersion *v) const {
 	if(v->know_slot)
 		return true;
 	if(!get_slots)
@@ -220,9 +202,7 @@ VarDbPkg::readSlot(const Package &p, InstVersion *v) const
 	return (v->know_slot = true);
 }
 
-bool
-VarDbPkg::readUse(const Package &p, InstVersion *v) const
-{
+bool VarDbPkg::readUse(const Package &p, InstVersion *v) const {
 	if(likely(v->know_use))
 		return true;
 	v->know_use = true;
@@ -267,9 +247,7 @@ VarDbPkg::readUse(const Package &p, InstVersion *v) const
 	return true;
 }
 
-void
-VarDbPkg::readRestricted(const Package &p, InstVersion *v, const DBHeader& header) const
-{
+void VarDbPkg::readRestricted(const Package &p, InstVersion *v, const DBHeader& header) const {
 	if(unlikely(!get_restrictions)) {
 		return;
 	}
@@ -304,9 +282,7 @@ VarDbPkg::readRestricted(const Package &p, InstVersion *v, const DBHeader& heade
 	}
 }
 
-void
-VarDbPkg::readInstDate(const Package &p, InstVersion *v) const
-{
+void VarDbPkg::readInstDate(const Package &p, InstVersion *v) const {
 	if(v->instDate != 0) {
 		return;
 	}
@@ -327,9 +303,7 @@ GCC_DIAG_ON(sign-conversion)
 	v->instDate = get_mtime(dirname.c_str());
 }
 
-void
-VarDbPkg::readDepend(const Package &p, InstVersion *v, const DBHeader& header) const
-{
+void VarDbPkg::readDepend(const Package &p, InstVersion *v, const DBHeader& header) const {
 	if(unlikely(!Depend::use_depend)) {
 		return;
 	}
@@ -374,9 +348,7 @@ VarDbPkg::readDepend(const Package &p, InstVersion *v, const DBHeader& header) c
 }
 
 /** Read category from db-directory. */
-void
-VarDbPkg::readCategory(const char *category)
-{
+void VarDbPkg::readCategory(const char *category) {
 	/* Pointer to category DIRectory */
 	DIR *dir_category;
 

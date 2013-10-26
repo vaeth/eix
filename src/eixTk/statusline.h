@@ -18,9 +18,9 @@ class Statusline {
 		void print_force(const std::string &str);
 		void user_statusline();
 	public:
-		Statusline(bool active, bool softstatus, const std::string &program_name, const std::string &exit_statusline) :
-			use(active), soft(softstatus), m_program(program_name), m_exit(exit_statusline)
-		{ }
+		Statusline(bool active, bool softstatus, const std::string &program_name, const std::string &exit_statusline)
+			: use(active), soft(softstatus), m_program(program_name), m_exit(exit_statusline) {
+		}
 
 		void print(const std::string &str);
 

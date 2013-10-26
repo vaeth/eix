@@ -40,9 +40,7 @@ int setgid(gid_t gid);
 int setegid(gid_t gid);
 #endif
 
-void
-drop_permissions(EixRc *eix)
-{
+void drop_permissions(EixRc *eix) {
 	bool set_uid(true);
 	bool valid_user(true);
 	uid_t uid;

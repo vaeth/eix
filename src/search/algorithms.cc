@@ -36,24 +36,18 @@ using std::string;
 
 map<string, Levenshtein> *FuzzyAlgorithm::levenshtein_map = NULLPTR;
 
-void
-FuzzyAlgorithm::init_static()
-{
+void FuzzyAlgorithm::init_static() {
 	eix_assert_static(levenshtein_map == NULLPTR);
 	levenshtein_map = new map<string, Levenshtein>;
 }
 
-bool
-FuzzyAlgorithm::compare(Package *p1, Package *p2)
-{
+bool FuzzyAlgorithm::compare(Package *p1, Package *p2) {
 	return ((*levenshtein_map)[p1->category + "/" + p1->name]
 			< (*levenshtein_map)[p2->category + "/" + p2->name]);
 }
 
 
-bool
-FuzzyAlgorithm::operator()(const char *s, Package *p)
-{
+bool FuzzyAlgorithm::operator()(const char *s, Package *p) {
 	eix_assert_static(levenshtein_map != NULLPTR);
 	Levenshtein d(get_levenshtein_distance(search_string.c_str(), s));
 	bool ok(d <= max_levenshteindistance);
@@ -65,23 +59,17 @@ FuzzyAlgorithm::operator()(const char *s, Package *p)
 	return ok;
 }
 
-bool
-ExactAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
-{
+bool ExactAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED) {
 	UNUSED(p);
 	return !strcmp(search_string.c_str(), s);
 }
 
-bool
-BeginAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
-{
+bool BeginAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED) {
 	UNUSED(p);
 	return !strncmp(search_string.c_str(), s, search_string.size());
 }
 
-bool
-EndAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
-{
+bool EndAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED) {
 	UNUSED(p);
 	string::size_type l(strlen(s));
 	string::size_type sl(search_string.size());
@@ -91,9 +79,7 @@ EndAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
 	return !strcmp(search_string.c_str(), s + (l - sl));
 }
 
-bool
-PatternAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
-{
+bool PatternAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED) {
 	UNUSED(p);
 	return !fnmatch(search_string.c_str(), s, FNMATCH_FLAGS);
 }

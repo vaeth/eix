@@ -30,16 +30,13 @@
 
 static EixRc *static_eixrc = NULLPTR;
 
-void fill_defaults_part_1(EixRc *eixrc)
-{
+void fill_defaults_part_1(EixRc *eixrc) {
 #include "eixrc/defaults.cc"
 // _( SYSCONFDIR This comment  satisfies check_includes script
 }
 
 /** Must be called exactly once before get_eixrc() can be used */
-EixRc &
-get_eixrc(const char *varprefix)
-{
+EixRc& get_eixrc(const char *varprefix) {
 	eix_assert_static(static_eixrc == NULLPTR);
 	static_eixrc = new EixRc(varprefix);
 
@@ -55,9 +52,7 @@ get_eixrc(const char *varprefix)
 
 /** Return reference to internal static EixRc.
  * This can be called everywhere! */
-EixRc &
-get_eixrc()
-{
+EixRc& get_eixrc() {
 	eix_assert_static(static_eixrc != NULLPTR);
 	return *static_eixrc;
 }

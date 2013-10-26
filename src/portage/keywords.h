@@ -30,62 +30,83 @@ class MaskFlags {
 			MASK_WORLD_SETS         = 0x10U,
 			MASK_MARKED             = 0x20U;
 
-		explicit MaskFlags(MaskType t = MASK_NONE)
-		{ m_mask = t; }
+		explicit MaskFlags(MaskType t = MASK_NONE) {
+			m_mask = t;
+		}
 
-		void set(MaskType t)
-		{ m_mask = t; }
+		void set(MaskType t) {
+			m_mask = t;
+		}
 
-		MaskType get() const
-		{ return m_mask; }
+		MaskType get() const {
+			return m_mask;
+		}
 
-		MaskType getall(MaskType t) const
-		{ return (m_mask & t); }
+		MaskType getall(MaskType t) const {
+			return (m_mask & t);
+		}
 
-		bool havesome(MaskType t) const
-		{ return (m_mask & t); }
+		bool havesome(MaskType t) const {
+			return (m_mask & t);
+		}
 
-		bool haveall(MaskType t) const
-		{ return ((m_mask & t) == t); }
+		bool haveall(MaskType t) const {
+			return ((m_mask & t) == t);
+		}
 
-		void setbits(MaskType t)
-		{ m_mask |= t; }
+		void setbits(MaskType t) {
+			m_mask |= t;
+		}
 
-		void clearbits(MaskType t)
-		{ m_mask &= ~t; }
+		void clearbits(MaskType t) {
+			m_mask &= ~t;
+		}
 
-		bool isHardMasked() const
-		{ return havesome(MaskFlags::MASK_HARD); }
+		bool isHardMasked() const {
+			return havesome(MaskFlags::MASK_HARD);
+		}
+
 		/** @return true if version is masked by profile. */
-		bool isProfileMask() const
-		{ return havesome(MaskFlags::MASK_PROFILE); }
+		bool isProfileMask() const {
+			return havesome(MaskFlags::MASK_PROFILE);
+		}
+
 		/** @return true if version is masked by a package.mask. */
-		bool isPackageMask() const
-		{ return havesome(MaskFlags::MASK_PACKAGE); }
+		bool isPackageMask() const {
+			return havesome(MaskFlags::MASK_PACKAGE);
+		}
+
 		/** @return true if version is part of a package that is a system-package. */
-		bool isSystem() const
-		{ return havesome(MaskFlags::MASK_SYSTEM); }
+		bool isSystem() const {
+			return havesome(MaskFlags::MASK_SYSTEM);
+		}
+
 		/** @return true if version is part of world. */
-		bool isWorld() const
-		{ return havesome(MaskFlags::MASK_WORLD); }
+		bool isWorld() const {
+			return havesome(MaskFlags::MASK_WORLD);
+		}
+
 		/** @return true if version is part of world sets. */
-		bool isWorldSets() const
-		{ return havesome(MaskFlags::MASK_WORLD_SETS); }
+		bool isWorldSets() const {
+			return havesome(MaskFlags::MASK_WORLD_SETS);
+		}
+
 		/** @return true if version is marked. */
-		bool isMarked() const
-		{ return havesome(MaskFlags::MASK_MARKED); }
+		bool isMarked() const {
+			return havesome(MaskFlags::MASK_MARKED);
+		}
 
 	protected:
 		MaskType m_mask;
 };
 
-inline static bool
-operator==(MaskFlags const& left, MaskFlags const& right)
-{ return (left.get() == right.get()); }
+inline static bool operator==(MaskFlags const& left, MaskFlags const& right) {
+	return (left.get() == right.get());
+}
 
-inline static bool
-operator!=(MaskFlags const& left, MaskFlags const& right)
-{ return (left.get() != right.get()); }
+inline static bool operator!=(MaskFlags const& left, MaskFlags const& right) {
+	return (left.get() != right.get());
+}
 
 class KeywordsFlags {
 	public:
@@ -106,76 +127,91 @@ class KeywordsFlags {
 
 		static KeyType get_keyflags(const std::set<std::string> &accepted_keywords, const std::string &keywords);
 
-		explicit KeywordsFlags(KeyType t = KEY_EMPTY)
-		{ m_keyword = t; }
+		explicit KeywordsFlags(KeyType t = KEY_EMPTY) {
+			m_keyword = t;
+		}
 
-		void set_keyflags(KeyType t)
-		{ m_keyword = t; }
+		void set_keyflags(KeyType t) {
+			m_keyword = t;
+		}
 
-		KeyType get() const
-		{ return m_keyword; }
+		KeyType get() const {
+			return m_keyword;
+		}
 
-		KeyType getall(KeyType t) const
-		{ return (m_keyword & t); }
+		KeyType getall(KeyType t) const {
+			return (m_keyword & t);
+		}
 
-		bool havesome(KeyType t) const
-		{ return (m_keyword & t); }
+		bool havesome(KeyType t) const {
+			return (m_keyword & t);
+		}
 
-		bool haveall(KeyType t) const
-		{ return ((m_keyword & t) == t); }
+		bool haveall(KeyType t) const {
+			return ((m_keyword & t) == t);
+		}
 
-		void setbits(KeyType t)
-		{ m_keyword |= t; }
+		void setbits(KeyType t) {
+			m_keyword |= t;
+		}
 
-		void clearbits(KeyType t)
-		{ m_keyword &= ~t; }
+		void clearbits(KeyType t) {
+			m_keyword &= ~t;
+		}
 
 		/** @return true if version is marked stable. */
-		bool isStable() const
-		{ return havesome(KEY_STABLE); }
+		bool isStable() const {
+			return havesome(KEY_STABLE);
+		}
 
 		/** @return true if version is unstable. */
-		bool isUnstable() const
-		{ return havesome(KEY_ARCHUNSTABLE); }
+		bool isUnstable() const {
+			return havesome(KEY_ARCHUNSTABLE);
+		}
 
 		/** @return true if version is masked by -* keyword. */
-		bool isMinusAsterisk() const
-		{ return havesome(KEY_MINUSASTERISK); }
+		bool isMinusAsterisk() const {
+			return havesome(KEY_MINUSASTERISK);
+		}
 
 		/** @return true if version is masked by -~* keyword. */
-		bool isMinusUnstable() const
-		{ return havesome(KEY_MINUSUNSTABLE); }
+		bool isMinusUnstable() const {
+			return havesome(KEY_MINUSUNSTABLE);
+		}
 
 		/** @return true if version is masked by -keyword. */
-		bool isMinusKeyword() const
-		{ return havesome(KEY_MINUSKEYWORD); }
+		bool isMinusKeyword() const {
+			return havesome(KEY_MINUSKEYWORD);
+		}
 
 		/** @return true if version is masked by ALIENARCH */
-		bool isAlienStable() const
-		{ return havesome(KEY_ALIENSTABLE); }
+		bool isAlienStable() const {
+			return havesome(KEY_ALIENSTABLE);
+		}
 
 		/** @return true if version is masked by ~ALIENARCH */
-		bool isAlienUnstable() const
-		{ return havesome(KEY_ALIENUNSTABLE); }
+		bool isAlienUnstable() const {
+			return havesome(KEY_ALIENUNSTABLE);
+		}
 
 		/** @return true if version is masked (only) by missing keyword */
-		bool isMissingKeyword() const
-		{ return ((m_keyword == KEY_EMPTY) || (m_keyword == KEY_ARCHSTABLE)); }
+		bool isMissingKeyword() const {
+			return ((m_keyword == KEY_EMPTY) || (m_keyword == KEY_ARCHSTABLE));
+		}
 
 	protected:
 		KeyType m_keyword;
 };
 
-inline static bool
-operator==(const KeywordsFlags& left, const KeywordsFlags& right)
-{ return (left.get() == right.get()); }
+inline static bool operator==(const KeywordsFlags& left, const KeywordsFlags& right) {
+	return (left.get() == right.get());
+}
 
-inline static bool
-operator!=(const KeywordsFlags& left, const KeywordsFlags& right)
-{ return (left.get() != right.get()); }
+inline static bool operator!=(const KeywordsFlags& left, const KeywordsFlags& right) {
+	return (left.get() != right.get());
+}
 
-class Keywords
-{
+class Keywords {
 	public:
 		typedef uint32_t Redundant;
 		static const Redundant
@@ -216,9 +252,8 @@ class Keywords
 		KeywordsFlags keyflags;
 		MaskFlags maskflags;
 
-		Keywords(KeywordsFlags::KeyType k = KeywordsFlags::KEY_EMPTY, MaskFlags::MaskType m = MaskFlags::MASK_NONE) :
-			keyflags(k), maskflags(m)
-		{
+		Keywords(KeywordsFlags::KeyType k = KeywordsFlags::KEY_EMPTY, MaskFlags::MaskType m = MaskFlags::MASK_NONE)
+			: keyflags(k), maskflags(m) {
 			redundant = RED_NOTHING;
 			red_mask = 0x00U;
 		}
@@ -226,57 +261,63 @@ class Keywords
 		/** Add/substract modify keys to/from original to obtain result.
 		 *  @return false if certainly no modifications occur. In this case
 		 *  the result is not modified */
-		static bool modify_keywords(std::string &result, const std::string &original, const std::string &modify_keys);
+		static bool modify_keywords(std::string *result, const std::string &original, const std::string &modify_keys);
 
-		void set_redundant(Redundant or_redundant = true)
-		{ redundant |= or_redundant; }
+		void set_redundant(Redundant or_redundant = true) {
+			redundant |= or_redundant;
+		}
 
-		Redundant get_redundant () const
-		{ return redundant; }
+		Redundant get_redundant() const {
+			return redundant;
+		}
 
-		void set_was_masked(bool value = true)
-		{
-			if(value)
+		void set_was_masked(bool value = true) {
+			if(value) {
 				red_mask |= 0x01U;
-			else
+			} else {
 				red_mask &= ~0x01U;
+			}
 		}
 
-		bool was_masked () const
-		{ return (red_mask & 0x01U); }
+		bool was_masked() const {
+			return (red_mask & 0x01U);
+		}
 
-		void set_was_unmasked(bool value = true)
-		{
-			if(value)
+		void set_was_unmasked(bool value = true) {
+			if(value) {
 				red_mask |= 0x02U;
-			else
+			} else {
 				red_mask &= ~0x02U;
+			}
 		}
 
-		bool was_unmasked () const
-		{ return (red_mask & 0x02U); }
+		bool was_unmasked() const {
+			return (red_mask & 0x02U);
+		}
 
-		void set_wanted_masked(bool value = true)
-		{
-			if(value)
+		void set_wanted_masked(bool value = true) {
+			if(value) {
 				red_mask |= 0x04U;
-			else
+			} else {
 				red_mask &= ~0x04U;
+			}
 		}
 
-		bool wanted_masked () const
-		{ return (red_mask & 0x04U); }
+		bool wanted_masked() const {
+			return (red_mask & 0x04U);
+		}
 
-		void set_wanted_unmasked(bool value = true)
-		{
-			if(value)
+		void set_wanted_unmasked(bool value = true) {
+			if(value) {
 				red_mask |= 0x08U;
-			else
+			} else {
 				red_mask &= ~0x08U;
+			}
 		}
 
-		bool wanted_unmasked () const
-		{ return (red_mask & 0x08U); }
+		bool wanted_unmasked () const {
+			return (red_mask & 0x08U);
+		}
 
 	protected:
 		Redundant redundant;
@@ -289,11 +330,11 @@ class KeywordSave {
 		bool have_data;
 
 	public:
-		explicit KeywordSave(const Keywords *k = NULLPTR)
-		{ store(k); }
+		explicit KeywordSave(const Keywords *k = NULLPTR) {
+			store(k);
+		}
 
-		void store(const Keywords *k = NULLPTR)
-		{
+		void store(const Keywords *k = NULLPTR) {
 			if(k == NULLPTR) {
 				have_data = false;
 				return;
@@ -303,10 +344,10 @@ class KeywordSave {
 			saved_maskflags = k->maskflags;
 		}
 
-		void restore(Keywords *k) const
-		{
-			if(!have_data)
+		void restore(Keywords *k) const {
+			if(!have_data) {
 				return;
+			}
 			k->keyflags  = saved_keyflags;
 			k->maskflags = saved_maskflags;
 		}

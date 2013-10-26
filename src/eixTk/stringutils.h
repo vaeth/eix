@@ -214,18 +214,16 @@ bool casecontains(const char *str, const char *pattern) ATTRIBUTE_NONNULL_;
 
 /** Check whether str contains a nonempty lowercase pattern case-insensitively */
 inline static bool casecontains(const std::string &str, const char *pattern) ATTRIBUTE_NONNULL_;
-inline static bool
-casecontains(const std::string &str, const char *pattern)
-{ return casecontains(str.c_str(), pattern); }
+inline static bool casecontains(const std::string &str, const char *pattern) {
+	return casecontains(str.c_str(), pattern);
+}
 
-class StringHash : public std::vector<std::string>
-{
+class StringHash : public std::vector<std::string> {
 	public:
-		explicit StringHash(bool will_hash = true) : hashing(will_hash), finalized(false)
-		{ }
+		explicit StringHash(bool will_hash = true) : hashing(will_hash), finalized(false) {
+		}
 
-		void init(bool will_hash)
-		{
+		void init(bool will_hash) {
 			hashing = will_hash;
 			finalized = false;
 			clear();
@@ -236,13 +234,15 @@ class StringHash : public std::vector<std::string>
 
 		void store_string(const std::string &s);
 		void store_words(const std::vector<std::string> &v);
-		void store_words(const std::string &s)
-		{ hash_words(split_string(s)); }
+		void store_words(const std::string &s) {
+			hash_words(split_string(s));
+		}
 
 		void hash_string(const std::string &s);
 		void hash_words(const std::vector<std::string> &v);
-		void hash_words(const std::string &s)
-		{ hash_words(split_string(s)); }
+		void hash_words(const std::string &s) {
+			hash_words(split_string(s));
+		}
 
 		StringHash::size_type get_index(const std::string &s) const;
 
@@ -250,6 +250,7 @@ class StringHash : public std::vector<std::string>
 		void output_depends() const;
 
 		const std::string& operator[](StringHash::size_type i) const;
+
 	private:
 		bool hashing, finalized;
 		std::map<std::string, StringHash::size_type> str_map;
@@ -260,68 +261,44 @@ class StringHash : public std::vector<std::string>
 // Implementation of the templates:
 
 /** Push back to a vector */
-template<typename T>
-inline static void
-push_back(std::vector<T> *v, const T &e)
-{ v->push_back(e); }
+template<typename T> inline static void push_back(std::vector<T> *v, const T &e) { v->push_back(e); }
 
 /** Push back (=insert) to a set */
-template<typename T>
-inline static void
-push_back(std::set<T> *s, const T &e)
-{ s->insert(e); }
+template<typename T> inline static void push_back(std::set<T> *s, const T &e) { s->insert(e); }
 
 /** Join a string-vector or string-set
  * @param glue glue between the elements. */
-template<typename T>
-inline static std::string
-join_to_string(T vec, const std::string &glue)
-{
+template<typename T> inline static std::string join_to_string(T vec, const std::string &glue) {
 	std::string ret;
 	join_to_string(&ret, vec, glue);
 	return ret;
 }
 
 /** Calls join_to_string() and then split_string() */
-template<typename Td, typename Ts>
-inline static void
-join_and_split(Td vec, const Ts &s, const std::string &glue, const bool handle_escape, const char *at, const bool ignore_empty)
-{
+template<typename Td, typename Ts> inline static void join_and_split(Td vec, const Ts &s, const std::string &glue, const bool handle_escape, const char *at, const bool ignore_empty) {
 	std::string t;
 	join_to_string(&t, s, glue);
 	split_string(vec, t, handle_escape, at, ignore_empty);
 }
 
 /** Add items from s to the end of d. */
-template<typename T>
-inline static void
-push_backs(std::vector<T> *d, const std::vector<T> &s)
-{
+template<typename T> inline static void push_backs(std::vector<T> *d, const std::vector<T> &s) {
 	d->insert(d->end(), s.begin(), s.end());
 }
 
 /** Insert a whole vector to a set. */
-template<typename T>
-inline static void
-insert_list(std::set<T> *the_set, const std::vector<T> &the_list)
-{
+template<typename T> inline static void insert_list(std::set<T> *the_set, const std::vector<T> &the_list) {
 	the_set->insert(the_list.begin(), the_list.end());
 }
 
 /** Make a set from a vector. */
-template<typename T>
-inline static void
-make_set(std::set<T> *the_set, const std::vector<T> &the_list)
-{
+template<typename T> inline static void make_set(std::set<T> *the_set, const std::vector<T> &the_list) {
 	the_set->clear();
 	insert_list(the_set, the_list);
 }
 
 /** Make a vector from a set. */
-template<typename T>
-inline static void
-make_vector(std::vector<T> *the_list, const std::set<T> &the_set)
-{
+template<typename T> inline static void make_vector(std::vector<T> *the_list, const std::set<T> &the_set) {
 	the_list->clear();
 	for(typename std::set<T>::const_iterator it(the_set.begin()),
 			it_end(the_set.end());
@@ -331,10 +308,7 @@ make_vector(std::vector<T> *the_list, const std::set<T> &the_set)
 }
 
 /** Make a vector from map->first */
-template<typename T, typename Y>
-inline static void
-make_vector(std::vector<T> *the_list, const std::map<T, Y> &the_map)
-{
+template<typename T, typename Y> inline static void make_vector(std::vector<T> *the_list, const std::map<T, Y> &the_map) {
 	the_list->clear();
 	for(typename std::map<T, Y>::const_iterator it(the_map.begin()),
 			it_end(the_map.end());

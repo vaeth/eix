@@ -55,17 +55,20 @@ class MetadataCache : public BasicCache {
 		void readCategoryFinalize();
 
 		const char *get_md5sum(const char *pkg_name, const char *ver_name) const ATTRIBUTE_NONNULL_;
-		time_t get_time(const char *pkg_name, const char *ver_name) const ATTRIBUTE_NONNULL_
-		{ return get_mtime((m_catpath + "/" + pkg_name + "-" + ver_name).c_str()); }
+		time_t get_time(const char *pkg_name, const char *ver_name) const ATTRIBUTE_NONNULL_ {
+			return get_mtime((m_catpath + "/" + pkg_name + "-" + ver_name).c_str());
+		}
 
 		void get_version_info(const char *pkg_name, const char *ver_name, Version *version) const ATTRIBUTE_NONNULL_;
-		void get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const ATTRIBUTE_NONNULL_
-		{ (*x_read_file)((m_catpath + "/" + pkg_name + "-" + ver_name).c_str(), pkg, m_error_callback); }
+		void get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const ATTRIBUTE_NONNULL_ {
+			(*x_read_file)((m_catpath + "/" + pkg_name + "-" + ver_name).c_str(), pkg, m_error_callback);
+		}
 
 		bool use_prefixport() const ATTRIBUTE_PURE;
 
-		const char *getType() const
-		{ return m_type.c_str(); }
+		const char *getType() const {
+			return m_type.c_str();
+		}
 };
 
 #endif  // SRC_CACHE_METADATA_METADATA_H_

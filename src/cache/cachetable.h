@@ -16,16 +16,16 @@
 #include "cache/base.h"
 #include "eixTk/ptr_list.h"
 
-class CacheTable : public eix::ptr_list<BasicCache>
-{
+class CacheTable : public eix::ptr_list<BasicCache> {
 	private:
 		std::string m_appending;
 	public:
-		explicit CacheTable(const std::string &appending) : m_appending(appending)
-		{ }
+		explicit CacheTable(const std::string &appending) : m_appending(appending) {
+		}
 
-		~CacheTable()
-		{ delete_and_clear(); }
+		~CacheTable() {
+			delete_and_clear();
+		}
 
 		bool addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const std::string &cache_name, const std::map<std::string, std::string> *override, std::string *errtext) ATTRIBUTE_NONNULL((4));
 };

@@ -34,8 +34,7 @@ using std::vector;
 
 eix::ptr_list<EixCache> *EixCache::all_eixcaches = NULLPTR;
 
-EixCache::~EixCache()
-{
+EixCache::~EixCache() {
 	if(all_eixcaches != NULLPTR) {
 		eix::ptr_list<EixCache>::iterator it(std::find(all_eixcaches->begin(),
 			all_eixcaches->end(), this));
@@ -45,8 +44,7 @@ EixCache::~EixCache()
 	}
 }
 
-bool EixCache::initialize(const string &name)
-{
+bool EixCache::initialize(const string &name) {
 	vector<string> args;
 	split_string(&args, name, true, ":", false);
 	if(casecontains(args[0], "eix")) {
@@ -93,18 +91,14 @@ bool EixCache::initialize(const string &name)
 	return (args.size() <= 3);
 }
 
-void
-EixCache::setSchemeFinish()
-{
+void EixCache::setSchemeFinish() {
 	if(!m_file.empty())
 		m_full = m_prefix + m_file;
 	else
 		m_full = m_prefix + EIX_CACHEFILE;
 }
 
-void
-EixCache::allerrors(const vector<EixCache*> &slaves, const string &msg)
-{
+void EixCache::allerrors(const vector<EixCache*> &slaves, const string &msg) {
 	for(vector<EixCache*>::const_iterator sl(slaves.begin());
 		unlikely(sl != slaves.end()); ++sl) {
 		string &s = (*sl)->err_msg;
@@ -115,20 +109,17 @@ EixCache::allerrors(const vector<EixCache*> &slaves, const string &msg)
 	m_error_callback(err_msg);
 }
 
-void
-EixCache::thiserror(const string &msg)
-{
+void EixCache::thiserror(const string &msg) {
 	err_msg = msg;
 	if(!slavemode) {
 		m_error_callback(err_msg);
 	}
 }
 
-bool
-EixCache::get_overlaydat(const DBHeader &header)
-{
-	if((!m_only_overlay) || (m_overlay.empty()))
+bool EixCache::get_overlaydat(const DBHeader &header) {
+	if((!m_only_overlay) || (m_overlay.empty())) {
 		return true;
+	}
 	const char *portdir(NULLPTR);
 	if(portagesettings)
 			portdir = (*portagesettings)["PORTDIR"].c_str();
@@ -153,9 +144,7 @@ EixCache::get_overlaydat(const DBHeader &header)
 	return true;
 }
 
-bool
-EixCache::get_destcat(PackageTree *packagetree, const char *cat_name, Category *category, const string &pcat)
-{
+bool EixCache::get_destcat(PackageTree *packagetree, const char *cat_name, Category *category, const string &pcat) {
 	if(likely(err_msg.empty())) {
 		if(unlikely(packagetree == NULLPTR)) {
 			if(unlikely(pcat == cat_name)) {
@@ -174,11 +163,10 @@ EixCache::get_destcat(PackageTree *packagetree, const char *cat_name, Category *
 	return false;
 }
 
-void
-EixCache::get_package(Package *p)
-{
-	if(dest_cat == NULLPTR)
+void EixCache::get_package(Package *p) {
+	if(dest_cat == NULLPTR) {
 		return;
+	}
 	bool have_onetime_info(false), have_pkg(false);
 	Package *pkg(NULLPTR);
 	for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
@@ -223,9 +211,7 @@ EixCache::get_package(Package *p)
 	}
 }
 
-bool
-EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Category *category)
-{
+bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Category *category) {
 	if(slavemode) {
 		if(err_msg.empty())
 			return true;

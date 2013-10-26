@@ -16,8 +16,7 @@
 #include "portage/package.h"
 #include "portage/version.h"
 
-Package::~Package()
-{
+Package::~Package() {
 	delete_and_clear();
 }
 
@@ -35,9 +34,7 @@ const Package::Versioncollects
 	Package::COLLECT_DEFAULT;
 
 /** Check if a package has duplicated versions. */
-void
-Package::checkDuplicates(const Version *version)
-{
+void Package::checkDuplicates(const Version *version) {
 	if(have_duplicate_versions == DUP_OVERLAYS) {
 		return;
 	}
@@ -59,9 +56,7 @@ Package::checkDuplicates(const Version *version)
 	}
 }
 
-void
-Package::sortedPushBack(Version *v)
-{
+void Package::sortedPushBack(Version *v) {
 	for(iterator i(begin()); likely(i != end()); ++i) {
 		if(*v < **i) {
 			insert(i, v);
@@ -71,9 +66,7 @@ Package::sortedPushBack(Version *v)
 	push_back(v);
 }
 
-void
-Package::collect_iuse(Version *version)
-{
+void Package::collect_iuse(Version *version) {
 	if(version->iuse.empty())
 		return;
 
@@ -83,9 +76,7 @@ Package::collect_iuse(Version *version)
 
 /** Finishes addVersionStart() after the remaining data
     have been filled */
-void
-Package::addVersionFinalize(Version *version)
-{
+void Package::addVersionFinalize(Version *version) {
 	ExtendedVersion::Overlay key(version->overlay_key);
 
 	if(key == 0) {
@@ -121,9 +112,7 @@ Package::addVersionFinalize(Version *version)
 }
 
 /** Call this after modifying system or world state of versions */
-void
-Package::finalize_masks()
-{
+void Package::finalize_masks() {
 	local_collects.set(MaskFlags::MASK_NONE);
 	for(iterator i(begin()); likely(i != end()); ++i) {
 		local_collects.setbits(i->maskflags.get());

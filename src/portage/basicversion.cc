@@ -36,9 +36,7 @@ using std::stringstream;
 
 const string::size_type BasicPart::max_type;
 
-eix::SignedBool
-BasicPart::compare(const BasicPart& left, const BasicPart& right)
-{
+eix::SignedBool BasicPart::compare(const BasicPart& left, const BasicPart& right) {
 	// There is some documentation online at http://dev.gentoo.org/~spb/pms.pdf,
 	// but I suppose this is not yet sanctioned by gentoo.
 	// We are going to follow the text from section 2.3 "Version Comparison" here.
@@ -85,9 +83,7 @@ BasicPart::compare(const BasicPart& left, const BasicPart& right)
 	return eix::numeric_compare(left.partcontent, right.partcontent);
 }
 
-static ostream&
-operator<<(ostream& s, const BasicPart& part)
-{
+static ostream& operator<<(ostream& s, const BasicPart& part) {
 	switch (part.parttype) {
 		case BasicPart::first:
 		case BasicPart::character:
@@ -115,17 +111,13 @@ operator<<(ostream& s, const BasicPart& part)
 		% static_cast<int>(part.parttype) % part.partcontent << endl;
 }
 
-string
-BasicVersion::getFull() const
-{
+string BasicVersion::getFull() const {
 	stringstream ss;
 	copy(m_parts.begin(), m_parts.end(), std::ostream_iterator<BasicPart>(ss));
 	return ss.str();
 }
 
-string
-BasicVersion::getPlain() const
-{
+string BasicVersion::getPlain() const {
 	stringstream ss;
 	for(list<BasicPart>::const_iterator it(m_parts.begin());
 		likely(it != m_parts.end()); ++it) {
@@ -137,9 +129,7 @@ BasicVersion::getPlain() const
 	return ss.str();
 }
 
-string
-BasicVersion::getRevision() const
-{
+string BasicVersion::getRevision() const {
 	stringstream ss;
 	for(list<BasicPart>::const_iterator it(m_parts.begin());
 		likely(it != m_parts.end()); ++it) {
@@ -154,9 +144,7 @@ BasicVersion::getRevision() const
 	return ss.str();
 }
 
-BasicVersion::ParseResult
-BasicVersion::parseVersion(const string& str, string *errtext, eix::SignedBool accept_garbage)
-{
+BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *errtext, eix::SignedBool accept_garbage) {
 	m_parts.clear();
 	string::size_type pos(0);
 	string::size_type len(str.find_first_not_of("0123456789", pos));
@@ -171,8 +159,9 @@ BasicVersion::parseVersion(const string& str, string *errtext, eix::SignedBool a
 	}
 	m_parts.push_back(BasicPart(BasicPart::first, str, pos, len - pos));
 
-	if (len == string::npos)
+	if(len == string::npos) {
 		return parsedOK;
+	}
 
 	pos += len;
 
@@ -189,34 +178,37 @@ BasicVersion::parseVersion(const string& str, string *errtext, eix::SignedBool a
 		}
 		m_parts.push_back(BasicPart(BasicPart::primary, str, pos, len - pos));
 
-		if (len == string::npos)
+		if(len == string::npos) {
 			return parsedOK;
+		}
 
 		pos = len;
 	}
 
-	if(isalpha(str[pos], localeC))
+	if(isalpha(str[pos], localeC)) {
 		m_parts.push_back(BasicPart(BasicPart::character, str[pos++]));
+	}
 
-	if (pos == str.size())
+	if(pos == str.size()) {
 		return parsedOK;
+	}
 
-	while (str[pos] == '_') {
+	while(str[pos] == '_') {
 		BasicPart::PartType suffix;
 		++pos;
-		if (str.compare(pos, 5, "alpha") == 0) {
+		if(str.compare(pos, 5, "alpha") == 0) {
 			pos += 5;
 			suffix = BasicPart::alpha;
-		} else if (str.compare(pos, 4, "beta") == 0) {
+		} else if(str.compare(pos, 4, "beta") == 0) {
 			pos += 4;
 			suffix = BasicPart::beta;
-		} else if (str.compare(pos, 3, "pre") == 0) {
+		} else if(str.compare(pos, 3, "pre") == 0) {
 			pos += 3;
 			suffix = BasicPart::pre;
-		} else if (str.compare(pos, 2, "rc") == 0) {
+		} else if(str.compare(pos, 2, "rc") == 0) {
 			pos += 2;
 			suffix = BasicPart::rc;
-		} else if (str.compare(pos, 1, "p") == 0) {
+		} else if(str.compare(pos, 1, "p") == 0) {
 			++pos;
 			suffix = BasicPart::patch;
 		} else {
@@ -232,8 +224,9 @@ BasicVersion::parseVersion(const string& str, string *errtext, eix::SignedBool a
 		len = str.find_first_not_of("0123456789", pos);
 		m_parts.push_back(BasicPart(suffix, str, pos, len - pos));
 
-		if (len == string::npos)
+		if(len == string::npos) {
 			return parsedOK;
+		}
 
 		pos = len;
 	}
@@ -243,16 +236,17 @@ BasicVersion::parseVersion(const string& str, string *errtext, eix::SignedBool a
 		len = str.find_first_not_of("0123456789", pos+=2);
 		m_parts.push_back(BasicPart(BasicPart::revision, str, pos, len-pos));
 
-		if (len == string::npos)
+		if(len == string::npos) {
 			return parsedOK;
+		}
 		pos = len;
 
-		if (str[pos] == '.') {
+		if(str[pos] == '.') {
 			// inter-revision used by prefixed portage.
 			// for example foo-1.2-r02.2
 			len = str.find_first_not_of("0123456789", ++pos);
 			m_parts.push_back(BasicPart(BasicPart::inter_rev, str, pos, len-pos));
-			if (len == string::npos)
+			if(len == string::npos)
 				return parsedOK;
 			pos = len;
 		}
@@ -271,36 +265,32 @@ BasicVersion::parseVersion(const string& str, string *errtext, eix::SignedBool a
 	return parsedGarbage;
 }
 
-eix::SignedBool
-BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
-{
+eix::SignedBool BasicVersion::compare(const BasicVersion& left, const BasicVersion &right) {
 	list<BasicPart>::const_iterator
 		it_left(left.m_parts.begin()),
 		it_right(right.m_parts.begin());
 
 	for(eix::SignedBool ret(0); ; ++it_left, ++it_right) {
-		if (it_left == left.m_parts.end()) {
-			if (it_right == right.m_parts.end()) {
+		if(it_left == left.m_parts.end()) {
+			if(it_right == right.m_parts.end()) {
 				return 0;
-			} else if (it_right->parttype < BasicPart::revision) {
+			} else if(it_right->parttype < BasicPart::revision) {
 				return 1;
 			}
 			return -1;
-		} else if (it_right == right.m_parts.end()) {
-			if (it_left->parttype < BasicPart::revision) {
+		} else if(it_right == right.m_parts.end()) {
+			if(it_left->parttype < BasicPart::revision) {
 				return -1;
 			}
 			return 1;
-		} else if ((ret = BasicPart::compare(*it_left, *it_right))) {
+		} else if((ret = BasicPart::compare(*it_left, *it_right))) {
 			return ret;
 		}
 	}
 	return 0;
 }
 
-eix::SignedBool
-BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right)
-{
+eix::SignedBool BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right) {
 	for(list<BasicPart>::const_iterator it_left(left.m_parts.begin()),
 		it_right(right.m_parts.begin()); ; ++it_left, ++it_right) {
 		bool right_end((it_right == right.m_parts.end())

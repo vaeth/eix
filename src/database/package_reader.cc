@@ -18,14 +18,11 @@
 #include "portage/package.h"
 #include "portage/version.h"
 
-PackageReader::~PackageReader()
-{
+PackageReader::~PackageReader() {
 	delete m_pkg;
 }
 
-bool
-PackageReader::read(Attributes need)
-{
+bool PackageReader::read(Attributes need) {
 	if(likely(m_have >= need)) {  // Already got this one
 		return true;
 	}
@@ -59,8 +56,7 @@ PackageReader::read(Attributes need)
 			}
 			if(unlikely(need == LICENSE))
 				break;
-		case LICENSE:
-			{
+		case LICENSE: {
 				eix::Versize i;
 				if(unlikely(!m_db->read_num(&i, &m_errtext))) {
 					m_error = true;
@@ -90,9 +86,7 @@ PackageReader::read(Attributes need)
 	return true;
 }
 
-bool
-PackageReader::skip()
-{
+bool PackageReader::skip() {
 	// only seek if needed
 	if(m_have != ALL) {
 		if(unlikely(!m_db->seekabs(m_next, &m_errtext))) {
@@ -105,9 +99,7 @@ PackageReader::skip()
 
 /// Release the package.
 // Complete the current package, and release it.
-Package *
-PackageReader::release()
-{
+Package *PackageReader::release() {
 	if(unlikely(!read())) {
 		return NULLPTR;
 	}
@@ -116,9 +108,7 @@ PackageReader::release()
 	return r;
 }
 
-bool
-PackageReader::next()
-{
+bool PackageReader::next() {
 	if(unlikely(m_cat_size-- == 0)) {
 		if(unlikely(m_frames-- == 0)) {
 			return false;
@@ -144,9 +134,7 @@ PackageReader::next()
 	return true;
 }
 
-bool
-PackageReader::nextCategory()
-{
+bool PackageReader::nextCategory() {
 	if(unlikely(m_frames-- == 0)) {
 		return false;
 	}
@@ -158,9 +146,7 @@ PackageReader::nextCategory()
 	return false;
 }
 
-bool
-PackageReader::nextPackage()
-{
+bool PackageReader::nextPackage() {
 	if(unlikely(m_cat_size-- == 0)) {
 		return false;
 	}

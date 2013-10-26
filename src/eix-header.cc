@@ -48,9 +48,7 @@ int overlay_loop(string *result, const OverlayOptionList &options) ATTRIBUTE_NON
 bool open_database(Database *db, DBHeader *header, const char *name, bool verbose) ATTRIBUTE_NONNULL_;
 bool print_overlay_data(string *result, const DBHeader &header, const char *overlay, const string &sep, const char *name, PrintOverlayMode mode, bool verbose) ATTRIBUTE_NONNULL_;
 
-static void
-print_help()
-{
+static void print_help() {
 	printf(_(
 "Usage: %s [-q] [-f FILE] [-s SEP] [-c] [-l OVERLAY] [-p OVERLAY] [-o OVERLAY] ...\n"
 "Check whether eix database FILE has current format, and print label, path,\n"
@@ -73,19 +71,17 @@ class OverlayOption {
 		char opt;
 		const char *arg;
 
-		explicit OverlayOption(char option) : opt(option)
-		{ }
+		explicit OverlayOption(char option) : opt(option) {
+		}
 
 		OverlayOption(char option, const char *argument) :
-			opt(option), arg(argument)
-		{ }
+			opt(option), arg(argument) {
+		}
 };
 
 typedef list<OverlayOption> OverlayOptionList;
 
-int
-run_eix_header(int argc, char *argv[])
-{
+int run_eix_header(int argc, char *argv[]) {
 	bool verbose(true);
 	OverlayOptionList options;
 
@@ -158,9 +154,7 @@ run_eix_header(int argc, char *argv[])
 	return ret;
 }
 
-int
-overlay_loop(string *result, const OverlayOptionList &options)
-{
+int overlay_loop(string *result, const OverlayOptionList &options) {
 	bool verbose(true);
 	string separator(1, '\0');
 	const char *name(EIX_CACHEFILE);
@@ -219,9 +213,7 @@ overlay_loop(string *result, const OverlayOptionList &options)
 	return ret;
 }
 
-bool
-open_database(Database *db, DBHeader *header, const char *name, bool verbose)
-{
+bool open_database(Database *db, DBHeader *header, const char *name, bool verbose) {
 	if(likely((name[0] != '\0') && db->openread(name))) {
 		if(likely(db->read_header(header, NULLPTR))) {
 			return true;
@@ -243,9 +235,7 @@ open_database(Database *db, DBHeader *header, const char *name, bool verbose)
 	return false;
 }
 
-bool
-print_overlay_data(string *result, const DBHeader &header, const char *overlay, const string &print_append, const char *name, PrintOverlayMode mode, bool verbose)
-{
+bool print_overlay_data(string *result, const DBHeader &header, const char *overlay, const string &print_append, const char *name, PrintOverlayMode mode, bool verbose) {
 	ExtendedVersion::Overlay num;
 	if(unlikely(!header.find_overlay(&num, overlay, NULLPTR, 0, DBHeader::OVTEST_ALL))) {
 		if(likely(verbose)) {

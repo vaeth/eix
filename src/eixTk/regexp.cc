@@ -28,9 +28,7 @@ using std::cerr;
 using std::endl;
 
 /// Free the regular expression.
-void
-Regex::free()
-{
+void Regex::free() {
 	if(m_compiled) {
 		regfree(&m_re);
 		m_compiled = false;
@@ -38,9 +36,7 @@ Regex::free()
 }
 
 /// Compile a regular expression.
-void
-Regex::compile(const char *regex, int eflags)
-{
+void Regex::compile(const char *regex, int eflags) {
 	if(unlikely(m_compiled)) {
 		regfree(&m_re);
 		m_compiled = false;
@@ -60,16 +56,12 @@ Regex::compile(const char *regex, int eflags)
 }
 
 /// Does the regular expression match s?
-bool
-Regex::match(const char *s) const
-{
+bool Regex::match(const char *s) const {
 	return (!m_compiled) || (!regexec(get(), s, 0, NULLPTR, 0));
 }
 
 /// Does the regular expression match s? Get beginning/end
-bool
-Regex::match(const char *s, string::size_type *b, string::size_type *e) const
-{
+bool Regex::match(const char *s, string::size_type *b, string::size_type *e) const {
 	regmatch_t pmatch[1];
 	if(!m_compiled) {
 		if(likely(b != NULLPTR)) {
@@ -102,8 +94,7 @@ GCC_DIAG_ON(sign-conversion)
 	return true;
 }
 
-RegexList::RegexList(const string& stringlist)
-{
+RegexList::RegexList(const string& stringlist) {
 	vector<string> l;
 	split_string(&l, stringlist, true);
 	for(vector<string>::const_iterator it(l.begin());
@@ -112,8 +103,7 @@ RegexList::RegexList(const string& stringlist)
 	}
 }
 
-RegexList::~RegexList()
-{
+RegexList::~RegexList() {
 	for(vector<Regex*>::iterator it(reglist.begin());
 		likely(it != reglist.end()); ++it) {
 		(*it)->free();
@@ -121,9 +111,7 @@ RegexList::~RegexList()
 	}
 }
 
-bool
-RegexList::match(const char *str)
-{
+bool RegexList::match(const char *str) {
 	for(vector<Regex*>::const_iterator it(reglist.begin());
 		likely(it != reglist.end()); ++it) {
 		if((*it)->match(str)) {

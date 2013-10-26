@@ -17,9 +17,7 @@
 using std::string;
 using std::vector;
 
-void
-StringListContent::append_to_string(OutputString *s, const OutputString &skip) const
-{
+void StringListContent::append_to_string(OutputString *s, const OutputString &skip) const {
 	bool sep(false);
 	for(vector<string>::const_iterator it(m_list.begin());
 		likely(it != m_list.end()); ++it) {

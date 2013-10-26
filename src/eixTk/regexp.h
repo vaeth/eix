@@ -22,18 +22,16 @@
 // It is normally used within global scope so that a regular expression doesn't
 // have to be compiled with every instance of a class using it.
 
-class Regex
-{
+class Regex {
 	public:
 		/// Initalize class.
-		Regex()
-			: m_compiled(false)
-		{ }
+		Regex() : m_compiled(false) {
+		}
 
 		/// Initalize and compile regular expression.
-		Regex(const char *regex, int eflags = REG_EXTENDED)
-			: m_compiled(false)
-		{ compile(regex, eflags); }
+		Regex(const char *regex, int eflags = REG_EXTENDED) : m_compiled(false) {
+			compile(regex, eflags);
+		}
 
 		/// Free the regular expression.
 		void free();
@@ -51,13 +49,15 @@ class Regex
 		/// Does the regular expression match s? Get beginning/end
 		bool match(const char *s, std::string::size_type *b, std::string::size_type *e) const ATTRIBUTE_NONNULL((2));
 
-		bool compiled() const
-		{ return m_compiled; }
+		bool compiled() const {
+			return m_compiled;
+		}
 
 	protected:
 		/// Gets the internal regular expression structure.
-		const regex_t *get() const
-		{ return &m_re; }
+		const regex_t *get() const {
+			return &m_re;
+		}
 
 		/// The actual regular expression (GNU C Library).
 		regex_t m_re;
@@ -66,8 +66,7 @@ class Regex
 		bool m_compiled;
 };
 
-class RegexList
-{
+class RegexList {
 	public:
 		explicit RegexList(const std::string& stringlist);
 

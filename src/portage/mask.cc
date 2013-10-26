@@ -37,20 +37,27 @@ static const struct OperatorTable {
 	const char *str;
 	eix::TinyUnsigned len;
 	Mask::Operator op;
-} operators[] = {
-	{ "<=", 2, Mask::maskOpLessEqual },
-	{ "<" , 1, Mask::maskOpLess },
-	{ ">=", 2, Mask::maskOpGreaterEqual },
-	{ ">" , 1, Mask::maskOpGreater },
-	{ "=" , 1, Mask::maskOpEqual },
-	{ "~" , 1, Mask::maskOpRevisions },
-	{ "@" , 1, Mask::maskIsSet },
-	{ ""  , 0, Mask::maskOpAll /* this must be the last one */ }
+} operators[] = { {
+		"<=", 2, Mask::maskOpLessEqual
+	}, {
+		"<" , 1, Mask::maskOpLess
+	}, {
+		">=", 2, Mask::maskOpGreaterEqual
+	}, {
+		">" , 1, Mask::maskOpGreater
+	}, {
+		"=" , 1, Mask::maskOpEqual
+	}, {
+		"~" , 1, Mask::maskOpRevisions
+	}, {
+		"@" , 1, Mask::maskIsSet
+	}, {
+		""  , 0, Mask::maskOpAll /* this must be the last one */
+	}
 };
 
 /** Constructor. */
-Mask::Mask(Type type, const char *repo)
-{
+Mask::Mask(Type type, const char *repo) {
 	m_type = type;
 	if((!m_test_reponame) && (repo != NULLPTR)) {
 		m_test_reponame = true;
@@ -63,9 +70,7 @@ Mask::Mask(Type type, const char *repo)
  * @param str_mask the string to be dissected
  * @param errtext contains error message if not 0 and not parseOK
  * @param accept_garbage passed to parseVersion if appropriate */
-BasicVersion::ParseResult
-Mask::parseMask(const char *str, string *errtext, eix::SignedBool accept_garbage)
-{
+BasicVersion::ParseResult Mask::parseMask(const char *str, string *errtext, eix::SignedBool accept_garbage) {
 	// determine comparison operator
 	if(unlikely(m_type == maskPseudomask)) {
 		m_operator = maskOpEqual;
@@ -238,9 +243,7 @@ GCC_DIAG_ON(sign-conversion)
 	return parsedOK;
 }
 
-void
-Mask::to_package(Package *p) const
-{
+void Mask::to_package(Package *p) const {
 	p->category = m_category;
 	p->name = m_name;
 	Version *v(new Version);
@@ -253,9 +256,7 @@ Mask::to_package(Package *p) const
 
 /** Tests if the mask applies to a Version.
  * @return true if applies. */
-bool
-Mask::test(const ExtendedVersion *ev) const
-{
+bool Mask::test(const ExtendedVersion *ev) const {
 	if(m_test_slot) {
 		if(m_slotname != ev->slotname) {
 			return false;
@@ -271,8 +272,7 @@ Mask::test(const ExtendedVersion *ev) const
 			return false;
 		}
 	}
-	switch(m_operator)
-	{
+	switch(m_operator) {
 		case maskOpAll:
 			return true;
 
@@ -282,8 +282,7 @@ Mask::test(const ExtendedVersion *ev) const
 		case maskOpGlob:
 			if(m_glob.empty()) {
 				return true;
-			}
-			{
+			} {
 				// '=*' operator has to remove leading zeros
 				// see match_from_list in portage_dep.py
 				const std::string version_string(ev->getFull());
@@ -297,37 +296,39 @@ Mask::test(const ExtendedVersion *ev) const
 				 * components are compared using a stringwise comparison.
 				 */
 
-				if (my_start == std::string::npos)
+				if(my_start == std::string::npos) {
 					my_start = m_glob.size() - 1;
-				else if(!isdigit(m_glob[my_start], localeC))
+				} else if(!isdigit(m_glob[my_start], localeC)) {
 					my_start -= 1;
+				}
 
-				if (version_start == std::string::npos)
+				if(version_start == std::string::npos) {
 					version_start = version_string.size() - 1;
-				else if(!isdigit(version_string[version_start], localeC))
+				} else if(!isdigit(version_string[version_start], localeC)) {
 					version_start -= 1;
+				}
 
 				const std::string::size_type total(m_glob.size() - my_start);
 				return (version_string.compare(version_start, total, m_glob, my_start, total) == 0);
 			}
 
 		case maskOpLess:
-			return BasicVersion::compare(*this, *ev) > 0;
+			return (BasicVersion::compare(*this, *ev) > 0);
 
 		case maskOpLessEqual:
-			return BasicVersion::compare(*this, *ev) >= 0;
+			return (BasicVersion::compare(*this, *ev) >= 0);
 
 		case maskOpEqual:
-			return BasicVersion::compare(*this, *ev) == 0;
+			return (BasicVersion::compare(*this, *ev) == 0);
 
 		case maskOpGreaterEqual:
-			return BasicVersion::compare(*this, *ev) <= 0;
+			return (BasicVersion::compare(*this, *ev) <= 0);
 
 		case maskOpGreater:
-			return BasicVersion::compare(*this, *ev) < 0;
+			return (BasicVersion::compare(*this, *ev) < 0);
 
 		case maskOpRevisions:
-			return BasicVersion::compareTilde(*this, *ev) == 0;
+			return (BasicVersion::compareTilde(*this, *ev) == 0);
 
 		// case maskIsSet: // makes no sense
 		default:
@@ -336,9 +337,7 @@ Mask::test(const ExtendedVersion *ev) const
 	return false;
 }
 
-void
-Mask::match(Matches *m, Package *pkg) const
-{
+void Mask::match(Matches *m, Package *pkg) const {
 	for(Package::iterator it(pkg->begin()); likely(it != pkg->end()); ++it) {
 		if(test(*it)) {
 			m->push_back(*it);
@@ -346,9 +345,7 @@ Mask::match(Matches *m, Package *pkg) const
 	}
 }
 
-bool
-Mask::have_match(const Package &pkg) const
-{
+bool Mask::have_match(const Package &pkg) const {
 	for(Package::const_iterator it(pkg.begin()); likely(it != pkg.end()); ++it) {
 		if(test(*it)) {
 			return true;
@@ -360,17 +357,13 @@ Mask::have_match(const Package &pkg) const
 /** Sets the stability members of all version in package according to the mask.
  * @param pkg            package you want tested
  * @param check          Redundancy checks which should apply */
-void
-Mask::checkMask(Package *pkg, Keywords::Redundant check) const
-{
+void Mask::checkMask(Package *pkg, Keywords::Redundant check) const {
 	for(Package::iterator i(pkg->begin()); likely(i != pkg->end()); ++i) {
 		apply(*i, true, check);
 	}
 }
 
-void
-KeywordMask::applyItem(Package *pkg) const
-{
+void KeywordMask::applyItem(Package *pkg) const {
 	for(Package::iterator i(pkg->begin()); likely(i != pkg->end()); ++i) {
 		if(test(*i)) {
 			applyItem(*i);
@@ -378,9 +371,7 @@ KeywordMask::applyItem(Package *pkg) const
 	}
 }
 
-void
-PKeywordMask::applyItem(Package *pkg) const
-{
+void PKeywordMask::applyItem(Package *pkg) const {
 	for(Package::iterator i(pkg->begin()); likely(i != pkg->end()); ++i) {
 		if(test(*i)) {
 			applyItem(*i);
@@ -388,9 +379,7 @@ PKeywordMask::applyItem(Package *pkg) const
 	}
 }
 
-void
-SetMask::applyItem(Package *pkg) const
-{
+void SetMask::applyItem(Package *pkg) const {
 	for(Package::iterator i(pkg->begin()); likely(i != pkg->end()); ++i) {
 		if(i->is_in_set(m_set))  // No need to check: Already in set
 			continue;
@@ -400,9 +389,7 @@ SetMask::applyItem(Package *pkg) const
 	}
 }
 
-bool
-Mask::ismatch(const Package &pkg) const
-{
+bool Mask::ismatch(const Package &pkg) const {
 	if((fnmatch(m_name.c_str(), pkg.name.c_str(), 0) != 0) ||
 		(fnmatch(m_category.c_str(), pkg.category.c_str(), 0) != 0))
 		return false;
@@ -417,44 +404,45 @@ Mask::ismatch(const Package &pkg) const
  * @param ve         Version instance to be set
  * @param do_test    set conditionally or unconditionally
  * @param check      check these for changes */
-void
-Mask::apply(Version *ve, bool do_test, Keywords::Redundant check) const
-{
+void Mask::apply(Version *ve, bool do_test, Keywords::Redundant check) const {
 	switch(m_type) {
 		case maskUnmask:
-			if(do_test && (!test(ve)))
+			if(do_test && (!test(ve))) {
 				break;
-			if(check & Keywords::RED_IN_UNMASK)
+			}
+			if(check & Keywords::RED_IN_UNMASK) {
 				ve->set_redundant(Keywords::RED_IN_UNMASK);
-			if(check & Keywords::RED_DOUBLE_UNMASK)
-			{
-				if(ve->wanted_unmasked())
+			}
+			if(check & Keywords::RED_DOUBLE_UNMASK) {
+				if(ve->wanted_unmasked()) {
 					ve->set_redundant(Keywords::RED_DOUBLE_UNMASK);
+				}
 				ve->set_wanted_unmasked();
 			}
-			if(ve->maskflags.isPackageMask())
-			{
+			if(ve->maskflags.isPackageMask()) {
 				ve->maskflags.clearbits(MaskFlags::MASK_PACKAGE);
-				if(check & Keywords::RED_UNMASK)
+				if(check & Keywords::RED_UNMASK) {
 					ve->set_was_unmasked();
+				}
 			}
 			break;
 		case maskMask:
-			if(do_test && (!test(ve)))
+			if(do_test && (!test(ve))) {
 				break;
-			if(check & Keywords::RED_IN_MASK)
+			}
+			if(check & Keywords::RED_IN_MASK) {
 				ve->set_redundant(Keywords::RED_IN_MASK);
-			if(check & Keywords::RED_DOUBLE_MASK)
-			{
+			}
+			if(check & Keywords::RED_DOUBLE_MASK) {
 				if(ve->wanted_masked())
 					ve->set_redundant(Keywords::RED_DOUBLE_MASK);
 				ve->set_wanted_masked();
 			}
-			if(!ve->maskflags.isPackageMask())
-			{
+			if(!ve->maskflags.isPackageMask()) {
 				ve->maskflags.setbits(MaskFlags::MASK_PACKAGE);
-				if(check & Keywords::RED_MASK)
+				if(check & Keywords::RED_MASK) {
 					ve->set_was_masked();
+				}
 			}
 			ve->add_reason(comments);
 			break;
@@ -476,15 +464,18 @@ Mask::apply(Version *ve, bool do_test, Keywords::Redundant check) const
 			}
 			break;
 		case maskAllowedByProfile:
-			if(ve->maskflags.isProfileMask())	/* Won't change anything cause already masked by profile */
+			if(ve->maskflags.isProfileMask()) { /* Won't change anything cause already masked by profile */
 				break;
-			if(do_test && (!test(ve)))
+			}
+			if(do_test && (!test(ve))) {
 				ve->maskflags.setbits(MaskFlags::MASK_PROFILE);
+			}
 			break;
 		case maskMark:
 		case maskMarkOptional:
-			if(do_test && (!test(ve)))
+			if(do_test && (!test(ve))) {
 				break;
+			}
 			ve->maskflags.setbits(MaskFlags::MASK_MARKED);
 			// break;
 		// case maskPseudomask:

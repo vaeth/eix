@@ -39,19 +39,17 @@ class SqliteCache : public BasicCache {
 		static TrueIndex *true_index;
 
 	public:
-		explicit SqliteCache(bool add_categories = false) : BasicCache(), never_add_categories(!add_categories)
-		{ }
+		explicit SqliteCache(bool add_categories = false) : BasicCache(), never_add_categories(!add_categories) {
+		}
 
-		bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL
-		{ return true; }
+		bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL {
+			return true;
+		}
 
 		bool readCategories(PackageTree *packagetree, const char *catname, Category *cat);
 
-		const char *getType() const
-		{
-			if(never_add_categories)
-				return "sqlite";
-			return "sqlite*";
+		const char *getType() const {
+			return (never_add_categories ? "sqlite" : "sqlite*");
 		}
 };
 

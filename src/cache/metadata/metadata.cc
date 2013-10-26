@@ -42,9 +42,7 @@ using std::vector;
 
 static int cachefiles_selector(SCANDIR_ARG3 dent);
 
-bool
-MetadataCache::use_prefixport() const
-{
+bool MetadataCache::use_prefixport() const {
 	switch(path_type) {
 		case PATH_REPOSITORY:
 		case PATH_FULL:
@@ -59,9 +57,7 @@ MetadataCache::use_prefixport() const
 	}
 }
 
-bool
-MetadataCache::initialize(const string &name)
-{
+bool MetadataCache::initialize(const string &name) {
 	string pure_name(name);
 	string::size_type i(pure_name.find(':'));
 	if(i != string::npos) {
@@ -122,9 +118,7 @@ MetadataCache::initialize(const string &name)
 	return false;
 }
 
-void
-MetadataCache::setType(PathType set_path_type, bool set_flat)
-{
+void MetadataCache::setType(PathType set_path_type, bool set_flat) {
 	path_type = set_path_type;
 	bool append_flattype(true);
 	switch(set_path_type) {
@@ -156,9 +150,7 @@ MetadataCache::setType(PathType set_path_type, bool set_flat)
 	setFlat(set_flat);
 }
 
-void
-MetadataCache::setFlat(bool set_flat)
-{
+void MetadataCache::setFlat(bool set_flat) {
 	if(set_flat) {
 		x_get_keywords_slot_iuse_restrict = flat_get_keywords_slot_iuse_restrict;
 		x_read_file = flat_read_file;
@@ -168,16 +160,12 @@ MetadataCache::setFlat(bool set_flat)
 	}
 }
 
-static int
-cachefiles_selector(SCANDIR_ARG3 dent)
-{
+static int cachefiles_selector(SCANDIR_ARG3 dent) {
 	return ((dent->d_name[0] != '.')
 			&& (strchr(dent->d_name, '-') != NULLPTR));
 }
 
-bool
-MetadataCache::readCategoryPrepare(const char *cat_name)
-{
+bool MetadataCache::readCategoryPrepare(const char *cat_name) {
 	string alt;
 	m_catname = cat_name;
 	if(have_override_path) {
@@ -269,17 +257,13 @@ MetadataCache::readCategoryPrepare(const char *cat_name)
 	return scandir_cc(m_catpath, &names, cachefiles_selector);
 }
 
-void
-MetadataCache::readCategoryFinalize()
-{
+void MetadataCache::readCategoryFinalize() {
 	m_catname.clear();
 	m_catpath.clear();
 	names.clear();
 }
 
-void
-MetadataCache::get_version_info(const char *pkg_name, const char *ver_name, Version *version) const
-{
+void MetadataCache::get_version_info(const char *pkg_name, const char *ver_name, Version *version) const {
 	string keywords, iuse, restr, props, slot;
 	string path(m_catpath);
 	path.append(1, '/');
@@ -295,18 +279,14 @@ MetadataCache::get_version_info(const char *pkg_name, const char *ver_name, Vers
 	version->overlay_key = m_overlay_key;
 }
 
-const char *
-MetadataCache::get_md5sum(const char *pkg_name, const char *ver_name) const
-{
+const char *MetadataCache::get_md5sum(const char *pkg_name, const char *ver_name) const {
 	if(!checkmd5) {
 		return NULLPTR;
 	}
 	return assign_get_md5sum(m_catpath + "/" + pkg_name + "-" + ver_name);
 }
 
-bool
-MetadataCache::readCategory(Category *cat)
-{
+bool MetadataCache::readCategory(Category *cat) {
 	for(vector<string>::const_iterator it(names.begin());
 		likely(it != names.end()); ) {
 		Version *newest(NULLPTR);

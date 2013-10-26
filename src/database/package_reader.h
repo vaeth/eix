@@ -36,8 +36,8 @@ class PackageReader {
 		/** Initialize with file-stream and number of packages.
 		    @arg ps is used to define the local package sets while version reading */
 		PackageReader(Database *db, const DBHeader &hdr, PortageSettings *ps = NULLPTR)
-			: m_db(db), m_frames(hdr.size), m_cat_size(0), m_pkg(NULLPTR), header(&hdr), m_portagesettings(ps), m_error(false)
-		{ }
+			: m_db(db), m_frames(hdr.size), m_cat_size(0), m_pkg(NULLPTR), header(&hdr), m_portagesettings(ps), m_error(false) {
+		}
 
 		~PackageReader();
 
@@ -47,8 +47,9 @@ class PackageReader {
 		/// Get pointer to the package.
 		// It's possible that some attributes of the package are not yet read
 		// from the database.
-		Package *get() const
-		{ return m_pkg; }
+		Package *get() const {
+			return m_pkg;
+		}
 
 		/// Skip the current package.
 		// The file pointer is moved to the next package.
@@ -71,11 +72,13 @@ class PackageReader {
 		bool nextPackage();
 
 		/// Return name of current category.
-		const std::string& category() const
-		{ return m_cat_name; }
+		const std::string& category() const {
+			return m_cat_name;
+		}
 
-		const char *get_errtext() const
-		{ return (m_error ? m_errtext.c_str() : NULLPTR); }
+		const char *get_errtext() const {
+			return (m_error ? m_errtext.c_str() : NULLPTR);
+		}
 
 	protected:
 		Database         *m_db;

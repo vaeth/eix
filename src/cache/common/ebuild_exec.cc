@@ -24,6 +24,7 @@
 
 #include "cache/base.h"
 #include "cache/common/ebuild_exec.h"
+#include "eixTk/constexpr.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -42,18 +43,16 @@ using std::string;
 using std::vector;
 
 class EbuildExecSettings {
-public:
-	string exec_ebuild, exec_ebuild_sh, ebuild_depend_temp;
-	string portage_rootpath, portage_bin_path;
+	public:
+		string exec_ebuild, exec_ebuild_sh, ebuild_depend_temp;
+		string portage_rootpath, portage_bin_path;
 
-	void init();
+		void init();
 };
 
 EbuildExec *EbuildExec::handler_arg;
 
-void
-ebuild_sig_handler(int sig)
-{
+void ebuild_sig_handler(int sig) {
 	EbuildExec::handler_arg->got_exit_signal = true;
 	EbuildExec::handler_arg->type_of_exit_signal = sig;
 }
@@ -66,9 +65,7 @@ ebuild_sig_handler(int sig)
 // of EbuildExec (and EbuildExec does not call other instances),
 // this is not a problem from "outside" this class.
 
-void
-EbuildExec::add_handler()
-{
+void EbuildExec::add_handler() {
 GCC_DIAG_OFF(old-style-cast)
 	handler_arg = this;
 	// Set the signals "empty" to avoid a race condition:
@@ -116,9 +113,7 @@ GCC_DIAG_OFF(old-style-cast)
 GCC_DIAG_ON(old-style-cast)
 }
 
-void
-EbuildExec::remove_handler()
-{
+void EbuildExec::remove_handler() {
 	if(!have_set_signals)
 		return;
 #ifdef HAVE_SIGACTION
@@ -134,9 +129,7 @@ EbuildExec::remove_handler()
 }
 
 // You should have called add_handler() in advance
-bool
-EbuildExec::make_tempfile()
-{
+bool EbuildExec::make_tempfile() {
 	char temp[256];
 	strcpy(temp, "/tmp/ebuild-cache.XXXXXXXX");  // NOLINT(runtime/printf)
 	int fd(mkstemp(temp));
@@ -150,9 +143,7 @@ EbuildExec::make_tempfile()
 	return true;
 }
 
-void
-EbuildExec::delete_cachefile()
-{
+void EbuildExec::delete_cachefile() {
 	if(unlikely(!cache_defined))
 		return;
 	const char *c(cachefile.c_str());
@@ -171,9 +162,7 @@ EbuildExec::delete_cachefile()
 
 /// This is a subfunction of make_cachefile() to ensure that make_cachefile()
 /// has no local variable when vfork() is called.
-void
-EbuildExec::calc_environment(const char *name, const string &dir, const Package &package, const Version &version)
-{
+void EbuildExec::calc_environment(const char *name, const string &dir, const Package &package, const Version &version) {
 	c_env = NULLPTR;
 	envstrings = NULLPTR;
 	// non-sh: environment is kept except for possibly new PORTDIR_OVERLAY
@@ -195,8 +184,8 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 	// ifndef HAVE_SETENV if(!use_ebuild_sh) we have already returned
 #endif
 	// if(use_ebuild_sh)
-	{
-		base->env_add_package(env, package, version, dir, name);
+	{  // NOLINT(whitespace/braces)
+		base->env_add_package(&env, package, version, dir, name);
 		env["dbkey"] = cachefile;
 		const string &portage_rootpath(settings->portage_rootpath);
 		if(likely(!portage_rootpath.empty())) {
@@ -241,11 +230,9 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 	c_env[i] = NULLPTR;
 }
 
-static const int EXECLE_FAILED = 17;
+static CONSTEXPR int EXECLE_FAILED = 17;
 
-string *
-EbuildExec::make_cachefile(const char *name, const string &dir, const Package &package, const Version &version)
-{
+string *EbuildExec::make_cachefile(const char *name, const string &dir, const Package &package, const Version &version) {
 	calc_settings();
 
 	// Make cachefile and calculate exec_name
@@ -274,8 +261,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 		base->m_error_callback(_("Forking failed"));
 		return NULLPTR;
 	}
-	if(child == 0)
-	{
+	if(child == 0) {
 		if(use_ebuild_sh) {
 			execle(exec_name, exec_name, "depend", static_cast<const char *>(NULLPTR), c_env);
 		} else {
@@ -323,9 +309,7 @@ GCC_DIAG_ON(old-style-cast)
 	return NULLPTR;
 }
 
-void
-EbuildExecSettings::init()
-{
+void EbuildExecSettings::init() {
 	EixRc &eix(get_eixrc());
 	exec_ebuild = eix["EXEC_EBUILD"];
 	exec_ebuild_sh = eix["EXEC_EBUILD_SH"];
@@ -336,9 +320,7 @@ EbuildExecSettings::init()
 
 EbuildExecSettings *EbuildExec::settings = NULLPTR;
 
-void
-EbuildExec::calc_settings()
-{
+void EbuildExec::calc_settings() {
 	if(unlikely(settings == NULLPTR)) {
 		settings = new EbuildExecSettings;
 		settings->init();

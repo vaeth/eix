@@ -27,13 +27,11 @@ class BaseAlgorithm {
 		std::string search_string;
 
 	public:
-		virtual void setString(const std::string &s)
-		{
+		virtual void setString(const std::string &s) {
 			search_string = s;
 		}
 
-		virtual ~BaseAlgorithm()
-		{
+		virtual ~BaseAlgorithm() {
 			// Nothin' to see here, please move along
 		}
 
@@ -46,20 +44,19 @@ class RegexAlgorithm : public BaseAlgorithm {
 		Regex re;
 
 	public:
-		RegexAlgorithm()
-		{ }
+		RegexAlgorithm() {
+		}
 
-		~RegexAlgorithm()
-		{ re.free(); }
+		~RegexAlgorithm() {
+			re.free();
+		}
 
-		void setString(const std::string &s)
-		{
+		void setString(const std::string &s) {
 			search_string = s;
 			re.compile(search_string.c_str(), REG_ICASE);
 		}
 
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2))
-		{
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2)) {
 			UNUSED(p);
 			return re.match(s);
 		}
@@ -74,8 +71,7 @@ class ExactAlgorithm : public BaseAlgorithm {
 /** substring matching */
 class SubstringAlgorithm : public BaseAlgorithm {
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2))
-		{
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2)) {
 			UNUSED(p);
 			return (std::string(s).find(search_string) != std::string::npos);
 		}
@@ -105,15 +101,14 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 		static std::map<std::string, Levenshtein> *levenshtein_map;
 
 	public:
-		explicit FuzzyAlgorithm(Levenshtein max) : max_levenshteindistance(max)
-		{ }
+		explicit FuzzyAlgorithm(Levenshtein max) : max_levenshteindistance(max) {
+		}
 
 		bool operator()(const char *s, Package *p);
 
 		static bool compare(Package *p1, Package *p2) ATTRIBUTE_NONNULL_;
 
-		static bool sort_by_levenshtein()
-		{
+		static bool sort_by_levenshtein() {
 			return (!levenshtein_map->empty());
 		}
 

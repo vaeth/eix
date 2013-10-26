@@ -17,9 +17,7 @@ using std::string;
 
 using std::cout;
 
-void
-Statusline::print_force(const string &str)
-{
+void Statusline::print_force(const string &str) {
 	if(soft) {
 		cout << "\033k" << header << str << "\033\\";
 	}
@@ -27,9 +25,7 @@ Statusline::print_force(const string &str)
 	flush(cout);
 }
 
-void
-Statusline::print(const string &str)
-{
+void Statusline::print(const string &str) {
 	if(use) {
 		if(header.empty()) {
 			header = m_program;
@@ -39,9 +35,7 @@ Statusline::print(const string &str)
 	}
 }
 
-void
-Statusline::user_statusline()
-{
+void Statusline::user_statusline() {
 	header.clear();
 	if(m_exit[0] == ' ') {
 		print_force(m_exit.substr(1));
@@ -50,9 +44,7 @@ Statusline::user_statusline()
 	}
 }
 
-void
-Statusline::success()
-{
+void Statusline::success() {
 	if(header.empty()) {
 		return;
 	}
@@ -63,9 +55,7 @@ Statusline::success()
 	}
 }
 
-void
-Statusline::failure()
-{
+void Statusline::failure() {
 	if(header.empty()) {
 		return;
 	}

@@ -104,14 +104,17 @@ class Mask : public BasicVersion {
 
 		void to_package(Package *p) const ATTRIBUTE_NONNULL_;
 
-		const char *getName() const
-		{ return m_name.c_str(); }
+		const char *getName() const {
+			return m_name.c_str();
+		}
 
-		const char *getCategory() const
-		{ return m_category.c_str(); }
+		const char *getCategory() const {
+			return m_category.c_str();
+		}
 
-		Type get_type () const
-		{ return m_type; }
+		Type get_type () const {
+			return m_type;
+		}
 
 		/** Sets the stability members of all version in package according to the mask.
 		 * @param pkg            package you want tested
@@ -120,8 +123,9 @@ class Mask : public BasicVersion {
 
 		bool ismatch(const Package& pkg) const;
 
-		bool is_set() const
-		{ return (m_operator == maskIsSet); }
+		bool is_set() const {
+			return (m_operator == maskIsSet);
+		}
 };
 
 class KeywordMask : public Mask {
@@ -129,35 +133,37 @@ class KeywordMask : public Mask {
 		std::string keywords;
 		bool locally_double;
 
-		explicit KeywordMask(const char *repo = NULLPTR) : Mask(maskTypeNone, repo)
-		{ }
+		explicit KeywordMask(const char *repo = NULLPTR) : Mask(maskTypeNone, repo) {
+		}
 
 		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;
 
-		void applyItem(Version *ver) const ATTRIBUTE_NONNULL_
-		{ ver->add_accepted_keywords(keywords); }
+		void applyItem(Version *ver) const ATTRIBUTE_NONNULL_ {
+			ver->add_accepted_keywords(keywords);
+		}
 };
 
 class PKeywordMask : public Mask {
 	public:
 		std::string keywords;
 
-		explicit PKeywordMask(const char *repo = NULLPTR) : Mask(maskTypeNone, repo)
-		{ }
+		explicit PKeywordMask(const char *repo = NULLPTR) : Mask(maskTypeNone, repo) {
+		}
 
 		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;
 
-		void applyItem(Version *ver) const ATTRIBUTE_NONNULL_
-		{ ver->modify_effective_keywords(keywords); }
+		void applyItem(Version *ver) const ATTRIBUTE_NONNULL_ {
+			ver->modify_effective_keywords(keywords);
+		}
 };
 
 class SetMask : public Mask {
 	public:
 		SetsIndex m_set;
 
-		SetMask(SetsIndex set_index, const char *repo = NULLPTR) :
-			Mask(maskTypeNone, repo), m_set(set_index)
-		{ }
+		SetMask(SetsIndex set_index, const char *repo = NULLPTR)
+			: Mask(maskTypeNone, repo), m_set(set_index) {
+		}
 
 		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;
 };

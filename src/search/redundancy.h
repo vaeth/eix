@@ -27,8 +27,8 @@ class RedAtom {
 		spc(Keywords::RED_NOTHING),
 		ins(Keywords::RED_NOTHING),
 		only(Keywords::RED_NOTHING),
-		oins(Keywords::RED_NOTHING)
-	{}
+		oins(Keywords::RED_NOTHING) {
+	}
 };
 
 

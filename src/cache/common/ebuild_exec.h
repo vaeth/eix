@@ -61,14 +61,16 @@ class EbuildExec {
 			base(b),
 			have_set_signals(false),
 			cache_defined(false),
-			use_ebuild_sh(will_use_sh)
-		{ }
+			use_ebuild_sh(will_use_sh) {
+		}
 
-		~EbuildExec()
-		{ delete_cachefile(); }
+		~EbuildExec() {
+			delete_cachefile();
+		}
 
-		bool use_sh() const
-		{ return use_ebuild_sh; }
+		bool use_sh() const {
+			return use_ebuild_sh;
+		}
 };
 
 #endif  // SRC_CACHE_COMMON_EBUILD_EXEC_H_

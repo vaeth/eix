@@ -37,6 +37,7 @@ stringutils_src = \
 eixTk/assert.h \
 eixTk/compare.cc \
 eixTk/compare.h \
+eixTk/constexpr.h \
 eixTk/diagnostics.h \
 eixTk/eixint.h \
 eixTk/formated.cc \
@@ -76,7 +77,7 @@ eixTk/ansicolor.cc \
 eixTk/ansicolor.h \
 eixTk/argsreader.cc \
 eixTk/argsreader.h \
-eixTk/auto_ptr.h \
+eixTk/auto_list.h \
 eixTk/exceptions.cc \
 eixTk/exceptions.h \
 eixTk/inttypes.h \

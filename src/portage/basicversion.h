@@ -13,126 +13,120 @@
 #include <list>
 #include <string>
 
+#include "eixTk/constexpr.h"
 #include "eixTk/eixint.h"
 
 // include "portage/basicversion.h" make check_includes happy
 
-class BasicPart
-{
-public:
-	enum PartType
-	{
-		garbage,
-		alpha,
-		beta,
-		pre,
-		rc,
-		revision,
-		inter_rev,
-		patch,
-		character,
-		primary,
-		first
-	};
-	// This must be larger than PartType elements and should be a power of 2.
-	static const std::string::size_type max_type = 32;
-	PartType parttype;
-	std::string partcontent;
+class BasicPart {
+	public:
+		enum PartType {
+			garbage,
+			alpha,
+			beta,
+			pre,
+			rc,
+			revision,
+			inter_rev,
+			patch,
+			character,
+			primary,
+			first
+		};
 
-	BasicPart()
-	{ }
+		// This must be larger than PartType elements and should be a power of 2.
+		static CONSTEXPR std::string::size_type max_type = 32;
+		PartType parttype;
+		std::string partcontent;
 
-	explicit BasicPart(PartType p) : parttype(p), partcontent()
-	{ }
+		BasicPart() {
+		}
 
-	BasicPart(PartType p, const std::string &s) : parttype(p), partcontent(s)
-	{ }
+		explicit BasicPart(PartType p) : parttype(p), partcontent() {
+		}
 
-	BasicPart(PartType p, const std::string &s, std::string::size_type start) : parttype(p), partcontent(s, start)
-	{ }
+		BasicPart(PartType p, const std::string &s) : parttype(p), partcontent(s) {
+		}
 
-	BasicPart(PartType p, const std::string &s, std::string::size_type start, std::string::size_type end) : parttype(p), partcontent(s, start, end)
-	{ }
+		BasicPart(PartType p, const std::string &s, std::string::size_type start)
+			: parttype(p), partcontent(s, start) {
+		}
 
-	BasicPart(PartType p, char c) : parttype(p), partcontent(1, c)
-	{ }
+		BasicPart(PartType p, const std::string &s, std::string::size_type start, std::string::size_type end)
+			: parttype(p), partcontent(s, start, end) {
+		}
 
-	BasicPart(PartType p, const char *s)  ATTRIBUTE_NONNULL_ : parttype(p), partcontent(s)
-	{ }
+		BasicPart(PartType p, char c) : parttype(p), partcontent(1, c) {
+		}
 
-	static eix::SignedBool compare(const BasicPart& left, const BasicPart& right) ATTRIBUTE_PURE;
+		BasicPart(PartType p, const char *s) ATTRIBUTE_NONNULL_ : parttype(p), partcontent(s) {
+		}
+
+		static eix::SignedBool compare(const BasicPart& left, const BasicPart& right) ATTRIBUTE_PURE;
 };
 
 
 /** Parse and represent a portage version-string. */
-class BasicVersion
-{
-public:
-	enum ParseResult
-	{
-		parsedOK,
-		parsedError,
-		parsedGarbage
-	};
+class BasicVersion {
+	public:
+		enum ParseResult {
+			parsedOK,
+			parsedError,
+			parsedGarbage
+		};
 
-	virtual ~BasicVersion() { }
+		virtual ~BasicVersion() { }
 
-	/// Parse the version-string pointed to by str.
-	BasicVersion::ParseResult parseVersion(const std::string& str, std::string *errtext, eix::SignedBool accept_garbage = 1);
+		/// Parse the version-string pointed to by str.
+		BasicVersion::ParseResult parseVersion(const std::string& str, std::string *errtext, eix::SignedBool accept_garbage = 1);
 
-	/// Compare all except gentoo revisions
-	static eix::SignedBool compareTilde(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
+		/// Compare all except gentoo revisions
+		static eix::SignedBool compareTilde(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
 
-	/// Compare the version.
-	static eix::SignedBool compare(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
+		/// Compare the version.
+		static eix::SignedBool compare(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
 
-	std::string getFull() const;
+		std::string getFull() const;
 
-	std::string getPlain() const;
+		std::string getPlain() const;
 
-	std::string getRevision() const;
+		std::string getRevision() const;
 
-protected:
-	/// Splitted m_primsplit-version.
-	std::list<BasicPart> m_parts;
+	protected:
+		/// Splitted m_primsplit-version.
+		std::list<BasicPart> m_parts;
 };
 
 
 // Short compare-stuff
-inline static bool
-operator<(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
-inline static bool
-operator<(const BasicVersion& left, const BasicVersion& right)
-{ return BasicVersion::compare(left, right) < 0; }
+inline static bool operator<(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+inline static bool operator<(const BasicVersion& left, const BasicVersion& right) {
+	return BasicVersion::compare(left, right) < 0;
+}
 
-inline static bool
-operator>(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
-inline static bool
-operator>(const BasicVersion& left, const BasicVersion& right)
-{ return BasicVersion::compare(left, right) > 0; }
+inline static bool operator>(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+inline static bool operator>(const BasicVersion& left, const BasicVersion& right) {
+	return BasicVersion::compare(left, right) > 0;
+}
 
-inline static bool
-operator==(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
-inline static bool
-operator==(const BasicVersion& left, const BasicVersion& right)
-{ return BasicVersion::compare(left, right) == 0; }
+inline static bool operator==(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+inline static bool operator==(const BasicVersion& left, const BasicVersion& right) {
+	return BasicVersion::compare(left, right) == 0;
+}
 
-inline static bool
-operator!=(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
-inline static bool
-operator!=(const BasicVersion& left, const BasicVersion& right)
-{ return BasicVersion::compare(left, right) != 0; }
+inline static bool operator!=(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+inline static bool operator!=(const BasicVersion& left, const BasicVersion& right) {
+	return BasicVersion::compare(left, right) != 0;
+}
 
-inline static bool
-operator>=(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
-inline static bool
-operator>=(const BasicVersion& left, const BasicVersion& right)
-{ return BasicVersion::compare(left, right) >= 0; }
+inline static bool operator>=(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+inline static bool operator>=(const BasicVersion& left, const BasicVersion& right) {
+	return BasicVersion::compare(left, right) >= 0;
+}
 
-inline static bool
-operator<=(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
-inline static bool
-operator<=(const BasicVersion& left, const BasicVersion& right)
-{ return BasicVersion::compare(left, right) <= 0; }
+inline static bool operator<=(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+inline static bool operator<=(const BasicVersion& left, const BasicVersion& right) {
+	return BasicVersion::compare(left, right) <= 0;
+}
 
 #endif  // SRC_PORTAGE_BASICVERSION_H_

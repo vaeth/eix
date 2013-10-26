@@ -48,22 +48,16 @@ const KeywordsFlags::KeyType
 inline static bool is_not_testing(const string &s);
 inline static bool is_testing(const string &s);
 
-inline static bool
-is_not_testing(const string &s)
-{
+inline static bool is_not_testing(const string &s) {
 	char c(s[0]);
 	return ((c != '~') && (c != '-'));
 }
 
-inline static bool
-is_testing(const string &s)
-{
+inline static bool is_testing(const string &s) {
 	return (s[0] == '~');
 }
 
-KeywordsFlags::KeyType
-KeywordsFlags::get_keyflags(const set<string> &accepted_keywords, const string &keywords)
-{
+KeywordsFlags::KeyType KeywordsFlags::get_keyflags(const set<string> &accepted_keywords, const string &keywords) {
 	KeyType m(KEY_EMPTY);
 	set<string> keywords_set;
 	make_set<string>(&keywords_set, split_string(keywords));
@@ -159,9 +153,7 @@ const Keywords::Redundant
 	Keywords::RED_IN_CFLAGS,
 	Keywords::RED_ALL_CFLAGS;
 
-bool
-Keywords::modify_keywords(string &result, const string &original, const string &modify_keys)
-{
+bool Keywords::modify_keywords(string *result, const string &original, const string &modify_keys) {
 	bool modified(false);
 	vector<string> modify;
 	split_string(&modify, modify_keys);
@@ -186,9 +178,10 @@ Keywords::modify_keywords(string &result, const string &original, const string &
 			}
 		}
 	}
-	if(likely(!modified))
+	if(likely(!modified)) {
 		return false;
-	result.clear();
-	join_to_string(&result, words);
+	}
+	result->clear();
+	join_to_string(result, words);
 	return true;
 }

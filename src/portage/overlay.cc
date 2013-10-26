@@ -26,15 +26,12 @@ using std::vector;
 
 static map<string, string> *path_label_hash = NULLPTR;
 
-void
-OverlayIdent::init_static()
-{
+void OverlayIdent::init_static() {
 	eix_assert_static(path_label_hash == NULLPTR);
 	path_label_hash = new map<string, string>;
 }
 
-OverlayIdent::OverlayIdent(const char *Path, const char *Label, Priority prio, bool ismain)
-{
+OverlayIdent::OverlayIdent(const char *Path, const char *Label, Priority prio, bool ismain) {
 	priority = prio;
 	is_main = ismain;
 	if(Path == NULLPTR) {
@@ -53,9 +50,7 @@ OverlayIdent::OverlayIdent(const char *Path, const char *Label, Priority prio, b
 	know_label = true;
 }
 
-void
-OverlayIdent::readLabel_internal(const char *Path)
-{
+void OverlayIdent::readLabel_internal(const char *Path) {
 	know_label = true;
 	vector<string> lines;
 	string my_path;
@@ -86,17 +81,13 @@ OverlayIdent::readLabel_internal(const char *Path)
 	(*path_label_hash)[my_path] = label;
 }
 
-string
-OverlayIdent::human_readable() const
-{
+string OverlayIdent::human_readable() const {
 	if(label.empty())
 		return path;
 	return string("\"") + label + "\" " + path;
 }
 
-const char *
-RepoList::get_path(const string &label)
-{
+const char *RepoList::get_path(const string &label) {
 	map<string, string>::iterator f(cache.find(label));
 	if(likely(f != cache.end())) {
 		return f->second.c_str();
@@ -123,9 +114,7 @@ RepoList::get_path(const string &label)
 	return NULLPTR;
 }
 
-RepoList::iterator
-RepoList::find_filename(const char *search, bool parent_ok, bool resolve_mask)
-{
+RepoList::iterator RepoList::find_filename(const char *search, bool parent_ok, bool resolve_mask) {
 	string mask;
 	const char *s(search);
 	if(resolve_mask) {
@@ -152,9 +141,7 @@ RepoList::find_filename(const char *search, bool parent_ok, bool resolve_mask)
 	return ret;
 }
 
-void
-RepoList::set_priority(OverlayIdent *overlay)
-{
+void RepoList::set_priority(OverlayIdent *overlay) {
 	const char *path(NULLPTR);
 	if(likely(overlay->know_label)) {
 		path = get_path(overlay->label);
@@ -172,9 +159,7 @@ RepoList::set_priority(OverlayIdent *overlay)
 	}
 }
 
-void
-RepoList::push_back(const OverlayIdent &s, bool no_path_dupes)
-{
+void RepoList::push_back(const OverlayIdent &s, bool no_path_dupes) {
 	if(likely(no_path_dupes)) {
 		RepoList::iterator it(find_filename(s.path.c_str()));
 		if(it != end()) {
@@ -190,9 +175,7 @@ RepoList::push_back(const OverlayIdent &s, bool no_path_dupes)
 	super::push_back(s);
 }
 
-void
-RepoList::clear()
-{
+void RepoList::clear() {
 	trust_cache = true;
 	super::clear();
 	cache.clear();

@@ -15,8 +15,7 @@ class DBHeader;
 class Version;
 class PackageTree;
 
-class Depend
-{
+class Depend {
 	friend class Database;
 
 	private:
@@ -33,47 +32,59 @@ class Depend
 
 		void set(const std::string &depend, const std::string &rdepend, const std::string &pdepend, const std::string &hdepend, bool normspace);
 
-		std::string get_depend() const
-		{ return subst(m_depend, m_rdepend, obsolete); }
+		std::string get_depend() const {
+			return subst(m_depend, m_rdepend, obsolete);
+		}
 
-		std::string get_depend_brief() const
-		{ return subst(m_depend, c_rdepend, obsolete); }
+		std::string get_depend_brief() const {
+			return subst(m_depend, c_rdepend, obsolete);
+		}
 
-		std::string get_rdepend() const
-		{ return subst(m_rdepend, m_depend, obsolete); }
+		std::string get_rdepend() const {
+			return subst(m_rdepend, m_depend, obsolete);
+		}
 
-		std::string get_rdepend_brief() const
-		{ return subst(m_rdepend, c_depend, obsolete); }
+		std::string get_rdepend_brief() const {
+			return subst(m_rdepend, c_depend, obsolete);
+		}
 
-		std::string get_pdepend() const
-		{ return m_pdepend; }
+		std::string get_pdepend() const {
+			return m_pdepend;
+		}
 
-		std::string get_pdepend_brief() const
-		{ return m_pdepend; }
+		std::string get_pdepend_brief() const {
+			return m_pdepend;
+		}
 
-		std::string get_hdepend() const
-		{ return m_hdepend; }
+		std::string get_hdepend() const {
+			return m_hdepend;
+		}
 
-		std::string get_hdepend_brief() const
-		{ return m_hdepend; }
+		std::string get_hdepend_brief() const {
+			return m_hdepend;
+		}
 
-		bool depend_empty() const
-		{ return m_depend.empty(); }
+		bool depend_empty() const {
+			return m_depend.empty();
+		}
 
-		bool rdepend_empty() const
-		{ return m_rdepend.empty(); }
+		bool rdepend_empty() const {
+			return m_rdepend.empty();
+		}
 
-		bool pdepend_empty() const
-		{ return m_pdepend.empty(); }
+		bool pdepend_empty() const {
+			return m_pdepend.empty();
+		}
 
-		bool hdepend_empty() const
-		{ return m_hdepend.empty(); }
+		bool hdepend_empty() const {
+			return m_hdepend.empty();
+		}
 
-		bool empty() const
-		{ return (m_depend.empty() && m_rdepend.empty() && m_pdepend.empty() && m_hdepend.empty()); }
+		bool empty() const {
+			return (m_depend.empty() && m_rdepend.empty() && m_pdepend.empty() && m_hdepend.empty());
+		}
 
-		void clear()
-		{
+		void clear() {
 			m_depend.clear();
 			m_rdepend.clear();
 			m_pdepend.clear();
@@ -83,8 +94,9 @@ class Depend
 
 		bool operator==(const Depend &d) const;
 
-		bool operator!=(const Depend &d) const
-		{ return !(*this == d); }
+		bool operator!=(const Depend &d) const {
+			return !(*this == d);
+		}
 };
 
 

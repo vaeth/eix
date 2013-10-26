@@ -24,9 +24,7 @@
 using std::map;
 using std::string;
 
-bool
-CacheTable::addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const string &cache_name, const map<string, string> *override, string *errtext)
-{
+bool CacheTable::addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const string &cache_name, const map<string, string> *override, string *errtext) {
 	for(CacheTable::iterator it(begin()); likely(it != end()); ++it) {
 		if(same_filenames(directory, (it->getPath()).c_str()))
 			return true;
