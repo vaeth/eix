@@ -236,29 +236,18 @@ bool pushback_files(const string &dir_path, vector<string> *into, const char *ex
 /** Cycle through map using it, until it is it_end, append all values from it
  * to the value with the same key in append_to. */
 void join_map(map<string, string> *append_to, map<string, string>::iterator it, map<string, string>::iterator it_end) {
-	while(likely(it != it_end)) {
-		(*append_to)[it->first] =
-			( ((*append_to)[it->first].size() != 0)
-			  ? (*append_to)[it->first] + " " + it->second : it->second );
-		++it;
+	for(; likely(it != it_end); ++it) {
+		string &to((*append_to)[it->first]);
+		if(to.empty()) {
+			to = it->second;
+		} else {
+			to.append(1, ' ');
+			to.append(it->second);
+		}
 	}
 }
 
 void dump_version() {
-	fputs(PACKAGE_STRING
-#if defined(GCC_VERSION) || defined(TARGET)
-		" ("
-#ifdef GCC_VERSION
-			"gcc-" GCC_VERSION
-#ifdef TARGET
-				", "
-#endif
-#endif
-#ifdef TARGET
-			TARGET
-#endif
-		")"
-#endif
-		"\n", stdout);
+	fputs(PACKAGE_VERSION "\n", stdout);
 	exit(EXIT_SUCCESS);
 }

@@ -7,9 +7,16 @@
 	  group_id=11597
 	- Introduce OMIT_EXPAND and <{colli,}use0> attributes to omit output of
 	  USE_EXPAND variables: http://bugs.gentoo.org/show_bug.cgi?id=489306
-	- Use constexpr for some constants
+	- Let --version output only version number
+	- Use constexpr for some constants (if supported by dialect, of course)
 	- Use gettext-0.18.3: allows to specify GNU sed
-	- Reformat code to pass Google's current cpplint-3.274
+	- Remove --with-nongnu-cxx (no kludges needed anymore for current clang
+	  and/or ccache; it is now the task of the user to export appropriate
+	  CCACHE_CPP2 or CXXFLAGS if he needs them for older versions.)
+	  This fixes http://bugs.gentoo.org/show_bug.cgi?id=455078
+	- Remove --enable-quickcheck (makes no sense without manual distinction
+	  of compilers which was just removed)
+	- Reformat code to pass Google's current cpplint-3.274_p114 with braces
 
 *eix-0.29.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

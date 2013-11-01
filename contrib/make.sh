@@ -11,15 +11,15 @@ Usage() {
 Available options are
   -q  quiet
   -n  Stop after ./configure, i.e. do not run make
-  -e  Keep environment - do not modify LDFLAGS, CXXFLAGS, CFLAGS
-  -0  Do not pass --enable-separate-* to ./configure
-  -1/2/3 Generate 1/2/3 binaries for eix-{,diff,update}
-  -4  Enable separate tools
+  -e  Keep environment - do not modify LDFLAGS, CXXFLAGS, CFLAGS, CC
+  -1/2/3 Generate 1/2/3 binaries for eix-{,diff,update} but no separate tools
+      (unless combined with -4)
+  -4  Enable separate tools but no separate binaries (unless combined with 2/3)
   -d  Do not use dep-default
   -w  Use -werror
   -W  Do not use --enable-strong-warnings
-  -g  Use clang++ (default if in path)
-  -G  Use GNU C++
+  -g  Use clang++, setting CXX, filtering some flags (default if available)
+  -G  Use default CXX (mnemonic: GNU)
   -s  With sqlite
   -S  Without sqlite
   -C  Avoid CCACHE
@@ -29,7 +29,6 @@ Available options are
   -Y  Do not use new c++ dialect
   -jX Use -jX (currently ${jarg})
   -c OPT Add OPT to ./configure
-  -f  As -c --enable-quickcheck
   -d  As -c --enable-debugging
   -O  As -c --enable-strong-optimization -c --enable-security
   -o  Do not pass --enable-strong-security
@@ -52,16 +51,10 @@ Die() {
 
 SetCcache() {
 	dircc='/usr/lib/ccache/bin'
-	ccache_path=false
-	if ${clang}
-	then	test -r "${dircc}/clang++"
-	else	test -d "${dircc}"
-	fi && [ -n "${PATH:++}" ] && ccache_path=:
-	if ${ccache_path} && \
-		case ":${PATH}:" in
-		*":${dircc}:"*)
-			false;;
-		esac
+	if case ":${PATH}:" in
+	*":${dircc}:"*)
+		false;;
+	esac
 	then	Info "export PATH=${dircc}:\${PATH}"
 		PATH="${dircc}:${PATH}"
 		export PATH
@@ -110,7 +103,6 @@ use_ccache=:
 automake_extra=
 configure_extra='--prefix=/usr --sysconfdir=/etc'
 optimization=false
-quickcheck=false
 recache=false
 clear_ccache=false
 debugging=false
@@ -118,14 +110,16 @@ command -v clang++ >/dev/null 2>&1 && clang=: || clang=false
 dialect='enable'
 strong_security=:
 OPTIND=1
-while getopts 'q01234gGdnewWsSrOofCxXyYdc:j:hH?' opt
+while getopts 'q1234gGdnewWsSrOoCxXyYdc:j:hH?' opt
 do	case ${opt} in
 	q)	quiet=:;;
-	0)	separate_all=false;;
-	1)	configure_extra=${configure_extra}' --disable-separate-binaries';;
-	2)	configure_extra=${configure_extra}' --enable-separate-update';;
-	3)	configure_extra=${configure_extra}' --enable-separate-binaries';;
-	4)	configure_extra=${configure_extra}' --enable-separate-tools';;
+	1)	separate_all=false;;
+	2)	separate_all=false
+		configure_extra=${configure_extra}' --enable-separate-update';;
+	3)	separate_all=false
+		configure_extra=${configure_extra}' --enable-separate-binaries';;
+	4)	separate_all=false
+		configure_extra=${configure_extra}' --enable-separate-tools';;
 	g)	clang=:;;
 	G)	clang=false;;
 	d)	dep_default=false;;
@@ -138,7 +132,6 @@ do	case ${opt} in
 	r)	use_chown=:;;
 	O)	optimization=:;;
 	o)	strong_security=false;;
-	f)	quickcheck=:;;
 	C)	use_ccache=false;;
 	x)	recache=:;;
 	X)	clear_ccache=:;;
@@ -155,22 +148,7 @@ then	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && \
 	eval 'shift "$(( ${OPTIND} - 1 ))"' || shift "`expr ${OPTIND} - 1`"
 fi
 
-clang_cc="'clang++'"
-if ${use_ccache}
-then	SetCcache
-	if ! ${ccache_path}
-	then	if ${clang}
-		then	clang_cc="'ccache clang++'"
-		else	CC="ccache ${CC:-g++}"
-			export CC
-			Info "export CC='${CC}'"
-		fi
-	fi
-fi
-
 [ -n "${dialect:++}" ] && configure_extra=${configure_extra}" --${dialect}-new-dialect"
-${clang} && configure_extra=${configure_extra}" --with-nongnu-cxx=${clang_cc}"
-${quickcheck} && configure_extra=${configure_extra}' --enable-quickcheck'
 ${dep_default} && configure_extra=${configure_extra}' --with-dep-default'
 ${separate_all} && configure_extra=${configure_extra}' --enable-separate-binaries --enable-separate-tools'
 ${optimization} && configure_extra=${configure_extra}' --enable-strong-optimization --enable-security'
@@ -203,12 +181,8 @@ Filter() {
 	done
 }
 
-if ! ${keepenv}
-then	CFLAGS=`portageq envvar CFLAGS`
-	CXXFLAGS=`portageq envvar CXXFLAGS`
-	LDFLAGS=`portageq envvar LDFLAGS`
-	CPPFLAGS=`portageq envvar CPPFLAGS`
-	${clang} && Filter \
+FilterClang() {
+	Filter \
 		-fnothrow-opt \
 		-frename-registers \
 		-funsafe-loop-optimizations \
@@ -229,7 +203,20 @@ then	CFLAGS=`portageq envvar CFLAGS`
 		-fno-enforce-eh-specs \
 		-fdirectives-only \
 		-ftracer
+}
+
+if ! ${keepenv}
+then	CFLAGS=`portageq envvar CFLAGS`
+	CXXFLAGS=`portageq envvar CXXFLAGS`
+	LDFLAGS=`portageq envvar LDFLAGS`
+	CPPFLAGS=`portageq envvar CPPFLAGS`
+	CXX=`portageq envvar CXX`
 	export CFLAGS CXXFLAGS LDFLAGS CPPFLAGS
+	if ${clang}
+	then	CXX='clang++'
+		FilterClang
+	fi
+	[ -z "${CXX}" ] || export CXX
 	if ${warnings}
 	then	configure_extra=${configure_extra}' --enable-strong-warnings'
 		automake_extra=${automake_extra}' -Wall'
@@ -239,9 +226,10 @@ then	CFLAGS=`portageq envvar CFLAGS`
 		automake_extra=${automake_extra}' -Werror'
 	fi
 fi
-Info "export CXXFLAGS=${CXXFLAGS}"
-Info "export LDFLAGS=${LDFLAGS}"
-Info "export CPPFLAGS=${CPPFLAGS}"
+Info "export CXXFLAGS='${CXXFLAGS}'"
+Info "export LDFLAGS='${LDFLAGS}'"
+Info "export CPPFLAGS='${CPPFLAGS}'"
+[ -z "${CXX}" ] ||  Info "export CXX='${CXX}'"
 if ! test -e Makefile
 then	if ! test -e configure || ! test -e Makefile.in
 	then	InfoVerbose './autogen.sh' ${automake_extra}

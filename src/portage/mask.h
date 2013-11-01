@@ -112,7 +112,7 @@ class Mask : public BasicVersion {
 			return m_category.c_str();
 		}
 
-		Type get_type () const {
+		Type get_type() const {
 			return m_type;
 		}
 

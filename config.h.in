@@ -88,9 +88,6 @@
 /* Define to 1 if _Pragma GCC diagnostic can be used everywhere */
 #undef FULL_GCC_DIAG_PRAGMA
 
-/* Version of gcc */
-#undef GCC_VERSION
-
 /* Define to 1 if you have the `atoi' function. */
 #undef HAVE_ATOI
 
@@ -309,9 +306,6 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
-
-/* Target system */
-#undef TARGET
 
 /* Enable extensions on AIX 3, Interix.  */
 #ifndef _ALL_SOURCE
