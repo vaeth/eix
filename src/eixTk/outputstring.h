@@ -15,7 +15,6 @@
 
 class OutputString {
 	private:
-		typedef WordSize WordSize;
 		typedef std::vector<WordSize> InsertType;
 		std::string m_string;
 		WordSize m_size;

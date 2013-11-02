@@ -35,7 +35,7 @@ call_rst2html.sh
 
 SUFFIXES = .in
 .in:
-	$(AM_V_GEN)A='s/^.*static * const *.* current *= *\([0-9]*\) *;.*$$/\1/p' ; \
+	$(AM_V_GEN)A='s/^.*static * CONSTEXPR *.* current *= *\([0-9]*\) *;.*$$/\1/p' ; \
 	H=`$(SED) -n -e "$${A}" ../src/database/header.h` ; \
 	X=`$(SED) -n -e "$${A}" ../src/output/print-xml.h` ; \
 	$(SED) \

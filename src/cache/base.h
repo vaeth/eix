@@ -105,7 +105,7 @@ class BasicCache {
 			UNUSED(category);
 			return 1;
 		}
-		virtual bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED) {
+		bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED) {
 			return readCategories(packagetree, NULLPTR, NULLPTR);
 		}
 
