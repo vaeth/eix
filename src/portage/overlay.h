@@ -10,7 +10,6 @@
 #ifndef SRC_PORTAGE_OVERLAY_H_
 #define SRC_PORTAGE_OVERLAY_H_ 1
 
-#include <map>
 #include <string>
 #include <vector>
 
@@ -28,15 +27,30 @@ class OverlayIdent {
 		Priority priority;
 		bool is_main;
 
-		OverlayIdent(const char *Path, const char *Label = NULLPTR, Priority prio = 0, bool ismain = false) ATTRIBUTE_NONNULL((2));
+		void init(const char *Path, const char *Label) ATTRIBUTE_NONNULL((2));
 
-		void readLabel(const char *Path = NULLPTR) {
+		OverlayIdent(const char *Path, const char *Label, Priority prio, bool ismain) ATTRIBUTE_NONNULL((2)) : priority(prio), is_main(ismain) {
+			init(Path, Label);
+		}
+
+		OverlayIdent(const char *Path, const char *Label) ATTRIBUTE_NONNULL((2)) : priority(0), is_main(false) {
+			init(Path, Label);
+		}
+
+		explicit OverlayIdent(const char *Path) ATTRIBUTE_NONNULL_ : priority(0), is_main(false) {
+			init(Path, NULLPTR);
+		}
+
+		void readLabel(const char *Path) {
 			if(!know_label) {
 				readLabel_internal(Path);
 			}
 		}
+		void readLabel() {
+			readLabel(NULLPTR);
+		}
 
-		void setLabel(const std::string &Label) {
+		void setLabel(const std::string& Label) {
 			label = Label;
 			know_label = true;
 		}
@@ -46,20 +60,28 @@ class OverlayIdent {
 		static void init_static();
 };
 
-class RepoList : public std::vector<OverlayIdent> {
+typedef std::vector<OverlayIdent> OverlayVec;
+
+class RepoList : public OverlayVec {
 	private:
 		bool trust_cache;
-		std::map<std::string, std::string> cache;
+		WordMap cache;
 
 	public:
-		typedef std::vector<OverlayIdent> super;
+		typedef OverlayVec super;
 
 		RepoList() : trust_cache(true) {
 		}
 
-		const char *get_path(const std::string &label);
+		const char *get_path(const std::string& label);
 
-		RepoList::iterator find_filename(const char *search, bool parent_ok = false, bool resolve_mask = true) ATTRIBUTE_NONNULL_;
+		RepoList::iterator find_filename(const char *search, bool parent_ok, bool resolve_mask) ATTRIBUTE_NONNULL_;
+		RepoList::iterator find_filename(const char *search, bool parent_ok) ATTRIBUTE_NONNULL_ {
+			return find_filename(search, parent_ok, true);
+		}
+		RepoList::iterator find_filename(const char *search) ATTRIBUTE_NONNULL_ {
+			return find_filename(search, false);
+		}
 
 		void set_priority(OverlayIdent *overlay);
 
@@ -71,7 +93,10 @@ class RepoList : public std::vector<OverlayIdent> {
 			return i;
 		}
 
-		void push_back(const OverlayIdent &s, bool no_path_dupes = false);
+		void push_back(const OverlayIdent& s, bool no_path_dupes);
+		void push_back(const OverlayIdent& s) {
+			push_back(s, false);
+		}
 
 		void clear();
 };

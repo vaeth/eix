@@ -11,11 +11,11 @@
 
 #include <map>
 #include <string>
-#include <vector>
 
 #include "eixTk/assert.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/sysutils.h"
 #include "portage/conf/portagesettings.h"
@@ -24,7 +24,6 @@
 
 using std::map;
 using std::string;
-using std::vector;
 
 class RestrictMap : public map<string, ExtendedVersion::Restrict> {
 	private:
@@ -87,24 +86,24 @@ void ExtendedVersion::init_static() {
 	properties_map = new PropertiesMap;
 }
 
-ExtendedVersion::Restrict ExtendedVersion::calcRestrict(const string &str) {
+ExtendedVersion::Restrict ExtendedVersion::calcRestrict(const string& str) {
 	eix_assert_static(restrict_map != NULLPTR);
 	Restrict r(RESTRICT_NONE);
-	vector<string> restrict_words;
+	WordVec restrict_words;
 	split_string(&restrict_words, str);
-	for(vector<string>::const_iterator it(restrict_words.begin());
+	for(WordVec::const_iterator it(restrict_words.begin());
 		likely(it != restrict_words.end()); ++it) {
 		r |= restrict_map->getRestrict(*it);
 	}
 	return r;
 }
 
-ExtendedVersion::Properties ExtendedVersion::calcProperties(const string &str) {
+ExtendedVersion::Properties ExtendedVersion::calcProperties(const string& str) {
 	eix_assert_static(properties_map != NULLPTR);
 	Properties p(PROPERTIES_NONE);
-	vector<string> properties_words;
+	WordVec properties_words;
 	split_string(&properties_words, str);
-	for(vector<string>::const_iterator it(properties_words.begin());
+	for(WordVec::const_iterator it(properties_words.begin());
 		it != properties_words.end(); ++it) {
 		p |= properties_map->getProperties(*it);
 	}
@@ -114,7 +113,7 @@ ExtendedVersion::Properties ExtendedVersion::calcProperties(const string &str) {
 bool ExtendedVersion::have_bin_pkg(const PortageSettings *ps, const Package *pkg) const {
 	switch(have_bin_pkg_m) {
 		case HAVEBINPKG_UNKNOWN: {
-				const string &s((*ps)["PKGDIR"]);
+				const string& s((*ps)["PKGDIR"]);
 				if((s.empty()) || !is_file((s + "/" + pkg ->category + "/" + pkg->name + "-" + getFull() + ".tbz2").c_str())) {
 					have_bin_pkg_m = HAVEBINPKG_NO;
 					return false;

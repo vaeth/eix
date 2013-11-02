@@ -11,54 +11,56 @@
 
 #include <string>
 #include <utility>
-#include <vector>
 
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "portage/package.h"
 #include "portage/packagetree.h"
 
 using std::pair;
 using std::string;
-using std::vector;
 
-Category::iterator Category::find(const std::string &pkg_name) {
+Category::iterator Category::find(const std::string& pkg_name) {
 	iterator i(begin());
 	for(; likely(i != end()); ++i) {
-		if(unlikely(i->name == pkg_name))
+		if(unlikely(i->name == pkg_name)) {
 			return i;
+		}
 	}
 	return i;
 }
 
-Category::const_iterator Category::find(const std::string &pkg_name) const {
+Category::const_iterator Category::find(const std::string& pkg_name) const {
 	const_iterator i(begin());
 	for(; likely(i != end()); ++i) {
-		if(unlikely(i->name == pkg_name))
+		if(unlikely(i->name == pkg_name)) {
 			return i;
+		}
 	}
 	return i;
 }
 
 #if 0
-bool Category::deletePackage(const std::string &pkg_name) {
+bool Category::deletePackage(const std::string& pkg_name) {
 	iterator i(find(pkg_name));
-	if(i == end())
+	if(i == end()) {
 		return false;
+	}
 	delete *i;
 	erase(i);
 	return true;
 }
 #endif
 
-Package *Category::addPackage(const string cat_name, const string &pkg_name) {
+Package *Category::addPackage(const string cat_name, const string& pkg_name) {
 	Package *p(new Package(cat_name, pkg_name));
 	addPackage(p);
 	return p;
 }
 
-Category *PackageTree::find(const string &cat_name) const {
+Category *PackageTree::find(const string& cat_name) const {
 	const_iterator f(Categories::find(cat_name));
 	if(unlikely(f == end())) {
 		return NULLPTR;
@@ -66,7 +68,7 @@ Category *PackageTree::find(const string &cat_name) const {
 	return f->second;
 }
 
-Category &PackageTree::insert(const string &cat_name) {
+Category& PackageTree::insert(const string& cat_name) {
 	pair<Categories::iterator, bool> n(Categories::insert(Categories::value_type(cat_name, NULLPTR)));
 	Category *&catpoint((n.first)->second);
 	if(n.second) {
@@ -75,22 +77,23 @@ Category &PackageTree::insert(const string &cat_name) {
 	return *catpoint;
 }
 
-void PackageTree::insert(const vector<string> &cat_vec) {
-	for(vector<string>::const_iterator it(cat_vec.begin());
+void PackageTree::insert(const WordVec& cat_vec) {
+	for(WordVec::const_iterator it(cat_vec.begin());
 		likely(it != cat_vec.end()); ++it) {
 		insert(*it);
 	}
 }
 
-Package *PackageTree::findPackage(const string &cat_name, const string &pkg_name) const {
+Package *PackageTree::findPackage(const string& cat_name, const string& pkg_name) const {
 	const_iterator f(Categories::find(cat_name));
-	if(unlikely(f == end()))
+	if(unlikely(f == end())) {
 		return NULLPTR;
+	}
 	return f->second->findPackage(pkg_name);
 }
 
 #if 0
-bool PackageTree::deletePackage(const string &cat_name, const string &pkg_name) {
+bool PackageTree::deletePackage(const string& cat_name, const string& pkg_name) {
 	iterator i(Categories::find(cat_name));
 	if(i == end()) {
 		return false;

@@ -13,7 +13,8 @@
 #include <csignal>
 
 #include <string>
-#include <vector>
+
+#include "eixTk/stringtypes.h"
 
 class EbuildExecSettings;
 class BasicCache;
@@ -43,8 +44,8 @@ class EbuildExec {
 		const char *exec_name;
 		const char **c_env;
 		int exec_status;
-		std::vector<std::string> *envstrings;
-		void calc_environment(const char *name, const std::string &dir, const Package &package, const Version &version) ATTRIBUTE_NONNULL_;
+		WordVec *envstrings;
+		void calc_environment(const char *name, const std::string& dir, const Package& package, const Version& version) ATTRIBUTE_NONNULL_;
 
 		static EbuildExecSettings *settings;
 
@@ -54,7 +55,7 @@ class EbuildExec {
 		static void calc_settings();
 
 	public:
-		std::string *make_cachefile(const char *name, const std::string &dir, const Package &package, const Version &version) ATTRIBUTE_NONNULL_;
+		std::string *make_cachefile(const char *name, const std::string& dir, const Package& package, const Version& version) ATTRIBUTE_NONNULL_;
 		void delete_cachefile();
 
 		EbuildExec(bool will_use_sh, const BasicCache *b) ATTRIBUTE_NONNULL_ :

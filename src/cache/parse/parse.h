@@ -15,6 +15,7 @@
 
 #include "cache/base.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "portage/extendedversion.h"
 
 class Category;
@@ -25,28 +26,34 @@ class Version;
 class ParseCache : public BasicCache {
 	private:
 		bool verbose;
-		std::vector<BasicCache*> further;
-		std::vector<bool> further_works;
+		typedef std::vector<BasicCache*> FurtherCaches;
+		FurtherCaches further;
+		typedef std::vector<bool> FurtherWorks;
+		FurtherWorks further_works;
 		bool try_parse, nosubst;
 		EbuildExec *ebuild_exec;
-		std::vector<std::string> m_packages;
+		WordVec m_packages;
 		std::string m_catpath;
 
-		void set_checking(std::string *str, const char *item, const VarsReader &ebuild, bool *ok = NULLPTR) ATTRIBUTE_NONNULL((2, 3));
-		void parse_exec(const char *fullpath, const std::string &dirpath, bool read_onetime_info, bool *have_onetime_info, Package *pkg, Version *version) ATTRIBUTE_NONNULL_;
-		void readPackage(Category *cat, const std::string &pkg_name, const std::string &directory_path, const std::vector<std::string> &files) ATTRIBUTE_NONNULL_;
+		void set_checking(std::string *str, const char *item, const VarsReader& ebuild, bool *ok) ATTRIBUTE_NONNULL((2, 3));
+		void set_checking(std::string *str, const char *item, const VarsReader& ebuild) ATTRIBUTE_NONNULL_ {
+			set_checking(str, item, ebuild, NULLPTR);
+		}
+
+		void parse_exec(const char *fullpath, const std::string& dirpath, bool read_onetime_info, bool *have_onetime_info, Package *pkg, Version *version) ATTRIBUTE_NONNULL_;
+		void readPackage(Category *cat, const std::string& pkg_name, const std::string& directory_path, const WordVec& files) ATTRIBUTE_NONNULL_;
 
 	public:
 		ParseCache() : BasicCache(), verbose(false), ebuild_exec(NULLPTR) {
 		}
 
-		bool initialize(const std::string &name);
+		bool initialize(const std::string& name);
 
 		~ParseCache();
 
-		void setScheme(const char *prefix, const char *prefixport, const std::string &scheme);
+		void setScheme(const char *prefix, const char *prefixport, const std::string& scheme);
 		void setKey(ExtendedVersion::Overlay key);
-		void setOverlayName(const std::string &name);
+		void setOverlayName(const std::string& name);
 		void setErrorCallback(ErrorCallback error_callback);
 		void setVerbose() {
 			verbose = true;

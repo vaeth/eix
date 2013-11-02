@@ -11,12 +11,12 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
 
 #include "database/header.h"
 #include "eixTk/argsreader.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixrc/eixrc.h"
 #include "output/formatstring.h"
@@ -31,11 +31,10 @@
 #include "various/cli.h"
 
 using std::string;
-using std::vector;
 
-static bool optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader &ar) ATTRIBUTE_NONNULL_;
+static bool optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
 
-static bool optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader &ar) {
+static bool optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) {
 	ArgumentReader::const_iterator next(*arg);
 	if(unlikely(++next == ar.end()))
 		return false;
@@ -481,9 +480,9 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 	while(likely(!std::cin.eof())) {
 		string line;
 		getline(std::cin, line);
-		vector<string> wordlist;
+		WordVec wordlist;
 		split_string(&wordlist, line);
-		for(vector<string>::iterator word(wordlist.begin());
+		for(WordVec::const_iterator word(wordlist.begin());
 			likely(word != wordlist.end()); ++word) {
 			string::size_type i(word->find("/"));
 			if((i == string::npos) || (i == 0) || (i == word->size() - 1)) {

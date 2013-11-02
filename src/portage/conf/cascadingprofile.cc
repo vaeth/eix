@@ -13,10 +13,8 @@
 
 #include <iostream>
 #include <map>
-#include <set>
 #include <string>
 #include <utility>
-#include <vector>
 
 #include "eixTk/assert.h"
 #include "eixTk/diagnostics.h"
@@ -25,6 +23,7 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/sysutils.h"
 #include "eixTk/utils.h"
 #include "portage/conf/cascadingprofile.h"
@@ -38,9 +37,7 @@
 
 using std::map;
 using std::pair;
-using std::set;
 using std::string;
-using std::vector;
 
 using std::cerr;
 using std::cout;
@@ -51,7 +48,7 @@ using std::endl;
 static const char *profile_exclude[] = { "parent", "..", "." , NULLPTR };
 
 /** Add all files from profile and its parents to m_profile_files. */
-bool CascadingProfile::addProfile(const char *profile, set<string> *sourced_files) {
+bool CascadingProfile::addProfile(const char *profile, WordSet *sourced_files) {
 	string truename(normalize_path(profile, true, true));
 	if(unlikely(print_profile_paths)) {
 		if(likely(is_dir(truename.c_str()))) {
@@ -68,22 +65,23 @@ bool CascadingProfile::addProfile(const char *profile, set<string> *sourced_file
 	}
 	bool topcall(sourced_files == NULLPTR);
 	if(unlikely(topcall)) {
-		sourced_files = new set<string>;
+		sourced_files = new WordSet;
 	} else if(sourced_files->find(truename) != sourced_files->end()) {
 		cerr << _("Recursion level for cascading profiles exceeded; stopping reading parents") << endl;
 		return false;
 	}
 	sourced_files->insert(truename);
-	vector<string> parents;
+	WordVec parents;
 	string currfile(truename);
 	currfile.append("parent");
 	// Use pushback_lines to avoid keeping file descriptor open:
 	// Who know what's our limit of open file descriptors.
 	if(pushback_lines(currfile.c_str(), &parents)) {
-		for(vector<string>::const_iterator it(parents.begin());
+		for(WordVec::const_iterator it(parents.begin());
 			likely(it != parents.end()); ++it) {
-			if(it->empty())
+			if(it->empty()) {
 				continue;
+			}
 			if((*it)[0] == '/') {
 				addProfile(it->c_str(), sourced_files);
 				continue;
@@ -115,9 +113,9 @@ bool CascadingProfile::addProfile(const char *profile, set<string> *sourced_file
 	} else {
 		sourced_files->erase(truename);
 	}
-	vector<string> filenames;
+	WordVec filenames;
 	bool r(pushback_files(truename, &filenames, profile_exclude, 3));
-	for(vector<string>::const_iterator it(filenames.begin());
+	for(WordVec::const_iterator it(filenames.begin());
 		likely(it != filenames.end()); ++it) {
 		listaddFile(*it, 0);
 	}
@@ -130,7 +128,7 @@ class ProfileFilenames {
 		NameMap name_map;
 
 	public:
-		void initstring(const std::string &s, Handler h) {
+		void initstring(const std::string& s, Handler h) {
 			name_map.insert(pair<string, Handler>(s, h));
 		}
 
@@ -166,7 +164,7 @@ void CascadingProfile::init_static() {
 bool CascadingProfile::readremoveFiles() {
 	eix_assert_static(profile_filenames != NULLPTR);
 	bool ret(false);
-	for(vector<ProfileFile>::iterator file(m_profile_files.begin());
+	for(ProfileFiles::iterator file(m_profile_files.begin());
 		likely(file != m_profile_files.end()); ++file) {
 		const char *filename(strrchr(file->c_str(), '/'));
 		if(filename == NULLPTR)
@@ -177,7 +175,7 @@ bool CascadingProfile::readremoveFiles() {
 			continue;
 		}
 
-		OverlayIdent &overlay(m_portagesettings->repos[file->reponum]);
+		OverlayIdent& overlay(m_portagesettings->repos[file->reponum]);
 		overlay.readLabel();
 		if((this->*handler)(file->name(),
 			overlay.label.empty() ? NULLPTR : overlay.label.c_str())) {
@@ -188,14 +186,14 @@ bool CascadingProfile::readremoveFiles() {
 	return ret;
 }
 
-bool CascadingProfile::readPackages(const string &filename, const char *repo) {
-	vector<string> lines;
+bool CascadingProfile::readPackages(const string& filename, const char *repo) {
+	LineVec lines;
 	pushback_lines(filename.c_str(), &lines, true, true);
 	bool ret(false);
 	PreList::FilenameIndex file_system(p_system.push_name(filename, repo));
 	PreList::FilenameIndex file_system_allowed(p_system_allowed.push_name(filename, repo));
 	PreList::LineNumber number(1);
-	for(vector<string>::const_iterator it(lines.begin());
+	for(LineVec::const_iterator it(lines.begin());
 		likely(it != lines.end()); ++number, ++it) {
 		if(it->empty()) {
 			continue;
@@ -222,33 +220,33 @@ bool CascadingProfile::readPackages(const string &filename, const char *repo) {
 	return ret;
 }
 
-bool CascadingProfile::readPackageMasks(const string &filename, const char *repo) {
-	vector<string> lines;
+bool CascadingProfile::readPackageMasks(const string& filename, const char *repo) {
+	LineVec lines;
 	pushback_lines(filename.c_str(), &lines, true, true, -1);
 	return p_package_masks.handle_file(lines, filename, repo, false, true);
 }
 
-bool CascadingProfile::readPackageUnmasks(const string &filename, const char *repo) {
-	vector<string> lines;
+bool CascadingProfile::readPackageUnmasks(const string& filename, const char *repo) {
+	LineVec lines;
 	pushback_lines(filename.c_str(), &lines, true, true);
 	return p_package_unmasks.handle_file(lines, filename, repo, false);
 }
 
-bool CascadingProfile::readPackageKeywords(const string &filename, const char *repo) {
-	vector<string> lines;
+bool CascadingProfile::readPackageKeywords(const string& filename, const char *repo) {
+	LineVec lines;
 	pushback_lines(filename.c_str(), &lines, true, true);
 	return p_package_keywords.handle_file(lines, filename, repo, false);
 }
 
-bool CascadingProfile::readPackageAcceptKeywords(const string &filename, const char *repo) {
-	vector<string> lines;
+bool CascadingProfile::readPackageAcceptKeywords(const string& filename, const char *repo) {
+	LineVec lines;
 	pushback_lines(filename.c_str(), &lines, true, true);
 	return p_package_accept_keywords.handle_file(lines, filename, repo, true);
 }
 
 /** Read all "make.defaults" files found in profile. */
 void CascadingProfile::readMakeDefaults() {
-	for(vector<string>::size_type i(0); likely(i < m_profile_files.size()); ++i) {
+	for(WordVec::size_type i(0); likely(i < m_profile_files.size()); ++i) {
 		if(unlikely(strcmp(strrchr(m_profile_files[i].c_str(), '/'), "/make.defaults") == 0)) {
 			m_portagesettings->read_config(m_profile_files[i].name(), "");
 		}
@@ -277,7 +275,7 @@ void CascadingProfile::listaddProfile(const char *profile_dir) {
 		addProfile(profile_dir);
 		return;
 	}
-	const string &s((*m_portagesettings)["PORTAGE_PROFILE"]);
+	const string& s((*m_portagesettings)["PORTAGE_PROFILE"]);
 	if(unlikely(!s.empty())) {
 		if(addProfile(s.c_str())) {
 			return;
@@ -314,9 +312,9 @@ GCC_DIAG_ON(sign-conversion)
 			// Shortcut for the most frequent case
 			continue;
 		}
-		for(vector<SetsIndex>::const_iterator it(v->sets_indizes.begin());
+		for(Version::SetsIndizes::const_iterator it(v->sets_indizes.begin());
 			unlikely(it != v->sets_indizes.end()); ++it) {
-			const string &set_name(m_portagesettings->set_names[*it]);
+			const string& set_name(m_portagesettings->set_names[*it]);
 			m_system_allowed.applySetMasks(*v, set_name);
 			m_system.applySetMasks(*v, set_name);
 			m_package_masks.applySetMasks(*v, set_name);
@@ -351,7 +349,7 @@ void CascadingProfile::applyKeywords(Package *p) const {
 			// Shortcut for the most frequent case
 			continue;
 		}
-		for(vector<SetsIndex>::const_iterator it(v->sets_indizes.begin());
+		for(Version::SetsIndizes::const_iterator it(v->sets_indizes.begin());
 			unlikely(it != v->sets_indizes.end()); ++it) {
 			const char *set_name(m_portagesettings->set_names[*it].c_str());
 			m_package_keywords.applyListSetItems(*v, set_name);

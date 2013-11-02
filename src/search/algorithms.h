@@ -27,7 +27,7 @@ class BaseAlgorithm {
 		std::string search_string;
 
 	public:
-		virtual void setString(const std::string &s) {
+		virtual void setString(const std::string& s) {
 			search_string = s;
 		}
 
@@ -51,7 +51,7 @@ class RegexAlgorithm : public BaseAlgorithm {
 			re.free();
 		}
 
-		void setString(const std::string &s) {
+		void setString(const std::string& s) {
 			search_string = s;
 			re.compile(search_string.c_str(), REG_ICASE);
 		}

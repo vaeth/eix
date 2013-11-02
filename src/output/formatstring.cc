@@ -15,7 +15,6 @@
 #include <cstring>
 
 #include <iostream>
-#include <map>
 #include <string>
 #include <vector>
 
@@ -29,6 +28,7 @@
 #include "eixTk/null.h"
 #include "eixTk/outputstring.h"
 #include "eixTk/regexp.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixrc/eixrc.h"
 #include "output/formatstring.h"
@@ -37,7 +37,6 @@
 class PortageSettings;
 class Darkmode;
 
-using std::map;
 using std::string;
 using std::vector;
 
@@ -46,10 +45,12 @@ using std::endl;
 
 string::size_type PrintFormat::currcolumn = 0;
 
+typedef vector<Darkmode> DarkModes;
+
 static void parse_color(OutputString *color, bool use_color) ATTRIBUTE_NONNULL_;
 static void colorstring(string *color, bool use_color) ATTRIBUTE_NONNULL_;
-static bool parse_colors(OutputString *ret, const string &colorstring, bool colors, string *errtext) ATTRIBUTE_NONNULL_;
-static void parse_termdark(vector<Darkmode> *mode, vector<string> *regexp, const string &termdark) ATTRIBUTE_NONNULL_;
+static bool parse_colors(OutputString *ret, const string& colorstring, bool colors, string *errtext) ATTRIBUTE_NONNULL_;
+static void parse_termdark(DarkModes *mode, WordVec *regexp, const string& termdark) ATTRIBUTE_NONNULL_;
 inline static const char *seek_character(const char *fmt) ATTRIBUTE_PURE;
 
 LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg) :
@@ -74,12 +75,12 @@ bool VarParserCacheNode::init(Node **rootnode, const char *fmt, bool colors, boo
 }
 
 void VarParserCache::clear_use() {
-	for(map<string, VarParserCacheNode>::iterator it = begin();
-		it != end(); ++it)
+	for(VarParserCacheMap::iterator it(begin()); likely(it != end()); ++it) {
 		it->second.in_use = false;
+	}
 }
 
-PrintFormat::PrintFormat(GetProperty get_callback) {
+void PrintFormat::init(GetProperty get_callback) {
 	m_get_property = get_callback;
 	virtuals = NULLPTR;
 	overlay_translations = NULLPTR;
@@ -92,12 +93,12 @@ PrintFormat::PrintFormat(GetProperty get_callback) {
 	stability = NULLPTR;
 }
 
-bool PrintFormat::parse_variable(Node **rootnode, const string &varname, string *errtext) const {
+bool PrintFormat::parse_variable(Node **rootnode, const string& varname, string *errtext) const {
 	VarParserCache::iterator f(varcache.find(varname));
 	if(f == varcache.end()) {
 		return varcache[varname].init(rootnode, (*eix_rc)[varname].c_str(), !no_color, true, errtext);
 	}
-	VarParserCacheNode &v(f->second);
+	VarParserCacheNode& v(f->second);
 	if(unlikely(v.in_use)) {
 		if(errtext != NULLPTR) {
 			*errtext = eix::format(_("Variable %r calls itself for printing")) % varname;
@@ -109,7 +110,7 @@ bool PrintFormat::parse_variable(Node **rootnode, const string &varname, string 
 	return true;
 }
 
-Node *PrintFormat::parse_variable(const string &varname) const {
+Node *PrintFormat::parse_variable(const string& varname) const {
 	string errtext;
 	Node *rootnode;
 	if(unlikely(!parse_variable(&rootnode, varname, &errtext))) {
@@ -122,7 +123,7 @@ Node *PrintFormat::parse_variable(const string &varname) const {
 void PrintFormat::overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay, bool plain) const {
 	ExtendedVersion::Overlay number(overlay);
 	if(number != 0) {
-		vector<ExtendedVersion::Overlay>::size_type index(overlay - 1);
+		OverlayTranslations::size_type index(overlay - 1);
 		if(overlay_used != NULLPTR) {
 			(*overlay_used)[index] = true;
 		}
@@ -131,7 +132,7 @@ void PrintFormat::overlay_keytext(OutputString *s, ExtendedVersion::Overlay over
 		}
 		if(overlay_translations != NULLPTR) {
 			if((number = (*overlay_translations)[index]) == 0) {
-				for(vector<ExtendedVersion::Overlay>::iterator it(overlay_translations->begin());
+				for(OverlayTranslations::const_iterator it(overlay_translations->begin());
 					likely(it != overlay_translations->end()); ++it) {
 					if(number < *it) {
 						number = *it;
@@ -162,7 +163,7 @@ class Darkmode {
 			check = is_check;
 		}
 
-		bool init(const string &s) {
+		bool init(const string& s) {
 			if(s == "true")  {
 				init(true, false);
 			} else if(s == "true*") {
@@ -184,10 +185,10 @@ class Darkmode {
 		}
 };
 
-static void parse_termdark(vector<Darkmode> *modes, vector<string> *regexp, const string &termdark) {
-	vector<string> terms_dark;
+static void parse_termdark(DarkModes *modes, WordVec *regexp, const string& termdark) {
+	WordVec terms_dark;
 	split_string(&terms_dark, termdark, true);
-	for(vector<string>::const_iterator it(terms_dark.begin());
+	for(WordVec::const_iterator it(terms_dark.begin());
 		likely(it != terms_dark.end()); ++it) {
 		const string *text(&(*it));
 		bool is_default(true);
@@ -247,7 +248,7 @@ void PrintFormat::setupResources(EixRc *rc) {
 			break;
 		}
 	}
-	vector<string> schemes;
+	WordVec schemes;
 	split_string(&schemes, (*rc)[string("COLORSCHEME") + schemenum]);
 	if(schemes.size() > 0) {
 		eix::TinyUnsigned entry(0);
@@ -256,19 +257,19 @@ void PrintFormat::setupResources(EixRc *rc) {
 			if(dark == 0) {
 				entry = 1;
 			} else if(dark < 0) {
-				vector<Darkmode> modes;
-				vector<string> regexp;
+				DarkModes modes;
+				WordVec regexp;
 				parse_termdark(&modes, &regexp, (*rc)["TERM_DARK"]);
-				vector<string>::size_type i(0);
+				WordVec::size_type i(0);
 				for(; likely(i < regexp.size()); ++i) {
 					if(Regex(regexp[i].c_str()).match(term)) {
 						break;
 					}
 				}
-				const Darkmode &mode(modes[i]);
+				const Darkmode& mode(modes[i]);
 				bool is_dark(mode.dark);
 				if(mode.check) {
-					const string &colorfgbg((*rc)["COLORFGBG"]);
+					const string& colorfgbg((*rc)["COLORFGBG"]);
 					if(!colorfgbg.empty()) {
 						is_dark = RegexList((*rc)["COLORFGBG_DARK"]).match(colorfgbg.c_str());
 					}
@@ -337,7 +338,7 @@ bool PrintFormat::recPrint(OutputString *result, void *entity, GetProperty get_p
 	for(; likely(root != NULLPTR); root = root->next) {
 		switch(root->type) {
 			case Node::TEXT: {  /* text!! */
-					const OutputString &t(static_cast<Text*>(root)->text);
+					const OutputString& t(static_cast<Text*>(root)->text);
 					if(!t.empty()) {
 						printed = true;
 						if(result != NULLPTR) {
@@ -386,7 +387,7 @@ bool PrintFormat::recPrint(OutputString *result, void *entity, GetProperty get_p
 							break;
 					}
 					if(root->type == Node::SET) {
-						OutputString &r(user_variables[ief->variable.name]);
+						OutputString& r(user_variables[ief->variable.name]);
 						if(ief->negation) {
 							if(rhs->empty()) {
 								r.set_one();
@@ -426,7 +427,7 @@ bool PrintFormat::recPrint(OutputString *result, void *entity, GetProperty get_p
 	return printed;
 }
 
-static bool parse_colors(OutputString *ret, const string &colorstring, bool colors, string *errtext) {
+static bool parse_colors(OutputString *ret, const string& colorstring, bool colors, string *errtext) {
 	FormatParser parser;
 	if(unlikely(!parser.start(colorstring.c_str(), colors, true, errtext))) {
 		return false;

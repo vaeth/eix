@@ -15,16 +15,14 @@
 
 #include <algorithm>
 #include <iostream>
-#include <map>
-#include <set>
 #include <string>
-#include <vector>
 
 #include "database/header.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/sysutils.h"
 #include "eixTk/utils.h"
@@ -33,19 +31,13 @@
 #include "portage/instversion.h"
 #include "portage/vardbpkg.h"
 
-using std::map;
-using std::set;
 using std::string;
-using std::vector;
 
 using std::cerr;
 using std::endl;
 
-inline static void sort_installed(map<string, vector<InstVersion> > *maping) ATTRIBUTE_NONNULL_;
-
-
-inline static void sort_installed(map<string, vector<InstVersion> > *maping) {
-	for(map<string, vector<InstVersion> >::iterator it(maping->begin());
+void VarDbPkg::sort_installed(VarDbPkg::InstVecPkg *maping) {
+	for(VarDbPkg::InstVecPkg::iterator it(maping->begin());
 		likely(it != maping->end()); ++it) {
 		sort(it->second.begin(), it->second.end());
 	}
@@ -53,36 +45,40 @@ inline static void sort_installed(map<string, vector<InstVersion> > *maping) {
 
 /** Find installed versions of packet "name" in category "category".
  * @return NULLPTR if not found .. else pointer to vector of versions. */
-vector<InstVersion> *VarDbPkg::getInstalledVector(const string &category, const string &name) {
-	map<string, map<string, vector<InstVersion> >* >::iterator map_it(installed.find(category));
+InstVec *VarDbPkg::getInstalledVector(const string& category, const string& name) {
+	InstVecCat::iterator map_it(installed.find(category));
 	/* Not yet read */
 	if(map_it == installed.end()) {
 		readCategory(category.c_str());
 		return getInstalledVector(category, name);
 	}
 
-	map<string, vector<InstVersion> >* installed_cat(map_it->second);
+	InstVecPkg *installed_cat(map_it->second);
 	/* No such category in db-directory. */
-	if(installed_cat == NULLPTR)
+	if(installed_cat == NULLPTR) {
 		return NULLPTR;
+	}
 
 	/* Find packet */
-	map<string, vector<InstVersion> >::iterator cat_it(installed_cat->find(name));
-	if(cat_it == installed_cat->end())
+	InstVecPkg::iterator cat_it(installed_cat->find(name));
+	if(cat_it == installed_cat->end()) {
 		return NULLPTR; /* Not installed */
+	}
 	return &(cat_it->second);
 }
 
 /** Returns true if v is in vec. v=NULLPTR is always in vec.
     If a serious result is found and r is nonzero, r points to that result */
-bool VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion **r) {
+bool VarDbPkg::isInVec(InstVec *vec, const BasicVersion *v, InstVersion **r) {
 	if(likely(vec != NULLPTR)) {
-		if(unlikely(v == NULLPTR))
+		if(unlikely(v == NULLPTR)) {
 			return true;
-		for(vector<InstVersion>::size_type i(0); likely(i < vec->size()); ++i) {
+		}
+		for(InstVec::size_type i(0); likely(i < vec->size()); ++i) {
 			if((*vec)[i] == *v) {
-				if(r != NULLPTR)
+				if(r != NULLPTR) {
 					*r = &((*vec)[i]);
+				}
 				return true;
 			}
 		}
@@ -90,7 +86,7 @@ bool VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVers
 	return false;
 }
 
-eix::SignedBool VarDbPkg::isInstalledVersion(InstVersion **inst, const Package &p, const Version *v, const DBHeader& header) {
+eix::SignedBool VarDbPkg::isInstalledVersion(InstVersion **inst, const Package& p, const Version *v, const DBHeader& header) {
 	*inst = NULLPTR;
 	if(!isInstalled(p, v, inst)) {
 		return 0;
@@ -105,7 +101,7 @@ eix::SignedBool VarDbPkg::isInstalledVersion(InstVersion **inst, const Package &
 }
 
 /** Return matching available version or NULLPTR */
-Version *VarDbPkg::getAvailable(const Package &p, InstVersion *v, const DBHeader& header) const {
+Version *VarDbPkg::getAvailable(const Package& p, InstVersion *v, const DBHeader& header) const {
 	for(Package::const_iterator it(p.begin()); likely(it != p.end()); ++it) {
 		if(BasicVersion::compare(**it, *v) != 0) {
 			continue;
@@ -127,14 +123,15 @@ Version *VarDbPkg::getAvailable(const Package &p, InstVersion *v, const DBHeader
 
 /** Returns number of installed versions of this package
  * @param p Check for this Package. */
-vector<InstVersion>::size_type VarDbPkg::numInstalled(const Package &p) {
-	vector<InstVersion> *vec(getInstalledVector(p));
-	if(vec == NULLPTR)
+InstVec::size_type VarDbPkg::numInstalled(const Package& p) {
+	InstVec *vec(getInstalledVector(p));
+	if(vec == NULLPTR) {
 		return 0;
+	}
 	return vec->size();
 }
 
-bool VarDbPkg::readOverlay(const Package &p, InstVersion *v, const DBHeader& header) const {
+bool VarDbPkg::readOverlay(const Package& p, InstVersion *v, const DBHeader& header) const {
 	if(likely(v->know_overlay))
 		return !v->overlay_failed;
 
@@ -165,7 +162,7 @@ bool VarDbPkg::readOverlay(const Package &p, InstVersion *v, const DBHeader& hea
 }
 
 string VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const {
-	vector<string> lines;
+	LineVec lines;
 	string dirname(m_directory);
 	dirname.append(p->category);
 	dirname.append(1, '/');
@@ -176,19 +173,20 @@ string VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
 		&lines, false, false, 1);
 	pushback_lines((dirname + "/REPOSITORY").c_str(),
 		&lines, false, false, 1);
-	if(lines.empty())
+	if(lines.empty()) {
 		return "";
+	}
 	return lines[0];
 }
 
-bool VarDbPkg::readSlot(const Package &p, InstVersion *v) const {
+bool VarDbPkg::readSlot(const Package& p, InstVersion *v) const {
 	if(v->know_slot)
 		return true;
 	if(!get_slots)
 		return false;
 	if(v->read_failed)
 		return false;
-	vector<string> lines;
+	LineVec lines;
 	if(unlikely(!pushback_lines(
 		(m_directory + p.category + "/" + p.name + "-" + v->getFull() + "/SLOT").c_str(),
 		&lines, false, false, 1))) {
@@ -202,16 +200,16 @@ bool VarDbPkg::readSlot(const Package &p, InstVersion *v) const {
 	return (v->know_slot = true);
 }
 
-bool VarDbPkg::readUse(const Package &p, InstVersion *v) const {
+bool VarDbPkg::readUse(const Package& p, InstVersion *v) const {
 	if(likely(v->know_use))
 		return true;
 	v->know_use = true;
 	v->inst_iuse.clear();
 	v->usedUse.clear();
-	set<string> iuse_set;
-	vector<string> alluse;
+	WordSet iuse_set;
+	WordVec alluse;
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
-	vector<string> lines;
+	LineVec lines;
 	if(unlikely(!pushback_lines((dirname + "/IUSE").c_str(),
 		&lines, false, false, 1))) {
 		return false;
@@ -224,7 +222,7 @@ bool VarDbPkg::readUse(const Package &p, InstVersion *v) const {
 		return false;
 	}
 	join_and_split(&alluse, lines);
-	for(vector<string>::iterator it(v->inst_iuse.begin());
+	for(WordVec::iterator it(v->inst_iuse.begin());
 		it != v->inst_iuse.end(); ++it) {
 		while(((*it)[0] == '+') || ((*it)[0] == '-'))
 			it->erase(0, 1);
@@ -232,13 +230,13 @@ bool VarDbPkg::readUse(const Package &p, InstVersion *v) const {
 	make_set<string>(&iuse_set, v->inst_iuse);
 	make_vector<string>(&(v->inst_iuse), iuse_set);
 
-	for(vector<string>::iterator it(alluse.begin());
+	for(WordVec::iterator it(alluse.begin());
 		it != alluse.end(); ++it) {
 		while(((*it)[0] == '+') || ((*it)[0] == '-'))
 			it->erase(0, 1);
 	}
 
-	for(vector<string>::iterator it(alluse.begin());
+	for(WordVec::iterator it(alluse.begin());
 		likely(it != alluse.end()); ++it) {
 		if(iuse_set.find(*it) != iuse_set.end()) {
 			v->usedUse.insert(*it);
@@ -247,7 +245,7 @@ bool VarDbPkg::readUse(const Package &p, InstVersion *v) const {
 	return true;
 }
 
-void VarDbPkg::readRestricted(const Package &p, InstVersion *v, const DBHeader& header) const {
+void VarDbPkg::readRestricted(const Package& p, InstVersion *v, const DBHeader& header) const {
 	if(unlikely(!get_restrictions)) {
 		return;
 	}
@@ -267,7 +265,7 @@ void VarDbPkg::readRestricted(const Package &p, InstVersion *v, const DBHeader& 
 		}
 	}
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
-	vector<string> lines;
+	LineVec lines;
 	if(unlikely(!pushback_lines((dirname + "/RESTRICT").c_str(),
 		&lines, false, false, 1))) {
 		// It is OK that this file does not exist:
@@ -282,16 +280,16 @@ void VarDbPkg::readRestricted(const Package &p, InstVersion *v, const DBHeader& 
 	}
 }
 
-void VarDbPkg::readInstDate(const Package &p, InstVersion *v) const {
+void VarDbPkg::readInstDate(const Package& p, InstVersion *v) const {
 	if(v->instDate != 0) {
 		return;
 	}
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
-	vector<string> datelines;
+	LineVec datelines;
 	if(use_build_time &&
 		pushback_lines((dirname + "/BUILD_TIME").c_str(),
 			&datelines, false, false, 1)) {
-		for(vector<string>::const_iterator it(datelines.begin());
+		for(LineVec::const_iterator it(datelines.begin());
 			it != datelines.end(); ++it) {
 GCC_DIAG_OFF(sign-conversion)
 			if((v->instDate = my_atoi(it->c_str())) != 0) {
@@ -303,7 +301,7 @@ GCC_DIAG_ON(sign-conversion)
 	v->instDate = get_mtime(dirname.c_str());
 }
 
-void VarDbPkg::readDepend(const Package &p, InstVersion *v, const DBHeader& header) const {
+void VarDbPkg::readDepend(const Package& p, InstVersion *v, const DBHeader& header) const {
 	if(unlikely(!Depend::use_depend)) {
 		return;
 	}
@@ -321,7 +319,7 @@ void VarDbPkg::readDepend(const Package &p, InstVersion *v, const DBHeader& head
 		}
 	}
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
-	vector<string> depend(4);
+	WordVec depend(4);
 	depend[0] = v->depend.get_depend();
 	depend[1] = v->depend.get_rdepend();
 	depend[2] = v->depend.get_pdepend();
@@ -333,7 +331,7 @@ void VarDbPkg::readDepend(const Package &p, InstVersion *v, const DBHeader& head
 		"/HDEPEND"
 	};
 	for(eix::TinyUnsigned i(0); likely(i < 4); ++i) {
-		vector<string> lines;
+		LineVec lines;
 		if(likely(pushback_lines((dirname + filenames[i]).c_str(),
 			&lines, false, false, 1))) {
 			if(likely(lines.size() == 1)) {
@@ -360,8 +358,8 @@ void VarDbPkg::readCategory(const char *category) {
 		return;
 	}
 	dir_category_name.append(1, '/');
-	map<string, vector<InstVersion> >* category_installed;
-	installed[category] = category_installed = new map<string, vector<InstVersion> >;
+	InstVecPkg *category_installed;
+	installed[category] = category_installed = new InstVecPkg;
 
 	struct dirent *package_entry;  /* current package dirent */
 	/* Cycle through this category */

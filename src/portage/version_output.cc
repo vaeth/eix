@@ -7,18 +7,13 @@
 
 #include <config.h>
 
-#include <set>
-
 #include "eixTk/outputstring.h"
 #include "eixTk/stringlist.h"
 #include "portage/version.h"
 
-using std::set;
-
-void Version::reasons_string(OutputString *s, const OutputString &skip, const OutputString &sep) const {
+void Version::reasons_string(OutputString *s, const OutputString& skip, const OutputString& sep) const {
 	bool psep(false);
-	for(set<StringList>::const_iterator it(reasons.begin());
-		it != reasons.end(); ++it) {
+	for(Reasons::const_iterator it(reasons.begin()); it != reasons.end(); ++it) {
 		if(psep) {
 			s->append(sep);
 		} else {

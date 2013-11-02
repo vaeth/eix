@@ -149,7 +149,7 @@ void MatchTree::set_pipetest(PackageTest *gtest) {
 }
 
 MatchAtomTest *MatchTree::parse_new_leaf() {
-	MatchParseData &top(parser_stack.top());
+	MatchParseData& top(parser_stack.top());
 	MatchAtom **r(top.useright ?
 		&(top.subroot->as_operator()->m_right) :
 		&(top.subroot));
@@ -168,7 +168,7 @@ void MatchTree::parse_local_negate() {
 		return;
 	}
 	local_negate = false;
-	MatchParseData &top(parser_stack.top());
+	MatchParseData& top(parser_stack.top());
 	MatchAtom **r(top.useright ?
 		&(top.subroot->as_operator()->m_right) :
 		&(top.subroot));
@@ -184,7 +184,7 @@ void MatchTree::parse_local_negate() {
 /// Ignores local_negate and local_finished.
 void MatchTree::parse_new_operator(MatchAtomOperator::AtomOperator op) {
 	MatchAtomOperator *p(new MatchAtomOperator(op));
-	MatchParseData &top(parser_stack.top());
+	MatchParseData& top(parser_stack.top());
 	top.useright = true;
 	p->m_left = top.subroot;
 	top.subroot = p;
@@ -229,7 +229,7 @@ void MatchTree::parse_open() {
 		parse_new_operator(default_operator);
 		local_finished = false;
 	}
-	MatchParseData &top(parser_stack.top());
+	MatchParseData& top(parser_stack.top());
 	parser_stack.push(MatchParseData(top.useright ?
 		&(top.subroot->as_operator()->m_right) :
 		&(top.subroot)));
@@ -242,7 +242,7 @@ void MatchTree::parse_open() {
 /// Internal form of parse_close() which can also clear the
 /// first (root) element on parser_stack() and ignores local_negate.
 void MatchTree::parse_closeforce() {
-	MatchParseData &top(parser_stack.top());
+	MatchParseData& top(parser_stack.top());
 	if(top.negatebrace) {
 		if(top.subroot != NULLPTR) {
 			top.subroot->m_negate = !(top.subroot->m_negate);

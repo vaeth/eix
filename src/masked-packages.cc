@@ -15,13 +15,13 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
 
 #include "eixTk/argsreader.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/utils.h"
 #include "main/main.h"
@@ -31,7 +31,6 @@
 #include "portage/package.h"
 
 using std::string;
-using std::vector;
 
 using std::cerr;
 using std::cout;
@@ -75,14 +74,20 @@ MaskedOptionList::MaskedOptionList() {
 	push_back(Option("mask",      'm', Option::KEEP_STRING));
 }
 
-static void read_stdin(vector<string> *lines, string *name) ATTRIBUTE_NONNULL((1));
-static void add_file(vector<string> *lines, const string &name, string *new_name = NULLPTR) ATTRIBUTE_NONNULL((1));
-static void add_file(PreList *pre_list, const string &name) ATTRIBUTE_NONNULL_;
-static void add_words(vector<string> *lines, const string &name) ATTRIBUTE_NONNULL_;
-static void read_args(MaskList<Mask> *mask_list, vector<string> *args, const ArgumentReader &ar) ATTRIBUTE_NONNULL_;
-static const char *opt_arg(ArgumentReader::const_iterator *arg, const ArgumentReader &ar) ATTRIBUTE_NONNULL_;
+static void read_stdin(LineVec *lines, string *name) ATTRIBUTE_NONNULL((1));
 
-static void read_stdin(vector<string> *lines, string *name) {
+static void add_file(LineVec *lines, const string& name, string *new_name) ATTRIBUTE_NONNULL((1));
+inline static void add_file(LineVec *lines, const string& name) ATTRIBUTE_NONNULL_;
+inline static void add_file(LineVec *lines, const string& name) {
+	add_file(lines, name, NULLPTR);
+}
+
+static void add_file(PreList *pre_list, const string& name) ATTRIBUTE_NONNULL_;
+static void add_words(LineVec *lines, const string& name) ATTRIBUTE_NONNULL_;
+static void read_args(MaskList<Mask> *mask_list, WordVec *args, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
+static const char *opt_arg(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
+
+static void read_stdin(LineVec *lines, string *name) {
 	static size_t stdin_count(0);
 	while(likely(!std::cin.eof())) {
 		string line;
@@ -101,7 +106,7 @@ static void read_stdin(vector<string> *lines, string *name) {
 	}
 }
 
-static void add_file(vector<string> *lines, const string &name, string *new_name) {
+static void add_file(LineVec *lines, const string& name, string *new_name) {
 	if(name.empty() || (name == "-")) {
 		read_stdin(lines, new_name);
 	} else {
@@ -112,23 +117,23 @@ static void add_file(vector<string> *lines, const string &name, string *new_name
 	}
 }
 
-static void add_file(PreList *pre_list, const string &name) {
-	vector<string> lines;
+static void add_file(PreList *pre_list, const string& name) {
+	LineVec lines;
 	string new_name;
 	add_file(&lines, name, &new_name);
 	pre_list->handle_file(lines, new_name, NULLPTR, false);
 }
 
-static void add_words(vector<string> *words, const string &name) {
-	vector<string> lines;
+static void add_words(WordVec *words, const string& name) {
+	LineVec lines;
 	add_file(&lines, name);
-	for(vector<string>::const_iterator it(lines.begin());
+	for(LineVec::const_iterator it(lines.begin());
 		likely(it != lines.end()); ++it) {
 		split_string(words, *it);
 	}
 }
 
-static const char *opt_arg(ArgumentReader::const_iterator *arg, const ArgumentReader &ar) {
+static const char *opt_arg(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) {
 	if(unlikely(++(*arg) == ar.end())) {
 		--(*arg);
 		return "";
@@ -136,7 +141,7 @@ static const char *opt_arg(ArgumentReader::const_iterator *arg, const ArgumentRe
 	return (*arg)->m_argument;
 }
 
-static void read_args(MaskList<Mask> *mask_list, vector<string> *args, const ArgumentReader &ar) {
+static void read_args(MaskList<Mask> *mask_list, WordVec *args, const ArgumentReader& ar) {
 	PreList::LineNumber linenr(0);
 	PreList pre_list;
 	PreListEntry::FilenameIndex argindex;
@@ -175,10 +180,10 @@ int run_masked_packages(int argc, char *argv[]) {
 	}
 
 	MaskList<Mask> mask_list;
-	vector<string> args;
+	WordVec args;
 	read_args(&mask_list, &args, argreader);
 
-	for(vector<string>::const_iterator it(args.begin());
+	for(WordVec::const_iterator it(args.begin());
 		likely(it != args.end()); ++it) {
 		Mask m(Mask::maskPseudomask);
 		string errtext;

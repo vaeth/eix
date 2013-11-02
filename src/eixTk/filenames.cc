@@ -37,11 +37,11 @@
 #include <iostream>
 #endif
 #include <string>
-#include <vector>
 
 #include "eixTk/filenames.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/sysutils.h"
 
 // If we still don't have PATH_MAX, try to use MAXPATHLEN:
@@ -53,7 +53,6 @@
 #endif
 
 using std::string;
-using std::vector;
 
 #ifdef DEBUG_NORMALIZE_PATH
 using std::cerr;
@@ -189,10 +188,10 @@ bool filename_starts_with(const char *mask, const char *name, bool resolve_mask)
 }
 
 /** Return first match in a list of filenames/patterns. */
-vector<string>::const_iterator find_filenames(const vector<string>::const_iterator start,
-		const vector<string>::const_iterator end, const char *search,
+WordVec::const_iterator find_filenames(const WordVec::const_iterator start,
+		const WordVec::const_iterator end, const char *search,
 		bool list_of_patterns, bool resolve_list) {
-	for(vector<string>::const_iterator i(start); likely(i != end); ++i) {
+	for(WordVec::const_iterator i(start); likely(i != end); ++i) {
 		if(unlikely(same_filenames(i->c_str(), search, list_of_patterns, resolve_list))) {
 			return i;
 		}

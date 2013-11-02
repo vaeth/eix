@@ -259,7 +259,7 @@ class PackageTest {
 			dup_packages_overlay = only_overlay;
 		}
 
-		void ObsoleteCfg(const RedAtom &first, const RedAtom &second, TestInstalled test_ins) {
+		void ObsoleteCfg(const RedAtom& first, const RedAtom& second, TestInstalled test_ins) {
 			obsolete           = true;
 			redundant_flags    = first.red|second.red;
 			first_test         = first;
@@ -330,8 +330,8 @@ class PackageTest {
 			test_stability_local, test_stability_nonlocal;
 		TestStability test_instability;
 
-		static MatchField     name2field(const std::string &p);
-		static MatchAlgorithm name2algorithm(const std::string &p);
+		static MatchField     name2field(const std::string& p);
+		static MatchAlgorithm name2algorithm(const std::string& p);
 		static MatchField     get_matchfield(const char *p);
 		static MatchAlgorithm get_matchalgorithm(const char *p);
 
@@ -346,16 +346,16 @@ class PackageTest {
 		/** Get the Fetched-value that is required to determine the match */
 		void calculateNeeds();
 
-		bool have_redundant(const Package &p, Keywords::Redundant r, const RedAtom &t) const;
-		bool have_redundant(const Package &p, Keywords::Redundant r) const;
+		bool have_redundant(const Package& p, Keywords::Redundant r, const RedAtom& t) const;
+		bool have_redundant(const Package& p, Keywords::Redundant r) const;
 		bool instabilitytest(const Package *p, TestStability what) const ATTRIBUTE_NONNULL_;
 
-		static Keywords::Redundant nowarn_keywords(const Package &p);
-		static Keywords::Redundant nowarn_mask(const Package &p);
-		static Keywords::Redundant nowarn_use(const Package &p);
-		static Keywords::Redundant nowarn_env(const Package &p);
-		static Keywords::Redundant nowarn_cflags(const Package &p);
-		static TestInstalled nowarn_installed(const Package &p);
+		static Keywords::Redundant nowarn_keywords(const Package& p);
+		static Keywords::Redundant nowarn_mask(const Package& p);
+		static Keywords::Redundant nowarn_use(const Package& p);
+		static Keywords::Redundant nowarn_env(const Package& p);
+		static Keywords::Redundant nowarn_cflags(const Package& p);
+		static TestInstalled nowarn_installed(const Package& p);
 };
 
 #endif  // SRC_SEARCH_PACKAGETEST_H_

@@ -29,8 +29,13 @@ class Regex {
 		}
 
 		/// Initalize and compile regular expression.
-		Regex(const char *regex, int eflags = REG_EXTENDED) : m_compiled(false) {
+		Regex(const char *regex, int eflags) : m_compiled(false) {
 			compile(regex, eflags);
+		}
+
+		/// Initalize and compile regular expression.
+		explicit Regex(const char *regex) : m_compiled(false) {
+			compile(regex, REG_EXTENDED);
 		}
 
 		/// Free the regular expression.
@@ -41,7 +46,10 @@ class Regex {
 		}
 
 		/// Compile a regular expression.
-		void compile(const char *regex, int eflags = REG_EXTENDED);
+		void compile(const char *regex, int eflags);
+		void compile(const char *regex) {
+			compile(regex, REG_EXTENDED);
+		}
 
 		/// Does the regular expression match s?
 		bool match(const char *s) const ATTRIBUTE_NONNULL_;

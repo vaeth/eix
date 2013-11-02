@@ -11,12 +11,12 @@
 #include <cstdio>
 
 #include <string>
-#include <vector>
 
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 
 // include "portage/basicversion.h" This comment satisfies check_include script
@@ -64,7 +64,7 @@ class File {
 		}
 
 		bool read_string_plain(char *s, std::string::size_type len, std::string *errtext) ATTRIBUTE_NONNULL((2));
-		bool write_string_plain(const std::string &str, std::string *errtext);
+		bool write_string_plain(const std::string& str, std::string *errtext);
 
 		bool seekrel(eix::OffsetType offset, std::string *errtext) {
 			return seek(offset, SEEK_CUR, errtext);
@@ -88,8 +88,8 @@ class Database : public File {
 		eix::OffsetType counter;
 
 		bool read_Part(BasicPart *b, std::string *errtext) ATTRIBUTE_NONNULL((2));
-		bool write_Part(const BasicPart &n, std::string *errtext);
-		bool write_string_plain(const std::string &str, std::string *errtext);
+		bool write_Part(const BasicPart& n, std::string *errtext);
+		bool write_string_plain(const std::string& str, std::string *errtext);
 
 	protected:
 		bool readUChar(eix::UChar *c, std::string *errtext);
@@ -102,9 +102,9 @@ class Database : public File {
 		template<typename m_Tp> bool write_num(m_Tp t, std::string *errtext);
 
 		bool read_string(std::string *s, std::string *errtext) ATTRIBUTE_NONNULL((2));
-		bool write_string(const std::string &str, std::string *errtext);
+		bool write_string(const std::string& str, std::string *errtext);
 
-		bool write_hash_string(const StringHash& hash, const std::string &s, std::string *errtext) {
+		bool write_hash_string(const StringHash& hash, const std::string& s, std::string *errtext) {
 			return write_num(hash.get_index(s), errtext);
 		}
 
@@ -117,28 +117,28 @@ class Database : public File {
 			return false;
 		}
 
-		bool write_hash_words(const StringHash& hash, const std::vector<std::string>& words, std::string *errtext);
+		bool write_hash_words(const StringHash& hash, const WordVec& words, std::string *errtext);
 
 		bool write_hash_words(const StringHash& hash, const std::string& words, std::string *errtext) {
 			return write_hash_words(hash, split_string(words), errtext);
 		}
 
-		bool read_hash_words(const StringHash& hash, std::vector<std::string> *s, std::string *errtext) ATTRIBUTE_NONNULL((3));
+		bool read_hash_words(const StringHash& hash, WordVec *s, std::string *errtext) ATTRIBUTE_NONNULL((3));
 		bool read_hash_words(const StringHash& hash, std::string *s, std::string *errtext) ATTRIBUTE_NONNULL((3));
 
 		bool read_iuse(const StringHash& hash, IUseSet *iuse, std::string *errtext) ATTRIBUTE_NONNULL((3));
 
-		bool read_version(Version *v, const DBHeader &hdr, std::string *errtext) ATTRIBUTE_NONNULL((2));
-		bool write_version(const Version *v, const DBHeader &hdr, std::string *errtext) ATTRIBUTE_NONNULL((2));
+		bool read_version(Version *v, const DBHeader& hdr, std::string *errtext) ATTRIBUTE_NONNULL((2));
+		bool write_version(const Version *v, const DBHeader& hdr, std::string *errtext) ATTRIBUTE_NONNULL((2));
 
-		bool read_depend(Depend *dep, const DBHeader &hdr, std::string *errtext) ATTRIBUTE_NONNULL((2));
-		bool write_depend(const Depend &dep, const DBHeader &hdr, std::string *errtext);
+		bool read_depend(Depend *dep, const DBHeader& hdr, std::string *errtext) ATTRIBUTE_NONNULL((2));
+		bool write_depend(const Depend& dep, const DBHeader& hdr, std::string *errtext);
 
 		bool read_category_header(std::string *name, eix::Treesize *h, std::string *errtext) ATTRIBUTE_NONNULL((2, 3));
-		bool write_category_header(const std::string &name, eix::Treesize size, std::string *errtext);
+		bool write_category_header(const std::string& name, eix::Treesize size, std::string *errtext);
 
-		bool write_package(const Package &pkg, const DBHeader &hdr, std::string *errtext);
-		bool write_package_pure(const Package &pkg, const DBHeader &hdr, std::string *errtext);
+		bool write_package(const Package& pkg, const DBHeader& hdr, std::string *errtext);
+		bool write_package_pure(const Package& pkg, const DBHeader& hdr, std::string *errtext);
 
 		bool write_hash(const StringHash& hash, std::string *errtext);
 		bool read_hash(StringHash *hash, std::string *errtext) ATTRIBUTE_NONNULL((2));
@@ -149,11 +149,11 @@ class Database : public File {
 
 		static void prep_header_hashs(DBHeader *hdr, const PackageTree& tree) ATTRIBUTE_NONNULL_;
 
-		bool write_header(const DBHeader &hdr, std::string *errtext);
+		bool write_header(const DBHeader& hdr, std::string *errtext);
 		bool read_header(DBHeader *hdr, std::string *errtext) ATTRIBUTE_NONNULL((2));
 
-		bool write_packagetree(const PackageTree &pkg, const DBHeader &hdr, std::string *errtext);
-		bool read_packagetree(PackageTree *tree, const DBHeader &hdr, PortageSettings *ps, std::string *errtext) ATTRIBUTE_NONNULL((2, 4));
+		bool write_packagetree(const PackageTree& pkg, const DBHeader& hdr, std::string *errtext);
+		bool read_packagetree(PackageTree *tree, const DBHeader& hdr, PortageSettings *ps, std::string *errtext) ATTRIBUTE_NONNULL((2, 4));
 };
 
 template<typename m_Tp> bool Database::read_num(m_Tp *ret, std::string *errtext) {

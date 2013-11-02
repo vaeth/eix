@@ -59,9 +59,11 @@ static const struct OperatorTable {
 /** Constructor. */
 Mask::Mask(Type type, const char *repo) {
 	m_type = type;
-	if((!m_test_reponame) && (repo != NULLPTR)) {
+	if(repo != NULLPTR) {
 		m_test_reponame = true;
 		m_reponame = repo;
+	} else {
+		m_test_reponame = false;
 	}
 }
 
@@ -345,7 +347,7 @@ void Mask::match(Matches *m, Package *pkg) const {
 	}
 }
 
-bool Mask::have_match(const Package &pkg) const {
+bool Mask::have_match(const Package& pkg) const {
 	for(Package::const_iterator it(pkg.begin()); likely(it != pkg.end()); ++it) {
 		if(test(*it)) {
 			return true;
@@ -389,7 +391,7 @@ void SetMask::applyItem(Package *pkg) const {
 	}
 }
 
-bool Mask::ismatch(const Package &pkg) const {
+bool Mask::ismatch(const Package& pkg) const {
 	if((fnmatch(m_name.c_str(), pkg.name.c_str(), 0) != 0) ||
 		(fnmatch(m_category.c_str(), pkg.category.c_str(), 0) != 0))
 		return false;

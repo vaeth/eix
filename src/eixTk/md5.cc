@@ -259,7 +259,7 @@ static void debug_md5(const uint32_t *resarr) {
 }
 #endif
 
-bool verify_md5sum(const char *file, const string &md5sum) {
+bool verify_md5sum(const char *file, const string& md5sum) {
 	if(md5sum.size() != 32) {
 		return false;
 	}

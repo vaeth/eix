@@ -57,6 +57,7 @@ SUFFIXES = .in
 		-e "s,/dev/null,$(DEV_NULL),g" \
 		-e "s,\@CURRENT\@,$${H},g" \
 		-e "s,\@CURRENTXML\@,$${X},g" \
+		-e 's,^#!/usr/bin/env sh$$,#!$(SH_SHEBANG),g' \
 	"$<" > "$@"
 
 eix-db.html: eix-db.txt $(css_data)

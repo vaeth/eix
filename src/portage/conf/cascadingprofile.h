@@ -10,11 +10,11 @@
 #ifndef SRC_PORTAGE_CONF_CASCADINGPROFILE_H_
 #define SRC_PORTAGE_CONF_CASCADINGPROFILE_H_ 1
 
-#include <set>
 #include <string>
 #include <vector>
 
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "portage/mask.h"
 #include "portage/mask_list.h"
 #include "portage/overlay.h"
@@ -26,13 +26,13 @@ class ProfileFilenames;
 class ProfileFile {
 		std::string filename;
 	public:
-		std::vector<OverlayIdent>::size_type reponum;
+		OverlayVec::size_type reponum;
 
-		ProfileFile(const std::string &s, std::vector<OverlayIdent>::size_type repo_num)
+		ProfileFile(const std::string& s, OverlayVec::size_type repo_num)
 			: filename(s), reponum(repo_num) {
 		}
 
-		const std::string &name() const {
+		const std::string& name() const {
 			return filename;
 		}
 
@@ -52,7 +52,8 @@ class CascadingProfile {
 
 	protected:
 		bool m_init_world;
-		std::vector<ProfileFile> m_profile_files; /**< List of files in profile. */
+		typedef std::vector<ProfileFile> ProfileFiles;
+		ProfileFiles m_profile_files; /**< List of files in profile. */
 		PortageSettings *m_portagesettings; /**< Profilesettings to which this instance "belongs" */
 
 		MaskList<Mask> m_system;         /**< Packages in system profile. */
@@ -66,35 +67,38 @@ class CascadingProfile {
 
 	private:
 		/** Add all files from profile and its parents to m_profile_files. */
-		bool addProfile(const char *profile, std::set<std::string> *sourced_files = NULLPTR) ATTRIBUTE_NONNULL((2));
+		bool addProfile(const char *profile, WordSet *sourced_files) ATTRIBUTE_NONNULL((2));
+		bool addProfile(const char *profile) ATTRIBUTE_NONNULL_ {
+			return addProfile(profile, NULLPTR);
+		}
 
 		/** Handler functions follow for reading a file */
-		typedef bool (CascadingProfile::*Handler)(const std::string &filename, const char *repo);
+		typedef bool (CascadingProfile::*Handler)(const std::string& filename, const char *repo);
 
 		/** Read all "packages" files found in profile.
 		 * Populate p_system and p_system_allowed.
 		 * @return true if data was changed */
-		bool readPackages(const std::string &filename, const char *repo);
+		bool readPackages(const std::string& filename, const char *repo);
 
 		/** Read all "package.mask" files found in profile.
 		 * Populate p_package_masks.
 		 * @return true if data was changed */
-		bool readPackageMasks(const std::string &filename, const char *repo);
+		bool readPackageMasks(const std::string& filename, const char *repo);
 
 		/** Read all "package.unmask" files found in profile.
 		 * Populate p_package_unmasks.
 		 * @return true if data was changed */
-		bool readPackageUnmasks(const std::string &filename, const char *repo);
+		bool readPackageUnmasks(const std::string& filename, const char *repo);
 
 		/** Read all "package.keywords" files found in profile.
 		 * Populate p_package_keywords.
 		 * @return true if data was changed */
-		bool readPackageKeywords(const std::string &filename, const char *repo);
+		bool readPackageKeywords(const std::string& filename, const char *repo);
 
 		/** Read all "package.accept_keywords" files found in profile.
 		 * Populate p_package_accept_keywords.
 		 * @return true if data was changed */
-		bool readPackageAcceptKeywords(const std::string &filename, const char *repo);
+		bool readPackageAcceptKeywords(const std::string& filename, const char *repo);
 
 	public:
 		CascadingProfile(PortageSettings *portagesettings, bool init_world) ATTRIBUTE_NONNULL_ :
@@ -122,7 +126,7 @@ class CascadingProfile {
 		void listaddProfile(const char *profile_dir = NULLPTR);
 
 		/** Put file into m_profile_files */
-		void listaddFile(const std::string &file, std::vector<OverlayIdent>::size_type i) {
+		void listaddFile(const std::string& file, OverlayVec::size_type i) {
 			m_profile_files.push_back(ProfileFile(file, i));
 		}
 

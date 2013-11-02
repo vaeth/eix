@@ -13,34 +13,34 @@
 #define STRINGLIST_FREE 1
 
 #include <string>
-#include <vector>
 
 #ifdef STRINGLIST_FREE
 #include "eixTk/inttypes.h"
 #endif
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 
 class StringList;
 class StringListContent;
 class OutputString;
 
-inline static bool operator<(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
-inline static bool operator>(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
-inline static bool operator<=(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
-inline static bool operator>=(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
-inline static bool operator==(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
-inline static bool operator!=(const StringListContent &a, const StringListContent &b) ATTRIBUTE_PURE;
+inline static bool operator<(const StringListContent& a, const StringListContent& b) ATTRIBUTE_PURE;
+inline static bool operator>(const StringListContent& a, const StringListContent& b) ATTRIBUTE_PURE;
+inline static bool operator<=(const StringListContent& a, const StringListContent& b) ATTRIBUTE_PURE;
+inline static bool operator>=(const StringListContent& a, const StringListContent& b) ATTRIBUTE_PURE;
+inline static bool operator==(const StringListContent& a, const StringListContent& b) ATTRIBUTE_PURE;
+inline static bool operator!=(const StringListContent& a, const StringListContent& b) ATTRIBUTE_PURE;
 
 class StringListContent {
-		friend bool operator<(const StringListContent &a, const StringListContent &b);
-		friend bool operator>(const StringListContent &a, const StringListContent &b);
-		friend bool operator<=(const StringListContent &a, const StringListContent &b);
-		friend bool operator>=(const StringListContent &a, const StringListContent &b);
-		friend bool operator==(const StringListContent &a, const StringListContent &b);
-		friend bool operator!=(const StringListContent &a, const StringListContent &b);
+		friend bool operator<(const StringListContent& a, const StringListContent& b);
+		friend bool operator>(const StringListContent& a, const StringListContent& b);
+		friend bool operator<=(const StringListContent& a, const StringListContent& b);
+		friend bool operator>=(const StringListContent& a, const StringListContent& b);
+		friend bool operator==(const StringListContent& a, const StringListContent& b);
+		friend bool operator!=(const StringListContent& a, const StringListContent& b);
 		friend class StringList;
 	private:
-		std::vector<std::string> m_list;
+		WordVec m_list;
 
 	protected:
 #ifdef STRINGLIST_FREE
@@ -52,51 +52,51 @@ class StringListContent {
 			return m_list.empty();
 		}
 
-		void push_back(const std::string &s) {
+		void push_back(const std::string& s) {
 			m_list.push_back(s);
 		}
 
-		void append_to_string(OutputString *s, const OutputString &skip) const ATTRIBUTE_NONNULL_;
+		void append_to_string(OutputString *s, const OutputString& skip) const ATTRIBUTE_NONNULL_;
 };
 
-inline static bool operator<(const StringListContent &a, const StringListContent &b) {
+inline static bool operator<(const StringListContent& a, const StringListContent& b) {
 	return (a.m_list < b.m_list);
 }
 
-inline static bool operator>(const StringListContent &a, const StringListContent &b) {
+inline static bool operator>(const StringListContent& a, const StringListContent& b) {
 	return (a.m_list > b.m_list);
 }
 
-inline static bool operator<=(const StringListContent &a, const StringListContent &b) {
+inline static bool operator<=(const StringListContent& a, const StringListContent& b) {
 	return (a.m_list <= b.m_list);
 }
 
-inline static bool operator>=(const StringListContent &a, const StringListContent &b) {
+inline static bool operator>=(const StringListContent& a, const StringListContent& b) {
 	return (a.m_list >= b.m_list);
 }
 
-inline static bool operator==(const StringListContent &a, const StringListContent &b) {
+inline static bool operator==(const StringListContent& a, const StringListContent& b) {
 	return (a.m_list == b.m_list);
 }
 
-inline static bool operator!=(const StringListContent &a, const StringListContent &b) {
+inline static bool operator!=(const StringListContent& a, const StringListContent& b) {
 	return (a.m_list != b.m_list);
 }
 
-inline static bool operator<(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
-inline static bool operator>(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
-inline static bool operator<=(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
-inline static bool operator>=(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
-inline static bool operator==(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
-inline static bool operator!=(const StringList &a, const StringList &b) ATTRIBUTE_PURE;
+inline static bool operator<(const StringList& a, const StringList& b) ATTRIBUTE_PURE;
+inline static bool operator>(const StringList& a, const StringList& b) ATTRIBUTE_PURE;
+inline static bool operator<=(const StringList& a, const StringList& b) ATTRIBUTE_PURE;
+inline static bool operator>=(const StringList& a, const StringList& b) ATTRIBUTE_PURE;
+inline static bool operator==(const StringList& a, const StringList& b) ATTRIBUTE_PURE;
+inline static bool operator!=(const StringList& a, const StringList& b) ATTRIBUTE_PURE;
 
 class StringList {
-		friend bool operator<(const StringList &a, const StringList &b);
-		friend bool operator>(const StringList &a, const StringList &b);
-		friend bool operator<=(const StringList &a, const StringList &b);
-		friend bool operator>=(const StringList &a, const StringList &b);
-		friend bool operator==(const StringList &a, const StringList &b);
-		friend bool operator!=(const StringList &a, const StringList &b);
+		friend bool operator<(const StringList& a, const StringList& b);
+		friend bool operator>(const StringList& a, const StringList& b);
+		friend bool operator<=(const StringList& a, const StringList& b);
+		friend bool operator>=(const StringList& a, const StringList& b);
+		friend bool operator==(const StringList& a, const StringList& b);
+		friend bool operator!=(const StringList& a, const StringList& b);
 
 	private:
 		StringListContent *ptr;
@@ -106,9 +106,9 @@ class StringList {
 		}
 
 #ifdef STRINGLIST_FREE
-		StringList& operator=(const StringList &s);
+		StringList& operator=(const StringList& s);
 
-		StringList(const StringList &s) {
+		StringList(const StringList& s) {
 			*this = s;
 		}
 
@@ -120,36 +120,36 @@ class StringList {
 			return (ptr == NULLPTR);
 		}
 
-		void push_back(const std::string &s);
+		void push_back(const std::string& s);
 
-		void append_to_string(OutputString *s, const OutputString &skip) const ATTRIBUTE_NONNULL_ {
+		void append_to_string(OutputString *s, const OutputString& skip) const ATTRIBUTE_NONNULL_ {
 			if(ptr != NULLPTR) {
 				ptr->append_to_string(s, skip);
 			}
 		}
 };
 
-inline static bool operator<(const StringList &a, const StringList &b) {
+inline static bool operator<(const StringList& a, const StringList& b) {
 	return (*(a.ptr) < *(b.ptr));
 }
 
-inline static bool operator>(const StringList &a, const StringList &b) {
+inline static bool operator>(const StringList& a, const StringList& b) {
 	return (*(a.ptr) > *(b.ptr));
 }
 
-inline static bool operator<=(const StringList &a, const StringList &b) {
+inline static bool operator<=(const StringList& a, const StringList& b) {
 	return (*(a.ptr) <= *(b.ptr));
 }
 
-inline static bool operator>=(const StringList &a, const StringList &b) {
+inline static bool operator>=(const StringList& a, const StringList& b) {
 	return (*(a.ptr) >= *(b.ptr));
 }
 
-inline static bool operator==(const StringList &a, const StringList &b) {
+inline static bool operator==(const StringList& a, const StringList& b) {
 	return (*(a.ptr) == *(b.ptr));
 }
 
-inline static bool operator!=(const StringList &a, const StringList &b) {
+inline static bool operator!=(const StringList& a, const StringList& b) {
 	return (*(a.ptr) != *(b.ptr));
 }
 

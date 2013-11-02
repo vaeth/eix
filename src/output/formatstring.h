@@ -55,10 +55,10 @@ class Text : public Node {
 		Text() : Node(TEXT) {
 		}
 
-		explicit Text(const OutputString &t) : Node(TEXT), text(t) {
+		explicit Text(const OutputString& t) : Node(TEXT), text(t) {
 		}
 
-		Text(const std::string &t, std::string::size_type s) : Node(TEXT), text(t, s) {
+		Text(const std::string& t, std::string::size_type s) : Node(TEXT), text(t, s) {
 		}
 };
 
@@ -67,7 +67,13 @@ class Property : public Node {
 		std::string name;
 		bool user_variable;
 
-		Property(const std::string &n = "", bool user_var = false) : Node(OUTPUT), name(n), user_variable(user_var) {
+		Property() : Node(OUTPUT), user_variable(false) {
+		}
+
+		explicit Property(const std::string& n) : Node(OUTPUT), name(n), user_variable(false) {
+		}
+
+		Property(const std::string& n, bool user_var) : Node(OUTPUT), name(n), user_variable(user_var) {
 		}
 };
 
@@ -141,7 +147,9 @@ class VarParserCacheNode {
 		bool init(Node **rootnode, const char *fmt, bool colors, bool use, std::string *errtext) ATTRIBUTE_NONNULL((3));
 };
 
-class VarParserCache : public std::map<std::string, VarParserCacheNode> {
+typedef std::map<std::string, VarParserCacheNode> VarParserCacheMap;
+
+class VarParserCache : public VarParserCacheMap {
 	public:
 		void clear_use();
 };
@@ -151,13 +159,16 @@ class VersionVariables;
 class PrintFormat {
 	friend class LocalCopy;
 	friend class Scanner;
-	friend void get_package_property(OutputString *s, const PrintFormat *fmt, void *entity, const std::string &name) ATTRIBUTE_NONNULL_;
-	friend void get_diff_package_property(OutputString *s, const PrintFormat *fmt, void *void_entity, const std::string &name) ATTRIBUTE_NONNULL_;
+	friend void get_package_property(OutputString *s, const PrintFormat *fmt, void *entity, const std::string& name) ATTRIBUTE_NONNULL_;
+	friend void get_diff_package_property(OutputString *s, const PrintFormat *fmt, void *void_entity, const std::string& name) ATTRIBUTE_NONNULL_;
 
 	public:
-		typedef void (*GetProperty)(OutputString *s, const PrintFormat *fmt, void *entity, const std::string &property) ATTRIBUTE_NONNULL_;
+		typedef void (*GetProperty)(OutputString *s, const PrintFormat *fmt, void *entity, const std::string& property) ATTRIBUTE_NONNULL_;
+		typedef std::vector<ExtendedVersion::Overlay> OverlayTranslations;
+		typedef std::vector<bool> OverlayUsed;
 
 	protected:
+		typedef std::vector<Version*> VerVec;
 		enum HandleExpand { EXPAND_NO, EXPAND_YES, EXPAND_OMIT };
 
 		static std::string::size_type currcolumn;
@@ -171,9 +182,10 @@ class PrintFormat {
 		mutable VersionVariables *version_variables;
 		FormatParser   m_parser;
 		GetProperty    m_get_property;
-		std::vector<bool> *virtuals;
-		std::vector<ExtendedVersion::Overlay> *overlay_translations;
-		std::vector<bool> *overlay_used;
+		typedef std::vector<bool> Virtuals;
+		Virtuals *virtuals;
+		OverlayTranslations *overlay_translations;
+		OverlayUsed *overlay_used;
 		bool          *some_overlay_used;
 		MaskList<Mask> *marked_list;
 		EixRc         *eix_rc;
@@ -190,34 +202,34 @@ class PrintFormat {
 		/* return true if something was actually printed */
 		bool recPrint(OutputString *result, void *entity, GetProperty get_property, Node *root) const ATTRIBUTE_NONNULL((3));
 
-		bool parse_variable(Node **rootnode, const std::string &varname, std::string *errtext) const ATTRIBUTE_NONNULL((2));
-		Node *parse_variable(const std::string &varname) const;
+		bool parse_variable(Node **rootnode, const std::string& varname, std::string *errtext) const ATTRIBUTE_NONNULL((2));
+		Node *parse_variable(const std::string& varname) const;
 
-		void iuse_expand(OutputString *s, const IUseSet &iuse, bool coll, HandleExpand expand) const;
-		void get_inst_use(OutputString *s, const Package &package, InstVersion *i, HandleExpand expand) const ATTRIBUTE_NONNULL_;
+		void iuse_expand(OutputString *s, const IUseSet& iuse, bool coll, HandleExpand expand) const;
+		void get_inst_use(OutputString *s, const Package& package, InstVersion *i, HandleExpand expand) const ATTRIBUTE_NONNULL_;
 		void get_installed(Package *package, Node *root) const ATTRIBUTE_NONNULL((2));
-		void get_versions_versorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2));
-		void get_versions_slotsorted(Package *package, Node *root, std::vector<Version*> *versions) const ATTRIBUTE_NONNULL((2));
-		void get_pkg_property(OutputString *s, Package *package, const std::string &name) const ATTRIBUTE_NONNULL_;
+		void get_versions_versorted(Package *package, Node *root, PrintFormat::VerVec *versions) const ATTRIBUTE_NONNULL((2));
+		void get_versions_slotsorted(Package *package, Node *root, PrintFormat::VerVec *versions) const ATTRIBUTE_NONNULL((2));
+		void get_pkg_property(OutputString *s, Package *package, const std::string& name) const ATTRIBUTE_NONNULL_;
 
 		// It follows a list of indirect functions called in get_pkg_property():
 		// Functions with capital letters are parser destinations; other functions
 		// here are sort of "macros" used by several other "capital letter" functions.
 
-		void COLON_VER_DATE(OutputString *s, Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
-		void colon_pkg_availableversions(Package *package, const std::string &after_colon, bool only_marked) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_AVAILABLEVERSIONS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_MARKEDVERSIONS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
-		void colon_pkg_bestversion(Package *package, const std::string &after_colon, bool allow_unstable) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_BESTVERSION(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_BESTVERSIONS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
-		void colon_pkg_bestslotversions(Package *package, const std::string &after_colon, bool allow_unstable) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_BESTSLOTVERSIONS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_BESTSLOTVERSIONSS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
-		void colon_pkg_bestslotupgradeversions(Package *package, const std::string &after_colon, bool allow_unstable) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_BESTSLOTUPGRADEVERSIONS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_BESTSLOTUPGRADEVERSIONSS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_INSTALLEDVERSIONS(Package *package, const std::string &after_colon) const ATTRIBUTE_NONNULL_;
+		void COLON_VER_DATE(OutputString *s, Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
+		void colon_pkg_availableversions(Package *package, const std::string& after_colon, bool only_marked) const ATTRIBUTE_NONNULL_;
+		void COLON_PKG_AVAILABLEVERSIONS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
+		void COLON_PKG_MARKEDVERSIONS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
+		void colon_pkg_bestversion(Package *package, const std::string& after_colon, bool allow_unstable) const ATTRIBUTE_NONNULL_;
+		void COLON_PKG_BESTVERSION(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
+		void COLON_PKG_BESTVERSIONS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
+		void colon_pkg_bestslotversions(Package *package, const std::string& after_colon, bool allow_unstable) const ATTRIBUTE_NONNULL_;
+		void COLON_PKG_BESTSLOTVERSIONS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
+		void COLON_PKG_BESTSLOTVERSIONSS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
+		void colon_pkg_bestslotupgradeversions(Package *package, const std::string& after_colon, bool allow_unstable) const ATTRIBUTE_NONNULL_;
+		void COLON_PKG_BESTSLOTUPGRADEVERSIONS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
+		void COLON_PKG_BESTSLOTUPGRADEVERSIONSS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
+		void COLON_PKG_INSTALLEDVERSIONS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
 		void PKG_INSTALLED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_VERSIONLINES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_SLOTSORTED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
@@ -353,7 +365,7 @@ class PrintFormat {
 		void VER_WASMINUSUNSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_WASMINUSASTERISK(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_HAVEMASKREASONS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void ver_maskreasons(OutputString *s, const OutputString &skip, const OutputString &sep) const;
+		void ver_maskreasons(OutputString *s, const OutputString& skip, const OutputString& sep) const;
 		void VER_MASKREASONS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_MASKREASONSS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 
@@ -380,7 +392,15 @@ class PrintFormat {
 			maskreasons_skip,  maskreasons_sep,
 			maskreasonss_skip, maskreasonss_sep;
 
-		explicit PrintFormat(GetProperty get_callback = NULLPTR);
+		void init(GetProperty get_callback);
+
+		PrintFormat() {
+			init(NULLPTR);
+		}
+
+		explicit PrintFormat(GetProperty get_callback) {
+			init(get_callback);
+		}
 
 		// Initialize those variables common to eix and eix-diff:
 		void setupResources(EixRc *eixrc) ATTRIBUTE_NONNULL_;
@@ -389,17 +409,20 @@ class PrintFormat {
 
 		void clear_virtual(ExtendedVersion::Overlay count);
 
-		void set_as_virtual(const ExtendedVersion::Overlay overlay, bool on = true);
+		void set_as_virtual(const ExtendedVersion::Overlay overlay, bool on);
+		void set_as_virtual(const ExtendedVersion::Overlay overlay) {
+			set_as_virtual(overlay, true);
+		}
 
 		bool is_virtual(const ExtendedVersion::Overlay overlay) const ATTRIBUTE_PURE;
 
 		bool have_virtual(const Package *p, bool nonvirtual) const ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
 
-		void set_overlay_translations(std::vector<ExtendedVersion::Overlay> *translations) {
+		void set_overlay_translations(OverlayTranslations *translations) {
 			overlay_translations = translations;
 		}
 
-		void set_overlay_used(std::vector<bool> *used, bool *some) {
+		void set_overlay_used(OverlayUsed *used, bool *some) {
 			overlay_used = used;
 			some_overlay_used = some;
 		}
@@ -408,7 +431,10 @@ class PrintFormat {
 			marked_list = m_list;
 		}
 
-		void overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay, bool plain = false) const ATTRIBUTE_NONNULL_;
+		void overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay, bool plain) const ATTRIBUTE_NONNULL_;
+		void overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay) const ATTRIBUTE_NONNULL_ {
+			overlay_keytext(s, overlay, false);
+		}
 
 		/* return true if something was actually printed */
 		bool print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL((2, 5, 6, 7, 8));

@@ -10,17 +10,18 @@
 #ifndef SRC_PORTAGE_KEYWORDS_H_
 #define SRC_PORTAGE_KEYWORDS_H_ 1
 
-#include <set>
 #include <string>
 
+#include "eixTk/constexpr.h"
 #include "eixTk/eixint.h"
 #include "eixTk/inttypes.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 
 class MaskFlags {
 	public:
 		typedef eix::UChar MaskType;
-		static const MaskType
+		static CONSTEXPR MaskType
 			MASK_NONE               = 0x00U,
 			MASK_PACKAGE            = 0x01U,
 			MASK_PROFILE            = 0x02U,
@@ -30,8 +31,10 @@ class MaskFlags {
 			MASK_WORLD_SETS         = 0x10U,
 			MASK_MARKED             = 0x20U;
 
-		explicit MaskFlags(MaskType t = MASK_NONE) {
-			m_mask = t;
+		MaskFlags() : m_mask(MASK_NONE) {
+		}
+
+		explicit MaskFlags(MaskType t) : m_mask(t) {
 		}
 
 		void set(MaskType t) {
@@ -111,7 +114,7 @@ inline static bool operator!=(MaskFlags const& left, MaskFlags const& right) {
 class KeywordsFlags {
 	public:
 		typedef eix::UChar KeyType;
-		static const KeyType
+		static CONSTEXPR KeyType
 			KEY_EMPTY          = 0x00U,
 			KEY_STABLE         = 0x01U,  /**< stabilized */
 			KEY_ARCHSTABLE     = 0x02U,  /**<  ARCH  */
@@ -125,10 +128,12 @@ class KeywordsFlags {
 			KEY_SOMEUNSTABLE   = KEY_ARCHUNSTABLE|KEY_ALIENUNSTABLE,
 			KEY_TILDESTARMATCH = KEY_SOMESTABLE|KEY_SOMEUNSTABLE;
 
-		static KeyType get_keyflags(const std::set<std::string> &accepted_keywords, const std::string &keywords);
+		static KeyType get_keyflags(const WordSet& accepted_keywords, const std::string& keywords);
 
-		explicit KeywordsFlags(KeyType t = KEY_EMPTY) {
-			m_keyword = t;
+		explicit KeywordsFlags() : m_keyword(KEY_EMPTY) {
+		}
+
+		explicit KeywordsFlags(KeyType t) : m_keyword(t) {
 		}
 
 		void set_keyflags(KeyType t) {
@@ -214,7 +219,7 @@ inline static bool operator!=(const KeywordsFlags& left, const KeywordsFlags& ri
 class Keywords {
 	public:
 		typedef uint32_t Redundant;
-		static const Redundant
+		static CONSTEXPR Redundant
 			RED_NOTHING         = 0x000000U,  /**< None of the following           */
 			RED_DOUBLE          = 0x000001U,  /**< Same keyword twice              */
 			RED_DOUBLE_LINE     = 0x000002U,  /**< Same keyword line twice         */
@@ -252,10 +257,13 @@ class Keywords {
 		KeywordsFlags keyflags;
 		MaskFlags maskflags;
 
-		Keywords(KeywordsFlags::KeyType k = KeywordsFlags::KEY_EMPTY, MaskFlags::MaskType m = MaskFlags::MASK_NONE)
-			: keyflags(k), maskflags(m) {
-			redundant = RED_NOTHING;
-			red_mask = 0x00U;
+		Keywords()
+			: keyflags(KeywordsFlags::KEY_EMPTY), maskflags(MaskFlags::MASK_NONE),
+			redundant(RED_NOTHING), red_mask(0x00U) {
+		}
+
+		Keywords(KeywordsFlags::KeyType k, MaskFlags::MaskType m)
+			: keyflags(k), maskflags(m), redundant(RED_NOTHING), red_mask(0x00U) {
 		}
 
 		/** Add/substract modify keys to/from original to obtain result.
@@ -263,7 +271,7 @@ class Keywords {
 		 *  the result is not modified */
 		static bool modify_keywords(std::string *result, const std::string &original, const std::string &modify_keys);
 
-		void set_redundant(Redundant or_redundant = true) {
+		void set_redundant(Redundant or_redundant) {
 			redundant |= or_redundant;
 		}
 
@@ -271,51 +279,35 @@ class Keywords {
 			return redundant;
 		}
 
-		void set_was_masked(bool value = true) {
-			if(value) {
-				red_mask |= 0x01U;
-			} else {
-				red_mask &= ~0x01U;
-			}
+		void set_was_masked() {
+			red_mask |= 0x01U;
 		}
 
 		bool was_masked() const {
 			return (red_mask & 0x01U);
 		}
 
-		void set_was_unmasked(bool value = true) {
-			if(value) {
-				red_mask |= 0x02U;
-			} else {
-				red_mask &= ~0x02U;
-			}
+		void set_was_unmasked() {
+			red_mask |= 0x02U;
 		}
 
 		bool was_unmasked() const {
 			return (red_mask & 0x02U);
 		}
 
-		void set_wanted_masked(bool value = true) {
-			if(value) {
-				red_mask |= 0x04U;
-			} else {
-				red_mask &= ~0x04U;
-			}
+		void set_wanted_masked() {
+			red_mask |= 0x04U;
 		}
 
 		bool wanted_masked() const {
 			return (red_mask & 0x04U);
 		}
 
-		void set_wanted_unmasked(bool value = true) {
-			if(value) {
-				red_mask |= 0x08U;
-			} else {
-				red_mask &= ~0x08U;
-			}
+		void set_wanted_unmasked() {
+			red_mask |= 0x08U;
 		}
 
-		bool wanted_unmasked () const {
+		bool wanted_unmasked() const {
 			return (red_mask & 0x08U);
 		}
 
@@ -330,11 +322,14 @@ class KeywordSave {
 		bool have_data;
 
 	public:
-		explicit KeywordSave(const Keywords *k = NULLPTR) {
+		KeywordSave() : have_data(false) {
+		}
+
+		explicit KeywordSave(const Keywords *k) {
 			store(k);
 		}
 
-		void store(const Keywords *k = NULLPTR) {
+		void store(const Keywords *k) {
 			if(k == NULLPTR) {
 				have_data = false;
 				return;

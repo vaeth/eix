@@ -57,13 +57,13 @@ void PercentStatus::init() {
 	m_total_s.clear();
 }
 
-void PercentStatus::init(const string &header) {
+void PercentStatus::init(const string& header) {
 	m_verbose = false;
 	m_format = header;
 	reprint();
 }
 
-void PercentStatus::init(const string &format, Percentage total) {
+void PercentStatus::init(const string& format, Percentage total) {
 	m_verbose = true;
 	m_format = format;
 	m_total = total;
@@ -71,7 +71,7 @@ void PercentStatus::init(const string &format, Percentage total) {
 	reprint();
 }
 
-void PercentStatus::next(const string &append_string) {
+void PercentStatus::next(const string& append_string) {
 	m_append = append_string;
 	next();
 	reprint();
@@ -88,7 +88,7 @@ void PercentStatus::next() {
 	}
 }
 
-void PercentStatus::finish(const string &append_string) {
+void PercentStatus::finish(const string& append_string) {
 	m_append.clear();
 	m_finished = true;
 	if(m_verbose)  {

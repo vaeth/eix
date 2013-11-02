@@ -30,7 +30,7 @@ char *strndup(const char *s, size_t n) ATTRIBUTE_NONNULL_;
 
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-
+#include "eixTk/stringtypes.h"
 
 #ifdef HAVE_STRTOUL
 #define my_atoi(a) strtoul(a, NULLPTR, 10)
@@ -85,27 +85,35 @@ void optional_append(std::string *s, char symbol) ATTRIBUTE_NONNULL_;
 /** Trim characters on left side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed */
-void ltrim(std::string *str, const char *delims = spaces) ATTRIBUTE_NONNULL_;
+void ltrim(std::string *str, const char *delims) ATTRIBUTE_NONNULL_;
 
 /** Trim characters on right side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed */
-void rtrim(std::string *str, const char *delims = spaces) ATTRIBUTE_NONNULL_;
+void rtrim(std::string *str, const char *delims) ATTRIBUTE_NONNULL_;
 
 /** Trim characters on left and right side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed */
-void trim(std::string *str, const char *delims = spaces) ATTRIBUTE_NONNULL_;
+void trim(std::string *str, const char *delims) ATTRIBUTE_NONNULL_;
+inline static void trim(std::string *str) ATTRIBUTE_NONNULL_;
+inline static void trim(std::string *str) {
+	trim(str, spaces);
+}
 
 /** Replaces all characters of delims by c (counting several delims as one).
  * delims on the beginning of end of the string are removed.
  * @param str String that should be trimmed
  * @param delims characters that should me removed
  * @param c character that should be inserted */
-void trimall(std::string *str, const char *delims = spaces, char c = ' ') ATTRIBUTE_NONNULL_;
+void trimall(std::string *str, const char *delims, char c) ATTRIBUTE_NONNULL_;
+inline static void trimall(std::string *str) ATTRIBUTE_NONNULL_;
+inline static void trimall(std::string *str) {
+	trimall(str, spaces, ' ');
+}
 
 /** return the lowercase version of str */
-std::string to_lower(const std::string &str);
+std::string to_lower(const std::string& str);
 
 /** return the character corresponding to an escaped symbol.
     For instance, n -> \n, \ -> \, \0 -> \ */
@@ -115,7 +123,11 @@ char get_escape(char c) ATTRIBUTE_CONST;
 void unescape_string(std::string *str) ATTRIBUTE_NONNULL_;
 
 /** Escape all "at" and "\" characters in string. */
-void escape_string(std::string *str, const char *at = spaces) ATTRIBUTE_NONNULL_;
+void escape_string(std::string *str, const char *at) ATTRIBUTE_NONNULL_;
+inline static void escape_string(std::string *str) ATTRIBUTE_NONNULL_;
+inline static void escape_string(std::string *str) {
+	escape_string(str, spaces);
+}
 
 /** Split a string into multiple strings.
  * @param vec Will contain the result. Actually the result is pushed_back
@@ -126,8 +138,32 @@ void escape_string(std::string *str, const char *at = spaces) ATTRIBUTE_NONNULL_
  * @param ignore_empty  Remove empty strings from the result.
  * @param handle_escape Do not split at escaped characters from "at" symbols,
  *                      removing escapes for \\ or "at" symbols from result. */
-void split_string(std::vector<std::string> *vec, const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true) ATTRIBUTE_NONNULL_;
-void split_string(std::set<std::string> *vec, const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true) ATTRIBUTE_NONNULL_;
+void split_string(WordVec *vec, const std::string& str, bool handle_escape, const char *at, bool ignore_empty) ATTRIBUTE_NONNULL_;
+void split_string(WordSet *vec, const std::string& str, bool handle_escape, const char *at, bool ignore_empty) ATTRIBUTE_NONNULL_;
+inline static void split_string(WordVec *vec, const std::string& str, bool handle_escape, const char *at) ATTRIBUTE_NONNULL_;
+inline static void split_string(WordVec *vec, const std::string& str, bool handle_escape, const char *at) {
+	split_string(vec, str, handle_escape, at, true);
+}
+inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape, const char *at) ATTRIBUTE_NONNULL_;
+inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape, const char *at) {
+	split_string(vec, str, handle_escape, at, true);
+}
+inline static void split_string(WordVec *vec, const std::string& str, bool handle_escape) ATTRIBUTE_NONNULL_;
+inline static void split_string(WordVec *vec, const std::string& str, bool handle_escape) {
+	split_string(vec, str, handle_escape, spaces);
+}
+inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape) ATTRIBUTE_NONNULL_;
+inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape) {
+	split_string(vec, str, handle_escape, spaces);
+}
+inline static void split_string(WordVec *vec, const std::string& str) ATTRIBUTE_NONNULL_;
+inline static void split_string(WordVec *vec, const std::string& str) {
+	split_string(vec, str, false);
+}
+inline static void split_string(WordSet *vec, const std::string& str) ATTRIBUTE_NONNULL_;
+inline static void split_string(WordSet *vec, const std::string& str) {
+	split_string(vec, str, false);
+}
 
 /** Check if slot contains a subslot and if yes, split it away.
     Also turn slot "0" into nothing */
@@ -135,7 +171,7 @@ bool slot_subslot(std::string *slot, std::string *subslot) ATTRIBUTE_NONNULL_;
 
 /** Split full to slot and subslot. Also turn slot "0" into nothing
  * @return true if subslot exists */
-bool slot_subslot(const std::string &full, std::string *slot, std::string *subslot) ATTRIBUTE_NONNULL_;
+bool slot_subslot(const std::string& full, std::string *slot, std::string *subslot) ATTRIBUTE_NONNULL_;
 
 /** Split a string into multiple strings.
  * @param str Reference to the string that should be splitted.
@@ -144,59 +180,101 @@ bool slot_subslot(const std::string &full, std::string *slot, std::string *subsl
  * @param handle_escape Do not split at escaped characters from "at" symbols,
  *                      removing escapes for \\ or "at" symbols from result.
  * @return the resulting vector */
-std::vector<std::string> split_string(const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true) ATTRIBUTE_NONNULL_;
+WordVec split_string(const std::string& str, bool handle_escape, const char *at, bool ignore_empty) ATTRIBUTE_NONNULL_;
+inline static WordVec split_string(const std::string& str, bool handle_escape, const char *at) ATTRIBUTE_NONNULL_;
+inline static WordVec split_string(const std::string& str, bool handle_escape, const char *at) {
+	return split_string(str, handle_escape, at, true);
+}
+inline static WordVec split_string(const std::string& str, bool handle_escape) ATTRIBUTE_NONNULL_;
+inline static WordVec split_string(const std::string& str, bool handle_escape) {
+	return split_string(str, handle_escape, spaces);
+}
+inline static WordVec split_string(const std::string& str) ATTRIBUTE_NONNULL_;
+inline static WordVec split_string(const std::string& str) {
+	return split_string(str, false);
+}
 
 /** Push back to a vector */
-template<typename T> inline static void push_back(std::vector<T> *v, const T &e) ATTRIBUTE_NONNULL_;
+template<typename T> inline static void push_back(std::vector<T> *v, const T& e) ATTRIBUTE_NONNULL_;
 
 /** Push back (=insert) to a set */
-template<typename T> inline static void push_back(std::set<T> *s, const T &e) ATTRIBUTE_NONNULL_;
+template<typename T> inline static void push_back(std::set<T> *s, const T& e) ATTRIBUTE_NONNULL_;
 
 /** Join a string-vector or string-set
  * @param glue glue between the elements. */
-template<typename T> inline static std::string join_to_string(T vec, const std::string &glue = " ");
+template<typename T> inline static std::string join_to_string(T vec, const std::string& glue);
+template<typename T> inline static std::string join_to_string(T vec) {
+	return join_to_string(vec, " ");
+}
 
 /** Add items from s to the end of d. */
-template<typename T> inline static void push_backs(std::vector<T> *d, const std::vector<T> &s) ATTRIBUTE_NONNULL_;
+template<typename T> inline static void push_backs(std::vector<T> *d, const std::vector<T>& s) ATTRIBUTE_NONNULL_;
 
 /** Join a string-vector.
  * @param glue glue between the elements. */
-void join_to_string(std::string *s, const std::vector<std::string> &vec, const std::string &glue = " ") ATTRIBUTE_NONNULL_;
+void join_to_string(std::string *s, const WordVec& vec, const std::string& glue) ATTRIBUTE_NONNULL_;
+inline static void join_to_string(std::string *s, const WordVec& vec) ATTRIBUTE_NONNULL_;
+inline static void join_to_string(std::string *s, const WordVec& vec) {
+	join_to_string(s, vec, " ");
+}
 
 /** Join a string-set
  * @param glue glue between the elements. */
-void join_to_string(std::string *s, const std::set<std::string> &vec, const std::string &glue = " ") ATTRIBUTE_NONNULL_;
+void join_to_string(std::string *s, const WordSet& vec, const std::string& glue) ATTRIBUTE_NONNULL_;
+inline static void join_to_string(std::string *s, const WordSet& vec) ATTRIBUTE_NONNULL_;
+inline static void join_to_string(std::string *s, const WordSet& vec) {
+	join_to_string(s, vec, " ");
+}
 
 /** Calls split_string() with a vector and then join_to_string().
  * @param source string to split
  * @param dest   result. May be identical to source. */
-void split_and_join(std::string *dest, const std::string &source, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true) ATTRIBUTE_NONNULL_;
+void split_and_join(std::string *dest, const std::string& source, const std::string& glue, bool handle_escape, const char *at, bool ignore_empty) ATTRIBUTE_NONNULL_;
+inline static void split_and_join(std::string *dest, const std::string& source) ATTRIBUTE_NONNULL_;
+inline static void split_and_join(std::string *dest, const std::string& source) {
+	split_and_join(dest, source, " ", false, spaces, true);
+}
 
 /** Calls split_string() with a vector and then join_to_string().
  * @param source string to split
  * @return result. */
-std::string split_and_join_string(const std::string &source, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true) ATTRIBUTE_NONNULL_;
+std::string split_and_join_string(const std::string& source, const std::string& glue, bool handle_escape, const char *at, bool ignore_empty) ATTRIBUTE_NONNULL_;
+inline static std::string split_and_join_string(const std::string& source) ATTRIBUTE_NONNULL_;
+inline static std::string split_and_join_string(const std::string& source) {
+	return split_and_join_string(source, " ", false, spaces, true);
+}
 
 /** Calls join_to_string() and then split_string() */
-template<typename Td, typename Ts> inline static void join_and_split(Td vec, const Ts &s, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true);
+template<typename Td, typename Ts> inline static void join_and_split(Td vec, const Ts& s, const std::string& glue, bool handle_escape, const char *at, bool ignore_empty);
+template<typename Td, typename Ts> inline static void join_and_split(Td vec, const Ts& s) {
+	join_and_split(vec, s, " ", false, spaces, true);
+}
 
 /** Resolve a vector of -/+ keywords to a set of actually set keywords.
  * @param s will get influenced by the string; it is not cleared in advance!
  * @param warnignore       List of keywords for which -keywords might apply
  * @return true            if there was -keyword which did not apply for */
-bool resolve_plus_minus(std::set<std::string> *s, const std::vector<std::string> &l, const std::set<std::string> *warnignore = NULLPTR) ATTRIBUTE_NONNULL((1));
+bool resolve_plus_minus(WordSet *s, const WordVec& l, const WordSet *warnignore) ATTRIBUTE_NONNULL((1));
+inline static bool resolve_plus_minus(WordSet *s, const WordVec& l) ATTRIBUTE_NONNULL_;
+inline static bool resolve_plus_minus(WordSet *s, const WordVec& l) {
+	return resolve_plus_minus(s, l, NULLPTR);
+}
 
 /** Resolve a string of -/+ keywords to a set of actually set keywords */
-bool resolve_plus_minus(std::set<std::string> *s, const std::string &str, const std::set<std::string> *warnignore = NULLPTR) ATTRIBUTE_NONNULL((1));
+bool resolve_plus_minus(WordSet *s, const std::string& str, const WordSet *warnignore) ATTRIBUTE_NONNULL((1));
+inline static bool resolve_plus_minus(WordSet *s, const std::string& str) ATTRIBUTE_NONNULL_;
+inline static bool resolve_plus_minus(WordSet *s, const std::string& str) {
+	return resolve_plus_minus(s, str, NULLPTR);
+}
 
 /** Insert a whole vector to a set. */
-template<typename T> inline static void insert_list(std::set<T> *the_set, const std::vector<T> &the_list) ATTRIBUTE_NONNULL_;
+template<typename T> inline static void insert_list(std::set<T> *the_set, const std::vector<T>& the_list) ATTRIBUTE_NONNULL_;
 
 /** Make a set from a vector. */
-template<typename T> inline static void make_set(std::set<T> *the_set, const std::vector<T> &the_list) ATTRIBUTE_NONNULL_;
+template<typename T> inline static void make_set(std::set<T> *the_set, const std::vector<T>& the_list) ATTRIBUTE_NONNULL_;
 
 /** Make a vector from a set. */
-template<typename T> inline static void make_vector(std::vector<T> *the_list, const std::set<T> &the_set) ATTRIBUTE_NONNULL_;
+template<typename T> inline static void make_vector(std::vector<T> *the_list, const std::set<T>& the_set) ATTRIBUTE_NONNULL_;
 
 /** Match str against a null-terminated list of patterns */
 bool match_list(const char **str_list, const char *str);
@@ -205,22 +283,26 @@ bool match_list(const char **str_list, const char *str);
 bool caseequal(const char *str, const char *pattern) ATTRIBUTE_NONNULL_;
 
 /** Match str against a lowercase pattern case-insensitively */
-inline static bool caseequal(const std::string &str, const char *pattern) ATTRIBUTE_NONNULL_;
-inline static bool caseequal(const std::string &str, const char *pattern)
-{ return caseequal(str.c_str(), pattern); }
+inline static bool caseequal(const std::string& str, const char *pattern) ATTRIBUTE_NONNULL_;
+inline static bool caseequal(const std::string& str, const char *pattern) {
+	return caseequal(str.c_str(), pattern);
+}
 
 /** Check whether str contains a nonempty lowercase pattern case-insensitively */
 bool casecontains(const char *str, const char *pattern) ATTRIBUTE_NONNULL_;
 
 /** Check whether str contains a nonempty lowercase pattern case-insensitively */
-inline static bool casecontains(const std::string &str, const char *pattern) ATTRIBUTE_NONNULL_;
-inline static bool casecontains(const std::string &str, const char *pattern) {
+inline static bool casecontains(const std::string& str, const char *pattern) ATTRIBUTE_NONNULL_;
+inline static bool casecontains(const std::string& str, const char *pattern) {
 	return casecontains(str.c_str(), pattern);
 }
 
-class StringHash : public std::vector<std::string> {
+class StringHash : public WordVec {
 	public:
-		explicit StringHash(bool will_hash = true) : hashing(will_hash), finalized(false) {
+		StringHash() : hashing(true), finalized(false) {
+		}
+
+		explicit StringHash(bool will_hash) : hashing(will_hash), finalized(false) {
 		}
 
 		void init(bool will_hash) {
@@ -232,19 +314,19 @@ class StringHash : public std::vector<std::string> {
 
 		void finalize();
 
-		void store_string(const std::string &s);
-		void store_words(const std::vector<std::string> &v);
-		void store_words(const std::string &s) {
+		void store_string(const std::string& s);
+		void store_words(const WordVec& v);
+		void store_words(const std::string& s) {
+			store_words(split_string(s));
+		}
+
+		void hash_string(const std::string& s);
+		void hash_words(const WordVec& v);
+		void hash_words(const std::string& s) {
 			hash_words(split_string(s));
 		}
 
-		void hash_string(const std::string &s);
-		void hash_words(const std::vector<std::string> &v);
-		void hash_words(const std::string &s) {
-			hash_words(split_string(s));
-		}
-
-		StringHash::size_type get_index(const std::string &s) const;
+		StringHash::size_type get_index(const std::string& s) const;
 
 		void output() const;
 		void output_depends() const;
@@ -253,7 +335,8 @@ class StringHash : public std::vector<std::string> {
 
 	private:
 		bool hashing, finalized;
-		std::map<std::string, StringHash::size_type> str_map;
+		typedef std::map<std::string, StringHash::size_type> StrSizeMap;
+		StrSizeMap str_map;
 		static StringHash *comparison_this;
 		static bool frequency_comparison(const std::string a, const std::string b);
 };
@@ -261,44 +344,48 @@ class StringHash : public std::vector<std::string> {
 // Implementation of the templates:
 
 /** Push back to a vector */
-template<typename T> inline static void push_back(std::vector<T> *v, const T &e) { v->push_back(e); }
+template<typename T> inline static void push_back(std::vector<T> *v, const T& e) {
+	v->push_back(e);
+}
 
 /** Push back (=insert) to a set */
-template<typename T> inline static void push_back(std::set<T> *s, const T &e) { s->insert(e); }
+template<typename T> inline static void push_back(std::set<T> *s, const T& e) {
+	s->insert(e);
+}
 
 /** Join a string-vector or string-set
  * @param glue glue between the elements. */
-template<typename T> inline static std::string join_to_string(T vec, const std::string &glue) {
+template<typename T> inline static std::string join_to_string(T vec, const std::string& glue) {
 	std::string ret;
 	join_to_string(&ret, vec, glue);
 	return ret;
 }
 
 /** Calls join_to_string() and then split_string() */
-template<typename Td, typename Ts> inline static void join_and_split(Td vec, const Ts &s, const std::string &glue, const bool handle_escape, const char *at, const bool ignore_empty) {
+template<typename Td, typename Ts> inline static void join_and_split(Td vec, const Ts& s, const std::string& glue, bool handle_escape, const char *at, bool ignore_empty) {
 	std::string t;
 	join_to_string(&t, s, glue);
 	split_string(vec, t, handle_escape, at, ignore_empty);
 }
 
 /** Add items from s to the end of d. */
-template<typename T> inline static void push_backs(std::vector<T> *d, const std::vector<T> &s) {
+template<typename T> inline static void push_backs(std::vector<T> *d, const std::vector<T>& s) {
 	d->insert(d->end(), s.begin(), s.end());
 }
 
 /** Insert a whole vector to a set. */
-template<typename T> inline static void insert_list(std::set<T> *the_set, const std::vector<T> &the_list) {
+template<typename T> inline static void insert_list(std::set<T> *the_set, const std::vector<T>& the_list) {
 	the_set->insert(the_list.begin(), the_list.end());
 }
 
 /** Make a set from a vector. */
-template<typename T> inline static void make_set(std::set<T> *the_set, const std::vector<T> &the_list) {
+template<typename T> inline static void make_set(std::set<T> *the_set, const std::vector<T>& the_list) {
 	the_set->clear();
 	insert_list(the_set, the_list);
 }
 
 /** Make a vector from a set. */
-template<typename T> inline static void make_vector(std::vector<T> *the_list, const std::set<T> &the_set) {
+template<typename T> inline static void make_vector(std::vector<T> *the_list, const std::set<T>& the_set) {
 	the_list->clear();
 	for(typename std::set<T>::const_iterator it(the_set.begin()),
 			it_end(the_set.end());
@@ -308,7 +395,7 @@ template<typename T> inline static void make_vector(std::vector<T> *the_list, co
 }
 
 /** Make a vector from map->first */
-template<typename T, typename Y> inline static void make_vector(std::vector<T> *the_list, const std::map<T, Y> &the_map) {
+template<typename T, typename Y> inline static void make_vector(std::vector<T> *the_list, const std::map<T, Y>& the_map) {
 	the_list->clear();
 	for(typename std::map<T, Y>::const_iterator it(the_map.begin()),
 			it_end(the_map.end());

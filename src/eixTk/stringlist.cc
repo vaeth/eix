@@ -8,22 +8,19 @@
 #include <config.h>
 
 #include <string>
-#include <vector>
 
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringlist.h"
-
-using std::string;
-using std::vector;
+#include "eixTk/stringtypes.h"
 
 void StringListContent::finalize() {
 	if(likely(m_list.empty())) {
 		return;
 	}
 	if(unlikely(m_list[0].empty()) || unlikely(m_list[m_list.size() - 1].empty())) {
-		vector<string> cp;
-		vector<string>::const_iterator it(m_list.begin());
+		WordVec cp;
+		WordVec::const_iterator it(m_list.begin());
 		while(unlikely(it->empty())) {
 			if(unlikely((++it) == m_list.end())) {
 				m_list.clear();
@@ -31,7 +28,7 @@ void StringListContent::finalize() {
 			}
 		}
 		for(; likely(it != m_list.end()); ++it) {
-			for(vector<string>::const_iterator r(it); unlikely(r->empty()); ) {
+			for(WordVec::const_iterator r(it); unlikely(r->empty()); ) {
 				if(unlikely((++r) == m_list.end())) {
 					m_list = cp;
 					return;
@@ -44,7 +41,7 @@ void StringListContent::finalize() {
 }
 
 #ifdef STRINGLIST_FREE
-StringList& StringList::operator=(const StringList &s) {
+StringList& StringList::operator=(const StringList& s) {
 	ptr = s.ptr;
 	if(ptr != NULLPTR) {
 		++(ptr->usage);
@@ -71,7 +68,7 @@ void StringList::finalize() {
 	}
 }
 
-void StringList::push_back(const std::string &s) {
+void StringList::push_back(const std::string& s) {
 	if(ptr == NULLPTR) {
 		ptr = new StringListContent;
 #ifdef STRINGLIST_FREE

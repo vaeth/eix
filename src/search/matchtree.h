@@ -24,7 +24,10 @@ class MatchAtom {
 		bool m_negate;
 
 	public:
-		explicit MatchAtom(bool negate = false) : m_negate(negate) {
+		explicit MatchAtom() : m_negate(false) {
+		}
+
+		explicit MatchAtom(bool negate) : m_negate(negate) {
 		}
 
 		/// Virtual deconstructor

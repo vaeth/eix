@@ -55,7 +55,7 @@ using std::cout;
 using std::endl;
 
 static void load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps) ATTRIBUTE_NONNULL_;
-static void set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix_virtual) ATTRIBUTE_NONNULL_;
+static void set_virtual(PrintFormat *fmt, const DBHeader& header, const string& eprefix_virtual) ATTRIBUTE_NONNULL_;
 static void print_changed_package(Package *op, Package *np) ATTRIBUTE_NONNULL_;
 static void print_found_package(Package *p) ATTRIBUTE_NONNULL_;
 static void print_lost_package(Package *p) ATTRIBUTE_NONNULL_;
@@ -155,7 +155,7 @@ static void load_db(const char *file, DBHeader *header, PackageTree *body, Porta
 	exit(EXIT_FAILURE);
 }
 
-static void set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix_virtual) {
+static void set_virtual(PrintFormat *fmt, const DBHeader& header, const string& eprefix_virtual) {
 	if(header.countOverlays() == 0) {
 		return;
 	}
@@ -280,7 +280,7 @@ int run_eix_diff(int argc, char *argv[]) {
 
 	string old_file, new_file;
 
-	EixRc &rc(get_eixrc(DIFF_VARS_PREFIX));
+	EixRc& rc(get_eixrc(DIFF_VARS_PREFIX));
 	drop_permissions(&rc);
 
 	Depend::use_depend = rc.getBool("DEP");

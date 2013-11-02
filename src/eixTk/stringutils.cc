@@ -23,8 +23,6 @@
 
 #include <algorithm>
 #include <iostream>
-#include <map>
-#include <set>
 #include <string>
 #include <vector>
 
@@ -33,10 +31,9 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 
-using std::map;
-using std::set;
 using std::string;
 using std::vector;
 
@@ -53,9 +50,9 @@ StringHash *StringHash::comparison_this;
 std::locale localeC("C");
 
 static void erase_escapes(string *s, const char *at) ATTRIBUTE_NONNULL_;
-template<typename S, typename T> inline static S calc_table_pos(const vector<S> &table, S pos, const T *pattern, T c) ATTRIBUTE_PURE ATTRIBUTE_NONNULL_;
-template<typename T> inline static void split_string_template(T *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty) ATTRIBUTE_NONNULL_;
-template<typename T> inline static void join_to_string_template(string *s, const T &vec, const string &glue) ATTRIBUTE_NONNULL_;
+template<typename S, typename T> inline static S calc_table_pos(const vector<S>& table, S pos, const T *pattern, T c) ATTRIBUTE_PURE ATTRIBUTE_NONNULL_;
+template<typename T> inline static void split_string_template(T *vec, const string& str, bool handle_escape, const char *at, bool ignore_empty) ATTRIBUTE_NONNULL_;
+template<typename T> inline static void join_to_string_template(string *s, const T& vec, const string& glue) ATTRIBUTE_NONNULL_;
 
 #ifndef HAVE_STRNDUP
 /* If we don't have strndup, we use our own ..
@@ -167,7 +164,7 @@ bool slot_subslot(string *slot, string *subslot) {
 
 /** Split full to slot and subslot. Also turn slot "0" into nothing
  * @return true if subslot exists */
-bool slot_subslot(const string &full, string *slot, string *subslot) {
+bool slot_subslot(const string& full, string *slot, string *subslot) {
 	string::size_type sep(full.find('/'));
 	if(sep == string::npos) {
 		if(full != "0") {
@@ -232,7 +229,7 @@ GCC_DIAG_ON(sign-conversion)
 	return out;
 }
 
-string to_lower(const string &str) {
+string to_lower(const string& str) {
 	string::size_type s(str.size());
 	string res;
 	for(string::size_type c(0); c != s; ++c) {
@@ -290,7 +287,7 @@ static void erase_escapes(string *s, const char *at) {
 	}
 }
 
-template<typename T> inline static void split_string_template(T *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty) {
+template<typename T> inline static void split_string_template(T *vec, const string& str, bool handle_escape, const char *at, bool ignore_empty) {
 	string::size_type last_pos(0), pos(0);
 	while((pos = str.find_first_of(at, pos)) != string::npos) {
 		if(unlikely(handle_escape)) {
@@ -324,16 +321,16 @@ template<typename T> inline static void split_string_template(T *vec, const stri
 	}
 }
 
-void split_string(vector<string> *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty) {
-	split_string_template< vector<string> >(vec, str, handle_escape, at, ignore_empty);
+void split_string(WordVec *vec, const string& str, bool handle_escape, const char *at, bool ignore_empty) {
+	split_string_template<WordVec>(vec, str, handle_escape, at, ignore_empty);
 }
 
-void split_string(set<string> *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty) {
-	split_string_template< set<string> >(vec, str, handle_escape, at, ignore_empty);
+void split_string(WordSet *vec, const string& str, bool handle_escape, const char *at, bool ignore_empty) {
+	split_string_template<WordSet>(vec, str, handle_escape, at, ignore_empty);
 }
 
-vector<string> split_string(const string &str, const bool handle_escape, const char *at, const bool ignore_empty) {
-	std::vector<std::string> vec;
+WordVec split_string(const string& str, bool handle_escape, const char *at, bool ignore_empty) {
+	WordVec vec;
 	split_string(&vec, str, handle_escape, at, ignore_empty);
 	return vec;
 }
@@ -341,8 +338,8 @@ vector<string> split_string(const string &str, const bool handle_escape, const c
 /** Calls split_string() with a vector and then join_to_string().
  * @param source string to split
  * @param dest   result. May be identical to source. */
-void split_and_join(string *dest, const string &source, const string &glue, const bool handle_escape, const char *at, const bool ignore_empty) {
-	vector<string> vec;
+void split_and_join(string *dest, const string& source, const string& glue, bool handle_escape, const char *at, bool ignore_empty) {
+	WordVec vec;
 	split_string(&vec, source, handle_escape, at, ignore_empty);
 	join_to_string(dest, vec, glue);
 }
@@ -350,20 +347,20 @@ void split_and_join(string *dest, const string &source, const string &glue, cons
 /** Calls split_string() with a vector and then join_to_string().
  * @param source string to split
  * @return result. */
-string split_and_join_string(const string &source, const string &glue, const bool handle_escape, const char *at, const bool ignore_empty) {
+string split_and_join_string(const string& source, const string& glue, bool handle_escape, const char *at, bool ignore_empty) {
 	string r;
 	split_and_join(&r, source, glue, handle_escape, at, ignore_empty);
 	return r;
 }
 
 /** Resolve a string of -/+ keywords to a set of actually set keywords */
-bool resolve_plus_minus(set<string> *s, const string &str, const set<string> *warnignore) {
-	vector<string> l;
+bool resolve_plus_minus(WordSet *s, const string& str, const WordSet *warnignore) {
+	WordVec l;
 	split_string(&l, str);
 	return resolve_plus_minus(s, l, warnignore);
 }
 
-template<typename T> inline static void join_to_string_template(string *s, const T &vec, const string &glue) {
+template<typename T> inline static void join_to_string_template(string *s, const T& vec, const string& glue) {
 	for(typename T::const_iterator it(vec.begin()); likely(it != vec.end()); ++it) {
 		if(likely(!s->empty())) {
 			s->append(glue);
@@ -372,13 +369,17 @@ template<typename T> inline static void join_to_string_template(string *s, const
 	}
 }
 
-void join_to_string(string *s, const vector<string> &vec, const string &glue) { join_to_string_template< vector<string> >(s, vec, glue); }
+void join_to_string(string *s, const WordVec& vec, const string& glue) {
+	join_to_string_template<WordVec>(s, vec, glue);
+}
 
-void join_to_string(string *s, const set<string> &vec, const string &glue) { join_to_string_template< set<string> >(s, vec, glue); }
+void join_to_string(string *s, const WordSet& vec, const string& glue) {
+	join_to_string_template<WordSet>(s, vec, glue);
+}
 
-bool resolve_plus_minus(set<string> *s, const vector<string> &l, const set<string> *warnignore) {
+bool resolve_plus_minus(WordSet *s, const WordVec& l, const WordSet *warnignore) {
 	bool minuskeyword(false);
-	for(vector<string>::const_iterator it(l.begin()); likely(it != l.end()); ++it) {
+	for(WordVec::const_iterator it(l.begin()); likely(it != l.end()); ++it) {
 		if(unlikely(it->empty())) {
 			continue;
 		}
@@ -394,9 +395,9 @@ bool resolve_plus_minus(set<string> *s, const vector<string> &l, const set<strin
 				continue;
 			}
 			if(*it == "-~*") {
-				vector<string> v;
+				WordVec v;
 				make_vector(&v, *s);
-				for(vector<string>::iterator i(v.begin());
+				for(WordVec::const_iterator i(v.begin());
 					unlikely(i != v.end()); ++i) {
 					if((i->size() >=2) && ((*i)[0] == '~')) {
 						s->erase(*i);
@@ -420,7 +421,7 @@ bool resolve_plus_minus(set<string> *s, const vector<string> &l, const set<strin
 	return minuskeyword;
 }
 
-void StringHash::store_string(const string &s) {
+void StringHash::store_string(const string& s) {
 	if(finalized) {
 		fprintf(stderr, _("Internal error: Storing required after finalizing"));
 		exit(EXIT_FAILURE);
@@ -428,7 +429,7 @@ void StringHash::store_string(const string &s) {
 	push_back(s);
 }
 
-void StringHash::hash_string(const string &s) {
+void StringHash::hash_string(const string& s) {
 	if(finalized) {
 		fprintf(stderr, _("Internal error: Hashing required after finalizing"));
 		exit(EXIT_FAILURE);
@@ -438,7 +439,7 @@ void StringHash::hash_string(const string &s) {
 		exit(EXIT_FAILURE);
 	}
 	// During hashing, we use str_map as a frequency counter to optimize
-	map<string, StringHash::size_type>::iterator i(str_map.find(s));
+	StrSizeMap::iterator i(str_map.find(s));
 	if(i != str_map.end()) {
 		++(i->second);
 	} else {
@@ -446,23 +447,24 @@ void StringHash::hash_string(const string &s) {
 	}
 }
 
-void StringHash::store_words(const vector<string> &v) {
-	for(vector<string>::const_iterator i(v.begin()); likely(i != v.end()); ++i) {
+void StringHash::store_words(const WordVec& v) {
+	for(WordVec::const_iterator i(v.begin()); likely(i != v.end()); ++i) {
 		store_string(*i);
 	}
 }
 
-void StringHash::hash_words(const vector<string> &v) {
-	for(vector<string>::const_iterator i(v.begin()); likely(i != v.end()); ++i)
+void StringHash::hash_words(const WordVec& v) {
+	for(WordVec::const_iterator i(v.begin()); likely(i != v.end()); ++i) {
 		hash_string(*i);
+	}
 }
 
-StringHash::size_type StringHash::get_index(const string &s) const {
+StringHash::size_type StringHash::get_index(const string& s) const {
 	if(!finalized) {
 		cerr << _("Internal error: Index required before sorting.") << endl;
 		exit(EXIT_FAILURE);
 	}
-	map<string, StringHash::size_type>::const_iterator i(str_map.find(s));
+	StrSizeMap::const_iterator i(str_map.find(s));
 	if(i == str_map.end()) {
 		cerr << _("Internal error: Trying to shortcut non-hashed string.") << endl;
 		exit(EXIT_FAILURE);
@@ -475,18 +477,18 @@ const string& StringHash::operator[](StringHash::size_type i) const {
 		cerr << _("Database corrupt: Nonexistent hash required");
 		exit(EXIT_FAILURE);
 	}
-	return vector<string>::operator[](i);
+	return WordVec::operator[](i);
 }
 
 void StringHash::output() const {
-	for(vector<string>::const_iterator i(begin()); likely(i != end()); ++i) {
+	for(WordVec::const_iterator i(begin()); likely(i != end()); ++i) {
 		cout << *i << "\n";
 	}
 }
 
 void StringHash::output_depends() const {
-	set<string> out;
-	for(vector<string>::const_iterator i(begin()); likely(i != end()); ++i) {
+	WordSet out;
+	for(WordVec::const_iterator i(begin()); likely(i != end()); ++i) {
 		string::size_type q(i->find('"'));
 		if(q == string::npos) {
 			out.insert(*i);
@@ -503,7 +505,7 @@ void StringHash::output_depends() const {
 			out.insert(string(*i, q));
 		}
 	}
-	for(set<string>::const_iterator i(out.begin()); likely(i != out.end()); ++i) {
+	for(WordSet::const_iterator i(out.begin()); likely(i != out.end()); ++i) {
 		cout << *i << "\n";
 	}
 }
@@ -562,7 +564,7 @@ bool caseequal(const char *str, const char *pattern) {
 }
 
 /** Subroutine for Knuth-Morris-Pratt algorithm */
-template<typename S, typename T> inline static S calc_table_pos(const vector<S> &table, S pos, const T *pattern, T c) {
+template<typename S, typename T> inline static S calc_table_pos(const vector<S>& table, S pos, const T *pattern, T c) {
 	while(pattern[pos] != c) {
 		if(pos == 0) {
 			return 0;
@@ -575,10 +577,11 @@ template<typename S, typename T> inline static S calc_table_pos(const vector<S> 
 /** Check whether str contains a nonempty lowercase pattern case-insensitively */
 bool casecontains(const char *str, const char *pattern) {
 	// Knuth-Morris-Pratt algorithm
-	string::size_type l(strlen(pattern));
-	vector<string::size_type> table(l, 0);
-	string::size_type pos(0);
-	for(string::size_type i(1); likely(i < l); ++i) {
+	typedef string::size_type IndexType;
+	IndexType l(strlen(pattern));
+	vector<IndexType> table(l, 0);
+	IndexType pos(0);
+	for(IndexType i(1); likely(i < l); ++i) {
 		pos = table[i] = calc_table_pos(table, pos, pattern, pattern[i]);
 	}
 	pos = 0;

@@ -19,12 +19,15 @@ class PackageTree;
 class TrueIndex;
 
 class SqliteCache : public BasicCache {
-	friend int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);
+		friend int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);
+
+	public:  // actually private, but this is too clumsy...
+		typedef std::vector<int> TrueIndexMap;
 
 	private:
 		bool never_add_categories;
 		void sqlite_callback_cpp(int argc, const char **argv, const char **azColName) ATTRIBUTE_NONNULL((4));
-		std::vector<int> trueindex;
+		TrueIndexMap trueindex;
 		int maxindex;
 
 		/** This variable is actually the this-parameter for our sqlite_callback function.
@@ -39,7 +42,10 @@ class SqliteCache : public BasicCache {
 		static TrueIndex *true_index;
 
 	public:
-		explicit SqliteCache(bool add_categories = false) : BasicCache(), never_add_categories(!add_categories) {
+		explicit SqliteCache() : BasicCache(), never_add_categories(true) {
+		}
+
+		explicit SqliteCache(bool add_categories) : BasicCache(), never_add_categories(!add_categories) {
 		}
 
 		bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL {

@@ -40,7 +40,7 @@ const DBHeader::DBVersion DBHeader::accept[] = { DBHeader::current, 32, 31, 0 };
 const char *DBHeader::magic = "eix\n";
 
 /** Get overlay for key from table. */
-const OverlayIdent &DBHeader::getOverlay(ExtendedVersion::Overlay key) const {
+const OverlayIdent& DBHeader::getOverlay(ExtendedVersion::Overlay key) const {
 	static const OverlayIdent *not_found = NULLPTR;
 	if(key > countOverlays()) {
 		if(unlikely(not_found == NULLPTR)) {
@@ -58,11 +58,13 @@ ExtendedVersion::Overlay DBHeader::addOverlay(const OverlayIdent& overlay) {
 }
 
 bool DBHeader::find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const {
-	if(unlikely(minimal > countOverlays()))
+	if(unlikely(minimal > countOverlays())) {
 		return false;
+	}
 	if(*name == '\0') {
-		if(countOverlays() == 1)
+		if(countOverlays() == 1) {
 			return false;
+		}
 		*num = (minimal != 0) ? minimal : 1;
 		return true;
 	}
@@ -85,8 +87,9 @@ bool DBHeader::find_overlay(ExtendedVersion::Overlay *num, const char *name, con
 		}
 		for(ExtendedVersion::Overlay i(minimal); i != countOverlays(); ++i) {
 			if(same_filenames(name, getOverlay(i).path.c_str(), true)) {
-				if((i == 0) && ((testmode & OVTEST_SAVED_PORTDIR) == OVTEST_NONE))
+				if((i == 0) && ((testmode & OVTEST_SAVED_PORTDIR) == OVTEST_NONE)) {
 					continue;
+				}
 				*num = i;
 				return true;
 			}
@@ -96,13 +99,16 @@ bool DBHeader::find_overlay(ExtendedVersion::Overlay *num, const char *name, con
 		return false;
 	// Is name a number?
 	ExtendedVersion::Overlay number;
-	if(!is_numeric(name))
+	if(!is_numeric(name)) {
 		return false;
+	}
 	number = my_atoi(name);
-	if(number >= countOverlays())
+	if(number >= countOverlays()) {
 		return false;
-	if(number < minimal)
+	}
+	if(number < minimal) {
 		return false;
+	}
 	*num = number;
 	return true;
 }

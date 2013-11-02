@@ -11,31 +11,30 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
 
 #include "eixTk/diagnostics.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/outputstring.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 
 using std::string;
-using std::vector;
 
 using std::cout;
 
-bool OutputString::is_equal(const OutputString &t) const {
+bool OutputString::is_equal(const OutputString& t) const {
 	return ((m_string == t.m_string) && likely(m_insert == t.m_insert));
 }
 
-void OutputString::assign(const OutputString &s) {
+void OutputString::assign(const OutputString& s) {
 	m_string.assign(s.m_string);
 	m_size = s.m_size;
 	m_insert = s.m_insert;
 	absolute = s.absolute;
 }
 
-void OutputString::assign_fast(const string &t) {
+void OutputString::assign_fast(const string& t) {
 	m_string.assign(t);
 	m_size = t.size();
 	absolute = false;
@@ -56,14 +55,14 @@ void OutputString::assign_fast(char s) {
 	m_insert.clear();
 }
 
-void OutputString::assign(const string &t, string::size_type s) {
+void OutputString::assign(const string& t, string::size_type s) {
 	m_string.assign(t);
 	m_size = s;
 	absolute = false;
 	m_insert.clear();
 }
 
-void OutputString::assign_smart(const string &t) {
+void OutputString::assign_smart(const string& t) {
 	m_string.assign(t);
 	m_insert.clear();
 	append_internal(t);
@@ -158,7 +157,7 @@ void OutputString::append_smart(char s) {
 	}
 }
 
-void OutputString::append_internal(const string &t, string::size_type ts, string::size_type s, bool a) {
+void OutputString::append_internal(const string& t, string::size_type ts, string::size_type s, bool a) {
 	string::size_type lastpos(0);
 	for(string::size_type currpos;
 		unlikely((currpos = t.find_first_of("\a\b\n\r\t", lastpos)) != string::npos);
@@ -190,7 +189,7 @@ void OutputString::append_internal(const string &t, string::size_type ts, string
 	absolute = a;
 }
 
-void OutputString::append_fast(const string &t) {
+void OutputString::append_fast(const string& t) {
 	m_string.append(t);
 	m_size += t.size();
 }
@@ -201,17 +200,17 @@ void OutputString::append_fast(const char *s) {
 	m_size += (m_string.size() - old);
 }
 
-void OutputString::append(const string &t, string::size_type s) {
+void OutputString::append(const string& t, string::size_type s) {
 	m_string.append(t);
 	m_size += s;
 }
 
-void OutputString::append_smart(const string &t) {
+void OutputString::append_smart(const string& t) {
 	append_internal(t, t.size(), m_size, absolute);
 	m_string.append(t);
 }
 
-void OutputString::append(const OutputString &a) {
+void OutputString::append(const OutputString& a) {
 	if(a.empty()) {
 		return;
 	}
@@ -222,7 +221,7 @@ void OutputString::append(const OutputString &a) {
 		a.print(&m_string, &m_size);
 		return;
 	} else {
-		for(vector<string::size_type>::const_iterator it(a.m_insert.begin());
+		for(InsertType::const_iterator it(a.m_insert.begin());
 			unlikely(it != a.m_insert.end()); ++it) {
 			m_insert.push_back((*it) + m_string.size());
 			m_insert.push_back((*(++it)) + m_size);
@@ -233,22 +232,22 @@ void OutputString::append(const OutputString &a) {
 	m_string.append(a.m_string);
 }
 
-void OutputString::print(std::string *dest, std::string::size_type *s) const {
-	std::string::size_type inserted(0);
+void OutputString::print(std::string *dest, WordSize *s) const {
+	WordSize inserted(0);
 	if(likely(m_insert.empty())) {
 		dest->append(m_string);
 	} else {
-		std::string::size_type r(0);
-		std::string::size_type curr(*s);
-		for(vector<string::size_type>::const_iterator it(m_insert.begin());
+		WordSize r(0);
+		WordSize curr(*s);
+		for(InsertType::const_iterator it(m_insert.begin());
 			unlikely(it != m_insert.end()); ++it) {
 			if(*it > r) {
 				dest->append(m_string, r, (*it) - r);
 				r = *it;
 			}
 			curr += *(++it);
-			std::string::size_type aim(*(++it));
-			std::string::size_type d;
+			WordSize aim(*(++it));
+			WordSize d;
 			if(aim  == 0) {  // tab
 				d = 8 - (curr % 8);
 				curr += d;
@@ -269,7 +268,7 @@ void OutputString::print(std::string *dest, std::string::size_type *s) const {
 	}
 }
 
-void OutputString::print(std::string::size_type *s) const {
+void OutputString::print(WordSize *s) const {
 	string d;
 	print(&d, s);
 	cout << d;

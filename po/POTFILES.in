@@ -81,6 +81,7 @@ src/eixTk/statusline.h
 src/eixTk/stringlist.cc
 src/eixTk/stringlist.h
 src/eixTk/stringlist_output.cc
+src/eixTk/stringtypes.h
 src/eixTk/stringutils.cc
 src/eixTk/stringutils.h
 src/eixTk/sysutils.cc
@@ -143,6 +144,7 @@ src/portage/overlay.h
 src/portage/package.cc
 src/portage/package.h
 src/portage/package_best.cc
+src/portage/packagesets.cc
 src/portage/packagesets.h
 src/portage/packagetree.cc
 src/portage/packagetree.h

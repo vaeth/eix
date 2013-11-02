@@ -19,22 +19,19 @@
 
 #include <algorithm>
 #include <fstream>
-#include <map>
 #include <string>
-#include <vector>
 
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/utils.h"
 #include "eixrc/global.h"
 
-using std::map;
 using std::string;
-using std::vector;
 
 class Directory {
 	private:
@@ -59,10 +56,10 @@ class Directory {
 		}
 };
 
-static bool pushback_lines_file(const char *file, vector<string> *v, bool keep_empty, eix::SignedBool keep_comments, string *errtext) ATTRIBUTE_NONNULL((1, 2));
+static bool pushback_lines_file(const char *file, WordVec *v, bool keep_empty, eix::SignedBool keep_comments, string *errtext) ATTRIBUTE_NONNULL((1, 2));
 static int pushback_files_selector(SCANDIR_ARG3 dir_entry);
 
-bool scandir_cc(const string &dir, vector<string> *namelist, select_dirent select, bool sorted) {
+bool scandir_cc(const string& dir, WordVec *namelist, select_dirent select, bool sorted) {
 	namelist->clear(); {
 		Directory my_dir;
 		if(!my_dir.opendirectory(dir.c_str())) {
@@ -84,7 +81,7 @@ bool scandir_cc(const string &dir, vector<string> *namelist, select_dirent selec
 }
 
 /** push_back every line of file into v. */
-static bool pushback_lines_file(const char *file, vector<string> *v, bool keep_empty, eix::SignedBool keep_comments, string *errtext) {
+static bool pushback_lines_file(const char *file, LineVec *v, bool keep_empty, eix::SignedBool keep_comments, string *errtext) {
 	string line;
 	std::ifstream ifstr(file);
 	if(!ifstr.is_open()) {
@@ -122,14 +119,14 @@ static bool pushback_lines_file(const char *file, vector<string> *v, bool keep_e
 const char *pushback_lines_exclude[] = { "..", ".", "CVS", "RCS", "SCCS", NULLPTR };
 
 /** push_back every line of file or dir into v. */
-bool pushback_lines(const char *file, vector<string> *v, bool recursive, bool keep_empty, eix::SignedBool keep_comments, string *errtext) {
+bool pushback_lines(const char *file, LineVec *v, bool recursive, bool keep_empty, eix::SignedBool keep_comments, string *errtext) {
 	static int depth(0);
-	vector<string> files;
+	WordVec files;
 	string dir(file);
 	dir.append(1, '/');
 	if(recursive && pushback_files(dir, &files, pushback_lines_exclude, 3)) {
 		bool rvalue(true);
-		for(vector<string>::iterator it(files.begin());
+		for(WordVec::const_iterator it(files.begin());
 			likely(it != files.end()); ++it) {
 			++depth;
 			if (depth == 100) {
@@ -205,24 +202,24 @@ static int pushback_files_selector(SCANDIR_ARG3 dir_entry) {
  * Pushed names of file in directory into string-vector if the don't match any
  * char * in given exlude list.
  * @param dir_path Path to directory
- * @param into pointer to vector of strings .. files get append here (with full path)
+ * @param into pointer to WordVec .. files get append here (with full path)
  * @param exclude list of char * that don't need to be put into vector
  * @param only_type: if 1: consider only ordinary files, if 2: consider only dirs, if 3: consider only files or dirs
  * @param no_hidden ignore hidden files
  * @param full_path return full pathnames
  * @return true if everything is ok */
-bool pushback_files(const string &dir_path, vector<string> *into, const char *exclude[], unsigned char only_type, bool no_hidden, bool full_path) {
+bool pushback_files(const string& dir_path, WordVec *into, const char *exclude[], unsigned char only_type, bool no_hidden, bool full_path) {
 	pushback_files_exclude = exclude;
 	pushback_files_no_hidden = no_hidden;
 	pushback_files_only_type = only_type;
 	if(only_type) {
 		pushback_files_dir_path = &dir_path;
 	}
-	vector<string> namelist;
+	WordVec namelist;
 	if(!scandir_cc(dir_path, &namelist, pushback_files_selector)) {
 		return false;
 	}
-	for(vector<string>::const_iterator it(namelist.begin());
+	for(WordVec::const_iterator it(namelist.begin());
 		likely(it != namelist.end()); ++it) {
 		if(full_path) {
 			into->push_back(dir_path + (*it));
@@ -235,9 +232,9 @@ bool pushback_files(const string &dir_path, vector<string> *into, const char *ex
 
 /** Cycle through map using it, until it is it_end, append all values from it
  * to the value with the same key in append_to. */
-void join_map(map<string, string> *append_to, map<string, string>::iterator it, map<string, string>::iterator it_end) {
+void join_map(WordMap *append_to, WordMap::const_iterator it, WordMap::iterator it_end) {
 	for(; likely(it != it_end); ++it) {
-		string &to((*append_to)[it->first]);
+		string& to((*append_to)[it->first]);
 		if(to.empty()) {
 			to = it->second;
 		} else {

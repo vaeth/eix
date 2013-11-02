@@ -22,15 +22,15 @@ class PercentStatus {
 			init();
 		}
 
-		void init(const std::string &header);
+		void init(const std::string& header);
 
-		void init(const std::string &format, Percentage total);
+		void init(const std::string& format, Percentage total);
 
 		void next();
 
-		void next(const std::string &append_string);
+		void next(const std::string& append_string);
 
-		void finish(const std::string &append_string);
+		void finish(const std::string& append_string);
 
 		void interprint_start();
 

@@ -13,6 +13,6 @@
 
 class BasicCache;
 
-BasicCache *get_cache(const std::string &name, const std::string &appending);
+BasicCache *get_cache(const std::string& name, const std::string& appending);
 
 #endif  // SRC_CACHE_CACHE_MAP_H_

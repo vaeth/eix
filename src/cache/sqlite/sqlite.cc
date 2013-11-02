@@ -21,7 +21,6 @@
 #endif
 #include <map>
 #include <string>
-#include <vector>
 
 #include "cache/sqlite/sqlite.h"
 #include "eixTk/formated.h"
@@ -38,7 +37,6 @@
 
 using std::map;
 using std::string;
-using std::vector;
 
 #ifdef SQLITE_ONLY_DEBUG
 using std::cout;
@@ -95,7 +93,10 @@ int sqlite_callback(void *NotUsed ATTRIBUTE_UNUSED, int argc, char **argv, char 
     the constructor, all functions should be const or static.
 */
 
-class TrueIndex : public map<string, vector<int>::size_type> {
+typedef SqliteCache::TrueIndexMap::size_type TrueIndexRes;
+typedef map<string, TrueIndexRes> TrueIndexMapper;
+
+class TrueIndex : public TrueIndexMapper {
 	public:
 		typedef enum {
 			NAME,
@@ -113,10 +114,10 @@ class TrueIndex : public map<string, vector<int>::size_type> {
 			HDEPEND,
 			LAST
 		} Names;
-		vector<int> default_trueindex;
+		SqliteCache::TrueIndexMap default_trueindex;
 
 	private:
-		void mapinit(int true_index, vector<int>::size_type my_index, const char *s) ATTRIBUTE_NONNULL_ {
+		void mapinit(int true_index, TrueIndexRes my_index, const char *s) ATTRIBUTE_NONNULL_ {
 			(*this)[s] = my_index;
 			default_trueindex[my_index] = true_index;
 		}
@@ -138,32 +139,34 @@ class TrueIndex : public map<string, vector<int>::size_type> {
 			mapinit(18, SLOT,        "SLOT");
 		}
 
-		int calc(int argc, const char **azColName, vector<int> *trueindex) const ATTRIBUTE_NONNULL_ {
+		int calc(int argc, const char **azColName, SqliteCache::TrueIndexMap *trueindex) const ATTRIBUTE_NONNULL_ {
 			*trueindex = default_trueindex;
 			for(int i(0); i < argc; ++i) {
-				map<string, vector<int>::size_type>::const_iterator it(find(azColName[i]));
+				TrueIndexMapper::const_iterator it(find(azColName[i]));
 				if(it != end())
 					(*trueindex)[it->second] = i;
 			}
 			int max_index(-1);
-			for(vector<int>::size_type i(0); likely(i < TrueIndex::LAST); ++i) {
+			for(TrueIndexRes i(0); likely(i < TrueIndex::LAST); ++i) {
 				int curr((*trueindex)[i]);
 				// Shortcut if we have not reached the maximum
-				if(max_index >= curr)
+				if(max_index >= curr) {
 					continue;
+				}
 				// Is the true index out of range?
 				if(argc <= curr) {
 					(*trueindex)[i] = -1;
 					// PROPERTIES is not mandatory
-					if(i == TrueIndex::PROPERTIES)
+					if(i == TrueIndex::PROPERTIES) {
 						continue;
+					}
 				}
 				max_index = curr;
 			}
 			return max_index;
 		}
 
-		static const char *c_str(const char **argv, vector<int> *trueindex, const vector<int>::size_type i) ATTRIBUTE_NONNULL((2)) {
+		static const char *c_str(const char **argv, SqliteCache::TrueIndexMap *trueindex, const TrueIndexRes i) ATTRIBUTE_NONNULL((2)) {
 			int t((*trueindex)[i]);
 			if(t < 0) {
 				return "";
@@ -210,15 +213,17 @@ void SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **
 	// Currently, we do not add non-matching categories with this method.
 	Category *dest_cat;
 	if(unlikely(packagetree == NULLPTR)) {
-		if(cat_name != catarg)
+		if(cat_name != catarg) {
 			return;
+		}
 		dest_cat = category;
 	} else if(never_add_categories) {
 		dest_cat = packagetree->find(catarg);
-		if(unlikely(dest_cat == NULLPTR))
+		if(unlikely(dest_cat == NULLPTR)) {
 			return;
+		}
 	} else {
-		dest_cat =  &((*packagetree)[catarg]);
+		dest_cat = &((*packagetree)[catarg]);
 	}
 	char **aux(ExplodeAtom::split(name_ver.c_str()));
 	if(unlikely(aux == NULLPTR)) {
@@ -229,8 +234,9 @@ void SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **
 	Package *pkg(dest_cat->findPackage(aux[0]));
 
 	/* If none was found create one */
-	if(pkg == NULLPTR)
+	if(pkg == NULLPTR) {
 		pkg = dest_cat->addPackage(catarg, aux[0]);
+	}
 
 	/* Create a new version and add it to package */
 	Version *version(new Version);

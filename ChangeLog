@@ -16,7 +16,11 @@
 	  This fixes http://bugs.gentoo.org/show_bug.cgi?id=455078
 	- Remove --enable-quickcheck (makes no sense without manual distinction
 	  of compilers which was just removed)
-	- Reformat code to pass Google's current cpplint-3.274_p114 with braces
+	- Dump /usr/bin/env shebangs. Thanks to SteveL for convincing me.
+	  Introduce --with{,out}-sh-shebang for overriding if necessary
+	- Code cleanup: Pass Google's current cpplint-3.274_p114 with braces,
+	  avoid default arguments, add more typedefs, put some member
+	  functions into separate file, standard reference syntax Type&
 
 *eix-0.29.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

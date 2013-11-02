@@ -11,7 +11,6 @@
 
 #include <cstdlib>
 
-#include <map>
 #include <string>
 
 #include "cache/base.h"
@@ -21,22 +20,24 @@
 #include "portage/package.h"
 #include "portage/packagetree.h"
 
-using std::map;
 using std::string;
 
-inline static string::size_type revision_index(const string &ver) {
+inline static string::size_type revision_index(const string& ver) {
 	string::size_type i(ver.rfind("-r"));
-	if(i == string::npos)
+	if(i == string::npos) {
 		return string::npos;
-	if (ver.find_first_not_of("0123456789", i + 2) == string::npos)
+	}
+	if(ver.find_first_not_of("0123456789", i + 2) == string::npos) {
 		return i;
+	}
 	return string::npos;
 }
 
-void BasicCache::setScheme(const char *prefix, const char *prefixport, const std::string &scheme) {
+void BasicCache::setScheme(const char *prefix, const char *prefixport, const std::string& scheme) {
 	m_scheme = scheme;
-	if(use_prefixport())
+	if(use_prefixport()) {
 		prefix = prefixport;
+	}
 	if(prefix != NULLPTR) {
 		have_prefix = true;
 		m_prefix = prefix;
@@ -63,15 +64,16 @@ string BasicCache::getPathHumanReadable() const {
 	return ret;
 }
 
-void BasicCache::env_add_package(map<string, string> *env, const Package &package, const Version &version, const string &ebuild_dir, const char *ebuild_full) const {
+void BasicCache::env_add_package(WordMap *env, const Package& package, const Version& version, const string& ebuild_dir, const char *ebuild_full) const {
 	string full(version.getFull());
 	string eroot;
 
 	// Set default variables
 
 	const char *envptr(getenv("PATH"));
-	if(likely(envptr != NULLPTR))
+	if(likely(envptr != NULLPTR)) {
 		(*env)["PATH"] = envptr;
+	}
 	envptr = getenv("ROOT");
 	if(unlikely(envptr != NULLPTR)) {
 		(*env)["ROOT"] = envptr;

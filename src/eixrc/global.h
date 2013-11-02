@@ -13,10 +13,10 @@
 class EixRc;
 
 /** Must be called exactly once before get_eixrc() can be used */
-EixRc &get_eixrc(const char *varprefix) ATTRIBUTE_NONNULL_;
+EixRc& get_eixrc(const char *varprefix) ATTRIBUTE_NONNULL_;
 
 /** Return a static eixrc. */
-EixRc &get_eixrc() ATTRIBUTE_PURE;
+EixRc& get_eixrc() ATTRIBUTE_PURE;
 
 void fill_defaults_part_1(EixRc *eixrc) ATTRIBUTE_NONNULL_;
 void fill_defaults_part_2(EixRc *eixrc) ATTRIBUTE_NONNULL_;

@@ -12,7 +12,6 @@
 #include <cstring>
 
 #include <set>
-#include <vector>
 
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
@@ -27,7 +26,6 @@
 #include "portage/version.h"
 
 using std::set;
-using std::vector;
 
 Version *VersionList::best(bool allow_unstable) const {
 	for(const_reverse_iterator ri(rbegin()); likely(ri != rend()); ++ri) {
@@ -96,7 +94,7 @@ Version *Package::best_slot(const char *slot_name, bool allow_unstable) const {
 	return vl->best(allow_unstable);
 }
 
-void Package::best_slots(vector<Version*> *l, bool allow_unstable) const {
+void Package::best_slots(Package::VerVec *l, bool allow_unstable) const {
 	l->clear();
 	for(SlotList::const_iterator sit(slotlist().begin());
 		likely(sit != slotlist().end()); ++sit) {
@@ -107,21 +105,24 @@ void Package::best_slots(vector<Version*> *l, bool allow_unstable) const {
 	}
 }
 
-void Package::best_slots_upgrade(vector<Version*> *versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const {
+void Package::best_slots_upgrade(Package::VerVec *versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const {
 	versions->clear();
-	if(unlikely(v == NULLPTR))
+	if(unlikely(v == NULLPTR)) {
 		return;
-	vector<InstVersion> *ins(v->getInstalledVector(*this));
-	if((ins == NULLPTR) || (ins->empty()))
+	}
+	InstVec *ins(v->getInstalledVector(*this));
+	if((ins == NULLPTR) || (ins->empty())) {
 		return;
+	}
 	bool need_best(false);
-	set<Version*> versionset;
-	for(vector<InstVersion>::iterator it(ins->begin());
-		it != ins->end() ; ++it) {
+	typedef set<Version*> VerSet;
+	VerSet versionset;
+	for(InstVec::iterator it(ins->begin()); it != ins->end() ; ++it) {
 		if(guess_slotname(&(*it), v)) {
 			Version *bv(best_slot((it->slotname).c_str(), allow_unstable));
-			if((bv != NULLPTR) && (*bv != *it))
+			if((bv != NULLPTR) && (*bv != *it)) {
 				versionset.insert(bv);
+			}
 		} else {
 			// Perhaps the slot was removed:
 			need_best = true;
@@ -141,11 +142,10 @@ void Package::best_slots_upgrade(vector<Version*> *versions, VarDbPkg *v, const 
 		return;
 	}
 	// Return only uninstalled versions:
-	for(set<Version*>::const_iterator it(versionset.begin());
+	for(VerSet::const_iterator it(versionset.begin());
 		likely(it != versionset.end()); ++it) {
 		bool found(false);
-		for(vector<InstVersion>::const_iterator insit(ins->begin());
-			likely(insit != ins->end()); ++insit) {
+		for(InstVec::const_iterator insit(ins->begin()); likely(insit != ins->end()); ++insit) {
 			if(*insit == **it) {
 				found = true;
 				break;
@@ -161,14 +161,13 @@ bool Package::is_best_upgrade(bool check_slots, const Version *version, VarDbPkg
 	if(unlikely(v == NULLPTR)) {
 		return false;
 	}
-	vector<InstVersion> *ins(v->getInstalledVector(*this));
+	InstVec *ins(v->getInstalledVector(*this));
 	if(ins == NULLPTR) {
 		return false;
 	}
 	bool need_best(!check_slots);
 	if(check_slots) {
-		for(vector<InstVersion>::iterator it(ins->begin());
-			likely(it != ins->end()); ++it) {
+		for(InstVec::iterator it(ins->begin()); likely(it != ins->end()); ++it) {
 			if(guess_slotname(&(*it), v)) {
 				if(version == best_slot((it->slotname).c_str(), allow_unstable)) {
 					return true;
@@ -192,7 +191,7 @@ bool Package::is_best_upgrade(bool check_slots, const Version *version, VarDbPkg
 	return false;
 }
 
-const char *Package::slotname(const ExtendedVersion &v) const {
+const char *Package::slotname(const ExtendedVersion& v) const {
 	for(const_iterator i(begin()); likely(i != end()); ++i) {
 		if(**i == v) {
 			return (i->slotname).c_str();
@@ -268,7 +267,7 @@ bool Package::guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const cha
 	-  3: p has no worse best_slot, but an identical
 	      from a different overlay
 	-  0: else */
-eix::TinySigned Package::worse_best_slots(const Package &p) const {
+eix::TinySigned Package::worse_best_slots(const Package& p) const {
 	eix::TinySigned ret(0);
 	for(SlotList::const_iterator it(slotlist().begin());
 		it != slotlist().end(); ++it) {
@@ -300,7 +299,7 @@ eix::TinySigned Package::worse_best_slots(const Package &p) const {
 	- -1: *this has a worse/missing best_slot, and p has not
 	-  2: p and *this both have a worse/missing best_slot
 	-  3: all matches, but at least one overlay differs */
-eix::TinySigned Package::compare_best_slots(const Package &p) const {
+eix::TinySigned Package::compare_best_slots(const Package& p) const {
 	eix::TinySigned worse(worse_best_slots(p));
 	eix::TinySigned better(p.worse_best_slots(*this));
 	if(worse == 1) {
@@ -325,7 +324,7 @@ eix::TinySigned Package::compare_best_slots(const Package &p) const {
 	- -1: p is larger
 	-  3: same, but overlays (or slots if test_slot)
 	      are different */
-eix::TinySigned Package::compare_best(const Package &p, bool test_slot) const {
+eix::TinySigned Package::compare_best(const Package& p, bool test_slot) const {
 	Version *t_best(best());
 	Version *p_best(p.best());
 	if((t_best != NULLPTR) && (p_best != NULLPTR)) {
@@ -365,9 +364,10 @@ eix::TinySigned Package::compare_best(const Package &p, bool test_slot) const {
 	-  4: (if only_installed) nothing is installed,
 	      but one can be installed */
 eix::TinySigned Package::check_best_slots(VarDbPkg *v, bool only_installed) const {
-	vector<InstVersion> *ins(NULLPTR);
-	if(likely(v != NULLPTR))
+	InstVec *ins(NULLPTR);
+	if(likely(v != NULLPTR)) {
 		ins = v->getInstalledVector(*this);
+	}
 	if((ins == NULLPTR) || ins->empty()) {
 		if(!only_installed) {
 			if(best()) {
@@ -378,15 +378,15 @@ eix::TinySigned Package::check_best_slots(VarDbPkg *v, bool only_installed) cons
 	}
 	bool downgrade(false);
 	bool upgrade(false);
-	for(vector<InstVersion>::iterator it(ins->begin());
-		likely(it != ins->end()); ++it) {
+	for(InstVec::iterator it(ins->begin()); likely(it != ins->end()); ++it) {
 		if(!guess_slotname(&(*it), v)) {
 			// Perhaps the slot was removed:
 			downgrade = true;
 			Version *t_best(best());
 			if(t_best) {
-				if(*t_best > *it)
+				if(*t_best > *it) {
 					upgrade = true;
+				}
 			}
 			continue;
 		}
@@ -404,10 +404,12 @@ eix::TinySigned Package::check_best_slots(VarDbPkg *v, bool only_installed) cons
 			continue;
 		}
 	}
-	if(upgrade && downgrade)
+	if(upgrade && downgrade) {
 		return 2;
-	if(upgrade)
+	}
+	if(upgrade) {
 		return 1;
+	}
 	if(downgrade) {
 		return -1;
 	}
@@ -429,15 +431,15 @@ eix::TinySigned Package::check_best_slots(VarDbPkg *v, bool only_installed) cons
 	      but one can be installed */
 eix::TinySigned Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const {
 	ExtendedVersion *t_best(best());
-	vector<InstVersion> *ins(NULLPTR);
-	if(likely(v != NULLPTR))
+	InstVec *ins(NULLPTR);
+	if(likely(v != NULLPTR)) {
 		ins = v->getInstalledVector(*this);
+	}
 	if((ins != NULLPTR) && !ins->empty()) {
 		if(!t_best) {
 			return -1;
 		}
-		for(vector<InstVersion>::iterator it(ins->begin());
-			likely(it != ins->end()); ++it) {
+		for(InstVec::iterator it(ins->begin()); likely(it != ins->end()); ++it) {
 			eix::SignedBool vgl(BasicVersion::compare(*t_best, *it));
 			if(vgl > 0) {
 				continue;

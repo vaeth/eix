@@ -17,7 +17,7 @@ using std::string;
 
 using std::cout;
 
-void Statusline::print_force(const string &str) {
+void Statusline::print_force(const string& str) {
 	if(soft) {
 		cout << "\033k" << header << str << "\033\\";
 	}
@@ -25,7 +25,7 @@ void Statusline::print_force(const string &str) {
 	flush(cout);
 }
 
-void Statusline::print(const string &str) {
+void Statusline::print(const string& str) {
 	if(use) {
 		if(header.empty()) {
 			header = m_program;

@@ -17,9 +17,7 @@
 
 #include <iostream>
 #include <map>
-#include <set>
 #include <string>
-#include <vector>
 
 #include "database/header.h"
 #include "database/package_reader.h"
@@ -35,6 +33,7 @@
 #include "eixTk/null.h"
 #include "eixTk/outputstring.h"
 #include "eixTk/ptr_list.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/utils.h"
 #include "eixrc/eixrc.h"
@@ -62,23 +61,26 @@
 template<typename m_Type> class MaskList;
 
 using std::map;
-using std::set;
 using std::string;
-using std::vector;
 
 using std::cerr;
 using std::cout;
 using std::endl;
 
 static bool opencache(Database *db, const char *filename, const char *tooltext) ATTRIBUTE_NONNULL_;
-static bool print_overlay_table(PrintFormat *fmt, DBHeader *header, vector<bool> *overlay_used) ATTRIBUTE_NONNULL((1, 2));
+static bool print_overlay_table(PrintFormat *fmt, DBHeader *header, PrintFormat::OverlayUsed *overlay_used) ATTRIBUTE_NONNULL((1, 2));
 static void parseFormat(const char *sourcename, const char *content) ATTRIBUTE_NONNULL_;
 static void set_format(EixRc *rc) ATTRIBUTE_NONNULL_;
 static void setup_defaults(EixRc *rc, bool is_tty) ATTRIBUTE_NONNULL_;
 static bool is_current_dbversion(const char *filename, const char *tooltext) ATTRIBUTE_NONNULL_;
-static void print_vector(const vector<string> &vec);
-static void print_unused(const string &filename, const string &excludefiles, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
-static void print_removed(const string &dirname, const string &excludefiles, const eix::ptr_list<Package> &packagelist);
+static void print_wordvec(const WordVec& vec);
+static void print_unused(const string& filename, const string& excludefiles, const eix::ptr_list<Package>& packagelist, bool test_empty);
+inline static void print_unused(const string& filename, const string& excludefiles, const eix::ptr_list<Package>& packagelist);
+inline static void print_unused(const string& filename, const string& excludefiles, const eix::ptr_list<Package>& packagelist) {
+	print_unused(filename, excludefiles, packagelist, false);
+}
+
+static void print_removed(const string& dirname, const string& excludefiles, const eix::ptr_list<Package>& packagelist);
 
 /** Show a short help screen with options and commands. */
 static void dump_help() {
@@ -514,7 +516,7 @@ static void setup_defaults(EixRc *rc, bool is_tty) {
 		overlay_mode = mode_list_all;
 }
 
-static bool print_overlay_table(PrintFormat *fmt, DBHeader *header, vector<bool> *overlay_used) {
+static bool print_overlay_table(PrintFormat *fmt, DBHeader *header, PrintFormat::OverlayUsed *overlay_used) {
 	bool printed_overlay(false);
 	for(ExtendedVersion::Overlay i((overlay_mode == mode_list_all) ? 0 : 1);
 		likely(i != header->countOverlays()); ++i) {
@@ -557,7 +559,7 @@ static void set_format(EixRc *rc) {
 		} else if(unlikely(rc_options.compact_output)) {
 			use_verbose = -1;
 		} else {
-			const string &s((*rc)["DEFAULT_FORMAT"]);
+			const string& s((*rc)["DEFAULT_FORMAT"]);
 			if(unlikely(casecontains(s, "verb"))) {
 				use_verbose = 1;
 			} else if(unlikely(casecontains(s, "comp"))) {
@@ -582,7 +584,7 @@ int run_eix(int argc, char** argv) {
 	PrintFormat::init_static();
 	format = new PrintFormat(get_package_property);
 
-	EixRc &eixrc(get_eixrc(EIX_VARS_PREFIX));
+	EixRc& eixrc(get_eixrc(EIX_VARS_PREFIX));
 	drop_permissions(&eixrc);
 
 	// Setup defaults for all global variables like rc_options
@@ -766,8 +768,8 @@ int run_eix(int argc, char** argv) {
 		return EXIT_SUCCESS;
 	}
 	if(unlikely(rc_options.world_sets)) {
-		const vector<string> *p(portagesettings.get_world_sets());
-		for(vector<string>::const_iterator it(p->begin());
+		const WordVec *p(portagesettings.get_world_sets());
+		for(WordVec::const_iterator it(p->begin());
 			likely(it != p->end()); ++it)
 			cout << *it << "\n";
 		return EXIT_SUCCESS;
@@ -905,7 +907,7 @@ int run_eix(int argc, char** argv) {
 	if(overlay_mode != mode_list_used_renumbered)
 		format->set_overlay_translations(NULLPTR);
 	bool need_overlay_table(false);
-	vector<bool> overlay_used(header.countOverlays(), false);
+	PrintFormat::OverlayUsed overlay_used(header.countOverlays(), false);
 	format->set_overlay_used(&overlay_used, &need_overlay_table);
 	eix::ptr_list<Package>::size_type count(0);
 	PrintXml *print_xml(NULLPTR);
@@ -961,11 +963,11 @@ int run_eix(int argc, char** argv) {
 		case mode_list_none: need_overlay_table = false; break;
 		default: break;
 	}
-	vector<ExtendedVersion::Overlay> overlay_num(header.countOverlays(), 0);
+	PrintFormat::OverlayTranslations overlay_num(header.countOverlays(), 0);
 	if(overlay_mode == mode_list_used_renumbered) {
 		ExtendedVersion::Overlay i(1);
-		vector<bool>::iterator uit(overlay_used.begin());
-		vector<ExtendedVersion::Overlay>::iterator nit(overlay_num.begin());
+		PrintFormat::OverlayUsed::iterator uit(overlay_used.begin());
+		PrintFormat::OverlayTranslations::iterator nit(overlay_num.begin());
 		for(; likely(uit != overlay_used.end()); ++uit, ++nit) {
 			if(*uit == true) {
 				*nit = i++;
@@ -1083,29 +1085,29 @@ static bool is_current_dbversion(const char *filename, const char *tooltext) { 	
 	return db.read_header(&header, NULLPTR);
 }
 
-static void print_vector(const vector<string> &vec) {
-	for(vector<string>::const_iterator it(vec.begin());
+static void print_wordvec(const WordVec& vec) {
+	for(WordVec::const_iterator it(vec.begin());
 		likely(it != vec.end()); ++it) {
 		cout << *it << "\n";
 	}
 	cout << "--\n\n";
 }
 
-static void print_unused(const string &filename, const string &excludefiles, const eix::ptr_list<Package> &packagelist, bool test_empty) {
-	vector<string> unused;
-	vector<string> lines;
-	set<string> excludes;
+static void print_unused(const string& filename, const string& excludefiles, const eix::ptr_list<Package>& packagelist, bool test_empty) {
+	WordVec unused;
+	LineVec lines;
+	WordSet excludes;
 	bool know_excludes(false);
 	pushback_lines(filename.c_str(), &lines, true);
-	for(vector<string>::iterator i(lines.begin());
+	for(WordVec::iterator i(lines.begin());
 		likely(i != lines.end()); ++i) {
 		if(unlikely(!know_excludes)) {
 			know_excludes = true;
-			vector<string> excludelist;
+			WordVec excludelist;
 			split_string(&excludelist, excludefiles, true);
-			for(vector<string>::const_iterator it(excludelist.begin());
+			for(WordVec::const_iterator it(excludelist.begin());
 				likely(it != excludelist.end()); ++it) {
-				vector<string> excl;
+				LineVec excl;
 				pushback_lines(it->c_str(), &excl, true);
 				join_and_split(&excludes, excl);
 			}
@@ -1116,8 +1118,9 @@ static void print_unused(const string &filename, const string &excludefiles, con
 		string errtext;
 		KeywordMask m;
 		if(n == string::npos) {
-			if(unlikely(excludes.find(*i) != excludes.end()))
+			if(unlikely(excludes.find(*i) != excludes.end())) {
 				continue;
+			}
 			if(unlikely(test_empty)) {
 				unused.push_back(*i);
 				continue;
@@ -1125,8 +1128,9 @@ static void print_unused(const string &filename, const string &excludefiles, con
 			r = m.parseMask(i->c_str(), &errtext, false);
 		} else {
 			string it(*i, 0, n);
-			if(excludes.find(it) != excludes.end())
+			if(excludes.find(it) != excludes.end()) {
 				continue;
+			}
 			r = m.parseMask(it.c_str(), &errtext, false);
 		}
 		if(r != BasicVersion::parsedOK) {
@@ -1135,11 +1139,13 @@ static void print_unused(const string &filename, const string &excludefiles, con
 		}
 		eix::ptr_list<Package>::const_iterator pi(packagelist.begin());
 		for( ; likely(pi != packagelist.end()); ++pi) {
-			if(m.ismatch(**pi))
+			if(m.ismatch(**pi)) {
 				break;
+			}
 		}
-		if(pi != packagelist.end())
+		if(pi != packagelist.end()) {
 			continue;
+		}
 		unused.push_back(*i);
 	}
 	if(unused.empty()) {
@@ -1153,54 +1159,57 @@ static void print_unused(const string &filename, const string &excludefiles, con
 		_("Non-matching or empty entries in %s:\n\n") :
 		_("Non-matching entries in %s:\n\n"))
 		% filename;
-	print_vector(unused);
+	print_wordvec(unused);
 }
 
-static void print_removed(const string &dirname, const string &excludefiles, const eix::ptr_list<Package> &packagelist) {
+static void print_removed(const string& dirname, const string& excludefiles, const eix::ptr_list<Package>& packagelist) {
 	/* For faster testing, we build a category->name set */
-	map<string, set<string> > cat_name;
+	typedef map<string, WordSet> CatName;
+	CatName cat_name;
 	for(eix::ptr_list<Package>::const_iterator pit(packagelist.begin());
 		likely(pit != packagelist.end()); ++pit) {
 		cat_name[pit->category].insert(pit->name);
 	}
 
 	/* This will contain categories/packages to be printed */
-	vector<string> failure;
+	WordVec failure;
 
 	/* Read all installed packages (not versions!) and fill failures */
-	set<string> excludes;
+	WordSet excludes;
 	bool know_excludes(false);
-	vector<string> categories;
+	WordVec categories;
 	pushback_files(dirname, &categories, NULLPTR, 2, true, false);
-	for(vector<string>::const_iterator cit(categories.begin());
+	for(WordVec::const_iterator cit(categories.begin());
 		likely(cit != categories.end()); ++cit) {
-		vector<string> names;
+		WordVec names;
 		string cat_slash(*cit);
 		cat_slash.append(1, '/');
 		pushback_files(dirname + cat_slash, &names, NULLPTR, 2, true, false);
-		map<string, set<string> >::const_iterator cat(cat_name.find(*cit));
-		const set<string> *ns( (cat == cat_name.end()) ? NULLPTR : &(cat->second) );
-		for(vector<string>::const_iterator nit(names.begin());
+		CatName::const_iterator cat(cat_name.find(*cit));
+		const WordSet *ns((cat == cat_name.end()) ? NULLPTR : &(cat->second));
+		for(WordVec::const_iterator nit(names.begin());
 			likely(nit != names.end()); ++nit) {
 			char *name(ExplodeAtom::split_name(nit->c_str()));
-			if(unlikely(name == NULLPTR))
+			if(unlikely(name == NULLPTR)) {
 				continue;
+			}
 			if(unlikely((ns == NULLPTR) || (ns->find(name) == ns->end()))) {
 				if(unlikely(!know_excludes)) {
 					know_excludes = true;
-					vector<string> excludelist;
+					WordVec excludelist;
 					split_string(&excludelist, excludefiles, true);
-					for(vector<string>::const_iterator it(excludelist.begin());
+					for(WordVec::const_iterator it(excludelist.begin());
 						likely(it != excludelist.end()); ++it) {
-						vector<string> excl;
+						LineVec excl;
 						pushback_lines(it->c_str(), &excl, true);
 						join_and_split(&excludes, excl);
 					}
 				}
 				if(likely(excludes.find(name) == excludes.end())) {
 					string fullname(cat_slash + name);
-					if(excludes.find(fullname) == excludes.end())
+					if(excludes.find(fullname) == excludes.end()) {
 						failure.push_back(cat_slash + name);
+					}
 				}
 			}
 			free(name);
@@ -1211,6 +1220,6 @@ static void print_removed(const string &dirname, const string &excludefiles, con
 		return;
 	}
 	cout << _("The following installed packages are not in the database:\n\n");
-	print_vector(failure);
+	print_wordvec(failure);
 	return;
 }

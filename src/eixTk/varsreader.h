@@ -12,12 +12,13 @@
 
 #include <sys/types.h>
 
-#include <set>
 #include <map>
 #include <string>
 
+#include "eixTk/constexpr.h"
 #include "eixTk/inttypes.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 
 /** A wrapper to FSM that can read shell-style key=value declarations.
@@ -28,7 +29,7 @@ class VarsReader {
 		typedef my_map::const_iterator const_iterator;
 		typedef my_map::iterator iterator;
 		typedef uint16_t Flags;
-		static const Flags
+		static CONSTEXPR Flags
 			NONE                 = 0x0000U,  /**< Flag: No flags set; normal behavior. */
 			ONLY_KEYWORDS_SLOT   = 0x0001U,  /**< Flag: Only read "KEYWORDS" and "SLOT" once, then stop the parser. */
 			KEYWORDS_READ        = 0x0002U,  /**< Flag: Have already read "KEYWORDS" once. */
@@ -64,7 +65,13 @@ class VarsReader {
 
 		/** Read file.
 		 * @return true if the file was successfully read. */
-		bool read(const char *filename, std::string *errtext, bool noexist_ok, std::set<std::string> *sourced = NULLPTR, bool nodir = false) ATTRIBUTE_NONNULL((2));
+		bool read(const char *filename, std::string *errtext, bool noexist_ok, WordSet *sourced, bool nodir) ATTRIBUTE_NONNULL((2));
+		bool read(const char *filename, std::string *errtext, bool noexist_ok, WordSet *sourced) ATTRIBUTE_NONNULL((2)) {
+			return read(filename, errtext, noexist_ok, sourced, false);
+		}
+		bool read(const char *filename, std::string *errtext, bool noexist_ok) ATTRIBUTE_NONNULL_ {
+			return read(filename, errtext, noexist_ok, NULLPTR);
+		}
 
 		/** Use a supplied map for variables. */
 		void useMap(my_map *vars_map) ATTRIBUTE_NONNULL_ {
@@ -72,7 +79,7 @@ class VarsReader {
 		}
 
 		/** Prefix (path resp. varname) used for sourcing */
-		void setPrefix(const std::string &prefix) {
+		void setPrefix(const std::string& prefix) {
 			source_prefix = prefix;
 		}
 
@@ -270,7 +277,7 @@ class VarsReader {
 		/** Read file using a new instance of VarsReader with the same
 		    settings (except for APPEND_VALUES),
 		    adding variables and changed HAVE_READ to current instance. */
-		bool source(const std::string &filename, std::string *errtext);
+		bool source(const std::string& filename, std::string *errtext);
 
 		size_t key_len; /**< Length of the key. */
 		char *key_begin;      /**< Pointer to first character of key. */
@@ -285,7 +292,7 @@ class VarsReader {
 		Flags parse_flags; /**< Flags for configuration of parser. */
 
 	protected:
-		std::set<std::string> *sourced_files;
+		WordSet *sourced_files;
 
 		std::string m_errtext;
 

@@ -30,6 +30,7 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/utils.h"
 #include "eixTk/varsreader.h"
@@ -964,9 +965,9 @@ bool VarsReader::read(const char *filename, string *errtext, bool noexist_ok, se
 	if((!nodir) && ((parse_flags & RECURSE) != NONE)) {
 		string dir(filename);
 		dir.append(1, '/');
-		vector<string> files;
+		WordVec files;
 		if(pushback_files(dir, &files, pushback_lines_exclude, 3)) {
-			for(vector<string>::const_iterator file(files.begin());
+			for(WordVec::const_iterator file(files.begin());
 				likely(file != files.end()); ++file) {
 				if(!read(file->c_str(), errtext, false, sourced, false)) {
 					return false;
@@ -1015,7 +1016,7 @@ GCC_DIAG_ON(old-style-cast)
 	string truename(normalize_path(filename));
 	bool topcall(sourced == NULLPTR);
 	if(likely(topcall)) {
-		sourced_files = new set<string>;
+		sourced_files = new WordSet;
 	} else {
 		sourced_files = sourced;
 		if(sourced->find(truename) != sourced->end()) {
@@ -1030,7 +1031,8 @@ GCC_DIAG_ON(old-style-cast)
 	initFsm();
 	bool ret;
 	if((parse_flags & APPEND_VALUES) != NONE) {
-		vector<pair<string, string> > incremental;
+		typedef vector<pair<string, string> > IncType;
+		IncType incremental;
 		// Save and clear incremental keys
 		for(iterator i(vars->begin());
 			i != vars->end(); ++i) {
@@ -1042,7 +1044,7 @@ GCC_DIAG_ON(old-style-cast)
 		}
 		ret = runFsm();
 		// Prepend previous content for incremental keys
-		for(vector<pair<string, string> >::const_iterator it(incremental.begin());
+		for(IncType::const_iterator it(incremental.begin());
 			it != incremental.end(); ++it) {
 			iterator f(vars->find(it->first));
 			if(f->second.empty()) {
@@ -1076,7 +1078,7 @@ GCC_DIAG_ON(sign-conversion)
 /** Read file using a new instance of VarsReader with the same
     settings (except for APPEND_VALUES),
     adding variables and changed HAVE_READ to current instance. */
-bool VarsReader::source(const string &filename, string *errtext) {
+bool VarsReader::source(const string& filename, string *errtext) {
 	VarsReader includefile((parse_flags & (~APPEND_VALUES)) | INTO_MAP);
 	includefile.accumulatingKeys(incremental_keys);
 	includefile.useMap(vars);

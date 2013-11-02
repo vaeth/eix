@@ -10,24 +10,26 @@
 #ifndef SRC_CACHE_CACHETABLE_H_
 #define SRC_CACHE_CACHETABLE_H_ 1
 
-#include <map>
 #include <string>
 
 #include "cache/base.h"
 #include "eixTk/ptr_list.h"
 
-class CacheTable : public eix::ptr_list<BasicCache> {
+typedef eix::ptr_list<BasicCache> CacheTableList;
+
+class CacheTable : public CacheTableList {
 	private:
 		std::string m_appending;
+
 	public:
-		explicit CacheTable(const std::string &appending) : m_appending(appending) {
+		explicit CacheTable(const std::string& appending) : m_appending(appending) {
 		}
 
 		~CacheTable() {
 			delete_and_clear();
 		}
 
-		bool addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const std::string &cache_name, const std::map<std::string, std::string> *override, std::string *errtext) ATTRIBUTE_NONNULL((4));
+		bool addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const std::string& cache_name, const WordMap *override, std::string *errtext) ATTRIBUTE_NONNULL((4));
 };
 
 #endif  // SRC_CACHE_CACHETABLE_H_

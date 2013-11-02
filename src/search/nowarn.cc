@@ -11,12 +11,12 @@
 #include <set>
 #include <string>
 #include <utility>
-#include <vector>
 
 #include "eixTk/assert.h"
 #include "eixTk/exceptions.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "portage/basicversion.h"
 #include "portage/conf/portagesettings.h"
 #include "portage/keywords.h"
@@ -30,7 +30,6 @@ using std::map;
 using std::pair;
 using std::set;
 using std::string;
-using std::vector;
 
 class NowarnKeywords {
 	private:
@@ -42,11 +41,11 @@ class NowarnKeywords {
 			name_map.insert(pair<string, NowarnFlags>(s, NowarnFlags(red)));
 		}
 
-		void init_ins(const std::string &s, PackageTest::TestInstalled ins) {
+		void init_ins(const std::string& s, PackageTest::TestInstalled ins) {
 			name_map.insert(pair<string, NowarnFlags>(s, NowarnFlags(Keywords::RED_NOTHING, ins)));
 		}
 
-		void apply(const std::string &s, NowarnFlags *f) const {
+		void apply(const std::string& s, NowarnFlags *f) const {
 			NameMap::const_iterator it(name_map.find(s));
 			if(it != name_map.end()) {
 				f->setbits(it->second);
@@ -90,11 +89,11 @@ void NowarnMask::init_static() {
 	nowarn_keywords = new NowarnKeywords;
 }
 
-void NowarnMask::init_nowarn(const vector<string> &flagstrings) {
+void NowarnMask::init_nowarn(const WordVec& flagstrings) {
 	eix_assert_static(nowarn_keywords != NULLPTR);
 	set_flags.clear();
 	clear_flags.clear();
-	for(vector<string>::const_iterator it(flagstrings.begin());
+	for(WordVec::const_iterator it(flagstrings.begin());
 		likely(it != flagstrings.end()); ++it) {
 		if(it->empty()) {
 			continue;
@@ -124,19 +123,20 @@ void NowarnMaskList::apply(Package *p, Keywords::Redundant *r, PackageTest::Test
 	}
 	delete masks;
 	// Now we also apply the set-items...
-	set<SetsIndex> my_sets;
+	typedef set<SetsIndex> MySets;
+	MySets my_sets;
 	for(Package::iterator v(p->begin()); likely(v != p->end()); ++v) {
 		if(likely(v->sets_indizes.empty())) {
 			// Shortcut for the most frequent case
 			continue;
 		}
-		for(vector<SetsIndex>::const_iterator sit(v->sets_indizes.begin());
+		for(Version::SetsIndizes::const_iterator sit(v->sets_indizes.begin());
 			unlikely(sit != v->sets_indizes.end()); ++sit) {
 			my_sets.insert(*sit);
 		}
 	}
 	if(unlikely(!my_sets.empty())) {
-		for(set<SetsIndex>::const_iterator sit(my_sets.begin());
+		for(MySets::const_iterator sit(my_sets.begin());
 			unlikely(sit != my_sets.end()); ++sit) {
 			super::Get *setmasks(get_setname(portagesettings->set_names[*sit]));
 			if(setmasks == NULLPTR) {

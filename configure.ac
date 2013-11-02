@@ -989,6 +989,26 @@ AC_DEFINE_UNQUOTED([EPREFIX_DEFAULT],
 	[Default EPREFIX])
 AC_SUBST([EPREFIX_DEFAULT])
 
+AC_MSG_CHECKING([for sh shebang])
+AS_VAR_SET([SH_SHEBANG], [])
+AC_ARG_WITH([sh-shebang],
+	[AS_HELP_STRING([--with-sh-shebang],
+		[use argument as sh script shebang. Pass auto or yes for autodetection])],
+	[AS_CASE(["${withval}"],
+		[auto], [],
+		[yes], [],
+		[AS_VAR_COPY([SH_SHEBANG], [withval])])],
+	[MV_IF_NONEMPTY(["${EPREFIX_DEFAULT}"],
+		[AS_VAR_SET([SH_SHEBANG], [no])])])
+MV_IF_EMPTY(["${SH_SHEBANG}"],
+	[AS_VAR_SET([SH_SHEBANG], ["`eval command -v sh 2>${DEV_NULL}`"])])
+AS_VAR_IF([SH_SHEBANG], [no],
+	[AS_VAR_SET([SH_SHEBANG], [])])
+MV_IF_EMPTY(["${SH_SHEBANG}"],
+	[AS_VAR_SET([SH_SHEBANG], ["/usr/bin/env sh"])])
+AC_MSG_RESULT([${SH_SHEBANG}])
+AC_SUBST([SH_SHEBANG])
+
 AC_MSG_CHECKING([EIX_PREFIX default])
 AC_ARG_WITH([eix-prefix-default],
 	[AS_HELP_STRING([--with-eix-prefix-default=STR],

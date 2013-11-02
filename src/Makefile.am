@@ -45,6 +45,7 @@ eixTk/formated.h \
 eixTk/i18n.h \
 eixTk/likely.h \
 eixTk/null.h \
+eixTk/stringtypes.h \
 eixTk/stringutils.cc \
 eixTk/stringutils.h
 
@@ -127,6 +128,7 @@ portage/instversion.h \
 portage/package.cc \
 portage/package_best.cc \
 portage/package.h \
+portage/packagesets.cc \
 portage/packagesets.h \
 portage/vardbpkg.cc \
 portage/vardbpkg.h \
@@ -636,10 +638,10 @@ SUFFIXES = .in
 		-e "s,\./eix-functions\.sh\.in,'$(bindir)/eix-functions.sh',g" \
 		-e "s,\./eix-drop-permissions,'$(bindir)/eix-drop-permissions',g" \
 		-e "s,\./eix-remote.in,'$(bindir)/eix-remote',g" \
+		-e 's,^#!/usr/bin/env sh$$,#!$(SH_SHEBANG),g' \
 		-e "s,\@TEXTDOMAIN\@,$(PACKAGE),g" \
 		-e "s,\@TEXTDOMAINDIR\@,$(localedir),g" \
 		-e "s,\@USE_NLS\@,$(USE_NLS),g" \
-		-e "s,/dev/null,$(DEV_NULL),g" \
 		"$<" > "$@"
 
 # Enable us to 'make clean' in src/

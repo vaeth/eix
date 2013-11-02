@@ -29,7 +29,7 @@ static void print_help() {
 }
 
 int run_eix_drop_permissions(int argc, char *argv[]) {
-	EixRc &eixrc(get_eixrc(DROP_VARS_PREFIX));
+	EixRc& eixrc(get_eixrc(DROP_VARS_PREFIX));
 	drop_permissions(&eixrc);
 	if(argc > 0) {
 		++argv;

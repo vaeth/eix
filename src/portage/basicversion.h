@@ -16,6 +16,8 @@
 #include "eixTk/constexpr.h"
 #include "eixTk/eixint.h"
 
+class Database;
+
 // include "portage/basicversion.h" make check_includes happy
 
 class BasicPart {
@@ -45,14 +47,14 @@ class BasicPart {
 		explicit BasicPart(PartType p) : parttype(p), partcontent() {
 		}
 
-		BasicPart(PartType p, const std::string &s) : parttype(p), partcontent(s) {
+		BasicPart(PartType p, const std::string& s) : parttype(p), partcontent(s) {
 		}
 
-		BasicPart(PartType p, const std::string &s, std::string::size_type start)
+		BasicPart(PartType p, const std::string& s, std::string::size_type start)
 			: parttype(p), partcontent(s, start) {
 		}
 
-		BasicPart(PartType p, const std::string &s, std::string::size_type start, std::string::size_type end)
+		BasicPart(PartType p, const std::string& s, std::string::size_type start, std::string::size_type end)
 			: parttype(p), partcontent(s, start, end) {
 		}
 
@@ -68,6 +70,7 @@ class BasicPart {
 
 /** Parse and represent a portage version-string. */
 class BasicVersion {
+		friend class Database;
 	public:
 		enum ParseResult {
 			parsedOK,
@@ -78,7 +81,10 @@ class BasicVersion {
 		virtual ~BasicVersion() { }
 
 		/// Parse the version-string pointed to by str.
-		BasicVersion::ParseResult parseVersion(const std::string& str, std::string *errtext, eix::SignedBool accept_garbage = 1);
+		BasicVersion::ParseResult parseVersion(const std::string& str, std::string *errtext, eix::SignedBool accept_garbage);
+		BasicVersion::ParseResult parseVersion(const std::string& str, std::string *errtext) {
+			return parseVersion(str, errtext, 1);
+		}
 
 		/// Compare all except gentoo revisions
 		static eix::SignedBool compareTilde(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
@@ -94,7 +100,8 @@ class BasicVersion {
 
 	protected:
 		/// Splitted m_primsplit-version.
-		std::list<BasicPart> m_parts;
+		typedef std::list<BasicPart> PartsType;
+		PartsType m_parts;
 };
 
 

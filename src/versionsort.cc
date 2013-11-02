@@ -149,14 +149,15 @@ int run_versionsort(int argc, char *argv[]) {
 			}
 		}
 	}
-	vector<BasicVersion> versions;
+	typedef vector<BasicVersion> Versions;
+	Versions versions;
 	for(int i(1); likely(i < argc); ++i) {
 		BasicVersion b;
 		parse_version(&b, get_version(argv[i]));
 		versions.push_back(b);
 	}
 	sort(versions.begin(), versions.end());
-	for(vector<BasicVersion>::const_iterator it(versions.begin());
+	for(Versions::const_iterator it(versions.begin());
 		likely(it != versions.end()); ++it) {
 		cout << it->getFull() << "\n";
 	}

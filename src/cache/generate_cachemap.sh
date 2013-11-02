@@ -42,28 +42,31 @@ cat<<END
 class BasicCache;
 
 using std::string;
-BasicCache *get_cache(const string &name, const string &appending) {
+BasicCache *get_cache(const string& name, const string& appending) {
 END
 
 for cache_name in ${cache_plain}
 do	cache_class=`to_classname "${cache_name}"`
 	cat<<END
-	if(name == "${cache_name}")
+	if(name == "${cache_name}") {
 		return new ${cache_class};
+	}
 END
 done
 for cache_name in ${cache_stars}
 do	cache_class=`to_classname "${cache_name}"`
 	cat<<END
-	if(name == "${cache_name}*")
+	if(name == "${cache_name}*") {
 		return new ${cache_class}(true);
+	}
 END
 done
 cat<<END
 	{
 		ParseCache *p(new ParseCache);
-		if(p->initialize(name + appending))
+		if(p->initialize(name + appending)) {
 			return p;
+		}
 		delete p;
 	}
 END
@@ -72,8 +75,9 @@ do	cache_class=`to_classname "${cache_name}"`
 	cat<<END
 	{
 		${cache_class} *p(new ${cache_class});
-		if(p->initialize(name))
+		if(p->initialize(name)) {
 			return p;
+		}
 		delete p;
 	}
 END

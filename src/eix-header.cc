@@ -19,6 +19,7 @@
 
 #include "database/header.h"
 #include "database/io.h"
+#include "eixTk/constexpr.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -37,16 +38,16 @@ class OverlayOption;
 typedef list<OverlayOption> OverlayOptionList;
 
 typedef eix::TinyUnsigned PrintOverlayMode;
-static const PrintOverlayMode
+static CONSTEXPR PrintOverlayMode
 	PRINT_OVERLAY_NONE  = 0x00,
 	PRINT_OVERLAY_LABEL = 0x01,
 	PRINT_OVERLAY_PATH  = 0x02,
 	PRINT_OVERLAY_LABEL_PATH = (PRINT_OVERLAY_LABEL | PRINT_OVERLAY_PATH);
 
 static void print_help();
-int overlay_loop(string *result, const OverlayOptionList &options) ATTRIBUTE_NONNULL_;
+int overlay_loop(string *result, const OverlayOptionList& options) ATTRIBUTE_NONNULL_;
 bool open_database(Database *db, DBHeader *header, const char *name, bool verbose) ATTRIBUTE_NONNULL_;
-bool print_overlay_data(string *result, const DBHeader &header, const char *overlay, const string &sep, const char *name, PrintOverlayMode mode, bool verbose) ATTRIBUTE_NONNULL_;
+bool print_overlay_data(string *result, const DBHeader& header, const char *overlay, const string& sep, const char *name, PrintOverlayMode mode, bool verbose) ATTRIBUTE_NONNULL_;
 
 static void print_help() {
 	printf(_(
@@ -154,7 +155,7 @@ int run_eix_header(int argc, char *argv[]) {
 	return ret;
 }
 
-int overlay_loop(string *result, const OverlayOptionList &options) {
+int overlay_loop(string *result, const OverlayOptionList& options) {
 	bool verbose(true);
 	string separator(1, '\0');
 	const char *name(EIX_CACHEFILE);
@@ -235,7 +236,7 @@ bool open_database(Database *db, DBHeader *header, const char *name, bool verbos
 	return false;
 }
 
-bool print_overlay_data(string *result, const DBHeader &header, const char *overlay, const string &print_append, const char *name, PrintOverlayMode mode, bool verbose) {
+bool print_overlay_data(string *result, const DBHeader& header, const char *overlay, const string& print_append, const char *name, PrintOverlayMode mode, bool verbose) {
 	ExtendedVersion::Overlay num;
 	if(unlikely(!header.find_overlay(&num, overlay, NULLPTR, 0, DBHeader::OVTEST_ALL))) {
 		if(likely(verbose)) {

@@ -12,7 +12,6 @@
 
 #include <algorithm>
 #include <string>
-#include <vector>
 
 #include "cache/eixcache/eixcache.h"
 #include "database/header.h"
@@ -23,6 +22,7 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/ptr_list.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "portage/basicversion.h"
 #include "portage/conf/portagesettings.h"
@@ -30,7 +30,6 @@
 #include "portage/packagetree.h"
 
 using std::string;
-using std::vector;
 
 eix::ptr_list<EixCache> *EixCache::all_eixcaches = NULLPTR;
 
@@ -44,8 +43,8 @@ EixCache::~EixCache() {
 	}
 }
 
-bool EixCache::initialize(const string &name) {
-	vector<string> args;
+bool EixCache::initialize(const string& name) {
+	WordVec args;
 	split_string(&args, name, true, ":", false);
 	if(casecontains(args[0], "eix")) {
 		if(args[0].find('*') == string::npos) {
@@ -98,10 +97,10 @@ void EixCache::setSchemeFinish() {
 		m_full = m_prefix + EIX_CACHEFILE;
 }
 
-void EixCache::allerrors(const vector<EixCache*> &slaves, const string &msg) {
-	for(vector<EixCache*>::const_iterator sl(slaves.begin());
+void EixCache::allerrors(const Slaves& slaves, const string& msg) {
+	for(Slaves::const_iterator sl(slaves.begin());
 		unlikely(sl != slaves.end()); ++sl) {
-		string &s = (*sl)->err_msg;
+		string& s((*sl)->err_msg);
 		if(s.empty()) {
 			s = msg;
 		}
@@ -109,14 +108,14 @@ void EixCache::allerrors(const vector<EixCache*> &slaves, const string &msg) {
 	m_error_callback(err_msg);
 }
 
-void EixCache::thiserror(const string &msg) {
+void EixCache::thiserror(const string& msg) {
 	err_msg = msg;
 	if(!slavemode) {
 		m_error_callback(err_msg);
 	}
 }
 
-bool EixCache::get_overlaydat(const DBHeader &header) {
+bool EixCache::get_overlaydat(const DBHeader& header) {
 	if((!m_only_overlay) || (m_overlay.empty())) {
 		return true;
 	}
@@ -144,7 +143,7 @@ bool EixCache::get_overlaydat(const DBHeader &header) {
 	return true;
 }
 
-bool EixCache::get_destcat(PackageTree *packagetree, const char *cat_name, Category *category, const string &pcat) {
+bool EixCache::get_destcat(PackageTree *packagetree, const char *cat_name, Category *category, const string& pcat) {
 	if(likely(err_msg.empty())) {
 		if(unlikely(packagetree == NULLPTR)) {
 			if(unlikely(pcat == cat_name)) {
@@ -218,7 +217,7 @@ bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Ca
 		m_error_callback(err_msg);
 		return false;
 	}
-	vector<EixCache*> slaves;
+	Slaves slaves;
 	if(all_eixcaches != NULLPTR) {
 		for(eix::ptr_list<EixCache>::iterator sl(all_eixcaches->begin());
 			unlikely(sl != all_eixcaches->end()); ++sl) {
@@ -248,7 +247,7 @@ bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Ca
 		return false;
 	}
 	bool success(false);
-	for(vector<EixCache*>::const_iterator sl(slaves.begin());
+	for(Slaves::const_iterator sl(slaves.begin());
 		unlikely(sl != slaves.end()); ++sl) {
 		if((*sl)->get_overlaydat(header))
 			success = true;
@@ -265,7 +264,7 @@ bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Ca
 		Package *p(reader.get());
 
 		success = false;
-		for(vector<EixCache*>::const_iterator sl(slaves.begin());
+		for(Slaves::const_iterator sl(slaves.begin());
 			unlikely(sl != slaves.end()); ++sl) {
 			if((*sl)->get_destcat(packagetree, cat_name, category, p->category)) {
 				success = true;
@@ -278,7 +277,7 @@ bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Ca
 			break;
 		}
 		p = reader.get();
-		for(vector<EixCache*>::const_iterator sl(slaves.begin());
+		for(Slaves::const_iterator sl(slaves.begin());
 			unlikely(sl != slaves.end()); ++sl) {
 			(*sl)->get_package(p);
 		}

@@ -44,7 +44,7 @@ void drop_permissions(EixRc *eix) {
 	bool set_uid(true);
 	bool valid_user(true);
 	uid_t uid;
-	const string &user((*eix)["EIX_USER"]);
+	const string& user((*eix)["EIX_USER"]);
 	if(user.empty() || !get_uid_of(user.c_str(), &uid)) {
 		valid_user = false;
 		uid_t i(eix->getInteger("EIX_UID"));
@@ -56,7 +56,7 @@ void drop_permissions(EixRc *eix) {
 	}
 	bool set_gid(true);
 	gid_t gid;
-	const string &group((*eix)["EIX_GROUP"]);
+	const string& group((*eix)["EIX_GROUP"]);
 	if(group.empty() || (get_uid_of(group.c_str(), &gid) == 0)) {
 		gid_t i(eix->getInteger("EIX_GID"));
 		if(i > 0) {

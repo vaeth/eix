@@ -12,7 +12,6 @@
 
 #include <ctime>
 
-#include <map>
 #include <string>
 
 #include "eixTk/null.h"
@@ -30,7 +29,7 @@ class Version;
 class BasicCache {
 		friend class EbuildExec;
 	public:
-		typedef void (*ErrorCallback)(const std::string &str);
+		typedef void (*ErrorCallback)(const std::string& str);
 
 		BasicCache() {
 			portagesettings = NULLPTR;
@@ -45,7 +44,7 @@ class BasicCache {
 		}
 
 		/// Set scheme for this cache
-		virtual void setScheme(const char *prefix, const char *prefixport, const std::string &scheme);
+		virtual void setScheme(const char *prefix, const char *prefixport, const std::string& scheme);
 
 		/// Set overlay-key
 		virtual void setKey(ExtendedVersion::Overlay key) {
@@ -53,7 +52,7 @@ class BasicCache {
 		}
 
 		/// Set overlay-name
-		virtual void setOverlayName(const std::string &name) {
+		virtual void setOverlayName(const std::string& name) {
 			m_overlay_name = name;
 		}
 
@@ -67,7 +66,7 @@ class BasicCache {
 		}
 
 		/// Get overlay-name
-		const std::string &getOverlayName() const {
+		const std::string& getOverlayName() const {
 			return m_overlay_name;
 		}
 
@@ -100,11 +99,14 @@ class BasicCache {
 		    @param cat_name If packagetree is NULLPTR, only packages with this category name are read.
 		    @param category If packagetree is NULLPTR, the packages matching cat_name are added to this category.
 		    @return false if some error caused incomplete read. */
-		virtual bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED, const char *cat_name ATTRIBUTE_UNUSED = NULLPTR, Category *category ATTRIBUTE_UNUSED = NULLPTR) {
+		virtual bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED, const char *cat_name ATTRIBUTE_UNUSED, Category *category ATTRIBUTE_UNUSED) {
 			UNUSED(packagetree);
 			UNUSED(cat_name);
 			UNUSED(category);
 			return 1;
+		}
+		virtual bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED) {
+			return readCategories(packagetree, NULLPTR, NULLPTR);
 		}
 
 		/** Prepare reading Cache for an individual category.
@@ -165,7 +167,7 @@ class BasicCache {
 		bool have_prefix;
 		ExtendedVersion::Overlay m_overlay_key;
 		ErrorCallback m_error_callback;
-		void env_add_package(std::map<std::string, std::string> *env, const Package &package, const Version &version, const std::string &ebuild_dir, const char *ebuild_full) const ATTRIBUTE_NONNULL_;
+		void env_add_package(WordMap *env, const Package& package, const Version& version, const std::string& ebuild_dir, const char *ebuild_full) const ATTRIBUTE_NONNULL_;
 
 	public:
 		PortageSettings *portagesettings;

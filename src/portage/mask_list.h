@@ -21,6 +21,7 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/ptr_list.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "portage/keywords.h"
 #include "portage/mask.h"
@@ -39,10 +40,10 @@ template<typename m_Type> class Masks : public std::list<m_Type> {
 		typedef typename std::list<m_Type>::iterator iterator;
 		typedef typename std::list<m_Type>::const_iterator const_iterator;
 
-		Masks(const std::string &f, const m_Type &m) : std::list<m_Type>(1, m), full(f) {
+		Masks(const std::string& f, const m_Type& m) : std::list<m_Type>(1, m), full(f) {
 		}
 
-		void add(const m_Type &m) {
+		void add(const m_Type& m) {
 			push_back(m);
 		}
 
@@ -87,7 +88,7 @@ template<typename m_Type> class MaskList : std::vector<Masks<m_Type> > {
 			full_index.clear();
 		}
 
-		bool match_full(const std::string &full) const {
+		bool match_full(const std::string& full) const {
 			if(exact_name.find(full) != exact_name.end()) {
 				return true;
 			}
@@ -103,7 +104,7 @@ template<typename m_Type> class MaskList : std::vector<Masks<m_Type> > {
 			return match_full(p->category + "/" + p->name);
 		}
 
-		inline static void push_result(Get **l, const Masks<m_Type> &r) ATTRIBUTE_NONNULL_ {
+		inline static void push_result(Get **l, const Masks<m_Type>& r) ATTRIBUTE_NONNULL_ {
 			if(*l == NULLPTR) {
 				*l = new Get;
 			}
@@ -112,7 +113,7 @@ template<typename m_Type> class MaskList : std::vector<Masks<m_Type> > {
 			}
 		}
 
-		Get *get_full(const std::string &full) const {
+		Get *get_full(const std::string& full) const {
 			Get *l(NULLPTR);
 			for(const_iterator it(begin()); likely(it != end()); ++it) {
 				if(unlikely(it->match_full(full.c_str()))) {
@@ -126,7 +127,7 @@ template<typename m_Type> class MaskList : std::vector<Masks<m_Type> > {
 			return l;
 		}
 
-		Get *get_setname(const std::string &setname) const {
+		Get *get_setname(const std::string& setname) const {
 			return get_full(std::string(SET_CATEGORY) + "/" + setname);
 		}
 
@@ -134,7 +135,7 @@ template<typename m_Type> class MaskList : std::vector<Masks<m_Type> > {
 			return get_full(p->category + "/" + p->name);
 		}
 
-		void add(const m_Type &m) {
+		void add(const m_Type& m) {
 			std::string full(m.getCategory());
 			full.append(1, '/');
 			full.append(m.getName());
@@ -157,7 +158,10 @@ template<typename m_Type> class MaskList : std::vector<Masks<m_Type> > {
 		}
 
 		/* return true if something was added */
-		bool add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines = false) ATTRIBUTE_NONNULL_;
+		bool add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines) ATTRIBUTE_NONNULL_;
+		bool add_file(const char *file, Mask::Type mask_type, bool recursive) ATTRIBUTE_NONNULL_ {
+			return add_file(file, mask_type, recursive, false);
+		}
 
 		/** This can be optionally called after the last add():
 		 *  It will release memory. */
@@ -177,7 +181,7 @@ template<typename m_Type> class MaskList : std::vector<Masks<m_Type> > {
 			delete masks;
 		}
 
-		void applyListSetItems(Version *v, const std::string &set_name) const ATTRIBUTE_NONNULL_ {
+		void applyListSetItems(Version *v, const std::string& set_name) const ATTRIBUTE_NONNULL_ {
 			Get *masks(get_setname(set_name));
 			if(masks == NULLPTR) {
 				return;
@@ -190,32 +194,35 @@ template<typename m_Type> class MaskList : std::vector<Masks<m_Type> > {
 		}
 
 		// return true if some mask potentially applied
-		bool applyMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const ATTRIBUTE_NONNULL_;
+		bool applyMasks(Package *p, Keywords::Redundant check) const ATTRIBUTE_NONNULL_;
+		bool applyMasks(Package *p) const ATTRIBUTE_NONNULL_ {
+			return applyMasks(p, Keywords::RED_NOTHING);
+		}
 
 		// return true if some mask matches
 		bool MaskMatches(Package *p) const ATTRIBUTE_NONNULL_;
 
-		void applySetMasks(Version *v, const std::string &set_name) const ATTRIBUTE_NONNULL_;
+		void applySetMasks(Version *v, const std::string& set_name) const ATTRIBUTE_NONNULL_;
 };
 
 // This is only needed for PreList
 class PreListEntry {
 	public:
-		typedef std::vector<std::string>::size_type FilenameIndex;
-		typedef std::vector<std::string>::size_type LineNumber;
+		typedef WordVec::size_type FilenameIndex;
+		typedef LineVec::size_type LineNumber;
 		std::string name;
-		std::vector<std::string> args;
+		WordVec args;
 		FilenameIndex filename_index;
 		LineNumber linenumber;
 		bool locally_double;
 };
 
 // This is only needed for PreList
-class PreListOrderEntry : public std::vector<std::string> {
+class PreListOrderEntry : public LineVec {
 	public:
 		typedef PreListEntry::FilenameIndex FilenameIndex;
 		typedef PreListEntry::LineNumber LineNumber;
-		typedef std::vector<std::string> super;
+		typedef LineVec super;
 		typedef super::const_iterator const_iterator;
 		using super::begin;
 		using super::end;
@@ -224,7 +231,7 @@ class PreListOrderEntry : public std::vector<std::string> {
 		LineNumber linenumber;
 		bool removed, locally_double;
 
-		PreListOrderEntry(const super &line, FilenameIndex file, LineNumber number)
+		PreListOrderEntry(const super& line, FilenameIndex file, LineNumber number)
 			: super(line), filename_index(file), linenumber(number), removed(false), locally_double(false) {
 		}
 };
@@ -235,9 +242,9 @@ class PreListFilename {
 		bool know_repo;
 
 	public:
-		PreListFilename(const std::string &n, const char *label);
+		PreListFilename(const std::string& n, const char *label);
 
-		const std::string &name() const {
+		const std::string& name() const {
 			return filename;
 		}
 
@@ -276,9 +283,12 @@ class PreList : public std::vector<PreListEntry> {
 	private:
 		using super::push_back;
 
-		std::vector<PreListOrderEntry> order;
-		std::vector<PreListFilename> filenames;
-		std::map<std::vector<std::string>, std::vector<PreListOrderEntry>::size_type> have;
+		typedef std::vector<PreListOrderEntry> Order;
+		Order order;
+		typedef std::vector<PreListFilename> FileNames;
+		FileNames filenames;
+		typedef std::map<std::vector<std::string>, Order::size_type> Have;
+		Have have;
 		bool finalized;
 
 	public:
@@ -288,7 +298,7 @@ class PreList : public std::vector<PreListEntry> {
 			super::clear();
 		}
 
-		const std::string &file_name(FilenameIndex file) const {
+		const std::string& file_name(FilenameIndex file) const {
 			return filenames[file].name();
 		}
 
@@ -296,7 +306,7 @@ class PreList : public std::vector<PreListEntry> {
 			return filenames[file].repo();
 		}
 
-		FilenameIndex push_name(const std::string &filename, const char *reponame) {
+		FilenameIndex push_name(const std::string& filename, const char *reponame) {
 			FilenameIndex i(filenames.size());
 			filenames.push_back(PreListFilename(filename, reponame));
 			return i;
@@ -305,36 +315,44 @@ class PreList : public std::vector<PreListEntry> {
 		PreList() : finalized(false) {
 		}
 
-		PreList(const std::vector<std::string> &lines, const std::string &filename, const char *reponame, bool only_add) : finalized(false) {
+		PreList(const std::vector<std::string>& lines, const std::string& filename, const char *reponame, bool only_add) : finalized(false) {
 			handle_file(lines, filename, reponame, only_add);
 		}
 
 		/// return true if something was changed
-		bool handle_file(const std::vector<std::string> &lines, const std::string &filename, const char *reponame, bool only_add, bool keep_commentlines = false) {
+		bool handle_file(const std::vector<std::string>& lines, const std::string& filename, const char *reponame, bool only_add, bool keep_commentlines) {
 			return handle_lines(lines, push_name(filename, reponame), only_add, NULLPTR, keep_commentlines);
 		}
 
 		/// return true if something was changed
-		bool handle_lines(const std::vector<std::string> &lines, FilenameIndex file, bool only_add, LineNumber *num, bool keep_commentlines);
+		bool handle_file(const std::vector<std::string>& lines, const std::string& filename, const char *reponame, bool only_add) {
+			return handle_lines(lines, push_name(filename, reponame), only_add, NULLPTR, false);
+		}
 
 		/// return true if something was changed
-		bool handle_line(const std::string &line, FilenameIndex file, LineNumber number, bool only_add, bool keep_commentlines);
+		bool handle_lines(const std::vector<std::string>& lines, FilenameIndex file, bool only_add, LineNumber *num, bool keep_commentlines);
 
 		/// return true if something was changed
-		bool add_line(const std::string &line, FilenameIndex file, LineNumber number, bool keep_commentlines);
+		bool handle_line(const std::string& line, FilenameIndex file, LineNumber number, bool only_add, bool keep_commentlines);
 
 		/// return true if something was changed
-		bool remove_line(const std::string &line);
+		bool add_line(const std::string& line, FilenameIndex file, LineNumber number, bool keep_commentlines);
 
 		/// return true if something was changed
-		bool add_splitted(const std::vector<std::string> &line, FilenameIndex file, LineNumber number);
+		bool remove_line(const std::string& line);
 
 		/// return true if something was changed
-		bool remove_splitted(const std::vector<std::string> &line);
+		bool add_splitted(const std::vector<std::string>& line, FilenameIndex file, LineNumber number);
+
+		/// return true if something was changed
+		bool remove_splitted(const std::vector<std::string>& line);
 
 		void finalize();
 
-		void initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines = false) ATTRIBUTE_NONNULL_;
+		void initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines) ATTRIBUTE_NONNULL_;
+		void initialize(MaskList<Mask> *l, Mask::Type t) ATTRIBUTE_NONNULL_ {
+			initialize(l, t, false);
+		}
 
 		void initialize(MaskList<KeywordMask> *l, std::string raised_arch) ATTRIBUTE_NONNULL_;
 

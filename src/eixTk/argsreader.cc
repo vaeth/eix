@@ -19,7 +19,7 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 
-ArgumentReader::ArgumentReader(int argc, char **argv, const OptionList &opt_table) {
+ArgumentReader::ArgumentReader(int argc, char **argv, const OptionList& opt_table) {
 	bool seen_escape(false);
 	name = argv[0];
 	eix::TinyUnsigned paramarg_remain(0);
@@ -78,7 +78,7 @@ ArgumentReader::ArgumentReader(int argc, char **argv, const OptionList &opt_tabl
 	foldAndRemove(opt_table);
 }
 
-const Option *ArgumentReader::lookup_option(const int opt, const OptionList &opt_table) {
+const Option *ArgumentReader::lookup_option(const int opt, const OptionList& opt_table) {
 	for(OptionList::const_iterator it(opt_table.begin());
 		likely(it != opt_table.end()); ++it) {
 		if(unlikely(it->shortopt == opt)) {
@@ -88,7 +88,7 @@ const Option *ArgumentReader::lookup_option(const int opt, const OptionList &opt
 	return NULLPTR;
 }
 
-eix::TinyUnsigned ArgumentReader::numargs(const int opt, const OptionList &opt_table) {
+eix::TinyUnsigned ArgumentReader::numargs(const int opt, const OptionList& opt_table) {
 	const Option *c(lookup_option(opt, opt_table));
 	if(c == NULLPTR) {
 		return 0;
@@ -117,7 +117,7 @@ eix::TinyUnsigned ArgumentReader::numargs(const int opt, const OptionList &opt_t
 /** Return shortopt for longopt stored in opt.
  * @param long_opt longopt that should be resolved.
  * @return shortopt for given longopt */
-int ArgumentReader::lookup_longopt(const char *long_opt, const OptionList &opt_table) {
+int ArgumentReader::lookup_longopt(const char *long_opt, const OptionList& opt_table) {
 	for(OptionList::const_iterator it(opt_table.begin());
 		likely(it != opt_table.end()); ++it) {
 		if(unlikely((it->longopt != NULLPTR) && (strcmp(it->longopt, long_opt) == 0))) {
@@ -132,7 +132,7 @@ int ArgumentReader::lookup_longopt(const char *long_opt, const OptionList &opt_t
 /** Check if short_opt is a known option.
  * @param long_opt longopt that should be resolved.
  * @return shortopt for given longopt */
-int ArgumentReader::lookup_shortopt(const char short_opt, const OptionList &opt_table) {
+int ArgumentReader::lookup_shortopt(const char short_opt, const OptionList& opt_table) {
 	for(OptionList::const_iterator it(opt_table.begin());
 		likely(it != opt_table.end()); ++it) {
 		if(unlikely(it->shortopt == short_opt))
@@ -143,7 +143,7 @@ int ArgumentReader::lookup_shortopt(const char short_opt, const OptionList &opt_
 	return 0;  // never reached, but might avoid compiler warning
 }
 
-void ArgumentReader::foldAndRemove(const OptionList &opt_table) {
+void ArgumentReader::foldAndRemove(const OptionList& opt_table) {
 	ArgumentReader::iterator it(begin());
 	while(it != end()) {
 		if(unlikely(it->type == Parameter::ARGUMENT)) {

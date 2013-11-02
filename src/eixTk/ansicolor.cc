@@ -37,9 +37,11 @@ unsigned int AnsiColor::colorscheme = 0;
 
 const char *AnsiColor::reset_string = "\x1B[0m";
 
-static map<string, ColorType> *static_color_map = NULLPTR;
+typedef map<string, ColorType> ColorMap;
 
-static const ColorType
+static ColorMap *static_color_map = NULLPTR;
+
+static CONSTEXPR ColorType
 	acNone       = 0,
 	amNone       = 50,
 	amBold       = 1,
@@ -60,8 +62,8 @@ static const ColorType
 
 void AnsiColor::init_static() {
 	eix_assert_static(static_color_map == NULLPTR);
-	static_color_map = new map<string, ColorType>;
-	map<string, ColorType> &color_map(*static_color_map);
+	static_color_map = new ColorMap;
+	ColorMap& color_map(*static_color_map);
 	color_map[""]           = acNone;
 	color_map["none"]       = amNone;
 	color_map["default"]    = acNone;
@@ -83,7 +85,7 @@ void AnsiColor::init_static() {
 	color_map["white"]      = fgGray;
 }
 
-bool AnsiColor::initcolor(const string &str, string *errtext) {
+bool AnsiColor::initcolor(const string& str, string *errtext) {
 	if(likely(str.empty())) {
 		code.assign(reset_string);
 		return true;
@@ -120,7 +122,7 @@ bool AnsiColor::initcolor(const string &str, string *errtext) {
 		string::size_type nextpos(str.find_first_of(",;|", currpos));
 		string curr(str, currpos, (nextpos == string::npos) ? string::npos : (nextpos - currpos));
 		ColorType col;
-		map<string, ColorType>::const_iterator f(static_color_map->find(curr));
+		ColorMap::const_iterator f(static_color_map->find(curr));
 		if(f != static_color_map->end()) {
 			col = f->second;
 			if(col == amNone) {

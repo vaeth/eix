@@ -15,7 +15,6 @@
 #include <cstring>
 
 #include <string>
-#include <vector>
 
 #include "cache/common/assign_reader.h"
 #include "cache/common/flat_reader.h"
@@ -24,6 +23,7 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/utils.h"
 #include "portage/basicversion.h"
@@ -32,7 +32,6 @@
 #include "portage/packagetree.h"
 
 using std::string;
-using std::vector;
 
 /* Subpath to metadata cache */
 #define METADATA_PATH		"metadata/cache"
@@ -57,7 +56,7 @@ bool MetadataCache::use_prefixport() const {
 	}
 }
 
-bool MetadataCache::initialize(const string &name) {
+bool MetadataCache::initialize(const string& name) {
 	string pure_name(name);
 	string::size_type i(pure_name.find(':'));
 	if(i != string::npos) {
@@ -287,7 +286,7 @@ const char *MetadataCache::get_md5sum(const char *pkg_name, const char *ver_name
 }
 
 bool MetadataCache::readCategory(Category *cat) {
-	for(vector<string>::const_iterator it(names.begin());
+	for(WordVec::const_iterator it(names.begin());
 		likely(it != names.end()); ) {
 		Version *newest(NULLPTR);
 		string neweststring;

@@ -12,7 +12,6 @@
 
 #include <vector>
 #include <string>
-#include <algorithm>
 
 typedef std::vector<std::string>::size_type SetsIndex;
 
@@ -21,8 +20,12 @@ class SetsList : public std::vector<SetsIndex> {
 		bool have_system;
 
 	public:
-		explicit SetsList(bool with_system = false) {
-			have_system = with_system;
+		typedef std::vector<SetsIndex> super;
+
+		explicit SetsList() : have_system(false) {
+		}
+
+		explicit SetsList(bool with_system) : have_system(with_system) {
 		}
 
 		bool has_system() const {
@@ -30,48 +33,17 @@ class SetsList : public std::vector<SetsIndex> {
 		}
 
 		/// @return true if something has changed
-		bool add_system() {
-			if(have_system) {
-				return false;
-			}
-			have_system = true;
-			return true;
-		}
+		bool add_system();
 
-		bool has(SetsIndex i) const {
-			return (std::find(begin(), end(), i) != end());
-		}
+		bool has(SetsIndex i) const;
 
 		/// @return true if something has changed
-		bool add(SetsIndex i) {
-			if(has(i)) {
-				return false;
-			}
-			push_back(i);
-			return true;
-		}
+		bool add(SetsIndex i);
 
 		/// @return true if something has changed
-		bool add(const SetsList &l) {
-			bool r(false);
-			if(l.has_system()) {
-				if(add_system()) {
-					r = true;
-				}
-			}
-			for(SetsList::const_iterator it = l.begin();
-				it != l.end(); ++it) {
-				if(add(*it)) {
-					r = true;
-				}
-			}
-			return r;
-		}
+		bool add(const SetsList& l);
 
-		void clear() {
-			std::vector<SetsIndex>::clear();
-			have_system = false;
-		}
+		void clear();
 };
 
 #endif  // SRC_PORTAGE_PACKAGESETS_H_

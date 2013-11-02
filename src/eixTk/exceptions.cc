@@ -11,30 +11,29 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
 
 #include "eixTk/exceptions.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 
 using std::string;
-using std::vector;
 
 using std::cerr;
 using std::endl;
 
 /// Provide a common look for error-messages for parse-errors in
 /// portage.{mask,keywords,..}.
-void portage_parse_error(const string &file, const vector<string>::size_type line_nr, const string& line, const string &errtext) {
+void portage_parse_error(const string& file, const LineVec::size_type line_nr, const string& line, const string& errtext) {
 	cerr << eix::format(_("-- Invalid line %s in %s: %r"))
 		% line_nr % file % line << endl;
 
 	// Indent the message correctly
-	vector<string> lines;
+	WordVec lines;
 	split_string(&lines, errtext, false, "\n", false);
-	for(vector<string>::iterator i(lines.begin()); likely(i != lines.end()); ++i) {
+	for(WordVec::const_iterator i(lines.begin()); likely(i != lines.end()); ++i) {
 		cerr << "    " << *i << endl;
 	}
 	cerr << endl;

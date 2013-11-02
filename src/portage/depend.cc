@@ -23,9 +23,9 @@ const char Depend::c_rdepend[] = "${RDEPEND}";
 
 static CONSTEXPR char the_same = '"';
 
-static bool subst_the_same(string *in, const string &from);
+static bool subst_the_same(string *in, const string& from);
 
-static bool subst_the_same(string *in, const string &from) {
+static bool subst_the_same(string *in, const string& from) {
 	if(from.empty()) {
 		return false;
 	}
@@ -50,7 +50,7 @@ static bool subst_the_same(string *in, const string &from) {
 	return true;
 }
 
-void Depend::set(const string &depend, const string &rdepend, const string &pdepend, const string &hdepend, bool normspace) {
+void Depend::set(const string& depend, const string& rdepend, const string& pdepend, const string& hdepend, bool normspace) {
 	if(!use_depend) {
 		return;
 	}
@@ -69,7 +69,7 @@ void Depend::set(const string &depend, const string &rdepend, const string &pdep
 	obsolete = false;
 }
 
-string Depend::subst(const string &in, const string &text, bool obs) {
+string Depend::subst(const string& in, const string& text, bool obs) {
 	string::size_type pos(in.find(the_same));
 	if(pos == string::npos) {
 		return in;
@@ -89,7 +89,7 @@ string Depend::subst(const string &in, const string &text, bool obs) {
 	return ret;
 }
 
-bool Depend::operator==(const Depend &d) const {
+bool Depend::operator==(const Depend& d) const {
 	return ((get_depend() == d.get_depend()) &&
 		(get_rdepend() == d.get_rdepend()) &&
 		(get_pdepend() == d.get_pdepend()) &&

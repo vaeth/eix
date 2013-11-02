@@ -22,6 +22,7 @@ class PackageTree;
 
 class EixCache : public BasicCache {
 	private:
+		typedef std::vector<EixCache*> Slaves;
 		static eix::ptr_list<EixCache> *all_eixcaches;
 		bool slavemode;
 		std::string err_msg;
@@ -32,17 +33,17 @@ class EixCache : public BasicCache {
 		Category *dest_cat;
 
 		void setSchemeFinish();
-		void allerrors(const std::vector<EixCache*> &slaves, const std::string &msg);
-		void thiserror(const std::string &msg);
-		bool get_overlaydat(const DBHeader &header);
-		bool get_destcat(PackageTree *packagetree, const char *cat_name, Category *category, const std::string &pcat) ATTRIBUTE_NONNULL((3));
+		void allerrors(const Slaves& slaves, const std::string& msg);
+		void thiserror(const std::string& msg);
+		bool get_overlaydat(const DBHeader& header);
+		bool get_destcat(PackageTree *packagetree, const char *cat_name, Category *category, const std::string& pcat) ATTRIBUTE_NONNULL((3));
 		void get_package(Package *p) ATTRIBUTE_NONNULL_;
 
 	public:
 		~EixCache();
 
 		// @return true if successful
-		bool initialize(const std::string &name);
+		bool initialize(const std::string& name);
 
 		bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL {
 			return true;

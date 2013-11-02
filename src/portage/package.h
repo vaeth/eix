@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/constexpr.h"
 #include "eixTk/eixint.h"
 #include "eixTk/inttypes.h"
 #include "eixTk/likely.h"
@@ -36,24 +37,26 @@ class VersionList : public std::list<Version*> {  // null entries are not allowe
 		explicit VersionList(Version *v) ATTRIBUTE_NONNULL_ : std::list<Version*>(1, v) {
 		}
 
-		Version* best(bool allow_unstable = false) const ATTRIBUTE_PURE;
+		Version* best(bool allow_unstable) const ATTRIBUTE_PURE;
+		Version* best() const ATTRIBUTE_PURE {
+			return best(false);
+		}
 };
 
 class SlotVersions {
 	private:
 		const char  *m_slotname;
 		VersionList  m_version_list;
-
 	public:
 		const char *slotname() const {
 			return m_slotname;
 		}
 
-		const VersionList &const_version_list() const {
+		const VersionList& const_version_list() const {
 			return m_version_list;
 		}
 
-		VersionList &version_list() {
+		VersionList& version_list() {
 			return m_version_list;
 		}
 
@@ -73,12 +76,14 @@ class SlotList : public std::vector<SlotVersions> {
  * about a package, including a sorted(!) list of versions. */
 class Package : public eix::ptr_list<Version> {
 	public:
+		typedef std::vector<Version *> VerVec;
+
 		friend class PackageReader;
 
 		/** True if duplicated versions are found in for this package.
 		 * That means e.g. that version 0.2 is found in two overlays. */
 		typedef uint8_t Duplicates;
-		static const Duplicates
+		static CONSTEXPR Duplicates
 			DUP_NONE     = 0x00U,
 			DUP_SOME     = 0x01U,  /* Duplicate versions are somewhere */
 			DUP_OVERLAYS = 0x03U;  /* Duplicate versions are both in overlays */
@@ -89,7 +94,7 @@ class Package : public eix::ptr_list<Version> {
 		ExtendedVersion::Overlay largest_overlay;
 
 		typedef uint8_t Versioncollects;
-		static const Versioncollects
+		static CONSTEXPR Versioncollects
 			COLLECT_NONE                  = 0x00U,
 			COLLECT_HAVE_NONTRIVIAL_SLOTS = 0x01U,
 			COLLECT_HAVE_SAME_OVERLAY_KEY = 0x02U,
@@ -238,14 +243,23 @@ class Package : public eix::ptr_list<Version> {
 			return true;
 		}
 
-		Version *best(bool allow_unstable = false) const ATTRIBUTE_PURE;
+		Version *best(bool allow_unstable) const ATTRIBUTE_PURE;
+		Version *best() const ATTRIBUTE_PURE {
+			return best(false);
+		}
 
-		Version *best_slot(const char *slot_name, bool allow_unstable = false) const ATTRIBUTE_NONNULL_;
+		Version *best_slot(const char *slot_name, bool allow_unstable) const ATTRIBUTE_NONNULL_;
+		Version *best_slot(const char *slot_name) const ATTRIBUTE_NONNULL_ {
+			return best_slot(slot_name, false);
+		}
 
-		void best_slots(std::vector<Version*> *l, bool allow_unstable = false) const ATTRIBUTE_NONNULL_;
+		void best_slots(Package::VerVec *l, bool allow_unstable) const ATTRIBUTE_NONNULL_;
+		void best_slots(Package::VerVec *l) const ATTRIBUTE_NONNULL_ {
+			return best_slots(l, false);
+		}
 
 		/** Calculate list of uninstalled upgrade candidates */
-		void best_slots_upgrade(std::vector<Version*> *versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const ATTRIBUTE_NONNULL((2, 4));
+		void best_slots_upgrade(Package::VerVec *versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const ATTRIBUTE_NONNULL((2, 4));
 
 		/** Is version an (installed or uninstalled) upgrade candidate? */
 		bool is_best_upgrade(bool check_slots, const Version *version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const ATTRIBUTE_NONNULL((3, 5));
@@ -256,7 +270,7 @@ class Package : public eix::ptr_list<Version> {
 			-  3: p has no worse/missing best_slot, but an
 			      identical from a different overlay
 			-  0: else */
-		eix::TinySigned worse_best_slots(const Package &p) const;
+		eix::TinySigned worse_best_slots(const Package& p) const;
 
 		/** Compare best_slots() versions with that of p.
 		    @return
@@ -265,7 +279,7 @@ class Package : public eix::ptr_list<Version> {
 			- -1: *this has a worse/missing best_slot, and p has not
 			-  2: p and *this both have a worse/missing best_slot
 			-  3: all matches, but at least one overlay differs */
-		eix::TinySigned compare_best_slots(const Package &p) const;
+		eix::TinySigned compare_best_slots(const Package& p) const;
 
 		/** Compare best() version with that of p.
 		    @return
@@ -274,10 +288,10 @@ class Package : public eix::ptr_list<Version> {
 			- -1: p is larger
 			-  3: same, but overlays (or slots if test_slot)
 			      are different */
-		eix::TinySigned compare_best(const Package &p, bool test_slot) const ATTRIBUTE_PURE;
+		eix::TinySigned compare_best(const Package& p, bool test_slot) const ATTRIBUTE_PURE;
 
 		/** has p a worse/missing best/best_slot/different overlay? */
-		bool have_worse(const Package &p, bool test_slots) const {
+		bool have_worse(const Package& p, bool test_slots) const {
 			if(test_slots) {
 				return (worse_best_slots(p) > 0);
 			}
@@ -285,7 +299,7 @@ class Package : public eix::ptr_list<Version> {
 		}
 
 		/** differs p in at least one best/best_slot? */
-		bool differ(const Package &p, bool test_slots) const {
+		bool differ(const Package& p, bool test_slots) const {
 			if(test_slots) {
 				return compare_best_slots(p);
 			}
@@ -337,10 +351,12 @@ class Package : public eix::ptr_list<Version> {
 		/** must we downgrade v or has v different categories/slots? */
 		bool must_downgrade(VarDbPkg *v, bool test_slots) const {
 			eix::TinySigned c(check_best(v, true, test_slots));
-			if((c < 0) || (c == 3))
+			if((c < 0) || (c == 3)) {
 				return true;
-			if(!test_slots)
+			}
+			if(!test_slots) {
 				return false;
+			}
 			c = check_best_slots(v, true);
 			return ((c < 0) || (c == 2));
 		}
@@ -351,7 +367,7 @@ class Package : public eix::ptr_list<Version> {
 				must_downgrade(v, test_slots);
 		}
 
-		bool differ(const Package &p, VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool testvardb, bool test_slots) const {
+		bool differ(const Package& p, VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool testvardb, bool test_slots) const {
 			if(testvardb) {
 				return recommend(v, ps, only_installed, test_slots);
 			}
@@ -360,13 +376,16 @@ class Package : public eix::ptr_list<Version> {
 
 		/** Get the name of a slot of a version.
 		    returns NULLPTR if not found. */
-		const char *slotname(const ExtendedVersion &v) const ATTRIBUTE_PURE;
+		const char *slotname(const ExtendedVersion& v) const ATTRIBUTE_PURE;
 
 		/** Get the name of a slot of an installed version,
 		    possibly reading it from disk.
 		    Returns true if a reasonable choice seems to be found
 		    (v.know_slot determines whether we had full success). */
-		bool guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *force = NULLPTR) const ATTRIBUTE_NONNULL((2));
+		bool guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *force) const ATTRIBUTE_NONNULL((2));
+		bool guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg) const ATTRIBUTE_NONNULL((2)) {
+			return guess_slotname(v, vardbpkg, NULLPTR);
+		}
 
 		Version *latest() const {
 			return *rbegin();
@@ -411,11 +430,11 @@ class PackageSave {
 		DataType data;
 
 	public:
-		explicit PackageSave(const Package *p = NULLPTR) {
+		explicit PackageSave(const Package *p) {
 			store(p);
 		}
 
-		void store(const Package *p = NULLPTR);
+		void store(const Package *p);
 
 		void restore(Package *p) const ATTRIBUTE_NONNULL_;
 };

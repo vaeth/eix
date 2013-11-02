@@ -35,14 +35,21 @@ class PackageReader {
 
 		/** Initialize with file-stream and number of packages.
 		    @arg ps is used to define the local package sets while version reading */
-		PackageReader(Database *db, const DBHeader &hdr, PortageSettings *ps = NULLPTR)
+		PackageReader(Database *db, const DBHeader& hdr, PortageSettings *ps)
 			: m_db(db), m_frames(hdr.size), m_cat_size(0), m_pkg(NULLPTR), header(&hdr), m_portagesettings(ps), m_error(false) {
+		}
+
+		PackageReader(Database *db, const DBHeader& hdr)
+			: m_db(db), m_frames(hdr.size), m_cat_size(0), m_pkg(NULLPTR), header(&hdr), m_portagesettings(NULLPTR), m_error(false) {
 		}
 
 		~PackageReader();
 
 		/// Read attributes from the database into the current package.
-		bool read(Attributes need = ALL);
+		bool read(Attributes need);
+		bool read() {
+			return read(ALL);
+		}
 
 		/// Get pointer to the package.
 		// It's possible that some attributes of the package are not yet read
@@ -83,8 +90,8 @@ class PackageReader {
 	protected:
 		Database         *m_db;
 
-		eix::Treesize      m_frames;
-		eix::Treesize      m_cat_size;
+		eix::Treesize     m_frames;
+		eix::Treesize     m_cat_size;
 		std::string       m_cat_name;
 
 		off_t             m_next;

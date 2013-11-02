@@ -10,12 +10,12 @@
 
 #include <set>
 #include <string>
-#include <vector>
 #include <iostream>
 
 #include "database/header.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/sysutils.h"
 #include "eixrc/eixrc.h"
 #include "output/formatstring.h"
@@ -32,13 +32,12 @@
 
 using std::set;
 using std::string;
-using std::vector;
 
 using std::cout;
 
 const PrintXml::XmlVersion PrintXml::current;
 
-static void print_iuse(const set<IUse> &s, IUse::Flags wanted, const char *dflt);
+static void print_iuse(const IUseSet::IUseStd& s, IUse::Flags wanted, const char *dflt);
 
 void PrintXml::runclear() {
 	started = false;
@@ -90,7 +89,7 @@ void PrintXml::finish() {
 		return;
 	}
 
-	if (count) {
+	if(count) {
 		cout << "\t</category>\n";
 	}
 	cout << "</eixdump>\n";
@@ -98,31 +97,34 @@ void PrintXml::finish() {
 	runclear();
 }
 
-static void print_iuse(const set<IUse> &s, IUse::Flags wanted, const char *dflt) {
+static void print_iuse(const IUseSet::IUseStd& s, IUse::Flags wanted, const char *dflt) {
 	bool have_found(false);
-	for(set<IUse>::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
-		if(!((it->flags) & wanted))
+	for(IUseSet::IUseStd::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
+		if(!((it->flags) & wanted)) {
 			continue;
+		}
 		if(likely(have_found)) {
 			cout << " " << it->name();
 			continue;
 		}
 		have_found = true;
-		if(dflt != NULLPTR)
+		if(dflt != NULLPTR) {
 			cout << "\t\t\t\t<iuse default=\"" << dflt << "\">";
-		else
+		} else {
 			cout << "\t\t\t\t<iuse>";
+		}
 		cout << it->name();
 	}
-	if(have_found)
+	if(have_found) {
 		cout << "</iuse>\n";
+	}
 }
 
 void PrintXml::package(Package *pkg) {
 	if(unlikely(!started))
 		start();
 	if(unlikely(curcat != pkg->category)) {
-		if (!curcat.empty()) {
+		if(!curcat.empty()) {
 			cout << "\t</category>\n";
 		}
 		curcat = pkg->category;
@@ -177,7 +179,7 @@ void PrintXml::package(Package *pkg) {
 			if(print_format->is_virtual(overlay_key)) {
 				cout << " virtual=\"1\"";
 			}
-			const OverlayIdent &overlay(hdr->getOverlay(overlay_key));
+			const OverlayIdent& overlay(hdr->getOverlay(overlay_key));
 			if((print_overlay || overlay.label.empty()) && !(overlay.path.empty())) {
 				cout << " overlay=\"" << escape_xmlstring(overlay.path) << "\"";
 			}
@@ -185,10 +187,10 @@ void PrintXml::package(Package *pkg) {
 				cout << " repository=\"" << escape_xmlstring(overlay.label) << "\"";
 			}
 		}
-		if (!ver->get_shortfullslot().empty()) {
+		if(!ver->get_shortfullslot().empty()) {
 			cout << " slot=\"" << escape_xmlstring(ver->get_longfullslot()) << "\"";
 		}
-		if (versionInstalled) {
+		if(versionInstalled) {
 			cout << " installed=\"1\" installDate=\"" <<
 				escape_xmlstring(date_conv(dateformat.c_str(), installedVersion->instDate)) << "\"";
 		}
@@ -200,7 +202,7 @@ void PrintXml::package(Package *pkg) {
 		KeywordsFlags waskey;
 		stability->calc_version_flags(false, &wasmask, &waskey, *ver, pkg);
 
-		vector<string> mask_text, unmask_text;
+		WordVec mask_text, unmask_text;
 		if(wasmask.isHardMasked()) {
 			if(currmask.isProfileMask()) {
 				mask_text.push_back("profile");
@@ -218,83 +220,85 @@ void PrintXml::package(Package *pkg) {
 		}
 
 		if(currkey.isStable()) {
-			if (waskey.isStable()) {
+			if(waskey.isStable()) {
 				//
-			} else if (waskey.isUnstable()) {
+			} else if(waskey.isUnstable()) {
 				mask_text.push_back("keyword");
 				unmask_text.push_back("package_keywords");
-			} else if (waskey.isMinusKeyword()) {
+			} else if(waskey.isMinusKeyword()) {
 				mask_text.push_back("minus_keyword");
 				unmask_text.push_back("package_keywords");
-			} else if (waskey.isAlienStable()) {
+			} else if(waskey.isAlienStable()) {
 				mask_text.push_back("alien_stable");
 				unmask_text.push_back("package_keywords");
-			} else if (waskey.isAlienUnstable()) {
+			} else if(waskey.isAlienUnstable()) {
 				mask_text.push_back("alien_unstable");
 				unmask_text.push_back("package_keywords");
-			} else if (waskey.isMinusUnstable()) {
+			} else if(waskey.isMinusUnstable()) {
 				mask_text.push_back("minus_unstable");
 				unmask_text.push_back("package_keywords");
-			} else if (waskey.isMinusAsterisk()) {
+			} else if(waskey.isMinusAsterisk()) {
 				mask_text.push_back("minus_asterisk");
 				unmask_text.push_back("package_keywords");
 			} else {
 				mask_text.push_back("missing_keyword");
 				unmask_text.push_back("package_keywords");
 			}
-		} else if (currkey.isUnstable()) {
+		} else if(currkey.isUnstable()) {
 			mask_text.push_back("keyword");
-		} else if (currkey.isMinusKeyword()) {
+		} else if(currkey.isMinusKeyword()) {
 			mask_text.push_back("minus_keyword");
-		} else if (currkey.isAlienStable()) {
+		} else if(currkey.isAlienStable()) {
 			mask_text.push_back("alien_stable");
-		} else if (currkey.isAlienUnstable()) {
+		} else if(currkey.isAlienUnstable()) {
 			mask_text.push_back("alien_unstable");
-		} else if (currkey.isMinusUnstable()) {
+		} else if(currkey.isMinusUnstable()) {
 			mask_text.push_back("minus_unstable");
-		} else if (currkey.isMinusAsterisk()) {
+		} else if(currkey.isMinusAsterisk()) {
 			mask_text.push_back("minus_asterisk");
 		} else {
 			mask_text.push_back("missing_keyword");
 		}
 
-		for(vector<string>::const_iterator it(mask_text.begin());
+		for(WordVec::const_iterator it(mask_text.begin());
 			unlikely(it != mask_text.end()); ++it) {
 			cout << "\t\t\t\t<mask type=\"" << *it << "\" />\n";
 		}
 
-		for(vector<string>::const_iterator it(unmask_text.begin());
+		for(WordVec::const_iterator it(unmask_text.begin());
 			unlikely(it != unmask_text.end()); ++it) {
 			cout << "\t\t\t\t<unmask type=\"" << *it << "\" />\n";
 		}
 
-		if (!(ver->iuse.empty())) {
+		if(!(ver->iuse.empty())) {
 			// cout << "\t\t\t\t<iuse>" << ver->iuse.asString() << "</iuse>\n";
-			const set<IUse> &s(ver->iuse.asSet());
+			const IUseSet::IUseStd& s(ver->iuse.asStd());
 			print_iuse(s, IUse::USEFLAGS_NORMAL, NULLPTR);
 			print_iuse(s, IUse::USEFLAGS_PLUS, "1");
 			print_iuse(s, IUse::USEFLAGS_MINUS, "-1");
 		}
-		if (versionInstalled) {
+		if(versionInstalled) {
 			string iuse_disabled, iuse_enabled;
 			var_db_pkg->readUse(*pkg, installedVersion);
-			vector<string> inst_iuse(installedVersion->inst_iuse);
-			set<string> usedUse(installedVersion->usedUse);
-			for (vector<string>::iterator iu = inst_iuse.begin(); iu != inst_iuse.end(); iu++) {
-				if (usedUse.find(*iu) == usedUse.end()) {
-					if (!iuse_disabled.empty())
+			WordVec inst_iuse(installedVersion->inst_iuse);
+			WordSet usedUse(installedVersion->usedUse);
+			for(WordVec::const_iterator iu(inst_iuse.begin()); likely(iu != inst_iuse.end()); iu++) {
+				if(usedUse.find(*iu) == usedUse.end()) {
+					if(!iuse_disabled.empty()) {
 						iuse_disabled.append(1, ' ');
+					}
 					iuse_disabled.append(*iu);
 				} else {
-					if (!iuse_enabled.empty())
+					if(!iuse_enabled.empty()) {
 						iuse_enabled.append(1, ' ');
+					}
 					iuse_enabled.append(*iu);
 				}
 			}
-			if (!iuse_disabled.empty()) {
+			if(!iuse_disabled.empty()) {
 				cout << "\t\t\t\t<use enabled=\"0\">" << iuse_disabled << "</use>\n";
 			}
-			if (!iuse_enabled.empty()) {
+			if(!iuse_enabled.empty()) {
 				cout << "\t\t\t\t<use enabled=\"1\">" << iuse_enabled << "</use>\n";
 			}
 		}
@@ -390,7 +394,7 @@ void PrintXml::package(Package *pkg) {
 	++count;
 }
 
-string PrintXml::escape_xmlstring(const string &s) {
+string PrintXml::escape_xmlstring(const string& s) {
 	string ret;
 	string::size_type prev(0);
 	string::size_type len(s.length());

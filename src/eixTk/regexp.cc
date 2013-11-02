@@ -19,6 +19,7 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/regexp.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 
 using std::string;
@@ -95,9 +96,9 @@ GCC_DIAG_ON(sign-conversion)
 }
 
 RegexList::RegexList(const string& stringlist) {
-	vector<string> l;
+	WordVec l;
 	split_string(&l, stringlist, true);
-	for(vector<string>::const_iterator it(l.begin());
+	for(WordVec::const_iterator it(l.begin());
 		likely(it != l.end()); ++it) {
 		reglist.push_back(new Regex(it->c_str()));
 	}

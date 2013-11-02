@@ -18,7 +18,6 @@
 
 #include <iostream>
 #include <list>
-#include <map>
 #include <string>
 #include <vector>
 
@@ -32,8 +31,8 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/percentage.h"
-#include "eixTk/ptr_list.h"
 #include "eixTk/statusline.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/sysutils.h"
 #include "eixTk/utils.h"
@@ -48,7 +47,6 @@
 #include "various/drop_permissions.h"
 
 using std::list;
-using std::map;
 using std::string;
 using std::vector;
 
@@ -56,7 +54,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-inline static void INFO(const string &s) {
+inline static void INFO(const string& s) {
 	cout << s;
 }
 
@@ -65,7 +63,7 @@ class Pathname {
 		string name;
 		bool must_resolve;
 	public:
-		bool is_a_match(const string &s) const {
+		bool is_a_match(const string& s) const {
 			if(must_resolve) {
 				return !fnmatch(name.c_str(), s.c_str(), 0);
 			}
@@ -104,14 +102,18 @@ class RepoName {
 		}
 };
 
-static bool update(const char *outputfile, CacheTable *cache_table, PortageSettings *portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline *statusline, string *errtext) ATTRIBUTE_NONNULL_;
-static void error_callback(const string &str);
-static void add_pathnames(vector<Pathname> *add_list, const vector<string> &to_add, bool must_resolve) ATTRIBUTE_NONNULL_;
-static void add_override(vector<Override> *override_list, EixRc *eixrc, const char *s) ATTRIBUTE_NONNULL_;
-static void add_reponames(vector<RepoName> *repo_names, EixRc *eixrc, const char *s) ATTRIBUTE_NONNULL_;
-static void add_virtuals(vector<Override> *override_list, vector<Pathname> *add, vector<RepoName> *repo_names, const string &cachefile, const string &eprefix_virtual) ATTRIBUTE_NONNULL_;
-static void override_label(OverlayIdent *overlay, const vector<RepoName> &repo_names) ATTRIBUTE_NONNULL_;
-static bool stringstart_in_wordlist(const string &to_check, const vector<string> &wordlist);
+typedef vector<Pathname> PathVec;
+typedef vector<Override> Overrides;
+typedef vector<RepoName> RepoNames;
+
+static bool update(const char *outputfile, CacheTable *cache_table, PortageSettings *portage_settings, bool override_umask, const RepoNames& repo_names, const WordVec& exclude_labels, Statusline *statusline, string *errtext) ATTRIBUTE_NONNULL_;
+static void error_callback(const string& str);
+static void add_pathnames(PathVec *add_list, const WordVec& to_add, bool must_resolve) ATTRIBUTE_NONNULL_;
+static void add_override(Overrides *override_list, EixRc *eixrc, const char *s) ATTRIBUTE_NONNULL_;
+static void add_reponames(RepoNames *repo_names, EixRc *eixrc, const char *s) ATTRIBUTE_NONNULL_;
+static void add_virtuals(Overrides *override_list, PathVec *add, RepoNames *repo_names, const string& cachefile, const string& eprefix_virtual) ATTRIBUTE_NONNULL_;
+static void override_label(OverlayIdent *overlay, const RepoNames& repo_names) ATTRIBUTE_NONNULL_;
+static bool stringstart_in_wordlist(const string& to_check, const WordVec& wordlist);
 static void print_help();
 
 static void print_help() {
@@ -165,8 +167,16 @@ static bool
 
 static bool use_percentage, use_status, verbose;
 
-static list<const char *> *exclude_args, *add_args;
-static list<ArgPair> *method_args, *repo_args;
+typedef list<const char *> ExcludeArgs;
+typedef ExcludeArgs AddArgs;
+static ExcludeArgs *exclude_args;
+static AddArgs *add_args;
+
+typedef list <ArgPair> MethodArgs;
+typedef MethodArgs RepoArgs;
+static MethodArgs *method_args;
+static RepoArgs *repo_args;
+
 static const char *outputname = NULLPTR;
 static const char *var_to_print = NULLPTR;
 
@@ -200,41 +210,41 @@ EixUpdateOptionList::EixUpdateOptionList() {
 static PercentStatus *reading_percent_status;
 
 
-static void add_pathnames(vector<Pathname> *add_list, const vector<string> &to_add, bool must_resolve) {
-	for(vector<string>::const_iterator it(to_add.begin());
+static void add_pathnames(PathVec *add_list, const WordVec& to_add, bool must_resolve) {
+	for(WordVec::const_iterator it(to_add.begin());
 		unlikely(it != to_add.end()); ++it)
 		add_list->push_back(Pathname(*it, must_resolve));
 }
 
-static void add_override(vector<Override> *override_list, EixRc *eixrc, const char *s) {
-	vector<string> v;
+static void add_override(Overrides *override_list, EixRc *eixrc, const char *s) {
+	WordVec v;
 	split_string(&v, (*eixrc)[s], true);
 	if(unlikely(v.size() & 1)) {
 		cerr << eix::format(_("%s must be a list of the form DIRECTORY METHOD")) % s << endl;
 		exit(EXIT_FAILURE);
 	}
-	for(vector<string>::iterator it(v.begin()); unlikely(it != v.end()); ++it) {
+	for(WordVec::iterator it(v.begin()); unlikely(it != v.end()); ++it) {
 		Override o(Pathname(*it, true));
 		o.method = *(++it);
 		override_list->push_back(o);
 	}
 }
 
-static void add_reponames(vector<RepoName> *repo_names, EixRc *eixrc, const char *s) {
-	vector<string> v;
+static void add_reponames(RepoNames *repo_names, EixRc *eixrc, const char *s) {
+	WordVec v;
 	split_string(&v, (*eixrc)[s], true);
 	if(unlikely(v.size() & 1)) {
 		cerr << eix::format(_("%s must be a list of the form DIR-PATTERN OVERLAY-LABEL")) % s << endl;
 		exit(EXIT_FAILURE);
 	}
-	for(vector<string>::iterator it(v.begin()); unlikely(it != v.end()); ++it) {
+	for(WordVec::const_iterator it(v.begin()); unlikely(it != v.end()); ++it) {
 		RepoName r(Pathname(*it, true));
 		r.repo_name = *(++it);
 		repo_names->push_back(r);
 	}
 }
 
-static void add_virtuals(vector<Override> *override_list, vector<Pathname> *add, vector<RepoName> *repo_names, const string &cachefile, const string &eprefix_virtual) {
+static void add_virtuals(Overrides *override_list, PathVec *add, RepoNames *repo_names, const string& cachefile, const string& eprefix_virtual) {
 	Database db;
 	if(unlikely(!db.openread(cachefile.c_str()))) {
 		INFO(eix::format(_(
@@ -251,7 +261,7 @@ static void add_virtuals(vector<Override> *override_list, vector<Pathname> *add,
 		return;
 	}
 	for(ExtendedVersion::Overlay i(0); likely(i != header.countOverlays()); ++i) {
-		const OverlayIdent &ov(header.getOverlay(i));
+		const OverlayIdent& ov(header.getOverlay(i));
 		string overlay(eprefix_virtual + ov.path);
 		if(!is_virtual(overlay.c_str()))
 			continue;
@@ -263,8 +273,8 @@ static void add_virtuals(vector<Override> *override_list, vector<Pathname> *add,
 	}
 }
 
-static void override_label(OverlayIdent *overlay, const vector<RepoName> &repo_names) {
-	for(vector<RepoName>::const_iterator it(repo_names.begin());
+static void override_label(OverlayIdent *overlay, const RepoNames& repo_names) {
+	for(RepoNames::const_iterator it(repo_names.begin());
 		it != repo_names.end(); ++it) {
 		if(it->name.is_a_match(overlay->path)) {
 			overlay->setLabel(it->repo_name);
@@ -272,9 +282,8 @@ static void override_label(OverlayIdent *overlay, const vector<RepoName> &repo_n
 	}
 }
 
-static bool stringstart_in_wordlist(const string &to_check, const vector<string> &wordlist) {
-	for(vector<string>::const_iterator it(wordlist.begin());
-		it != wordlist.end(); ++it) {
+static bool stringstart_in_wordlist(const string& to_check, const WordVec& wordlist) {
+	for(WordVec::const_iterator it(wordlist.begin()); it != wordlist.end(); ++it) {
 		if(to_check.compare(0, it->size(), *it) == 0) {
 			return true;
 		}
@@ -286,13 +295,13 @@ int run_eix_update(int argc, char *argv[]) {
 	// Initialize static classes
 	ExtendedVersion::init_static();
 	PortageSettings::init_static();
-	exclude_args = new list<const char *>;
-	add_args = new list<const char *>;
-	method_args = new list<ArgPair>;
-	repo_args = new list<ArgPair>;
+	exclude_args = new ExcludeArgs;
+	add_args = new AddArgs;
+	method_args = new MethodArgs;
+	repo_args = new RepoArgs;
 
 	/* Setup eixrc. */
-	EixRc &eixrc(get_eixrc(UPDATE_VARS_PREFIX));
+	EixRc& eixrc(get_eixrc(UPDATE_VARS_PREFIX));
 	drop_permissions(&eixrc);
 	Depend::use_depend = eixrc.getBool("DEP");
 	string eix_cachefile(eixrc["EIX_CACHEFILE"]); {
@@ -386,14 +395,14 @@ int run_eix_update(int argc, char *argv[]) {
 	PortageSettings portage_settings(&eixrc, false, true);
 
 	/* Build default (overlay/method/...) lists, using environment vars */
-	vector<Override> override_list;
+	Overrides override_list;
 	add_override(&override_list, &eixrc, "CACHE_METHOD");
-	vector<Pathname> excluded_list;
+	PathVec excluded_list;
 	add_pathnames(&excluded_list, split_string(eixrc["EXCLUDE_OVERLAY"], true), true);
-	vector<Pathname> add_list;
+	PathVec add_list;
 	add_pathnames(&add_list, split_string(eixrc["ADD_OVERLAY"], true), true);
 
-	vector<RepoName> repo_names;
+	RepoNames repo_names;
 
 	if(unlikely(eixrc.getBool("KEEP_VIRTUALS"))) {
 		add_virtuals(&override_list, &add_list, &repo_names, eix_cachefile, eixrc["EPREFIX_VIRTUAL"]);
@@ -402,19 +411,19 @@ int run_eix_update(int argc, char *argv[]) {
 	add_override(&override_list, &eixrc, "OVERRIDE_CACHE_METHOD");
 
 	/* Modify default (overlay/method/...) lists, using command line args */
-	for(list<const char*>::iterator it(exclude_args->begin());
+	for(ExcludeArgs::iterator it(exclude_args->begin());
 		unlikely(it != exclude_args->end()); ++it)
 		excluded_list.push_back(Pathname(*it, true));
-	for(list<const char*>::iterator it(add_args->begin());
+	for(AddArgs::iterator it(add_args->begin());
 		unlikely(it != add_args->end()); ++it)
 		add_list.push_back(Pathname(*it, true));
-	for(list<ArgPair>::iterator it(method_args->begin());
+	for(MethodArgs::iterator it(method_args->begin());
 		unlikely(it != method_args->end()); ++it)
 		override_list.push_back(Override(Pathname(it->first, true), it->second));
 
 	/* For REPO_NAMES it is quite the opposite: */
 
-	for(list<ArgPair>::iterator it(repo_args->begin());
+	for(RepoArgs::iterator it(repo_args->begin());
 		unlikely(it != repo_args->end()); ++it)
 		repo_names.push_back(RepoName(Pathname(it->first, false), it->second));
 
@@ -422,14 +431,14 @@ int run_eix_update(int argc, char *argv[]) {
 
 	/* Normalize names: */
 
-	vector<string> excluded_overlays;
-	for(vector<Pathname>::iterator it(excluded_list.begin());
+	WordVec excluded_overlays;
+	for(PathVec::iterator it(excluded_list.begin());
 		unlikely(it != excluded_list.end()); ++it)
 		excluded_overlays.push_back(it->resolve(&portage_settings));
 	excluded_list.clear();
 
-	vector<string> add_overlays;
-	for(vector<Pathname>::iterator it(add_list.begin());
+	WordVec add_overlays;
+	for(PathVec::iterator it(add_list.begin());
 		unlikely(it != add_list.end()); ++it) {
 		string add_name(it->resolve(&portage_settings));
 		// Let exclude override added names
@@ -439,8 +448,8 @@ int run_eix_update(int argc, char *argv[]) {
 	}
 	add_list.clear();
 
-	map<string, string> override;
-	for(vector<Override>::iterator it(override_list.begin());
+	WordMap override;
+	for(Overrides::iterator it(override_list.begin());
 		unlikely(it != override_list.end()); ++it) {
 		override[(it->name).resolve(&portage_settings)] = it->method;
 	}
@@ -450,10 +459,10 @@ int run_eix_update(int argc, char *argv[]) {
 
 	if(likely(eixrc.getBool("EXPORT_PORTDIR_OVERLAY"))) {
 		bool modified(false);
-		string &ref(portage_settings["PORTDIR_OVERLAY"]);
-		vector<string> overlayvec;
+		string& ref(portage_settings["PORTDIR_OVERLAY"]);
+		WordVec overlayvec;
 		split_string(&overlayvec, ref, true);
-		for(vector<string>::const_iterator it(add_overlays.begin());
+		for(WordVec::const_iterator it(add_overlays.begin());
 			unlikely(it != add_overlays.end()); ++it) {
 			if(find_filenames(overlayvec.begin(), overlayvec.end(),
 				it->c_str(), false, true) == overlayvec.end()) {
@@ -461,8 +470,7 @@ int run_eix_update(int argc, char *argv[]) {
 				modified = true;
 			}
 		}
-		for(vector<string>::iterator it(overlayvec.begin());
-			unlikely(it != overlayvec.end()); ) {
+		for(WordVec::iterator it(overlayvec.begin()); unlikely(it != overlayvec.end()); ) {
 			if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 				it->c_str(), true) == excluded_overlays.end()) {
 				++it;
@@ -484,7 +492,7 @@ int run_eix_update(int argc, char *argv[]) {
 
 	/* Create CacheTable and fill with PORTDIR and PORTDIR_OVERLAY. */
 	CacheTable table(eixrc["CACHE_METHOD_PARSE"]); {
-		map<string, string> *override_ptr(override.size() ? &override : NULLPTR);
+		WordMap *override_ptr(override.size() ? &override : NULLPTR);
 		if(likely(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 				portage_settings["PORTDIR"].c_str(), true) == excluded_overlays.end())) {
 			string errtext;
@@ -536,15 +544,15 @@ int run_eix_update(int argc, char *argv[]) {
 	return EXIT_SUCCESS;
 }
 
-static void error_callback(const string &str) {
+static void error_callback(const string& str) {
 	reading_percent_status->interprint_start();
 	cerr << str << endl;
 	reading_percent_status->interprint_end();
 }
 
-static bool update(const char *outputfile, CacheTable *cache_table, PortageSettings *portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline *statusline, string *errtext) {
+static bool update(const char *outputfile, CacheTable *cache_table, PortageSettings *portage_settings, bool override_umask, const RepoNames& repo_names, const WordVec& exclude_labels, Statusline *statusline, string *errtext) {
 	DBHeader dbheader;
-	vector<string> categories;
+	WordVec categories;
 	portage_settings->pushback_categories(&categories);
 	PackageTree package_tree(categories);
 
@@ -553,7 +561,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 	/* We must first initialize all caches and erase unneeded ones,
 	   because some cache methods like eixcache know about each other
 	   and call each other before we can call them in a loop afterwards. */
-	for(eix::ptr_list<BasicCache>::iterator it(cache_table->begin());
+	for(CacheTable::iterator it(cache_table->begin());
 		likely(it != cache_table->end()); ) {
 		BasicCache *cache(*it);
 		cache->portagesettings = portage_settings;
@@ -582,7 +590,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 	}
 
 	/* Build database from scratch. */
-	for(eix::ptr_list<BasicCache>::iterator it(cache_table->begin());
+	for(CacheTable::iterator it(cache_table->begin());
 		likely(it != cache_table->end()); ++it) {
 		BasicCache *cache(*it);
 		INFO(eix::format(_("[%s] \"%s\" %s (cache: %s)\n"))

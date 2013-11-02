@@ -9,9 +9,9 @@
 #define SRC_SEARCH_NOWARN_H_ 1
 
 #include <string>
-#include <vector>
 
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "portage/keywords.h"
 #include "portage/mask.h"
 #include "portage/mask_list.h"
@@ -26,8 +26,13 @@ class NowarnFlags {
 		PackageTest::TestInstalled ins;
 
 	public:
-		NowarnFlags(Keywords::Redundant r = Keywords::RED_NOTHING, PackageTest::TestInstalled i = PackageTest::INS_NONE)
-			: red(r), ins(i) {
+		NowarnFlags() : red(Keywords::RED_NOTHING), ins(PackageTest::INS_NONE) {
+		}
+
+		explicit NowarnFlags(Keywords::Redundant r) : red(r), ins(PackageTest::INS_NONE) {
+		}
+
+		NowarnFlags(Keywords::Redundant r, PackageTest::TestInstalled i) : red(r), ins(i) {
 		}
 
 		void apply_red(Keywords::Redundant *r) const {
@@ -43,12 +48,12 @@ class NowarnFlags {
 			ins = PackageTest::INS_NONE;
 		}
 
-		void setbits(const NowarnFlags &s) {
+		void setbits(const NowarnFlags& s) {
 			red |= s.red;
 			ins |= s.ins;
 		}
 
-		void clearbits(const NowarnFlags &s) {
+		void clearbits(const NowarnFlags& s) {
 			red &= ~s.red;
 			ins &= ~s.ins;
 		}
@@ -64,7 +69,7 @@ class NowarnMask : public Mask {
 		NowarnMask() : Mask(maskTypeNone) {
 		}
 
-		void init_nowarn(const std::vector<std::string> &flagstrings);
+		void init_nowarn(const WordVec& flagstrings);
 
 		static void init_static();
 
@@ -86,7 +91,7 @@ class NowarnPreList : public PreList {
 		NowarnPreList() : super() {
 		}
 
-		NowarnPreList(const std::vector<std::string> &lines, const std::string &filename, bool only_add)
+		NowarnPreList(const LineVec& lines, const std::string& filename, bool only_add)
 			: super(lines, filename, NULLPTR, only_add) {
 		}
 

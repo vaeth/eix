@@ -11,12 +11,12 @@
 
 #include <map>
 #include <string>
-#include <vector>
 
 #include "eixTk/exceptions.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringlist.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/utils.h"
 #include "portage/basicversion.h"
@@ -29,16 +29,15 @@ class Version;
 
 using std::map;
 using std::string;
-using std::vector;
 
 template<> bool MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines) {
-	vector<string> lines;
+	LineVec lines;
 	if(!pushback_lines(file, &lines, recursive, true, (keep_commentlines ? (-1) : 0))) {
 		return false;
 	}
 	bool added(false), finishcomment(false);
 	StringList *comments(NULLPTR);
-	for(vector<string>::iterator it(lines.begin()); likely(it != lines.end()); ++it) {
+	for(LineVec::iterator it(lines.begin()); likely(it != lines.end()); ++it) {
 		if(it->empty()) {
 			if(keep_commentlines) {
 				finishcomment = false;
@@ -150,7 +149,7 @@ template<> bool MaskList<Mask>::applyMasks(Package *p, Keywords::Redundant check
 	return true;
 }
 
-template<> void MaskList<Mask>::applySetMasks(Version *v, const string &set_name) const {
+template<> void MaskList<Mask>::applySetMasks(Version *v, const string& set_name) const {
 	Get *masks(get_setname(set_name));
 	if(masks == NULLPTR) {
 		return;
@@ -162,7 +161,7 @@ template<> void MaskList<Mask>::applySetMasks(Version *v, const string &set_name
 	delete masks;
 }
 
-PreListFilename::PreListFilename(const string &n, const char *label) {
+PreListFilename::PreListFilename(const string& n, const char *label) {
 	filename = n;
 	if(label == NULLPTR) {
 		know_repo = false;
@@ -179,10 +178,10 @@ const char *PreListFilename::repo() const {
 	return NULLPTR;
 }
 
-bool PreList::handle_lines(const vector<string> &lines, FilenameIndex file, const bool only_add, LineNumber *num, bool keep_commentlines) {
+bool PreList::handle_lines(const LineVec& lines, FilenameIndex file, const bool only_add, LineNumber *num, bool keep_commentlines) {
 	bool changed(false);
 	LineNumber number((num == NULLPTR) ? 1 : (*num));
-	for(vector<string>::const_iterator it(lines.begin());
+	for(LineVec::const_iterator it(lines.begin());
 		likely(it != lines.end()); ++it) {
 		if(handle_line(*it, file, number++, only_add, keep_commentlines)) {
 			changed = true;
@@ -194,7 +193,7 @@ bool PreList::handle_lines(const vector<string> &lines, FilenameIndex file, cons
 	return changed;
 }
 
-bool PreList::handle_line(const std::string &line, FilenameIndex file, LineNumber number, bool only_add, bool keep_commentlines) {
+bool PreList::handle_line(const std::string& line, FilenameIndex file, LineNumber number, bool only_add, bool keep_commentlines) {
 	if(line.empty()) {
 		if(keep_commentlines) {
 			return add_line(line, file, number, keep_commentlines);
@@ -207,9 +206,9 @@ bool PreList::handle_line(const std::string &line, FilenameIndex file, LineNumbe
 	return remove_line(line.c_str() + 1);
 }
 
-bool PreList::add_line(const std::string &line, FilenameIndex file, LineNumber number, bool keep_commentlines) {
+bool PreList::add_line(const std::string& line, FilenameIndex file, LineNumber number, bool keep_commentlines) {
 	static string *unique = NULLPTR;
-	vector<string> l;
+	LineVec l;
 	if(keep_commentlines) {
 		if(line.empty() || (line[0] == '#')) {
 			if(unique == NULLPTR) {
@@ -239,23 +238,23 @@ bool PreList::add_line(const std::string &line, FilenameIndex file, LineNumber n
 	return add_splitted(l, file, number);
 }
 
-bool PreList::remove_line(const std::string &line) {
-	vector<string> l;
+bool PreList::remove_line(const std::string& line) {
+	LineVec l;
 	split_string(&l, line);
 	return remove_splitted(l);
 }
 
-bool PreList::add_splitted(const std::vector<std::string> &line, FilenameIndex file, LineNumber number) {
+bool PreList::add_splitted(const LineVec& line, FilenameIndex file, LineNumber number) {
 	if(line.empty()) {
 		return false;
 	}
-	map<vector<string>, vector<PreListOrderEntry>::size_type>::iterator it(have.find(line));
+	Have::iterator it(have.find(line));
 	if(it == have.end()) {
 		have[line] = order.size();
 		order.push_back(PreListOrderEntry(line, file, number));
 		return true;
 	}
-	PreListOrderEntry &e(order[it->second]);
+	PreListOrderEntry& e(order[it->second]);
 	e.filename_index = file;
 	e.linenumber = number;
 	if(e.removed) {
@@ -267,11 +266,11 @@ bool PreList::add_splitted(const std::vector<std::string> &line, FilenameIndex f
 	}
 }
 
-bool PreList::remove_splitted(const std::vector<std::string> &line) {
+bool PreList::remove_splitted(const LineVec& line) {
 	if(line.empty()) {
 		return false;
 	}
-	map<vector<string>, vector<PreListOrderEntry>::size_type>::iterator it(have.find(line));
+	Have::iterator it(have.find(line));
 	if(it == have.end()) {
 		return false;
 	}
@@ -290,8 +289,9 @@ void PreList::finalize() {
 
 	// We first build a map of the result and
 	// set the duplicate names to removed.
-	map<string, PreListEntry> result;
-	for(vector<PreListOrderEntry>::const_iterator it(order.begin());
+	typedef map<string, PreListEntry> Res;
+	Res result;
+	for(Order::const_iterator it(order.begin());
 		likely(it != order.end()); ++it) {
 		if(unlikely(it->removed)) {
 			continue;
@@ -301,7 +301,7 @@ void PreList::finalize() {
 		}
 		PreListOrderEntry::const_iterator curr(it->begin());
 		PreListEntry *e;
-		map<string, PreListEntry>::iterator r(result.find(*curr));
+		Res::iterator r(result.find(*curr));
 		if(likely(r == result.end())) {
 			e = &(result[*curr]);
 		} else {
@@ -317,8 +317,7 @@ void PreList::finalize() {
 	}
 
 	// Now we sort the result according to the order.
-	for(vector<PreListOrderEntry>::const_iterator it(order.begin());
-		likely(it != order.end()); ++it) {
+	for(Order::const_iterator it(order.begin()); likely(it != order.end()); ++it) {
 		if(likely(!it->removed)) {
 			push_back(result[(*it)[0]]);
 		}
@@ -348,7 +347,7 @@ void PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines
 			if(!keep_commentlines) {
 				continue;
 			}
-			const string &comment(it->args[0]);
+			const string& comment(it->args[0]);
 			if(comment.empty()) {
 				finishcomment = false;
 				delete comments;

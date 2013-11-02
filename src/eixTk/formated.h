@@ -131,12 +131,12 @@ class format {
 		}
 
 		/// Write string t enclosed in single quotes into stream s.
-		std::ostream& write_representation(std::ostream& s, const std::string &t) {  // NOLINT(runtime/references)
+		std::ostream& write_representation(std::ostream& s, const std::string& t) {  // NOLINT(runtime/references)
 			return s << "'" << t << "'";
 		}
 
 		/// Write size_type or "<string::npos>" to stream.
-		std::ostream& write_representation(std::ostream& s, const std::string::size_type &t) {  // NOLINT(runtime/references)
+		std::ostream& write_representation(std::ostream& s, const std::string::size_type& t) {  // NOLINT(runtime/references)
 			if(t == std::string::npos) {
 				return s << "<string::npos>";
 			}

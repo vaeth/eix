@@ -13,7 +13,6 @@
 #include <string>
 
 #include "eixTk/eixint.h"
-#include "eixTk/null.h"
 #include "eixTk/ptr_list.h"
 #include "eixTk/stringlist.h"
 #include "portage/basicversion.h"
@@ -88,19 +87,24 @@ class Mask : public BasicVersion {
 		 * @param check      check these for changes */
 		void apply(Version *ve, bool do_test, Keywords::Redundant check) const ATTRIBUTE_NONNULL_;
 
-		/** Parse mask-string. */
-		Mask(Type type, const char *repo = NULLPTR);
+		Mask(Type type, const char *repo);
+
+		explicit Mask(Type type) : m_type(type), m_test_reponame(false) {
+		}
 
 		/** split a "mask string" into its components
 		 * @return whether/which error occurred
 		 * @param str_mask the string to be dissected
 		 * @param errtext contains error message if not 0 and not parseOK
 		 * @param accept_garbage passed to parseVersion if appropriate */
-		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, eix::SignedBool accept_garbage = 1) ATTRIBUTE_NONNULL_;
+		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, eix::SignedBool accept_garbage) ATTRIBUTE_NONNULL_;
+		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext) ATTRIBUTE_NONNULL_ {
+			return parseMask(str, errtext, 1);
+		}
 
 		void match(Matches *m, Package *pkg) const ATTRIBUTE_NONNULL_;
 
-		bool have_match(const Package &pkg) const;
+		bool have_match(const Package& pkg) const;
 
 		void to_package(Package *p) const ATTRIBUTE_NONNULL_;
 
@@ -119,7 +123,10 @@ class Mask : public BasicVersion {
 		/** Sets the stability members of all version in package according to the mask.
 		 * @param pkg            package you want tested
 		 * @param check          Redundancy checks which should apply */
-		void checkMask(Package *pkg, Keywords::Redundant check = Keywords::RED_NOTHING) const ATTRIBUTE_NONNULL_;
+		void checkMask(Package *pkg, Keywords::Redundant check) const ATTRIBUTE_NONNULL_;
+		void checkMask(Package *pkg) const ATTRIBUTE_NONNULL_ {
+			checkMask(pkg, Keywords::RED_NOTHING);
+		}
 
 		bool ismatch(const Package& pkg) const;
 
@@ -133,7 +140,10 @@ class KeywordMask : public Mask {
 		std::string keywords;
 		bool locally_double;
 
-		explicit KeywordMask(const char *repo = NULLPTR) : Mask(maskTypeNone, repo) {
+		explicit KeywordMask(const char *repo) : Mask(maskTypeNone, repo) {
+		}
+
+		explicit KeywordMask() : Mask(maskTypeNone) {
 		}
 
 		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;
@@ -147,7 +157,10 @@ class PKeywordMask : public Mask {
 	public:
 		std::string keywords;
 
-		explicit PKeywordMask(const char *repo = NULLPTR) : Mask(maskTypeNone, repo) {
+		explicit PKeywordMask(const char *repo) : Mask(maskTypeNone, repo) {
+		}
+
+		explicit PKeywordMask() : Mask(maskTypeNone) {
 		}
 
 		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;
@@ -161,8 +174,10 @@ class SetMask : public Mask {
 	public:
 		SetsIndex m_set;
 
-		SetMask(SetsIndex set_index, const char *repo = NULLPTR)
-			: Mask(maskTypeNone, repo), m_set(set_index) {
+		SetMask(SetsIndex set_index, const char *repo) : Mask(maskTypeNone, repo), m_set(set_index) {
+		}
+
+		explicit SetMask(SetsIndex set_index) : Mask(maskTypeNone), m_set(set_index) {
 		}
 
 		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;

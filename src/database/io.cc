@@ -70,7 +70,7 @@ bool File::read_string_plain(char *s, string::size_type len, string *errtext) {
 	return false;
 }
 
-bool File::write_string_plain(const string &str, string *errtext) {
+bool File::write_string_plain(const string& str, string *errtext) {
 	if(likely(write(str))) {
 		return true;
 	}
@@ -112,7 +112,7 @@ bool Database::writeUChar(eix::UChar c, string *errtext) {
 	return true;
 }
 
-bool Database::write_string_plain(const string &str, string *errtext) {
+bool Database::write_string_plain(const string& str, string *errtext) {
 	if(counting) {
 GCC_DIAG_OFF(sign-conversion)
 		counter += str.size();
@@ -136,7 +136,7 @@ bool Database::read_string(string *s, string *errtext) {
 	return false;
 }
 
-bool Database::write_string(const string &str, string *errtext) {
+bool Database::write_string(const string& str, string *errtext) {
 	return (likely(write_num(str.size(), errtext)) &&
 		likely(write_string_plain(str, errtext)));
 }

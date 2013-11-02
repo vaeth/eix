@@ -35,7 +35,7 @@ int ebuild_selector(SCANDIR_ARG3 dent) {
 	return package_selector(dent);
 }
 
-string::size_type ebuild_pos(const std::string &str) {
+string::size_type ebuild_pos(const std::string& str) {
 	string::size_type pos(str.length());
 	static CONSTEXPR string::size_type append_size = 7;
 	if(pos <= append_size) {
@@ -51,7 +51,7 @@ string::size_type ebuild_pos(const std::string &str) {
 	if(unlikely(r == NULLPTR)) {
 		string m("\\.ebuild-(");
 		EixRc eixrc(get_eixrc());
-		const string &s(eixrc["EAPI_REGEX"]);
+		const string& s(eixrc["EAPI_REGEX"]);
 		if(s.empty()) {
 			is_empty = true;
 			return false;

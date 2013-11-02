@@ -15,8 +15,10 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/constexpr.h"
 #include "eixTk/eixint.h"
 #include "eixTk/stringlist.h"
+#include "eixTk/stringtypes.h"
 #include "portage/basicversion.h"
 #include "portage/extendedversion.h"
 #include "portage/keywords.h"
@@ -29,7 +31,7 @@ class OutputString;
 class IUse : public std::string {
 	public:
 		typedef eix::UChar Flags;
-		static const Flags
+		static CONSTEXPR Flags
 			USEFLAGS_NIL    = 0,
 			USEFLAGS_NORMAL = 1,
 			USEFLAGS_PLUS   = 2,
@@ -38,19 +40,19 @@ class IUse : public std::string {
 
 		static Flags parse(std::string *s) ATTRIBUTE_NONNULL_;
 
-		std::string &name() {
+		std::string& name() {
 			return *static_cast<std::string *>(this);
 		}
 
-		const std::string &name() const {
+		const std::string& name() const {
 			return *static_cast<const std::string *>(this);
 		}
 
-		explicit IUse(const std::string &s) : std::string(s) {
+		explicit IUse(const std::string& s) : std::string(s) {
 			flags = parse(&name());
 		}
 
-		IUse(const std::string &s, Flags f) : std::string(s), flags(f) {
+		IUse(const std::string& s, Flags f) : std::string(s), flags(f) {
 		}
 
 		const char *prefix() const ATTRIBUTE_PURE;
@@ -64,6 +66,8 @@ class IUse : public std::string {
 
 class IUseSet {
 	public:
+		typedef std::set<IUse> IUseStd;
+
 		bool empty() const {
 			return m_iuse.empty();
 		}
@@ -72,30 +76,30 @@ class IUseSet {
 			m_iuse.clear();
 		}
 
-		const std::set<IUse> &asSet() const {
+		const IUseStd& asStd() const {
 			return m_iuse;
 		}
 
-		void insert(const std::set<IUse> &iuse);
+		void insert(const IUseStd& iuse);
 
-		void insert(const IUseSet &iuse) {
-			insert(iuse.asSet());
+		void insert(const IUseSet& iuse) {
+			insert(iuse.asStd());
 		}
 
-		void insert(const std::string &iuse);
+		void insert(const std::string& iuse);
 
-		void insert_fast(const std::string &iuse) {
+		void insert_fast(const std::string& iuse) {
 			insert(IUse(iuse));
 		}
 
 		std::string asString() const;
 
-		std::vector<std::string> asVector() const;
+		WordVec asVector() const;
 
 	protected:
-		std::set<IUse> m_iuse;
+		IUseStd m_iuse;
 
-		void insert(const IUse &iuse);
+		void insert(const IUse& iuse);
 };
 
 /** Version expands the BasicVersion class by data relevant for versions in tree/overlays.
@@ -118,7 +122,7 @@ class Version : public ExtendedVersion, public Keywords {
 		} SavedEffectiveIndex;
 
 		typedef eix::UChar EffectiveState;
-		static const EffectiveState
+		static CONSTEXPR EffectiveState
 			EFFECTIVE_UNSAVED = 0,
 			EFFECTIVE_USED    = 1,
 			EFFECTIVE_UNUSED  = 2;
@@ -131,7 +135,8 @@ class Version : public ExtendedVersion, public Keywords {
 		std::vector<std::string>   saved_accepted;
 		std::vector<EffectiveState> states_effective;
 
-		std::vector<SetsIndex> sets_indizes;
+		typedef std::vector<SetsIndex> SetsIndizes;
+		SetsIndizes sets_indizes;
 
 		std::string m_accepted_keywords;
 
@@ -181,7 +186,7 @@ class Version : public ExtendedVersion, public Keywords {
 			return false;
 		}
 
-		void set_iuse(const std::string &s) {
+		void set_iuse(const std::string& s) {
 			iuse.clear();
 			iuse.insert(s);
 		}
@@ -210,7 +215,7 @@ class Version : public ExtendedVersion, public Keywords {
 			}
 		}
 
-		void set_full_keywords(const std::string &keywords) {
+		void set_full_keywords(const std::string& keywords) {
 			full_keywords = keywords;
 		}
 
@@ -226,35 +231,36 @@ class Version : public ExtendedVersion, public Keywords {
 
 		/** Calls must be initialized with reset_effective_keywords().
 		    Call save_effective_keywords only after the last modify command! */
-		void modify_effective_keywords(const std::string &modify_keys);
+		void modify_effective_keywords(const std::string& modify_keys);
 
-		void add_accepted_keywords(const std::string &accepted_keywords);
+		void add_accepted_keywords(const std::string& accepted_keywords);
 
 		const std::string get_effective_keywords() const {
 			return ((effective_state == EFFECTIVE_USED) ? effective_keywords : full_keywords);
 		}
 
-		KeywordsFlags::KeyType get_keyflags(const std::set<std::string> &accepted_keywords) const {
+		KeywordsFlags::KeyType get_keyflags(const WordSet& accepted_keywords) const {
 			if(effective_state == EFFECTIVE_USED) {
 				return KeywordsFlags::get_keyflags(accepted_keywords, effective_keywords);
 			}
 			return KeywordsFlags::get_keyflags(accepted_keywords, full_keywords);
 		}
 
-		void set_keyflags(const std::set<std::string> &accepted_keywords) {
+		void set_keyflags(const WordSet& accepted_keywords) {
 			keyflags.set_keyflags(get_keyflags(accepted_keywords));
 		}
 
-		void add_reason(const StringList &reason);
+		void add_reason(const StringList& reason);
 
-		void reasons_string(OutputString *s, const OutputString &skip, const OutputString &sep) const ATTRIBUTE_NONNULL_;
+		void reasons_string(OutputString *s, const OutputString& skip, const OutputString& sep) const ATTRIBUTE_NONNULL_;
 
 		bool have_reasons() const ATTRIBUTE_NONNULL_ {
 			return !reasons.empty();
 		}
 
 	protected:
-		std::set<StringList> reasons;
+		typedef std::set<StringList> Reasons;
+		Reasons reasons;
 		std::string full_keywords, effective_keywords;
 		EffectiveState effective_state;
 };

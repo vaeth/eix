@@ -9,40 +9,33 @@
 
 #include <config.h>
 
-#include <map>
 #include <string>
-#include <vector>
 
 #include "eixTk/assert.h"
 #include "eixTk/filenames.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/utils.h"
 #include "portage/overlay.h"
 
-using std::map;
 using std::string;
-using std::vector;
 
-static map<string, string> *path_label_hash = NULLPTR;
+static WordMap *path_label_hash = NULLPTR;
 
 void OverlayIdent::init_static() {
 	eix_assert_static(path_label_hash == NULLPTR);
-	path_label_hash = new map<string, string>;
+	path_label_hash = new WordMap;
 }
 
-OverlayIdent::OverlayIdent(const char *Path, const char *Label, Priority prio, bool ismain) {
-	priority = prio;
-	is_main = ismain;
+void OverlayIdent::init(const char *Path, const char *Label) {
 	if(Path == NULLPTR) {
-		path.clear();
 		know_path = false;
 	} else {
 		path = Path;
 		know_path = true;
 	}
 	if(Label == NULLPTR) {
-		label.clear();
 		know_label = false;
 		return;
 	}
@@ -52,7 +45,7 @@ OverlayIdent::OverlayIdent(const char *Path, const char *Label, Priority prio, b
 
 void OverlayIdent::readLabel_internal(const char *Path) {
 	know_label = true;
-	vector<string> lines;
+	LineVec lines;
 	string my_path;
 	if(Path == NULLPTR) {
 		if(!know_path) {
@@ -64,14 +57,14 @@ void OverlayIdent::readLabel_internal(const char *Path) {
 		my_path = Path;
 	}
 	eix_assert_static(path_label_hash != NULLPTR);
-	map<string, string>::const_iterator f(path_label_hash->find(my_path));
+	WordMap::const_iterator f(path_label_hash->find(my_path));
 	if(f != path_label_hash->end()) {
 		label = f->second;
 		return;
 	}
 	pushback_lines((my_path + "/profiles/repo_name").c_str(), &lines);
 	label.clear();
-	for(vector<string>::const_iterator i(lines.begin()); likely(i != lines.end()); ++i) {
+	for(LineVec::const_iterator i(lines.begin()); likely(i != lines.end()); ++i) {
 		if(i->empty()) {
 			continue;
 		}
@@ -82,13 +75,14 @@ void OverlayIdent::readLabel_internal(const char *Path) {
 }
 
 string OverlayIdent::human_readable() const {
-	if(label.empty())
+	if(label.empty()) {
 		return path;
+	}
 	return string("\"") + label + "\" " + path;
 }
 
-const char *RepoList::get_path(const string &label) {
-	map<string, string>::iterator f(cache.find(label));
+const char *RepoList::get_path(const string& label) {
+	WordMap::iterator f(cache.find(label));
 	if(likely(f != cache.end())) {
 		return f->second.c_str();
 	}
@@ -103,8 +97,8 @@ const char *RepoList::get_path(const string &label) {
 		if(unlikely(!it->know_label)) {
 			continue;
 		}
-		const string &l(it->label);
-		const string &p(it->path);
+		const string& l(it->label);
+		const string& p(it->path);
 		cache[l] = p;
 		if(unlikely(l == label)) {
 			return p.c_str();
@@ -159,7 +153,7 @@ void RepoList::set_priority(OverlayIdent *overlay) {
 	}
 }
 
-void RepoList::push_back(const OverlayIdent &s, bool no_path_dupes) {
+void RepoList::push_back(const OverlayIdent& s, bool no_path_dupes) {
 	if(likely(no_path_dupes)) {
 		RepoList::iterator it(find_filename(s.path.c_str()));
 		if(it != end()) {

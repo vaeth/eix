@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "eixTk/constexpr.h"
 #include "eixTk/eixint.h"
 #include "eixTk/inttypes.h"
 #include "eixTk/stringutils.h"
@@ -25,7 +26,7 @@ class PortageSettings;
 class ExtendedVersion : public BasicVersion {
 	private:
 		typedef eix::UChar HaveBinPkg;
-		static const HaveBinPkg
+		static CONSTEXPR HaveBinPkg
 			HAVEBINPKG_UNKNOWN = 0x00U,
 			HAVEBINPKG_NO      = 0x01U,
 			HAVEBINPKG_YES     = 0x02U;
@@ -33,7 +34,7 @@ class ExtendedVersion : public BasicVersion {
 
 	public:
 		typedef uint16_t Restrict;
-		static const Restrict  // order according to frequency...
+		static CONSTEXPR Restrict  // order according to frequency...
 			RESTRICT_NONE           = 0x0000U,
 			RESTRICT_BINCHECKS      = 0x0001U,
 			RESTRICT_STRIP          = 0x0002U,
@@ -48,7 +49,7 @@ class ExtendedVersion : public BasicVersion {
 			RESTRICT_ALL            = 0x03FFU;
 
 		typedef eix::UChar Properties;
-		static const Properties  // order according to frequency...
+		static CONSTEXPR Properties  // order according to frequency...
 			PROPERTIES_NONE        = 0x00U,
 			PROPERTIES_INTERACTIVE = 0x01U,
 			PROPERTIES_LIVE        = 0x02U,
@@ -113,7 +114,7 @@ class ExtendedVersion : public BasicVersion {
 			return (slotname.empty() ? "0" : slotname);
 		}
 
-		void assign_basic_version(const BasicVersion &b) {
+		void assign_basic_version(const BasicVersion& b) {
 			*static_cast<BasicVersion *>(this) = b;
 		}
 
@@ -125,22 +126,34 @@ class ExtendedVersion : public BasicVersion {
 
 // Short compare-stuff
 inline static bool operator<(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
-inline static bool operator<(const ExtendedVersion& left, const ExtendedVersion& right) { return ExtendedVersion::compare(left, right) < 0; }
+inline static bool operator<(const ExtendedVersion& left, const ExtendedVersion& right) {
+	return ExtendedVersion::compare(left, right) < 0;
+}
 
 inline static bool operator>(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
-inline static bool operator>(const ExtendedVersion& left, const ExtendedVersion& right) { return ExtendedVersion::compare(left, right) > 0; }
+inline static bool operator>(const ExtendedVersion& left, const ExtendedVersion& right) {
+	return ExtendedVersion::compare(left, right) > 0;
+}
 
 inline static bool operator==(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
-inline static bool operator==(const ExtendedVersion& left, const ExtendedVersion& right) { return ExtendedVersion::compare(left, right) == 0; }
+inline static bool operator==(const ExtendedVersion& left, const ExtendedVersion& right) {
+	return ExtendedVersion::compare(left, right) == 0;
+}
 
 inline static bool operator!=(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
-inline static bool operator!=(const ExtendedVersion& left, const ExtendedVersion& right) { return ExtendedVersion::compare(left, right) != 0; }
+inline static bool operator!=(const ExtendedVersion& left, const ExtendedVersion& right) {
+	return ExtendedVersion::compare(left, right) != 0;
+}
 
 inline static bool operator>=(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
-inline static bool operator>=(const ExtendedVersion& left, const ExtendedVersion& right) { return ExtendedVersion::compare(left, right) >= 0; }
+inline static bool operator>=(const ExtendedVersion& left, const ExtendedVersion& right) {
+	return ExtendedVersion::compare(left, right) >= 0;
+}
 
 inline static bool operator<=(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
-inline static bool operator<=(const ExtendedVersion& left, const ExtendedVersion& right) { return ExtendedVersion::compare(left, right) <= 0; }
+inline static bool operator<=(const ExtendedVersion& left, const ExtendedVersion& right) {
+	return ExtendedVersion::compare(left, right) <= 0;
+}
 
 
 #endif  // SRC_PORTAGE_EXTENDEDVERSION_H_

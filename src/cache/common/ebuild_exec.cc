@@ -18,9 +18,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <map>
 #include <string>
-#include <vector>
 
 #include "cache/base.h"
 #include "cache/common/ebuild_exec.h"
@@ -30,6 +28,7 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/sysutils.h"
 #include "eixrc/eixrc.h"
@@ -38,9 +37,7 @@
 
 extern char **environ;
 
-using std::map;
 using std::string;
-using std::vector;
 
 class EbuildExecSettings {
 	public:
@@ -162,7 +159,7 @@ void EbuildExec::delete_cachefile() {
 
 /// This is a subfunction of make_cachefile() to ensure that make_cachefile()
 /// has no local variable when vfork() is called.
-void EbuildExec::calc_environment(const char *name, const string &dir, const Package &package, const Version &version) {
+void EbuildExec::calc_environment(const char *name, const string& dir, const Package& package, const Version& version) {
 	c_env = NULLPTR;
 	envstrings = NULLPTR;
 	// non-sh: environment is kept except for possibly new PORTDIR_OVERLAY
@@ -172,13 +169,14 @@ void EbuildExec::calc_environment(const char *name, const string &dir, const Pac
 #endif
 		return;
 	}
-	map<string, string> env;
+	WordMap env;
 #ifndef HAVE_SETENV
 	if(!use_ebuild_sh) {
 		for(char **e(environ); likely(*e != NULLPTR); ++e) {
 			const char *s(strchr(*e, '='));
-			if(likely(s != NULLPTR))
+			if(likely(s != NULLPTR)) {
 				env[string(*e, s - (*e))] = s + 1;
+			}
 		}
 	} else  // NOLINT(readability/braces)
 	// ifndef HAVE_SETENV if(!use_ebuild_sh) we have already returned
@@ -187,18 +185,18 @@ void EbuildExec::calc_environment(const char *name, const string &dir, const Pac
 	{  // NOLINT(whitespace/braces)
 		base->env_add_package(&env, package, version, dir, name);
 		env["dbkey"] = cachefile;
-		const string &portage_rootpath(settings->portage_rootpath);
+		const string& portage_rootpath(settings->portage_rootpath);
 		if(likely(!portage_rootpath.empty())) {
 			env["PORTAGE_ROOTPATH"] = portage_rootpath;
 		}
-		const string &portage_bin_path(settings->portage_bin_path);
+		const string& portage_bin_path(settings->portage_bin_path);
 		if(likely(!portage_bin_path.empty())) {
 			env["PORTAGE_BIN_PATH"] = portage_bin_path;
 		}
 		env["PORTAGE_REPO_NAME"] = base->getOverlayName();
-		vector<string> eclasses;
+		WordVec eclasses;
 		eclasses.push_back(base->getPrefixedPath());
-		RepoList &repos(base->portagesettings->repos);
+		RepoList& repos(base->portagesettings->repos);
 		// eclasses.push_back((*(base->portagesettings))["PORTDIR"]);
 		// for(RepoList::const_iterator it(repos.second());
 		for(RepoList::const_iterator it(repos.begin());
@@ -207,7 +205,7 @@ void EbuildExec::calc_environment(const char *name, const string &dir, const Pac
 				eclasses.push_back(it->path);
 			}
 		}
-		for(vector<string>::iterator it(eclasses.begin());
+		for(WordVec::iterator it(eclasses.begin());
 			likely(it != eclasses.end()); ++it) {
 			escape_string(&*it, shellspecial);
 		}
@@ -217,11 +215,11 @@ void EbuildExec::calc_environment(const char *name, const string &dir, const Pac
 
 	// transform env into c_env (pointing to envstrings[i].c_str())
 	c_env = new const char *[env.size() + 1];
-	vector<string>::size_type i(0);
+	WordVec::size_type i(0);
 	if(!env.empty()) {
-		envstrings = new vector<string>(env.size());
-		for(map<string, string>::const_iterator it = env.begin();
-			it != env.end(); ++it) {
+		envstrings = new WordVec(env.size());
+		for(WordMap::const_iterator it(env.begin());
+			likely(it != env.end()); ++it) {
 			(*envstrings)[i] = ((it->first) + '=' + (it->second));
 			c_env[i] = (*envstrings)[i].c_str();
 			++i;
@@ -232,7 +230,7 @@ void EbuildExec::calc_environment(const char *name, const string &dir, const Pac
 
 static CONSTEXPR int EXECLE_FAILED = 17;
 
-string *EbuildExec::make_cachefile(const char *name, const string &dir, const Package &package, const Version &version) {
+string *EbuildExec::make_cachefile(const char *name, const string& dir, const Package& package, const Version& version) {
 	calc_settings();
 
 	// Make cachefile and calculate exec_name
@@ -310,7 +308,7 @@ GCC_DIAG_ON(old-style-cast)
 }
 
 void EbuildExecSettings::init() {
-	EixRc &eix(get_eixrc());
+	EixRc& eix(get_eixrc());
 	exec_ebuild = eix["EXEC_EBUILD"];
 	exec_ebuild_sh = eix["EXEC_EBUILD_SH"];
 	ebuild_depend_temp = eix["EBUILD_DEPEND_TEMP"];

@@ -13,9 +13,9 @@
 #include <ctime>
 
 #include <string>
-#include <vector>
 
 #include "cache/base.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/sysutils.h"
 
 class Category;
@@ -37,9 +37,9 @@ class MetadataCache : public BasicCache {
 		std::string override_path;
 		std::string m_type;
 		std::string m_catpath;
-		std::vector<std::string> names;
+		WordVec names;
 
-		typedef void (*x_get_keywords_slot_iuse_restrict_t)(const std::string &filename, std::string *keywords, std::string *slotname, std::string *iuse, std::string *restr, std::string *props, Depend *dep, BasicCache::ErrorCallback error_callback) ATTRIBUTE_NONNULL_;
+		typedef void (*x_get_keywords_slot_iuse_restrict_t)(const std::string& filename, std::string *keywords, std::string *slotname, std::string *iuse, std::string *restr, std::string *props, Depend *dep, BasicCache::ErrorCallback error_callback) ATTRIBUTE_NONNULL_;
 		typedef void (*x_read_file_t)(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback) ATTRIBUTE_NONNULL_;
 		x_get_keywords_slot_iuse_restrict_t x_get_keywords_slot_iuse_restrict;
 		x_read_file_t x_read_file;
@@ -48,7 +48,7 @@ class MetadataCache : public BasicCache {
 		void setFlat(bool set_flat);
 
 	public:
-		bool initialize(const std::string &name);
+		bool initialize(const std::string& name);
 
 		bool readCategoryPrepare(const char *cat_name) ATTRIBUTE_NONNULL_;
 		bool readCategory(Category *cat) ATTRIBUTE_NONNULL_;

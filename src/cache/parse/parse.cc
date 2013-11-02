@@ -12,9 +12,7 @@
 #include <cstdlib>
 #include <ctime>
 
-#include <map>
 #include <string>
-#include <vector>
 
 #include "cache/base.h"
 #include "cache/common/ebuild_exec.h"
@@ -27,6 +25,7 @@
 #include "eixTk/likely.h"
 #include "eixTk/md5.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/sysutils.h"
 #include "eixTk/varsreader.h"
@@ -37,23 +36,23 @@
 #include "portage/packagetree.h"
 #include "portage/version.h"
 
-using std::map;
 using std::string;
-using std::vector;
 
-bool ParseCache::initialize(const string &name) {
-	vector<string> names;
+bool ParseCache::initialize(const string& name) {
+	WordVec names;
 	split_string(&names, name, true, "#");
-	vector<string>::const_iterator it_name(names.begin());
-	if(unlikely(it_name == names.end()))
+	if(unlikely(names.empty())) {
 		return false;
-	vector<string> s;
+	}
+	WordVec::const_iterator it_name(names.begin());
+	WordVec s;
 	split_string(&s, *it_name, false, "|");
-	if(unlikely(s.empty()))
+	if(unlikely(s.empty())) {
 		return false;
+	}
 	try_parse = nosubst = false;
 	bool try_ebuild(false), use_sh(false);
-	for(vector<string>::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
+	for(WordVec::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
 		if(*it == "parse") {
 			try_parse = true;
 			nosubst = false;
@@ -113,7 +112,7 @@ const char *ParseCache::getType() const {
 			s->append(t);
 		}
 	}
-	for(vector<BasicCache*>::const_iterator it(further.begin());
+	for(FurtherCaches::const_iterator it(further.begin());
 		likely(it != further.end()); ++it) {
 		s->append(1, '#');
 		s->append((*it)->getType());
@@ -122,7 +121,7 @@ const char *ParseCache::getType() const {
 }
 
 ParseCache::~ParseCache() {
-	for(std::vector<BasicCache*>::iterator it(further.begin());
+	for(FurtherCaches::iterator it(further.begin());
 		likely(it != further.end()); ++it) {
 		delete *it;
 	}
@@ -133,9 +132,9 @@ ParseCache::~ParseCache() {
 	}
 }
 
-void ParseCache::setScheme(const char *prefix, const char *prefixport, const std::string &scheme) {
+void ParseCache::setScheme(const char *prefix, const char *prefixport, const std::string& scheme) {
 	BasicCache::setScheme(prefix, prefixport, scheme);
-	for(std::vector<BasicCache*>::iterator it(further.begin());
+	for(FurtherCaches::iterator it(further.begin());
 		likely(it != further.end()); ++it) {
 		(*it)->setScheme(prefix, prefixport, scheme);
 	}
@@ -143,15 +142,15 @@ void ParseCache::setScheme(const char *prefix, const char *prefixport, const std
 
 void ParseCache::setKey(ExtendedVersion::Overlay key) {
 	BasicCache::setKey(key);
-	for(std::vector<BasicCache*>::iterator it(further.begin());
+	for(FurtherCaches::iterator it(further.begin());
 		likely(it != further.end()); ++it) {
 		(*it)->setKey(key);
 	}
 }
 
-void ParseCache::setOverlayName(const std::string &name) {
+void ParseCache::setOverlayName(const std::string& name) {
 	BasicCache::setOverlayName(name);
-	for(std::vector<BasicCache*>::iterator it(further.begin());
+	for(FurtherCaches::iterator it(further.begin());
 		likely(it != further.end()); ++it) {
 		(*it)->setOverlayName(name);
 	}
@@ -159,13 +158,13 @@ void ParseCache::setOverlayName(const std::string &name) {
 
 void ParseCache::setErrorCallback(ErrorCallback error_callback) {
 	BasicCache::setErrorCallback(error_callback);
-	for(std::vector<BasicCache*>::iterator it(further.begin());
+	for(FurtherCaches::iterator it(further.begin());
 		likely(it != further.end()); ++it) {
 		(*it)->setErrorCallback(error_callback);
 	}
 }
 
-void ParseCache::set_checking(string *str, const char *item, const VarsReader &ebuild, bool *ok) {
+void ParseCache::set_checking(string *str, const char *item, const VarsReader& ebuild, bool *ok) {
 	bool check((ebuild_exec != NULLPTR) && (ok != NULLPTR) && (*ok));
 	const string *s(ebuild.find(item));
 	str->clear();
@@ -185,7 +184,7 @@ void ParseCache::set_checking(string *str, const char *item, const VarsReader &e
 	}
 }
 
-void ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_onetime_info, bool *have_onetime_info, Package *pkg, Version *version) {
+void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool read_onetime_info, bool *have_onetime_info, Package *pkg, Version *version) {
 	version->overlay_key = m_overlay_key;
 	string keywords, restr, props, iuse, slot;
 	bool ok(try_parse);
@@ -194,7 +193,7 @@ void ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool re
 		if(!read_onetime_info) {
 			flags |= VarsReader::ONLY_KEYWORDS_SLOT;
 		}
-		map<string, string> env;
+		WordMap env;
 		if(!nosubst) {
 			flags |= VarsReader::INTO_MAP | VarsReader::SUBST_VARS;
 			env_add_package(&env, *pkg, *version, dirpath, fullpath);
@@ -261,7 +260,7 @@ void ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool re
 	pkg->addVersionFinalize(version);
 }
 
-void ParseCache::readPackage(Category *cat, const string &pkg_name, const string &directory_path, const vector<string> &files) {
+void ParseCache::readPackage(Category *cat, const string& pkg_name, const string& directory_path, const WordVec& files) {
 	bool have_onetime_info, have_pkg;
 
 	Package *pkg(cat->findPackage(pkg_name));
@@ -272,11 +271,12 @@ void ParseCache::readPackage(Category *cat, const string &pkg_name, const string
 		pkg = new Package(m_catname, pkg_name);
 	}
 
-	for(vector<string>::const_iterator fileit(files.begin());
+	for(WordVec::const_iterator fileit(files.begin());
 		likely(fileit != files.end()); ++fileit) {
 		string::size_type pos(ebuild_pos(*fileit));
-		if(pos == string::npos)
+		if(pos == string::npos) {
 			continue;
+		}
 
 		/* Check if we can split it */
 		char *ver(ExplodeAtom::split_version(fileit->substr(0, pos).c_str()));
@@ -304,12 +304,13 @@ void ParseCache::readPackage(Category *cat, const string &pkg_name, const string
 		/* For the latest version read/change corresponding data */
 		bool read_onetime_info(true);
 		if(have_onetime_info) {
-			if(*(pkg->latest()) != *version)
+			if(*(pkg->latest()) != *version) {
 				read_onetime_info = false;
+			}
 		}
 
 		time_t ebuild_time(0);
-		vector<BasicCache*>::const_iterator it(further.begin());
+		FurtherCaches::const_iterator it(further.begin());
 		for(; likely(it != further.end()); ++it) {
 			const char *s((*it)->get_md5sum(pkg_name.c_str(), ver));
 			if(s != NULLPTR) {
@@ -358,31 +359,33 @@ void ParseCache::readPackage(Category *cat, const string &pkg_name, const string
 bool ParseCache::readCategoryPrepare(const char *cat_name) {
 	m_catname = cat_name;
 	further_works.clear();
-	for(std::vector<BasicCache*>::iterator it(further.begin());
-		likely(it != further.end()); ++it)
+	for(FurtherCaches::iterator it(further.begin());
+		likely(it != further.end()); ++it) {
 		further_works.push_back((*it)->readCategoryPrepare(cat_name));
+	}
 	m_catpath = m_prefix + m_scheme + '/' + cat_name;
 	return scandir_cc(m_catpath, &m_packages, package_selector);
 }
 
 void ParseCache::readCategoryFinalize() {
 	further_works.clear();
-	for(std::vector<BasicCache*>::iterator it(further.begin());
-		likely(it != further.end()); ++it)
+	for(FurtherCaches::iterator it(further.begin());
+		likely(it != further.end()); ++it) {
 		(*it)->readCategoryFinalize();
+	}
 	m_catname.clear();
 	m_catpath.clear();
 	m_packages.clear();
 }
 
 bool ParseCache::readCategory(Category *cat) {
-	for(vector<string>::const_iterator pit(m_packages.begin());
+	for(WordVec::const_iterator pit(m_packages.begin());
 		likely(pit != m_packages.end()); ++pit) {
-		vector<string> files;
 		string pkg_path(m_catpath + '/' + (*pit));
-
-		if(scandir_cc(pkg_path, &files, ebuild_selector))
+		WordVec files;
+		if(scandir_cc(pkg_path, &files, ebuild_selector)) {
 			readPackage(cat, *pit, pkg_path, files);
+		}
 	}
 	return true;
 }

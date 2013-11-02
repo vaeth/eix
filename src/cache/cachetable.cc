@@ -9,7 +9,6 @@
 
 #include <config.h>
 
-#include <map>
 #include <string>
 
 #include "cache/base.h"
@@ -21,19 +20,19 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 
-using std::map;
 using std::string;
 
-bool CacheTable::addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const string &cache_name, const map<string, string> *override, string *errtext) {
+bool CacheTable::addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const string& cache_name, const WordMap *override, string *errtext) {
 	for(CacheTable::iterator it(begin()); likely(it != end()); ++it) {
-		if(same_filenames(directory, (it->getPath()).c_str()))
+		if(same_filenames(directory, (it->getPath()).c_str())) {
 			return true;
+		}
 	}
 	const char *cache_method(cache_name.c_str());
 	if(unlikely(override != NULLPTR)) {
 		// If we would look for identical names, we could use the much faster
-		// map<string, string>::const_iterator found = override->find(directory);
-		for(map<string, string>::const_reverse_iterator it(override->rbegin());
+		// WordMap::const_iterator found = override->find(directory);
+		for(WordMap::const_reverse_iterator it(override->rbegin());
 			unlikely(it != override->rend()); ++it) {
 			if(same_filenames((it->first).c_str(), directory, true)) {
 				cache_method = (it->second).c_str();

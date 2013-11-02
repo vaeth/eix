@@ -12,7 +12,6 @@
 #include <algorithm>
 #include <iostream>
 #include <iterator>
-#include <list>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -26,7 +25,6 @@
 #include "eixTk/stringutils.h"
 #include "portage/basicversion.h"
 
-using std::list;
 using std::string;
 
 using std::cerr;
@@ -119,7 +117,7 @@ string BasicVersion::getFull() const {
 
 string BasicVersion::getPlain() const {
 	stringstream ss;
-	for(list<BasicPart>::const_iterator it(m_parts.begin());
+	for(PartsType::const_iterator it(m_parts.begin());
 		likely(it != m_parts.end()); ++it) {
 		if(unlikely(it->parttype == BasicPart::revision)) {
 			break;
@@ -131,7 +129,7 @@ string BasicVersion::getPlain() const {
 
 string BasicVersion::getRevision() const {
 	stringstream ss;
-	for(list<BasicPart>::const_iterator it(m_parts.begin());
+	for(PartsType::const_iterator it(m_parts.begin());
 		likely(it != m_parts.end()); ++it) {
 		if(unlikely(it->parttype == BasicPart::revision)) {
 			ss << "r" << it->partcontent;
@@ -265,8 +263,8 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 	return parsedGarbage;
 }
 
-eix::SignedBool BasicVersion::compare(const BasicVersion& left, const BasicVersion &right) {
-	list<BasicPart>::const_iterator
+eix::SignedBool BasicVersion::compare(const BasicVersion& left, const BasicVersion& right) {
+	PartsType::const_iterator
 		it_left(left.m_parts.begin()),
 		it_right(right.m_parts.begin());
 
@@ -290,8 +288,8 @@ eix::SignedBool BasicVersion::compare(const BasicVersion& left, const BasicVersi
 	return 0;
 }
 
-eix::SignedBool BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right) {
-	for(list<BasicPart>::const_iterator it_left(left.m_parts.begin()),
+eix::SignedBool BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion& right) {
+	for(PartsType::const_iterator it_left(left.m_parts.begin()),
 		it_right(right.m_parts.begin()); ; ++it_left, ++it_right) {
 		bool right_end((it_right == right.m_parts.end())
 				|| (it_right->parttype == BasicPart::revision));

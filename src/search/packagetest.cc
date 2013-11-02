@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include <map>
-#include <set>
 #include <string>
 #include <vector>
 
@@ -24,6 +23,7 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/regexp.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/utils.h"
 #include "eixrc/eixrc.h"
@@ -45,7 +45,6 @@ class DBHeader;
 class SetStability;
 
 using std::map;
-using std::set;
 using std::string;
 using std::vector;
 
@@ -173,12 +172,13 @@ void PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::VERSIONS);
 }
 
-static map<string, PackageTest::MatchField> *static_match_field_map = NULLPTR;
+typedef map<string, PackageTest::MatchField> MatchFieldMap;
+static MatchFieldMap *static_match_field_map = NULLPTR;
 
 static void init_match_field_map() {
 	eix_assert_static(static_match_field_map == NULLPTR);
-	static_match_field_map = new map<string, PackageTest::MatchField>;
-	map<string, PackageTest::MatchField> &match_field_map(*static_match_field_map);
+	static_match_field_map = new MatchFieldMap;
+	MatchFieldMap& match_field_map(*static_match_field_map);
 	match_field_map["NAME"]           = PackageTest::NAME;
 	match_field_map["name"]           = PackageTest::NAME;
 	match_field_map["DESCRIPTION"]    = PackageTest::DESCRIPTION;
@@ -249,12 +249,13 @@ static void init_match_field_map() {
 	match_field_map["hdepend"]        = PackageTest::HDEPEND;
 }
 
-static map<string, PackageTest::MatchAlgorithm> *static_match_algorithm_map = NULLPTR;
+typedef map<string, PackageTest::MatchAlgorithm> MatchAlgorithmMap;
+static MatchAlgorithmMap *static_match_algorithm_map = NULLPTR;
 
 static void init_match_algorithm_map() {
 	eix_assert_static(static_match_algorithm_map == NULLPTR);
-	static_match_algorithm_map = new map<string, PackageTest::MatchAlgorithm>;
-	map<string, PackageTest::MatchAlgorithm> &match_algorithm_map(*static_match_algorithm_map);
+	static_match_algorithm_map = new MatchAlgorithmMap;
+	MatchAlgorithmMap& match_algorithm_map(*static_match_algorithm_map);
 	match_algorithm_map["REGEX"]      = PackageTest::ALGO_REGEX;
 	match_algorithm_map["REGEXP"]     = PackageTest::ALGO_REGEX;
 	match_algorithm_map["regex"]      = PackageTest::ALGO_REGEX;
@@ -273,9 +274,9 @@ static void init_match_algorithm_map() {
 	match_algorithm_map["fuzzy"]      = PackageTest::ALGO_FUZZY;
 }
 
-PackageTest::MatchField PackageTest::name2field(const string &p) {
+PackageTest::MatchField PackageTest::name2field(const string& p) {
 	eix_assert_static(static_match_field_map != NULLPTR);
-	map<string, MatchField>::const_iterator it(static_match_field_map->find(p));
+	MatchFieldMap::const_iterator it(static_match_field_map->find(p));
 	if(unlikely(it == static_match_field_map->end())) {
 		cerr << eix::format(_("cannot find match field %r")) % p << endl;
 		return NAME;
@@ -283,9 +284,9 @@ PackageTest::MatchField PackageTest::name2field(const string &p) {
 	return it->second;
 }
 
-PackageTest::MatchAlgorithm PackageTest::name2algorithm(const string &p) {
+PackageTest::MatchAlgorithm PackageTest::name2algorithm(const string& p) {
 	eix_assert_static(static_match_algorithm_map != NULLPTR);
-	map<string, MatchAlgorithm>::const_iterator it(static_match_algorithm_map->find(p));
+	MatchAlgorithmMap::const_iterator it(static_match_algorithm_map->find(p));
 	if(unlikely(it == static_match_algorithm_map->end())) {
 		cerr << eix::format(_("cannot find match algorithm %r")) % p << endl;
 		return ALGO_REGEX;
@@ -296,45 +297,48 @@ PackageTest::MatchAlgorithm PackageTest::name2algorithm(const string &p) {
 /// It is more convenient to make this a macro than a template,
 /// because otherwise we would have to pass initialization functions
 
-#define MatcherClassDefinition(n, t, f, d) \
-class n { \
+#define MatcherClassDefinition(N, T, f, d) \
+class N { \
 	private: \
-	vector<Regex*> m; \
-	vector<t> v; \
-	t default_value; \
+		typedef vector<Regex *> mType; \
+		mType m; \
+		typedef vector<T> vType; \
+		vType v; \
+		T default_value; \
 \
 	public: \
-	explicit n(const string &s) { \
-		vector<string> pairs; \
-		split_string(&pairs, s, true); \
-		for(vector<string>::iterator it(pairs.begin()); \
-			likely(it != pairs.end()); ++it) { \
-			string *s_ptr(&(*it)); \
-			++it; \
-			if(it == pairs.end()) { \
-				default_value = f(*s_ptr); \
-				return; \
+		explicit N(const string& s) { \
+			WordVec pairs; \
+			split_string(&pairs, s, true); \
+			for(WordVec::iterator it(pairs.begin()); \
+				likely(it != pairs.end()); ++it) { \
+				string *s_ptr(&(*it)); \
+				++it; \
+				if(it == pairs.end()) { \
+					default_value = f(*s_ptr); \
+					return; \
+				} \
+				m.push_back(new Regex(s_ptr->c_str())); \
+				v.push_back(f(*it)); \
 			} \
-			m.push_back(new Regex(s_ptr->c_str())); \
-			v.push_back(f(*it)); \
+			default_value = d; \
 		} \
-		default_value = d; \
-	} \
 \
-	~n() { \
-		for(vector<Regex*>::iterator it(m.begin()); likely(it != m.end()); ++it) { \
-			(*it)->free(); \
-			delete *it; \
+		~N() { \
+			for(mType::iterator it(m.begin()); likely(it != m.end()); ++it) { \
+				(*it)->free(); \
+				delete *it; \
+			} \
 		} \
-	} \
 \
-	t parse(const char *p) { \
-		for(vector<Regex*>::size_type i(0); likely(i != m.size()); ++i) { \
-			if(m[i]->match(p)) \
-				return v[i]; \
+		T parse(const char *p) { \
+			for(mType::size_type i(0); likely(i != m.size()); ++i) { \
+				if(m[i]->match(p)) { \
+					return v[i]; \
+				} \
+			} \
+			return default_value; \
 		} \
-		return default_value; \
-	} \
 }
 
 MatcherClassDefinition(MatcherField, PackageTest::MatchField, PackageTest::name2field, PackageTest::NAME);
@@ -343,7 +347,7 @@ MatcherClassDefinition(MatcherAlgorithm, PackageTest::MatchAlgorithm, PackageTes
 PackageTest::MatchField PackageTest::get_matchfield(const char *p) {
 	static MatcherField *m = NULLPTR;
 	if(m == NULLPTR) {
-		EixRc &rc(get_eixrc());
+		EixRc& rc(get_eixrc());
 		m = new MatcherField(rc["DEFAULT_MATCH_FIELD"]);
 	}
 	return m->parse(p);
@@ -352,7 +356,7 @@ PackageTest::MatchField PackageTest::get_matchfield(const char *p) {
 PackageTest::MatchAlgorithm PackageTest::get_matchalgorithm(const char *p) {
 	static MatcherAlgorithm *m = NULLPTR;
 	if(m == NULLPTR) {
-		EixRc &rc(get_eixrc());
+		EixRc& rc(get_eixrc());
 		m = new MatcherAlgorithm(rc["DEFAULT_MATCH_ALGORITHM"]);
 	}
 	return m->parse(p);
@@ -408,23 +412,14 @@ void PackageTest::finalize() {
 
 /** Return true if pkg matches test. */
 bool PackageTest::stringMatch(Package *pkg) const {
-	if(((field & NAME) != NONE) && (*algorithm)(pkg->name.c_str(), pkg))
+	if((((field & NAME) != NONE) && (*algorithm)(pkg->name.c_str(), pkg))
+	|| (((field & DESCRIPTION) != NONE)  && (*algorithm)(pkg->desc.c_str(), pkg))
+	|| (((field & LICENSE) != NONE) && (*algorithm)(pkg->licenses.c_str(), pkg))
+	|| (((field & CATEGORY) != NONE) && (*algorithm)(pkg->category.c_str(), pkg))
+	|| (((field & CATEGORY_NAME) != NONE) && (*algorithm)((pkg->category + "/" + pkg->name).c_str(), pkg))
+	|| (((field & HOMEPAGE) != NONE) && (*algorithm)(pkg->homepage.c_str(), pkg))) {
 		return true;
-
-	if(((field & DESCRIPTION) != NONE)  && (*algorithm)(pkg->desc.c_str(), pkg))
-		return true;
-
-	if(((field & LICENSE) != NONE) && (*algorithm)(pkg->licenses.c_str(), pkg))
-		return true;
-
-	if(((field & CATEGORY) != NONE) && (*algorithm)(pkg->category.c_str(), pkg))
-		return true;
-
-	if(((field & CATEGORY_NAME) != NONE) && (*algorithm)((pkg->category + "/" + pkg->name).c_str(), pkg))
-		return true;
-
-	if(((field & HOMEPAGE) != NONE) && (*algorithm)(pkg->homepage.c_str(), pkg))
-		return true;
+	}
 
 	if((field & SLOT) != NONE) {
 		for(Package::iterator it(pkg->begin());
@@ -443,8 +438,8 @@ bool PackageTest::stringMatch(Package *pkg) const {
 	}
 
 	if((field & IUSE) != NONE) {
-		const set<IUse> &s(pkg->iuse.asSet());
-		for(set<IUse>::const_iterator it(s.begin());
+		const IUseSet::IUseStd& s(pkg->iuse.asStd());
+		for(IUseSet::IUseStd::const_iterator it(s.begin());
 			it != s.end(); ++it) {
 			if((*algorithm)(it->name().c_str(), NULLPTR))
 				return true;
@@ -459,49 +454,42 @@ bool PackageTest::stringMatch(Package *pkg) const {
 		for(Package::iterator it(pkg->begin());
 			likely(it != pkg->end()); ++it) {
 			const Depend &dep(it->depend);
-			if(depend) {
-				if((*algorithm)(dep.get_depend().c_str(), pkg))
-				return true;
-			}
-			if(rdepend) {
-				if((*algorithm)(dep.get_rdepend().c_str(), pkg))
-				return true;
-			}
-			if(pdepend) {
-				if((*algorithm)(dep.get_pdepend().c_str(), pkg))
-				return true;
-			}
-			if(hdepend) {
-				if((*algorithm)(dep.get_hdepend().c_str(), pkg))
+			if((depend && (*algorithm)(dep.get_depend().c_str(), pkg))
+			|| (rdepend && (*algorithm)(dep.get_rdepend().c_str(), pkg))
+			|| (pdepend && (*algorithm)(dep.get_pdepend().c_str(), pkg))
+			|| (hdepend && (*algorithm)(dep.get_hdepend().c_str(), pkg))) {
 				return true;
 			}
 		}
 	}
 
 	if(field & SET) {
-		set<string> setnames;
+		WordSet setnames;
 		portagesettings->get_setnames(&setnames, pkg);
-		for(set<string>::const_iterator it(setnames.begin());
+		for(WordSet::const_iterator it(setnames.begin());
 			likely(it != setnames.end()); ++it) {
-			if((*algorithm)(it->c_str(), NULLPTR))
+			if((*algorithm)(it->c_str(), NULLPTR)
+			|| (*algorithm)((string("@") + *it).c_str(), NULLPTR)) {
 				return true;
-			if((*algorithm)((string("@") + *it).c_str(), NULLPTR))
-				return true;
+			}
 		}
 	}
 
-	if((field & (USE_ENABLED | USE_DISABLED | INST_SLOT | INST_FULLSLOT | DEPS)) == NONE)
+	if((field & (USE_ENABLED | USE_DISABLED | INST_SLOT | INST_FULLSLOT | DEPS)) == NONE) {
 		return false;
+	}
 
-	vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*pkg));
-	if(installed_versions == NULLPTR)
+	InstVec *installed_versions(vardbpkg->getInstalledVector(*pkg));
+	if(installed_versions == NULLPTR) {
 		return false;
+	}
 
 	if((field & (INST_SLOT | INST_FULLSLOT)) != NONE) {
-		for(vector<InstVersion>::iterator it(installed_versions->begin());
+		for(InstVec::iterator it(installed_versions->begin());
 			likely(it != installed_versions->end()); ++it) {
-			if(!vardbpkg->readSlot(*pkg, &(*it)))
+			if(!vardbpkg->readSlot(*pkg, &(*it))) {
 				continue;
+			}
 			if((field & INST_SLOT) != NONE) {
 				if((*algorithm)(it->get_longslot().c_str(), pkg)) {
 					return true;
@@ -516,24 +504,28 @@ bool PackageTest::stringMatch(Package *pkg) const {
 	}
 
 	if((field & (USE_ENABLED | USE_DISABLED)) != NONE) {
-		for(vector<InstVersion>::iterator it(installed_versions->begin());
+		for(InstVec::iterator it(installed_versions->begin());
 			it != installed_versions->end(); ++it) {
-			if(!vardbpkg->readUse(*pkg, &(*it)))
+			if(!vardbpkg->readUse(*pkg, &(*it))) {
 				continue;
+			}
 			if((field & USE_ENABLED) != NONE) {
-				for(set<string>::iterator uit((it->usedUse).begin());
+				for(WordSet::iterator uit((it->usedUse).begin());
 					likely(uit != (it->usedUse).end()); ++uit) {
-					if((*algorithm)(uit->c_str(), NULLPTR))
+					if((*algorithm)(uit->c_str(), NULLPTR)) {
 						return true;
+					}
 				}
 			}
 			if((field & USE_DISABLED) != NONE) {
-				for(vector<string>::iterator uit((it->inst_iuse).begin());
+				for(WordVec::iterator uit((it->inst_iuse).begin());
 					likely(uit != (it->inst_iuse).end()); ++uit) {
-					if(!(*algorithm)(uit->c_str(), NULLPTR))
+					if(!(*algorithm)(uit->c_str(), NULLPTR)) {
 						continue;
-					if((it->usedUse).find(*uit) == (it->usedUse).end())
+					}
+					if((it->usedUse).find(*uit) == (it->usedUse).end()) {
 						return true;
+					}
 				}
 			}
 		}
@@ -544,10 +536,10 @@ bool PackageTest::stringMatch(Package *pkg) const {
 		bool rdepend((field & RDEPEND) != NONE);
 		bool pdepend((field & PDEPEND) != NONE);
 		bool hdepend((field & HDEPEND) != NONE);
-		for(vector<InstVersion>::iterator it(installed_versions->begin());
+		for(InstVec::iterator it(installed_versions->begin());
 			it != installed_versions->end(); ++it) {
 			vardbpkg->readDepend(*pkg, &(*it), *header);
-			const Depend &dep(it->depend);
+			const Depend& dep(it->depend);
 			if(depend) {
 				if((*algorithm)(dep.get_depend().c_str(), pkg))
 				return true;
@@ -570,7 +562,7 @@ bool PackageTest::stringMatch(Package *pkg) const {
 	return false;
 }
 
-bool PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAtom &t) const {
+bool PackageTest::have_redundant(const Package& p, Keywords::Redundant r, const RedAtom& t) const {
 	r &= t.red;
 	if(r == Keywords::RED_NOTHING) {
 		return false;
@@ -627,7 +619,7 @@ bool PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const 
 	}
 }
 
-bool PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const {
+bool PackageTest::have_redundant(const Package& p, Keywords::Redundant r) const {
 	if(r == Keywords::RED_NOTHING) {
 		return false;
 	}
@@ -653,17 +645,21 @@ static bool stabilitytest(const Package *p, PackageTest::TestStability what) {
 				return true;
 			}
 		}
-		if(it->maskflags.isHardMasked())
+		if(it->maskflags.isHardMasked()) {
 			continue;
+		}
 		if(it->keyflags.isStable()) {
 			return true;
 		}
-		if(what & PackageTest::STABLE_FULL)
+		if(what & PackageTest::STABLE_FULL) {
 			continue;
-		if(it->keyflags.isUnstable())
+		}
+		if(it->keyflags.isUnstable()) {
 			return true;
-		if(what & PackageTest::STABLE_TESTING)
+		}
+		if(what & PackageTest::STABLE_TESTING) {
 			continue;
+		}
 		// what & PackageTest::STABLE_NONMASKED
 			return true;
 	}
@@ -737,25 +733,30 @@ bool PackageTest::match(PackageReader *pkg) const {
 
 	if(unlikely(algorithm != NULLPTR)) {
 		get_p(&p, pkg);
-		if(!stringMatch(p))
+		if(!stringMatch(p)) {
 			return false;
+		}
 	}
 
 	if(unlikely(slotted)) {
 		// -1 or -2
 		get_p(&p, pkg);
-		if(!(p->have_nontrivial_slots()))
+		if(!(p->have_nontrivial_slots())) {
 			return false;
-		if(multi_slot)
-			if( (p->slotlist()).size() <= 1 )
+		}
+		if(multi_slot) {
+			if((p->slotlist()).size() <= 1) {
 				return false;
+			}
+		}
 	}
 
 	if(unlikely(overlay)) {
 		// -O
 		get_p(&p, pkg);
-		if(!(p->largest_overlay))
+		if(!(p->largest_overlay)) {
 			return false;
+		}
 	}
 
 	if(unlikely(overlay_list != NULLPTR)) {
@@ -763,21 +764,24 @@ bool PackageTest::match(PackageReader *pkg) const {
 		get_p(&p, pkg);
 		bool have(false);
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
-			if(unlikely(overlay_list->find(it->overlay_key) == overlay_list->end()))
+			if(unlikely(overlay_list->find(it->overlay_key) == overlay_list->end())) {
 				continue;
+			}
 			have = true;
 			break;
 		}
-		if(!have)
+		if(!have) {
 			return false;
+	}
 	}
 
 	if(unlikely(overlay_only_list != NULLPTR)) {
 		// --only-in-overlay
 		get_p(&p, pkg);
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
-			if(likely(overlay_only_list->find(it->overlay_key) == overlay_only_list->end()))
+			if(likely(overlay_only_list->find(it->overlay_key) == overlay_only_list->end())) {
 				return false;
+			}
 		}
 	}
 
@@ -800,12 +804,14 @@ bool PackageTest::match(PackageReader *pkg) const {
 	if(unlikely(installed)) {
 		// -i or -I
 		get_p(&p, pkg);
-		vector<BasicVersion>::size_type s(vardbpkg->numInstalled(*p));
-		if(s == 0)
+		InstVec::size_type s(vardbpkg->numInstalled(*p));
+		if(s == 0) {
 			return false;
+		}
 		if(s == 1) {
-			if(multi_installed)
+			if(multi_installed) {
 				return false;
+			}
 		}
 	}
 
@@ -814,23 +820,26 @@ bool PackageTest::match(PackageReader *pkg) const {
 		get_p(&p, pkg);
 		bool have(false);
 		bool get_installed(true);
-		vector<InstVersion> *installed_versions(NULLPTR);
+		InstVec *installed_versions(NULLPTR);
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
-			if(in_overlay_inst_list->find(it->overlay_key) == in_overlay_inst_list->end())
+			if(in_overlay_inst_list->find(it->overlay_key) == in_overlay_inst_list->end()) {
 				continue;
+			}
 			if(get_installed) {
 				get_installed = false;
 				installed_versions = vardbpkg->getInstalledVector(*p);
 			}
-			if(installed_versions == NULLPTR)
+			if(installed_versions == NULLPTR) {
 				continue;
+			}
 			if(VarDbPkg::isInVec(installed_versions, *it)) {
 				have = true;
 				break;
 			}
 		}
-		if(!have)
+		if(!have) {
 			return false;
+		}
 	}
 
 	if(unlikely((from_overlay_inst_list != NULLPTR) ||
@@ -838,30 +847,35 @@ bool PackageTest::match(PackageReader *pkg) const {
 		// -J or --installed-from-overlay
 		get_p(&p, pkg);
 		bool have(false);
-		vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
-		if(installed_versions == NULLPTR)
+		InstVec *installed_versions(vardbpkg->getInstalledVector(*p));
+		if(installed_versions == NULLPTR) {
 			return false;
-		for(vector<InstVersion>::iterator it(installed_versions->begin());
+		}
+		for(InstVec::iterator it(installed_versions->begin());
 			likely(it != installed_versions->end()); ++it) {
 			if(vardbpkg->readOverlay(*p, &(*it), *header)) {
-				if(from_overlay_inst_list == NULLPTR)
+				if(from_overlay_inst_list == NULLPTR) {
 					continue;
-				if(from_overlay_inst_list->find(it->overlay_key) == from_overlay_inst_list->end())
+				}
+				if(from_overlay_inst_list->find(it->overlay_key) == from_overlay_inst_list->end()) {
 					continue;
+				}
 				have = true;
 				break;
 			}
 		}
-		if(!have)
+		if(!have) {
 			return false;
+		}
 	}
 
 	if(unlikely(dup_packages)) {
 		// -d
 		get_p(&p, pkg);
 		if(dup_packages_overlay) {
-			if(!(p->at_least_two_overlays()))
+			if(!(p->at_least_two_overlays())) {
 				return false;
+			}
 		} else if(p->have_same_overlay_key()) {
 			return false;
 		}
@@ -872,8 +886,9 @@ bool PackageTest::match(PackageReader *pkg) const {
 		get_p(&p, pkg);
 		Package::Duplicates testfor((dup_versions_overlay) ?
 				Package::DUP_OVERLAYS : Package::DUP_SOME);
-		if(((p->have_duplicate_versions) & testfor) != testfor)
+		if(((p->have_duplicate_versions) & testfor) != testfor) {
 			return false;
+		}
 	}
 
 	if(unlikely((restrictions != ExtendedVersion::RESTRICT_NONE) ||
@@ -888,10 +903,11 @@ bool PackageTest::match(PackageReader *pkg) const {
 			}
 		}
 		if(!found) {
-			vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
-			if(installed_versions == NULLPTR)
+			InstVec *installed_versions(vardbpkg->getInstalledVector(*p));
+			if(installed_versions == NULLPTR) {
 				return false;
-			for(vector<InstVersion>::iterator it(installed_versions->begin());
+			}
+			for(InstVec::iterator it(installed_versions->begin());
 				likely(it != installed_versions->end()); ++it) {
 				vardbpkg->readRestricted(*p, &(*it), *header);
 				if(unlikely((((it->restrictFlags) & restrictions) == restrictions) &&
@@ -900,8 +916,9 @@ bool PackageTest::match(PackageReader *pkg) const {
 					break;
 				}
 			}
-			if(!found)
+			if(!found) {
 				return false;
+			}
 		}
 	}
 
@@ -916,18 +933,20 @@ bool PackageTest::match(PackageReader *pkg) const {
 			}
 		}
 		if(!found) {
-			vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
-			if(installed_versions == NULLPTR)
+			InstVec *installed_versions(vardbpkg->getInstalledVector(*p));
+			if(installed_versions == NULLPTR) {
 				return false;
-			for(vector<InstVersion>::iterator it(installed_versions->begin());
+			}
+			for(InstVec::iterator it(installed_versions->begin());
 				likely(it != installed_versions->end()); ++it) {
 				if(unlikely(it->have_bin_pkg(portagesettings, p))) {
 					found = true;
 					break;
 				}
 			}
-			if(!found)
+			if(!found) {
 				return false;
+			}
 		}
 	}
 
@@ -935,8 +954,9 @@ bool PackageTest::match(PackageReader *pkg) const {
 		// -T; loop, because we break in case of success
 		// Can some test succeed at all?
 		if((test_installed == INS_NONE) &&
-			(redundant_flags == Keywords::RED_NOTHING))
+			(redundant_flags == Keywords::RED_NOTHING)) {
 			return false;
+		}
 
 		if(nowarn_list == NULLPTR) {
 			get_nowarn_list();
@@ -949,46 +969,35 @@ bool PackageTest::match(PackageReader *pkg) const {
 		Keywords::Redundant r(rflags & Keywords::RED_ALL_MASKSTUFF);
 		if(r != Keywords::RED_NOTHING) {
 			if(r && portagesettings->user_config->setMasks(p, r)) {
-				if(have_redundant(*p, r & Keywords::RED_DOUBLE_MASK))
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE_MASK)
+				|| have_redundant(*p, r & Keywords::RED_DOUBLE_UNMASK)
+				|| have_redundant(*p, r & Keywords::RED_MASK)
+				|| have_redundant(*p, r & Keywords::RED_UNMASK)
+				|| have_redundant(*p, r & Keywords::RED_IN_MASK)
+				|| have_redundant(*p, r & Keywords::RED_IN_UNMASK)) {
 					break;
-				if(have_redundant(*p, r & Keywords::RED_DOUBLE_UNMASK))
-					break;
-				if(have_redundant(*p, r & Keywords::RED_MASK))
-					break;
-				if(have_redundant(*p, r & Keywords::RED_UNMASK))
-					break;
-				if(have_redundant(*p, r & Keywords::RED_IN_MASK))
-					break;
-				if(have_redundant(*p, r & Keywords::RED_IN_UNMASK))
-					break;
+				}
 			}
 		}
 		r = rflags & Keywords::RED_ALL_KEYWORDS;
 		if(r != Keywords::RED_NOTHING) {
 			if(r && portagesettings->user_config->setKeyflags(p, r)) {
-				if(have_redundant(*p, r & Keywords::RED_DOUBLE))
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE)
+				|| have_redundant(*p, r & Keywords::RED_MIXED)
+				|| have_redundant(*p, r & Keywords::RED_WEAKER)
+				|| have_redundant(*p, r & Keywords::RED_STRANGE)
+				|| have_redundant(*p, r & Keywords::RED_NO_CHANGE)
+				|| have_redundant(*p, r & Keywords::RED_IN_KEYWORDS)
+				|| have_redundant(*p, r & Keywords::RED_DOUBLE_LINE)) {
 					break;
-				if(have_redundant(*p, r & Keywords::RED_MIXED))
-					break;
-				if(have_redundant(*p, r & Keywords::RED_WEAKER))
-					break;
-				if(have_redundant(*p, r & Keywords::RED_STRANGE))
-					break;
-				if(have_redundant(*p, r & Keywords::RED_NO_CHANGE))
-					break;
-				if(have_redundant(*p, r & Keywords::RED_IN_KEYWORDS))
-					break;
-				if(have_redundant(*p, r & Keywords::RED_DOUBLE_LINE))
-					break;
+				}
 			}
 		}
 		r = rflags & Keywords::RED_ALL_USE;
 		if(r != Keywords::RED_NOTHING) {
 			if(r && portagesettings->user_config->CheckUse(p, r)) {
-				if(have_redundant(*p, r & Keywords::RED_DOUBLE_USE)) {
-					break;
-				}
-				if(have_redundant(*p, r & Keywords::RED_IN_USE)) {
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE_USE)
+				|| have_redundant(*p, r & Keywords::RED_IN_USE)) {
 					break;
 				}
 			}
@@ -996,10 +1005,8 @@ bool PackageTest::match(PackageReader *pkg) const {
 		r = rflags & Keywords::RED_ALL_ENV;
 		if(r != Keywords::RED_NOTHING) {
 			if(r && portagesettings->user_config->CheckEnv(p, r)) {
-				if(have_redundant(*p, r & Keywords::RED_DOUBLE_ENV)) {
-					break;
-				}
-				if(have_redundant(*p, r & Keywords::RED_IN_ENV)) {
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE_ENV)
+				|| have_redundant(*p, r & Keywords::RED_IN_ENV)) {
 					break;
 				}
 			}
@@ -1007,10 +1014,8 @@ bool PackageTest::match(PackageReader *pkg) const {
 		r = rflags & Keywords::RED_ALL_LICENSE;
 		if(r != Keywords::RED_NOTHING) {
 			if(r && portagesettings->user_config->CheckLicense(p, r)) {
-				if(have_redundant(*p, r & Keywords::RED_DOUBLE_LICENSE)) {
-					break;
-				}
-				if(have_redundant(*p, r & Keywords::RED_IN_LICENSE)) {
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE_LICENSE)
+				|| have_redundant(*p, r & Keywords::RED_IN_LICENSE)) {
 					break;
 				}
 			}
@@ -1018,10 +1023,8 @@ bool PackageTest::match(PackageReader *pkg) const {
 		r = rflags & Keywords::RED_ALL_RESTRICT;
 		if(r != Keywords::RED_NOTHING) {
 			if(r && portagesettings->user_config->CheckAcceptRestrict(p, r)) {
-				if(have_redundant(*p, r & Keywords::RED_DOUBLE_RESTRICT)) {
-					break;
-				}
-				if(have_redundant(*p, r & Keywords::RED_IN_RESTRICT)) {
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE_RESTRICT)
+				|| have_redundant(*p, r & Keywords::RED_IN_RESTRICT)) {
 					break;
 				}
 			}
@@ -1029,10 +1032,8 @@ bool PackageTest::match(PackageReader *pkg) const {
 		r = rflags & Keywords::RED_ALL_CFLAGS;
 		if(r != Keywords::RED_NOTHING) {
 			if(r && portagesettings->user_config->CheckCflags(p, r)) {
-				if(have_redundant(*p, r & Keywords::RED_DOUBLE_CFLAGS)) {
-					break;
-				}
-				if(have_redundant(*p, r & Keywords::RED_IN_CFLAGS)) {
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE_CFLAGS)
+				|| have_redundant(*p, r & Keywords::RED_IN_CFLAGS)) {
 					break;
 				}
 			}
@@ -1040,7 +1041,7 @@ bool PackageTest::match(PackageReader *pkg) const {
 		if(test_ins == INS_NONE) {
 			return false;
 		}
-		vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
+		InstVec *installed_versions(vardbpkg->getInstalledVector(*p));
 		if(installed_versions == NULLPTR) {
 			return false;
 		}
@@ -1048,7 +1049,7 @@ bool PackageTest::match(PackageReader *pkg) const {
 			portagesettings->user_config->setMasks(p);
 			portagesettings->user_config->setKeyflags(p);
 		}
-		vector<InstVersion>::iterator current(installed_versions->begin());
+		InstVec::iterator current(installed_versions->begin());
 		for( ; likely(current != installed_versions->end()); ++current) {
 			bool not_all_found(true);
 			for(Package::iterator version_it(p->begin());
@@ -1128,8 +1129,9 @@ bool PackageTest::match(PackageReader *pkg) const {
 	// --installed-unstable --installed-testing --installed-masked
 		get_p(&p, pkg);
 		StabilityNonlocal(p);
-		if(!instabilitytest(p, test_instability))
+		if(!instabilitytest(p, test_instability)) {
 			return false;
+		}
 	}
 
 	if(unlikely(world || worldset)) {
@@ -1164,11 +1166,11 @@ bool PackageTest::match(PackageReader *pkg) const {
 
 void PackageTest::get_nowarn_list() {
 	NowarnPreList prelist;
-	vector<string> name;
-	EixRc &rc(get_eixrc());
+	WordVec name;
+	EixRc& rc(get_eixrc());
 	split_string(&name, rc["PACKAGE_NOWARN"], true);
-	for(vector<string>::const_iterator it(name.begin()); it != name.end(); ++it) {
-		vector<string> lines;
+	for(WordVec::const_iterator it(name.begin()); it != name.end(); ++it) {
+		LineVec lines;
 		pushback_lines(it->c_str(), &lines, true, true);
 		prelist.handle_file(lines, *it, NULLPTR, true);
 	}

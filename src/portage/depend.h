@@ -25,12 +25,12 @@ class Depend {
 		static const char c_depend[];
 		static const char c_rdepend[];
 
-		static std::string subst(const std::string &in, const std::string &text, bool obs);
+		static std::string subst(const std::string& in, const std::string& text, bool obs);
 
 	public:
 		static bool use_depend;
 
-		void set(const std::string &depend, const std::string &rdepend, const std::string &pdepend, const std::string &hdepend, bool normspace);
+		void set(const std::string& depend, const std::string& rdepend, const std::string& pdepend, const std::string& hdepend, bool normspace);
 
 		std::string get_depend() const {
 			return subst(m_depend, m_rdepend, obsolete);
@@ -92,9 +92,9 @@ class Depend {
 			obsolete = false;
 		}
 
-		bool operator==(const Depend &d) const;
+		bool operator==(const Depend& d) const;
 
-		bool operator!=(const Depend &d) const {
+		bool operator!=(const Depend& d) const {
 			return !(*this == d);
 		}
 };

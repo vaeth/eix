@@ -34,11 +34,12 @@
 using std::map;
 using std::string;
 
-map<string, Levenshtein> *FuzzyAlgorithm::levenshtein_map = NULLPTR;
+typedef map<string, Levenshtein> LevenshteinMap;
+LevenshteinMap *FuzzyAlgorithm::levenshtein_map = NULLPTR;
 
 void FuzzyAlgorithm::init_static() {
 	eix_assert_static(levenshtein_map == NULLPTR);
-	levenshtein_map = new map<string, Levenshtein>;
+	levenshtein_map = new LevenshteinMap;
 }
 
 bool FuzzyAlgorithm::compare(Package *p1, Package *p2) {
@@ -61,12 +62,12 @@ bool FuzzyAlgorithm::operator()(const char *s, Package *p) {
 
 bool ExactAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED) {
 	UNUSED(p);
-	return !strcmp(search_string.c_str(), s);
+	return (strcmp(search_string.c_str(), s) == 0);
 }
 
 bool BeginAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED) {
 	UNUSED(p);
-	return !strncmp(search_string.c_str(), s, search_string.size());
+	return (strncmp(search_string.c_str(), s, search_string.size()) == 0);
 }
 
 bool EndAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED) {
@@ -76,10 +77,10 @@ bool EndAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED) {
 	if(l < sl) {
 		return false;
 	}
-	return !strcmp(search_string.c_str(), s + (l - sl));
+	return (strcmp(search_string.c_str(), s + (l - sl)) == 0);
 }
 
 bool PatternAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED) {
 	UNUSED(p);
-	return !fnmatch(search_string.c_str(), s, FNMATCH_FLAGS);
+	return (fnmatch(search_string.c_str(), s, FNMATCH_FLAGS) == 0);
 }

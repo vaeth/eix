@@ -24,18 +24,22 @@
 class PrintFormat;
 class DBHeader;
 
+typedef std::vector<InstVersion> InstVec;
 /** Holds every installed version of a package. */
 class VarDbPkg {
 	private:
+		typedef std::map<std::string, InstVec> InstVecPkg;
+		typedef std::map<std::string, InstVecPkg *> InstVecCat;
+		static void sort_installed(VarDbPkg::InstVecPkg *maping) ATTRIBUTE_NONNULL_;
 		/** Mapping of [category][package] to list versions. */
-		std::map<std::string, std::map<std::string, std::vector<InstVersion> >* > installed;
+		InstVecCat installed;
 		std::string m_directory; /**< This is the db-directory. */
 		bool get_slots, care_of_slots, care_of_deps;
 		bool get_restrictions, care_of_restrictions, use_build_time;
 
 		/** Find installed versions of packet "name" in category "category".
 		 * @return NULLPTR if not found .. else pointer to vector of versions. */
-		std::vector<InstVersion> *getInstalledVector(const std::string &category, const std::string &name);
+		InstVec *getInstalledVector(const std::string& category, const std::string& name);
 
 		/** Read category from db-directory.
 		 * @param category read this category. */
@@ -55,7 +59,7 @@ class VarDbPkg {
 		}
 
 		~VarDbPkg() {
-			for(std::map<std::string, std::map<std::string, std::vector<InstVersion> >* >::iterator it(installed.begin());
+			for(InstVecCat::iterator it(installed.begin());
 				likely(it != installed.end()); ++it) {
 				delete it->second;
 			}
@@ -65,50 +69,59 @@ class VarDbPkg {
 			return care_of_slots;
 		}
 
-		bool readSlot(const Package &p, InstVersion *v) const ATTRIBUTE_NONNULL_;
-		bool readUse(const Package &p, InstVersion *v) const ATTRIBUTE_NONNULL_;
-		void readRestricted(const Package &p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
-		void readInstDate(const Package &p, InstVersion *v) const ATTRIBUTE_NONNULL_;
-		void readDepend(const Package &p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
+		bool readSlot(const Package& p, InstVersion *v) const ATTRIBUTE_NONNULL_;
+		bool readUse(const Package& p, InstVersion *v) const ATTRIBUTE_NONNULL_;
+		void readRestricted(const Package& p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
+		void readInstDate(const Package& p, InstVersion *v) const ATTRIBUTE_NONNULL_;
+		void readDepend(const Package& p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
 
-		bool readOverlay(const Package &p, InstVersion *v, const DBHeader &header) const ATTRIBUTE_NONNULL_;
+		bool readOverlay(const Package& p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
 		std::string readOverlayLabel(const Package *p, const BasicVersion *v) const ATTRIBUTE_NONNULL_;
 		eix::SignedBool check_installed_overlays;
 
 		/** Find installed versions
 		 * @return NULLPTR if not found .. else pointer to vector of versions. */
-		std::vector<InstVersion> *getInstalledVector(const Package &p) {
+		InstVec *getInstalledVector(const Package& p) {
 			return getInstalledVector(p.category, p.name);
 		}
 
 		/** Returns true if v is in vec. v=NULLPTR is always in vec.
 		    If a serious result is found and r is nonzero, r points to that result */
-		static bool isInVec(std::vector<InstVersion> *vec, const BasicVersion *v = NULLPTR, InstVersion **r = NULLPTR);
+		static bool isInVec(InstVec *vec, const BasicVersion *v, InstVersion **r);
+		inline static bool isInVec(InstVec *vec, const BasicVersion *v) {
+			return isInVec(vec, v, NULLPTR);
+		}
+		inline static bool isInVec(InstVec *vec) {
+			return isInVec(vec, NULLPTR);
+		}
 
 		/** Returns true if a Package installed.
 		 * @param p Check for this Package.
 		 * @param v If not NULLPTR, check for this BasicVersion.
 		   If a particular version is found and r is nonzero, r points to that version */
-		bool isInstalled(const Package &p, const BasicVersion *v = NULLPTR, InstVersion **r = NULLPTR) {
+		bool isInstalled(const Package& p, const BasicVersion *v, InstVersion **r) {
 			return isInVec(getInstalledVector(p), v, r);
+		}
+		bool isInstalled(const Package& p) {
+			return isInVec(getInstalledVector(p));
 		}
 
 		/** Test if a particular version is installed from the correct overlay.
 		 * @return 1 (yes) or 0 (no) or -1 (might be - overlay unclear) */
-		eix::SignedBool isInstalledVersion(const Package &p, const Version *v, const DBHeader& header) ATTRIBUTE_NONNULL_ {
+		eix::SignedBool isInstalledVersion(const Package& p, const Version *v, const DBHeader& header) ATTRIBUTE_NONNULL_ {
 			InstVersion *inst;
 			return isInstalledVersion(&inst, p, v, header);
 		}
 
 		/** As above and store pointer to installed version in *inst */
-		eix::SignedBool isInstalledVersion(InstVersion **inst, const Package &p, const Version *v, const DBHeader& header) ATTRIBUTE_NONNULL_;
+		eix::SignedBool isInstalledVersion(InstVersion **inst, const Package& p, const Version *v, const DBHeader& header) ATTRIBUTE_NONNULL_;
 
 		/** Return matching available version or NULLPTR */
-		Version *getAvailable(const Package &p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
+		Version *getAvailable(const Package& p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
 
 		/** Returns number of installed versions of this package
 		 * @param p Check for this Package. */
-		std::vector<InstVersion>::size_type numInstalled(const Package &p);
+		InstVec::size_type numInstalled(const Package& p);
 };
 
 #endif  // SRC_PORTAGE_VARDBPKG_H_

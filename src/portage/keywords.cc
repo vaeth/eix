@@ -10,17 +10,14 @@
 #include <config.h>
 
 #include <algorithm>
-#include <set>
 #include <string>
-#include <vector>
 
 #include "eixTk/likely.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "portage/keywords.h"
 
-using std::set;
 using std::string;
-using std::vector;
 
 const MaskFlags::MaskType
 	MaskFlags::MASK_NONE,
@@ -45,31 +42,32 @@ const KeywordsFlags::KeyType
 	KeywordsFlags::KEY_SOMEUNSTABLE,
 	KeywordsFlags::KEY_TILDESTARMATCH;
 
-inline static bool is_not_testing(const string &s);
-inline static bool is_testing(const string &s);
+inline static bool is_not_testing(const string& s);
+inline static bool is_testing(const string& s);
 
-inline static bool is_not_testing(const string &s) {
+inline static bool is_not_testing(const string& s) {
 	char c(s[0]);
 	return ((c != '~') && (c != '-'));
 }
 
-inline static bool is_testing(const string &s) {
+inline static bool is_testing(const string& s) {
 	return (s[0] == '~');
 }
 
-KeywordsFlags::KeyType KeywordsFlags::get_keyflags(const set<string> &accepted_keywords, const string &keywords) {
+KeywordsFlags::KeyType KeywordsFlags::get_keyflags(const WordSet& accepted_keywords, const string& keywords) {
 	KeyType m(KEY_EMPTY);
-	set<string> keywords_set;
+	WordSet keywords_set;
 	make_set<string>(&keywords_set, split_string(keywords));
-	for(set<string>::const_iterator it(keywords_set.begin());
+	for(WordSet::const_iterator it(keywords_set.begin());
 		likely(it != keywords_set.end()); ++it) {
 		if((*it)[0] == '-') {
-			if(*it == "-*")
+			if(*it == "-*") {
 				m |= KEY_MINUSASTERISK;
-			else if(*it == "-~*")
+			} else if(*it == "-~*") {
 				m |= KEY_MINUSUNSTABLE;
-			else if(accepted_keywords.find(it->substr(1)) != accepted_keywords.end())
+			} else if(accepted_keywords.find(it->substr(1)) != accepted_keywords.end()) {
 				m |= KEY_MINUSKEYWORD;
+			}
 			continue;
 		}
 		if(*it == "*") {
@@ -103,17 +101,21 @@ KeywordsFlags::KeyType KeywordsFlags::get_keyflags(const set<string> &accepted_k
 			m |= (found ? KEY_ARCHSTABLE : KEY_ALIENSTABLE);
 		}
 	}
-	if(m & KEY_STABLE)
+	if(m & KEY_STABLE) {
 		return m;
-	if(accepted_keywords.find("**") != accepted_keywords.end())
+	}
+	if(accepted_keywords.find("**") != accepted_keywords.end()) {
 		return (m | KEY_STABLE);
+	}
 	if(m & KEY_SOMESTABLE) {
-		if(accepted_keywords.find("*") != accepted_keywords.end())
+		if(accepted_keywords.find("*") != accepted_keywords.end()) {
 			return (m | KEY_STABLE);
+		}
 	}
 	if(m & KEY_TILDESTARMATCH) {
-		if(accepted_keywords.find("~*") != accepted_keywords.end())
+		if(accepted_keywords.find("~*") != accepted_keywords.end()) {
 			return (m | KEY_STABLE);
+		}
 	}
 	return m;
 }
@@ -153,20 +155,22 @@ const Keywords::Redundant
 	Keywords::RED_IN_CFLAGS,
 	Keywords::RED_ALL_CFLAGS;
 
-bool Keywords::modify_keywords(string *result, const string &original, const string &modify_keys) {
+bool Keywords::modify_keywords(string *result, const string& original, const string& modify_keys) {
 	bool modified(false);
-	vector<string> modify;
+	WordVec modify;
 	split_string(&modify, modify_keys);
-	if(modify.empty())
+	if(modify.empty()) {
 		return false;
-	vector<string> words;
+	}
+	WordVec words;
 	split_string(&words, original);
-	for(vector<string>::const_iterator it(modify.begin());
+	for(WordVec::const_iterator it(modify.begin());
 		it != modify.end(); ++it) {
-		if(it->empty())
+		if(it->empty()) {
 			continue;
+		}
 		if((*it)[0] == '-') {
-			vector<string>::iterator f(find(words.begin(), words.end(), it->substr(1)));
+			WordVec::iterator f(find(words.begin(), words.end(), it->substr(1)));
 			if(f != words.end()) {
 				modified = true;
 				words.erase(f);

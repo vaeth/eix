@@ -54,4 +54,5 @@ SUFFIXES = .in
 		-e "s,\@DEFAULT_REMOTE_PATH1\@,$(DEFAULT_REMOTE_PATH1),g" \
 		-e "s,\@DEFAULT_REMOTE_PATH2\@,$(DEFAULT_REMOTE_PATH2),g" \
 		-e "s,/dev/null,$(DEV_NULL),g" \
+		-e 's,^#!/usr/bin/env sh$$,#!$(SH_SHEBANG),g' \
 		"$<" > "$@"

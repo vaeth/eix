@@ -9,19 +9,16 @@
 
 #include <config.h>
 
-#include <set>
 #include <string>
-#include <vector>
 
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringlist.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "portage/version.h"
 
-using std::set;
 using std::string;
-using std::vector;
 
 const IUse::Flags
 	IUse::USEFLAGS_NIL,
@@ -105,7 +102,7 @@ string IUse::asString() const {
 
 string IUseSet::asString() const {
 	string ret;
-	for(set<IUse>::const_iterator it(m_iuse.begin());
+	for(IUseStd::const_iterator it(m_iuse.begin());
 		likely(it != m_iuse.end()); ++it) {
 		if(!ret.empty())
 			ret.append(1, ' ');
@@ -114,34 +111,34 @@ string IUseSet::asString() const {
 	return ret;
 }
 
-vector<string> IUseSet::asVector() const {
-	vector<string> ret(m_iuse.size());
-	vector<string>::size_type i(0);
-	for(set<IUse>::const_iterator it(m_iuse.begin());
+WordVec IUseSet::asVector() const {
+	WordVec ret(m_iuse.size());
+	WordVec::size_type i(0);
+	for(IUseStd::const_iterator it(m_iuse.begin());
 		likely(it != m_iuse.end()); ++i, ++it) {
 		ret[i] = it->asString();
 	}
 	return ret;
 }
 
-void IUseSet::insert(const std::set<IUse> &iuse) {
-	for(set<IUse>::const_iterator it(iuse.begin());
+void IUseSet::insert(const IUseStd& iuse) {
+	for(IUseStd::const_iterator it(iuse.begin());
 		likely(it != iuse.end()); ++it) {
 		insert(*it);
 	}
 }
 
-void IUseSet::insert(const string &iuse) {
-	vector<string> vec;
+void IUseSet::insert(const string& iuse) {
+	WordVec vec;
 	split_string(&vec, iuse);
-	for(vector<string>::const_iterator it(vec.begin());
+	for(WordVec::const_iterator it(vec.begin());
 		likely(it != vec.end()); ++it) {
 		insert_fast(*it);
 	}
 }
 
-void IUseSet::insert(const IUse &iuse) {
-	set<IUse>::iterator it(m_iuse.find(iuse));
+void IUseSet::insert(const IUse& iuse) {
+	IUseStd::iterator it(m_iuse.find(iuse));
 	if(it == m_iuse.end()) {
 		m_iuse.insert(iuse);
 		return;
@@ -159,7 +156,7 @@ const Version::EffectiveState
 	Version::EFFECTIVE_USED,
 	Version::EFFECTIVE_UNUSED;
 
-void Version::modify_effective_keywords(const string &modify_keys) {
+void Version::modify_effective_keywords(const string& modify_keys) {
 	if(effective_state == EFFECTIVE_UNUSED) {
 		if(!modify_keywords(&effective_keywords, full_keywords, modify_keys)) {
 			return;
@@ -175,7 +172,7 @@ void Version::modify_effective_keywords(const string &modify_keys) {
 	}
 }
 
-void Version::add_accepted_keywords(const std::string &accepted_keywords) {
+void Version::add_accepted_keywords(const std::string& accepted_keywords) {
 	if(!m_accepted_keywords.empty()) {
 		m_accepted_keywords.append(" ");
 	}
