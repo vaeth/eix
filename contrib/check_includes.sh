@@ -126,6 +126,7 @@ Check '"eixTk/ptr_list\.h"' -e 'eix::ptr'
 Check '"eixTk/stringutils\.h"' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e is_numeric -e to_lower -e trim -e StringHash -e escape_string -e localeC -e match_list -e slot_subslot -e casecontains -e caseequal
 Check '"eixTk/unused\.h"' -e '[^_]UNUSED' -e 'ATTRIBUTE_UNUSED'
 Check '"portage/basicversion\.h"' -e 'BasicVersion' -e 'BasicPart'
+CheckWithout '"search/packagetest\.h"' -e 'PackageTest::'
 
 Check '<iostream>' -e '[^a-z]cout[^a-z]' -e '[^a-z]cerr[^a-z]' -e '[^a-z]cin[^a-z]'
 Check '<list>' -e '[^_]list<' -e '^list<'

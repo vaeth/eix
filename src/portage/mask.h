@@ -19,7 +19,6 @@
 #include "portage/keywords.h"
 #include "portage/packagesets.h"
 #include "portage/version.h"
-#include "search/packagetest.h"
 
 class ExtendedVersion;
 class Package;

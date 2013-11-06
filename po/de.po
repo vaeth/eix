@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-11-02 14:24+0100\n"
+"POT-Creation-Date: 2013-11-06 18:32+0100\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1310,7 +1310,7 @@ msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 msgid "Skipping check: installed but not in the database"
 msgstr "Übergehe Check für installierte Pakete nicht in der Datenbank"
 
-#: src/eix.cc:87
+#: src/eix.cc:88
 #, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
@@ -1649,16 +1649,16 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:545 src/eix-diff.cc:269
+#: src/eix.cc:546 src/eix-diff.cc:270
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:659 src/eix-diff.cc:332 src/eix-update.cc:376
+#: src/eix.cc:660 src/eix-diff.cc:333 src/eix-update.cc:376
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
-#: src/eix.cc:742
+#: src/eix.cc:743
 msgid ""
 "%s was created with an incompatible eix-update:\n"
 "It uses database format %s (current is %s).\n"
@@ -1668,21 +1668,21 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit %r neu erzeugen."
 
-#: src/eix.cc:1014 src/eix.cc:1035
+#: src/eix.cc:1021 src/eix.cc:1042
 #, c-format
 msgid "Found %s matches."
 msgstr "%s Treffer."
 
-#: src/eix.cc:1017
+#: src/eix.cc:1024
 msgid "No matches found."
 msgstr "Kein Treffer."
 
-#: src/eix.cc:1026
+#: src/eix.cc:1033
 #, c-format
 msgid "Found %s match."
 msgstr "%s Treffer."
 
-#: src/eix.cc:1046
+#: src/eix.cc:1053
 #, c-format
 msgid ""
 "Only %s matches displayed on terminal.\n"
@@ -1691,7 +1691,7 @@ msgstr ""
 "Auf dem Terminal werden nur %s Treffer angezeigt.\n"
 "Setzen Sie %s=0 um alle anzuzeigen.\n"
 
-#: src/eix.cc:1074
+#: src/eix.cc:1081
 msgid ""
 "Cannot open the database file %s for reading.\n"
 "Did you forget to create it with %r?"
@@ -1699,17 +1699,17 @@ msgstr ""
 "Datenbankfile %s kann nicht geöffnet werden.\n"
 "Wurde es denn mit %r erzeugt?"
 
-#: src/eix.cc:1153
+#: src/eix.cc:1160
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:1154
+#: src/eix.cc:1161
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:1159
+#: src/eix.cc:1166
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1718,7 +1718,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1160
+#: src/eix.cc:1167
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1727,7 +1727,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1219
+#: src/eix.cc:1226
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1735,7 +1735,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:1222
+#: src/eix.cc:1229
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -1743,7 +1743,7 @@ msgstr ""
 "Folgende installierte Pakete sind nicht in der Datenbank:\n"
 "\n"
 
-#: src/eix-diff.cc:72
+#: src/eix-diff.cc:73
 #, c-format
 msgid ""
 "Usage: %s [options] old-cache [new-cache]\n"
@@ -1787,15 +1787,15 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-diff.cc:151
+#: src/eix-diff.cc:152
 msgid "error in database file %r: %s"
 msgstr "Fehler in Datenbankfile %r: %s"
 
-#: src/eix-diff.cc:153 src/eix-header.cc:232
+#: src/eix-diff.cc:154 src/eix-header.cc:232
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Datenbankfile %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
 
-#: src/eix-diff.cc:399
+#: src/eix-diff.cc:400
 #, c-format
 msgid "Diffing databases (%s -> %s packages)\n"
 msgstr "Vergleiche Datenbanken (%s -> %s Pakete)\n"

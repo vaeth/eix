@@ -83,11 +83,14 @@ MatchAtomTest::~MatchAtomTest() {
 bool MatchAtomTest::match(PackageReader *p) {
 #ifdef DEBUG_MATCHTREE
 	cout << (m_negate ? " [!" : " [");
-	if(m_pipe != NULLPTR) cout << "|";
-	if(m_test == NULLPTR)
+	if(m_pipe != NULLPTR) {
+		cout << "|";
+	}
+	if(m_test == NULLPTR) {
 		cout << "NULLPTR";
-	else
+	} else {
 		cout << *reinterpret_cast<int*>(m_test);
+	}
 	cout << "] ";
 	return false;
 #else

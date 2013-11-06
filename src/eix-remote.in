@@ -127,12 +127,12 @@ do	case ${opt} in
 	L)	exclude=debug;;
 	l)	local_layman=${OPTARG};;
 	a)	addr=${OPTARG};;
-	H)	statusline=false
-		export NOSTATUSLINE=true;;
+	H)	statusline=false;;
 	*)	Usage 0;;
 	esac
 done
 [ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
+${statusline} || export NOSTATUSLINE=true;;
 
 SanitizeLocalLayman() {
 	normalize_resolve=false NormalizeNames local_layman \

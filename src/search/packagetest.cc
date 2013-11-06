@@ -362,6 +362,11 @@ PackageTest::MatchAlgorithm PackageTest::get_matchalgorithm(const char *p) {
 	return m->parse(p);
 }
 
+void PackageTest::setAlgorithm(BaseAlgorithm *p) {
+	delete algorithm;
+	algorithm = p;
+}
+
 void PackageTest::setAlgorithm(MatchAlgorithm a) {
 	switch(a) {
 		case ALGO_REGEX:
@@ -382,7 +387,7 @@ void PackageTest::setAlgorithm(MatchAlgorithm a) {
 		case ALGO_PATTERN:
 			setAlgorithm(new PatternAlgorithm());
 			break;
-		case ALGO_FUZZY:
+		// case ALGO_FUZZY:
 		default:
 			setAlgorithm(new FuzzyAlgorithm(get_eixrc().getInteger("LEVENSHTEIN_DISTANCE")));
 			break;

@@ -259,7 +259,6 @@ DefaultOpts() {
 
 DefaultOpts
 ExecuteConfig 'opts'
-
 set -f
 eval "Push -c opt ${config_opts}"
 Push opt "${@}"
@@ -297,14 +296,15 @@ do	case ${opt} in
 	o)	Push updatecmd "${OPTARG}";;
 	r)	clearcache=:;;
 	R)	clearcache=false;;
-	H)	statusline=false
-		export NOSTATUSLINE=true;;
+	H)	statusline=false;;
 	*)	Usage 0;;
 	esac
 done
+[ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
 opt=
 [ -z "${server:++}" ] || skip_sync=:
 ${skip_sync} && have_changed=:
+${statusline} || export NOSTATUSLINE=true;;
 
 if [ -z "${metadata:++}" ]
 then	metadata=false

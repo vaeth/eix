@@ -54,6 +54,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
+static void print_help();
 static void load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps) ATTRIBUTE_NONNULL_;
 static void set_virtual(PrintFormat *fmt, const DBHeader& header, const string& eprefix_virtual) ATTRIBUTE_NONNULL_;
 static void print_changed_package(Package *op, Package *np) ATTRIBUTE_NONNULL_;

@@ -8,6 +8,11 @@
 	- Introduce OMIT_EXPAND and <{colli,}use0> attributes to omit output of
 	  USE_EXPAND variables: http://bugs.gentoo.org/show_bug.cgi?id=489306
 	- Let --version output only version number
+	- scripts: Let -i also reset -H properly
+	- Avoid #include of algorithm.h in packagetest and of packagest.h in
+	  mask.h. This avoids "phantom" code with some gcc versions and flto:
+	  http://developer.berlios.de/bugs/?func=detailbug&
+	  bug_id=19182&group_id=11597
 	- Use constexpr for some constants (if supported by dialect, of course)
 	- Use gettext-0.18.3: allows to specify GNU sed
 	- Remove --with-nongnu-cxx (no kludges needed anymore for current clang
@@ -16,9 +21,10 @@
 	  This fixes http://bugs.gentoo.org/show_bug.cgi?id=455078
 	- Remove --enable-quickcheck (makes no sense without manual distinction
 	  of compilers which was just removed)
-	- Dump /usr/bin/env shebangs. Thanks to SteveL for convincing me.
+	- Dump /usr/bin/env shebangs unless --with-eprefix-default is set.
+	  Thanks to SteveL for convincing me.
 	  Introduce --with{,out}-sh-shebang for overriding if necessary
-	- Code cleanup: Pass Google's current cpplint-3.274_p114 with braces,
+	- Code cleanup: Pass Google's current cpplint #296/r116 with braces,
 	  avoid default arguments, add more typedefs, put some member
 	  functions into separate file, standard reference syntax Type&
 

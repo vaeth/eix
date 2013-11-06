@@ -23,9 +23,9 @@
 #include "portage/keywords.h"
 #include "portage/package.h"
 #include "portage/set_stability.h"
-#include "search/algorithms.h"
 #include "search/redundancy.h"
 
+class BaseAlgorithm;
 class Mask;
 class MatcherAlgorithm;
 class MatcherField;
@@ -96,10 +96,7 @@ class PackageTest {
 
 		~PackageTest();
 
-		void setAlgorithm(BaseAlgorithm *p) {
-			delete algorithm;
-			algorithm = p;
-		}
+		void setAlgorithm(BaseAlgorithm *p);
 
 		void setAlgorithm(MatchAlgorithm a);
 

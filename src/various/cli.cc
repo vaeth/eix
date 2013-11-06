@@ -26,6 +26,7 @@
 #include "portage/mask_list.h"
 #include "portage/set_stability.h"
 #include "portage/vardbpkg.h"
+#include "search/algorithms.h"
 #include "search/matchtree.h"
 #include "search/packagetest.h"
 #include "various/cli.h"
@@ -36,8 +37,9 @@ static bool optional_increase(ArgumentReader::const_iterator *arg, const Argumen
 
 static bool optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) {
 	ArgumentReader::const_iterator next(*arg);
-	if(unlikely(++next == ar.end()))
+	if(unlikely(++next == ar.end())) {
 		return false;
+	}
 	*arg = next;
 	return true;
 }
@@ -359,8 +361,8 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 					}
 				}
 				test->ObsoleteCfg(red.first, red.second, test_installed);
-			}
 				break;
+			}
 			// }}}
 
 			// Check for field-designators {{{

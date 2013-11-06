@@ -106,6 +106,7 @@ typedef vector<Pathname> PathVec;
 typedef vector<Override> Overrides;
 typedef vector<RepoName> RepoNames;
 
+static void print_help();
 static bool update(const char *outputfile, CacheTable *cache_table, PortageSettings *portage_settings, bool override_umask, const RepoNames& repo_names, const WordVec& exclude_labels, Statusline *statusline, string *errtext) ATTRIBUTE_NONNULL_;
 static void error_callback(const string& str);
 static void add_pathnames(PathVec *add_list, const WordVec& to_add, bool must_resolve) ATTRIBUTE_NONNULL_;
@@ -114,7 +115,6 @@ static void add_reponames(RepoNames *repo_names, EixRc *eixrc, const char *s) AT
 static void add_virtuals(Overrides *override_list, PathVec *add, RepoNames *repo_names, const string& cachefile, const string& eprefix_virtual) ATTRIBUTE_NONNULL_;
 static void override_label(OverlayIdent *overlay, const RepoNames& repo_names) ATTRIBUTE_NONNULL_;
 static bool stringstart_in_wordlist(const string& to_check, const WordVec& wordlist);
-static void print_help();
 
 static void print_help() {
 	printf(_("Usage: %s [options]\n"
