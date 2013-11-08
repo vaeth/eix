@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-11-06 18:32+0100\n"
+"POT-Creation-Date: 2013-11-08 17:43+0100\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -5650,7 +5650,7 @@ msgstr ""
 msgid "internal error: SetStability calculates wrong index"
 msgstr "внутренняя ошибка: SetStability рассчитывает неверный индекс"
 
-#: src/search/matchtree.cc:259
+#: src/search/matchtree.cc:262
 msgid "warning: ignoring --close without --open"
 msgstr "внимание: игнорирую --close без --open"
 

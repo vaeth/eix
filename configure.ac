@@ -998,13 +998,13 @@ AC_ARG_WITH([sh-shebang],
 		[auto], [],
 		[yes], [],
 		[AS_VAR_COPY([SH_SHEBANG], [withval])])],
-	[MV_IF_NONEMPTY(["${EPREFIX_DEFAULT}"],
+	[MV_IF_NONEMPTY([${EPREFIX_DEFAULT}],
 		[AS_VAR_SET([SH_SHEBANG], [no])])])
-MV_IF_EMPTY(["${SH_SHEBANG}"],
+MV_IF_EMPTY([${SH_SHEBANG}],
 	[AS_VAR_SET([SH_SHEBANG], ["`eval command -v sh 2>${DEV_NULL}`"])])
 AS_VAR_IF([SH_SHEBANG], [no],
 	[AS_VAR_SET([SH_SHEBANG], [])])
-MV_IF_EMPTY(["${SH_SHEBANG}"],
+MV_IF_EMPTY([${SH_SHEBANG}],
 	[AS_VAR_SET([SH_SHEBANG], ["/usr/bin/env sh"])])
 AC_MSG_RESULT([${SH_SHEBANG}])
 AC_SUBST([SH_SHEBANG])
