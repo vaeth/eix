@@ -115,7 +115,7 @@ do	case ${opt} in
 	esac
 done
 [ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
-${statusline} || export NOSTATUSLINE=true;;
+${statusline} || export NOSTATUSLINE=true
 
 GetOverlays() {
 	set -f

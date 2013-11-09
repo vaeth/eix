@@ -304,7 +304,7 @@ done
 opt=
 [ -z "${server:++}" ] || skip_sync=:
 ${skip_sync} && have_changed=:
-${statusline} || export NOSTATUSLINE=true;;
+${statusline} || export NOSTATUSLINE=true
 
 if [ -z "${metadata:++}" ]
 then	metadata=false
