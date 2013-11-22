@@ -4,7 +4,7 @@
 # Copyright (c)
 #  Wolfgang Frisch <xororand@users.sourceforge.net>
 #  Emil Beinroth <emilbeinroth@gmx.net>
-#  Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
+#  Martin V\"ath <martin@mvath.de>
 
 dnl The formatting convention used in this file is the following:
 dnl
@@ -43,7 +43,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.30.0], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
+AC_INIT([eix], [0.30.1], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
 AC_PREREQ([2.64])
 
 m4_ifdef([AC_CONFIG_MACRO_DIR],

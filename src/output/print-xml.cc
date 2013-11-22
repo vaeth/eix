@@ -4,7 +4,7 @@
 //
 // Copyright (c)
 //   Bob Shaffer II <bob.shaffer.2 at gmail.com>
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+//   Martin Väth <martin@mvath.de>
 
 #include <config.h>
 

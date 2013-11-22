@@ -3784,7 +3784,7 @@ for switching off, there is the new option B<--normal>.
 .SH "AUTHORS"
 .LP
 
-Martin V\(:ath <vaeth at mathematik.uni-wuerzburg.de> (developer, current maintainer)
+Martin V\(:ath <martin at mvath.de> (developer, current maintainer)
 
 Emil Beinroth <emilbeinroth at gmx.net> (developer, previous maintainer)
 

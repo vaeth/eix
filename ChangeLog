@@ -1,7 +1,8 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.30.1
 *eix-0.30.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce {mainrepo} attribute; "Find open bugs" only for those, see
 	  http://developer.berlios.de/bugs/?func=detailbug&bug_id=19160&
 	  group_id=11597
@@ -29,7 +30,7 @@
 	  functions into separate file, standard reference syntax Type&
 
 *eix-0.29.6
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- --format now overrides all format related options/variables like
 	  e.g. FORMAT or DEFAULT_FORMAT. In contrast, without --format, which
 	  of the FORMAT* variable takes effect still depends on DEFAULT_FORMAT.
@@ -44,7 +45,7 @@
 	- manpages: Avoid some warnings with groff-1.22.2
 
 *eix-0.29.5
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Shorten database size dramatically (sort StringHashs by frequency)
 	- versionsort: Fix versionsort -[pn], introduce -[fV], let -? support
 	  more than one argument, ignore some non-alphanumeric rubbish
@@ -57,7 +58,7 @@
 	- --print-all-depends works now as documented (no doublequote symbols)
 
 *eix-0.29.4
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix wrong usage of ATTRIBUTE_NONNULL for Node *root (caused even
 	  segfaults), see http://bugs.gentoo.org/show_bug.cgi?id=483392
 	- Fix cache-method sqlite: Set overlay_key in read versions, see
@@ -66,12 +67,12 @@
 	  mask reasons in certain cases
 
 *eix-0.29.3
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Add EIX_LIMIT{,_COMPACT} as a safety measurement for typos.
 	  This solves somewhat http://bugs.gentoo.org/show_bug.cgi?id=346665
 
 *eix-0.29.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix random bugs for masks with slot and no subslot
 	- Fix eix-update: Make long option --override-method work
 	- Fix eix-update: ebuild*: export PORTAGE_REPO_NAME and a rudimentary
@@ -83,7 +84,7 @@
 	- manpage: cosmetical fixes
 
 *eix-0.29.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fallback to PORTDIR=/usr/portage, see
 	  http://forums.gentoo.org/viewtopic-p-7349870.html
 	- Make --installed-slot work again (regression from 0.26.0).
@@ -97,7 +98,7 @@
 	Артём Воротников <skybon at gmail.com>:
 	- Russian translation updates
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- eix-sync now calls eix-remote add1/add2 by default if necessary
 	- Support /etc/portage/repos.conf, honouring priority values
 	- Currently, --print PORTDIR and --print PORTDIR_OVERLAY are modified
@@ -119,7 +120,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=475076
 
 *eix-0.28.5
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Allow that eix/portage config files are (recursively read) dirs,
 	  see e.g. http://bugs.gentoo.org/show_bug.cgi?id=467276
 	  Make /etc/eixrc a directory by default
@@ -142,7 +143,7 @@
 	Артём Воротников <skybon at gmail.com>:
 	- Russian translation fixes and updates
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Ethan Schoonover's Solarized has now its own color schemes in eix:
 	  Set SOLARIZED if you use solarized (and omit setting TERM_ALT3 or
 	  COLORSCHEME? as was recommended previously: this would choose a
@@ -154,7 +155,7 @@
 	Артём Воротников <skybon at gmail.com>:
 	- Russian translation fixes and updates
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support secondary remote database:
 	  Default: gentoo and zugaina (http://gpo.zugaina.org)
 	  New option -Z, --remote2; modify REMOTE_DEFAULT correspondingly
@@ -173,7 +174,7 @@
 	Артём Воротников <skybon at gmail.com>:
 	- Russian translation fixes and updates
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce -# as short form of --only-names, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=453180
 	- Fix regression of re-enumeration of overlays from eix-0.28.0, see
@@ -188,14 +189,14 @@
 	- Make \C<number> slower but reliable (OutputString::..._smart())
 
 *eix-0.28.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix regression {*var} and {!*var} from eix-0.28.0
 	- Simplify eix-diff default format (use new \C<number> feature)
 	- Improve parsing in --pipe: cut garbage after versions, see
 	  http://forums.gentoo.org/viewtopic-p-7222402.html
 
 *eix-0.28.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Add --print-profile-paths
 	- Add --print USE.profile for profile's USE; USE is only make.conf's
 	- manpage: add section how to speed up eix-update / handle metadata
@@ -211,7 +212,7 @@
 	- Move tools to contrib/
 
 *eix-0.27.6
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- PLEASE READ THIS IF YOU HAVE TROUBLES WITH COLORS/BACKGROUND:
 	  Try the hints in the beginning of the BUGS section of the eix
 	  manpage.
@@ -236,7 +237,7 @@
 	- Recognize file-ends better for comment separation
 
 *eix-0.27.5
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support mask reason (by default output with --versionlines), see
 	  http://developer.berlios.de/feature/?func=detailfeature&
 	  feature_id=5605&group_id=11597
@@ -274,7 +275,7 @@
 	  group_id=11597
 
 *eix-0.27.4
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Change COLOR_INST_VERSION to work with solarized. Thanks to khayyam:
 	  http://forums.gentoo.org/viewtopic.php?p=7167646
 	- Cosmetical fixes in the manpages
@@ -286,7 +287,7 @@
 	- Improve zsh completions, e.g. add descriptions
 
 *eix-0.27.3
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- It is now possible to use eix colors with white background terminals:
 	  To use the light color schemes, set DARK=false (e.g. in /etc/eixrc);
 	  or set COLORSCHEME=2 or COLORSCHEME_ALT=3 for usage with ordinary
@@ -309,7 +310,7 @@
 	- Avoid strcasestr(), see http://bugs.gentoo.org/show_bug.cgi?id=437706
 
 *eix-0.27.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce %{var[,;]...} for delayed substitution to simplify colors.
 	- Fix colorscheme choice for eix-diff
 	- Introduce FORMAT_{BEFORE,AFTER}_COLL_EXPAND*
@@ -321,7 +322,7 @@
 	  for reading previous database format 31 of eix-0.27.1.
 
 *eix-0.27.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support 256 color terminals: COLORSCHEME, COLORSCHEME_ALT, TERM_ALT.
 	  If you want to use it with screen or tmux use TERM=screen-256colors
 	  Currently, only a dark scheme is available on 256 color terminals.
@@ -335,7 +336,7 @@
 	- Fix --pipe with versions (regression in 0.26.3)
 
 *eix-0.27.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support USE_EXPAND. Set EIX_USE_EXPAND=false if you do not like it.
 	  <{coll,}use*> and FORMAT_{BEFORE,AFTER}_IUSE_EXPAND{,_START,_END}
 	- Improve handling of local cascading profiles; add local make.defaults
@@ -353,7 +354,7 @@
 	- Fix Makefile.am for top_builddir != top_srcdir
 
 *eix-0.26.4
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- eix-remote now generates an alternative database by default.
 	  To access this database, the new eix option -R has been included.
 	  You can make -R the default by setting REMOTE_DEFAULT=true.
@@ -370,7 +371,7 @@
 	  This should fix http://bugs.gentoo.org/show_bug.cgi?id=432478
 
 *eix-0.26.3
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Follow most of Google's C++ style guidelines:
 	  eix now avoids using static or global classes. It should at least
 	  pass src/cpplint.sh (i.e. cpplint.py up to minor whitespace
@@ -388,7 +389,7 @@
 	  personally, I dislike it, and it is not necessary for eix.
 
 *eix-0.26.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- eix-test-obsolete: Add -q, "quick", use FORMAT_TEST_OBSOLETE,
 	  support TEST_FOR_REDUNDANCY better
 	- Fix masked-packages: Treat repository name in arguments correctly.
@@ -413,7 +414,7 @@
 	- Continued Russian translation and add fixes suggested by
 	  Stanislav Cymbalov <dummyunit at gmail.com>.
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Add masked-packages
 	- Introduce versionsort -[npvr]
 	- Introduce plainversion and revision attributes
@@ -433,7 +434,7 @@
 	Артём Воротников <skybon at gmail.com>:
 	- Russian translation. (Missing yet: eix --dump and most of manpage)
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Depend on http://github.com/vaeth/push/ instead of implementing
 	  a poor substitute.
 	- Add German manpage
@@ -445,7 +446,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=414979
 
 *eix-0.25.4
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce -y (--any) to select any match field: don't miss anything.
 	- Default format: new properties/restrictions separator: */^
 	  Also add $sep (a tab) after version with --versionlines
@@ -465,21 +466,21 @@
 	- scripts: Simplify quoting slightly
 
 *eix-0.25.3
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce eix-drop-permissions and use it for eix-remote
 	  instead of su/sudo hacks.
 	- Fix regressions: eix-remote add|fetch without temporary file,
 	  and eix-remote update with temporary file.
 
 *eix-0.25.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce EIX_PREVIOUS as default for eix-diff; remove eix-sync -d.
 	- Introduce EIX_REMOTEARCHIVE; remove filename handling of eix-remote.
 	- eix-remote: Pass more variables to new user.
 	- Update docu to new paths and magic string (forgotten in eix-0.25.1)
 
 *eix-0.25.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Drop all permission stuff: Only become EIX_{USER,GROUP,UID,GID} ASAP.
 	  This fixes several security issues and simplifies code enormously.
 	- Let DEP work with sqlite cache method (bug in eix-0.25.0).
@@ -490,7 +491,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=407473
 
 *eix-0.25.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Add DEP (and ./configure option --with-dep-default for the default)
 	  to support DEPEND, RDEPEND, PDEPEND ({r,p,}depend{,*} properties).
 	  By new default, the output happens with "eix -lv" (or "eix -lvx")
@@ -517,7 +518,7 @@
 	- Remove haveversionuse and NOT_FULL_USE to shorten database format.
 
 *eix-0.24.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Remove support for obsolete old-style virtuals.
 	  This is a major change: Remove many search options, print-commands,
 	  many default variables, and changes the database format (even xml).
@@ -532,7 +533,7 @@
 	- scripts: Simplify some quoting in assignment and case
 
 *eix-0.23.10
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- eix-sync: Make layman and hook errors non-fatal, by default.
 	  Use -F, FATAL_HOOKS, or the die function to revert old behavior.
 	- Suppress status line if TERM does not begin with TERM_STATUSLINE,
@@ -540,7 +541,7 @@
 
 *eix-0.23.9
 *eix-0.23.8
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Provide status line also for eix-update
 	- Do not update status line if output is not a terminal
 	- Introduce {NO,FORCE_}{COLORS,STATUSLINE,PERCENTAGE}.
@@ -552,7 +553,7 @@
 	  Thank Arfrever Frehtes Taifersar Arahesis <arfrever.fta at gmail.com>
 
 *eix-0.23.7
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix MetadataCache::use_prefixport(), see:
 	  http://bugs.gentoo.org/show_bug.cgi?id=399233
 	- Add {tbz2} also for default compact output
@@ -562,7 +563,7 @@
 	  docutils + python-3.2: http://bugs.gentoo.org/show_bug.cgi?id=399451
 
 *eix-0.23.6
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Scripts: Support for status line update; minor output improvements
 	- Introduce new cache method metadata-md5-or-flat and make it default
 	  for PORTDIR_CACHE_METHOD:
@@ -572,12 +573,12 @@
 	  see http://bugs.gentoo.org/show_bug.cgi?id=397589
 
 *eix-0.23.5
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- scripts: Be less rigorous with set -f
 	  This fixes some regressions of eix-0.23.4 (e.g. eix-remote).
 
 *eix-0.23.4
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- scripts: Fix possible globbing problems
 	- varsreader.cc: Improve error output for failed "source".
 	  Thanks to Sergei Trofimovich <slyfox at gentoo.org> for the patch
@@ -587,14 +588,14 @@
 	- Fix minor include issues
 
 *eix-0.23.3
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Now --print exits with 1 if variable is not known
 	- Introduce --known-vars and use it with zsh-completion
 	- Major rewrite of varsreader.cc: Allow concatenation of strings
 	- scripts: Remove portageq usage completely (for runtime)
 
 *eix-0.23.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- New cache method metadata-md5 to support metadata/md5-cache
 	  in overlays
 	- eix-update: Add option -v (and UPDATE_VERBOSE) for printing
@@ -604,7 +605,7 @@
 	- eix-functions.sh: Add PushEscaped, InitPortdirOverlay
 
 *eix-0.23.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support basic /etc/portage/package.license checking
 	- Add rudimentary bash-completion of
 	  Marcel Philipp Partap <marcel.partap at rwth-aachen.de>, see
@@ -613,7 +614,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=382539
 
 *eix-0.23.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Make profiles/* files default only on their repositories, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=380979
 	  This required a major code reorganization
@@ -625,7 +626,7 @@
 	- Cosmetic code changes
 
 *eix-0.22.11
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Bugfix: Let -... in /etc/portage/package.accept_keywords remove
 	  ACCEPT_KEYWORDS, see http://bugs.gentoo.org/show_bug.cgi?id=378767
 	- eix-test-obsolete: Set DEFAULT_FORMAT=compact instead using -c
@@ -633,7 +634,7 @@
 	  developer.berlios.de/bugs/?func=detailbug&bug_id=18284&group_id=11597
 
 *eix-0.22.10
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Add -Wl,-z,noexecstack with strong-optimization and security:
 	  gcc-4.6 -flto turns on execstack which is probably a bug, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=369795
@@ -642,7 +643,7 @@
 	- scripts: Use readlink only if it supports -f
 
 *eix-0.22.9
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support -~* keywords: Introduce {isminusunstable}, {wasminusunstable}
 	- Support alternative /etc/portage/make.profile location, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=358647
@@ -671,7 +672,7 @@
 	- Use -fno-common -fnothrow-opt -flto-partition=none and new -W...
 
 *eix-0.22.8
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix non-casting of rend() -> reverse_const_iterator on some systems,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=354071
 	- Do not rely on argreader.end() not to change, even if argreader is
@@ -687,7 +688,7 @@
 	- Add --with-extra-doc and install by default nothing from doc
 
 *eix-0.22.7
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Add option -f to eix-installed-after
 	- Fix segfault for tests beginning with --end, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=350321
@@ -696,7 +697,7 @@
 	  this goes at the cost of making many arguments non-const Package *
 
 *eix-0.22.6
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Add some experimental zsh-completion
 	- eix-sync: New option -V, cancel -m, fix description of -u
 	- eix-test-obsolete: Output {,accept_}keywords instead of keywords:
@@ -708,7 +709,7 @@
 	- Make code c++0x clean
 
 *eix-0.22.5
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix mask syntax if slots and repositories are used in the same mask,
 	  see http://forums.gentoo.org/viewtopic-p-6479886.html
 	- Fix NONEXISTENT_IF_MASKED (check not only keywords but also mask)
@@ -716,7 +717,7 @@
 	- Divide memory usage of global*.cc during compiling more even.
 
 *eix-0.22.4
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce eix-installed.
 	- Rewrite eix-test-obsolete almost completely.
 	- Do not require SA_SIGINFO (thanks Markus Duft <mduft at gentoo.org>)
@@ -724,7 +725,7 @@
 	- Add a forgotten translation to eix-installed-after
 
 *eix-0.22.3
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support repository names in config files:
 	  http://bugs.gentoo.org/show_bug.cgi?id=340098
 	  The current implementation stores reponames in every version and
@@ -733,13 +734,13 @@
 	- Convert manpage a-diaresis back to groff format (no utf8)
 
 *eix-0.22.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Improve error handling when reading profile masks
 	- Fix sqlite.cc: http://bugs.gentoo.org/show_bug.cgi?id=336896
 	- Fix sqlite automagic
 
 *eix-0.22.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- use /etc/portage/package.nowarn instead of
 	  /etc/portage/package.*.nowarn; the latter is now obsolete.
 	  If you want continue to use it, set OBSOLETE_NOWARN=true
@@ -748,7 +749,7 @@
 	- Support /etc/portage/make.conf
 
 *eix-0.22.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support wildcards in config-files.
 	  This required a rewrite of the whole mask handling: Even if no
 	  wildcards are used, a crucial change in the data structure is needed
@@ -763,7 +764,7 @@
 	- Fix: Handle sets in local {un}masks and for -t
 
 *eix-0.21.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support for virtuals in @system and worldfile:
 	  --world* --selected* --system* include now by default all virtuals.
 	  Use --world-pure etc. to avoid inclusion of virtuals.
@@ -775,7 +776,7 @@
 	- Support escaping of "-" on the commandline by using "---" instead.
 
 *eix-0.20.7
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Add new demo script (eix-installed-after) which outputs packages
 	  installed after/before a given package.
 	- Choose color defaults more similar to portage
@@ -789,12 +790,12 @@
 	- Use sigaction() where available
 
 *eix-0.20.6
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix wrong test for masks ...*:SLOT (regression from eix-0.19.0), see
 	  http://bugs.gentoo.org/show_bug.cgi?id=326143
 
 *eix-0.20.5
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Interpret escapes for portage config files in the way portage does,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=316907
 	  Thanks to Michał Górny <gentoo at mgorny.alt.pl> for the main part
@@ -806,7 +807,7 @@
 	- configure: Treat sqlite with PKG_CHECK_MODULES if possible.
 
 *eix-0.20.4
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support RESTRICT=parallel.
 	- Support RESTRICT=primaryuri in xml output.
 	- Ignore hidden files/dirs in local set dirs like /etc/portage/sets
@@ -825,7 +826,7 @@
 	  this could prevent previously e.g. -Wall from being auto-added.
 
 *eix-0.20.3
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Output in --xml up to two mask_type/unmask_type:
 	  One for the keyword type and one for the hard/profile mask:
 	  http://sourceforge.net/tracker/?
@@ -837,7 +838,7 @@
 	- manpage: Fix indentation
 
 *eix-0.20.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Move hosting to BerliOS as a protest on the influence of the
 	  American Government against the freedom of projects on Sourceforge.
 	- Support for BUILD_TIME (>=portage-2.2_rc63):
@@ -856,7 +857,7 @@
 	  If somebody has an idea, please write to that bug.
 
 *eix-0.20.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix magic adding of -a / -o between successive tests
 	  (regression introduced in 0.20.0).
 	- Introduce NOFOUND_STATUS, MOREFOUND_STATUS to make eix -q useful:
@@ -870,7 +871,7 @@
 	- Minor compatibility fixes.
 
 *eix-0.20.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce -( ... -) command line parsing.
 	- Be aware if you rely in scripts on logical connectives -a -o -!
 	  or the previous strange side effects of --pipe
@@ -884,7 +885,7 @@
 	  Thanks to Stuart Shelton <srcshelton at gmail.com>
 
 *eix-0.19.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- eix-functions.sh: Replace: returns true/false, uses $replace_count
 	- eix-functions.sh: New function ReadVar as --print wrapper
 	- Introduce PRINT_APPEND and let it default to \n. Hence:
@@ -908,7 +909,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=299904
 
 *eix-0.19.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Let eix-remote and KEEP_VIRTUAL=true use the original
 	  overlay label's (repo_name)
 	- Introduce --repo-name and REPO_NAMES
@@ -927,7 +928,7 @@
 	- Improve tests in case of --enable-security.
 
 *eix-0.19.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- This is a major rewrite (although hopefully not visible to the user;
 	  perhaps it is slightly faster which however is hardly visible, since
 	  the main bulk is the I/O governed by the kernel).
@@ -1006,7 +1007,7 @@
 	- In Scripts: Use ":" instead of "true"
 
 *eix-0.18.3
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Add ./configure --with-remote-file=STR
 	- Modify CXXFLAGS/LDFLAGS. The default can be modified by:
 	  --enable-debugging --enable-strong-optimization --enable-warnings
@@ -1024,7 +1025,7 @@
 	  portage versions): http://bugs.gentoo.org/show_bug.cgi?id=288031
 
 *eix-0.18.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- PLEASE NOTICE: The adding of +- data to USE-Flags to the cachefile
 	  in eix-0.18.1 came without a version format jump to not force you to
 	  regenerate it. Of course, you will only get the new information if
@@ -1067,7 +1068,7 @@
 	  the output of the first useflag tag of each version.
 
 *eix-0.18.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Allow also properties and variable names on the right-hand side
 	  of comparisons or runtime variable assignments.
 	- Store/show +- of IUSE.
@@ -1088,7 +1089,7 @@
 	  Bob Shaffer II <bob.shaffer.2 at gmail.com>
 
 *eix-0.18.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- XML output was implemented by
 	  Bob Shaffer II <bob.shaffer.2 at gmail.com>
 	  Thanks for the contribution.
@@ -1123,7 +1124,7 @@
 	- Fix segfaults for certain malformed delayed references.
 
 *eix-0.17.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix missing include: http://bugs.gentoo.org/show_bug.cgi?id=283549
 	  Thanks to Michael Yang <yangofzeal at gmail.com>.
 	- autotools: Tweaks, updates, and minor fixes.
@@ -1132,7 +1133,7 @@
 	  Use with care: Even portage does not support it yet.
 
 *eix-0.17.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Renames: update-eix -> eix-update, diff-eix -> eix-diff,
 	  update-eix-remote -> eix-remote, update-eix-layman -> eix-layman,
 	  functions-eix.sh -> eix-functions.sh
@@ -1171,13 +1172,13 @@
 	- Ignore --disable-dependency-tracking without --disable-silent-rules.
 
 *eix-0.16.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Default to SAVE_WORLD=true: I doubt that the world file is that
 	  security relevant, and I guess many users don't know the feature.
 	- Build system defaults to silent rules in case of >=automake-1.11.
 
 *eix-0.16.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Allow optional #metadata-method(s) for cache method parse/ebuild,
 	  if up-to-date metadata is found for the ebuild.
 	  This speeds up things enormously if metadata is provided by an
@@ -1189,7 +1190,7 @@
 	- Minor compatibility tweaks for gcc-4.4 and glibc-2.10
 
 *eix-0.16.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Add NLS support and experimental translation into German.
 	- Add versionsort helper tool (and ./configure --enable-separate-tool)
 	- Support $PROFILE/package.keywords and $PROFILE/package.unmask
@@ -1201,7 +1202,7 @@
 	- manpage: Give some examples for egencache hooks with eix-sync.
 
 *eix-0.15.7
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Allow USE dependencies http://bugs.gentoo.org/show_bug.cgi?id=264798
 	- Update citation reference for "portage with sqlite"
 	- Introduce EXPORT_PORTDIR_OVERLAY to export a new PORTDIR_OVERLAY with
@@ -1210,7 +1211,7 @@
 	  and http://bugs.gentoo.org/show_bug.cgi?id=265854
 
 *eix-0.15.6
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce EAPI_REGEX for EAPI-suffixed ebuilds (GLEP 55).
 	- Introduce ...installedmarked... and ...availablemarked... to print
 	  only those installed/available versions marked by --pipe.
@@ -1218,7 +1219,7 @@
 	- Make scripts more POSIX (e.g. "local" only at a function start).
 
 *eix-0.15.5
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce special overlay name ~ for cache methods eix/eix* to allow
 	  easily reading of previous overlay data.
 	- Fix regression which did not work for overlay labels/numbers for
@@ -1228,7 +1229,7 @@
 	- Fix segfault/endless loop when an optional last argument is omitted.
 
 *eix-0.15.4
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Hack around http://bugs.gentoo.org/show_bug.cgi?id=255711
 	  (cannot compare const_backward_iterator with backward_iterator).
 	- Use signed char instead of char for FullFlag, see
@@ -1239,7 +1240,7 @@
 	  group_id=128101&atid=710608
 
 *eix-0.15.3
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Allow relative (to PORTDIR) paths and magic "*" (for PORTDIR_OVERLAY)
 	  in EIX_LOCAL_SETS and let the default contain "*/sets" and "sets".
 	  This is to deal with the de facto standard of some overlays to put
@@ -1254,7 +1255,7 @@
 	- Fix format string in ansicolor.cc for bug #254412
 
 *eix-0.15.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Make regex-matches in DEFAULT_MATCH_{FIELD,ALGORITHM}
 	  case-sensitive to make LICENSE defaults reasonable, see
 	  http://forums.gentoo.org/viewtopic.php?p=5285010
@@ -1263,7 +1264,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=247227
 
 *eix-0.15.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- New match algorithms: --substring (-z), --begin (-b), --end
 	- Introduce DEFAULT_MATCH_ALGORITHM. This should avoid some surprises
 	  like "eix libstdc++-v3" looking for regular expressions as in
@@ -1287,7 +1288,7 @@
 	- Internal change: More convenient argument order in split_string()
 
 *eix-0.15.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Allow @set (from EIX_LOCAL_SETS) in /etc/portage/package.keywords.
 	  This is more than portage currently does, although it is planned:
 	  http://bugs.gentoo.org/show_bug.cgi?id=244366
@@ -1321,7 +1322,7 @@
 	- Fix minor bugs in escape handling in lists.
 
 *eix-0.14.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce /etc/portage/package.slot_upgrade_{allow,forbid}
 	  to allow exceptions from the general UPGRADE_TO_HIGHEST_SLOT policy.
 	  This can be used as manual workaround for the missing dependency
@@ -1342,7 +1343,7 @@
 	- Fix segfault for cache methods ebuild and parse[*]|ebuild.
 
 *eix-0.14.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support sets in masks or sets; provide RECURSIVE_SETS.
 	- Provide --installed-unstable, --installed-testing, --installed-masked
 	  see http://bugs.gentoo.org/show_bug.cgi?id=240010
@@ -1365,7 +1366,7 @@
 	  Please upgrade to >=eix-0.14.2 if you need one of these methods.
 
 *eix-0.14.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support for PROPERTIES and RESTRICT.
 	- Inquire sqlite database more flexible. This should fix
 	  http://bugs.gentoo.org/show_bug.cgi?id=238942
@@ -1376,7 +1377,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=238882
 
 *eix-0.13.5
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix segfault in numeric comparison of 0 and number with leading 0,
 	  see http://forums.gentoo.org/viewtopic-t-278819-start-375.html
 	- Disable autotools maintainer mode which seems to be broken anyway.
@@ -1388,7 +1389,7 @@
 	  are combined; only use default keywords if combination is empty.
 	- Print warning if "source" failed.
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Let eix-sync be tacit on hooks and evaluate them in current shell.
 	  This makes hooks more powerful and gives the user the ability to
 	  treat redirection manually to some extent, see
@@ -1409,7 +1410,7 @@
 	  this logfile was obsoleted already in eix-0.13.3.
 
 *eix-0.13.3
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- New cache method "metadata-assign" needed for alt-gentoo, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=231808
 	- Rename some of the other cache methods to have a consistent scheme
@@ -1442,7 +1443,7 @@
 	  This also avoids separate rules for separate *.in files.
 
 *eix-0.13.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Extend the manpage concerning the description of expressions, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=229625
 	- Fix buggy want_slash=false in normalize_path(), see
@@ -1451,14 +1452,14 @@
 	  The profile reading should even work without symlink resolving.
 
 *eix-0.13.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix defaults for FORMATLINE_PACKAGESETS, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=229355
 	- Fix broken replacement update-eix-functions.sh path and a bug in
 	  normalize_path(), see http://bugs.gentoo.org/show_bug.cgi?id=229419
 
 *eix-0.13.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support for package sets.
 	- Support for world file. You need execute permissions for
 	  /var/lib/portage or set SAVE_WORLD=true and run update-eix with
@@ -1488,7 +1489,7 @@
 	  these files for a long time) and reformatted ChangeLog.
 
 *eix-0.12.5
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce DIFF_SEPARATE_DELETED and let it default to true.
 	- Introduce DIFF_PRINT_HEADER.
 	- Ignore leading + or - for /var/db/pkg/*/*/{,I}USE for paludis.
@@ -1517,7 +1518,7 @@
 	  =app-portage/eix-0* triggered an exception.
 	  Affected versions are >=eix-0.12.0.
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Treat parent profiles before children, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=217120
 	- Let update-eix first process options like --print.
@@ -1539,7 +1540,7 @@
 	  information.
 	- Add support for multiple inheritance in "parent" files of profiles.
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Avoid scandir(), to allow compilation under Solaris 9. Thanks to
 	  Jeremy Olexa <darkside at gentoo.org> for the hints, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=195411
@@ -1572,7 +1573,7 @@
 	- Remove uint, see http://bugs.gentoo.org/show_bug.cgi?id=213769
 	- Kill --as-needed, see http://bugs.gentoo.org/show_bug.cgi?id=213199
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix REDUNDANT_IF_DOUBLE_{UN,}MASKED in eix-test-obsolete.
 	- Introduce metadata:PATH and flat:PATH to allow usage of metadata
 	  calculated by paludis. Thanks for the idea to
@@ -1587,7 +1588,7 @@
 	- Avoid some hangs on damaged eix files.
 
 *eix-0.12.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Do not die on obsolete eix cache files, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=212637
 	- Default to create only one binary file. This needs less disk space
@@ -1599,7 +1600,7 @@
 	- Avoid libtool usage, since no libraries have to be built anymore.
 
 *eix-0.12.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- BE AWARE!!
 	  The new default OVERLAY_CACHE_METHOD="parse|ebuild*"
 	  is a security risk if you have untrusted ebuilds in your overlay!
@@ -1630,7 +1631,7 @@
 	- kill SAVE_VERSIONTEXT
 	- rewrite parts of BasicVersion and store versions as a vector of Parts
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce /etc/portage/package.*.nonexistent
 	- Introduce /etc/portage/package.*.nowarn
 	- Introduce --print-all-* options
@@ -1659,7 +1660,7 @@
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Use STL for revision parsing.
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix some problems with EOF after variable names or assignments, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=210106
 	- Work around a dash bug ("VAR=e func_call" does not restore VAR).
@@ -1673,7 +1674,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=209239
 	- Fix http://bugs.gentoo.org/show_bug.cgi?id=209934
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Make REDUNDANT_IF_MIXED=false the default since it confused people:
 	  http://bugs.gentoo.org/show_bug.cgi?id=203067
 	- Make defaults independent of bzlib usage (considering overlays of
@@ -1689,7 +1690,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=201117
 	- Minor changes (size() == 0 -> empty(), ...)
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce PRINT_KEYWORDS, FORMAT_{BEFORE,AFTER}_KEYWORDS
 	- Let -T check overlay for all-installed and some-installed
 	- Fix segfault for unknown repository and unreadable environment.bz2
@@ -1704,7 +1705,7 @@
 	- Remove useless OOM_ASSERT, WARNING and THROW macros.
 	- Replace PrintVar macro with function, simplify get_eixrc()
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix REDUNDANT_IF_WEAKER and REDUNDANT_IF_MIXED which were
 	  completely broken in eix-0.10.1 due to a stupid typo.
 	- New treatment of scandir, see
@@ -1720,7 +1721,7 @@
 	   of the GNU General Public License v2. + Copyright notice
 	  This change removes about 2000 useless lines from the project.
 
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support for RESTRICT="fetch mirror", see
 	  http://forums.gentoo.org/viewtopic-t-278819-start-355.html
 	- Introduce ALWAYS_ACCEPT_KEYWORDS and let it default to "false" to
@@ -1733,7 +1734,7 @@
 	  eix should now compile with gcc-4.3
 
 *eix-0.10.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Rewrite stability setting, fixing thereby a lot of bugs and
 	  inconsistencies. In particular, this fixes ACCEPT_KEYWORDS=~ARCH
 	  and -~ARCH in /etc/portage/package.keywords (thanks to
@@ -1756,7 +1757,7 @@
 	- Fix http://bugs.gentoo.org/show_bug.cgi?id=192707
 
 *eix-0.9.12
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce eix-test-obsolete [no-]repository
 	- Re-introduce optional parameter for eix-test-obsolete to set
 	  (but not toggle!) CHECK_INSTALLED_OVERLAYS: Users of older portage
@@ -1774,7 +1775,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=191716
 
 *eix-0.9.11
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Support for repository names.
 	- Introduce <fullinstalled>.
 	- Introduce <fullavailable>, <fullavailableshort>, <fullavailablelong>.
@@ -1787,7 +1788,7 @@
 	- Avoid "bashisms" in scripts except for arrays (which are necessary).
 
 *eix-0.9.10
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix compilation issues with gcc-3.3.6
 	- Do not treat # as comment symbol in /var/db/pkg/*/*/{USE,IUSE,SLOT}.
 	  This fixes http://sourceforge.net/tracker/index.php?
@@ -1796,7 +1797,7 @@
 	- Fix some memory allocations
 
 *eix-0.9.9
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Allow slot names for masks, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=181244
 	- Fix compilation issues with some C compilers, see
@@ -1810,7 +1811,7 @@
 	  func=detail&aid=1735722&group_id=128101&atid=710611
 
 *eix-0.9.8
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix calculation of needed data which was broken since eix-0.9.5.
 	  This brings "cheap" searches (for names etc) back to the speed of
 	  eix-0.9.4. See http://sourceforge.net/tracker/index.php?
@@ -1830,7 +1831,7 @@
 	  contain any relevant data.
 
 *eix-0.9.7
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- eix-sync now defaults to layman instead of deprecated gensync. Thanks
 	  for the patch to Roberto Castagnola <roberto.castagnola at gmail.com>
 	  see http://bugs.gentoo.org/show_bug.cgi?id=179482
@@ -1846,14 +1847,14 @@
 	- Fix a serious memory leak in PackageTest::match()
 
 *eix-0.9.6
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix diff-eix: Flag whether local settings should be
 	  obeyed was inverted by mistake in 0.9.5.
 	- Fix logic error in {recommend} when new slot vanishes.
 	- Minor fixes and simplifications in default formats.
 
 *eix-0.9.5
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Add Bugs/FAQ section in manpage.
 	- Introduce OBSOLETE_MINUSASTERISK and set it to false,
 	  to deal with the soon coming portage-2.1.3.
@@ -1868,7 +1869,7 @@
 	- Fix possible endless loop in color parsing.
 
 *eix-0.9.4
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce PRINT_IUSE, FORMAT_{BEFORE,AFTER}_{,COLL_,SLOT_}IUSE
 	- Introduce --installed-with-use, --installed-without-use
 	- Introduce ./configure option --use-bzip2 to enable the following:
@@ -1888,7 +1889,7 @@
 	- Introduce CHECK_INSTALLED_OVERLAYS.
 
 *eix-0.9.3
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix nonexistent asprintf and broken FNM_CASEFOLD handling
 	  for solaris, see http://bugs.gentoo.org/show_bug.cgi?id=173763
 	- Fix manpage typo --update:
@@ -1899,7 +1900,7 @@
 	  Thanks to Matthias Schwarzott for pointing out.
 
 *eix-0.9.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix partly http://bugs.gentoo.org/show_bug.cgi?id=169127
 	  (compilation error on big-endian architectures).
 	- Fix std::unique which is presumably broken on some systems.
@@ -1913,7 +1914,7 @@
 	- Minor compatibility fixes.
 
 *eix-0.9.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Use environment's EPREFIX to find /etc/eixrc if
 	  PORTAGE_CONFIGROOT is unset.
 	- New ./configure options allow customization of default values for
@@ -1922,7 +1923,7 @@
 	  equivalent to ROOT=''.
 
 *eix-0.9.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Let * and ~* in /etc/portage/package.keywords accept stable
 	  and testing keyword, respectively, of any architecture.
 	  Moreover, consider this as weaker (preferrable) than ** and
@@ -1947,7 +1948,7 @@
 	- Code cleanup (new-style casts and other pedantic compiler warnings).
 
 *eix-0.8.8
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Change to new version number scheme:
 	  http://bugs.gentoo.org/show_bug.cgi?id=165414
 	- Fix sorting of things like _p20060716 (longer numbers)
@@ -1956,7 +1957,7 @@
 	- Internal cleanup: Proper variable typing.
 
 *eix-0.8.7
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Let ** in /etc/portage/package.keywords accept "missing keyword".
 	  This corresponds to the change in portage-2.1.2-r4, see
 	  comments #20 #24 in http://bugs.gentoo.org/show_bug.cgi?id=160519
@@ -1975,7 +1976,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=164695
 
 *eix-0.8.6
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Ignore *~ files in /etc/portage/package.*
 	  This reflects the change of portage-2.1.2_rc4-r9 of
 	  http://bugs.gentoo.org/show_bug.cgi?id=144445
@@ -1987,7 +1988,7 @@
 	- Correct EIX_WIKI to http://eix.sourceforge.net
 
 *eix-0.8.5
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Honour PORTAGE_CONFIGROOT
 	- Honour PORTAGE_PROFILE
 	- Allow environment to override/add to portage config variables
@@ -1998,7 +1999,7 @@
 	- Prepare database format for perhaps future per-version IUSE data.
 
 *eix-0.8.4
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Treat empty regular expression manually. This fixes
 	  http://bugs.gentoo.org/show_bug.cgi?id=158222
 	- Add option -O to update-eix-remote, see the discussion starting at
@@ -2007,7 +2008,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=159005
 
 *eix-0.8.3
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix default FORMAT_HEADER_DELETE (reset color in [D]).
 	- Add update-eix-layman
 	- Add update-eix-functions.sh
@@ -2015,7 +2016,7 @@
 	- Add option -U (suggested by stephan.ritscher).
 
 *eix-0.8.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Add options --in-overlay, --only-in-overlay
 	- Add options -J, --installed-in-overlay
 	- Allow wildcard patterns for overlays in --exclude-overlay and
@@ -2030,7 +2031,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=155160
 
 *eix-0.8.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Conditional blocks in delayed references.
 	- Make use of conditionals in defaults:
 	  Introduce delayed PRINT_ALWAYS, DIFF_PRINT_INSTALLED.
@@ -2047,7 +2048,7 @@
 	- Fix some comments of variables.
 
 *eix-0.8.0
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Major change: delayed reference %{VAR} of config vars possible.
 	  This way, *FORMAT_* strings can be input/modified more conveniently.
 	  Moreover, most DIFF_* variables were dropped, since the distinction
@@ -2069,7 +2070,7 @@
 	- Tiny bugfix: "and" for "Upgrade and Downgrade" in default color.
 
 *eix-0.7.9
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Since this version, it is now strongly recommended to leave
 	  *LOCAL_PORTAGE_CONFIG=true, because the "default" stability
 	  can now be seen anyway: The output and default coloring was changed
@@ -2091,7 +2092,7 @@
 	- Fix manpage typos.
 
 *eix-0.7.8
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Main changes are improved possibilities of (colorized!) output of
 	  installed versions and corresponding changes in FORMAT_* defaults.
 	- Show installed versions in FORMAT_COMPACT default.
@@ -2118,7 +2119,7 @@
 	  instead of "update-eix -o test" you can use "update-eix -otest".
 
 *eix-0.7.7
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Fix default DIFF_FORMAT_DELETE (fix "unknown property: old*" errors).
 	- Introduce FORMAT_INSTALLATION_DATE and DIFF_FORMAT_INSTALLATION_DATE.
 	- Introduce FORMAT_INSTALLED_USE and DIFF_FORMAT_INSTALLED_USE.
@@ -2127,7 +2128,7 @@
 	  manage installed versions (to store e.g. installation dates).
 
 *eix-0.7.6
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Early release to fix two problems:
 	- In the default setting -T had false non-matches (the +/- prefix
 	  in REDUNDANT_IF_* had falsely an effect also for some other tests).
@@ -2140,7 +2141,7 @@
 	- Fix manpage typo (thanks to Mathieu Bonnet).
 
 *eix-0.7.5
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- By the new default, now all matches of /etc/portage/package.*
 	  to non-installed packages are considered as redundant.
 	  Also /etc/portage/package.cflags is now checked for redundancy
@@ -2159,7 +2160,7 @@
 	- Fix tempfile handling of eix-sync if mktemp does not exist.
 
 *eix-0.7.4
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Add support for sqlite if portage uses the sqlite backend
 	    http://gentoo-wiki.com/TIP_speed_up_portage_with_sqlite
 	  Introduce very fast cache method "sqlite" which is available if
@@ -2172,7 +2173,7 @@
 	- Improve error-handling of update-eix (continue as far as possible).
 
 *eix-0.7.3
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Improved determination of "virtual" overlays.
 	- Introduce KEEP_VIRTUAL and let it default to true.
 	- Introduce CACHE_METHOD and ADD_OVERRIDE_CACHE_METHOD
@@ -2194,13 +2195,13 @@
 	- Better doxygen sourcecode documentation.
 
 *eix-0.7.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- urgent version bump to fix a segfault of update-eix -m
 	  when ADD_CACHE_METHOD and OVERRIDE_CACHE_METHOD are both empty
 	  (this happened for update-eix-remote if no configuration was used).
 
 *eix-0.7.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Let cache method "none" substitute variables;
 	  fix segfault in substitutions for cases like A=${X-$ARCH}
 	- Previous cache method "none" is now called "none*".
@@ -2216,7 +2217,7 @@
 	- Avoid memory leak in pushback_files().
 
 *eix-0.7.0_beta
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Major changes: remote support and full support for slots.
 	  For the former, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=144200
@@ -2256,7 +2257,7 @@
 	- Implement --quiet for diff-eix. Introduce *QUIETMODE.
 
 *eix-0.6.4
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Introduce slot support.
 	- Fix memory leak for source command in varsreader.
 	- Fix setting of package flags in all cache methods
@@ -2267,7 +2268,7 @@
 	- DEFAULT_IS_OR defaults to "false" again.
 
 *eix-0.6.3
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Rename EMPTY_IS_BAD -> TEST_FOR_EMPTY.
 	  Sorry for that: eix-0.6.2 was not yet intended to be released.
 	  (The release happened only by a misunderstanding).
@@ -2277,12 +2278,12 @@
 	- Introduce TEST_FOR_REDUNDANCY.
 
 *eix-0.6.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Correct scandir handling according to ./configure in pushback_files.
 	- Introduce EMPTY_IS_BAD and corresponding test in -t.
 
 *eix-0.6.1
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Reflect portage's change of ignoring hidden files/dirs
 	  for recursive reading, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=137607
@@ -2307,7 +2308,7 @@
 	- Introduce "markedversions" format.
 
 *eix-0.6.0_beta
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- Implemented -T to help cleaning up /etc/portage/package.*.
 	- Read package information for the newest available versions:
 	  http://bugs.gentoo.org/show_bug.cgi?id=138629
@@ -2324,7 +2325,7 @@
 	- Implemented -t to help further in cleaning up /etc/portage/package.*
 
 *eix-0.5.6
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	Martin Väth <martin at mvath.de>:
 	- If /etc/portage/package.* is a directory, read it recursively:
 	  http://bugs.gentoo.org/show_bug.cgi?id=137784
 	- patch from caster at matfyz.cz to treat version numbers as long ints:

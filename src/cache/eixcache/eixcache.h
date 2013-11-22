@@ -3,7 +3,7 @@
 // terms of the GNU General Public License v2.
 //
 // Copyright (c)
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+//   Martin Väth <martin@mvath.de>
 
 #ifndef SRC_CACHE_EIXCACHE_EIXCACHE_H_
 #define SRC_CACHE_EIXCACHE_EIXCACHE_H_ 1

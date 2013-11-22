@@ -3,7 +3,7 @@
 # terms of the GNU General Public License v2.
 #
 # Authors and Copyright (c):
-#   Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
+#   Martin V\"ath <martin@mvath.de>
 #
 # This script lists all packages installed after/before a certain package
 # See the eix manpage for details. (@PACKAGE_STRING@).

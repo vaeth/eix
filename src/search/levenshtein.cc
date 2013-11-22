@@ -4,7 +4,7 @@
 //
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+//   Martin Väth <martin@mvath.de>
 
 #include <config.h>
 

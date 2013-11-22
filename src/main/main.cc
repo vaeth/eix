@@ -5,7 +5,7 @@
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+//   Martin Väth <martin@mvath.de>
 
 // This file is meant to be included from a wrapper which should start with:
 // #include <config.h>

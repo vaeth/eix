@@ -3,7 +3,7 @@
 // terms of the GNU General Public License v2.
 //
 // Copyright (c)
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+//   Martin Väth <martin@mvath.de>
 
 // #define DEBUG_MATCHTREE 1
 

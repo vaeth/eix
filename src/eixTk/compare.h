@@ -4,7 +4,7 @@
 //
 // Copyright (c)
 //   Emil Beinroth <emilbeinroth@gmx.net>
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+//   Martin Väth <martin@mvath.de>
 
 #ifndef SRC_EIXTK_COMPARE_H_
 #define SRC_EIXTK_COMPARE_H_ 1

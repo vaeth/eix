@@ -5,7 +5,7 @@
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+//   Martin Väth <martin@mvath.de>
 
 #ifndef SRC_PORTAGE_KEYWORDS_H_
 #define SRC_PORTAGE_KEYWORDS_H_ 1

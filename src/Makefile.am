@@ -4,7 +4,7 @@
 #   Copyright (c)
 #     Wolfgang Frisch <xororand@users.sourceforge.net>
 #     Emil Beinroth <emilbeinroth@gmx.net>
-#     Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
+#     Martin V\"ath <martin@mvath.de>
 
 AUTOMAKE_OPTIONS = subdir-objects
 

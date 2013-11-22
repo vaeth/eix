@@ -4,7 +4,7 @@
 #
 # Authors and Copyright (c):
 #   Emil Beinroth <emilbeinroth@gmx.net> (original)
-#   Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de> (complete rewrite)
+#   Martin V\"ath <martin@mvath.de> (complete rewrite)
 #
 # This script calls emerge --sync and shows the differences.
 # See the eix manpage for details. (@PACKAGE_STRING@).

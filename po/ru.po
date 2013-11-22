@@ -3,7 +3,7 @@
 # Copyright (C)
 # This file is distributed under the same license as the eix package.
 #
-# Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>, 2013.
+# Martin Vaeth <martin@mvath.de>, 2013.
 # Artem Vorotnikov <skybon@gmail.com>, 2012-2013, 2013.
 #
 msgid ""

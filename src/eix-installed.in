@@ -3,7 +3,7 @@
 # terms of the GNU General Public License v2.
 #
 # Author and Copyright (c):
-#   Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
+#   Martin V\"ath <martin@mvath.de>
 
 read_var_prg=eix
 . ./eix-functions.sh.in

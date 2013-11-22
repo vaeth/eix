@@ -3,7 +3,7 @@
 // terms of the GNU General Public License v2.
 //
 // Copyright (c)
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+//   Martin Väth <martin@mvath.de>
 //   Emil Beinroth <emilbeinroth@gmx.net>
 
 #ifndef SRC_EIXTK_INTTYPES_H_

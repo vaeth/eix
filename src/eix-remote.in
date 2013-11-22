@@ -3,7 +3,7 @@
 # terms of the GNU General Public License v2.
 #
 # Author and Copyright (c):
-#   Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
+#   Martin V\"ath <martin@mvath.de>
 #
 # It can be used to fetch the "standard" overlay data and add it to the
 # eix database. (@PACKAGE_STRING@).

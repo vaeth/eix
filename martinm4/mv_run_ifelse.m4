@@ -2,7 +2,7 @@ dnl This file is part of the eix project and distributed under the
 dnl terms of the GNU General Public License v2.
 dnl
 dnl Copyright (c)
-dnl  Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
+dnl  Martin V\"ath <martin@mvath.de>
 dnl
 dnl MV_RUN_IFELSE_LINK(INPUT, [ACTION-IF-TRUE], [ACTION-IF-FALSE],)
 dnl same as AC_RUN_IFELSE or AC_LINK_IFELSE if crosscompiling, respectively
