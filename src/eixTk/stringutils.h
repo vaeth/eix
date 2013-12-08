@@ -185,11 +185,11 @@ inline static WordVec split_string(const std::string& str, bool handle_escape, c
 inline static WordVec split_string(const std::string& str, bool handle_escape, const char *at) {
 	return split_string(str, handle_escape, at, true);
 }
-inline static WordVec split_string(const std::string& str, bool handle_escape) ATTRIBUTE_NONNULL_;
+inline static WordVec split_string(const std::string& str, bool handle_escape);
 inline static WordVec split_string(const std::string& str, bool handle_escape) {
 	return split_string(str, handle_escape, spaces);
 }
-inline static WordVec split_string(const std::string& str) ATTRIBUTE_NONNULL_;
+inline static WordVec split_string(const std::string& str);
 inline static WordVec split_string(const std::string& str) {
 	return split_string(str, false);
 }
@@ -239,7 +239,7 @@ inline static void split_and_join(std::string *dest, const std::string& source) 
  * @param source string to split
  * @return result. */
 std::string split_and_join_string(const std::string& source, const std::string& glue, bool handle_escape, const char *at, bool ignore_empty) ATTRIBUTE_NONNULL_;
-inline static std::string split_and_join_string(const std::string& source) ATTRIBUTE_NONNULL_;
+inline static std::string split_and_join_string(const std::string& source);
 inline static std::string split_and_join_string(const std::string& source) {
 	return split_and_join_string(source, " ", false, spaces, true);
 }

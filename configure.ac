@@ -362,7 +362,6 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wall \
 			-Wextra \
 			-Wformat=2 \
-			-Wlong-long \
 			-Wunused-variable \
 			-Wunused-parameter \
 			-Wstring-plus-int \

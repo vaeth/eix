@@ -124,6 +124,14 @@
 				<xsd:attribute name="type" type="MaskType" use="required" />
 			</xsd:complexType>
 		</xsd:element>
+		<xsd:element name="maskreason" type="StringList" minOccurs="0" maxOccurs="unbounded">
+			<xsd:annotation>
+				<xsd:documentation xml:lang="en">
+					The mask reasons given in a package.mask file.
+					This element can occur repeatedly if different reasons are listed.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:element>
 		<xsd:element name="unmask" minOccurs="0" maxOccurs="unbounded">
 			<xsd:annotation>
 				<xsd:documentation xml:lang="en">

@@ -106,6 +106,8 @@ class IUseSet {
  */
 class Version : public ExtendedVersion, public Keywords {
 	public:
+		typedef std::set<StringList> Reasons;
+
 		friend class Database;
 
 		typedef enum {
@@ -254,12 +256,15 @@ class Version : public ExtendedVersion, public Keywords {
 
 		void reasons_string(OutputString *s, const OutputString& skip, const OutputString& sep) const ATTRIBUTE_NONNULL_;
 
-		bool have_reasons() const ATTRIBUTE_NONNULL_ {
+		bool have_reasons() const {
 			return !reasons.empty();
 		}
 
+		const Reasons *reasons_ptr() const {
+			return &reasons;
+		}
+
 	protected:
-		typedef std::set<StringList> Reasons;
 		Reasons reasons;
 		std::string full_keywords, effective_keywords;
 		EffectiveState effective_state;

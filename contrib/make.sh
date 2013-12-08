@@ -51,7 +51,7 @@ Die() {
 
 SetCcache() {
 	dircc='/usr/lib/ccache/bin'
-	if case ":${PATH}:" in
+	if ${use_ccache} && case ":${PATH}:" in
 	*":${dircc}:"*)
 		false;;
 	esac
@@ -79,12 +79,13 @@ SetCcache() {
 			testcc=${testcc%A} && [ -n "${testcc:++}" ] \
 			&& test -d "${testcc}" && break
 	done
-	[ -z "${testcc:++}" ] && return
-	Info "export CCACHE_DIR=${testcc}"
-	Info 'export CCACHE_COMPRESS=true'
-	CCACHE_DIR=${testcc}
-	export CCACHE_DIR
-	export CCACHE_COMPRESS=true
+	if [ -n "${testcc:++}" ]
+	then	Info "export CCACHE_DIR=${testcc}"
+		Info 'export CCACHE_COMPRESS=true'
+		CCACHE_DIR=${testcc}
+		export CCACHE_DIR
+		export CCACHE_COMPRESS=true
+	fi
 	${clear_ccache} || return 0
 	Info 'ccache -C'
 	ccache -C
@@ -148,6 +149,7 @@ then	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && \
 	eval 'shift "$(( ${OPTIND} - 1 ))"' || shift "`expr ${OPTIND} - 1`"
 fi
 
+SetCcache
 [ -n "${dialect:++}" ] && configure_extra=${configure_extra}" --${dialect}-new-dialect"
 ${dep_default} && configure_extra=${configure_extra}' --with-dep-default'
 ${separate_all} && configure_extra=${configure_extra}' --enable-separate-binaries --enable-separate-tools'

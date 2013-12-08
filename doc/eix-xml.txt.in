@@ -142,6 +142,11 @@ depending on the configuration and the version data.
   - **minus_asterisk**
   - **minus_keyword**
 
+- **<maskreason>** [..] **</maskreason>**
+
+  The mask reasons given in a package.mask file.
+  This element can occur repeatedly if different reasons are listed.
+
 - **<unmask type="** [..] **" />**
 
   This can occur only if the mask element has occurred and describes how the

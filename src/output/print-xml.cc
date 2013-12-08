@@ -29,6 +29,7 @@
 #include "portage/package.h"
 #include "portage/set_stability.h"
 #include "portage/vardbpkg.h"
+#include "portage/version.h"
 
 using std::set;
 using std::string;
@@ -265,6 +266,29 @@ void PrintXml::package(Package *pkg) {
 			cout << "\t\t\t\t<mask type=\"" << *it << "\" />\n";
 		}
 
+		if(unlikely(ver->have_reasons())) {
+			const Version::Reasons *reasons_ptr(ver->reasons_ptr());
+			for(Version::Reasons::const_iterator it(reasons_ptr->begin());
+				unlikely(it != reasons_ptr->end()); ++it) {
+				const WordVec *vec(it->asWordVecPtr());
+				if((vec == NULLPTR) || (vec->empty())) {
+					continue;
+				}
+				cout << "\t\t\t\t<maskreason>";
+				bool pret(false);
+				for(WordVec::const_iterator wit(vec->begin());
+					likely(wit != vec->end()); ++wit) {
+					if(likely(pret)) {
+						cout << "\n";
+					} else {
+						pret = true;
+					}
+					cout << escape_xmlstring(*wit);
+				}
+				cout << "</maskreason>\n";
+			}
+		}
+
 		for(WordVec::const_iterator it(unmask_text.begin());
 			unlikely(it != unmask_text.end()); ++it) {
 			cout << "\t\t\t\t<unmask type=\"" << *it << "\" />\n";
@@ -356,37 +380,46 @@ void PrintXml::package(Package *pkg) {
 			bool print_full(keywords_mode != KW_EFF);
 			bool print_effective(keywords_mode != KW_FULL);
 			string full_kw, eff_kw;
-			if(print_full)
+			if(print_full) {
 				full_kw = ver->get_full_keywords();
-			if(print_effective)
+			}
+			if(print_effective) {
 				eff_kw = ver->get_effective_keywords();
+			}
 			if((keywords_mode == KW_FULLS) || (keywords_mode == KW_EFFS)) {
 				if(likely(full_kw == eff_kw)) {
-					if(keywords_mode == KW_FULLS)
+					if(keywords_mode == KW_FULLS) {
 						print_effective = false;
-					else
+					} else {
 						print_full = false;
+					}
 				}
 			}
-			if(print_full)
+			if(print_full) {
 				cout << "\t\t\t\t<keywords>" << escape_xmlstring(full_kw) << "</keywords>\n";
-			if(print_effective)
+			}
+			if(print_effective) {
 				cout << "\t\t\t\t<effective_keywords>" << escape_xmlstring(eff_kw) << "</effective_keywords>\n";
+			}
 		}
 
 		if(Depend::use_depend) {
 			string s(ver->depend.get_depend());
-			if(!s.empty())
+			if(!s.empty()) {
 				cout << "\t\t\t\t<depend>" << escape_xmlstring(s) << "</depend>\n";
+			}
 			s = ver->depend.get_rdepend();
-			if(!s.empty())
+			if(!s.empty()) {
 				cout << "\t\t\t\t<rdepend>" << escape_xmlstring(s) << "</rdepend>\n";
+			}
 			s = ver->depend.get_pdepend();
-			if(!s.empty())
+			if(!s.empty()) {
 				cout << "\t\t\t\t<pdepend>" << escape_xmlstring(s) << "</pdepend>\n";
+			}
 			s = ver->depend.get_hdepend();
-			if(!s.empty())
+			if(!s.empty()) {
 				cout << "\t\t\t\t<hdepend>" << escape_xmlstring(s) << "</hdepend>\n";
+			}
 		}
 		cout << "\t\t\t</version>\n";
 	}

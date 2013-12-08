@@ -57,6 +57,10 @@ class StringListContent {
 		}
 
 		void append_to_string(OutputString *s, const OutputString& skip) const ATTRIBUTE_NONNULL_;
+
+		const WordVec *asWordVecPtr() const {
+			return &m_list;
+		}
 };
 
 inline static bool operator<(const StringListContent& a, const StringListContent& b) {
@@ -126,6 +130,10 @@ class StringList {
 			if(ptr != NULLPTR) {
 				ptr->append_to_string(s, skip);
 			}
+		}
+
+		const WordVec *asWordVecPtr() const {
+			return ((ptr == NULLPTR) ? NULLPTR : ptr->asWordVecPtr());
 		}
 };
 
