@@ -2534,7 +2534,7 @@ For the value B<auto> the result depends on a heuristic based on B<TERM_DARK> an
 
 .TP
 .B TERM_DARK " " (string list)
-This is a list of pairs of the form I<regular-expresssion 1> I<dark-mode 1> I<regular-expresssion 2> B<dark-mode 2> ... where B<dark-mode> is one of B<true>, B<false>, B<true*>, B<false*>;
+This is a list of pairs of the form I<regular-expresssion 1> I<dark-mode 1> I<regular-expresssion 2> I<dark-mode 2> ... where I<dark-mode> is one of B<true>, B<false>, B<true*>, B<false*>;
 optionally, a default I<dark-mode> can be specified as a last entry (if none is specified, the default is B<true*>).
 If B<DARK=auto> this is used to determine the darkmode as follows:
 

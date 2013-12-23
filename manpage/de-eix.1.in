@@ -2580,7 +2580,7 @@ Für den Wert B<auto> hängt das Ergebnis von einer Heuristik ab, die durch die 
 
 .TP
 .B TERM_DARK " " "(Stringliste)"
-Dies ist eine Liste von Paaren der Form I<regulärer Ausdruck 1> I<Dunkelmodus 1> I<regulärer Ausdruck 2> B<Dunkelmodus 2> ... wobei B<Dunkelmodus> jeweils einer der Werte B<true>, B<false>, B<true*>, B<false*> sein muss;
+Dies ist eine Liste von Paaren der Form I<regulärer Ausdruck 1> I<Dunkelmodus 1> I<regulärer Ausdruck 2> I<Dunkelmodus 2> ... wobei I<Dunkelmodus> jeweils einer der Werte B<true>, B<false>, B<true*>, B<false*> sein muss;
 optional kann ein Vorgabewert für I<Dunkelmodus> als letzter Eintrag spezifiziert werden (wenn keiner spezifiziert ist, ist B<true*> die Vorgabe).
 Wenn B<DARK=auto> ist, wird diese Liste benutzt, um den Dunkelmodus wie folgt festzulegen:
 
