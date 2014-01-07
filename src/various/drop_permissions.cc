@@ -89,15 +89,13 @@ bool drop_permissions(EixRc *eix) {
 #endif
 #endif
 #ifdef HAVE_SETGROUPS
-		if(setgroups(1, &gid)) {
-			success = false;
-		}
+		// This is expected to fail if we are already uid
+		setgroups(1, &gid);
 #endif
 #ifdef HAVE_INITGROUPS
 		if(valid_user) {
-			if(initgroups(user.c_str(), gid)) {
-				success = false;
-			}
+			// This is expected to fail if we are already uid
+			initgroups(user.c_str(), gid);
 		}
 #endif
 	}
