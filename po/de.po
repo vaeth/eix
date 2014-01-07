@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2013-12-08 13:12+0100\n"
+"POT-Creation-Date: 2014-01-07 23:52+0100\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <martin@mvath.de>\n"
 "Language-Team: German\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Language: German\n"
 
-#: src/eix-functions.sh.in:103 src/eix-update.cc:610 src/eix-update.cc:644
+#: src/eix-functions.sh.in:103 src/eix-update.cc:612 src/eix-update.cc:646
 #: src/eixTk/statusline.cc:52
 msgid "Finished"
 msgstr "Fertig"
@@ -338,7 +338,7 @@ msgstr ""
 "-H            Keine Ausgabe der Statuszeile\n"
 "-q            Keine Ausgabe"
 
-#: src/eix-layman.sh:133 src/eix-remote.sh:274 src/eix-update.cc:652
+#: src/eix-layman.sh:133 src/eix-remote.sh:274 src/eix-update.cc:654
 msgid "Analyzing"
 msgstr "Analyse"
 
@@ -1654,7 +1654,7 @@ msgstr ""
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:660 src/eix-diff.cc:333 src/eix-update.cc:376
+#: src/eix.cc:660 src/eix-diff.cc:333 src/eix-update.cc:378
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
@@ -1668,21 +1668,21 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit %r neu erzeugen."
 
-#: src/eix.cc:1021 src/eix.cc:1042
+#: src/eix.cc:1026 src/eix.cc:1047
 #, c-format
 msgid "Found %s matches."
 msgstr "%s Treffer."
 
-#: src/eix.cc:1024
+#: src/eix.cc:1029
 msgid "No matches found."
 msgstr "Kein Treffer."
 
-#: src/eix.cc:1033
+#: src/eix.cc:1038
 #, c-format
 msgid "Found %s match."
 msgstr "%s Treffer."
 
-#: src/eix.cc:1053
+#: src/eix.cc:1058
 #, c-format
 msgid ""
 "Only %s matches displayed on terminal.\n"
@@ -1691,7 +1691,7 @@ msgstr ""
 "Auf dem Terminal werden nur %s Treffer angezeigt.\n"
 "Setzen Sie %s=0 um alle anzuzeigen.\n"
 
-#: src/eix.cc:1081
+#: src/eix.cc:1086
 msgid ""
 "Cannot open the database file %s for reading.\n"
 "Did you forget to create it with %r?"
@@ -1699,17 +1699,17 @@ msgstr ""
 "Datenbankfile %s kann nicht geöffnet werden.\n"
 "Wurde es denn mit %r erzeugt?"
 
-#: src/eix.cc:1160
+#: src/eix.cc:1165
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:1161
+#: src/eix.cc:1166
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:1166
+#: src/eix.cc:1171
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1718,7 +1718,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1167
+#: src/eix.cc:1172
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1727,7 +1727,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1226
+#: src/eix.cc:1231
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1735,7 +1735,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:1229
+#: src/eix.cc:1234
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -1800,25 +1800,37 @@ msgstr "Datenbankfile %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
 msgid "Diffing databases (%s -> %s packages)\n"
 msgstr "Vergleiche Datenbanken (%s -> %s Pakete)\n"
 
-#: src/eix-drop-permissions.cc:23
+#: src/eix-drop-permissions.cc:24
 #, c-format
 msgid ""
-"Usage: %s [--] command [options]\n"
-"Executes command [options] with the permissions according to the eix "
-"variables\n"
-"EIX_USER, EIX_GROUP, EIX_UID, and EIX_GID.\n"
+"Usage: %s [options] [--] command [arguments]\n"
+"Executes command [arguments] with the permissions according to the eix\n"
+"variables EIX_USER, EIX_GROUP, EIX_UID, and EIX_GID.\n"
+"The following options are available:\n"
+"-q suppress output of warnings/errors\n"
+"-e error (do not execute command) if change of permission failed\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
 "further information.\n"
 msgstr ""
-"Aufruf: %s [--] Kommando [Optionen]\n"
+"Aufruf: %s [Optionen] [--] Kommando [Argumente]\n"
 "Führt Kommando [Optionen] mit Rechten entsprechend den eix-Variablen\n"
 "EIX_USER, EIX_GROUP, EIX_UID, und EIX_GID aus.\n"
 "\n"
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-drop-permissions.cc:47
+#: src/eix-drop-permissions.cc:72
+#, c-format
+msgid "failed to drop permissions\n"
+msgstr "Rechteänderung schlug fehl\n"
+
+#: src/eix-drop-permissions.cc:76 src/eix-update.cc:306
+#, c-format
+msgid "warning: failed to drop permissions\n"
+msgstr "Warnung: Rechteänderung schlug fehl\n"
+
+#: src/eix-drop-permissions.cc:81
 #, c-format
 msgid "failed to execute %s\n"
 msgstr "Konnte %s nicht ausführen\n"
@@ -1964,85 +1976,85 @@ msgstr "Füge virtuellen Overlay aus %s hinzu...\n"
 msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
 msgstr "Warnung: KEEP_VIRTUALS wegen Änderung des Datenbank-Formats ignoriert"
 
-#: src/eix-update.cc:394
+#: src/eix-update.cc:396
 msgid "Reading Portage settings ..\n"
 msgstr "Lese Portage-Konfiguration...\n"
 
-#: src/eix-update.cc:508
+#: src/eix-update.cc:510
 #, c-format
 msgid "Excluded PORTDIR: %s\n"
 msgstr "Ausschluss von PORTDIR: %s\n"
 
-#: src/eix-update.cc:527
+#: src/eix-update.cc:529
 #, c-format
 msgid "Excluded overlay %s\n"
 msgstr "Ausschluss von Overlay: %s\n"
 
-#: src/eix-update.cc:533
+#: src/eix-update.cc:535
 #, c-format
 msgid "Building database (%s) ..\n"
 msgstr "Erzeuge Datenkbank (%s) ...\n"
 
-#: src/eix-update.cc:574
+#: src/eix-update.cc:576
 #, c-format
 msgid "Excluding \"%s\" %s (cache: %s)\n"
 msgstr "Ausschluss von \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:596
+#: src/eix-update.cc:598
 #, c-format
 msgid "[%s] \"%s\" %s (cache: %s)\n"
 msgstr "[%s] \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:601
+#: src/eix-update.cc:603
 #, c-format
 msgid "[%s] %s"
 msgstr "[%s] %s"
 
-#: src/eix-update.cc:606
+#: src/eix-update.cc:608
 msgid "     Reading Packages .. "
 msgstr "     Paket-Daten werden gelesen... "
 
-#: src/eix-update.cc:610 src/eix-update.cc:643
+#: src/eix-update.cc:612 src/eix-update.cc:645
 msgid "ABORTED!"
 msgstr "ABBRUCH!"
 
-#: src/eix-update.cc:614
+#: src/eix-update.cc:616
 #, c-format
 msgid "     Reading category %s|%s (%s%%)"
 msgstr "     Lese Category %s|%s (%s%%)"
 
-#: src/eix-update.cc:618
+#: src/eix-update.cc:620
 #, c-format
 msgid "     Reading up to %s categories of packages .. "
 msgstr "     Paketdaten aus bis zu %s Categorien werden gelesen... "
 
-#: src/eix-update.cc:633
+#: src/eix-update.cc:635
 #, c-format
 msgid ": %s .."
 msgstr ": %s ..."
 
-#: src/eix-update.cc:642
+#: src/eix-update.cc:644
 msgid "EMPTY!"
 msgstr "LEER!"
 
-#: src/eix-update.cc:655
+#: src/eix-update.cc:657
 msgid "Applying masks ..\n"
 msgstr "Maskiere Pakete...\n"
 
-#: src/eix-update.cc:666
+#: src/eix-update.cc:668
 msgid "Calculating hash tables ..\n"
 msgstr "Berechne Hash-Tabellen...\n"
 
-#: src/eix-update.cc:671
+#: src/eix-update.cc:673
 #, c-format
 msgid "Writing database file %s ..\n"
 msgstr "Schreibe Datenbankfile %s...\n"
 
-#: src/eix-update.cc:683
+#: src/eix-update.cc:685
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
 
-#: src/eix-update.cc:695
+#: src/eix-update.cc:697
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "Datenbank enthält %s Pakete in %s Kategorien.\n"

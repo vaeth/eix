@@ -40,7 +40,7 @@ int setgid(gid_t gid);
 int setegid(gid_t gid);
 #endif
 
-void drop_permissions(EixRc *eix) {
+bool drop_permissions(EixRc *eix) {
 	bool set_uid(true);
 	bool valid_user(true);
 	uid_t uid;
@@ -65,42 +65,57 @@ void drop_permissions(EixRc *eix) {
 			set_gid = false;
 		}
 	}
+	bool success(true);
 #ifdef HAVE_SETUSER
 	if(valid_user) {
-		setuser(user.c_str(), NULLPTR, SU_COMPLETE);
+		if(setuser(user.c_str(), NULLPTR, SU_COMPLETE)) {
+			success = false;
+		}
 	}
 #endif
 	if(set_gid) {
 #ifdef HAVE_SETGID
 #ifndef BROKEN_SETGID
-		setgid(gid);
+		if(setgid(gid)) {
+			success = false;
+		}
 #endif
 #endif
 #ifdef HAVE_SETEGID
 #ifndef BROKEN_SETEGID
-		setegid(gid);
+		if(setegid(gid)) {
+			success = false;
+		}
 #endif
 #endif
 #ifdef HAVE_SETGROUPS
-		setgroups(1, &gid);
+		if(setgroups(1, &gid)) {
+			success = false;
+		}
 #endif
 #ifdef HAVE_INITGROUPS
 		if(valid_user) {
-			initgroups(user.c_str(), gid);
+			if(initgroups(user.c_str(), gid)) {
+				success = false;
+			}
 		}
 #endif
 	}
 	if(set_uid) {
 #ifdef HAVE_SETUID
 #ifndef BROKEN_SETUID
-		setuid(uid);
+		if(setuid(uid)) {
+			success = false;
+		}
 #endif
 #endif
 #ifdef HAVE_SETEUID
 #ifndef BROKEN_SETEUID
-		seteuid(uid);
+		if(seteuid(uid)) {
+			success = false;
+		}
 #endif
 #endif
 	}
+	return success;
 }
-

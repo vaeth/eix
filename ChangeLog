@@ -6,6 +6,9 @@
 	- Update email
 	- internal: remove redundant ATTRIBUTE_NONNULL
 	- contrib/make.sh: Fix ccache handling
+	- Check whether dropping of permissions worked
+	- Fix message if EIX_LIMIT{,_COMPACT} equals number of all packages
+	  output, see http://bugs.gentoo.org/show_bug.cgi?id=497232
 
 *eix-0.30.0
 	Martin Väth <martin at mvath.de>:

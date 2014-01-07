@@ -302,7 +302,9 @@ int run_eix_update(int argc, char *argv[]) {
 
 	/* Setup eixrc. */
 	EixRc& eixrc(get_eixrc(UPDATE_VARS_PREFIX));
-	drop_permissions(&eixrc);
+	if(unlikely(!drop_permissions(&eixrc))) {
+		cerr << _("warning: failed to drop permissions\n");
+	}
 	Depend::use_depend = eixrc.getBool("DEP");
 	string eix_cachefile(eixrc["EIX_CACHEFILE"]); {
 	/* calculate defaults for use_{percentage,status} */

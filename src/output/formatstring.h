@@ -437,11 +437,26 @@ class PrintFormat {
 		}
 
 		/* return true if something was actually printed */
-		bool print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL((2, 5, 6, 7, 8));
+		bool print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s, bool check_only) ATTRIBUTE_NONNULL((2, 5, 6, 7, 8));
+
+		/* return true if something was actually printed */
+		bool print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL((2, 5, 6, 7, 8)) {
+			return print(entity, get_property, root, dbheader, vardbpkg, ps, s, false);
+		}
+
+		/* return true if something was actually printed */
+		bool print(void *entity, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s, bool check_only) ATTRIBUTE_NONNULL((2, 4, 5, 6, 7)) {
+			return print(entity, m_get_property, root, dbheader, vardbpkg, ps, s, check_only);
+		}
 
 		/* return true if something was actually printed */
 		bool print(void *entity, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL((2, 4, 5, 6, 7)) {
 			return print(entity, m_get_property, root, dbheader, vardbpkg, ps, s);
+		}
+
+		/* return true if something was actually printed */
+		bool print(void *entity, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s, bool check_only) ATTRIBUTE_NONNULL_ {
+			return print(entity, m_parser.rootnode(), dbheader, vardbpkg, ps, s, check_only);
 		}
 
 		/* return true if something was actually printed */

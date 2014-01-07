@@ -802,16 +802,23 @@ bool FormatParser::start(const char *fmt, bool colors, bool parse_only_colors, s
 }
 
 /* return true if something was actually printed */
-bool PrintFormat::print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) {
+bool PrintFormat::print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s, bool check_only) {
 	// The four hackish variables
 	header = dbheader;
 	vardb = vardbpkg;
 	portagesettings = ps;
 	stability = s;
 	version_variables = NULLPTR;
+
 	varcache.clear_use();
 	user_variables.clear();
-	bool r(recPrint(NULLPTR, entity, get_property, root));
+	bool r;
+	if(unlikely(check_only)) {
+		OutputString dummy;
+		r = recPrint(&dummy, entity, get_property, root);
+	} else {
+		r = recPrint(NULLPTR, entity, get_property, root);
+	}
 	// Reset the four hackish variables
 	header = NULLPTR;
 	vardb = NULLPTR;

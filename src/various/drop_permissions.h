@@ -10,6 +10,6 @@
 
 class EixRc;
 
-void drop_permissions(EixRc *eix) ATTRIBUTE_NONNULL_;
+bool drop_permissions(EixRc *eix) ATTRIBUTE_NONNULL_;
 
 #endif  // SRC_VARIOUS_DROP_PERMISSIONS_H_

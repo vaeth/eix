@@ -793,8 +793,9 @@ int run_eix(int argc, char** argv) {
 		local_mode = LOCALMODE_LOCAL;
 	}
 	// Save lot of time: avoid redundant remasking
-	if(format->recommend_mode == local_mode)
+	if(format->recommend_mode == local_mode) {
 		format->recommend_mode = LOCALMODE_DEFAULT;
+	}
 
 	SetStability stability(&portagesettings, !rc_options.ignore_etc_portage, false, eixrc.getBool("ALWAYS_ACCEPT_KEYWORDS"));
 
@@ -923,7 +924,7 @@ int run_eix(int argc, char** argv) {
 		print_xml->start();
 	}
 	bool have_printed(false);
-	bool reached_limit(false);
+	bool reached_limit(false), over_limit(false);
 	string limit_var(rc_options.compact_output ? "EIX_LIMIT_COMPACT" : "EIX_LIMIT");
 	eix::Treesize limit(is_tty ? eixrc.getInteger(limit_var) : 0);
 	for(eix::ptr_list<Package>::iterator it(matches.begin());
@@ -948,14 +949,16 @@ int run_eix(int argc, char** argv) {
 			}
 		}
 		if(overlay_mode != mode_list_used_renumbered) {
-			if(reached_limit || format->print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
+			if(format->print(*it, &header, &varpkg_db, &portagesettings, &stability, reached_limit)) {
 				have_printed = true;
 				++count;
+				if(unlikely(reached_limit)) {
+					over_limit = true;
+				} else if(unlikely(count == limit)) {
+					reached_limit = true;
+				}
 				if(unlikely(rc_options.brief || (rc_options.brief2 && count > 1))) {
 					break;
-				}
-				if(unlikely(count == limit)) {
-					reached_limit = true;
 				}
 			}
 		}
@@ -983,14 +986,16 @@ int run_eix(int argc, char** argv) {
 		format->set_overlay_translations(&overlay_num);
 		for(eix::ptr_list<Package>::iterator it(matches.begin());
 			likely(it != matches.end()); ++it) {
-			if(reached_limit || format->print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
+			if(format->print(*it, &header, &varpkg_db, &portagesettings, &stability, reached_limit)) {
 				have_printed = true;
 				++count;
+				if(unlikely(reached_limit)) {
+					over_limit = true;
+				} else if(unlikely(count == limit)) {
+					reached_limit = true;
+				}
 				if(unlikely(rc_options.brief || (rc_options.brief2 && count > 1))) {
 					break;
-				}
-				if(unlikely(count == limit)) {
-					reached_limit = true;
 				}
 			}
 		}
@@ -1048,7 +1053,7 @@ int run_eix(int argc, char** argv) {
 	}
 	if(likely(have_printed)) {
 		cout << format->color_end;
-		if(unlikely(reached_limit)) {
+		if(unlikely(over_limit)) {
 			cout << eix::format(_(
 			"Only %s matches displayed on terminal.\n"
 			"Set %s=0 to show all matches.\n"))
