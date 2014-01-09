@@ -9,6 +9,8 @@
 	- Check whether dropping of permissions worked
 	- Fix message if EIX_LIMIT{,_COMPACT} equals number of all packages
 	  output, see http://bugs.gentoo.org/show_bug.cgi?id=497232
+	- eix-header: Add comment that -f is non-optional for portable scripts,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=497572
 
 *eix-0.30.0
 	Martin Väth <martin at mvath.de>:

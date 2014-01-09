@@ -51,20 +51,26 @@ bool print_overlay_data(string *result, const DBHeader& header, const char *over
 
 static void print_help() {
 	printf(_(
-"Usage: %s [-q] [-f FILE] [-s SEP] [-c] [-l OVERLAY] [-p OVERLAY] [-o OVERLAY] ...\n"
+"Usage: %s [-q] [-f FILE] [-s SEP] [-c] [-l OV] [-p OV] [-o OV] ...\n"
 "Check whether eix database FILE has current format, and print label, path,\n"
-"or both of specified OVERLAY in FILE, appending SEP to each data.\n"
+"or both of specified overlay OV in FILE, appending SEP to each data.\n"
 "All options can be used repeatedly: FILE and SEP are active until modified.\n"
 "FILE defaults to %s\n"
-"SEP defaults to the null character (to be distinguished from the empty string)\n"
-"-c can be used to check only whether FILE has current format\n"
-"without producing any output.\n"
+"Note that this default for FILE is independent of the EIX_CACHEFILE variable,\n"
+"i.e. for usage in portable scripts you should always specify -f as one of the\n"
+"first options, e.g. as in this script snippet:\n"
+"\t. eix-functions.sh; ReadFunctions\n"
+"\tReadVar EIX_CACHEFILE EIX_CACHEFILE || die 'cache name not known'\n"
+"\t%s -qf \"${EIX_CACHEFILE}\" -c || die 'no current database'\n"
+"SEP defaults to the null character (to be distinguished from the empty string).\n"
+"-c can be used to check only whether FILE has current format without producing\n"
+"any output.\n"
 "After option -q no further output is made, usually.\n"
 "So specify -q first if you want no output at all.\n"
 "The special option -h outputs this help text and quits.\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"), program_name, EIX_CACHEFILE);
+"further information.\n"), program_name, EIX_CACHEFILE, program_name);
 }
 
 class OverlayOption {
