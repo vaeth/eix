@@ -352,7 +352,6 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
 			-fno-common \
 			-funsigned-char \
-			-fPIC \
 			-fdirectives-only \
 			-ftracer \
 		], [${my_cxxfatal}], [${CPPFLAGS}], [:])
@@ -448,7 +447,17 @@ dnl			-Weffc++ \
 AS_IF([${security}],
 	# We try to add -fstack-protector to LDFLAGS before adding to CXXFLAGS
 	# since on some systems it requires also linking with a library.
-	[MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
+	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
+			-fPIE \
+		], [${my_cxxfatal}], [${CPPFLAGS}], [:])
+	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
+			-fPIE \
+		], [${my_ldfatal}], [], [:])
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
+			-pie \
+		], [${my_cxxfatal}], [${CPPFLAGS}], [:])
+	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
+			-pie \
 			-fstack-protector \
 			-Wl,-z,now \
 			-Wl,-z,relro \
