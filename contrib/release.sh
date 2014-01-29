@@ -115,8 +115,10 @@ TagTarball() {
 	for i in *
 	do	[ "${i}" = "${proj}-${ver}" ] || rm -rf "./${i}"
 	done
-	Eecho "mv ${proj}-ver/* ."
+	Eecho "mv ${proj}-${ver}/* ."
 	mv "${proj}-${ver}"/* . || Die "mv ${proj}-${ver}/* . failed"
+	Eecho "mv ${proj}-${ver}/.* ."
+	mv "${proj}-${ver}"/.* . || Warn "mv ${proj}-${ver}/.* . failed"
 	ExecDie rmdir "${proj}-${ver}"
 
 	ExecWarn git merge master
