@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
-"Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
+"Report-Msgid-Bugs-To: http://github.com/vaeth/eix/issues/\n"
 "POT-Creation-Date: 2014-01-09 11:03+0100\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <martin@mvath.de>\n"
