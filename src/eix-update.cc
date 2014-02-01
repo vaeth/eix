@@ -301,9 +301,15 @@ int run_eix_update(int argc, char *argv[]) {
 	repo_args = new RepoArgs;
 
 	/* Setup eixrc. */
-	EixRc& eixrc(get_eixrc(UPDATE_VARS_PREFIX));
-	if(unlikely(!drop_permissions(&eixrc))) {
-		cerr << _("warning: failed to drop permissions\n");
+	EixRc& eixrc(get_eixrc(UPDATE_VARS_PREFIX)); {
+		string errtext;
+		bool success(drop_permissions(&eixrc, &errtext));
+		if(!errtext.empty()) {
+			cerr << errtext << endl;
+		}
+		if(!success) {
+			return EXIT_FAILURE;
+		}
 	}
 	Depend::use_depend = eixrc.getBool("DEP");
 	string eix_cachefile(eixrc["EIX_CACHEFILE"]); {

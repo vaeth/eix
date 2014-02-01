@@ -2172,6 +2172,18 @@ dieses Benutzers gewählt; andernfalls schrumpft die Gruppenliste auf
 einen einzelnen Eintrag zusammen.
 
 .TP
+.BR REQUIRE_DROP " " (true / false / root)
+Der Wert B<true> bedeutet, dass die Rechteänderungen entsprechend von
+B<EIX_{USER,GROUP,UID,GID}> erfolgreich sein müssen, vgl. B<DROP_FATAL>.
+Im Falle des Werts B<root> muss dies nur dann der Fall sein, wenn die
+aktuelle UID den Wert 0 hat.
+
+.TP
+.BR NODROP_FATAL " " (true / false)
+Wenn die Voraussetzung entsprechend B<REQUIRE_DROP> fehlschlägt, wird
+mit einem Fehler abgebrochen (B<true>) bzw. nur eine Warnung ausgegeben.
+
+.TP
 .BR PORTAGE_ROOTPATH ", " PORTAGE_BIN_PATH " " (string)
 Falls nichtleer, werden diese Variablen unverändert an ebuild.sh für die Cachemethode B<ebuild*> übergeben.
 Beachte, dass ebuild.sh diese Variablen benutzt, um den PATH zu ermitteln, so dass diese

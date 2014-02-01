@@ -585,8 +585,16 @@ int run_eix(int argc, char** argv) {
 	PrintFormat::init_static();
 	format = new PrintFormat(get_package_property);
 
-	EixRc& eixrc(get_eixrc(EIX_VARS_PREFIX));
-	drop_permissions(&eixrc);
+	EixRc& eixrc(get_eixrc(EIX_VARS_PREFIX)); {
+		string errtext;
+		bool success(drop_permissions(&eixrc, &errtext));
+		if(!errtext.empty()) {
+			cerr << errtext << endl;
+		}
+		if(!success) {
+			return EXIT_FAILURE;
+		}
+	}
 
 	// Setup defaults for all global variables like rc_options
 	bool is_tty(isatty(1) != 0);

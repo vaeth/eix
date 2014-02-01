@@ -2150,6 +2150,17 @@ If B<EIX_USER> is a valid name, the full grouplist of that user
 is chosen; otherwise, the grouplist is shrinked to a singleton.
 
 .TP
+.BR REQUIRE_DROP " " (true / false / root)
+If B<true>, it is required that the dropping of permissions
+according to B<EIX_{USER,GROUP,UID,GID}> is successful, see B<DROP_FATAL>.
+If B<root>, this is required only if the current UID is 0.
+
+.TP
+.BR NODROP_FATAL " " (true / false)
+If the requirement of B<REQUIRE_DROP> is not met, a warning (B<false>) or
+an error (B<true>) is raised.
+
+.TP
 .BR PORTAGE_ROOTPATH ", " PORTAGE_BIN_PATH " " (string)
 If nonempty, these variables are passed unchanged to ebuild.sh for cache method B<ebuild*>.
 Note that ebuild.sh uses these variables to calculate the PATH, so this may be a severe security issue.

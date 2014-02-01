@@ -281,8 +281,16 @@ int run_eix_diff(int argc, char *argv[]) {
 
 	string old_file, new_file;
 
-	EixRc& rc(get_eixrc(DIFF_VARS_PREFIX));
-	drop_permissions(&rc);
+	EixRc& rc(get_eixrc(DIFF_VARS_PREFIX)); {
+		string errtext;
+		bool success(drop_permissions(&rc, &errtext));
+		if(!errtext.empty()) {
+			cerr << errtext << endl;
+		}
+		if(!success) {
+			return EXIT_FAILURE;
+		}
+	}
 
 	Depend::use_depend = rc.getBool("DEP");
 

@@ -595,7 +595,7 @@ AC_CHECK_FUNCS([strndup \
 	initgroups \
 	])
 
-AC_DEFUN([SETXPROGRAM], [AC_LANG_PROGRAM([[
+AC_DEFUN([SETGETXPROGRAM], [AC_LANG_PROGRAM([[
 #include <unistd.h>
 #include <sys/types.h>
 
@@ -611,15 +611,21 @@ $1
 $2
 ]])])
 
-AC_DEFUN([PROTO_SETX],
+AC_DEFUN([PROTO_SETGETX],
 	[AC_MSG_CHECKING([whether $1 prototype works])
-	AC_LINK_IFELSE([SETXPROGRAM([], [$1(0);])],
+	AC_LINK_IFELSE([SETGETXPROGRAM([], [$2;])],
 		[MV_MSG_RESULT([yes])],
-		[AC_LINK_IFELSE([SETXPROGRAM([$2], [$1(0);])],
+		[AC_LINK_IFELSE([SETGETXPROGRAM([$3], [$2;])],
 			[MV_MSG_RESULT([no, but can be provided])
-			$3],
+			$4],
 			[MV_MSG_RESULT([no and cannot be provided])
-			$4])])])
+			$5])])])
+
+AC_DEFUN([PROTO_SETX],
+	[PROTO_SETGETX([$1], [$1(0)], [$2], [$3], [$4])])
+
+AC_DEFUN([PROTO_GETX],
+	[PROTO_SETGETX([$1], [return($1() == 0)], [$2], [$3], [$4])])
 
 PROTO_SETX([setuid], [
 int setuid(uid_t uid);
@@ -657,6 +663,43 @@ int setegid(gid_t gid);
 	[AC_DEFINE([BROKEN_SETEGID],
 		[1],
 		[Define to 1 if setegid is broken])])
+
+PROTO_GETX([getuid], [
+uid_t getuid();
+	],
+	[AC_DEFINE([NEED_GETUID_PROTO],
+		[1],
+		[Define to 1 if getuid needs a prototype])],
+	[AC_DEFINE([BROKEN_GETUID],
+		[1],
+		[Define to 1 if getuid is broken])])
+PROTO_GETX([geteuid], [
+uid_t geteuid();
+	],
+	[AC_DEFINE([NEED_GETEUID_PROTO],
+		[1],
+		[Define to 1 if geteuid needs a prototype])],
+	[AC_DEFINE([BROKEN_GETEUID],
+		[1],
+		[Define to 1 if geteuid is broken])])
+PROTO_GETX([getgid], [
+gid_t getgid();
+	],
+	[AC_DEFINE([NEED_GETGID_PROTO],
+		[1],
+		[Define to 1 if getgid needs a prototype])],
+	[AC_DEFINE([BROKEN_GETGID],
+		[1],
+		[Define to 1 if getgid is broken])])
+PROTO_GETX([getegid], [
+git_t getegid();
+	],
+	[AC_DEFINE([NEED_GETEGID_PROTO],
+		[1],
+		[Define to 1 if getegid needs a prototype])],
+	[AC_DEFINE([BROKEN_GETEGID],
+		[1],
+		[Define to 1 if getegid is broken])])
 
 # If climits exists, we need not check for limits.h
 AC_CHECK_HEADERS([climits limits.h],

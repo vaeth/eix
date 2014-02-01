@@ -20,6 +20,8 @@
 
 #include <string>
 
+#include "eixTk/eixint.h"
+#include "eixTk/i18n.h"
 #include "eixTk/null.h"
 #include "eixTk/sysutils.h"
 #include "eixrc/eixrc.h"
@@ -39,8 +41,35 @@ int setgid(gid_t gid);
 #ifdef NEED_SETEGID_PROTO
 int setegid(gid_t gid);
 #endif
+#ifdef NEED_GETUID_PROTO
+uid_t getuid();
+#endif
+#ifdef NEED_GETEUID_PROTO
+uid_t geteuid();
+#endif
+#ifdef NEED_GETGID_PROTO
+gid_t getgid();
+#endif
+#ifdef NEED_GETEGID_PROTO
+gid_t getegid();
+#endif
 
-bool drop_permissions(EixRc *eix) {
+static bool drop_permissions(EixRc *eix);
+
+bool drop_permissions(EixRc *eix, string *errtext) {
+	if(drop_permissions(eix)) {
+		errtext->clear();
+		return true;
+	}
+	if(eix->getBool("NODROP_FATAL")) {
+		errtext->assign(_("failed to drop permissions"));
+		return false;
+	}
+	errtext->assign(_("warning: failed to drop permissions"));
+	return true;
+}
+
+static bool drop_permissions(EixRc *eix) {
 	bool set_uid(true);
 	bool valid_user(true);
 	uid_t uid;
@@ -57,7 +86,7 @@ bool drop_permissions(EixRc *eix) {
 	bool set_gid(true);
 	gid_t gid;
 	const string& group((*eix)["EIX_GROUP"]);
-	if(group.empty() || (get_uid_of(group.c_str(), &gid) == 0)) {
+	if(group.empty() || !get_gid_of(group.c_str(), &gid)) {
 		gid_t i(eix->getInteger("EIX_GID"));
 		if(i > 0) {
 			gid = i;
@@ -66,27 +95,48 @@ bool drop_permissions(EixRc *eix) {
 		}
 	}
 	bool success(true);
+	bool force_success; {
+		eix::SignedBool w(eix->getBoolText("REQUIRE_DROP", "root"));
+		force_success = ((w < 0) ?
+#ifdef HAVE_GETUID
+			(getuid() != 0)
+#else
+			true
+#endif
+			: (w == 0));
+	}
+
 #ifdef HAVE_SETUSER
 	if(valid_user) {
 		if(setuser(user.c_str(), NULLPTR, SU_COMPLETE)) {
 			success = false;
+		} else {
+			force_success = true;
 		}
 	}
 #endif
 	if(set_gid) {
-#ifdef HAVE_SETGID
-#ifndef BROKEN_SETGID
+#if defined(HAVE_SETGID) && !defined(BROKEN_SETGID)
+#if defined(HAVE_GETGID) && !defined(BROKEN_GETGID)
+		bool forcing_success(force_success || (getgid() == gid));
+#endif
 		if(setgid(gid)) {
+#if defined(HAVE_GETGID) && !defined(BROKEN_GETGID)
+			if(!forcing_success)
+#endif
 			success = false;
 		}
 #endif
+#if defined(HAVE_SETEGID) && !defined(BROKEN_SETEGID)
+#if defined(HAVE_GETEGID) && !defined(BROKEN_GETEGID)
+		bool forcing_success(force_success || (getegid() == gid));
 #endif
-#ifdef HAVE_SETEGID
-#ifndef BROKEN_SETEGID
 		if(setegid(gid)) {
+#if defined(HAVE_GETEGID) && !defined(BROKEN_GETEGID)
+			if(!forcing_success)
+#endif
 			success = false;
 		}
-#endif
 #endif
 #ifdef HAVE_SETGROUPS
 		// This is expected to fail if we are already uid
@@ -100,20 +150,28 @@ bool drop_permissions(EixRc *eix) {
 #endif
 	}
 	if(set_uid) {
-#ifdef HAVE_SETUID
-#ifndef BROKEN_SETUID
+#if defined(HAVE_SETUID) && !defined(BROKEN_SETUID)
+#if defined(HAVE_GETUID) && !defined(BROKEN_GETUID)
+		bool forcing_success(force_success || (getuid() == uid));
+#endif
 		if(setuid(uid)) {
+#if defined(HAVE_GETUID) && !defined(BROKEN_GETUID)
+			if(!forcing_success)
+#endif
 			success = false;
 		}
 #endif
+#if defined(HAVE_SETEUID) && !defined(BROKEN_SETEUID)
+#if defined(HAVE_GETEUID) && !defined(BROKEN_GETEUID)
+		bool forcing_success(force_success || (geteuid() == uid));
 #endif
-#ifdef HAVE_SETEUID
-#ifndef BROKEN_SETEUID
 		if(seteuid(uid)) {
+#if defined(HAVE_GETEUID) && !defined(BROKEN_GETEUID)
+			if(!forcing_success)
+#endif
 			success = false;
 		}
-#endif
 #endif
 	}
-	return success;
+	return (force_success || success);
 }

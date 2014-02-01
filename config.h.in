@@ -30,6 +30,18 @@
 /* Define to __attribute__ ((signal)) if it can be used */
 #undef ATTRIBUTE_SIGNAL
 
+/* Define to 1 if getegid is broken */
+#undef BROKEN_GETEGID
+
+/* Define to 1 if geteuid is broken */
+#undef BROKEN_GETEUID
+
+/* Define to 1 if getgid is broken */
+#undef BROKEN_GETGID
+
+/* Define to 1 if getuid is broken */
+#undef BROKEN_GETUID
+
 /* Define to 1 if setegid is broken */
 #undef BROKEN_SETEGID
 
@@ -258,6 +270,18 @@
 
 /* Default Levenshtein distance for matches (as string) */
 #undef LEVENSHTEIN_DISTANCE_DEFAULT
+
+/* Define to 1 if getegid needs a prototype */
+#undef NEED_GETEGID_PROTO
+
+/* Define to 1 if geteuid needs a prototype */
+#undef NEED_GETEUID_PROTO
+
+/* Define to 1 if getgid needs a prototype */
+#undef NEED_GETGID_PROTO
+
+/* Define to 1 if getuid needs a prototype */
+#undef NEED_GETUID_PROTO
 
 /* Define to 1 if setegid needs a prototype */
 #undef NEED_SETEGID_PROTO

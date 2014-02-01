@@ -3,6 +3,9 @@
 *eix-0.30.2
 	Martin Väth <martin at mvath.de>:
 	- Move repository to GitHub since BerliOS closes
+	- Introduce REQUIRE_DROP, NODROP_FATAL, see
+	  https://bugs.gentoo.org/show_bug.cgi?id=499944
+	- Add tmpfiles.d/eix.conf default
 	- manpage: Add reference to color variables in FAQ and fix typos from
 	  http://bugs.gentoo.org/show_bug.cgi?id=499932
 

@@ -238,6 +238,15 @@ AddOption(INTEGER, "EIX_UID",
 	"If EIX_USER is empty or nonexistent, use this user id.\n"
 	"In this case and if ${EIX_UID} <= 0, the user id is not changed."));
 
+AddOption(STRING, "REQUIRE_DROP",
+	"root", _(
+	"If true it is required that dropping of permission succeeds.\n"
+	"The special value root means: true for UID 0, false otherwise."));
+
+AddOption(BOOLEAN, "NODROP_FATAL",
+	"false", _(
+	"If true, a negative result of REQUIRE_DROP raises an error."));
+
 AddOption(INTEGER, "EIX_GID",
 	"%{EIX_UID}", _(
 	"If EIX_GROUP is empty or nonexistent, use this group id.\n"

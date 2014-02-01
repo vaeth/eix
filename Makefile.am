@@ -23,7 +23,7 @@ CLEANFILES = doxygen.cfg cppcomplete.tags tags
 dist_doc_DATA = AUTHORS ChangeLog
 
 # Stuff from our distribution
-EXTRA_DIST = config/config.rpath contrib/cpplint.sh contrib/check_includes.sh doxygen.cfg.in bash/eix .gitignore
+EXTRA_DIST = config/config.rpath contrib/cpplint.sh contrib/check_includes.sh doxygen.cfg.in bash/eix tmpfiles.d/eix.conf .gitignore
 
 ACLOCAL_AMFLAGS = -I m4 -I martinm4
 
