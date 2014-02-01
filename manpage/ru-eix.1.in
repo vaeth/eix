@@ -3480,7 +3480,9 @@ Many cache methods are slowly in principle:
 Please use the hints given in the separate section B<SPEEDUP> below.
 
 eix cannot reliably detect the color capabilities and background color of your terminal.
-Here are a few simple methods how you can avoid some undesired color problems:
+Here are a few simple methods how you can avoid some undesired color problems
+(to understand details of these methods look up the above description of the variables
+B<TERM_ALT?>, B<SOLARIZED>, B<COLORSCHEME?>, B<DARK>, B<TERM_DARK>, and B<COLORFGBG_DARK>.)
 
 .TP
 1. Use the color scheme corresponding to your actual background color by setting B<DARK=true> or B<DARK=false> in I<@SYSCONFDIR@/eixrc> (or adapt the heuristics in B<TERM_DARK> to your system.)
@@ -3500,7 +3502,8 @@ Here are a few simple methods how you can avoid some undesired color problems:
 .LP
 eix does not and probably never will support dependencies and/or useflags.
 In particular, this means that eix -u output will be in general different
-from the output of an emerge update command - rely only the latter for your system.
+from the output of an emerge update command.
+You should rely only on the latter for your system.
 This holds in particular also for the upgrades of packages with slots.
 The variable B<UPGRADE_TO_HIGHEST_SLOT> and manual exceptions
 in B</etc/portage/package.slot_upgrade_forbid> or
@@ -3607,7 +3610,7 @@ and, unless you have a reason not to do so, also the line
 B<thin-manifests = true>
 
 The former tells portage to create/read only the metadata in
-I</usr/local/portage/medata/md5-cache> (which is the new method and should be preferred over the other).
+I</usr/local/portage/metadata/md5-cache> (which is the new method and should be preferred over the other).
 The other line is not really related with metadata but just means that the Manifest files
 in your overlay will/need not contain checksums of files from I</usr/local/portage>.
 

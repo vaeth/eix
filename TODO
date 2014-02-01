@@ -7,7 +7,7 @@ Things to do perhaps:
 Ambitious tasks which will probably not be implemented:
 - Support for Paludis.
   Would require rather different mask/keywords handling,
-  in particular in connected with option -T and with overlays;
+  in particular in connection with option -T and with overlays;
   Probably a separated mask handling would have to be implemented to let -T
   still work.  Moreover, overlay handling - especially for /var/db/pkg -
   would have to be completely rewritten and in a way which would probably

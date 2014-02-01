@@ -3568,7 +3568,9 @@ Benutzen Sie die Hinweise im speziellen Abschnitt B<BESCHLEUNIGUNG> weiter unten
 eix kann nicht zuverlässig die Farbmöglichkeiten und Hintergrundfarbe Ihres Terminal feststellen;
 dies ist gerade dann besonders ärgerlich, wenn Sie ein transparentes Terminal benutzen oder die Vorgabe-Hintergrundfarbe von
 beispielsweise xterm auf Schwarz geändert haben.
-Hier sind einige einfache Methoden, wie sie einige ungewünschte Farbprobleme vermeiden können:
+Hier sind einige einfache Methoden, wie sie einige ungewünschte Farbprobleme vermeiden können
+(zum Detailverständnis dieser Methoden schlagen Sie bitte die weiter oben stehende Beschreibung
+der Variablen B<TERM_ALT?>, B<SOLARIZED>, B<COLORSCHEME?>, B<DARK>, B<TERM_DARK> und B<COLORFGBG_DARK> nach):
 
 .TP
 1. Benutzen Sie das Farbschema zu ihrer tatsächlichen Hintergrundfarbe, indem Sie B<DARK=true> oder B<DARK=false> in I<@SYSCONFDIR@/eixrc> setzen (oder in indem Sie die Heuristik aus B<TERM_DARK> an Ihr System anpassen.)
@@ -3699,7 +3701,7 @@ sowie, außer man hat Gründe das nicht zu tun, ebenfalls die Zeile
 B<thin-manifests = true>
 
 Das erste weist Portage an nur die Metadaten in
-I</usr/local/portage/medata/md5-cache> zu erzeugen/benutzen
+I</usr/local/portage/metadata/md5-cache> zu erzeugen/benutzen
 (was die neue Methode ist und der alten vorgezogen werden sollte).
 Die andere Zeile hat nichts mit Metadaten zu tun sondern bedeutet nur,
 dass die Manifest-Dateien im Overlay keine Checksummen der Dateien aus
