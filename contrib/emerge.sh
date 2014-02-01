@@ -21,21 +21,17 @@ distdir=`portageq distdir`
 [ -n "${distdir:++}" ] && test -d "${distdir}" || Die "cannot determine DISTDIR"
 
 GetEdir() {
-	reverse=
-	for overlay in `portageq portdir_overlay`
-	do	reverse="${overlay} ${reverse}"
-	done
-	for overlay in ${reverse}
-	do	edir="${overlay}/${category}/${project}"
+	eroot=`portageq envvar EROOT`
+	for overlay in `portageq get_repos "${eroot}"`
+	do	edir=`portageq get_repo_path "${eroot}" "${overlay}"`/${category}/${project}
 		test -d "${edir}" || continue
 		for jebuild in "${edir}/${project}-"*.ebuild
 		do	case ${jebuild##*/} in
-				"${project}-9999"*) continue;;
+			*9999.ebuild)
+				continue;;
 			esac
 			test -f "${jebuild}" || continue
-			test -r "${overlay}/profiles/repo_name" && \
-			repo_name=`cat -- "${overlay}"/profiles/repo_name` || \
-			repo_name=
+			repo_name=${overlay}
 			return 0
 		done
 	done
@@ -48,7 +44,8 @@ MoveEbuild() {
 	latest=
 	for find_latest in "${edir}/${project}-"*.ebuild
 	do	case ${find_latest##*/} in
-		"${project}-"*9999.ebuild)	continue;;
+		*9999.ebuild)
+			continue;;
 		esac
 		test -f "${find_latest}" && latest=${find_latest}
 	done
