@@ -430,7 +430,7 @@ ReadGettext() {
 	case ${USE_NLS-@USE_NLS@} in
 	''|[nNfF0]*)
 		false;;
-	esac && {
+	esac && command -v gettext.sh >/dev/null 2>&1 && {
 		. gettext.sh
 		export TEXTDOMAIN='@TEXTDOMAIN@'
 		export TEXTDOMAINDIR='@TEXTDOMAINDIR@'

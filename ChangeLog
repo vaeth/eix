@@ -4,8 +4,10 @@
 	Martin Väth <martin at mvath.de>:
 	- Move repository to GitHub since BerliOS closes
 	- Introduce REQUIRE_DROP, NODROP_FATAL, see
-	  https://bugs.gentoo.org/show_bug.cgi?id=499944
+	  http://bugs.gentoo.org/show_bug.cgi?id=499944
 	- Add tmpfiles.d/eix.conf default
+	- scripts: act as with USE_NLS=no if gettext.sh cannot be found, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=500130
 	- manpage: Add reference to color variables in FAQ and fix typos from
 	  http://bugs.gentoo.org/show_bug.cgi?id=499932
 
