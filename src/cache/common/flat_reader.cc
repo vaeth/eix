@@ -93,7 +93,7 @@ void flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallbac
 	string linebuf;
 	// Read the rest
 	for(eix::TinyUnsigned linenr(5); is.good(); ++linenr) {
-		getline(is, linebug);
+		getline(is, linebuf);
 		switch(linenr) {
 			case 5:  pkg->homepage = linebuf;
 			         break;
