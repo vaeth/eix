@@ -50,7 +50,7 @@ bool open_database(Database *db, DBHeader *header, const char *name, bool verbos
 bool print_overlay_data(string *result, const DBHeader& header, const char *overlay, const string& sep, const char *name, PrintOverlayMode mode, bool verbose) ATTRIBUTE_NONNULL_;
 
 static void print_help() {
-	printf(_(
+	cout << eix::format(_(
 "Usage: %s [-q] [-f FILE] [-s SEP] [-c] [-l OV] [-p OV] [-o OV] ...\n"
 "Check whether eix database FILE has current format, and print label, path,\n"
 "or both of specified overlay OV in FILE, appending SEP to each data.\n"
@@ -70,7 +70,7 @@ static void print_help() {
 "The special option -h outputs this help text and quits.\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"), program_name, EIX_CACHEFILE, program_name);
+"further information.\n")) % program_name % EIX_CACHEFILE % program_name;
 }
 
 class OverlayOption {

@@ -15,7 +15,6 @@
 
 #include <unistd.h>
 
-#include <cstdio>
 #include <cstdlib>
 
 #include <algorithm>
@@ -70,7 +69,7 @@ static DBHeader       *old_header, *new_header;
 static Node           *format_new, *format_delete, *format_changed;
 
 static void print_help() {
-	printf(_("Usage: %s [options] old-cache [new-cache]\n"
+	cout << eix::format(_("Usage: %s [options] old-cache [new-cache]\n"
 "\n"
 " -Q, --quick (toggle)    do (not) read unguessable slots of installed packages\n"
 "     --care              always read slots of installed packages\n"
@@ -88,7 +87,7 @@ static void print_help() {
 " -V, --version           show version-string\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"), program_name);
+"further information.\n")) % program_name;
 }
 
 bool cli_show_help(false),

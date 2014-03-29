@@ -9,9 +9,14 @@
 
 #include <cstdio>
 
+#include <iostream>
+
 #include "eixTk/ansicolor.h"
 #include "eixTk/eixint.h"
+#include "eixTk/formated.h"
 #include "eixTk/i18n.h"
+
+using std::cout;
 
 typedef unsigned int CalcType;
 
@@ -145,11 +150,11 @@ void Display::palette(eix::SignedBool f, bool b, const char *s) {
 	} else {
 		printed_palette = true;
 	}
-	printf(_("System Colors (%s):\n"), s);
+	cout << eix::format(_("System Colors (%s):\n")) % s;
 	syscol();
-	printf(_("6x6x6 Color Cube (%s):\n"), s);
+	cout << eix::format(_("6x6x6 Color Cube (%s):\n")) % s;
 	cube();
-	printf(_("Grayscale Ramp (%s):\n"), s);
+	cout << eix::format(_("Grayscale Ramp (%s):\n")) % s;
 	ramp();
 }
 

@@ -9,15 +9,20 @@
 
 #include <config.h>
 
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
+#include <iostream>
+
 #include "eixTk/argsreader.h"
 #include "eixTk/eixint.h"
+#include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+
+using std::cerr;
+using std::endl;
 
 ArgumentReader::ArgumentReader(int argc, char **argv, const OptionList& opt_table) {
 	bool seen_escape(false);
@@ -124,7 +129,7 @@ int ArgumentReader::lookup_longopt(const char *long_opt, const OptionList& opt_t
 			return it->shortopt;
 		}
 	}
-	fprintf(stderr, _("Unknown option --%s\n"), long_opt);
+	cerr << eix::format(_("Unknown option --%s")) % long_opt << endl;
 	exit(EXIT_FAILURE);
 	return 0;  // never reached, but might avoid compiler warning
 }
@@ -138,7 +143,7 @@ int ArgumentReader::lookup_shortopt(const char short_opt, const OptionList& opt_
 		if(unlikely(it->shortopt == short_opt))
 			return short_opt;
 	}
-	fprintf(stderr, _("Unknown option -%c\n"), short_opt);
+	cerr << eix::format(_("Unknown option -%s")) % short_opt << endl;
 	exit(EXIT_FAILURE);
 	return 0;  // never reached, but might avoid compiler warning
 }
@@ -208,7 +213,7 @@ void ArgumentReader::foldAndRemove(const OptionList& opt_table) {
 					}
 					if(it == end()) {
 						if(!optional) {
-							fprintf(stderr, _("Missing parameter to --%s\n"), c->longopt);
+							cerr << eix::format(_("Missing parameter to --%s")) % (c->longopt) << endl;
 							exit(EXIT_FAILURE);
 						}
 					} else {
@@ -232,7 +237,7 @@ void ArgumentReader::foldAndRemove(const OptionList& opt_table) {
 					}
 					if(it == end()) {
 						if(!optional) {
-							fprintf(stderr, _("Missing second parameter to --%s\n"), c->longopt);
+							cerr << eix::format(_("Missing second parameter to --%s")) % (c->longopt) << endl;
 							exit(EXIT_FAILURE);
 						}
 					} else {

@@ -14,6 +14,7 @@
 #include <sys/types.h>
 
 #include <cerrno>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
@@ -90,7 +91,8 @@ static bool pushback_lines_file(const char *file, LineVec *v, bool keep_empty, e
 		}
 		return false;
 	}
-	while(likely(getline(ifstr, line) != NULLPTR)) {
+	while(ifstr.good()) {
+		getline(ifstr, line);
 		if(keep_comments <= 0) {
 			string::size_type x(line.find('#'));
 			if(unlikely(x != string::npos)) {

@@ -37,7 +37,7 @@ using std::cout;
 using std::endl;
 
 static void print_help() {
-	printf(_("Usage: %s [options] category/name-version[:slot][::repo] ...\n"
+	cout << eix::format(_("Usage: %s [options] category/name-version[:slot][::repo] ...\n"
 "Output all arguments matching a list of mask\n"
 "Options:\n"
 " -h, --help              show a short help screen\n"
@@ -50,7 +50,7 @@ static void print_help() {
 "An empty/omitted filename means standard input.\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"), program_name);
+"further information.\n")) % program_name;
 }
 
 /** Local options for argument reading. */

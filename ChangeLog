@@ -3,6 +3,9 @@
 *eix-0.30.2
 	Martin Väth <martin at mvath.de>:
 	- Move repository to GitHub since BerliOS closes
+	- Fix wrong usage of getline(), see
+	  http://bugs.gentoo.org/show_bug.cgi?id=506106
+	- Prefer eix::format over printf
 	- Introduce REQUIRE_DROP, NODROP_FATAL, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=499944
 	- Add tmpfiles.d/eix.conf default

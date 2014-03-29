@@ -17,7 +17,6 @@
 
 #include <locale>
 
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
@@ -423,7 +422,7 @@ bool resolve_plus_minus(WordSet *s, const WordVec& l, const WordSet *warnignore)
 
 void StringHash::store_string(const string& s) {
 	if(finalized) {
-		fprintf(stderr, _("Internal error: Storing required after finalizing"));
+		cerr << _("Internal error: Storing required after finalizing") << endl;
 		exit(EXIT_FAILURE);
 	}
 	push_back(s);
@@ -431,11 +430,11 @@ void StringHash::store_string(const string& s) {
 
 void StringHash::hash_string(const string& s) {
 	if(finalized) {
-		fprintf(stderr, _("Internal error: Hashing required after finalizing"));
+		cerr << _("Internal error: Hashing required after finalizing") << endl;
 		exit(EXIT_FAILURE);
 	}
 	if(!hashing) {
-		fprintf(stderr, _("Internal error: Hashing required in non-hash mode"));
+		cerr << _("Internal error: Hashing required in non-hash mode") << endl;
 		exit(EXIT_FAILURE);
 	}
 	// During hashing, we use str_map as a frequency counter to optimize

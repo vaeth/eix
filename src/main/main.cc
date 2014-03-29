@@ -11,14 +11,15 @@
 // #include <config.h>
 
 #include <csignal>  /* signal handlers */
-#include <cstdio>
 #include <cstdlib>
 #ifdef ENABLE_NLS
 #include <clocale>
 #endif
 
 #include <string>
+#include <iostream>
 
+#include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -105,6 +106,8 @@
 #endif
 
 using std::string;
+using std::cerr;
+using std::endl;
 
 /** The name under which we have been called. */
 const char *program_name;
@@ -115,7 +118,7 @@ static void sanitize_filename(string *s) ATTRIBUTE_NONNULL_;
 /** On segfault: show some instructions to help us find the bug. */
 static void sig_handler(int sig) {
 	if(sig == SIGSEGV)
-		fprintf(stderr, _(
+		cerr << eix::format(_(
 				"Received SIGSEGV - you probably found a bug in eix.\n"
 				"Please proceed with the following few instructions and help us find the bug:\n"
 				" * install gdb (sys-dev/gdb)\n"
@@ -126,8 +129,9 @@ static void sig_handler(int sig) {
 				" * type \"bt\" to get a backtrace (this helps us a lot)\n"
 				" * post a bugreport and be sure to include the output from gdb ..\n"
 				"\n"
-				"Sorry for the inconvenience and thanks in advance!\n"),
-				program_name, program_name);
+				"Sorry for the inconvenience and thanks in advance!")) %
+				program_name % program_name
+				<< endl;
 	exit(EXIT_FAILURE);
 }
 

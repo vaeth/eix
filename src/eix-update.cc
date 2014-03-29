@@ -13,7 +13,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include <cstdio>
 #include <cstdlib>
 
 #include <iostream>
@@ -117,7 +116,7 @@ static void override_label(OverlayIdent *overlay, const RepoNames& repo_names) A
 static bool stringstart_in_wordlist(const string& to_check, const WordVec& wordlist);
 
 static void print_help() {
-	printf(_("Usage: %s [options]\n"
+	cout << eix::format(_("Usage: %s [options]\n"
 "\n"
 " -h, --help              show a short help screen\n"
 " -V, --version           show version-string\n"
@@ -146,7 +145,7 @@ static void print_help() {
 " -r  --repo-name         set label for matching overlay.\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"), program_name, EIX_CACHEFILE);
+"further information.\n")) % program_name % EIX_CACHEFILE;
 }
 
 enum cli_options {
@@ -579,7 +578,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		override_label(&overlay, repo_names);
 		overlay.readLabel(cache->getPrefixedPath().c_str());
 		if(unlikely(find(exclude_labels.begin(), exclude_labels.end(), overlay.label) != exclude_labels.end())) {
-			INFO(eix::format(_("Excluding \"%s\" %s (cache: %s)\n"))
+			INFO(eix::format(_("Excluding %r %s (cache: %s)\n"))
 				% overlay.label
 				% cache->getPathHumanReadable()
 				% cache->getType());
@@ -601,7 +600,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 	for(CacheTable::iterator it(cache_table->begin());
 		likely(it != cache_table->end()); ++it) {
 		BasicCache *cache(*it);
-		INFO(eix::format(_("[%s] \"%s\" %s (cache: %s)\n"))
+		INFO(eix::format(_("[%s] %r %s (cache: %s)\n"))
 			% cache->getKey()
 			% cache->getOverlayName()
 			% cache->getPathHumanReadable()

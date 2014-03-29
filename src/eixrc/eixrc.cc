@@ -820,7 +820,7 @@ void EixRc::dumpDefaults(FILE *s, bool use_defaults) {
 				key,
 				output.c_str());
 		if(deflt == value) {
-			fprintf(s, "\n");
+			putc('\n', s);
 		} else {
 			fprintf(s,
 				"# %s\n"

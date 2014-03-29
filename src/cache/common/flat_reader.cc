@@ -92,7 +92,8 @@ void flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallbac
 	skip_lines(5, &is, filename, error_callback);
 	string linebuf;
 	// Read the rest
-	for(eix::TinyUnsigned linenr(5); getline(is, linebuf); ++linenr) {
+	for(eix::TinyUnsigned linenr(5); is.good(); ++linenr) {
+		getline(is, linebug);
 		switch(linenr) {
 			case 5:  pkg->homepage = linebuf;
 			         break;
@@ -105,5 +106,6 @@ void flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallbac
 				break;
 		}
 	}
+	// We should never get here. However, we do not spit errors if we do...
 	is.close();
 }
