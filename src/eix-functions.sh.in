@@ -226,7 +226,7 @@ Replace() {
 }
 
 Push() {
-# Rely on the existence of push.sh from http://github.com/vaeth/push/
+# Rely on the existence of push.sh from https://github.com/vaeth/push/
 	. push.sh
 	Push "${@}"
 }

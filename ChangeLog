@@ -462,7 +462,7 @@
 	- Russian translation. (Missing yet: eix --dump and most of manpage)
 
 	Martin Väth <martin at mvath.de>:
-	- Depend on http://github.com/vaeth/push/ instead of implementing
+	- Depend on https://github.com/vaeth/push/ instead of implementing
 	  a poor substitute.
 	- Add German manpage
 	- Improve file error handling. Make some errors fatal.
