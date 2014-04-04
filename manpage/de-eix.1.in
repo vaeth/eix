@@ -2093,6 +2093,11 @@ Eine lokale Kopie des Remote-Archivs, auf das eix-remote zugreift.
 Falls es leer ist, werden nur Temporärdateien benutzt.
 
 .TP
+.BR EIX_EBUILD ", " EIX_EBUILD_SH ", " EBUILD_DEPEND_TEMP " " (string)
+Pfade zu den Binaries B<ebuild> und B<ebuild.sh> bzw. der Datei, die von
+B<ebuild depend> generiert wird.
+
+.TP
 .BR EIX_WORLD " " (string)
 Die Datei, die eix als world-Datei betrachtet.
 Beachte, dass diese Datei normalerweise nur für Mitglieder der Gruppe portage lesbar ist.
