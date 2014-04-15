@@ -1997,7 +1997,7 @@ msgstr "Ausschluss von Overlay: %s\n"
 #: src/eix-update.cc:540
 #, c-format
 msgid "Building database (%s) ..\n"
-msgstr "Erzeuge Datenkbank (%s) ...\n"
+msgstr "Erzeuge Datenbank (%s) ...\n"
 
 #: src/eix-update.cc:581
 msgid "Excluding %r %s (cache: %s)\n"

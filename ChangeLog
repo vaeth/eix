@@ -11,6 +11,10 @@
 	- Add tmpfiles.d/eix.conf default
 	- scripts: act as with USE_NLS=no if gettext.sh cannot be found, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=500130
+	- Several translation fixes for German. Thanks to
+	  André Jaenisch <andre.jaenisch at openmailbox.org>,
+	  Dominik Geyer <dominik.geyer at gmail.com>, and
+	  Justin Lechner <jlec at gentoo.org>
 	- manpage: Add reference to color variables in FAQ and fix typos from
 	  http://bugs.gentoo.org/show_bug.cgi?id=499932
 
