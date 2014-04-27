@@ -223,6 +223,8 @@ AS_IF([${new_dialect}],
 	[AS_CASE([" ${CXXFLAGS} ${my_cxxadd}"],
 		[*" -std="*], [],
 		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+				-std=gnu++1y \
+				-std=c++1y \
 				-std=gnu++11 \
 				-std=c++11 \
 			], [${my_cxxfatal}], [], [break])])])
@@ -274,6 +276,8 @@ AS_IF([${optimization}],
 			-fpredictive-commoning \
 			-ftree-switch-conversion \
 			-fno-ident \
+			-freorder-functions \
+			-fdevirtualize-speculatively \
 		], [${my_cxxfatal}], [], [:])
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_FALSE], [ \
 			-Wl,-O1 \
@@ -408,6 +412,7 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wint-to-pointer-cast \
 			-Wcomment \
 			-WNSObject-attribute \
+			-fdiagnostic-color=always \
 		], [${my_cxxfatal}], [], [:])
 dnl We do not use:
 dnl Not needed anymore with current clang:
@@ -459,6 +464,7 @@ AS_IF([${security}],
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-pie \
 			-fstack-protector \
+			-fstack-protector-strong \
 			-Wl,-z,now \
 			-Wl,-z,relro \
 			-Wl,-z,noexecstack \
@@ -466,6 +472,7 @@ AS_IF([${security}],
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-D_FORTIFY_SOURCE=2 \
 			-fstack-protector \
+			-fstack-protector-strong \
 		], [${my_cxxfatal}], [${CPPFLAGS}], [:])])
 AS_IF([${strong_security}],
 	# We try to add -fsanitize=address to LDFLAGS before adding to CXXFLAGS

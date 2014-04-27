@@ -1257,7 +1257,7 @@ B<slotfirst>/B<slotlast> äquivalent zu B<first>/B<last>, und B<oneslot> ist 1.
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 Es wird der aktuelle Slot bzw. der Overlay der aktuellen Version ausgegeben.
 B<overlayver> ist leer, falls das gesamte Paket aus nur einem Overlay stammt;
-für diesen Fall sollte B<overlay> zur Ausgabe des Overlays benutzt werden.
+für diesen Fall sollte B<overlaykey> zur Ausgabe des Overlays benutzt werden.
 Im Gegensatz dazu enthält B<overlaynum> stets die Nummer des Overlays
 (als Text ohne Farben) oder ist leer, falls die Version keinem Overlay entstammt.
 B<virtual> ist genau dann nichtleer, wenn die Version aus einem virtuellen Overlay kommt.
@@ -2449,7 +2449,7 @@ Dies war des Standardverhalten vor eix-0.6.0.
 .BR used-renumbered / renumber / renumbered / number
 Listet nur die Overlay, die tatsächlich benutzt wurden, wobei die
 Overlays in"Fussnotenreihenfolge" nummeriert werden
-(d.h. wenn nur zwei Overlays benutzt werden, werden sie mit [1] und [2]nummeriert).
+(d.h. wenn nur zwei Overlays benutzt werden, werden sie mit [1] und [2] nummeriert).
 Der Nachteil dieses Vorgehens ist, dass Overlays für verschiedene Ausgaben
 verschiedene Nummern erhalten.
 Dennoch ist die Reihenfolge der Nummerierung konsistent.

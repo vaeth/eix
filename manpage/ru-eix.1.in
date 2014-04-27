@@ -1228,7 +1228,7 @@ B<slotfirst>/B<slotlast> is equivalent to B<first>/B<last> and B<oneslot> is 1.
 This must occur only in I<VARIABLE> in the context of version printing.
 It outputs the current slot or the overlay of the current version.
 B<overlayver> is empty if the whole package is from only one overlay;
-you should use B<overlay> to print the overlay in such a case.
+you should use B<overlaykey> to print the overlay in such a case.
 B<overlaynum>, in contrast, contains the number of the overlay
 without colors unconditionally (or is empty if the version is not from an overlay).
 B<virtual> is nonempty if and only if the version is from a virtual overlay.
