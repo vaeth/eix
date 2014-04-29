@@ -90,9 +90,9 @@ class Mask : public BasicVersion {
 
 		explicit Mask(Type type) :
 			m_type(type),
-			m_test_reponame(false),
 			m_test_slot(false),
-			m_test_subslot(false) {
+			m_test_subslot(false),
+			m_test_reponame(false) {
 		}
 
 		/** split a "mask string" into its components
