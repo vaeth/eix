@@ -65,6 +65,7 @@ Mask::Mask(Type type, const char *repo) {
 	} else {
 		m_test_reponame = false;
 	}
+	m_test_slot = m_test_subslot = false;
 }
 
 /** split a "mask string" into its components

@@ -88,7 +88,11 @@ class Mask : public BasicVersion {
 
 		Mask(Type type, const char *repo);
 
-		explicit Mask(Type type) : m_type(type), m_test_reponame(false) {
+		explicit Mask(Type type) :
+			m_type(type),
+			m_test_reponame(false),
+			m_test_slot(false),
+			m_test_subslot(false) {
 		}
 
 		/** split a "mask string" into its components

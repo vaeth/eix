@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2014-04-27 18:19+0200\n"
+"POT-Creation-Date: 2014-04-29 09:43+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -5629,28 +5629,28 @@ msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr ""
 "внутренняя ошибка: Попытка восстановить нелокальную маску без сохранения"
 
-#: src/portage/mask.cc:106
+#: src/portage/mask.cc:107
 msgid "Can't read category."
 msgstr "Невозможно прочесть категорию."
 
-#: src/portage/mask.cc:130
+#: src/portage/mask.cc:131
 msgid "Repository name must be separated with :: (one : is missing)."
 msgstr ""
 "Имя репозитория должно быть отделено с помощью :: (одно : отсутствует)."
 
-#: src/portage/mask.cc:178
+#: src/portage/mask.cc:179
 msgid "Operator without a version part."
 msgstr "Оператор без части с версией."
 
-#: src/portage/mask.cc:179
+#: src/portage/mask.cc:180
 msgid "Version specification is missing."
 msgstr "Отсутствует указание версии."
 
-#: src/portage/mask.cc:203
+#: src/portage/mask.cc:204
 msgid "A wildcard is only valid with the = operator."
 msgstr "Шаблон поиска имеет смысл только с оператором =."
 
-#: src/portage/mask.cc:207
+#: src/portage/mask.cc:208
 msgid ""
 "A wildcard is only valid with the = operator.\n"
 "Portage would also accept something like ~app-shells/bash-3*,\n"

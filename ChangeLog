@@ -9,6 +9,7 @@
 	- Introduce REQUIRE_DROP, NODROP_FATAL, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=499944
 	- Use gcc-4.9 features if available
+	- Initialize bools to make gcc-4.9 diagnostics happy
 	- Add tmpfiles.d/eix.conf default
 	- scripts: act as with USE_NLS=no if gettext.sh cannot be found, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=500130

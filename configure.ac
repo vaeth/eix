@@ -336,11 +336,13 @@ AS_IF([${strong_optimization}],
 			-fno-rtti \
 			-fno-threadsafe-statics \
 		], [${my_cxxfatal}], [${CPPFLAGS}], [:])
-	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+	AS_IF([${strong_security}],
+		[],
+		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-DNDEBUG \
 			-DNO_DEBUG \
 			-DG_DISABLE_ASSERT \
-		], [${my_cxxfatal}], [${CPPFLAGS}], [:])])
+		], [${my_cxxfatal}], [${CPPFLAGS}], [:])])])
 dnl We do not use:
 dnl Would not cahange anything:
 dnl			-ffast-math \
@@ -449,6 +451,16 @@ dnl			-Wunreachable-code \
 dnl			-Waggregate-return \
 dnl			-Winline \
 dnl			-Weffc++ \
+AS_IF([${strong_security}],
+	[AS_VAR_SET([my_stackprotector], ["
+		-fstack-protector-all
+		-fstack-protector-strong
+		-fstack-protector
+	"])],
+	[AS_VAR_SET([my_stackprotector], ["
+		-fstack-protector-strong
+		-fstack-protector
+	"])])
 AS_IF([${security}],
 	# We try to add -fstack-protector to LDFLAGS before adding to CXXFLAGS
 	# since on some systems it requires also linking with a library.
@@ -463,29 +475,41 @@ AS_IF([${security}],
 		], [${my_cxxfatal}], [${CPPFLAGS}], [:])
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-pie \
-			-fstack-protector \
-			-fstack-protector-strong \
 			-Wl,-z,now \
 			-Wl,-z,relro \
 			-Wl,-z,noexecstack \
 		], [${my_ldfatal}], [], [:])
+	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
+			${my_stack_protector} \
+			], [${my_ldfatal}], [], [break])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-D_FORTIFY_SOURCE=2 \
-			-fstack-protector \
-			-fstack-protector-strong \
-		], [${my_cxxfatal}], [${CPPFLAGS}], [:])])
+		], [${my_cxxfatal}], [${CPPFLAGS}], [:])
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+			${my_stack_protector} \
+			], [${my_cxxfatal}], [${CPPFLAGS}], [break])])
 AS_IF([${strong_security}],
-	# We try to add -fsanitize=address to LDFLAGS before adding to CXXFLAGS
+	# We try to add -fsanitize=... to LDFLAGS before adding to CXXFLAGS
 	# since on some systems it requires also linking with a library.
-	[MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
-			-fstack-protector-all \
-			-faddress-sanitizer \
-			-fsanitize=address \
+	[AS_VAR_SET([my_sanitize], ["
+			-faddress-sanitizer
+			-fsanitize=address
+			-fsanitize=leak
+			-fsanitize=thread
+			-fsanitize=undefined
+			-fsanitize=vla-bound
+			-fsanitize=shift
+			-fsanitize=signed-integer-overflow
+			-fsanitize=integer-divide-by-zero
+			-fsanitize=unreachable
+			-fsanitize=null
+			-fsanitize=return
+		"])
+	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
+			${my_sanitize} \
 		], [${my_ldfatal}], [], [:])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
-			-fstack-protector-all \
-			-faddress-sanitizer \
-			-fsanitize=address \
+			${my_sanitize} \
 		], [${my_cxxfatal}], [${CPPFLAGS}], [:])])
 
 # We are done with testing, the real flag mangling takes place:

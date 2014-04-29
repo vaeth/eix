@@ -30,6 +30,9 @@ class Depend {
 	public:
 		static bool use_depend;
 
+		Depend() : obsolete(false) {
+		}
+
 		void set(const std::string& depend, const std::string& rdepend, const std::string& pdepend, const std::string& hdepend, bool normspace);
 
 		std::string get_depend() const {

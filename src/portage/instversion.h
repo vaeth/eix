@@ -46,6 +46,7 @@ class InstVersion : public ExtendedVersion, public Keywords {
 			know_deps = false;
 			instDate = 0;
 			know_overlay = false;
+			overlay_failed = false;
 		}
 
 		InstVersion() {
