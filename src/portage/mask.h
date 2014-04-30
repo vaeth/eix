@@ -143,10 +143,14 @@ class KeywordMask : public Mask {
 		std::string keywords;
 		bool locally_double;
 
-		explicit KeywordMask(const char *repo) : Mask(maskTypeNone, repo) {
+		explicit KeywordMask(const char *repo) :
+			Mask(maskTypeNone, repo),
+			locally_double(false) {
 		}
 
-		explicit KeywordMask() : Mask(maskTypeNone) {
+		explicit KeywordMask() :
+			Mask(maskTypeNone),
+			locally_double(false) {
 		}
 
 		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;

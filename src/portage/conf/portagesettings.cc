@@ -700,9 +700,9 @@ void PortageSettings::addOverlayProfiles(CascadingProfile *p) const {
 PortageUserConfig::PortageUserConfig(PortageSettings *psettings, CascadingProfile *local_profile) {
 	m_settings = psettings;
 	profile    = local_profile;
+	read_use = read_env = read_license = read_restrict = read_cflags = false;
 	readKeywords();
 	readMasks();
-	read_use = read_env = read_license = read_cflags = false;
 }
 
 PortageUserConfig::~PortageUserConfig() {
