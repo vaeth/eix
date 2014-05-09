@@ -1,24 +1,31 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.30.3
+	Martin Väth <martin at mvath.de>:
+	- eix-sync: Add -n (dry-run) and -v (verbose) options, see
+	  https://bugs.gentoo.org/show_bug.cgi?id=509750
+	- Fix more wrong usages of getline(), see
+	  https://bugs.gentoo.org/show_bug.cgi?id=506106
+
 *eix-0.30.2
 	Martin Väth <martin at mvath.de>:
 	- Move repository to GitHub since BerliOS closes
 	- Fix wrong usage of getline(), see
-	  http://bugs.gentoo.org/show_bug.cgi?id=506106
+	  https://bugs.gentoo.org/show_bug.cgi?id=506106
 	- Prefer eix::format over printf
 	- Introduce REQUIRE_DROP, NODROP_FATAL, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=499944
+	  https://bugs.gentoo.org/show_bug.cgi?id=499944
 	- Use gcc-4.9 features if available
 	- Initialize bools to make gcc-4.9 diagnostics happy
 	- Add tmpfiles.d/eix.conf default
 	- scripts: act as with USE_NLS=no if gettext.sh cannot be found, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=500130
+	  https://bugs.gentoo.org/show_bug.cgi?id=500130
 	- Several translation fixes for German. Thanks to
 	  André Jaenisch <andre.jaenisch at openmailbox.org>,
 	  Dominik Geyer <dominik.geyer at gmail.com>, and
 	  Justin Lechner <jlec at gentoo.org>
 	- manpage: Add reference to color variables in FAQ and fix typos from
-	  http://bugs.gentoo.org/show_bug.cgi?id=499932
+	  https://bugs.gentoo.org/show_bug.cgi?id=499932
 
 *eix-0.30.1
 	Martin Väth <martin at mvath.de>:
@@ -28,31 +35,31 @@
 	- contrib/make.sh: Fix ccache handling
 	- Check whether dropping of permissions worked
 	- Fix message if EIX_LIMIT{,_COMPACT} equals number of all packages
-	  output, see http://bugs.gentoo.org/show_bug.cgi?id=497232
+	  output, see https://bugs.gentoo.org/show_bug.cgi?id=497232
 	- eix-header: Add comment that -f is non-optional for portable scripts,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=497572
+	  see https://bugs.gentoo.org/show_bug.cgi?id=497572
 	- Use -fPIE -pie with --enable-security, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=497546
+	  https://bugs.gentoo.org/show_bug.cgi?id=497546
 
 *eix-0.30.0
 	Martin Väth <martin at mvath.de>:
 	- Introduce {mainrepo} attribute; "Find open bugs" only for those, see
-	  http://developer.berlios.de/bugs/?func=detailbug&bug_id=19160&
+	  https://developer.berlios.de/bugs/?func=detailbug&bug_id=19160&
 	  group_id=11597
 	- Introduce OMIT_EXPAND and <{colli,}use0> attributes to omit output of
-	  USE_EXPAND variables: http://bugs.gentoo.org/show_bug.cgi?id=489306
+	  USE_EXPAND variables: https://bugs.gentoo.org/show_bug.cgi?id=489306
 	- Let --version output only version number
 	- scripts: Let -i also reset -H properly
 	- Avoid #include of algorithm.h in packagetest and of packagest.h in
 	  mask.h. This avoids "phantom" code with some gcc versions and flto:
-	  http://developer.berlios.de/bugs/?func=detailbug&
+	  https://developer.berlios.de/bugs/?func=detailbug&
 	  bug_id=19182&group_id=11597
 	- Use constexpr for some constants (if supported by dialect, of course)
 	- Use gettext-0.18.3: allows to specify GNU sed
 	- Remove --with-nongnu-cxx (no kludges needed anymore for current clang
 	  and/or ccache; it is now the task of the user to export appropriate
 	  CCACHE_CPP2 or CXXFLAGS if he needs them for older versions.)
-	  This fixes http://bugs.gentoo.org/show_bug.cgi?id=455078
+	  This fixes https://bugs.gentoo.org/show_bug.cgi?id=455078
 	- Remove --enable-quickcheck (makes no sense without manual distinction
 	  of compilers which was just removed)
 	- Dump /usr/bin/env shebangs unless --with-eprefix-default is set.
@@ -84,25 +91,25 @@
 	  more than one argument, ignore some non-alphanumeric rubbish
 	- fix calculation of output of revision text
 	- eix -R/-Z: Print clearer error message,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=485488
+	  see https://bugs.gentoo.org/show_bug.cgi?id=485488
 	- eix-sync: Fix checking EIX_CACHEFILE when path changed,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=485152
+	  see https://bugs.gentoo.org/show_bug.cgi?id=485152
 	- Improve storage of depends (simpler and better compression)
 	- --print-all-depends works now as documented (no doublequote symbols)
 
 *eix-0.29.4
 	Martin Väth <martin at mvath.de>:
 	- Fix wrong usage of ATTRIBUTE_NONNULL for Node *root (caused even
-	  segfaults), see http://bugs.gentoo.org/show_bug.cgi?id=483392
+	  segfaults), see https://bugs.gentoo.org/show_bug.cgi?id=483392
 	- Fix cache-method sqlite: Set overlay_key in read versions, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=480604
+	  https://bugs.gentoo.org/show_bug.cgi?id=480604
 	- Fix: deep StringList comparison; fixes duplicate occurence of
 	  mask reasons in certain cases
 
 *eix-0.29.3
 	Martin Väth <martin at mvath.de>:
 	- Add EIX_LIMIT{,_COMPACT} as a safety measurement for typos.
-	  This solves somewhat http://bugs.gentoo.org/show_bug.cgi?id=346665
+	  This solves somewhat https://bugs.gentoo.org/show_bug.cgi?id=346665
 
 *eix-0.29.2
 	Martin Väth <martin at mvath.de>:
@@ -110,8 +117,8 @@
 	- Fix eix-update: Make long option --override-method work
 	- Fix eix-update: ebuild*: export PORTAGE_REPO_NAME and a rudimentary
 	  PORTAGE_ECLASS_LOCATIONS (>=portage-2.2.0_alpha89 needs it),
-	  see http://bugs.gentoo.org/show_bug.cgi?id=478320
-	- Fix colorless output: http://bugs.gentoo.org/show_bug.cgi?id=478818
+	  see https://bugs.gentoo.org/show_bug.cgi?id=478320
+	- Fix colorless output: https://bugs.gentoo.org/show_bug.cgi?id=478818
 	- Read also PORTAGE_REPOS_CONF /usr/share/portage/config/repos.conf
 	- Fix zsh-completion: use _call_program, force DEFAULT_FORMAT=normal
 	- manpage: cosmetical fixes
@@ -119,10 +126,10 @@
 *eix-0.29.1
 	Martin Väth <martin at mvath.de>:
 	- Fallback to PORTDIR=/usr/portage, see
-	  http://forums.gentoo.org/viewtopic-p-7349870.html
+	  https://forums.gentoo.org/viewtopic-p-7349870.html
 	- Make --installed-slot work again (regression from 0.26.0).
 	  Thanks to Vikraman <vikraman at gentoo.org> for finding and fixing,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=475564
+	  see https://bugs.gentoo.org/show_bug.cgi?id=475564
 	- Fix md5 algorithm for files of 8192 bytes or longer (serious bug
 	  from the beginning which made md5-cache for longer ebuilds invalid).
 	- Fix possible memory leaks.
@@ -139,7 +146,7 @@
 	  If possible, this feature will be kept in future versons of eix
 	- PORTDIR and PORTDIR_OVERLAY are probably going to be supported
 	  as input variables for eix, even if perhaps deprecated by portage,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=474590
+	  see https://bugs.gentoo.org/show_bug.cgi?id=474590
 	- Let dependency attribute work for installed versions
 	- Introduce --deps-installed, DEPS_INSTALLED
 	- Introduce new tool eix-header
@@ -150,26 +157,26 @@
 	- Fix some paths in manpage (regression from eix-0.28.3)
 	- cleanup: Transform io namespace to class: automatic close on cleanup
 	- German translation updates, improvements, and fixes, see e.g.
-	  http://bugs.gentoo.org/show_bug.cgi?id=475076
+	  https://bugs.gentoo.org/show_bug.cgi?id=475076
 
 *eix-0.28.5
 	Martin Väth <martin at mvath.de>:
 	- Allow that eix/portage config files are (recursively read) dirs,
-	  see e.g. http://bugs.gentoo.org/show_bug.cgi?id=467276
+	  see e.g. https://bugs.gentoo.org/show_bug.cgi?id=467276
 	  Make /etc/eixrc a directory by default
 	- Support for /etc/portage/package.accept_restrict, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=467622
+	  https://bugs.gentoo.org/show_bug.cgi?id=467622
 	- eix-remote: add option -x/-X to exclude redundant local/remote
 	  layman overlays. -x used to be the default in earlier eix versions,
 	  but this was reverted since users do not expect it,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=467958
+	  see https://bugs.gentoo.org/show_bug.cgi?id=467958
 	  Put EIX_REMOTE_OPTS=-x into /etc/eixrc to keep the old behaviour.
 	- eix-remote: make LOCAL_LAYMAN heuristic work with layman-2.0.0
 	- Fixes in zsh completion for --print, --*overlay*, eix-installed-after
 	- -fstrict-enums -fno-rtti -fno-threadsafe-statics -fvect-cost-model
 	- eix-sync: Exit with status 3 if neither main tree changed nor
 	  option -a was used nor have_changed=: is set, see
-	  http://developer.berlios.de/bugs/?func=detailbug&
+	  https://developer.berlios.de/bugs/?func=detailbug&
 	  bug_id=18973&group_id=11597
 
 *eix-0.28.4
@@ -193,11 +200,11 @@
 	  Default: gentoo and zugaina (http://gpo.zugaina.org)
 	  New option -Z, --remote2; modify REMOTE_DEFAULT correspondingly
 	- Fix eix-update with REMOTE_DEFAULT, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=462040
+	  https://bugs.gentoo.org/show_bug.cgi?id=462040
 	- Fixes in zsh-completion: content, tags, use always _description,
 	  add some forgotten options like -R (and new -Z)
 	- Make copy-constructors non-explicit as required in new C++ standard,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=456064
+	  see https://bugs.gentoo.org/show_bug.cgi?id=456064
 	- Pass Google's current cpplint-3.231
 	- Be nice to gcc-4.8 (e.g. -Wno-long-long for broken pre-includes)
 	- Use gettext-0.18.2
@@ -209,9 +216,9 @@
 
 	Martin Väth <martin at mvath.de>:
 	- Introduce -# as short form of --only-names, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=453180
+	  https://bugs.gentoo.org/show_bug.cgi?id=453180
 	- Fix regression of re-enumeration of overlays from eix-0.28.0, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=452548
+	  https://bugs.gentoo.org/show_bug.cgi?id=452548
 	- Allow full mask syntax in --pipe.
 	- Introduce --pipe-mask.
 	- Remove --pipe-name --pipe-version hacks (--pipe-mask is better).
@@ -226,7 +233,7 @@
 	- Fix regression {*var} and {!*var} from eix-0.28.0
 	- Simplify eix-diff default format (use new \C<number> feature)
 	- Improve parsing in --pipe: cut garbage after versions, see
-	  http://forums.gentoo.org/viewtopic-p-7222402.html
+	  https://forums.gentoo.org/viewtopic-p-7222402.html
 
 *eix-0.28.0
 	Martin Väth <martin at mvath.de>:
@@ -238,7 +245,7 @@
 	- Extend COLORFGBG_DARK default for rxvt-unicode with XPM support.
 	- Treat (none;black) correctly
 	- eix-remote -q: Pass --no-verbose to wget and redirect its output,
-	  see http://forums.gentoo.org/viewtopic.php?p=7208430
+	  see https://forums.gentoo.org/viewtopic.php?p=7208430
 	- eix-functions.sh: Introduce Echo
 	- Support AC_CONFIG_MACRO_DIR[S] of automake-1.13, keep ACLOCAL_AMFLAGS
 	- Remove support for <automake-1.11.2
@@ -264,15 +271,15 @@
 	- Change TERM_DARK meaning to allow a finer heuristics
 	  (e.g. tune whether COLORFGBG is respected).
 	- Clear comment lines correctly in non-mask files, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=446078 and
-	  http://developer.berlios.de/bugs/?func=detailbug&
+	  https://bugs.gentoo.org/show_bug.cgi?id=446078 and
+	  https://developer.berlios.de/bugs/?func=detailbug&
 	  bug_id=18819&group_id=11597
 	- Recognize file-ends better for comment separation
 
 *eix-0.27.5
 	Martin Väth <martin at mvath.de>:
 	- Support mask reason (by default output with --versionlines), see
-	  http://developer.berlios.de/feature/?func=detailfeature&
+	  https://developer.berlios.de/feature/?func=detailfeature&
 	  feature_id=5605&group_id=11597
 	- If you have inconvenient colors (e.g. on dark or transparent terms),
 	  this is probably due to the new DARK heuristics (see below).
@@ -291,31 +298,31 @@
 	  COLORSCHEME3=0.
 	  See the BUGS section on the eix manpage.
 	- Let DARK=auto use a heuristic based on TERM_DARK, COLORFGBG_DARK,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=438076
+	  see https://bugs.gentoo.org/show_bug.cgi?id=438076
 	- COLORSCHEME{0..3} can now contain two numbers (dark and light).
 	- Move rxvt-unicode without -256color to ALT_TERM2, since it supports
 	  only 88 colors which could deserve its own color scheme.
 	  For the moment, COLORSCHEME0 is used as a poor man's 88 color scheme.
-	  See http://bugs.gentoo.org/show_bug.cgi?id=438076
+	  See https://bugs.gentoo.org/show_bug.cgi?id=438076
 	- Add reset-sequences before some/all (depending on RESET_ALL_LINES)
 	  newlines to the defaults to fix the worst issues on terminals
 	  breaking with changed background colors, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=445392
+	  https://bugs.gentoo.org/show_bug.cgi?id=445392
 	- Fix color output of overlay list if no colors are used.
 	- Add WIDETERM, COLUMNS, and a heuristic for the defaults.
 	- Support =foo/bar-* version atoms as reported by bugmenot2:
-	  http://developer.berlios.de/bugs/?func=detailbug&bug_id=18788&
+	  https://developer.berlios.de/bugs/?func=detailbug&bug_id=18788&
 	  group_id=11597
 
 *eix-0.27.4
 	Martin Väth <martin at mvath.de>:
 	- Change COLOR_INST_VERSION to work with solarized. Thanks to khayyam:
-	  http://forums.gentoo.org/viewtopic.php?p=7167646
+	  https://forums.gentoo.org/viewtopic.php?p=7167646
 	- Cosmetical fixes in the manpages
 	- Add unused default variables {UPDATE_,DROP_}PRINT_IUSE
 	  to formally complete *PRINT_IUSE references.
 	- Use again readdir() instead of readdir_r() because of Solaris, see
-	  http://developer.berlios.de/bugs/?func=detailbug&bug_id=18768&
+	  https://developer.berlios.de/bugs/?func=detailbug&bug_id=18768&
 	  group_id=11597 Thanks for alx_s for reporting.
 	- Improve zsh completions, e.g. add descriptions
 
@@ -340,7 +347,8 @@
 	- eix-installed-after: New option -F File to use mtime for reference
 	- Introduce EIX_INSTALLED_AFTER to set default args; corresponding new
 	  eix-installed-after option -i to ignore. Previous -i is renamed to -I
-	- Avoid strcasestr(), see http://bugs.gentoo.org/show_bug.cgi?id=437706
+	- Avoid strcasestr(), see
+	  https://bugs.gentoo.org/show_bug.cgi?id=437706
 
 *eix-0.27.2
 	Martin Väth <martin at mvath.de>:
@@ -378,7 +386,7 @@
 	- New eix --print-overlay-data
 	- Let eix --print-overlay-* honor PRINT_APPEND
 	- Default to eix-sync -M if PORTDIR_CACHE_METHOD is sqlite{,*} or flat,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=434616
+	  see https://bugs.gentoo.org/show_bug.cgi?id=434616
 	- Fix --with-nongnu-cxx=clang if ccache is used: sets CCACHE_CPP2=true
 	- Add -Werror also for LDFLAGS checks. Fixes indirectly CXXFLAGS checks
 	- Introduce paranoic/static asserts and use them only for debugging
@@ -397,11 +405,11 @@
 	- Introduce search options --nonvirtual, --virtual and attributes
 	  {virtual} {havevirtual} {havenonvirtual} and in xml: virtual="1"
 	- Make configure cross-compile friendly, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=432122
+	  https://bugs.gentoo.org/show_bug.cgi?id=432122
 	- Fix --without-sqlite compile regression, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=432238
+	  https://bugs.gentoo.org/show_bug.cgi?id=432238
 	- include config.h in all non-headers, and only there.
-	  This should fix http://bugs.gentoo.org/show_bug.cgi?id=432478
+	  This should fix https://bugs.gentoo.org/show_bug.cgi?id=432478
 
 *eix-0.26.3
 	Martin Väth <martin at mvath.de>:
@@ -428,19 +436,19 @@
 	- Fix masked-packages: Treat repository name in arguments correctly.
 	- masked-packages: Treat - as standard input.
 	- Fix USE=tools linking error (regression of eix-0.26.0), see
-	  http://bugs.gentoo.org/show_bug.cgi?id=425512
+	  https://bugs.gentoo.org/show_bug.cgi?id=425512
 	- Allow KEYWORDS='*' and KEYWORDS='~*' in ebuilds
 	- Support profile-format=portage-2, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=426256
+	  https://bugs.gentoo.org/show_bug.cgi?id=426256
 	- Introduce DEFAULT_ARCH and ./configure --with-default-arch
 	- Use function pointers instead of case cascades
 	  for FORMAT execution and for file parsing.
 	  This is cleaner and might speed up things.
 	- manpage: improve description of masked-packages
 	- varsreader: Fix hang for DOS line ends, see
-	  http://forums.gentoo.org/viewtopic-t-929536.html
+	  https://forums.gentoo.org/viewtopic-t-929536.html
 	- Do not let (...) automagically choose the dep search, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=427644
+	  https://bugs.gentoo.org/show_bug.cgi?id=427644
 
 *eix-0.26.0
 	Артём Воротников <skybon at gmail.com>:
@@ -457,7 +465,7 @@
 	- Improve error handling of version parsing
 	- Remove NEWLINE
 	- Extend varsreader.cc to allow VAR=\n and (for portage escapes)
-	  VAR[\t ]*=[\t ]*value http://bugs.gentoo.org/show_bug.cgi?id=417387
+	  VAR[\t ]*=[\t ]*value https://bugs.gentoo.org/show_bug.cgi?id=417387
 	- support --with-nongnu-cxx=clang++
 	- separate eix-drop-permissions binary with --enable-separate-tools
 	- Improve slot finding
@@ -476,7 +484,7 @@
 	- eix-functions.sh: Make eval_gettext safe
 	- Use waitpid() in a more compatible manner
 	- No longer support gnu++0x or c++0x which breaks with gcc-4.4, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=414979
+	  https://bugs.gentoo.org/show_bug.cgi?id=414979
 
 *eix-0.25.4
 	Martin Väth <martin at mvath.de>:
@@ -486,9 +494,9 @@
 	  Remove duplicate FORMAT_AFTER_IUSE (a long standing regression)
 	- Fix eix-installed-after (regression introduced in eix-0.24.0)
 	- Set umask 002 in eix-update unless option -o is used, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=408509
+	  https://bugs.gentoo.org/show_bug.cgi?id=408509
 	- Try to fix permissions on interix, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=410205
+	  https://bugs.gentoo.org/show_bug.cgi?id=410205
 	  Thanks to Gordon Cowie <gcowie at live.com> and
 	  Fabian Groffen <grobian at gentoo.org>
 	- Rely on working delete 0; should speed up things slightly
@@ -521,7 +529,7 @@
 	- Move all cache files into /var/cache/eix/
 	- Start cachefile with magic string "eix\n"
 	- Introduce EXIT_STATUSLINE, see the discussion in
-	  http://bugs.gentoo.org/show_bug.cgi?id=407473
+	  https://bugs.gentoo.org/show_bug.cgi?id=407473
 
 *eix-0.25.0
 	Martin Väth <martin at mvath.de>:
@@ -570,7 +578,7 @@
 	- eix-sync: Make layman and hook errors non-fatal, by default.
 	  Use -F, FATAL_HOOKS, or the die function to revert old behavior.
 	- Suppress status line if TERM does not begin with TERM_STATUSLINE,
-	  see the discussion in http://bugs.gentoo.org/show_bug.cgi?id=402993
+	  see the discussion in https://bugs.gentoo.org/show_bug.cgi?id=402993
 
 *eix-0.23.9
 *eix-0.23.8
@@ -580,30 +588,30 @@
 	- Introduce {NO,FORCE_}{COLORS,STATUSLINE,PERCENTAGE}.
 	  The previous FORCE_USECOLORS and new NOCOLOR default them all.
 	- eix-remote: Change ownership before calling wget, see
-	  http://developer.berlios.de/bugs/?func=detailbug&bug_id=18493&
+	  https://developer.berlios.de/bugs/?func=detailbug&bug_id=18493&
 	  group_id=11597
-	- Make correct fix for http://bugs.gentoo.org/show_bug.cgi?id=399451.
+	- Make correct fix for https://bugs.gentoo.org/show_bug.cgi?id=399451.
 	  Thank Arfrever Frehtes Taifersar Arahesis <arfrever.fta at gmail.com>
 
 *eix-0.23.7
 	Martin Väth <martin at mvath.de>:
 	- Fix MetadataCache::use_prefixport(), see:
-	  http://bugs.gentoo.org/show_bug.cgi?id=399233
+	  https://bugs.gentoo.org/show_bug.cgi?id=399233
 	- Add {tbz2} also for default compact output
-	- Fix typo in eix-sync: http://bugs.gentoo.org/show_bug.cgi?id=399117
+	- Fix typo in eix-sync: https://bugs.gentoo.org/show_bug.cgi?id=399117
 	- Fix and document behavior if path is specified for cache md5-or-*
 	- Remove UTF-8 symbol from my name in some docs to allow building with
-	  docutils + python-3.2: http://bugs.gentoo.org/show_bug.cgi?id=399451
+	  docutils + python-3.2: https://bugs.gentoo.org/show_bug.cgi?id=399451
 
 *eix-0.23.6
 	Martin Väth <martin at mvath.de>:
 	- Scripts: Support for status line update; minor output improvements
 	- Introduce new cache method metadata-md5-or-flat and make it default
 	  for PORTDIR_CACHE_METHOD:
-	  http://developer.berlios.de/feature/?func=detailfeature&
+	  https://developer.berlios.de/feature/?func=detailfeature&
 	  feature_id=5483&group_id=11597
 	- Include unistd.h for isatty(). Thanks to <gokturk at binghamton.edu>,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=397589
+	  see https://bugs.gentoo.org/show_bug.cgi?id=397589
 
 *eix-0.23.5
 	Martin Väth <martin at mvath.de>:
@@ -642,63 +650,63 @@
 	- Support basic /etc/portage/package.license checking
 	- Add rudimentary bash-completion of
 	  Marcel Philipp Partap <marcel.partap at rwth-aachen.de>, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=304819
+	  https://bugs.gentoo.org/show_bug.cgi?id=304819
 	- Avoid install -D (does not work on BSD), see
-	  http://bugs.gentoo.org/show_bug.cgi?id=382539
+	  https://bugs.gentoo.org/show_bug.cgi?id=382539
 
 *eix-0.23.0
 	Martin Väth <martin at mvath.de>:
 	- Make profiles/* files default only on their repositories, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=380979
+	  https://bugs.gentoo.org/show_bug.cgi?id=380979
 	  This required a major code reorganization
 	- Bugfix: Let -... in /etc/portage/package.accept_keywords remove
 	  previous keywords of /etc/portage/package.accept_keywords
 	- Use a function-call for testing *FLAGS (e.g. -fstack-protector), see
-	  http://bugs.gentoo.org/show_bug.cgi?id=379717
+	  https://bugs.gentoo.org/show_bug.cgi?id=379717
 	  Thanks to Dustin Polke for helping with debugging this issue
 	- Cosmetic code changes
 
 *eix-0.22.11
 	Martin Väth <martin at mvath.de>:
 	- Bugfix: Let -... in /etc/portage/package.accept_keywords remove
-	  ACCEPT_KEYWORDS, see http://bugs.gentoo.org/show_bug.cgi?id=378767
+	  ACCEPT_KEYWORDS, see https://bugs.gentoo.org/show_bug.cgi?id=378767
 	- eix-test-obsolete: Set DEFAULT_FORMAT=compact instead using -c
-	  (chooses compact format absolutely, not toggling...), see http://
+	  (chooses compact format absolutely, not toggling...), see https://
 	  developer.berlios.de/bugs/?func=detailbug&bug_id=18284&group_id=11597
 
 *eix-0.22.10
 	Martin Väth <martin at mvath.de>:
 	- Add -Wl,-z,noexecstack with strong-optimization and security:
 	  gcc-4.6 -flto turns on execstack which is probably a bug, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=369795
+	  https://bugs.gentoo.org/show_bug.cgi?id=369795
 	- In case of -flto add CXXFLAGS to LDFLAGS unconditionally, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=374217
+	  https://bugs.gentoo.org/show_bug.cgi?id=374217
 	- scripts: Use readlink only if it supports -f
 
 *eix-0.22.9
 	Martin Väth <martin at mvath.de>:
 	- Support -~* keywords: Introduce {isminusunstable}, {wasminusunstable}
 	- Support alternative /etc/portage/make.profile location, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=358647
+	  https://bugs.gentoo.org/show_bug.cgi?id=358647
 	- Support layman-2
 	- Fix handling of non-matching /etc/portage/package.accept_keywords:
-	  http://bugs.gentoo.org/show_bug.cgi?id=370799
+	  https://bugs.gentoo.org/show_bug.cgi?id=370799
 	- Make eix-test-obsolete more intelligent concerning skipping of
-	  checks, see http://bugs.gentoo.org/show_bug.cgi?id=358861
+	  checks, see https://bugs.gentoo.org/show_bug.cgi?id=358861
 	- Fix eix-test-obsolete's support for REDUNDANT_IF_IN_CFLAGS.
 	  Thanks to Michał Bartoszkiewicz <mbartoszkiewicz at gmail.com>,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=372921
+	  see https://bugs.gentoo.org/show_bug.cgi?id=372921
 	- Provide poor man's einfo, ewarn, eerror, ebegin, eend to avoid
-	  dependency on openrc: http://bugs.gentoo.org/show_bug.cgi?id=372887
+	  dependency on openrc: https://bugs.gentoo.org/show_bug.cgi?id=372887
 	- Introduce ROOT_UID for usage with prefix, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=364351
+	  https://bugs.gentoo.org/show_bug.cgi?id=364351
 	  Thanks to Jacob Godserv at <jacobgodserv at gmail.com> for the patch.
 	- Add several ATTRIBUTE_PURE
 	- Treat provide as a list of strings, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=358729
+	  https://bugs.gentoo.org/show_bug.cgi?id=358729
 	- Scripts: Avoid test -e for compatibility reasons
 	- Do not add -flto on gcc-4.6.0 as it seems broken there, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=364317
+	  https://bugs.gentoo.org/show_bug.cgi?id=364317
 	- Make -flto tests more reliable
 	- Add CXXFLAGS to LDFLAGS in case of -flto
 	- Use AS_VAR_COPY instead of AS_VAR_SET if possible
@@ -707,24 +715,24 @@
 *eix-0.22.8
 	Martin Väth <martin at mvath.de>:
 	- Fix non-casting of rend() -> reverse_const_iterator on some systems,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=354071
+	  see https://bugs.gentoo.org/show_bug.cgi?id=354071
 	- Do not rely on argreader.end() not to change, even if argreader is
 	  not accessed in a writable way. Thanks to
 	  Tom Lloyd <napalmllama at gmail.com> for letting me debug on his
-	  machine, see http://bugs.gentoo.org/show_bug.cgi?id=355623
+	  machine, see https://bugs.gentoo.org/show_bug.cgi?id=355623
 	- Set always default search field, even if string is unspecified
 	- Introduce ACCEPT_KEYWORDS_AS_ARCH=full and make it default, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=353562
+	  https://bugs.gentoo.org/show_bug.cgi?id=353562
 	- Also add ./configure --with-always-accept-keywords
 	- Remove --with-rst and ship *.html in tarball, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=353705
+	  https://bugs.gentoo.org/show_bug.cgi?id=353705
 	- Add --with-extra-doc and install by default nothing from doc
 
 *eix-0.22.7
 	Martin Väth <martin at mvath.de>:
 	- Add option -f to eix-installed-after
 	- Fix segfault for tests beginning with --end, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=350321
+	  https://bugs.gentoo.org/show_bug.cgi?id=350321
 	- Minor fixes in zsh-completion
 	- Avoid casting away const to be compatible with future C++ standard;
 	  this goes at the cost of making many arguments non-const Package *
@@ -734,7 +742,7 @@
 	- Add some experimental zsh-completion
 	- eix-sync: New option -V, cancel -m, fix description of -u
 	- eix-test-obsolete: Output {,accept_}keywords instead of keywords:
-	  http://bugs.gentoo.org/show_bug.cgi?id=349352
+	  https://bugs.gentoo.org/show_bug.cgi?id=349352
 	- Honour order of {,accept_}keywords
 	- Use largefile support if available
 	- Fix minor variable and manpage description issues
@@ -744,7 +752,7 @@
 *eix-0.22.5
 	Martin Väth <martin at mvath.de>:
 	- Fix mask syntax if slots and repositories are used in the same mask,
-	  see http://forums.gentoo.org/viewtopic-p-6479886.html
+	  see https://forums.gentoo.org/viewtopic-p-6479886.html
 	- Fix NONEXISTENT_IF_MASKED (check not only keywords but also mask)
 	- manpage: Explain logic of EXPRESSION more verbosely.
 	- Divide memory usage of global*.cc during compiling more even.
@@ -754,13 +762,13 @@
 	- Introduce eix-installed.
 	- Rewrite eix-test-obsolete almost completely.
 	- Do not require SA_SIGINFO (thanks Markus Duft <mduft at gentoo.org>)
-	  http://bugs.gentoo.org/show_bug.cgi?id=343071
+	  https://bugs.gentoo.org/show_bug.cgi?id=343071
 	- Add a forgotten translation to eix-installed-after
 
 *eix-0.22.3
 	Martin Väth <martin at mvath.de>:
 	- Support repository names in config files:
-	  http://bugs.gentoo.org/show_bug.cgi?id=340098
+	  https://bugs.gentoo.org/show_bug.cgi?id=340098
 	  The current implementation stores reponames in every version and
 	  thus increases memory usage, but this is perhaps cleaner than to tie
 	  the names to the database headers.
@@ -769,7 +777,7 @@
 *eix-0.22.2
 	Martin Väth <martin at mvath.de>:
 	- Improve error handling when reading profile masks
-	- Fix sqlite.cc: http://bugs.gentoo.org/show_bug.cgi?id=336896
+	- Fix sqlite.cc: https://bugs.gentoo.org/show_bug.cgi?id=336896
 	- Fix sqlite automagic
 
 *eix-0.22.1
@@ -825,12 +833,12 @@
 *eix-0.20.6
 	Martin Väth <martin at mvath.de>:
 	- Fix wrong test for masks ...*:SLOT (regression from eix-0.19.0), see
-	  http://bugs.gentoo.org/show_bug.cgi?id=326143
+	  https://bugs.gentoo.org/show_bug.cgi?id=326143
 
 *eix-0.20.5
 	Martin Väth <martin at mvath.de>:
 	- Interpret escapes for portage config files in the way portage does,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=316907
+	  see https://bugs.gentoo.org/show_bug.cgi?id=316907
 	  Thanks to Michał Górny <gentoo at mgorny.alt.pl> for the main part
 	  of the patch.
 	- Fix lots of typos in German translation. Thanks to
@@ -844,15 +852,15 @@
 	- Support RESTRICT=parallel.
 	- Support RESTRICT=primaryuri in xml output.
 	- Ignore hidden files/dirs in local set dirs like /etc/portage/sets
-	  See http://bugs.gentoo.org/show_bug.cgi?id=315611
+	  See https://bugs.gentoo.org/show_bug.cgi?id=315611
 	- Fix linking of standalone versionsort with gettext, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=313267
+	  https://bugs.gentoo.org/show_bug.cgi?id=313267
 	  Thanks a lot to Javier Villavicencio <the_paya at gentoo.org>
 	  for examining the cause. This should also fix
-	  http://bugs.gentoo.org/show_bug.cgi?id=305737
+	  https://bugs.gentoo.org/show_bug.cgi?id=305737
 	- Transfer manpage to utf8 to make it work with heirloom-doctools.
 	  This makes the manpage work only with .utf8 locales. If somebody
-	  knows a better fix for http://bugs.gentoo.org/show_bug.cgi?id=294402
+	  knows a better fix for https://bugs.gentoo.org/show_bug.cgi?id=294402
 	  please let me know.
 	- Use -flto and -fwhole-program of gcc-4.5
 	- Improve automagic in warning flags (test without -Werror);
@@ -862,11 +870,11 @@
 	Martin Väth <martin at mvath.de>:
 	- Output in --xml up to two mask_type/unmask_type:
 	  One for the keyword type and one for the hard/profile mask:
-	  http://sourceforge.net/tracker/?
+	  https://sourceforge.net/tracker/?
 	  func=detail&atid=710608&aid=2968195&group_id=128101
 	- eix-remote/eix-layman: work around bug of newer layman or python
 	  which misinterprets python -c ... as option -c for layman, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=309685
+	  https://bugs.gentoo.org/show_bug.cgi?id=309685
 	- eix-remote/eix-layman: support >=python-3
 	- manpage: Fix indentation
 
@@ -879,13 +887,13 @@
 	- Quote in --dump and --dump-defaults: It is now guaranteed that the
 	  output can be reread.
 	- Fix segfault of <markedversions:*> without pipe argument, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=307479
+	  https://bugs.gentoo.org/show_bug.cgi?id=307479
 	- Extend xml output by <licenses> and <provide>:
-	  http://sourceforge.net/tracker/?
+	  https://sourceforge.net/tracker/?
 	  func=detail&aid=2965496&group_id=128101&atid=710611
 	- Introduce eix-test-obsolete [no-]buildtime
 	- Being unable to fix USE=nls on OS X,
-	  http://bugs.gentoo.org/show_bug.cgi?id=305737
+	  https://bugs.gentoo.org/show_bug.cgi?id=305737
 	  Thanks to Stuart Shelton <srcshelton at gmail.com> for testing.
 	  If somebody has an idea, please write to that bug.
 
@@ -894,13 +902,13 @@
 	- Fix magic adding of -a / -o between successive tests
 	  (regression introduced in 0.20.0).
 	- Introduce NOFOUND_STATUS, MOREFOUND_STATUS to make eix -q useful:
-	  http://bugs.gentoo.org/show_bug.cgi?id=304705
+	  https://bugs.gentoo.org/show_bug.cgi?id=304705
 	  Best combined with:
 	- Introduce --brief, --brief2 (mainly to make eix -q faster);
 	  best combined with COUNT_ONLY_PRINTED=false
 	- varsreader does no longer introduce accessed undefined variables:
 	  There might be an advantage in speed and memory, but mainly it is
-	  cleaner, avoiding e.g. http://bugs.gentoo.org/show_bug.cgi?id=299904
+	  cleaner, avoiding e.g. https://bugs.gentoo.org/show_bug.cgi?id=299904
 	- Minor compatibility fixes.
 
 *eix-0.20.0
@@ -914,7 +922,7 @@
 	- Treat --pipe as a TEST_OPTION.
 	- Unify shell-script style.
 	- Fix missing includes and type ambiguity on IRIX
-	  http://bugs.gentoo.org/show_bug.cgi?id=302626
+	  https://bugs.gentoo.org/show_bug.cgi?id=302626
 	  Thanks to Stuart Shelton <srcshelton at gmail.com>
 
 *eix-0.19.2
@@ -930,16 +938,16 @@
 	- Fix description of @/@@-hook order in manpage and help page.
 	  Fix corresponding eix-remote example in manpage.
 	  Thanks to navid.zamani at googlemail.com
-	  http://bugs.gentoo.org/show_bug.cgi?id=296722
+	  https://bugs.gentoo.org/show_bug.cgi?id=296722
 	- eix-sync: Add option -L for passing options to layman,
-	  see http://sourceforge.net/tracker/index.php?
+	  see https://sourceforge.net/tracker/index.php?
 	  func=detail&aid=2921161&group_id=128101&atid=710611
 	- "Export" EPREFIX when sourcing make.{globals,conf} so that e.g.
 	  ${EPREFIX} can be used in etc/make.conf
 	- Fix incremental keys hack in varsreader.cc at the cost of speed:
 	  Variables now can be exported for sourcing with APPEND_VALUES.
 	  In particular, they are not clean(ed) when accessed which caused
-	  http://bugs.gentoo.org/show_bug.cgi?id=299904
+	  https://bugs.gentoo.org/show_bug.cgi?id=299904
 
 *eix-0.19.1
 	Martin Väth <martin at mvath.de>:
@@ -985,12 +993,12 @@
 	  stay separated with appropriate names: FORCE_PERCENTAGE/FORCE_COLORS)
 	- Fix name output on --help.
 	- Fix: KEEP_VIRTUALS=true should now quote ":" correctly, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=294773
+	  https://bugs.gentoo.org/show_bug.cgi?id=294773
 	- Fix: Now --world-file --world really behaves like --world-file as it
 	  should be according to the logic.
 	- Fix: Check effective uid instead of uid.
 	- configure: Be stricter with testing flags and enable less defaults:
-	  http://bugs.gentoo.org/show_bug.cgi?id=293263
+	  https://bugs.gentoo.org/show_bug.cgi?id=293263
 	- configure: More verbose output concerning options for flag mangling
 	- configure: Remove libtool again which was only added for libintl
 	  support, since I guess this is not needed when gettext is installed
@@ -1053,9 +1061,10 @@
 	- Fix: Do not use obsoleted {markedversions} in the defaults.
 	- Introduce {havemarkedversion}.
 	- Fix some segfaults when unknown attributes are used by mistake.
-	- Fix linking versionsort http://bugs.gentoo.org/show_bug.cgi?id=288514
+	- Fix linking versionsort
+	  https://bugs.gentoo.org/show_bug.cgi?id=288514
 	- Let *.tbz2 recognition also work with symlinks (needed for older
-	  portage versions): http://bugs.gentoo.org/show_bug.cgi?id=288031
+	  portage versions): https://bugs.gentoo.org/show_bug.cgi?id=288031
 
 *eix-0.18.2
 	Martin Väth <martin at mvath.de>:
@@ -1084,16 +1093,16 @@
 	- NAMESLOT now prints the slot only if there are at least two slots.
 	  The old behaviour of printing the slot always is now available
 	  as NAMEASLOT.
-	- Feature Request http://bugs.gentoo.org/show_bug.cgi?id=288031
+	- Feature Request https://bugs.gentoo.org/show_bug.cgi?id=288031
 	  Introduce --binary, {binary}, {isbinary} and use it in defaults.
 	- Introduce XML_DATE.
 	- Fix missing initialization leading to "unknown property ''" errors.
 	  A big thanks to Michał Bartoszkiewicz <mbartoszkiewicz at gmail.com>
-	  http://bugs.gentoo.org/show_bug.cgi?id=287186
+	  https://bugs.gentoo.org/show_bug.cgi?id=287186
 	- Fix some false error messages about variables calling themselves.
 	  Thanks again to Michał Bartoszkiewicz <mbartoszkiewicz at gmail.com>
 	  for analyzing this terrible spaghetti-recursion code.
-	  http://bugs.gentoo.org/show_bug.cgi?id=287288
+	  https://bugs.gentoo.org/show_bug.cgi?id=287288
 	- Fix bestslotupgradeversions{,*} (in 0.18.1 it worked like
 	  bestslotversions{,*}).
 	- Fix IUSE storing in eix-update (0.18.1 stored false empty entries);
@@ -1116,7 +1125,7 @@
 	- Fix implementation of -q which was broken in a subtle way.
 	- Use fseek/ftell on systems without fseeko/ftello, and
 	- improve error messages for failed permission tests,
-	  for both see http://bugs.gentoo.org/show_bug.cgi?id=286229
+	  for both see https://bugs.gentoo.org/show_bug.cgi?id=286229
 	- ./configure: --with-null-device, get default EPREFIX by portageq.
 	- Fix bug in variable parsing for --xml. Thanks to
 	  Bob Shaffer II <bob.shaffer.2 at gmail.com>
@@ -1158,7 +1167,7 @@
 
 *eix-0.17.1
 	Martin Väth <martin at mvath.de>:
-	- Fix missing include: http://bugs.gentoo.org/show_bug.cgi?id=283549
+	- Fix missing include: https://bugs.gentoo.org/show_bug.cgi?id=283549
 	  Thanks to Michael Yang <yangofzeal at gmail.com>.
 	- autotools: Tweaks, updates, and minor fixes.
 	- manpage: Describe eix-diff output defaults.
@@ -1199,7 +1208,7 @@
 	- Introduce --print-overlay-{path,label}
 	- OVERLAYS_LIST=all now also prints the main tree as 0th entry.
 	- Fix multiple declaration of local variable, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=275300
+	  https://bugs.gentoo.org/show_bug.cgi?id=275300
 	  Thanks to Stuart Shelton <srcshelton at gmail.com> for the patch.
 	- Better document eix-layman.
 	- Ignore --disable-dependency-tracking without --disable-silent-rules.
@@ -1227,7 +1236,7 @@
 	- Add NLS support and experimental translation into German.
 	- Add versionsort helper tool (and ./configure --enable-separate-tool)
 	- Support $PROFILE/package.keywords and $PROFILE/package.unmask
-	- Workaround setenv for http://bugs.gentoo.org/show_bug.cgi?id=267807
+	- Workaround setenv for https://bugs.gentoo.org/show_bug.cgi?id=267807
 	- Use non-capital variable names in scripts.
 	- Minor bugfixes in scripts.
 	- Some autotools/preprocessor cleanup.
@@ -1236,12 +1245,12 @@
 
 *eix-0.15.7
 	Martin Väth <martin at mvath.de>:
-	- Allow USE dependencies http://bugs.gentoo.org/show_bug.cgi?id=264798
+	- Allow USE dependencies https://bugs.gentoo.org/show_bug.cgi?id=264798
 	- Update citation reference for "portage with sqlite"
 	- Introduce EXPORT_PORTDIR_OVERLAY to export a new PORTDIR_OVERLAY with
 	  added/excluded overlays to deal with eclasses. This somewhat fixes
-	  http://bugs.gentoo.org/show_bug.cgi?id=249843
-	  and http://bugs.gentoo.org/show_bug.cgi?id=265854
+	  https://bugs.gentoo.org/show_bug.cgi?id=249843
+	  and https://bugs.gentoo.org/show_bug.cgi?id=265854
 
 *eix-0.15.6
 	Martin Väth <martin at mvath.de>:
@@ -1263,13 +1272,13 @@
 
 *eix-0.15.4
 	Martin Väth <martin at mvath.de>:
-	- Hack around http://bugs.gentoo.org/show_bug.cgi?id=255711
+	- Hack around https://bugs.gentoo.org/show_bug.cgi?id=255711
 	  (cannot compare const_backward_iterator with backward_iterator).
 	- Use signed char instead of char for FullFlag, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=255994
+	  https://bugs.gentoo.org/show_bug.cgi?id=255994
 	- Allow "virtual" for "provide || category-name" in DEFAULT_MATCH_FIELD
 	  and prefer this in the defaults to avoid confusion for virtual/, see
-	  http://sourceforge.net/tracker/index.php?func=detail&aid=2542891&
+	  https://sourceforge.net/tracker/index.php?func=detail&aid=2542891&
 	  group_id=128101&atid=710608
 
 *eix-0.15.3
@@ -1279,7 +1288,7 @@
 	  This is to deal with the de facto standard of some overlays to put
 	  new sets into $OVERLAY/sets.
 	- Introduce FORCE_PERCENTAGE for better cron-job handling
-	  http://sourceforge.net/tracker/index.php?func=detail&aid=2391952&
+	  https://sourceforge.net/tracker/index.php?func=detail&aid=2391952&
 	  group_id=128101&atid=710611
 	- Allow passing of options from eix-sync to update-eix.
 	- More regexp-defaults (e.g. when @.* is searched).
@@ -1291,19 +1300,19 @@
 	Martin Väth <martin at mvath.de>:
 	- Make regex-matches in DEFAULT_MATCH_{FIELD,ALGORITHM}
 	  case-sensitive to make LICENSE defaults reasonable, see
-	  http://forums.gentoo.org/viewtopic.php?p=5285010
-	  or http://bugs.gentoo.org/show_bug.cgi?id=248677
+	  https://forums.gentoo.org/viewtopic.php?p=5285010
+	  or https://bugs.gentoo.org/show_bug.cgi?id=248677
 	- Change EPREFIX_SOURCE default to %{EIX_PREFIX}, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=247227
+	  https://bugs.gentoo.org/show_bug.cgi?id=247227
 
 *eix-0.15.1
 	Martin Väth <martin at mvath.de>:
 	- New match algorithms: --substring (-z), --begin (-b), --end
 	- Introduce DEFAULT_MATCH_ALGORITHM. This should avoid some surprises
 	  like "eix libstdc++-v3" looking for regular expressions as in
-	  http://bugs.gentoo.org/show_bug.cgi?id=245487
+	  https://bugs.gentoo.org/show_bug.cgi?id=245487
 	  or "eix @kde" also matching e.g. @kde3 as in
-	  http://bugs.gentoo.org/show_bug.cgi?id=245773
+	  https://bugs.gentoo.org/show_bug.cgi?id=245773
 	- Introduce DEFAULT_MATCH_FIELD; remove MATCH_.*_IF and MATCH_ORDER.
 	- Fix order for <full...> and <=full...>. Slot comes after version.
 	- Treat ADD_CACHE_METHOD and ADD_OVERRIDE_CACHE_METHOD only by
@@ -1314,8 +1323,8 @@
 	- Only read the first set definition file if the same name occurs in
 	  several directories.
 	- Fix order in EIX_LOCAL_SETS: list local before global set files.
-	- Fix missing includes, http://bugs.gentoo.org/show_bug.cgi?id=246270
-	  http://bugs.gentoo.org/show_bug.cgi?id=246222
+	- Fix missing includes, https://bugs.gentoo.org/show_bug.cgi?id=246270
+	  https://bugs.gentoo.org/show_bug.cgi?id=246222
 	- Fix LEVENSHTEIN_DISTANCE (actually honour the variable).
 	- Name guards in a more standard manner (no dangerous _* names).
 	- Internal change: More convenient argument order in split_string()
@@ -1324,14 +1333,14 @@
 	Martin Väth <martin at mvath.de>:
 	- Allow @set (from EIX_LOCAL_SETS) in /etc/portage/package.keywords.
 	  This is more than portage currently does, although it is planned:
-	  http://bugs.gentoo.org/show_bug.cgi?id=244366
+	  https://bugs.gentoo.org/show_bug.cgi?id=244366
 	- Introduce /etc/portage/sets.eix in the EIX_LOCAL_SETS defaults,
 	  and document in the description of that file and in the bug section
 	  of the eix man page that eix' shortcomings for sets can be partially
 	  (manually) circumvented with this directory.
 	- For --set check also "@set" (i.e. in addition to "set").
 	- Let @ default to set check (so that e.g. eix -e @kde is possible),
-	  see http://bugs.gentoo.org/show_bug.cgi?id=245773
+	  see https://bugs.gentoo.org/show_bug.cgi?id=245773
 	- Introduce <empty...> to produce only category/name:slot output.
 	- Change <full...> to produce less output (simplifies postprocessing).
 	- Introduce <=full...>/<=empty...> to produce output portage likes.
@@ -1345,13 +1354,13 @@
 	- Code cleanup (changes in inline/static/global).
 	- Cleanup of header files. Some header file fixes (occur with gcc-4.4).
 	- Fix various compilation problems, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=243396
+	  https://bugs.gentoo.org/show_bug.cgi?id=243396
 	- Fix ERPEFIX_SOURCE (previously it had no effect...)
 	- Fix varsreader.cc to deal also with files following DOS conventions;
 	  improve handling of unclosed "${".
 	- Fix segfault and hash problems with USE="--" (which might occur
 	  if e.g. cache method parse fails), see
-	  http://bugs.gentoo.org/show_bug.cgi?id=238216
+	  https://bugs.gentoo.org/show_bug.cgi?id=238216
 	- Fix minor bugs in escape handling in lists.
 
 *eix-0.14.2
@@ -1360,7 +1369,7 @@
 	  to allow exceptions from the general UPGRADE_TO_HIGHEST_SLOT policy.
 	  This can be used as manual workaround for the missing dependency
 	  resolving which will never be available in eix. See
-	  http://bugs.gentoo.org/show_bug.cgi?id=236036
+	  https://bugs.gentoo.org/show_bug.cgi?id=236036
 	- Fix scripts to use proper printf instead of echo.
 	- Introduce MARK_UPGRADE.
 	- Allow combining marker attributes, e.g. MARK_UPGRADE="bold,underline"
@@ -1368,7 +1377,7 @@
 	- Introduce <fullbest...> format.
 	- Introduce <bestslotsupgrade...> (and <fullbestslotsupgrade...>)
 	  format as a reaction to several requests, the latest being
-	  http://forums.gentoo.org/viewtopic-t-278819-start-393.html
+	  https://forums.gentoo.org/viewtopic-t-278819-start-393.html
 	  But please please note that if you use this in a script to call
 	  emerge you are almost surely doing something wrong.
 	  See the manpage for more details.
@@ -1379,19 +1388,19 @@
 	Martin Väth <martin at mvath.de>:
 	- Support sets in masks or sets; provide RECURSIVE_SETS.
 	- Provide --installed-unstable, --installed-testing, --installed-masked
-	  see http://bugs.gentoo.org/show_bug.cgi?id=240010
+	  see https://bugs.gentoo.org/show_bug.cgi?id=240010
 	- Make EIX_LOCAL_SETS a list of directories.
 	- Fix visible output of cache methods metadata/flat, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=240038
+	  https://bugs.gentoo.org/show_bug.cgi?id=240038
 	- Introduce ./configure --with-ebuild-sh-default and
 	  EXEC_EBUILD, EXEC_EBUILD_SH, EBUILD_DEPEND_TEMP to allow
 	  customization to nonstandard paths, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=240460
+	  https://bugs.gentoo.org/show_bug.cgi?id=240460
 	  Default is autodetection which works in the above case.
 	- Remove EPREFIX_PORTAGE_EXEC (except for delayed substitution
 	  for the above new variables).
 	- Be extremely careful about vfork() usage to fix segfault from
-	  http://bugs.gentoo.org/show_bug.cgi?id=240460
+	  https://bugs.gentoo.org/show_bug.cgi?id=240460
 	- New cache methods repo-* support paludis' path scheme.
 	- Be more verbose on execution failures for update-eix.
 	- Cache method ebuild (without "*") and parse[*]|ebuild are broken in
@@ -1402,19 +1411,19 @@
 	Martin Väth <martin at mvath.de>:
 	- Support for PROPERTIES and RESTRICT.
 	- Inquire sqlite database more flexible. This should fix
-	  http://bugs.gentoo.org/show_bug.cgi?id=238942
+	  https://bugs.gentoo.org/show_bug.cgi?id=238942
 	- Fix ./configure --with-eprefix-default/--with-eix-prefix-default.
 	  Thanks to Michał Bartoszkiewicz <mbartoszkiewicz@gmail.com> for
-	  investigating, see http://bugs.gentoo.org/show_bug.cgi?id=235011
+	  investigating, see https://bugs.gentoo.org/show_bug.cgi?id=235011
 	- Assume SLOT="" is not ok for parse[*]|ebuild[*], see
-	  http://bugs.gentoo.org/show_bug.cgi?id=238882
+	  https://bugs.gentoo.org/show_bug.cgi?id=238882
 
 *eix-0.13.5
 	Martin Väth <martin at mvath.de>:
 	- Fix segfault in numeric comparison of 0 and number with leading 0,
-	  see http://forums.gentoo.org/viewtopic-t-278819-start-375.html
+	  see https://forums.gentoo.org/viewtopic-t-278819-start-375.html
 	- Disable autotools maintainer mode which seems to be broken anyway.
-	- Fix -u in manpage, see http://bugs.gentoo.org/show_bug.cgi?id=236036
+	- Fix -u in manpage, see https://bugs.gentoo.org/show_bug.cgi?id=236036
 
 *eix-0.13.4
 	Emil Beinroth <emilbeinroth at gmx.net>:
@@ -1426,12 +1435,12 @@
 	- Let eix-sync be tacit on hooks and evaluate them in current shell.
 	  This makes hooks more powerful and gives the user the ability to
 	  treat redirection manually to some extent, see
-	  http://sourceforge.net/tracker/index.php?func=detail&aid=2042001&
+	  https://sourceforge.net/tracker/index.php?func=detail&aid=2042001&
 	  group_id=128101&atid=710611
 	- Improve calculation of times in eix-sync; avoid time command, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=235269
+	  https://bugs.gentoo.org/show_bug.cgi?id=235269
 	- Introduce EIX_PREFIX to split the previous double meaning of EPREFIX,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=235011
+	  see https://bugs.gentoo.org/show_bug.cgi?id=235011
 	  Now EPREFIX has a meaning similar to that of prefix-portage.
 	  For chroot environment you should set EIX_PREFIX instead;
 	  The EIX_PREFIX environment variable now also wins over
@@ -1445,7 +1454,7 @@
 *eix-0.13.3
 	Martin Väth <martin at mvath.de>:
 	- New cache method "metadata-assign" needed for alt-gentoo, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=231808
+	  https://bugs.gentoo.org/show_bug.cgi?id=231808
 	- Rename some of the other cache methods to have a consistent scheme
 	  (metadata->metadata-flat, portage-2.0->flat, portage-2.1->assign).
 	  Also treat internally flat/assign and metadata-flat/assign by the
@@ -1464,10 +1473,10 @@
 	  to some script. In the new manner you can now determine explicitly
 	  what should be passed and how.
 	- Use python in update-eix-layman to parse layman.cfg for its
-	  make.conf, see http://bugs.gentoo.org/show_bug.cgi?id=230788
+	  make.conf, see https://bugs.gentoo.org/show_bug.cgi?id=230788
 	- Remove logging support of eix-sync (and drop options -v and -V).
 	  This should fix all problems with the emerge --ask option, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=233132
+	  https://bugs.gentoo.org/show_bug.cgi?id=233132
 	  If you use eix-sync in a cronjob you now have to redirect manually!
 	- Be more verbose in ./configure output
 	- Improve pkg-config error treatment
@@ -1478,18 +1487,18 @@
 *eix-0.13.2
 	Martin Väth <martin at mvath.de>:
 	- Extend the manpage concerning the description of expressions, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=229625
+	  https://bugs.gentoo.org/show_bug.cgi?id=229625
 	- Fix buggy want_slash=false in normalize_path(), see
-	  http://bugs.gentoo.org/show_bug.cgi?id=230341
+	  https://bugs.gentoo.org/show_bug.cgi?id=230341
 	- Do not demand canonicalize_file_name() or realpath():
 	  The profile reading should even work without symlink resolving.
 
 *eix-0.13.1
 	Martin Väth <martin at mvath.de>:
 	- Fix defaults for FORMATLINE_PACKAGESETS, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=229355
+	  https://bugs.gentoo.org/show_bug.cgi?id=229355
 	- Fix broken replacement update-eix-functions.sh path and a bug in
-	  normalize_path(), see http://bugs.gentoo.org/show_bug.cgi?id=229419
+	  normalize_path(), see https://bugs.gentoo.org/show_bug.cgi?id=229419
 
 *eix-0.13.0
 	Martin Väth <martin at mvath.de>:
@@ -1503,17 +1512,17 @@
 	  /etc/eix-sync.conf with previous defaults if you use a cache method
 	  depending on this like "portage-2.1" (most users are not affected).
 	  See the manpage and eix-sync -h for details. See the discussion in
-	  http://bugs.gentoo.org/show_bug.cgi?id=202535
+	  https://bugs.gentoo.org/show_bug.cgi?id=202535
 	- Allow "!!" lines in eix-sync to override environment variables like
-	  FORCE_USECOLORS, see http://bugs.gentoo.org/show_bug.cgi?id=225963
+	  FORCE_USECOLORS, see https://bugs.gentoo.org/show_bug.cgi?id=225963
 	- Treat /etc/make.profile with normalize_path(). This should fix
-	  http://bugs.gentoo.org/show_bug.cgi?id=229091
+	  https://bugs.gentoo.org/show_bug.cgi?id=229091
 	- Fix treatment of "-" in slotnames.
 	  Thanks to Edward "Hades" <edward.hades at gmail.com> for the patch,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=225773
+	  see https://bugs.gentoo.org/show_bug.cgi?id=225773
 	- Fix PATH_MAX headers on FreeBSD-7. Thanks to
 	  Javier Villavicencio <the_paya at gentoo.org> for the patch, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=226499
+	  https://bugs.gentoo.org/show_bug.cgi?id=226499
 	- Fix recognition of system packages according to local settings.
 	- Provide is now HashedWords. Thanks to
 	  Charlie Shepherd <masterdriverz at gmail.com> for reporting.
@@ -1529,14 +1538,14 @@
 	  Do the same with IUSE data in packages for EAPI=1. Thanks for the
 	  hint to Leonardo Valeri Manera <l.valerimanera at gmail.com>
 	- Fix error handling in pushback_lines_file(), see
-	  http://bugs.gentoo.org/show_bug.cgi?id=220119
+	  https://bugs.gentoo.org/show_bug.cgi?id=220119
 	- Fix some bsd shell incompatibilities in scripts, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=220397
+	  https://bugs.gentoo.org/show_bug.cgi?id=220397
 	- Introduce MAKE_GLOBALS default /usr/share/portage/config/make.globals
-	  See http://bugs.gentoo.org/show_bug.cgi?id=221271
+	  See https://bugs.gentoo.org/show_bug.cgi?id=221271
 	- Reorganize eixrc/defaults.cc
 	- Export PATH and other portagesettings variables to ebuild.sh, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=219066
+	  https://bugs.gentoo.org/show_bug.cgi?id=219066
 	- Minor documentation fixes.
 
 	Emil Beinroth <emilbeinroth at gmx.net>:
@@ -1547,17 +1556,17 @@
 	- Drop EIX_WIKI and use PACKAGE_BUGREPORT; Label Wolfgang and Roland
 	  as inactive developers, so they are less likely to be bothered with
 	  emails.
-	- Fix http://bugs.gentoo.org/show_bug.cgi?id=216483, a mask like
+	- Fix https://bugs.gentoo.org/show_bug.cgi?id=216483, a mask like
 	  =app-portage/eix-0* triggered an exception.
 	  Affected versions are >=eix-0.12.0.
 
 	Martin Väth <martin at mvath.de>:
 	- Treat parent profiles before children, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=217120
+	  https://bugs.gentoo.org/show_bug.cgi?id=217120
 	- Let update-eix first process options like --print.
 	  This also fixes script problems with KEEP_VIRTUAL=true.
 	  Thanks to tzopik <tzopik at gmail.com> for reporting and
-	  investigating. See http://bugs.gentoo.org/show_bug.cgi?id=216972
+	  investigating. See https://bugs.gentoo.org/show_bug.cgi?id=216972
 	- Conversion of all latin1 characters to unicode.
 	- Fix segfault/endless loop when loops in profile/**/parent data occur.
 	- Decrease required number of simultaneously open files.
@@ -1576,9 +1585,9 @@
 	Martin Väth <martin at mvath.de>:
 	- Avoid scandir(), to allow compilation under Solaris 9. Thanks to
 	  Jeremy Olexa <darkside at gentoo.org> for the hints, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=195411
+	  https://bugs.gentoo.org/show_bug.cgi?id=195411
 	- Fix NormalizeNames() of update-eix-function.sh, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=215417
+	  https://bugs.gentoo.org/show_bug.cgi?id=215417
 	- Fix possible endless loop for cache method metadata and portage-2.1
 
 *eix-0.12.2
@@ -1603,8 +1612,8 @@
 	- Move stdint.h stuff into eixTk/inttypes.h and include. Add static
 	  assertion macro EIX_STATIC_ASSERT. Add database/types.h and include
 	  if needed.
-	- Remove uint, see http://bugs.gentoo.org/show_bug.cgi?id=213769
-	- Kill --as-needed, see http://bugs.gentoo.org/show_bug.cgi?id=213199
+	- Remove uint, see https://bugs.gentoo.org/show_bug.cgi?id=213769
+	- Kill --as-needed, see https://bugs.gentoo.org/show_bug.cgi?id=213199
 
 	Martin Väth <martin at mvath.de>:
 	- Fix REDUNDANT_IF_DOUBLE_{UN,}MASKED in eix-test-obsolete.
@@ -1613,7 +1622,7 @@
 	  Leonardo Valeri Manera <l.valerimanera at gmail.com>
 	- Fix signal handling for ebuild* (and parse{,*}|ebuild*) cache.
 	- Honour EPREFIX_PORTAGE_EXEC in parse{,*}|ebuild{,*}. This should fix
-	  http://bugs.gentoo.org/show_bug.cgi?id=213248
+	  https://bugs.gentoo.org/show_bug.cgi?id=213248
 	  Thanks to Fabian Groffen <grobian at gentoo.org> for finding out.
 	- Improve treatment of argv[0] (for --help).
 	- Merge implementation of metadata and flat/portage-2.0.
@@ -1623,7 +1632,7 @@
 *eix-0.12.1
 	Martin Väth <martin at mvath.de>:
 	- Do not die on obsolete eix cache files, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=212637
+	  https://bugs.gentoo.org/show_bug.cgi?id=212637
 	- Default to create only one binary file. This needs less disk space
 	  but more memory. Moreover, it means that the eix binary needs shared
 	  libraries which are otherwise only needed for update-eix
@@ -1652,7 +1661,7 @@
 	- Remove broken cache method portage-2.1* unless a corresponding
 	  ./configure option is used (which is mainly for testing purposes).
 	- Introduce --enable-as-needed to override the -Wl,--as-needed test,
-	  see the comments in http://bugs.gentoo.org/show_bug.cgi?id=209239
+	  see the comments in https://bugs.gentoo.org/show_bug.cgi?id=209239
 	- Fix some pedantic compiler warnings; make basicversion.cc using std.
 	- Make update-eix slightly more verbose.
 
@@ -1669,23 +1678,23 @@
 	- Introduce /etc/portage/package.*.nowarn
 	- Introduce --print-all-* options
 	- Introduce "detail" option for eix-test-obsolete, see
-	  http://forums.gentoo.org/viewtopic-t-666071-highlight-.html
+	  https://forums.gentoo.org/viewtopic-t-666071-highlight-.html
 	- Shrink database file by hashing common words.
 	- Fix REDUNDANT_IF_DOUBLE_LINE, REDUNDANT_IF_MINUS_ASTERISK and also
 	  fix corresponding parts in eix-test-obsolete.
 	- Fix update-eix-layman (broken since eix-0.10.4), see
-	  http://bugs.gentoo.org/show_bug.cgi?id=211093
+	  https://bugs.gentoo.org/show_bug.cgi?id=211093
 	  Thanks to Roberto Castagnola <roberto.castagnola at gmail.com>
 	  for the fix.
 	- Fix update-eix-remote for users without shell (like "nobody"), see
-	  http://bugs.gentoo.org/show_bug.cgi?id=211348
+	  https://bugs.gentoo.org/show_bug.cgi?id=211348
 	- Install "empty" /etc/eixrc to avoid that users overlook the new
 	  recommendations and thus get problems like e.g. the one leading to
-	  http://bugs.gentoo.org/show_bug.cgi?id=211192
+	  https://bugs.gentoo.org/show_bug.cgi?id=211192
 	- Support prefix-portage subrevisions
-	  http://www.gentoo.org/proj/en/
+	  https://www.gentoo.org/proj/en/
 	  gentoo-alt/prefix/techdocs.xml#doc_chap2
-	  See also http://bugs.gentoo.org/show_bug.cgi?id=209239
+	  See also https://bugs.gentoo.org/show_bug.cgi?id=209239
 	- Better honour SYSCONFDIR. Use configmake.h to pass to C++ code.
 	- Let autoconf try to define uint*_t
 
@@ -1695,7 +1704,7 @@
 
 	Martin Väth <martin at mvath.de>:
 	- Fix some problems with EOF after variable names or assignments, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=210106
+	  https://bugs.gentoo.org/show_bug.cgi?id=210106
 	- Work around a dash bug ("VAR=e func_call" does not restore VAR).
 
 *eix-0.10.4
@@ -1704,23 +1713,23 @@
 	  search packages that have at least one version with a slot that
 	  matches kde-4.
 	- Remove all uses of __VA_ARGS__, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=209239
-	- Fix http://bugs.gentoo.org/show_bug.cgi?id=209934
+	  https://bugs.gentoo.org/show_bug.cgi?id=209239
+	- Fix https://bugs.gentoo.org/show_bug.cgi?id=209934
 
 	Martin Väth <martin at mvath.de>:
 	- Make REDUNDANT_IF_MIXED=false the default since it confused people:
-	  http://bugs.gentoo.org/show_bug.cgi?id=203067
+	  https://bugs.gentoo.org/show_bug.cgi?id=203067
 	- Make defaults independent of bzlib usage (considering overlays of
 	  installed packages makes always sense in current portage versions).
 	- Finally use POSIX shell throughout, making bash obsolete.
 	- Clean up manpage formatting.
 	- Some compatibility fixes, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=209239
+	  https://bugs.gentoo.org/show_bug.cgi?id=209239
 
 *eix-0.10.3
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Fix compilation for ia64-hpux, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=201117
+	  https://bugs.gentoo.org/show_bug.cgi?id=201117
 	- Minor changes (size() == 0 -> empty(), ...)
 
 	Martin Väth <martin at mvath.de>:
@@ -1729,7 +1738,7 @@
 	- Fix segfault for unknown repository and unreadable environment.bz2
 	- Use POSIX' command -v instead of type/type -P in scripts
 	- Clearer error messages for newer cachefile format, see
-	  http://forums.gentoo.org/viewtopic-t-614015.html
+	  https://forums.gentoo.org/viewtopic-t-614015.html
 
 *eix-0.10.2
 	Emil Beinroth <emilbeinroth at gmx.net>:
@@ -1742,9 +1751,9 @@
 	- Fix REDUNDANT_IF_WEAKER and REDUNDANT_IF_MIXED which were
 	  completely broken in eix-0.10.1 due to a stupid typo.
 	- New treatment of scandir, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=195411
+	  https://bugs.gentoo.org/show_bug.cgi?id=195411
 	- Introduce PRINT_BUGS, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=195204
+	  https://bugs.gentoo.org/show_bug.cgi?id=195204
 	- New number format in cache file
 
 *eix-0.10.1
@@ -1756,10 +1765,10 @@
 
 	Martin Väth <martin at mvath.de>:
 	- Support for RESTRICT="fetch mirror", see
-	  http://forums.gentoo.org/viewtopic-t-278819-start-355.html
+	  https://forums.gentoo.org/viewtopic-t-278819-start-355.html
 	- Introduce ALWAYS_ACCEPT_KEYWORDS and let it default to "false" to
 	  imitate the behavior of <eix-0.10.0 for ~ARCH in ACCEPT_KEYWORDS,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=193719
+	  see https://bugs.gentoo.org/show_bug.cgi?id=193719
 	- Improve internal treatment of SetStability.
 	- Many fixes due to Emil Beinroth <emilbeinroth at gmx.net>.
 	- Decrease memory usage during compilation.
@@ -1774,7 +1783,7 @@
 	  Emil Beinroth <emilbeinroth at gmx.net> for reporting).
 	  This also fixes problems with several ARCHes in ACCEPT_KEYWORDS.
 	- Treat leading zeroes of version-related numbers in the portage way,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=192807
+	  see https://bugs.gentoo.org/show_bug.cgi?id=192807
 	- Store all version-related numbers as strings. This avoids overflows
 	  and actually saves space and (for the new comparison) even time.
 	- Store string-length more efficiently.
@@ -1786,8 +1795,8 @@
 	  treatment with diff-eix.
 	- Due to (b) above, the SMALL_EIX_DATABASE variable was canceled.
 	- Fix progress output. Thanks to Mark J. Olah <mjo at cs.unm.edu> for
-	  reporting. See http://bugs.gentoo.org/show_bug.cgi?id=192458
-	- Fix http://bugs.gentoo.org/show_bug.cgi?id=192707
+	  reporting. See https://bugs.gentoo.org/show_bug.cgi?id=192458
+	- Fix https://bugs.gentoo.org/show_bug.cgi?id=192707
 
 *eix-0.9.12
 	Martin Väth <martin at mvath.de>:
@@ -1805,7 +1814,7 @@
 	  This is faster and avoids possible undesired error messages.
 	- Consider profile/package.mask and overlay/profile/package.mask as
 	  (first or last) part of profile w.r.t. '-' entries. This fixes
-	  http://bugs.gentoo.org/show_bug.cgi?id=191716
+	  https://bugs.gentoo.org/show_bug.cgi?id=191716
 
 *eix-0.9.11
 	Martin Väth <martin at mvath.de>:
@@ -1815,7 +1824,7 @@
 	- Bugfix: Do not shorten /var/log/eix-sync.log near end of eix-sync.
 	- Bugfix: eix no longer considers output from <...> as "no output"
 	  (for COUNT_ONLY_PRINTED or trailing newline). This fixes
-	  http://sourceforge.net/tracker/index.php?
+	  https://sourceforge.net/tracker/index.php?
 	  func=detail&aid=1780283&group_id=128101&atid=710608
 	- eix-sync: introduce -V to make -v in /etc/eix-sync.conf convenient.
 	- Avoid "bashisms" in scripts except for arrays (which are necessary).
@@ -1824,7 +1833,7 @@
 	Martin Väth <martin at mvath.de>:
 	- Fix compilation issues with gcc-3.3.6
 	- Do not treat # as comment symbol in /var/db/pkg/*/*/{USE,IUSE,SLOT}.
-	  This fixes http://sourceforge.net/tracker/index.php?
+	  This fixes https://sourceforge.net/tracker/index.php?
 	  func=detail&aid=1756510&group_id=128101&atid=710608
 	- Fix some crashes if there is bad data in /var/db/pkg
 	- Fix some memory allocations
@@ -1832,25 +1841,25 @@
 *eix-0.9.9
 	Martin Väth <martin at mvath.de>:
 	- Allow slot names for masks, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=181244
+	  https://bugs.gentoo.org/show_bug.cgi?id=181244
 	- Fix compilation issues with some C compilers, see
-	  http://sourceforge.net/tracker/index.php?
+	  https://sourceforge.net/tracker/index.php?
 	  func=detail&aid=1731374&group_id=128101&atid=710608
 	- Fix DIFF_FORMAT_HEADER_NEW default (was broken in eix-0.9.8;
 	  thanks to Seemant Kulleen <seemant at gentoo.org> for reporting.)
-	  See also http://bugs.gentoo.org/show_bug.cgi?id=181629
+	  See also https://bugs.gentoo.org/show_bug.cgi?id=181629
 	- Introduce SKIP_PERMISSION_TESTS to deal with NSS/LDAP or other
-	  setups, see http://sourceforge.net/tracker/index.php?
+	  setups, see https://sourceforge.net/tracker/index.php?
 	  func=detail&aid=1735722&group_id=128101&atid=710611
 
 *eix-0.9.8
 	Martin Väth <martin at mvath.de>:
 	- Fix calculation of needed data which was broken since eix-0.9.5.
 	  This brings "cheap" searches (for names etc) back to the speed of
-	  eix-0.9.4. See http://sourceforge.net/tracker/index.php?
+	  eix-0.9.4. See https://sourceforge.net/tracker/index.php?
 	  func=detail&aid=1728310&group_id=128101&atid=710608
 	- New default format for diff-eix: Print * tag for stabilized packages,
-	  see http://forums.gentoo.org/viewtopic-p-4078742.html
+	  see https://forums.gentoo.org/viewtopic-p-4078742.html
 	- Introduced delayed TAG_* variables in default formats.
 	- Suppress newline when the FORMATSTRING outputs nothing. This allows
 	  to use conditionals in the formatstring to select packages.
@@ -1867,7 +1876,7 @@
 	Martin Väth <martin at mvath.de>:
 	- eix-sync now defaults to layman instead of deprecated gensync. Thanks
 	  for the patch to Roberto Castagnola <roberto.castagnola at gmail.com>
-	  see http://bugs.gentoo.org/show_bug.cgi?id=179482
+	  see https://bugs.gentoo.org/show_bug.cgi?id=179482
 	- Introduce PRINT_COUNT_ALWAYS=never
 	- Introduce --pure-packages and --only-names
 	- Introduce +- variants of --stable, --testing, --non-masked, --system.
@@ -1893,9 +1902,9 @@
 	  to deal with the soon coming portage-2.1.3.
 	- Introduce corresponding REDUNDANT_IF_MINUSASTERISK.
 	- Introduce --stable, --testing, --non-masked, --system, see
-	  http://forums.gentoo.org/viewtopic-t-556942.html
+	  https://forums.gentoo.org/viewtopic-t-556942.html
 	- Honour /etc/portage/profile. This fixes
-	  http://bugs.gentoo.org/show_bug.cgi?id=176840
+	  https://bugs.gentoo.org/show_bug.cgi?id=176840
 	- Remove FORMAT_INSTALLED_USE for security reasons.
 	- Some further security fixes.
 	- Remove asprintf usage.
@@ -1924,24 +1933,24 @@
 *eix-0.9.3
 	Martin Väth <martin at mvath.de>:
 	- Fix nonexistent asprintf and broken FNM_CASEFOLD handling
-	  for solaris, see http://bugs.gentoo.org/show_bug.cgi?id=173763
+	  for solaris, see https://bugs.gentoo.org/show_bug.cgi?id=173763
 	- Fix manpage typo --update:
-	  http://bugs.gentoo.org/show_bug.cgi?id=174489
+	  https://bugs.gentoo.org/show_bug.cgi?id=174489
 	- Fix some missing include unistd.h (required for linux 2.4), see
-	  http://bugs.gentoo.org/show_bug.cgi?id=174697
+	  https://bugs.gentoo.org/show_bug.cgi?id=174697
 	- Use extended path for functions.sh to work with baselayout-2.
 	  Thanks to Matthias Schwarzott for pointing out.
 
 *eix-0.9.2
 	Martin Väth <martin at mvath.de>:
-	- Fix partly http://bugs.gentoo.org/show_bug.cgi?id=169127
+	- Fix partly https://bugs.gentoo.org/show_bug.cgi?id=169127
 	  (compilation error on big-endian architectures).
 	- Fix std::unique which is presumably broken on some systems.
 	  Perhaps this fixes the above issues completely.
 	- Reformulate security recommendations in update-eix-remote. Thanks to
-	  Marijn Schouten, see http://bugs.gentoo.org/show_bug.cgi?id=169806
+	  Marijn Schouten, see https://bugs.gentoo.org/show_bug.cgi?id=169806
 	- Fix nocolor output. Thanks to Rick Morra for reporting
-	  http://bugs.gentoo.org/show_bug.cgi?id=170868
+	  https://bugs.gentoo.org/show_bug.cgi?id=170868
 	- Fix compilation issues with gcc-3.3.6.
 	  Thanks to Helmut Auer <helmut at helmutauer.de>
 	- Minor compatibility fixes.
@@ -1965,7 +1974,7 @@
 	- Introduce --print option and use it in the scripts to have
 	  consistent variable treatment throughout.
 	- Introduce ROOT and EPREFIX_* fine granulation, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=167961
+	  https://bugs.gentoo.org/show_bug.cgi?id=167961
 	- Introduce EIXRC and EIXRC_SOURCE
 	- Introduce EIX_CACHEFILE
 	- Let -ARCH in /etc/portage/package.keywords stabilize -ARCH keyword.
@@ -1983,7 +1992,7 @@
 *eix-0.8.8
 	Martin Väth <martin at mvath.de>:
 	- Change to new version number scheme:
-	  http://bugs.gentoo.org/show_bug.cgi?id=165414
+	  https://bugs.gentoo.org/show_bug.cgi?id=165414
 	- Fix sorting of things like _p20060716 (longer numbers)
 	- Increase some quantities to 64bit (e.g. 20071042308
 	  should still be a valid version number), or to  16bit (e.g. -r9999).
@@ -1993,7 +2002,7 @@
 	Martin Väth <martin at mvath.de>:
 	- Let ** in /etc/portage/package.keywords accept "missing keyword".
 	  This corresponds to the change in portage-2.1.2-r4, see
-	  comments #20 #24 in http://bugs.gentoo.org/show_bug.cgi?id=160519
+	  comments #20 #24 in https://bugs.gentoo.org/show_bug.cgi?id=160519
 	- Let PORTAGE_CONFIGROOT modify the path of /etc/eixrc.
 	- Allow PORTAGE_CONFIGROOT also in /etc/eixrc and ~/.eixrc
 	  if not set in the environment.
@@ -2006,19 +2015,19 @@
 	  PORTAGE_PROFILE, PORTDIR, and overlay paths.
 	- Use true (soft-link resolved) filenames for PORTDIR and overlays.
 	- Bugfix: Apply package.mask of profiles. This fixes
-	  http://bugs.gentoo.org/show_bug.cgi?id=164695
+	  https://bugs.gentoo.org/show_bug.cgi?id=164695
 
 *eix-0.8.6
 	Martin Väth <martin at mvath.de>:
 	- Ignore *~ files in /etc/portage/package.*
 	  This reflects the change of portage-2.1.2_rc4-r9 of
-	  http://bugs.gentoo.org/show_bug.cgi?id=144445
+	  https://bugs.gentoo.org/show_bug.cgi?id=144445
 	- Fix <availableversionsshort>.
 	- Security improvement: Use random temporary names also on systems
 	  without mktemp (in eix-sync and update-eix-remote).
 	- Add Push and NormalizeNames to update-eix-functions.sh
 	- Code cleanup of scripts, in particular of eix-sync
-	- Correct EIX_WIKI to http://eix.sourceforge.net
+	- Correct EIX_WIKI to https://eix.sourceforge.net
 
 *eix-0.8.5
 	Martin Väth <martin at mvath.de>:
@@ -2034,11 +2043,11 @@
 *eix-0.8.4
 	Martin Väth <martin at mvath.de>:
 	- Treat empty regular expression manually. This fixes
-	  http://bugs.gentoo.org/show_bug.cgi?id=158222
+	  https://bugs.gentoo.org/show_bug.cgi?id=158222
 	- Add option -O to update-eix-remote, see the discussion starting at
-	  http://forums.gentoo.org/viewtopic-t-278819-start-343.html
+	  https://forums.gentoo.org/viewtopic-t-278819-start-343.html
 	- Add option -W and more general options -c, -C, -M to eix-sync, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=159005
+	  https://bugs.gentoo.org/show_bug.cgi?id=159005
 
 *eix-0.8.3
 	Martin Väth <martin at mvath.de>:
@@ -2061,7 +2070,7 @@
 	- Introduce REDUNDANT_IF_DOUBLE_LINES (related to previous bugfix).
 	- Some code cleanup and fixing of some compiler warnings.
 	  Thanks to KIMURA Masaru / hiyuh <hiyuh.root at gmail.com>
-	  http://bugs.gentoo.org/show_bug.cgi?id=155160
+	  https://bugs.gentoo.org/show_bug.cgi?id=155160
 
 *eix-0.8.1
 	Martin Väth <martin at mvath.de>:
@@ -2070,7 +2079,7 @@
 	  Introduce delayed PRINT_ALWAYS, DIFF_PRINT_INSTALLED.
 	  In particular, PRINT_ALWAYS finally is a way to have a "short"
 	  configuration for cyberpatrols wish to print lines even if unused:
-	  http://forums.gentoo.org/
+	  https://forums.gentoo.org/
 	  viewtopic-t-278819-postdays-0-postorder-asc-start-292.html
 	- Let eix-sync print the time emerge --sync needed.
 	- Bugfix: Let "%%{" work as documented in the treatment of
@@ -2111,7 +2120,7 @@
 	  new feature is optional and can be switched off, see below).
 	- Print output such that also the default (non-local) stability
 	  can be seen. This is a suggestion of STEDevil, see
-	  http://forums.gentoo.org/viewtopic-t-278819-start-325.html
+	  https://forums.gentoo.org/viewtopic-t-278819-start-325.html
 	- Show the keyword flag also for masked versions.
 	- Color according to original settings not to local settings;
 	  make a possible exception for local masking (*COLOR_LOCAL_MASK).
@@ -2144,7 +2153,7 @@
 	  Change [N] color with -c correspondingly to allow better optical
 	  distinction (not in diff-eix: [N] has a different meaning there).
 	- Bugfix: Initialize empty search string in constructor of regex.
-	  This fixes http://bugs.gentoo.org/show_bug.cgi?id=151327
+	  This fixes https://bugs.gentoo.org/show_bug.cgi?id=151327
 	- Bugfix: No splitting of short options when they are option
 	  parameters, e.g. in "update-eix -o -oo" the second argument
 	  is not interpreted as two options of type -o.
@@ -2195,7 +2204,7 @@
 *eix-0.7.4
 	Martin Väth <martin at mvath.de>:
 	- Add support for sqlite if portage uses the sqlite backend
-	    http://gentoo-wiki.com/TIP_speed_up_portage_with_sqlite
+	    https://gentoo-wiki.com/TIP_speed_up_portage_with_sqlite
 	  Introduce very fast cache method "sqlite" which is available if
 	  eix is compiled with ./configure --with-sqlite
 	- Fix endless loop and wrong sanitize in update-eix-remote.
@@ -2253,7 +2262,7 @@
 	Martin Väth <martin at mvath.de>:
 	- Major changes: remote support and full support for slots.
 	  For the former, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=144200
+	  https://bugs.gentoo.org/show_bug.cgi?id=144200
 	  the idea for the latter is due to a discussion with
 	  caster at matfyz.cz
 	  All changes in detail:
@@ -2319,7 +2328,7 @@
 	Martin Väth <martin at mvath.de>:
 	- Reflect portage's change of ignoring hidden files/dirs
 	  for recursive reading, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=137607
+	  https://bugs.gentoo.org/show_bug.cgi?id=137607
 	- Reflect portage's behaviour of reading files/dirs in sorted order
 	  for recursive reading.
 	- Introduce OVERLAYS_LIST to display only overlays that are
@@ -2329,11 +2338,11 @@
 	  This changes the default behaviour when several arguments are given.
 	- Document that variables may be overridden by environment
 	- Introduce -d and DUP_*_ONLY_OVERLAYS, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=142469
+	  https://bugs.gentoo.org/show_bug.cgi?id=142469
 	- Read profile/package.mask of overlays, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=142503
+	  https://bugs.gentoo.org/show_bug.cgi?id=142503
 	- Mark packages and versions passed with --pipe, see the discussion in
-	  http://bugs.gentoo.org/show_bug.cgi?id=142469
+	  https://bugs.gentoo.org/show_bug.cgi?id=142469
 	- Introduce "marked" format and "MARK_VERSIONS" to customize the
 	  marking of packages and versions passed with --pipe.
 	- Change color format to allow also e.g. "underline" in the formats.
@@ -2344,13 +2353,13 @@
 	Martin Väth <martin at mvath.de>:
 	- Implemented -T to help cleaning up /etc/portage/package.*.
 	- Read package information for the newest available versions:
-	  http://bugs.gentoo.org/show_bug.cgi?id=138629
+	  https://bugs.gentoo.org/show_bug.cgi?id=138629
 	- Let diff-eix respect local setting (DIFF_LOCAL_PORTAGE_CONFIG):
-	  http://bugs.gentoo.org/show_bug.cgi?id=140555
+	  https://bugs.gentoo.org/show_bug.cgi?id=140555
 	- Document that it is possible to exclude the PORTDIR "overlay".
 	- Add --add-overlay (ADD_OVERLAY variable) to update-eix.
 	- Fixed passing of recursive flag for /etc/portage/package.*
-	  This should fix http://bugs.gentoo.org/show_bug.cgi?id=141818
+	  This should fix https://bugs.gentoo.org/show_bug.cgi?id=141818
 	- Treat also non-arch Keywords, e.g. x86 on an amd64 architecture.
 	  To avoid increasing database size by factor ~1.5 for this feature,
 	  you can use the new SMALL_EIX_DATABASE variable.
@@ -2360,11 +2369,11 @@
 *eix-0.5.6
 	Martin Väth <martin at mvath.de>:
 	- If /etc/portage/package.* is a directory, read it recursively:
-	  http://bugs.gentoo.org/show_bug.cgi?id=137784
+	  https://bugs.gentoo.org/show_bug.cgi?id=137784
 	- patch from caster at matfyz.cz to treat version numbers as long ints:
-	  http://bugs.gentoo.org/show_bug.cgi?id=133732
+	  https://bugs.gentoo.org/show_bug.cgi?id=133732
 	- Support a "source " (and ". ") command in /etc/make.*:
-	  http://bugs.gentoo.org/show_bug.cgi?id=132874
+	  https://bugs.gentoo.org/show_bug.cgi?id=132874
 	- Mark installed versions in output list. This experimental feature
 	  can be disabled with MARK_INSTALLED=none in /etc/eixrc
 	- Fixing -D again.
@@ -2373,8 +2382,8 @@
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Fix fstream.ignore-stuff in metadata and flat.
 	- Redone a part of argsreader.h Option .. looks *much* cleaner now.
-	- Fixed http://gentooexperimental.org/eix/ticket/3
-	  (was previously http://dev.croup.de/proj/eix/ticket/3)
+	- Fixed https://gentooexperimental.org/eix/ticket/3
+	  (was previously https://dev.croup.de/proj/eix/ticket/3)
 	  profiles can contain profiles/categories
 	- fuzzy-search is now ignore-case.
 
@@ -2388,7 +2397,7 @@
 
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Added metadata as cache-method.
-	- Added a workaround for http://bugs.gentoo.org/show_bug.cgi?id=114628
+	- Added a workaround for https://bugs.gentoo.org/show_bug.cgi?id=114628
 	  Looks like the problems isn't eix, but some part of the toolchain.
 
 *eix-0.5.1
@@ -2402,8 +2411,8 @@
 	  old depcache in /var/cache/edb/dep.
 	- More verbose output if problems with files in /etc/portage/ or the
 	  profile pop up. This should stop reports like
-	  http://bugs.gentoo.org/show_bug.cgi?id=116592
-	- Fixed http://bugs.gentoo.org/show_bug.cgi?id=117407 and removed a
+	  https://bugs.gentoo.org/show_bug.cgi?id=116592
+	- Fixed https://bugs.gentoo.org/show_bug.cgi?id=117407 and removed a
 	  compilation-error for -pedantic -ansi -W -Wall -Werror
 	- Moved the code in ExplodeAtom from regex to short, _fast_ and
 	  hand-written parser-code.
@@ -2421,23 +2430,23 @@
 	- Fixed a small bug regarding -o/-a and atoms with a pattern ..
 	  thanks to leonie for bringing this to my attention.
 	- Added PROVIDE; bumped db-version
-	- Fixing http://bugs.gentoo.org/show_bug.cgi?id=111927
+	- Fixing https://bugs.gentoo.org/show_bug.cgi?id=111927
 	- Added our own strndup-implementation that will be used for ppc-macos
-	  See http://bugs.gentoo.org/show_bug.cgi?id=111912
+	  See https://bugs.gentoo.org/show_bug.cgi?id=111912
 	- Finally, environment variables can be used to override eixrc-stuff.
-	- Applied patch from http://bugs.gentoo.org/show_bug.cgi?id=111865,
+	- Applied patch from https://bugs.gentoo.org/show_bug.cgi?id=111865,
 	  thanks JeR
-	- Applied patch from http://bugs.gentoo.org/show_bug.cgi?id=112776
-	- Applied patch from http://bugs.gentoo.org/show_bug.cgi?id=112806
+	- Applied patch from https://bugs.gentoo.org/show_bug.cgi?id=112776
+	- Applied patch from https://bugs.gentoo.org/show_bug.cgi?id=112806
 	- Applied patches for scandir, sed, byteorder and regex from
-	  http://bugs.gentoo.org/show_bug.cgi?id=111912
+	  https://bugs.gentoo.org/show_bug.cgi?id=111912
 	- Fixed some small memory-leaks - valgrind reports one more that leads
 	  into the glibc (getpwnam) .. but this is really a leak. See
 	  --run-glibc-freeres in valgrind(1).
 	- Rewrite BasicVersion (much more efficient) and fixes
-	  http://gentooexperimental.org/eix/ticket/1
-	  (was previously http://dev.croup.de/proj/eix/ticket/1)
-	- Fix http://bugs.gentoo.org/show_bug.cgi?id=113735
+	  https://gentooexperimental.org/eix/ticket/1
+	  (was previously https://dev.croup.de/proj/eix/ticket/1)
+	- Fix https://bugs.gentoo.org/show_bug.cgi?id=113735
 
 *eix-0.5_beta
 
@@ -2445,7 +2454,7 @@
 	- Formatstring(Conditions): If a "else" was missing, the if-true part
 	  was linked to if-false.
 	- Changed the arch-part of the dbheader from char[16] to string.
-	- Fixed http://bugs.gentoo.org/show_bug.cgi?id=104083 - once again:
+	- Fixed https://bugs.gentoo.org/show_bug.cgi?id=104083 - once again:
 	  unsigned int vs. vector::size_type
 	- Moved from #define in basicio.h to a namespace io with generic
 	  read/write-functions for POD and {read,write}_string for strings.
@@ -2454,11 +2463,11 @@
 	- eix-sync hides output of emerge --sync and update-eix per default.
 	  Added cli-options -v, -h, -q
 	- Fixed a non-existing bug :)
-	  http://bugs.gentoo.org/show_bug.cgi?id=97462
+	  https://bugs.gentoo.org/show_bug.cgi?id=97462
 	- Fixed a rather *extrem* bug:
 	  The read-only-what-we-need-to-check-if-the-package-matches
 	  wasn't used at all! This brings an extrem speedup.
-	- Fixed http://bugs.gentoo.org/show_bug.cgi?id=105935
+	- Fixed https://bugs.gentoo.org/show_bug.cgi?id=105935
 	- I just love auto_ptr!
 
 *eix-0.3.0
@@ -2472,7 +2481,7 @@
 	  to ignore all local configuration like /etc/portage and
 	  ACCEPT_KEYWORDS.
 	  Yes, I know that this could be done by a alias in $SHELL.
-	- Fixed (think) http://bugs.gentoo.org/show_bug.cgi?id=103836.
+	- Fixed (think) https://bugs.gentoo.org/show_bug.cgi?id=103836.
 	  offset_type wasn't off_t everywhere.
 
 *eix-0.3.0_beta
@@ -2486,10 +2495,10 @@
 	- Added target and gcc-version to the output of both, eix -V and
 	  update-eix -V.
 	- Fixed a bug in the cdb-code: munmap was called for bad pointers.
-	- Fixed http://bugs.gentoo.org/show_bug.cgi?id=97914 (Thanks to
+	- Fixed https://bugs.gentoo.org/show_bug.cgi?id=97914 (Thanks to
 	  David Held <andukar at andukar.org> for the patch.
 	- Fixed compilation-problems
-	  http://bugs.gentoo.org/show_bug.cgi?id=98218.
+	  https://bugs.gentoo.org/show_bug.cgi?id=98218.
 	  Patch by Cyrille Mescam <titi at oboulo.com>.
 	- Masks like '>app-portage/eix-0.2*' are finally accepted by
 	  update-eix.
@@ -2519,11 +2528,11 @@
 *eix-0.2.5
 
 	Emil Beinroth <emilbeinroth at gmx.net>:
-	- Fixed http://bugs.gentoo.org/show_bug.cgi?id=88148
+	- Fixed https://bugs.gentoo.org/show_bug.cgi?id=88148
 	- Committed reviewed manpage (Thanks Legoguy)
 	- Overlay reading: Check result of explodePkgFilename before using it
 	- Added --version/-V options
-	- Added patch from http://bugs.gentoo.org/show_bug.cgi?id=89376
+	- Added patch from https://bugs.gentoo.org/show_bug.cgi?id=89376
 	  by Mike Gardiner <obz at gentoo.org>
 	- Rewrote big parts of update-eix. We now have different classes for
 	  different portage cache-backends.
@@ -2566,11 +2575,11 @@
 	  Use xororand formatstring.cc for output of results
 
 	Wolfgang Frisch <xororand at users.sourceforge.net>:
-	- Added a wiki: http://eixwiki.unfoog.de
+	- Added a wiki: https://eixwiki.unfoog.de
 	- Added parameter -l,--lineversions for printing versions line-by-line
 	  like "etcat -v"
 	- Added format strings to allow customized output. See manpage and
-	  http://eixwiki.unfoog.de/index.php/Usage#Format_strings
+	  https://eixwiki.unfoog.de/index.php/Usage#Format_strings
 	- Yet another 'version number sorting'-fix. Now: 1.2a < 1.2b
 	- Moved Portage settings parts from PortageDB to new class
 	  PortageSettings
@@ -2603,8 +2612,8 @@
 	- Included minor fixes from
 	  Christian Heim <christian.th.heim at gmx.de>
 	- Big cleanups in readoverlay to fix 2 major bugs
-	  http://bugs.gentoo.org/show_bug.cgi?id=80241 and
-	  http://forums.gentoo.org/viewtopic.php?p=2005152#2005152
+	  https://bugs.gentoo.org/show_bug.cgi?id=80241 and
+	  https://forums.gentoo.org/viewtopic.php?p=2005152#2005152
 	- Added -I to search only installed packages. If no search pattern is
 	  given it prints all installed packages.
 	- Changed version.cc, added a test for version.cc, added 'keys' for
@@ -2627,7 +2636,7 @@
 	  and ppc64, x86 and x86-obsd .. and so on
 	- Converted the db-read/write code to use c-style FILE*, fread, fwrite.
 	  This fixes the ppc-problem described in
-	  http://forums.gentoo.org/viewtopic.php?p=2036103#2036103
+	  https://forums.gentoo.org/viewtopic.php?p=2036103#2036103
 	  Thanks meyerm for testing :)
 	xororand <xororand at users.sourceforge.net>:
 	- Fixed: packages with ebuilds in multiple overlays are no longer

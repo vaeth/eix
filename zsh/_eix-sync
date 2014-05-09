@@ -23,4 +23,6 @@ _arguments -s -S -A '-*' : \
 '*-L+[OPT (add OPT to layman)]:layman option: ' \
 '-r[clear /var/cache/edb/dep/* before syncing]' \
 '-R[cancel previous -r]' \
+'-v[verbose]' \
+'-n[dry run (implies -vH)]' \
 '-H[no status line update]'

@@ -45,16 +45,19 @@ static WordMap *get_map_from_cache(const char *file) {
 	}
 
 	ifstream is(file);
-	if(!is.is_open()) {
+	if(unlikely(!is.is_open())) {
 		return NULLPTR;
 	}
 
-	string lbuf;
-	while(likely(getline(is, lbuf) != NULLPTR)) {
-		string::size_type p(lbuf.find('='));
-		if(p == string::npos)
-			continue;
-		(*cf)[lbuf.substr(0, p)].assign(lbuf, p + 1, string::npos);
+	if(likely(is.good())) {
+		string lbuf;
+		while(getline(is, lbuf), likely(is.good())) {
+			string::size_type p(lbuf.find('='));
+			if(p == string::npos) {
+				continue;
+			}
+			(*cf)[lbuf.substr(0, p)].assign(lbuf, p + 1, string::npos);
+		}
 	}
 	is.close();
 	return cf;

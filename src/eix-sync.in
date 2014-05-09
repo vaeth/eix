@@ -39,7 +39,8 @@ quote them correctly and care about security risks.
 Moreover, "--" in the default options will forbid command line options.
 The following options are available:
 
--i   Ignore all previous options (useful to ignore ${eixsyncconf} options).
+-i   Ignore all previous options except -n
+     (useful to ignore ${eixsyncconf} options).
 -a   Always assume that some tree/overlay changes
      (set have_changed=: in a !-hook to force this)
 -s [USER@]SERVER[:DIR] Sync via rsync from SERVER.
@@ -80,6 +81,8 @@ The following options are available:
      use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer
      is active. (This option is not default anymore).
 -R   Cancel previous -r (e.g. if it was used in ${eixsyncconf}).
+-v   Verbose output.
+-n   Dry run. This option implies -avHT
 -H   Suppress status line update.
 -h   Show this text and exit.'
 	echo
@@ -95,7 +98,8 @@ WarnOrDie() {
 DoExecute() {
 	for curr_cmd
 	do	set +f
-		eval "${curr_cmd}" || WarnOrDie "`eval_gettext \
+		! ${verbose} || Echo "# ${curr_cmd}"
+		${dryrun} || eval "${curr_cmd}" || WarnOrDie "`eval_gettext \
 			'Something went wrong with ${curr_cmd}'`"
 	done
 }
@@ -246,6 +250,7 @@ DefaultOpts() {
 	nohooks=false
 	quiet=false
 	usetemp=false
+	verbose=false
 	measure_time=:
 	metadata=
 	skip_sync=false
@@ -257,6 +262,7 @@ DefaultOpts() {
 	FATAL_HOOKS=
 }
 
+dryrun=false
 DefaultOpts
 ExecuteConfig 'opts'
 set -f
@@ -265,7 +271,7 @@ Push opt "${@}"
 eval "set -- ${opt}"
 set +f
 OPTIND=1
-while getopts 'ias:02:UuFlA@SMNtTqwWL:c:C:o:rRHh?' opt
+while getopts 'ias:02:UuFlA@SMNtTqwWL:c:C:o:rRHvnh?' opt
 do	case ${opt} in
 	i)	DefaultOpts;;
 	a)	have_changed=:;;
@@ -297,11 +303,19 @@ do	case ${opt} in
 	r)	clearcache=:;;
 	R)	clearcache=false;;
 	H)	statusline=false;;
+	v)	verbose=:;;
+	n)	dryrun=:;;
 	*)	Usage 0;;
 	esac
 done
 [ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
-opt=
+unset opt
+if ${dryrun}
+then	have_changed=:
+	verbose=:
+	statusline=false
+	measure_time=false
+fi
 [ -z "${server:++}" ] || skip_sync=:
 ${skip_sync} && have_changed=:
 ${statusline} || export NOSTATUSLINE=true
@@ -331,13 +345,22 @@ IsNumber "${time_begin:-x}" && [ "${time_begin}" -gt 99 ] && {
 	[ "${t}" -gt 0 ] && [ "${time_begin}" -gt "${t}" ]
 } >/dev/null 2>&1 && measure_time=:
 
+MyRunning() {
+	if ${verbose}
+	then	Push -c myrun "${@}"
+		Echo "# ${myrun}"
+	fi
+	${dryrun} && return
+	"${@}"
+}
+
 MyRun() {
 	if [ "${1}" = '-t' ]
 	then	if ${measure_time}
 		then	timevar="time_${2}"
 			shift 2
 			begt=`date '+%s' 2>/dev/null` || measure_time=false
-			"${@}"
+			MyRunning "${@}"
 			runstat=${?}
 			${measure_time} && endt=`date +%s 2>/dev/null` \
 				|| measure_time=false
@@ -347,7 +370,7 @@ MyRun() {
 		fi
 		shift 2
 	fi
-	"${@}"
+	MyRunning "${@}"
 }
 
 MyRunCommand() {
@@ -520,13 +543,13 @@ CopyToTemp() {
 		'Copying old ${eixcache} cache to temporary file'`"
 	MakeTempFile
 	chmod a+r -- "${tmpfile}"
-	cp -p -- "${eixcache}" "${tmpfile}" || die "`eval_gettext \
+	MyRun cp -p -- "${eixcache}" "${tmpfile}" || die "`eval_gettext \
 		'Could not copy database to temporary file ${tmpfile}'`"
 }
 
 CopyToPrevious() {
 	StatusInfo "`eval_gettext 'Copying old database to ${eixprevious}'`"
-	cp -p -- "${eixcache}" "${eixprevious}" || die "`eval_gettext \
+	MyRun cp -p -- "${eixcache}" "${eixprevious}" || die "`eval_gettext \
 		'Could not copy database to ${eixprevious}'`"
 }
 

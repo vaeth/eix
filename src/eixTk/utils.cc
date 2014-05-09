@@ -85,30 +85,31 @@ bool scandir_cc(const string& dir, WordVec *namelist, select_dirent select, bool
 static bool pushback_lines_file(const char *file, LineVec *v, bool keep_empty, eix::SignedBool keep_comments, string *errtext) {
 	string line;
 	std::ifstream ifstr(file);
-	if(!ifstr.is_open()) {
+	if(unlikely(!ifstr.is_open())) {
 		if(errtext != NULLPTR) {
 			*errtext = eix::format(_("Can't open %s: %s")) % file % strerror(errno);
 		}
 		return false;
 	}
-	while(ifstr.good()) {
-		getline(ifstr, line);
-		if(keep_comments <= 0) {
-			string::size_type x(line.find('#'));
-			if(unlikely(x != string::npos)) {
-				if(likely((keep_comments == 0) || (x != 0))) {
-					line.erase(x);
+	if(likely(ifstr.good())) {
+		while(getline(ifstr, line), likely(ifstr.good())) {
+			if(keep_comments <= 0) {
+				string::size_type x(line.find('#'));
+				if(unlikely(x != string::npos)) {
+					if(likely((keep_comments == 0) || (x != 0))) {
+						line.erase(x);
+					}
 				}
 			}
-		}
 
-		trim(&line);
+			trim(&line);
 
-		if(keep_empty || (!line.empty())) {
-			v->push_back(line);
+			if(keep_empty || (!line.empty())) {
+				v->push_back(line);
+			}
 		}
 	}
-	if(ifstr.eof()) {  // if we have eof, everything went well
+	if(likely(ifstr.eof())) {  // if we have eof, everything went well
 		return true;
 	}
 	if(errtext != NULLPTR) {

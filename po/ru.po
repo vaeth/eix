@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2014-04-29 09:43+0200\n"
+"POT-Creation-Date: 2014-05-09 22:31+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -610,7 +610,8 @@ msgid ""
 "Moreover, \"--\" in the default options will forbid command line options.\n"
 "The following options are available:\n"
 "\n"
-"-i   Ignore all previous options (useful to ignore ${eixsyncconf} options).\n"
+"-i   Ignore all previous options except -n\n"
+"     (useful to ignore ${eixsyncconf} options).\n"
 "-a   Always assume that some tree/overlay changes\n"
 "     (set have_changed=: in a !-hook to force this)\n"
 "-s [USER@]SERVER[:DIR] Sync via rsync from SERVER.\n"
@@ -658,6 +659,8 @@ msgid ""
 "     use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer\n"
 "     is active. (This option is not default anymore).\n"
 "-R   Cancel previous -r (e.g. if it was used in ${eixsyncconf}).\n"
+"-v   Verbose output.\n"
+"-n   Dry run. This option implies -avHT\n"
 "-H   Suppress status line update.\n"
 "-h   Show this text and exit."
 msgstr ""
@@ -678,8 +681,8 @@ msgstr ""
 "строки.\n"
 "Доступны следующие ключи:\n"
 "\n"
-"-i   Игнорировать все предыдущие ключи (полезно для игнорирования "
-"${eixsyncconf}).\n"
+"-i   Игнорировать все предыдущие ключи except -n\n"
+"     (полезно для игнорирования ${eixsyncconf}).\n"
 "-a   Always assume that some tree/overlay changes\n"
 "     (set have_changed=: in a !-hook to force this)\n"
 "-s [ПОЛЬЗОВАТЕЛЬ@]СЕРВЕР[:ДИР] Синхронизация через rsync с СЕРВЕРом.\n"
@@ -729,23 +732,25 @@ msgstr ""
 "     (Этот ключ более не активирован по умолчанию).\n"
 "-R   Отменить предыдущий -r (например, если он использовался в "
 "${eixsyncconf}).\n"
+"-v   Verbose output.\n"
+"-n   Dry run. This option implies -avHT\n"
 "-H   Подавить обновления строки состояния.\n"
 "-h   Показать этот текст и выйти."
 
-#: src/eix-sync.sh:99
+#: src/eix-sync.sh:103
 #, sh-format
 msgid "Something went wrong with ${curr_cmd}"
 msgstr "Что-то не так с ${curr_cmd}"
 
-#: src/eix-sync.sh:104
+#: src/eix-sync.sh:108
 msgid "Running !!-hooks"
 msgstr "Выполняются !!-хуки"
 
-#: src/eix-sync.sh:111
+#: src/eix-sync.sh:115
 msgid "Running !-hooks"
 msgstr "Выполняются !-хуки"
 
-#: src/eix-sync.sh:122
+#: src/eix-sync.sh:126
 msgid ""
 "Your eix-sync configuration contains an obsolete hook\n"
 "\"eix-remote*add*\" or \"eix-remote*update*\"\n"
@@ -756,160 +761,160 @@ msgid ""
 "a different syntax like quoting eix-remote."
 msgstr ""
 
-#: src/eix-sync.sh:206
+#: src/eix-sync.sh:210
 msgid "Syncing all portage overlays"
 msgstr "Синхронизация всех оверлеев"
 
-#: src/eix-sync.sh:208
+#: src/eix-sync.sh:212
 #, sh-format
 msgid "${mycmd} -S failed"
 msgstr "ошибка ${mycmd} -S"
 
-#: src/eix-sync.sh:211
+#: src/eix-sync.sh:215
 #, sh-format
 msgid "Syncing portage overlay ${j}"
 msgstr "Синхронизация оверлея ${j}"
 
-#: src/eix-sync.sh:213
+#: src/eix-sync.sh:217
 #, sh-format
 msgid "${mycmd} -s ${j} failed"
 msgstr "ошибка ${mycmd} -s ${j}"
 
-#: src/eix-sync.sh:386
+#: src/eix-sync.sh:409
 #, sh-format
 msgid "Running ${myvarcmd}"
 msgstr "Запуск ${myvarcmd}"
 
-#: src/eix-sync.sh:388
+#: src/eix-sync.sh:411
 #, sh-format
 msgid "${myvarcmd} failed"
 msgstr "ошибка ${myvarcmd}"
 
-#: src/eix-sync.sh:399
+#: src/eix-sync.sh:422
 msgid "%6d seconds for %s\\n"
 msgstr "%6d секунд для %s\\n"
 
-#: src/eix-sync.sh:404
+#: src/eix-sync.sh:427
 msgid "Time statistics:"
 msgstr "Статистика времени:"
 
-#: src/eix-sync.sh:405
+#: src/eix-sync.sh:428
 msgid "initial eix-update"
 msgstr "начальный eix-update"
 
-#: src/eix-sync.sh:406
+#: src/eix-sync.sh:429
 msgid "syncing"
 msgstr "синхронизация"
 
-#: src/eix-sync.sh:407
+#: src/eix-sync.sh:430
 msgid "client syncing"
 msgstr "синхронизация клиента"
 
-#: src/eix-sync.sh:408
+#: src/eix-sync.sh:431
 msgid "metadata update"
 msgstr "обновление метаданных"
 
-#: src/eix-sync.sh:409
+#: src/eix-sync.sh:432
 msgid "eix-update"
 msgstr "eix-update"
 
-#: src/eix-sync.sh:410
+#: src/eix-sync.sh:433
 msgid "eix-diff"
 msgstr "eix-diff"
 
-#: src/eix-sync.sh:413
+#: src/eix-sync.sh:436
 msgid "%6d seconds total\\n"
 msgstr "%6d секунд всего\\n"
 
-#: src/eix-sync.sh:454
+#: src/eix-sync.sh:477
 msgid "Running ~-hooks"
 msgstr "Выполняются ~-хуки"
 
-#: src/eix-sync.sh:458
+#: src/eix-sync.sh:481
 #, sh-format
 msgid "${c} (output of ${curr_cmd}) failed"
 msgstr "${c} (ошибка вывода ${curr_cmd})"
 
-#: src/eix-sync.sh:459
+#: src/eix-sync.sh:482
 #, sh-format
 msgid "${curr_cmd} failed"
 msgstr "Ошибка ${curr_cmd}"
 
-#: src/eix-sync.sh:479
+#: src/eix-sync.sh:502
 #, sh-format
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr "Удаление старого кэша portage в ${local_varcache}/var/cache/edb/dep"
 
-#: src/eix-sync.sh:481
+#: src/eix-sync.sh:504
 #, sh-format
 msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
 msgstr "Ошибка rm -rf ${local_varcache}/var/cache/edb/dep/*"
 
-#: src/eix-sync.sh:489
+#: src/eix-sync.sh:512
 #, sh-format
 msgid "Could not rsync from ${hostdir}"
 msgstr "Невозможно выполнить rsync из ${hostdir}"
 
-#: src/eix-sync.sh:499
+#: src/eix-sync.sh:522
 #, sh-format
 msgid "rsyncing to ${hostdir}"
 msgstr "Выполняю rsync в ${hostdir}"
 
-#: src/eix-sync.sh:501
+#: src/eix-sync.sh:524
 #, sh-format
 msgid "Could not rsync to ${hostdir}"
 msgstr "Невозможно выполнить rsync в ${hostdir}"
 
-#: src/eix-sync.sh:511
+#: src/eix-sync.sh:534
 msgid "eix-cache does not exist."
 msgstr "eix-cache не существует."
 
-#: src/eix-sync.sh:513
+#: src/eix-sync.sh:536
 msgid "eix-cache format has changed."
 msgstr "Формат eix-cache изменился"
 
-#: src/eix-sync.sh:520
+#: src/eix-sync.sh:543
 #, sh-format
 msgid "Copying old ${eixcache} cache to temporary file"
 msgstr "Копирую старый кэш ${eixcache} во временный файл"
 
-#: src/eix-sync.sh:524
+#: src/eix-sync.sh:547
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Невозможно скопировать базу данных во временный файл ${tmpfile}"
 
-#: src/eix-sync.sh:528
+#: src/eix-sync.sh:551
 #, sh-format
 msgid "Copying old database to ${eixprevious}"
 msgstr "Копирую старую базу данных в ${eixprevious}"
 
-#: src/eix-sync.sh:530
+#: src/eix-sync.sh:553
 #, sh-format
 msgid "Could not copy database to ${eixprevious}"
 msgstr "Невозможно скопировать базу данных в ${eixprevious}"
 
-#: src/eix-sync.sh:558
+#: src/eix-sync.sh:581
 #, fuzzy, sh-format
 msgid "eix-remote add${remote_num} failed"
 msgstr "ошибка eix-remote add${remote_num}"
 
-#: src/eix-sync.sh:571
+#: src/eix-sync.sh:594
 msgid "eix-update was apparently already called in a hook"
 msgstr "Вероятно, eix-update уже вызван крюком"
 
-#: src/eix-sync.sh:574
+#: src/eix-sync.sh:597
 msgid "Running @@-hooks"
 msgstr "Выполняются @@-хуки"
 
-#: src/eix-sync.sh:576
+#: src/eix-sync.sh:599
 msgid "Calling eix-diff"
 msgstr "Вызов eix-diff"
 
-#: src/eix-sync.sh:578
+#: src/eix-sync.sh:601
 msgid "Failed to diff against current cache"
 msgstr "Ошибка сравнения с текущим кэшем"
 
-#: src/eix-sync.sh:593
+#: src/eix-sync.sh:616
 msgid ""
 "Main gentoo tree does not appear to have changed: exiting\n"
 "Use -a or set have_changed=: in a ! hook to override this check"
@@ -917,7 +922,7 @@ msgstr ""
 "Главное дерево gentoo не изменилось, выхожу\n"
 "Ключ -a или have_changed=: в !=хуке позволит обойти проверку"
 
-#: src/eix-sync.sh:607
+#: src/eix-sync.sh:630
 msgid "Running @-hooks"
 msgstr "Выполняются @-хуки"
 
@@ -2069,7 +2074,7 @@ msgstr "Невозможно определить версию %s"
 msgid "Unknown cache %r for directory %r"
 msgstr "Неизвестный кэш %r для каталога %r"
 
-#: src/cache/common/assign_reader.cc:80 src/cache/common/assign_reader.cc:98
+#: src/cache/common/assign_reader.cc:83 src/cache/common/assign_reader.cc:101
 #: src/cache/common/flat_reader.cc:38 src/cache/eixcache/eixcache.cc:235
 #, c-format
 msgid "Can't read cache file %s: %s"
@@ -2333,12 +2338,12 @@ msgstr "Внутренняя ошибка: Попытка создать ярл�
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "База данных испорчена: требуется несуществующий хеш"
 
-#: src/eixTk/utils.cc:115
+#: src/eixTk/utils.cc:116
 #, c-format
 msgid "Error reading %s: %s"
 msgstr "Ошибка чтения %s: %s"
 
-#: src/eixTk/utils.cc:136
+#: src/eixTk/utils.cc:137
 msgid "Nesting level too deep in %r"
 msgstr "Уровень гнездования слишком глубок в %r"
 
