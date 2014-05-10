@@ -2,7 +2,7 @@
 
 *eix-0.30.3
 	Martin Väth <martin at mvath.de>:
-	- eix-sync: Add -n (dry-run) and -v (verbose) options, see
+	- eix-sync: Add -vn (verbose dry-run) options, see
 	  https://bugs.gentoo.org/show_bug.cgi?id=509750
 	- Fix more wrong usages of getline(), see
 	  https://bugs.gentoo.org/show_bug.cgi?id=506106

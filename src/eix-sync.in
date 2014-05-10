@@ -81,8 +81,8 @@ The following options are available:
      use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer
      is active. (This option is not default anymore).
 -R   Cancel previous -r (e.g. if it was used in ${eixsyncconf}).
--v   Verbose output.
--n   Dry run. This option implies -avHT
+-v   Verbose: output of executed commands.
+-n   Dry run. You might want to combine this with -v. This implies -aHT
 -H   Suppress status line update.
 -h   Show this text and exit.'
 	echo
@@ -95,10 +95,14 @@ WarnOrDie() {
 	ewarn "${@}"
 }
 
+PrintCmd() {
+	Echo "# ${*}"
+}
+
 DoExecute() {
 	for curr_cmd
 	do	set +f
-		! ${verbose} || Echo "# ${curr_cmd}"
+		! ${printcmd} || PrintCmd "${curr_cmd}"
 		${dryrun} || eval "${curr_cmd}" || WarnOrDie "`eval_gettext \
 			'Something went wrong with ${curr_cmd}'`"
 	done
@@ -250,7 +254,7 @@ DefaultOpts() {
 	nohooks=false
 	quiet=false
 	usetemp=false
-	verbose=false
+	printcmd=false
 	measure_time=:
 	metadata=
 	skip_sync=false
@@ -303,7 +307,7 @@ do	case ${opt} in
 	r)	clearcache=:;;
 	R)	clearcache=false;;
 	H)	statusline=false;;
-	v)	verbose=:;;
+	v)	printcmd=:;;
 	n)	dryrun=:;;
 	*)	Usage 0;;
 	esac
@@ -312,7 +316,6 @@ done
 unset opt
 if ${dryrun}
 then	have_changed=:
-	verbose=:
 	statusline=false
 	measure_time=false
 fi
@@ -346,9 +349,9 @@ IsNumber "${time_begin:-x}" && [ "${time_begin}" -gt 99 ] && {
 } >/dev/null 2>&1 && measure_time=:
 
 MyRunning() {
-	if ${verbose}
+	if ${printcmd}
 	then	Push -c myrun "${@}"
-		Echo "# ${myrun}"
+		PrintCmd "${myrun}"
 	fi
 	${dryrun} && return
 	"${@}"
@@ -476,7 +479,9 @@ PrepRsync() {
 	esac
 	[ ${#} -eq 0 ] || StatusInfo "`gettext 'Running ~-hooks'`"
 	for curr_cmd
-	do	if c=`eval "${curr_cmd}"`
+	do	! ${printcmd} || PrintCmd 'eval "$(eval "'"${curr_cmd}"'")"'
+		${dryrun} && continue
+		if c=`eval "${curr_cmd}"`
 		then	eval "${c}" || WarnOrDie "`eval_gettext \
 				'${c} (output of ${curr_cmd}) failed'`"
 		else	WarnOrDie "`eval_gettext '${curr_cmd} failed'`"
@@ -572,12 +577,13 @@ RemoteAdd() {
 		eval eixremote=\${eixremote${remote_num}}
 		[ -z "${eixremote}" ] && continue
 		[ "${eixremote}" = "${eixcache}" ] && continue
-		test -r "${eixremote}" && {
+		test -r "${eixremote}" || continue
+		! ${dryrun} && {
 			test "${eixremote}" -nt "${eixcache}" && \
 			test "${eixremote}" -nt "${archive}"
 		} >/dev/null 2>&1 && continue
 		StatusInfo eix-remote add${remote_num}
-		eix-remote add${remote_num} || WarnOrDie "`eval_gettext \
+		MyRun eix-remote add${remote_num} || WarnOrDie "`eval_gettext \
 			'eix-remote add${remote_num} failed'`"
 	done
 	return 0
@@ -589,7 +595,7 @@ UpdateDiff() {
 	then	d=${tmpfile}
 	else	d=${eixprevious}
 	fi
-	if test "${eixcache}" -nt "${d}" >/dev/null 2>&1
+	if ! ${dryrun} && test "${eixcache}" -nt "${d}" >/dev/null 2>&1
 	then	einfo "`gettext \
 			'eix-update was apparently already called in a hook'`"
 	else	MyVarCommand "${updatecmd}" -t update

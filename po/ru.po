@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2014-05-09 22:31+0200\n"
+"POT-Creation-Date: 2014-05-10 07:58+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -659,8 +659,8 @@ msgid ""
 "     use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer\n"
 "     is active. (This option is not default anymore).\n"
 "-R   Cancel previous -r (e.g. if it was used in ${eixsyncconf}).\n"
-"-v   Verbose output.\n"
-"-n   Dry run. This option implies -avHT\n"
+"-v   Verbose: output of executed commands.\n"
+"-n   Dry run. You might want to combine this with -v. This implies -aHT\n"
 "-H   Suppress status line update.\n"
 "-h   Show this text and exit."
 msgstr ""
@@ -732,25 +732,25 @@ msgstr ""
 "     (Этот ключ более не активирован по умолчанию).\n"
 "-R   Отменить предыдущий -r (например, если он использовался в "
 "${eixsyncconf}).\n"
-"-v   Verbose output.\n"
-"-n   Dry run. This option implies -avHT\n"
+"-v   Verbose: output of executed commands.\n"
+"-n   Dry run. You might want to combine this with -v. This implies -aHT\n"
 "-H   Подавить обновления строки состояния.\n"
 "-h   Показать этот текст и выйти."
 
-#: src/eix-sync.sh:103
+#: src/eix-sync.sh:107
 #, sh-format
 msgid "Something went wrong with ${curr_cmd}"
 msgstr "Что-то не так с ${curr_cmd}"
 
-#: src/eix-sync.sh:108
+#: src/eix-sync.sh:112
 msgid "Running !!-hooks"
 msgstr "Выполняются !!-хуки"
 
-#: src/eix-sync.sh:115
+#: src/eix-sync.sh:119
 msgid "Running !-hooks"
 msgstr "Выполняются !-хуки"
 
-#: src/eix-sync.sh:126
+#: src/eix-sync.sh:130
 msgid ""
 "Your eix-sync configuration contains an obsolete hook\n"
 "\"eix-remote*add*\" or \"eix-remote*update*\"\n"
@@ -761,160 +761,160 @@ msgid ""
 "a different syntax like quoting eix-remote."
 msgstr ""
 
-#: src/eix-sync.sh:210
+#: src/eix-sync.sh:214
 msgid "Syncing all portage overlays"
 msgstr "Синхронизация всех оверлеев"
 
-#: src/eix-sync.sh:212
+#: src/eix-sync.sh:216
 #, sh-format
 msgid "${mycmd} -S failed"
 msgstr "ошибка ${mycmd} -S"
 
-#: src/eix-sync.sh:215
+#: src/eix-sync.sh:219
 #, sh-format
 msgid "Syncing portage overlay ${j}"
 msgstr "Синхронизация оверлея ${j}"
 
-#: src/eix-sync.sh:217
+#: src/eix-sync.sh:221
 #, sh-format
 msgid "${mycmd} -s ${j} failed"
 msgstr "ошибка ${mycmd} -s ${j}"
 
-#: src/eix-sync.sh:409
+#: src/eix-sync.sh:412
 #, sh-format
 msgid "Running ${myvarcmd}"
 msgstr "Запуск ${myvarcmd}"
 
-#: src/eix-sync.sh:411
+#: src/eix-sync.sh:414
 #, sh-format
 msgid "${myvarcmd} failed"
 msgstr "ошибка ${myvarcmd}"
 
-#: src/eix-sync.sh:422
+#: src/eix-sync.sh:425
 msgid "%6d seconds for %s\\n"
 msgstr "%6d секунд для %s\\n"
 
-#: src/eix-sync.sh:427
+#: src/eix-sync.sh:430
 msgid "Time statistics:"
 msgstr "Статистика времени:"
 
-#: src/eix-sync.sh:428
+#: src/eix-sync.sh:431
 msgid "initial eix-update"
 msgstr "начальный eix-update"
 
-#: src/eix-sync.sh:429
+#: src/eix-sync.sh:432
 msgid "syncing"
 msgstr "синхронизация"
 
-#: src/eix-sync.sh:430
+#: src/eix-sync.sh:433
 msgid "client syncing"
 msgstr "синхронизация клиента"
 
-#: src/eix-sync.sh:431
+#: src/eix-sync.sh:434
 msgid "metadata update"
 msgstr "обновление метаданных"
 
-#: src/eix-sync.sh:432
+#: src/eix-sync.sh:435
 msgid "eix-update"
 msgstr "eix-update"
 
-#: src/eix-sync.sh:433
+#: src/eix-sync.sh:436
 msgid "eix-diff"
 msgstr "eix-diff"
 
-#: src/eix-sync.sh:436
+#: src/eix-sync.sh:439
 msgid "%6d seconds total\\n"
 msgstr "%6d секунд всего\\n"
 
-#: src/eix-sync.sh:477
+#: src/eix-sync.sh:480
 msgid "Running ~-hooks"
 msgstr "Выполняются ~-хуки"
 
-#: src/eix-sync.sh:481
+#: src/eix-sync.sh:486
 #, sh-format
 msgid "${c} (output of ${curr_cmd}) failed"
 msgstr "${c} (ошибка вывода ${curr_cmd})"
 
-#: src/eix-sync.sh:482
+#: src/eix-sync.sh:487
 #, sh-format
 msgid "${curr_cmd} failed"
 msgstr "Ошибка ${curr_cmd}"
 
-#: src/eix-sync.sh:502
+#: src/eix-sync.sh:507
 #, sh-format
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr "Удаление старого кэша portage в ${local_varcache}/var/cache/edb/dep"
 
-#: src/eix-sync.sh:504
+#: src/eix-sync.sh:509
 #, sh-format
 msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
 msgstr "Ошибка rm -rf ${local_varcache}/var/cache/edb/dep/*"
 
-#: src/eix-sync.sh:512
+#: src/eix-sync.sh:517
 #, sh-format
 msgid "Could not rsync from ${hostdir}"
 msgstr "Невозможно выполнить rsync из ${hostdir}"
 
-#: src/eix-sync.sh:522
+#: src/eix-sync.sh:527
 #, sh-format
 msgid "rsyncing to ${hostdir}"
 msgstr "Выполняю rsync в ${hostdir}"
 
-#: src/eix-sync.sh:524
+#: src/eix-sync.sh:529
 #, sh-format
 msgid "Could not rsync to ${hostdir}"
 msgstr "Невозможно выполнить rsync в ${hostdir}"
 
-#: src/eix-sync.sh:534
+#: src/eix-sync.sh:539
 msgid "eix-cache does not exist."
 msgstr "eix-cache не существует."
 
-#: src/eix-sync.sh:536
+#: src/eix-sync.sh:541
 msgid "eix-cache format has changed."
 msgstr "Формат eix-cache изменился"
 
-#: src/eix-sync.sh:543
+#: src/eix-sync.sh:548
 #, sh-format
 msgid "Copying old ${eixcache} cache to temporary file"
 msgstr "Копирую старый кэш ${eixcache} во временный файл"
 
-#: src/eix-sync.sh:547
+#: src/eix-sync.sh:552
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Невозможно скопировать базу данных во временный файл ${tmpfile}"
 
-#: src/eix-sync.sh:551
+#: src/eix-sync.sh:556
 #, sh-format
 msgid "Copying old database to ${eixprevious}"
 msgstr "Копирую старую базу данных в ${eixprevious}"
 
-#: src/eix-sync.sh:553
+#: src/eix-sync.sh:558
 #, sh-format
 msgid "Could not copy database to ${eixprevious}"
 msgstr "Невозможно скопировать базу данных в ${eixprevious}"
 
-#: src/eix-sync.sh:581
+#: src/eix-sync.sh:587
 #, fuzzy, sh-format
 msgid "eix-remote add${remote_num} failed"
 msgstr "ошибка eix-remote add${remote_num}"
 
-#: src/eix-sync.sh:594
+#: src/eix-sync.sh:600
 msgid "eix-update was apparently already called in a hook"
 msgstr "Вероятно, eix-update уже вызван крюком"
 
-#: src/eix-sync.sh:597
+#: src/eix-sync.sh:603
 msgid "Running @@-hooks"
 msgstr "Выполняются @@-хуки"
 
-#: src/eix-sync.sh:599
+#: src/eix-sync.sh:605
 msgid "Calling eix-diff"
 msgstr "Вызов eix-diff"
 
-#: src/eix-sync.sh:601
+#: src/eix-sync.sh:607
 msgid "Failed to diff against current cache"
 msgstr "Ошибка сравнения с текущим кэшем"
 
-#: src/eix-sync.sh:616
+#: src/eix-sync.sh:622
 msgid ""
 "Main gentoo tree does not appear to have changed: exiting\n"
 "Use -a or set have_changed=: in a ! hook to override this check"
@@ -922,7 +922,7 @@ msgstr ""
 "Главное дерево gentoo не изменилось, выхожу\n"
 "Ключ -a или have_changed=: в !=хуке позволит обойти проверку"
 
-#: src/eix-sync.sh:630
+#: src/eix-sync.sh:636
 msgid "Running @-hooks"
 msgstr "Выполняются @-хуки"
 
