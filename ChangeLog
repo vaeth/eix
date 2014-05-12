@@ -10,6 +10,9 @@
 	  https://bugs.gentoo.org/show_bug.cgi?id=510120
 	- Trigger clang/gcc/glibc incompatibility when testing for c++1y, see
 	  https://bugs.gentoo.org/show_bug.cgi?id=510102
+	- Russian translation: Improve spacing for eix-test-obsolete, and
+	  https://developer.berlios.de/bugs/?func=detailbug&bug_id=19366&
+	  group_id=11597
 
 *eix-0.30.2
 	Martin Väth <martin at mvath.de>:

@@ -1038,7 +1038,7 @@ msgstr "Лишнее в некотором ${rump}*:"
 #: src/eix-test-obsolete.sh:226
 #, sh-format
 msgid "No  redundant  entries in ${rump}{,accept_}keywords"
-msgstr "Нет лишних записей в ${rump}{,accept_}keywords"
+msgstr "Нет  лишних  записей в ${rump}{,accept_}keywords"
 
 #: src/eix-test-obsolete.sh:227
 #, sh-format
@@ -1068,7 +1068,7 @@ msgstr "Пропускаю проверку: удалённые записи в 
 #: src/eix-test-obsolete.sh:237
 #, sh-format
 msgid "No  redundant  entries in ${rump}mask"
-msgstr "Нет лишних записей в ${rump}mask"
+msgstr "Нет  лишних  записей в ${rump}mask"
 
 #: src/eix-test-obsolete.sh:238
 #, sh-format
@@ -1098,7 +1098,7 @@ msgstr "Пропускаю проверку: удалённые записи в 
 #: src/eix-test-obsolete.sh:246
 #, sh-format
 msgid "No  redundant  entries in ${rump}unmask"
-msgstr "Нет лишних записей в ${rump}unmask"
+msgstr "Нет  лишних  записей в ${rump}unmask"
 
 #: src/eix-test-obsolete.sh:247
 #, sh-format
@@ -1118,7 +1118,7 @@ msgstr "Нет удалённых записей в ${rump}unmask"
 #: src/eix-test-obsolete.sh:251
 #, sh-format
 msgid "Not installed but in ${rump}unmask:"
-msgstr "Не удалено, но в ${rump}unmask:"
+msgstr "Не установлено, но в ${rump}unmask:"
 
 #: src/eix-test-obsolete.sh:252
 #, sh-format
@@ -1148,7 +1148,7 @@ msgstr "Нет удалённых записей в ${rump}use"
 #: src/eix-test-obsolete.sh:260
 #, sh-format
 msgid "Not installed but in ${rump}use:"
-msgstr "Не удалено, но в ${rump}use:"
+msgstr "Не установлено, но в ${rump}use:"
 
 #: src/eix-test-obsolete.sh:261
 #, sh-format
@@ -1178,7 +1178,7 @@ msgstr "Нет удалённых записей в ${rump}env"
 #: src/eix-test-obsolete.sh:269
 #, sh-format
 msgid "Not installed but in ${rump}env:"
-msgstr "Не удалено, но в ${rump}env:"
+msgstr "Не установлено, но в ${rump}env:"
 
 #: src/eix-test-obsolete.sh:270
 #, sh-format
@@ -1208,7 +1208,7 @@ msgstr "Нет удалённых записей в ${rump}license"
 #: src/eix-test-obsolete.sh:278
 #, sh-format
 msgid "Not installed but in ${rump}license:"
-msgstr "Не удалено, но в ${rump}license:"
+msgstr "Не установлено, но в ${rump}license:"
 
 #: src/eix-test-obsolete.sh:279
 #, sh-format
@@ -1218,7 +1218,7 @@ msgstr "Пропускаю проверку: удалённые записи в 
 #: src/eix-test-obsolete.sh:282
 #, sh-format
 msgid "No  redundant  entries in ${rump}accept_restrict"
-msgstr "Нет лишних записей в ${rump}accept_restrict"
+msgstr "Нет  лишних  записей в ${rump}accept_restrict"
 
 #: src/eix-test-obsolete.sh:283
 #, sh-format
@@ -1268,7 +1268,7 @@ msgstr "Нет удалённых записей в ${rump}cflags"
 #: src/eix-test-obsolete.sh:296
 #, sh-format
 msgid "Not installed but in ${rump}cflags:"
-msgstr "Не удалено, но в ${rump}cflags:"
+msgstr "Не установлено, но в ${rump}cflags:"
 
 #: src/eix-test-obsolete.sh:297
 #, sh-format
