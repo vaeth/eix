@@ -3033,7 +3033,7 @@ AddOption(STRING, "FORMATLINE_BUGS",
 		"%{?PRINT_ALWAYS}{mainrepo}%{}"
 		"\\C<%{COLUMN_CONTENT}>"
 		"(%{COLOR_NORMAL})"
-		"http://bugs.gentoo.org/buglist.cgi?quicksearch="
+		"https://bugs.gentoo.org/buglist.cgi?quicksearch="
 		"<category>%2F<name>"
 		"%{!RESET_ALL_LINES}(%{COLOR_NORMAL_END})%{}"
 	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}%{}", _(

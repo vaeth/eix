@@ -6,6 +6,10 @@
 	  https://bugs.gentoo.org/show_bug.cgi?id=509750
 	- Fix more wrong usages of getline(), see
 	  https://bugs.gentoo.org/show_bug.cgi?id=506106
+	- Fix include files for ioctl() on solaris, see
+	  https://bugs.gentoo.org/show_bug.cgi?id=510120
+	- Trigger clang/gcc/glibc incompatibility when testing for c++1y, see
+	  https://bugs.gentoo.org/show_bug.cgi?id=510102
 
 *eix-0.30.2
 	Martin Väth <martin at mvath.de>:

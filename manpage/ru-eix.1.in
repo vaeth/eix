@@ -3490,7 +3490,7 @@ For all other options (or without option), it is made clear by prepending of "X"
 .\" {{{ BUGS
 .SH "BUGS (and sort of FAQ)"
 .LP
-For bugreports use either I<@PACKAGE_BUGREPORT@> or Gentoo's bugzilla I<http://bugs.gentoo.org/>
+For bugreports use either I<@PACKAGE_BUGREPORT@> or Gentoo's bugzilla I<https://bugs.gentoo.org/>
 
 Many cache methods are slowly in principle:
 Please use the hints given in the separate section B<SPEEDUP> below.

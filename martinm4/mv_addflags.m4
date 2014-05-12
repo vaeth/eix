@@ -43,9 +43,13 @@ AC_DEFUN([MV_ADDFLAGS],
 dnl The program should use STL and C libraries and "stress" the linker with
 dnl constant and dynamic variables, but also be standard, short and quick...
 dnl It should also use a larger local array to test the stack.
+dnl The unistd.h and string are here to trigger clang/gcc/glibc incompatibily,
+dnl see https://bugs.gentoo.org/show_bug.cgi?id=510102
 						[AC_LANG_PROGRAM([[
-#include <vector>
+#include <unistd.h>
 #include <cstring>
+#include <string>
+#include <vector>
 int my_func();
 int my_func() { std::vector<const char*> a(1, "a"); int my_a[1000];
 for (int j = 999; j < 999 + a.size(); ++j) my_a[j] = 0;

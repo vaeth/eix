@@ -299,7 +299,7 @@ AS_IF([${strong_optimization}],
 		], [${my_ldfatal}], [], [:])
 dnl The following is never tried, since the run can succeed but the result
 dnl may fail for some unknown reason on non-GNU systems, see
-dnl http://bugs.gentoo.org/show_bug.cgi?id=293263
+dnl https://bugs.gentoo.org/show_bug.cgi?id=293263
 dnl			-Wl,--hash-style=gnu \
 dnl			-Wl,--enable-new-dtags \
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_FALSE], [ \
@@ -599,6 +599,7 @@ AC_CHECK_FUNCS([strtoul strtol atoi],
 # Optional header files:
 AC_CHECK_HEADERS([sys/param.h \
 	termios.h \
+	stropts.h \
 	sys/ioctl.h \
 	sys/stream.h \
 	sys/ptem.h \

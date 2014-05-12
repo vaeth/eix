@@ -11,11 +11,17 @@
 
 #include <grp.h>
 #include <pwd.h>
+// unistd.h is needed on Solaris for including stropts.h, see below
+#include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
 #ifdef HAVE_TERMIOS_H
 #include <termios.h>
+#endif
+#ifdef HAVE_STROPTS_H
+// Needed on Solaris for ioctl() https://bugs.gentoo.org/show_bug.cgi?id=510120
+#include <stropts.h>
 #endif
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>

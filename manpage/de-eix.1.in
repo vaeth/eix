@@ -3577,7 +3577,7 @@ Bei allen anderen Optionen (oder ohne Option) wird durch Vorstellen des "X" klar
 .SH "FEHLER (und Antworten auf einige häufig gestellte Fragen)"
 .LP
 Für Fehlermeldungen benutzen Sie bitte I<@PACKAGE_BUGREPORT@> oder
-Gentoos Bugzilla I<http://bugs.gentoo.org/>
+Gentoos Bugzilla I<https://bugs.gentoo.org/>
 
 Viele Cache-Methoden sind prinzipbedingt sehr langsam.
 Benutzen Sie die Hinweise im speziellen Abschnitt B<BESCHLEUNIGUNG> weiter unten.
