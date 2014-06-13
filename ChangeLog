@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.30.4
+	Martin Väth <martin at mvath.de>:
+	- Fix gdb instructions
+
 *eix-0.30.3
 	Martin Väth <martin at mvath.de>:
 	- eix-sync: Add -vn (verbose dry-run) options, see

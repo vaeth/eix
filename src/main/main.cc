@@ -121,7 +121,7 @@ static void sig_handler(int sig) {
 		cerr << eix::format(_(
 				"Received SIGSEGV - you probably found a bug in eix.\n"
 				"Please proceed with the following few instructions and help us find the bug:\n"
-				" * install gdb (sys-dev/gdb)\n"
+				" * install gdb (sys-devel/gdb)\n"
 				" * reemerge eix with FEATURES=\"nostrip\" USE=\"debug\"\n"
 				"   or with FEATURES=\"nostrip\" CXXFLAGS=\"-g -ggdb3\" LDFLAGS=\"\"\n"
 				" * enter gdb with \"gdb --args %s your_arguments_for_%s\"\n"
