@@ -1,4 +1,4 @@
-# @SYSCONFDIR@/eixrc/00-eirc
+# @SYSCONFDIR@/eixrc/00-eixrc
 #
 # All non-hidden files in @SYSCONFDIR@/eixrc
 # (or a subdirectory thereof) are read in alphabetical order.

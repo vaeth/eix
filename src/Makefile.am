@@ -311,6 +311,7 @@ eix-test-obsolete
 CLEANFILES = \
 cppcomplete.tags \
 tags \
+$(nobase_nodist_sysconf_DATA) \
 $(nodist_sysconf_DATA) \
 $(nodist_bin_SCRIPTS) \
 $(nodist_eix_only_src) \
