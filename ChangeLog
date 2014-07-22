@@ -3,6 +3,8 @@
 *eix-0.30.4
 	Martin Väth <martin at mvath.de>:
 	- Fix gdb instructions
+	- Replace default [D] by [?] to avoid confusion with portage output
+	- Add remarks about stability of names in future eix versions
 
 *eix-0.30.3
 	Martin Väth <martin at mvath.de>:

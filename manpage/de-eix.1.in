@@ -1122,7 +1122,7 @@ Durch Betrachten der Versionsstrings wird klar, dass Slot B<2> eine neue Version
 und das die vorherige höchste stabile Version B<1.1> des Slots B<1> entfernt oder maskiert wurde
 (die aktuell stabile Version dieses Slots ist jetzt B<1.0>).
 .TP
-.B "[UD]  == foo/bar (1.1(1)@01.01.2009; 1.1(1) -> 2.0(2)): description"
+.B "[U?]  == foo/bar (1.1(1)@01.01.2009; 1.1(1) -> 2.0(2)): description"
 Der Status des Pakets B<foo/bar> im Baum hat sich geändert (für die lokalen Settings):
 Die Symbole an der linken Seite bedeuten, dass für einen installierten Slot ein Upgrade möglich ist (ohne Veränderung von Maske/Keywords),
 und das ein anderer installierter Slot entfernt/maskiert wurde.
@@ -1140,12 +1140,12 @@ B<UPGRADE_TO_HIGHEST_SLOT=true> or falls das Paket in
 B</etc/portage/package.slot_upgrade_allow> gelistet ist.
 
 Tatsächlich wäre der output
-.B "[UD><] == foo/bar ..."
+.B "[U?><] == foo/bar ..."
 konsistenter, weil zusätzlich ein Slot eine höhere stabile Version erhielt
 und die höchste stabile Version eines anderen Slots entfernt wurde.
-Aber weil dies tyopischerweise von "B<U>" bzw. "B<D>" impliziert ist,
+Aber weil dies tyopischerweise von "B<U>" bzw. "B<?>" impliziert ist,
 war es bei den Standardeinstellungen eine Design-Entscheidung, dass bei der
-Ausgabe von B<U> oder B<D> die Ausgabe der Symbole
+Ausgabe von B<U> oder B<?> die Ausgabe der Symbole
 .B <
 bzw.
 .B >
@@ -1890,14 +1890,28 @@ verzögerte Referenzen enthalten sein).
 .RE
 .\" }}}
 
-Beachten Sie, dass Variablen, die zu verzögerten Ersetzung benutzt werden nur dann
+Beachten Sie, dass Variablen, die zu verzögerten Ersetzung benutzt werden, nur dann
 mit --dump ausgegeben werden, wenn sie tatsächlich benutzt werden (d.h. in einer anderen
 Variable dereferenziert werden).
-Falls sietrotzdem ausgegeben werden sollen, etwa für Kommentare oder leichtere spätere Änderungen,
+Falls sie trotzdem ausgegeben werden sollen, etwa für Kommentare oder leichtere spätere Änderungen,
 so können Referenzen auf sie in der B<DUMMY>-Variable gespeichert werden.
 
 Die folgenden Variablenliste enthält nicht die Variablen, die in verspäteter Ersetzung benutzt werden.
 Um eine Beschreibung der Letzteren (und ihrer Vorgabewerte) zu erhalten, benutzen Sie bitte B<eix --dump>.
+
+Einige Bemerkungen zur Stabilität der Namen bzgl. zukünftiger eix-Versionen:
+Soweit möglich und sinnvoll, wird versucht, die Bedeutung aller Namen beizubehalten,
+zumindest für die im folgenden aufgezählten Variablen.
+Bei Variablen zur verspäteten Ersetzung sind Änderungen wahrscheinlicher.
+Als Faustregel gilt: Je "elementarer" eine Variable ist (beispielsweise eine
+Variable, die nur ein einzelnes Zeichen definiert), desto unwahrscheinlicher ist,
+dass Sie sich in zukünftigen eix Versionen ändert oder entfernt wird.
+Hingegen Variablen zur verzögerten Ersetzung im "Mittelbau" (die also wiederum
+selbst andere Variablen zur verzögert Ersetzung benutzen), haben eine
+größere Wahrscheinlichkeit in zukünftigen eix-Versionen in ihrere Bedeutung
+geändert oder entfernt zu werden - je nachdem, welche Erweiterungen im
+Format für gewisse zukünftige Erweiterungen von eix notwendig sein werden.
+
 .TP
 .B DUMMY " " (string)
 Diese Variable hat keinen direkten Einfluss auf das Programm, aber ihr Inhalt

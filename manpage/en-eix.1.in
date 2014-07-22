@@ -1095,7 +1095,7 @@ that slot B<2> has obtained a new version (the previous stable in this slot was 
 and that the previously highest stable version B<1.1> of slot B<1> was removed or masked
 (the current stable version in this slot is now B<1.0>).
 .TP
-.B "[UD]  == foo/bar (1.1(1)@01.01.2009; 1.1(1) -> 2.0(2)): description"
+.B "[U?]  == foo/bar (1.1(1)@01.01.2009; 1.1(1) -> 2.0(2)): description"
 The status of package B<foo/bar> has changed in the tree (for your settings):
 The symbols on the left mean that a slot you have installed can be upgraded (without modifying masks/keywords),
 and that another slot you have installed was removed/masked.
@@ -1114,16 +1114,16 @@ B<UPGRADE_TO_HIGHEST_SLOT=true> or if the package is listed in
 B</etc/portage/package.slot_upgrade_allow>.
 
 Actually, the output
-.B "[UD><] == foo/bar ..."
+.B "[U?><] == foo/bar ..."
 would be more consistent, because in addition one slot has gained a
 higher stable version and the highest stable version of another slot was removed,
-but since typically this is implicitly implied by "B<U>" or "B<D>", respectively,
-it was a design decision of the default setting that if B<U> or B<D> is output
+but since typically this is implicitly implied by "B<U>" or "B<?>", respectively,
+it was a design decision of the default setting that if B<U> or B<?> is output
 then the symbols
 .B <
 and
 .B >
-will never output.
+will not be output.
 You can of course build a different B<DIFF_FORMAT_HEADER_CHANGED> string
 which follows another policy.
 .\" }}}
@@ -1877,6 +1877,19 @@ you can collect references to them in the B<DUMMY> variable.
 
 The following variables do not contain those which are used only in delayed references.
 To get a full description of the latter (and of the defaults), please use B<eix --dump>.
+
+Some remarks concerning the stability of names in future eix versions:
+As far as possible and reasonable, it is attempted to keep all meanings of the names,
+at least for the variables in the subsequent list.
+For variables for delayed substitution, changes are more likely to occur.
+As a rule of thumb: The more "elementary" a variable is (e.g. a variable
+defining just a single character) the less likely is that it is changed or
+removed in a future eix version.
+On the other hand, variables with delayed substitution in the "middle range"
+(that is, those using other variables for delayed substitution) are more likely
+to be changed in their meaning or to be removed - depending which extensions
+in the format will be necessary to implement future extensions of eix.
+
 .TP
 .B DUMMY " " (string)
 This variable has no direct influence on the programs, but the content of this

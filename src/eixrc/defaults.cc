@@ -1494,7 +1494,7 @@ AddOption(STRING, "CHAR_UPGRADE",
 	"It defines the character printed for upgrade recommendations."));
 
 AddOption(STRING, "CHAR_DOWNGRADE",
-	"D", _(
+	"?", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the character printed for downgrade recommendations."));
 
