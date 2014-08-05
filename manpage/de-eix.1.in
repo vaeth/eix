@@ -3673,8 +3673,8 @@ Andererseits gibt es immer noch eine Menge Dinge, die nicht konfiguriert werden 
 .\" {{{ BESCHLEUNIGUNG
 .SH "BESCHLEUNIGUNG"
 .LP
-Alle Nicht-Metadaten-basierten Cachemethoden für B<eix-update> sind entweder unzuverlässig (B<parse>, B<parse*>) oder langsam und unsicher (B<eix>, B<eix*>).
-Daher wird es empfohlen, Metadaten zu erzeugen und sie für den Hauptbaum und aller Overlays zu benutzen.
+Alle Nicht-Metadaten-basierten Cachemethoden für B<eix-update> sind entweder unzuverlässig (B<parse>, B<parse*>) oder langsam und unsicher (B<ebuild>, B<ebuild*>).
+Daher wird empfohlen, Metadaten zu erzeugen und sie für den Hauptbaum und alle Overlays zu benutzen.
 Die Vorgaben von eix sind so, dass diese Metadaten benutzt werden, sofern vorhanden (siehe B<CACHE_METHOD_PARSE>)
 (Konfiguration ist nur im Falle des sqlite-Backends von Portage erforderlich).
 Im Wesentlichen gibt es zwei Arten möglicher Metdaten, die benutzt werden können:

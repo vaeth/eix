@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <title>eix - search util for Gentoo's portage</title></title>
+   <title>eix - search util for Gentoo's portage</title>
 </head>
 <body>
 <!-- content -->

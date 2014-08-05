@@ -2,9 +2,11 @@
 
 *eix-0.30.4
 	Martin Väth <martin at mvath.de>:
-	- Fix gdb instructions
 	- Replace default [D] by [?] to avoid confusion with portage output
-	- Add remarks about stability of names in future eix versions
+	- Fix gdb instructions
+	- manpage: add remarks about stability of names in future eix versions
+	- manpage: fix typo in SPEEDUP
+	- Add CPPLINT.cfg
 
 *eix-0.30.3
 	Martin Väth <martin at mvath.de>:

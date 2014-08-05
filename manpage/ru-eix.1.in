@@ -3584,7 +3584,7 @@ On the other hand, there are still many things which cannot be configured...
 .\" {{{ SPEEDUP
 .SH "SPEEDUP"
 .LP
-All non-metadata cache methods for B<eix-update> are either non-reliable (B<parse>, B<parse*>) or rather slow and insecure (B<eix>, B<eix*>).
+All non-metadata cache methods for B<eix-update> are either non-reliable (B<parse>, B<parse*>) or rather slow and insecure (B<ebuild>, B<ebuild*>).
 For this reason, it is recommended to generate and use metadata for the main portage tree as well as for all its overlays.
 The defaults of eix are such that this metadata is used if available (see B<CACHE_METHOD_PARSE>) (configuration is only necessary if you use the sqlite backend of portage).
 Essentially, there are two types of possible metadata which can be used:
