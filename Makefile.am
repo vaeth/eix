@@ -32,7 +32,7 @@ contrib/cpplint.sh \
 autogen.sh \
 CPPLINT.cfg \
 doxygen.cfg.in \
-tmpfiles.d/eix.conf \
+tmpfiles.d/eix.conf
 
 ACLOCAL_AMFLAGS = -I m4 -I martinm4
 
