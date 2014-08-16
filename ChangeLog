@@ -6,6 +6,7 @@
 	- Fix gdb instructions
 	- manpage: add remarks about stability of names in future eix versions
 	- manpage: fix typo in SPEEDUP
+	- cosmetical changes to be cpplint compliant
 	- Add CPPLINT.cfg
 
 *eix-0.30.3

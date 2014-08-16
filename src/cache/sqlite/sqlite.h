@@ -42,7 +42,7 @@ class SqliteCache : public BasicCache {
 		static TrueIndex *true_index;
 
 	public:
-		explicit SqliteCache() : BasicCache(), never_add_categories(true) {
+		SqliteCache() : BasicCache(), never_add_categories(true) {
 		}
 
 		explicit SqliteCache(bool add_categories) : BasicCache(), never_add_categories(!add_categories) {

@@ -130,7 +130,7 @@ class KeywordsFlags {
 
 		static KeyType get_keyflags(const WordSet& accepted_keywords, const std::string& keywords);
 
-		explicit KeywordsFlags() : m_keyword(KEY_EMPTY) {
+		KeywordsFlags() : m_keyword(KEY_EMPTY) {
 		}
 
 		explicit KeywordsFlags(KeyType t) : m_keyword(t) {

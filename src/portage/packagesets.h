@@ -22,7 +22,7 @@ class SetsList : public std::vector<SetsIndex> {
 	public:
 		typedef std::vector<SetsIndex> super;
 
-		explicit SetsList() : have_system(false) {
+		SetsList() : have_system(false) {
 		}
 
 		explicit SetsList(bool with_system) : have_system(with_system) {

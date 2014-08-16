@@ -13,7 +13,7 @@
 #include "eixTk/null.h"
 
 namespace eix {
-	template<typename m_Type> class auto_list {
+template<typename m_Type> class auto_list {
 	public:
 		explicit auto_list(m_Type *p) : m_p(p) {
 		}

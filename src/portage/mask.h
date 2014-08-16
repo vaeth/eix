@@ -148,7 +148,7 @@ class KeywordMask : public Mask {
 			locally_double(false) {
 		}
 
-		explicit KeywordMask() :
+		KeywordMask() :
 			Mask(maskTypeNone),
 			locally_double(false) {
 		}
@@ -167,7 +167,7 @@ class PKeywordMask : public Mask {
 		explicit PKeywordMask(const char *repo) : Mask(maskTypeNone, repo) {
 		}
 
-		explicit PKeywordMask() : Mask(maskTypeNone) {
+		PKeywordMask() : Mask(maskTypeNone) {
 		}
 
 		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;

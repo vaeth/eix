@@ -24,7 +24,7 @@ class MatchAtom {
 		bool m_negate;
 
 	public:
-		explicit MatchAtom() : m_negate(false) {
+		MatchAtom() : m_negate(false) {
 		}
 
 		explicit MatchAtom(bool negate) : m_negate(negate) {

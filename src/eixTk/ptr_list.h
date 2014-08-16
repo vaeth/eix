@@ -13,18 +13,18 @@
 #include <list>
 
 namespace eix {
-	template<typename m_Iterator> inline static void delete_all(m_Iterator b, m_Iterator e);
+template<typename m_Iterator> inline static void delete_all(m_Iterator b, m_Iterator e);
 
-	template<typename m_Iterator> inline static void delete_all(m_Iterator b, m_Iterator e) {
-		for(; b != e; ++b) {
-			delete *b;
-		}
+template<typename m_Iterator> inline static void delete_all(m_Iterator b, m_Iterator e) {
+	for(; b != e; ++b) {
+		delete *b;
 	}
+}
 
-	/// An iterator type to iterate through a container containing pointers of the
-	// given data type. The special thing is the operator-> returns the same as the operator*.
-	// Taken from the obby-project (http://darcs.0x539.de/libobby) and extended.
-	template<typename base_iterator> class ptr_iterator : public base_iterator {
+/// An iterator type to iterate through a container containing pointers of the
+// given data type. The special thing is the operator-> returns the same as the operator*.
+// Taken from the obby-project (http://darcs.0x539.de/libobby) and extended.
+template<typename base_iterator> class ptr_iterator : public base_iterator {
 	public:
 		ptr_iterator() : base_iterator() {
 		}
@@ -41,8 +41,8 @@ namespace eix {
 		}
 	};
 
-	/// A list that only stores pointers to type.
-	template<typename type> class ptr_list : public std::list<type*> {
+/// A list that only stores pointers to type.
+template<typename type> class ptr_list : public std::list<type*> {
 	public:
 		using std::list<type*>::begin;
 		using std::list<type*>::end;
