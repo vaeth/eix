@@ -60,9 +60,6 @@
 /* Null device of the system */
 #undef DEV_NULL
 
-/* Default EXEC_EBUILD_SH (without prefix) */
-#undef EBUILD_SH_DEFAULT
-
 /* Location of the cachefile */
 #undef EIX_CACHEFILE
 
@@ -318,9 +315,6 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
-
-/* Default PORTAGE_BIN_PATH */
-#undef PORTAGE_BIN_PATH_DEFAULT
 
 /* Default PORTAGE_ROOTPATH */
 #undef PORTAGE_ROOTPATH_DEFAULT

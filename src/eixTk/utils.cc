@@ -87,7 +87,7 @@ static bool pushback_lines_file(const char *file, LineVec *v, bool keep_empty, e
 	std::ifstream ifstr(file);
 	if(unlikely(!ifstr.is_open())) {
 		if(errtext != NULLPTR) {
-			*errtext = eix::format(_("Can't open %s: %s")) % file % strerror(errno);
+			*errtext = eix::format(_("cannot open %s: %s")) % file % strerror(errno);
 		}
 		return false;
 	}

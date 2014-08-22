@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 
 #include <csignal>
@@ -40,11 +41,19 @@ extern char **environ;
 using std::string;
 
 class EbuildExecSettings {
-	public:
-		string exec_ebuild, exec_ebuild_sh, ebuild_depend_temp;
-		string portage_rootpath, portage_bin_path;
+		friend class EbuildExec;
+
+	private:
+#ifndef HAVE_SETENV
+		string exec_ebuild;
+#endif
+		string ebuild_depend_temp;
+		string portage_rootpath;
+		string portage_bin_path, portage_pym_path, exec_ebuild_sh;
+		bool read_portage_paths, know_portage_paths;
 
 		void init();
+		bool init_ebuild_sh(const EbuildExec *e);
 };
 
 EbuildExec *EbuildExec::handler_arg;
@@ -133,7 +142,6 @@ bool EbuildExec::make_tempfile() {
 	if(fd == -1) {
 		return false;
 	}
-	calc_settings();
 	cachefile.assign(temp);
 	cache_defined = true;
 	close(fd);
@@ -146,11 +154,11 @@ void EbuildExec::delete_cachefile() {
 	const char *c(cachefile.c_str());
 	if(is_pure_file(c)) {
 		if(unlink(c) < 0)
-			base->m_error_callback(eix::format(_("Can't unlink tempfile %s")) % c);
+			base->m_error_callback(eix::format(_("cannot unlink tempfile %s")) % c);
 		else if(is_file(c))
-			base->m_error_callback(eix::format(_("Tempfile %s still there after unlink")) % c);
+			base->m_error_callback(eix::format(_("tempfile %s still there after unlink")) % c);
 	} else {
-		base->m_error_callback(eix::format(_("Tempfile %s is not a file")) % c);
+		base->m_error_callback(eix::format(_("tempfile %s is not a file")) % c);
 	}
 	remove_handler();
 	cache_defined = false;
@@ -189,10 +197,8 @@ void EbuildExec::calc_environment(const char *name, const string& dir, const Pac
 		if(likely(!portage_rootpath.empty())) {
 			env["PORTAGE_ROOTPATH"] = portage_rootpath;
 		}
-		const string& portage_bin_path(settings->portage_bin_path);
-		if(likely(!portage_bin_path.empty())) {
-			env["PORTAGE_BIN_PATH"] = portage_bin_path;
-		}
+		env["PORTAGE_BIN_PATH"] = settings->portage_bin_path;
+		env["PORTAGE_PYM_PATH"] = settings->portage_pym_path;
 		env["PORTAGE_REPO_NAME"] = base->getOverlayName();
 		WordVec eclasses;
 		eclasses.push_back(base->getPrefixedPath());
@@ -228,10 +234,12 @@ void EbuildExec::calc_environment(const char *name, const string& dir, const Pac
 	c_env[i] = NULLPTR;
 }
 
-static CONSTEXPR int EXECLE_FAILED = 17;
+static CONSTEXPR int EXECLE_FAILED = 127;
 
 string *EbuildExec::make_cachefile(const char *name, const string& dir, const Package& package, const Version& version) {
-	calc_settings();
+	if(unlikely(!calc_settings())) {
+		return NULLPTR;
+	}
 
 	// Make cachefile and calculate exec_name
 
@@ -239,24 +247,29 @@ string *EbuildExec::make_cachefile(const char *name, const string& dir, const Pa
 	if(use_ebuild_sh) {
 		exec_name = settings->exec_ebuild_sh.c_str();
 		if(!make_tempfile()) {
-			base->m_error_callback(_("Creation of tempfile failed"));
+			base->m_error_callback(_("creation of tempfile failed"));
 			remove_handler();
 			return NULLPTR;
 		}
 	} else {
-		exec_name = settings->exec_ebuild.c_str();
+		exec_name = "ebuild";
 		cachefile = settings->ebuild_depend_temp;
 		cache_defined = true;
 	}
 	calc_environment(name, dir, package, version);
+#ifndef HAVE_SETENV
+	if((!use_ebuild_sh) && (c_env != NULLPTR)) {
+		exec_name = settings->exec_ebuild.c_str();
+	}
+#endif
 
 #ifdef HAVE_VFORK
 	pid_t child = vfork();
 #else
 	pid_t child = fork();
 #endif
-	if(child == -1) {
-		base->m_error_callback(_("Forking failed"));
+	if(unlikely(child == -1)) {
+		base->m_error_callback(_("forking failed"));
 		return NULLPTR;
 	}
 	if(child == 0) {
@@ -268,7 +281,7 @@ string *EbuildExec::make_cachefile(const char *name, const string& dir, const Pa
 				execle(exec_name, exec_name, name, "depend", static_cast<const char *>(NULLPTR), c_env);
 			else
 #endif
-				execl(exec_name, exec_name, name, "depend", static_cast<const char *>(NULLPTR));
+				execlp(exec_name, exec_name, name, "depend", static_cast<const char *>(NULLPTR));
 		}
 		_exit(EXECLE_FAILED);
 	}
@@ -280,47 +293,115 @@ string *EbuildExec::make_cachefile(const char *name, const string& dir, const Pa
 
 GCC_DIAG_OFF(old-style-cast)
 	// Only now we check for the child exit status or signals:
-	if(got_exit_signal) {
-		base->m_error_callback(eix::format(_("Got signal %s")) % type_of_exit_signal);
-	} else if(WIFSIGNALED(exec_status)) {
+	if(unlikely(got_exit_signal)) {
+		base->m_error_callback(eix::format(_("got signal %s")) % type_of_exit_signal);
+	} else if(unlikely(WIFSIGNALED(exec_status))) {
 		got_exit_signal = true;
 		type_of_exit_signal = WTERMSIG(exec_status);
-		base->m_error_callback(eix::format(_("Ebuild got signal %s")) % type_of_exit_signal);
+		base->m_error_callback(eix::format(_("ebuild got signal %s")) % type_of_exit_signal);
 	}
-	if(got_exit_signal) {
+	if(unlikely(got_exit_signal)) {
 		delete_cachefile();
 		raise(type_of_exit_signal);
 		return NULLPTR;
 	}
-	if(WIFEXITED(exec_status)) {
-		if(!(WEXITSTATUS(exec_status)))  // the only good case:
+	if(likely(WIFEXITED(exec_status))) {
+		if(likely(!(WEXITSTATUS(exec_status)))) {  // the only good case:
 			return &cachefile;
-		if((WEXITSTATUS(exec_status)) == EXECLE_FAILED)
-			base->m_error_callback(eix::format(_("Could not start %s")) % exec_name);
-		else
-			base->m_error_callback(eix::format(_("Ebuild failed with status %s")) % WEXITSTATUS(exec_status));
+		}
+		if((WEXITSTATUS(exec_status)) == EXECLE_FAILED) {
+			base->m_error_callback(eix::format(_("could not start %s")) % exec_name);
+		} else {
+			base->m_error_callback(eix::format(_("ebuild failed with status %s")) % WEXITSTATUS(exec_status));
+		}
 	} else {
-		base->m_error_callback(_("Child aborted in a strange way"));
+		base->m_error_callback(_("child aborted in a strange way"));
 	}
 GCC_DIAG_ON(old-style-cast)
 	delete_cachefile();
 	return NULLPTR;
 }
 
+bool EbuildExec::portageq(std::string *result, const char *var) const {
+	int fds[2];
+
+	if(unlikely(pipe(fds) != 0)) {
+		base->m_error_callback(_("cannot setup pipe"));
+		return false;
+	}
+
+	pid_t child = fork();
+
+	if(unlikely(child == -1)) {
+		base->m_error_callback(_("forking failed"));
+		return false;
+	}
+	if(child == 0) {
+		close(fds[0]);
+		dup2(fds[1], 1);
+		close(fds[1]);
+		execlp("portageq", "portageq", "envvar", var, static_cast<const char *>(NULLPTR));
+		_exit(EXECLE_FAILED);
+	}
+	close(fds[1]);
+	static CONSTEXPR unsigned int kSize = 8000;
+	char buf[kSize];
+	size_t curr;
+	string res;
+GCC_DIAG_OFF(sign-conversion)
+	while((curr = read(fds[0], buf, kSize)),
+		((curr > 0) && (curr <= kSize))) {
+		res.append(buf, curr);
+	}
+GCC_DIAG_ON(sign-conversion)
+	close(fds[0]);
+	int ret_status;
+	while(waitpid(child, &ret_status, 0) != child ) { }
+	if((ret_status != 0) || res.empty()) {
+		base->m_error_callback(_("portageq failed"));
+		return false;
+	}
+	result->assign(res, 0, res.size() - 1);
+	return true;
+}
+
 void EbuildExecSettings::init() {
 	EixRc& eix(get_eixrc());
-	exec_ebuild = eix["EXEC_EBUILD"];
-	exec_ebuild_sh = eix["EXEC_EBUILD_SH"];
 	ebuild_depend_temp = eix["EBUILD_DEPEND_TEMP"];
+#ifndef HAVE_SETENV
+	exec_ebuild = eix["EPREFIX_PORTAGE_EXEC"];
+	exec_ebuild.append("/usr/bin/ebuild");
+#endif
+	exec_ebuild_sh = "ebuild.sh";
 	portage_rootpath = eix["PORTAGE_ROOTPATH"];
-	portage_bin_path = eix["PORTAGE_BIN_PATH"];
+	read_portage_paths = false;
+}
+
+bool EbuildExecSettings::init_ebuild_sh(const EbuildExec *e) {
+	if(likely(read_portage_paths)) {
+		return know_portage_paths;
+	}
+	read_portage_paths = true;
+	if(unlikely(!e->portageq(&portage_bin_path, "PORTAGE_BIN_PATH")) ||
+		unlikely(!e->portageq(&portage_pym_path, "PORTAGE_PYM_PATH"))) {
+		know_portage_paths = false;
+		return false;
+	}
+	exec_ebuild_sh = portage_bin_path;
+	exec_ebuild_sh.append("/ebuild.sh");
+	know_portage_paths = true;
+	return true;
 }
 
 EbuildExecSettings *EbuildExec::settings = NULLPTR;
 
-void EbuildExec::calc_settings() {
+bool EbuildExec::calc_settings() {
 	if(unlikely(settings == NULLPTR)) {
 		settings = new EbuildExecSettings;
 		settings->init();
 	}
+	if(!use_ebuild_sh) {
+		return true;
+	}
+	return settings->init_ebuild_sh(this);
 }

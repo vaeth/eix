@@ -2049,8 +2049,12 @@ Der Vorgabewert entspricht dem Verhalten von >=portage-2.2*
 Diese Datei wird als Default für Repository-Informationen eingelesen.
 
 .TP
+.BR EPREFIX_PORTAGE_EXEC " " (prefix-string)
+Dieser Pfad kann als Präfix für I</usr/bin/ebuild> benutzt werden.
+
+.TP
 .BR EPREFIX_SOURCE " " (prefix-string)
-Dies Pfad wird allen Pfaden vorangestellt, die als Argumente von Source-Kommandos
+Dieser Pfad wird allen Pfaden vorangestellt, die als Argumente von Source-Kommandos
 in /etc/make.conf und /etc/make.globals auftauchen.
 
 .TP
@@ -2107,9 +2111,8 @@ Eine lokale Kopie des Remote-Archivs, auf das eix-remote zugreift.
 Falls es leer ist, werden nur Temporärdateien benutzt.
 
 .TP
-.BR EIX_EBUILD ", " EIX_EBUILD_SH ", " EBUILD_DEPEND_TEMP " " (string)
-Pfade zu den Binaries B<ebuild> und B<ebuild.sh> bzw. der Datei, die von
-B<ebuild depend> generiert wird.
+.BR EBUILD_DEPEND_TEMP " " (string)
+Pfad zur Datei, die von B<ebuild depend> generiert wird.
 
 .TP
 .BR EIX_WORLD " " (string)
@@ -2203,10 +2206,8 @@ Wenn die Voraussetzung entsprechend B<REQUIRE_DROP> fehlschlägt, wird
 mit einem Fehler abgebrochen (B<true>) bzw. nur eine Warnung ausgegeben.
 
 .TP
-.BR PORTAGE_ROOTPATH ", " PORTAGE_BIN_PATH " " (string)
-Falls nichtleer, werden diese Variablen unverändert an ebuild.sh für die Cachemethode B<ebuild*> übergeben.
-Beachte, dass ebuild.sh diese Variablen benutzt, um den PATH zu ermitteln, so dass diese
-Werte extrem sicherheitsrelevant sind!
+.BR PORTAGE_ROOTPATH " " (string)
+Falls nichtleer, wird dies Variable unverändert an ebuild.sh für die Cachemethode B<ebuild*> übergeben.
 
 .TP
 .BR DEFAULT_ARCH " " (string)
@@ -2894,9 +2895,8 @@ Statt also wie bei der Cachemethode  B<ebuild> ein Python-Programm für jedes ".
 wird "nur" ein längliches Shellskript und das ebuild selbst ausgeführt
 (folglich ist auch diese Methode unsicher, falls man nicht allen ".ebuild"-Skripten vertrauen kann).
 Die meisten Environmentvariablen außer Portage-spezifischen Variablen und PATH werden gelöscht;
-PORTAGE_BIN_PATH und PORTAGE_ROOTPATH werden exportiert (beachten Sie, dass ebuild.sh
-diese benutzt um den PATH zu ermitteln, so dass dies ein ernsthafte Sicherheitsfrage sein kann);
-enige .ebuild-spezifische Variables wie $P werden gesetzt, wenn das Ebuild ausgeführt wird.
+PORTAGE_ROOTPATH wird exportiert;
+einige .ebuild-spezifische Variables wie $P werden gesetzt, wenn das Ebuild ausgeführt wird.
 Diese Methode ist nicht ganz so kompatibel wie B<ebuild>, und es kann von der Portage-Version abhängen,
 ob sie überhaupt möglich ist.
 Aber sie ist dennoch deutlich schneller als B<ebuild>, und stabil genug um beispielsweise

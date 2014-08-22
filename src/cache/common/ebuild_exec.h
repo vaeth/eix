@@ -25,6 +25,7 @@ void ebuild_sig_handler(int sig) ATTRIBUTE_SIGNAL;
 
 class EbuildExec {
 		friend void ebuild_sig_handler(int sig) ATTRIBUTE_SIGNAL;
+		friend class EbuildExecSettings;
 
 	private:
 		const BasicCache *base;
@@ -52,7 +53,8 @@ class EbuildExec {
 		void add_handler();
 		void remove_handler();
 		bool make_tempfile();
-		static void calc_settings();
+		bool portageq(std::string *result, const char *var) const;
+		bool calc_settings();
 
 	public:
 		std::string *make_cachefile(const char *name, const std::string& dir, const Package& package, const Version& version) ATTRIBUTE_NONNULL_;

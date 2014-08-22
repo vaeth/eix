@@ -43,7 +43,7 @@ bool CacheTable::addCache(const char *eprefixcache, const char *eprefixport, con
 	BasicCache *cache(get_cache(cache_method, m_appending));
 	if(unlikely(cache == NULLPTR)) {
 		if(errtext != NULLPTR) {
-			*errtext = eix::format(_("Unknown cache %r for directory %r"))
+			*errtext = eix::format(_("unknown cache %r for directory %r"))
 				% cache_method % directory;
 			return false;
 		}

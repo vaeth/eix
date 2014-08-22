@@ -12,6 +12,7 @@
 #include <grp.h>
 #include <pwd.h>
 // unistd.h is needed on Solaris for including stropts.h, see below
+// _exit; make check_includes happy
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>

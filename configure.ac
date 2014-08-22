@@ -1118,28 +1118,6 @@ AC_DEFINE_UNQUOTED([ROOT_DEFAULT],
 	[Default ROOT])
 AC_SUBST([ROOT_DEFAULT])
 
-AC_MSG_CHECKING([EXEC_EBUILD_SH default])
-AC_ARG_WITH([ebuild-sh-default],
-	[AS_HELP_STRING([--with-ebuild-sh-default=STR],
-		[default EXEC_EBUILD_SH])],
-	[AS_VAR_COPY([EBUILD_SH_DEFAULT], [withval])
-	AS_VAR_SET([description], ["on request"])],
-	[AS_VAR_SET([EBUILD_SH_DEFAULT], ["/usr/lib/portage/bin/ebuild.sh"])
-	AS_IF([test -d "${EPREFIX_DEFAULT}/usr/lib"],
-		[],
-		[AS_IF([test -d "${EPREFIX_DEFAULT}/usr/lib64"],
-			[AS_VAR_SET([EBUILD_SH_DEFAULT],
-				["/usr/lib64/portage/bin/ebuild.sh"])])])
-	AS_IF([test -x "${EPREFIX_DEFAULT}${EBUILD_SH_DEFAULT}"],
-		[AS_VAR_SET([description], ["autodetected"])],
-		[AS_VAR_SET([description], ["guessed"])])])
-MV_PREFIX(EBUILD_SH_DEFAULT)
-MV_MSG_RESULT_VAR([EBUILD_SH_DEFAULT], [${description}])
-AC_DEFINE_UNQUOTED([EBUILD_SH_DEFAULT],
-	["${EBUILD_SH_DEFAULT}"],
-	[Default EXEC_EBUILD_SH (without prefix)])
-AC_SUBST([EBUILD_SH_DEFAULT])
-
 AC_MSG_CHECKING([PORTAGE_ROOTPATH default])
 AC_ARG_WITH([portage-rootpath],
 	[AS_HELP_STRING([--with-portage-rootpath=STR],
@@ -1151,18 +1129,6 @@ AC_DEFINE_UNQUOTED([PORTAGE_ROOTPATH_DEFAULT],
 	["${PORTAGE_ROOTPATH_DEFAULT}"],
 	[Default PORTAGE_ROOTPATH])
 AC_SUBST([PORTAGE_ROOTPATH_DEFAULT])
-
-AC_MSG_CHECKING([PORTAGE_BIN_PATH default])
-AC_ARG_WITH([portage-bin-path],
-	[AS_HELP_STRING([--with-portage-bin-path=STR],
-		[default PORTAGE_BIN_PATH])],
-	[AS_VAR_COPY([PORTAGE_BIN_PATH_DEFAULT], [withval])],
-	[AS_VAR_SET([PORTAGE_BIN_PATH_DEFAULT], [])])
-MV_MSG_RESULT_VAR([PORTAGE_BIN_PATH_DEFAULT])
-AC_DEFINE_UNQUOTED([PORTAGE_BIN_PATH_DEFAULT],
-	["${PORTAGE_BIN_PATH_DEFAULT}"],
-	[Default PORTAGE_BIN_PATH])
-AC_SUBST([PORTAGE_BIN_PATH_DEFAULT])
 
 AC_MSG_CHECKING([default DEFAULT_ARCH])
 AC_ARG_WITH([default-arch],

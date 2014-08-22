@@ -604,7 +604,7 @@ UpdateDiff() {
 	RemoteAdd
 	MyRunCommand "`gettext 'Calling eix-diff'`" \
 		-t diff eix-diff -- "${d}" || \
-		die "`gettext 'Failed to diff against current cache'`"
+		die "`gettext 'failed to diff against current cache'`"
 	PrintTimes
 }
 

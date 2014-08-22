@@ -3,6 +3,10 @@
 *eix-0.30.4
 	Martin Väth <martin at mvath.de>:
 	- Replace default [D] by [?] to avoid confusion with portage output
+	- Remove EXEC_EBUILD, EXEC_EBUILD_SH, PORTAGE_BIN_PATH
+	- Remove --with-ebuild-sh-default, --with-portage-bin-path
+	- Use instead portageq, PATH, and/or EPREFIX_PORTAGE_EXEC to obtain
+	  paths, see https://bugs.gentoo.org/show_bug.cgi?id=520436
 	- Fix gdb instructions
 	- manpage: add remarks about stability of names in future eix versions
 	- manpage: fix typo in SPEEDUP

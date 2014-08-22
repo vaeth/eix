@@ -42,6 +42,7 @@ cat<<END
 class BasicCache;
 
 using std::string;
+
 BasicCache *get_cache(const string& name, const string& appending) {
 END
 
@@ -62,7 +63,7 @@ do	cache_class=`to_classname "${cache_name}"`
 END
 done
 cat<<END
-	{
+	{  // NOLINT(whitespace/braces)
 		ParseCache *p(new ParseCache);
 		if(p->initialize(name + appending)) {
 			return p;
@@ -73,7 +74,7 @@ END
 for cache_name in ${cache_vary}
 do	cache_class=`to_classname "${cache_name}"`
 	cat<<END
-	{
+	{  // NOLINT(whitespace/braces)
 		${cache_class} *p(new ${cache_class});
 		if(p->initialize(name)) {
 			return p;

@@ -80,7 +80,7 @@ void assign_get_keywords_slot_iuse_restrict(const string& filename, string *keyw
 	Depend *dep, BasicCache::ErrorCallback error_callback) {
 	WordMap *cf(get_map_from_cache(filename.c_str()));
 	if(unlikely(cf == NULLPTR)) {
-		error_callback(eix::format(_("Can't read cache file %s: %s"))
+		error_callback(eix::format(_("cannot read cache file %s: %s"))
 			% filename % strerror(errno));
 		return;
 	}
@@ -98,7 +98,7 @@ void assign_get_keywords_slot_iuse_restrict(const string& filename, string *keyw
 void assign_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback) {
 	WordMap *cf(get_map_from_cache(filename));
 	if(unlikely(cf == NULLPTR)) {
-		error_callback(eix::format(_("Can't read cache file %s: %s"))
+		error_callback(eix::format(_("cannot read cache file %s: %s"))
 			% filename % strerror(errno));
 		return;
 	}
