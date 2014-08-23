@@ -79,11 +79,11 @@ KeyCheck() {
 }
 
 Echo 'Usage of this script requires that you committed the latest changes'
-if KeyCheck "Are you sure you want to tag release-${ver} of ${proj}"
-then	Eecho "git tag -a release-${ver} -m ..."
+if KeyCheck "Are you sure you want to tag v${ver} of ${proj}"
+then	Eecho "git tag -a v${ver} -m ..."
 #svnroot="https://svn.gentooexperimental.org/${proj}"
-#svn copy "${svnroot}/trunk" "${svnroot}/tags/release-${ver}"
-	git tag -a "release-${ver}" \
+#svn copy "${svnroot}/trunk" "${svnroot}/tags/v${ver}"
+	git tag -a "v${ver}" \
 		-m "Tagging the ${ver} release" || \
 		KeyCheck "git tagging failed. Continue anyway" || exit 2
 fi

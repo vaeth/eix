@@ -1,20 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.30.4
+*eix-0.30.3
 	Martin Väth <martin at mvath.de>:
 	- Replace default [D] by [?] to avoid confusion with portage output
 	- Remove EXEC_EBUILD, EXEC_EBUILD_SH, PORTAGE_BIN_PATH
 	- Remove --with-ebuild-sh-default, --with-portage-bin-path
 	- Use instead portageq, PATH, and/or EPREFIX_PORTAGE_EXEC to obtain
 	  paths, see https://bugs.gentoo.org/show_bug.cgi?id=520436
-	- Fix gdb instructions
-	- manpage: add remarks about stability of names in future eix versions
-	- manpage: fix typo in SPEEDUP
-	- cosmetical changes to be cpplint compliant
-	- Add CPPLINT.cfg
-
-*eix-0.30.3
-	Martin Väth <martin at mvath.de>:
 	- eix-sync: Add -vn (verbose dry-run) options, see
 	  https://bugs.gentoo.org/show_bug.cgi?id=509750
 	- Fix more wrong usages of getline(), see
@@ -23,9 +15,14 @@
 	  https://bugs.gentoo.org/show_bug.cgi?id=510120
 	- Trigger clang/gcc/glibc incompatibility when testing for c++1y, see
 	  https://bugs.gentoo.org/show_bug.cgi?id=510102
+	- Fix gdb instructions
+	- manpage: add remarks about stability of names in future eix versions
+	- manpage: fix typo in SPEEDUP
 	- Russian translation: Improve spacing for eix-test-obsolete, and
 	  https://developer.berlios.de/bugs/?func=detailbug&bug_id=19366&
 	  group_id=11597
+	- cosmetical changes to be cpplint compliant
+	- Add CPPLINT.cfg
 
 *eix-0.30.2
 	Martin Väth <martin at mvath.de>:
