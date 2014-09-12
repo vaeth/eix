@@ -46,6 +46,7 @@
 /src/functions-eix.sh
 
 /src/eixrc/eixrc
+/src/eixrc/00-eixrc
 /src/cache/cache_map.cc
 
 !/zsh/_eix*.*

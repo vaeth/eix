@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2014-08-22 21:04+0200\n"
+"POT-Creation-Date: 2014-09-12 21:03+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -2366,19 +2366,19 @@ msgstr "Уровень гнездования слишком глубок в %r"
 msgid "%s: failed to source %r (%s)"
 msgstr "%s: ошибка взятия %r в качестве источника (%s)"
 
-#: src/eixTk/varsreader.cc:985
+#: src/eixTk/varsreader.cc:1001
 msgid "cannot read file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:993
+#: src/eixTk/varsreader.cc:1009
 msgid "cannot stat file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:1009
+#: src/eixTk/varsreader.cc:1026
 msgid "cannot map file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:1024
+#: src/eixTk/varsreader.cc:1041
 msgid "recursively sourced file %r"
 msgstr "рекурсивно прочтён файл %r"
 
@@ -5635,8 +5635,8 @@ msgstr ""
 msgid "warning: ignoring parent %r of file %r"
 msgstr "внимание: игнорирую родителя %r файла %r"
 
-#: src/portage/conf/portagesettings.cc:1245
-#: src/portage/conf/portagesettings.cc:1272
+#: src/portage/conf/portagesettings.cc:1252
+#: src/portage/conf/portagesettings.cc:1279
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr ""
 "внутренняя ошибка: Попытка восстановить нелокальную маску без сохранения"

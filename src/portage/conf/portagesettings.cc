@@ -120,6 +120,7 @@ static const char *default_accumulating_keys[] = {
 /** Environment variables which should take effect before reading profiles. */
 static const char *test_in_env_early[] = {
 	"PORTAGE_PROFILE",
+	"PORTAGE_REPOSITORIES",
 	"PORTDIR",
 	"PORTDIR_OVERLAY",
 	NULLPTR
@@ -226,10 +227,16 @@ void PortageSettings::init(EixRc *eixrc, bool getlocal, bool init_world, bool pr
 		/* Read repos.conf */
 		VarsReader reposfile(VarsReader::SUBST_VARS|VarsReader::PORTAGE_SECTIONS|VarsReader::RECURSE);
 		reposfile.setPrefix(eprefixsource);
-		string errtext;
-		bool have_repos(reposfile.read((*eixrc)["PORTAGE_REPOS_CONF"].c_str(), &errtext, true));
-		if(reposfile.read((m_eprefixconf + USER_REPOS_CONF).c_str(), &errtext, true)) {
+		bool have_repos(reposfile.read((*eixrc)["PORTAGE_REPOS_CONF"].c_str(), NULLPTR, true));
+		if(reposfile.read((m_eprefixconf + USER_REPOS_CONF).c_str(), NULLPTR, true)) {
 			have_repos = true;
+		}
+		string &repositories = (*this)["PORTAGE_REPOSITORIES"];
+		if(!repositories.empty()) {
+			const char *s = repositories.c_str();
+			if(reposfile.readmem(s, s + repositories.size(), NULLPTR)) {
+				have_repos = true;
+			}
 		}
 		const string *main_repo(NULLPTR);
 		OverlayIdent::Priority priority(0);

@@ -63,13 +63,17 @@ class VarsReader {
 				delete vars;
 		}
 
+		/** Read from memory instead of file.
+		    If buffer_end is NULLPTR then buffer is assumed to end with \0 */
+		bool readmem(const char *buffer, const char *buffer_end, std::string *errtext);
+
 		/** Read file.
 		 * @return true if the file was successfully read. */
 		bool read(const char *filename, std::string *errtext, bool noexist_ok, WordSet *sourced, bool nodir) ATTRIBUTE_NONNULL((2));
 		bool read(const char *filename, std::string *errtext, bool noexist_ok, WordSet *sourced) ATTRIBUTE_NONNULL((2)) {
 			return read(filename, errtext, noexist_ok, sourced, false);
 		}
-		bool read(const char *filename, std::string *errtext, bool noexist_ok) ATTRIBUTE_NONNULL_ {
+		bool read(const char *filename, std::string *errtext, bool noexist_ok) ATTRIBUTE_NONNULL((2)) {
 			return read(filename, errtext, noexist_ok, NULLPTR);
 		}
 
@@ -264,7 +268,7 @@ class VarsReader {
 		 * [RV] -> NOISE_DOUBLE_QUOTE */
 		void NOISE_DOUBLE_QUOTE_ESCAPE();
 
-		void var_append(char *beginning, size_t ref_key_length) ATTRIBUTE_NONNULL_;
+		void var_append(const char *beginning, size_t ref_key_length) ATTRIBUTE_NONNULL_;
 
 		/** Try to resolve $... references to variables.
 		 * If we fail we recover from it. However, INPUT_EOF might be true at stop. */
@@ -280,9 +284,9 @@ class VarsReader {
 		bool source(const std::string& filename, std::string *errtext);
 
 		size_t key_len; /**< Length of the key. */
-		char *key_begin;      /**< Pointer to first character of key. */
+		const char *key_begin;  /**< Pointer to first character of key. */
 
-		char *x;        /**< Pointer to current position in filebuffer. */
+		const char *x;  /**< Pointer to current position in filebuffer. */
 		bool sourcecmd; /**< A flag whether we are currently parsing a source command */
 
 		std::string value; /**< Buffy for value */
@@ -296,14 +300,17 @@ class VarsReader {
 
 		std::string m_errtext;
 
-		char *filebuffer,     /**< The filebuffer everyone is taking about. */
-		     *filebuffer_end; /**< Marks the end of the filebuffer. */
+		const char *filebuffer,  /**< The filebuffer everyone is taking about. */
+			*filebuffer_end; /**< Marks the end of the filebuffer. */
 		const char **incremental_keys;  /**< c-array of pattern for keys which values should be prepended to the new value. */
 		/** Mapping of key to value. */
 		my_map *vars;
 
 		/** Prefix resp. varname used for sourcing */
 		std::string source_prefix;
+
+		/** Do the actual parsing: handling of Fsm, setting of results */
+		bool parse();
 
 		/** Init the FSM.
 		 * Mallocs buffer for file and reads it into this buffer.

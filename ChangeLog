@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.30.4
+	Martin Väth <martin at mvath.de>:
+	- Support PORTAGE_REPOSITORIES
+	- internal: Support parsing from mem for varsreader.cc
+
 *eix-0.30.3
 	Martin Väth <martin at mvath.de>:
 	- Replace default [D] by [?] to avoid confusion with portage output

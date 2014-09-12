@@ -849,7 +849,7 @@ void VarsReader::NOISE_DOUBLE_QUOTE() {
 	}
 }
 
-void VarsReader::var_append(char *beginning, size_t ref_key_length) {
+void VarsReader::var_append(const char *beginning, size_t ref_key_length) {
 	if(unlikely(ref_key_length == 0)) {
 		return;
 	}
@@ -868,10 +868,10 @@ void VarsReader::var_append(char *beginning, size_t ref_key_length) {
 /** Try to resolve $... references to variables.
  * If we fail we recover from it. However, INPUT_EOF might be true at stop. */
 void VarsReader::resolveReference() {
-	char *backup(x);
+	const char *backup(x);
 	NEXT_INPUT_APPEND_RET;
 	bool brace(false);
-	char *beginning(x);
+	const char *beginning(x);
 	if(INPUT == '{') {
 		brace = true;
 		NEXT_INPUT_APPEND_RET;
@@ -911,14 +911,14 @@ void VarsReader::resolveReference() {
 /** Try to resolve %(...)s references to variables.
  * If we fail we recover from it. However, INPUT_EOF might be true at stop. */
 void VarsReader::resolveSectionReference() {
-	char *backup(x);
+	const char *backup(x);
 	NEXT_INPUT_APPEND_RET;
 	if(INPUT != '(') {
 		APPEND_RET;
 	}
 	NEXT_INPUT_APPEND_RET;
 
-	char *beginning(x);
+	const char *beginning(x);
 	size_t ref_key_length(0);
 	while(likely(isValidKeyCharacter(INPUT) || (INPUT == ' ') || (INPUT == '\t') || (INPUT == ':'))) {
 		++ref_key_length;
@@ -961,6 +961,22 @@ void VarsReader::initFsm() {
 	section.clear();
 }
 
+bool VarsReader::readmem(const char *buffer, const char *buffer_end, string *errtext) {
+	filebuffer = buffer;
+	if(buffer_end != NULLPTR) {
+		filebuffer_end = buffer_end;
+	} else {
+		filebuffer_end = buffer + strlen(buffer);
+	}
+	if(likely(parse())) {
+		return true;
+	}
+	if(errtext != NULLPTR) {
+		*errtext = m_errtext;
+	}
+	return false;
+}
+
 bool VarsReader::read(const char *filename, string *errtext, bool noexist_ok, set<string> *sourced, bool nodir) {
 	if((!nodir) && ((parse_flags & RECURSE) != NONE)) {
 		string dir(filename);
@@ -999,11 +1015,12 @@ bool VarsReader::read(const char *filename, string *errtext, bool noexist_ok, se
 		return true;
 	}
 GCC_DIAG_OFF(sign-conversion)
-	filebuffer = static_cast<char *>(mmap(NULLPTR, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
+	void *buffer = mmap(NULLPTR, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
+	filebuffer = static_cast<const char *>(buffer);
 GCC_DIAG_ON(sign-conversion)
 	close(fd);
 GCC_DIAG_OFF(old-style-cast)
-	if (filebuffer == MAP_FAILED) {
+	if (buffer == MAP_FAILED) {
 GCC_DIAG_ON(old-style-cast)
 		if(errtext != NULLPTR) {
 			*errtext = eix::format(_("cannot map file %r")) % filename;
@@ -1028,36 +1045,9 @@ GCC_DIAG_ON(old-style-cast)
 	}
 
 	sourced_files->insert(truename);
-	initFsm();
-	bool ret;
-	if((parse_flags & APPEND_VALUES) != NONE) {
-		typedef vector<pair<string, string> > IncType;
-		IncType incremental;
-		// Save and clear incremental keys
-		for(iterator i(vars->begin());
-			i != vars->end(); ++i) {
-			if((!i->second.empty()) &&
-				isIncremental(i->first.c_str())) {
-				incremental.push_back(*i);
-				i->second.clear();
-			}
-		}
-		ret = runFsm();
-		// Prepend previous content for incremental keys
-		for(IncType::const_iterator it(incremental.begin());
-			it != incremental.end(); ++it) {
-			iterator f(vars->find(it->first));
-			if(f->second.empty()) {
-				f->second = it->second;
-			} else {
-				f->second = (it->second) + ' ' + (f->second);
-			}
-		}
-	} else {
-		ret = runFsm();
-	}
+	bool ret = parse();
 GCC_DIAG_OFF(sign-conversion)
-	munmap(filebuffer, st.st_size);
+	munmap(buffer, st.st_size);
 GCC_DIAG_ON(sign-conversion)
 	if(likely(topcall)) {
 		delete sourced_files;
@@ -1073,6 +1063,36 @@ GCC_DIAG_ON(sign-conversion)
 		*errtext = m_errtext;
 	}
 	return false;
+}
+
+bool VarsReader::parse() {
+	initFsm();
+	if((parse_flags & APPEND_VALUES) == NONE) {
+		return runFsm();
+	}
+	typedef vector<pair<string, string> > IncType;
+	IncType incremental;
+	// Save and clear incremental keys
+	for(iterator i(vars->begin());
+		i != vars->end(); ++i) {
+		if((!i->second.empty()) &&
+			isIncremental(i->first.c_str())) {
+			incremental.push_back(*i);
+			i->second.clear();
+		}
+	}
+	bool ret = runFsm();
+	// Prepend previous content for incremental keys
+	for(IncType::const_iterator it(incremental.begin());
+		it != incremental.end(); ++it) {
+		iterator f(vars->find(it->first));
+		if(f->second.empty()) {
+			f->second = it->second;
+		} else {
+			f->second = (it->second) + ' ' + (f->second);
+		}
+	}
+	return ret;
 }
 
 /** Read file using a new instance of VarsReader with the same

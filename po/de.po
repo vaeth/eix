@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2014-08-22 21:04+0200\n"
+"POT-Creation-Date: 2014-09-12 21:03+0200\n"
 "PO-Revision-Date: 2013-05-01 11:40+0200\n"
 "Last-Translator: Martin Vaeth <martin@mvath.de>\n"
 "Language-Team: German\n"
@@ -2403,19 +2403,19 @@ msgstr "Zu tiefe Verschachtelung in %r"
 msgid "%s: failed to source %r (%s)"
 msgstr "%s: source %r ging nicht (%s)"
 
-#: src/eixTk/varsreader.cc:985
+#: src/eixTk/varsreader.cc:1001
 msgid "cannot read file %r"
 msgstr "Datei %r kann nicht gelesen werden"
 
-#: src/eixTk/varsreader.cc:993
+#: src/eixTk/varsreader.cc:1009
 msgid "cannot stat file %r"
 msgstr "Status der Datei %r kann nicht ermiitelt werden"
 
-#: src/eixTk/varsreader.cc:1009
+#: src/eixTk/varsreader.cc:1026
 msgid "cannot map file %r"
 msgstr "Datei %r kann nicht gemapped werden"
 
-#: src/eixTk/varsreader.cc:1024
+#: src/eixTk/varsreader.cc:1041
 msgid "recursively sourced file %r"
 msgstr "File %r wird rekursiv gesourced"
 
@@ -6759,8 +6759,8 @@ msgstr ""
 msgid "warning: ignoring parent %r of file %r"
 msgstr "Warnung: Ignoriere Parent %r der Datei %r"
 
-#: src/portage/conf/portagesettings.cc:1245
-#: src/portage/conf/portagesettings.cc:1272
+#: src/portage/conf/portagesettings.cc:1252
+#: src/portage/conf/portagesettings.cc:1279
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
 
