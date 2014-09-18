@@ -49,15 +49,14 @@ static WordMap *get_map_from_cache(const char *file) {
 		return NULLPTR;
 	}
 
-	if(likely(is.good())) {
+	while(likely(is.good())) {
 		string lbuf;
-		while(getline(is, lbuf), likely(is.good())) {
-			string::size_type p(lbuf.find('='));
-			if(p == string::npos) {
-				continue;
-			}
-			(*cf)[lbuf.substr(0, p)].assign(lbuf, p + 1, string::npos);
+		getline(is, lbuf);
+		string::size_type p(lbuf.find('='));
+		if(p == string::npos) {
+			continue;
 		}
+		(*cf)[lbuf.substr(0, p)].assign(lbuf, p + 1, string::npos);
 	}
 	is.close();
 	return cf;

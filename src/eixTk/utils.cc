@@ -91,22 +91,24 @@ static bool pushback_lines_file(const char *file, LineVec *v, bool keep_empty, e
 		}
 		return false;
 	}
-	if(likely(ifstr.good())) {
-		while(getline(ifstr, line), likely(ifstr.good())) {
-			if(keep_comments <= 0) {
-				string::size_type x(line.find('#'));
-				if(unlikely(x != string::npos)) {
-					if(likely((keep_comments == 0) || (x != 0))) {
-						line.erase(x);
-					}
+	while(likely(ifstr.good())) {
+		getline(ifstr, line);
+		if(unlikely(line.empty() && unlikely(!ifstr.good())))  {
+			break;
+		}
+		if(keep_comments <= 0) {
+			string::size_type x(line.find('#'));
+			if(unlikely(x != string::npos)) {
+				if(likely((keep_comments == 0) || (x != 0))) {
+					line.erase(x);
 				}
 			}
+		}
 
-			trim(&line);
+		trim(&line);
 
-			if(keep_empty || (!line.empty())) {
-				v->push_back(line);
-			}
+		if(keep_empty || (!line.empty())) {
+			v->push_back(line);
 		}
 	}
 	if(likely(ifstr.eof())) {  // if we have eof, everything went well

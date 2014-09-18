@@ -2,6 +2,8 @@
 
 *eix-0.30.4
 	Martin Väth <martin at mvath.de>:
+	- Fix for lines ending with EOF (regression introduced in eix-0.30.3),
+	  see https://github.com/vaeth/eix/issues/3
 	- Support PORTAGE_REPOSITORIES
 	- internal: Support parsing from mem for varsreader.cc
 
