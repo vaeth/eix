@@ -26,7 +26,7 @@ local ret=$?
 case $state in
 (package)
 	_tags packages
-	_requested packages && {
+	_tags && {
 		local d
 		local -x NEWLINE=false CAREMODE=false QUICKMODE=true \
 			FORCE_COLORS=false RESTRICT_INSTALLED=false \

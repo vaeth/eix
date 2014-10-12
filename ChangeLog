@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.30.5
+	Martin Väth <martin at mvath.de>:
+	- zsh-completion: fix checks for _tags
+	- Bump gettext
+
 *eix-0.30.4
 	Martin Väth <martin at mvath.de>:
 	- Fix for lines ending with EOF (regression introduced in eix-0.30.3),
