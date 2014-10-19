@@ -217,7 +217,7 @@ static void dump_help() {
 "    -s, --name              name (default)\n"
 "    -H, --homepage          homepage\n"
 "    -L, --license           license\n"
-"    --deps                  same as --depend --rdepend -pdepend -hdepend\n"
+"    --deps                  same as --depend --rdepend --pdepend --hdepend\n"
 "    --depend                depend (needs DEP=true)\n"
 "    --rdepend               rdepend (needs DEP=true)\n"
 "    --pdepend               pdepend (needs DEP=true)\n"

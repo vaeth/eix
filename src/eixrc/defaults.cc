@@ -2211,7 +2211,7 @@ AddOption(STRING, "FORMAT_AFTER_KEYWORDS",
 AddOption(STRING, "FORMAT_NEWLINE",
 	"%{?RESET_ALL_LINES}()\\n(%{COLOR_RESET_BG})%{else}\\n%{}", _(
 	"This variable only used for delayed substitution.\n"
-	"It prints a newline, optionally handling background colors for broken terminals."));
+	"It prints a newline, optionally handling background colors for some terminals."));
 
 AddOption(STRING, "COLUMN_TITLE",
 	"5", _(
