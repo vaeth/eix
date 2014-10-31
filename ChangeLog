@@ -3,6 +3,8 @@
 *eix-0.30.5
 	Martin Väth <martin at mvath.de>:
 	- zsh-completion: fix checks for _tags
+	- German translation: Many fixes and extensions by
+	  André Jaenisch <andre.jaenisch at openmailbox.org>
 	- Bump gettext
 
 *eix-0.30.4

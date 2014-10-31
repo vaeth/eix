@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
 "POT-Creation-Date: 2014-09-18 07:02+0200\n"
-"PO-Revision-Date: 2013-05-01 11:40+0200\n"
-"Last-Translator: Martin Vaeth <martin@mvath.de>\n"
+"PO-Revision-Date: 2014-10-29 21:03+0100\n"
+"Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -18,6 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Language: German\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: src/eix-functions.sh.in:103 src/eix-update.cc:617 src/eix-update.cc:651
 #: src/eixTk/statusline.cc:52
@@ -44,19 +45,19 @@ msgstr "eix-update schlug fehl"
 #: src/eix-functions.sh.in:372
 #, sh-format
 msgid "${eixf_patha} cannot be found in PATH"
-msgstr "${eixf_patha} nicht gefunden (im PATH)"
+msgstr "${eixf_patha} konnte im PATH nicht gefunden werden"
 
 #: src/eix-functions.sh.in:516
 msgid "found no free temporary name after 10000 attempts"
-msgstr "Kein möglicher Temporärname nach 10000 Versuchen"
+msgstr "Keinen möglichen temporären Namen nach 10000 Versuchen gefunden"
 
 #: src/eix-functions.sh.in:531
 msgid "cannot create temporary directory"
-msgstr "Temporärdirectory nicht erzeugbar"
+msgstr "Kein temporäres Verzeichnis erzeugbar"
 
 #: src/eix-functions.sh.in:532
 msgid "cannot create temporary file"
-msgstr "Temporärdatei nicht erzeugbar"
+msgstr "Keine temporäre Datei erzeugbar"
 
 #: src/eix-installed.sh:15
 #, sh-format
@@ -88,6 +89,8 @@ msgstr ""
 "Dieses Skript ist Teil von ${p}.\n"
 "Es gibt alle installierten Pakete aus, oder alle Pakete, die mit bzw. ohne\n"
 "Informationen zu Repository oder Buildtime installiert wurden.\n"
+"Pakete, die mit neueren Portage-Versionen emerged wurden, enthalten\n"
+"Repository und Buildtime-Informationen.\n"
 "Es ist vorteilhaft (wenngleich nicht notwendig), wenn eix diese\n"
 "Informationen benutzen kann; näheres dazu findet sich auf der eix manpage\n"
 "unter CHECK_INSTALLED_OVERLAYS und USE_BUILD_TIME.\n"
@@ -219,7 +222,7 @@ msgstr ""
 "-e ZEIT Benutzt ZEIT als \"Installationsdatum\". ZEIT ist die Zahl der\n"
 "     Sekunden seit Epoch (vgl. \"date +%s\").\n"
 "-F FILE Benutzt die mtime von FILE als Installationsdatum.\n"
-"-l   Benutze /var/log/emerge.log um die _erste (statt der letzten)\n"
+"-l   Benutze /var/log/emerge.log um die _erste_ (statt der letzten)\n"
 "     Installation des Referenzpakets herauszufinden. In diesem Fall wird\n"
 "     das Argument als regulärer Ausdruck für category/package-version\n"
 "     interpretiert. Beachten Sie, dass die Zeit im Logfile und die Zeit in\n"
@@ -241,9 +244,9 @@ msgstr ""
 "-s   Ausgabe des Slots, selbst dann, wenn er eindeutig sein sollte\n"
 "-v   Ausgabe als category/package-version  statt category/package[:slot]\n"
 "-=   Ausgabe als =category/package-version statt category/package[:slot]\n"
-"-t   Benutzt build time (falls verfügbar) statt des Installationsdatums,\n"
+"-t   Benutzt Buildtime (falls verfügbar) statt des Installationsdatums,\n"
 "     unabhängig vom Wert der Variablen USE_BUILD_TIME\n"
-"-T   Benutzt niemals die build time, immer nur das Installationsdatum."
+"-T   Benutzt niemals die Buildtime, immer nur das Installationsdatum."
 
 #: src/eix-installed-after.sh:144
 #, sh-format
@@ -281,20 +284,19 @@ msgid ""
 "              the layman overlays. Current value:"
 msgstr ""
 "Aufruf: ${n} [Optionen] Kommando\n"
-"Dieses Skript gehört zu ${p}.\n"
-"Es fügt lokale Layman-Overlays zur eix-Datenbank hinzu oder entfernt sie.\n"
+"Es fügt lokale Layman-Overlays zur eix-Datenbank (${p}) hinzu oder entfernt sie.\n"
 "\n"
-"Falls Laymans make.conf nicht in /etc/make.conf gesourced wird, werden die\n"
-"Layman Overlays nicht als Teil von PORTDIR_OVERLAY angesehen; in diesem Fall\n"
-"werden sie normalerweise nicht zur Eix-Datenbank hinzugefügt und können daher\n"
+"Falls layman/make.conf nicht in /etc/make.conf gesourced wird, werden die\n"
+"Layman-Overlays nicht als Teil von PORTDIR_OVERLAY angesehen; in diesem Fall\n"
+"werden sie normalerweise nicht zur eix-Datenbank hinzugefügt und können daher\n"
 "nicht mit eix durchsucht werden.\n"
-"Dieses Skript dient dazu, sie temporär zur Eix-Datenbank hinzuzufügen oder\n"
+"Dieses Skript dient dazu, sie temporär zur eix-Datenbank hinzuzufügen oder\n"
 "sie zu entfernen, ohne dazu /etc/make.conf ändern zu müssen.\n"
 "Außerdem dient es als Beispiel zur Benutzung von eix-functions.sh.\n"
 "\n"
 "Die folgenden Kommandos gibt es:\n"
 "\n"
-"add:    Hinzufügen eines lokalen Layman-Overlays (zur Eix-Datenbank)\n"
+"add:    Hinzufügen eines lokalen Layman-Overlays (zur eix-Datenbank)\n"
 "remove: Entfernen eines lokalen Layman-Overlays.\n"
 "\n"
 "Optionen:\n"
@@ -334,7 +336,7 @@ msgstr "Konnte ${prg} nicht ausführen"
 
 #: src/eix-remote.sh:49
 msgid "temporary file"
-msgstr "Temporärdatei"
+msgstr "temporäre Datei"
 
 #: src/eix-remote.sh:50
 #, sh-format
@@ -403,9 +405,8 @@ msgstr ""
 "        Holt die eix-caches einiger Layman-Overlays, speichert sie lokal in\n"
 "        EIX_REMOTEARCHIVE1 (${f1}) bzw.\n"
 "        EIX_REMOTEARCHIVE2 (${f2})\n"
-"        und fügt sie zur Eix-Datenbank hinzu.\n"
-"        Falls EIX_REMOTE1 bzw. EIX_REMOTE2 nichtleer ist, geht die Ausgabe "
-"in\n"
+"        und fügt sie zur eix-Datenbank hinzu.\n"
+"        Falls EIX_REMOTE1 bzw. EIX_REMOTE2 nichtleer ist, geht die Ausgabe in\n"
 "        die entsprechende separate Datei. Mit eix -R bzw. -Z oder\n"
 "        REMOTE_DEFAULT=1 bzw. 2 benutzt eix diese alternative Datenbank.\n"
 "        Falls EIX_REMOTE1 bzw. EIX_REMOTE2 leer ist, wird die Ausgabe\n"
@@ -414,27 +415,22 @@ msgstr ""
 "        retten, kann es sinnvoll sein, KEEP_VIRTUALS=true in /etc/eixrc\n"
 "        zu setzen.\n"
 "add1 (=add) oder add2:\n"
-"        Fügt nur die Overlay-Daten aus EIX_REMOTEARCHIVE zur Eix-Datenbank.\n"
+"        Fügt nur die Overlay-Daten aus EIX_REMOTEARCHIVE zur eix-Datenbank hinzu.\n"
 "        Wenn EIX_REMOTE nichtleer ist, ist es sinnvoll, dies immer nach\n"
 "        eix-update auszuführen, so dass eix -R synchronisierte Daten zeigt.\n"
-"        Es ist in diesem Fall sinnvoll, die folgende Zeile zu eix-sync.conf\n"
-"        hinzuzufügen:\n"
-"        @@eix-remote add\n"
 "fetch1 (=fetch) oder fetch2:\n"
 "        Holt nur die Overlay-Daten nach EIX_REMOTEARCHIVE1 bzw.\n"
 "        EIX_REMOTEARCHIVE2.\n"
 "        Falls die aktuellsten Daten bei jedem Aufruf von eix-sync\n"
-"        heruntergeladen werden sollen, fügen Sie die folgenden Zeilen\n"
-"        Ihrem eix-sync.conf hinzu:\n"
+"        heruntergeladen werden sollen, fügen Sie beispielsweise die\n"
+"        folgenden Zeilen Ihrem eix-sync.conf hinzu:\n"
+"        @StatusInfo Downloading remote1\n"
 "        @eix-remote fetch1\n"
-"        @@eix-remote add1\n"
-"        @eix-remote fetch2\n"
-"        @@eix-remote add2\n"
 "remove: Entfernt alle temporär hinzugefügten virtuellen Overlays aus der\n"
 "        Eix-Datenbank. Die ist nur dann sinnvoll, wenn EIX_REMOTE? leer ist.\n"
 "        Es ist ungefähr das selbe wie\n"
 "        \tKEEP_VIRTUALS=false eix-update\n"
-"        aber schneller (da möglichst das alte Cachefile benutzt wird).\n"
+"        aber schneller (da möglichst die alte Cache-Datei benutzt wird).\n"
 "\n"
 "Optionen können in der (Umgebungs-) eix-Variablen EIX_REMOTE_OPTS\n"
 "angegeben werden. Diese wird evaluiert, also Vorsicht!\n"
@@ -442,7 +438,7 @@ msgstr ""
 "Die folgenden Optionen gibt es:\n"
 "\n"
 "-k      Behält Rechte bei.\n"
-"        Ohne diese Option wird eix-drop-permissions benutzt um die Rechte\n"
+"        Ohne diese Option wird eix-drop-permissions benutzt, um die Rechte\n"
 "        sofort auf die von EIX_USER abzusenken\n"
 "-K      Wie -k, aber kann nicht mit -i überschrieben werden.\n"
 "-X      Ausschluss von Remote-Overlay, die lokal (Layman) sind. Siehe -L/-l\n"
@@ -452,7 +448,7 @@ msgstr ""
 "        beendet sich dann).\n"
 "        Setzen Sie LOCAL_LAYMAN oder benutzen Sie die Option -l, um die\n"
 "        Heuristik zu überschreiben.\n"
-"-l PFAD Benutzt PFAD als LOCAL_LAYMAN\n"
+"-l PATH Benutzt PATH als LOCAL_LAYMAN\n"
 "-a ADDR Benutze ADDR zum Abholen der Daten statt:\n"
 "        ${addr1}\n"
 "        ${addr2}\n"
@@ -479,7 +475,7 @@ msgstr "kann kein sinnvolles $LOCAL_LAYMAN festlegen"
 #: src/eix-remote.sh:190
 #, sh-format
 msgid "cannot cd to ${a}"
-msgstr "Wechseln ins Directory ${a} nicht möglich"
+msgstr "Wechseln ins Verzeichnis ${a} nicht möglich"
 
 #: src/eix-remote.sh:221
 msgid "Downloading remote data"
@@ -487,7 +483,7 @@ msgstr "Daten herunterladen"
 
 #: src/eix-remote.sh:223
 msgid "cannot cd to tempdir"
-msgstr "Wechseln ins Temporärdirectory nicht möglich"
+msgstr "Wechseln ins temporäre Verzeichnis nicht möglich"
 
 #: src/eix-remote.sh:234
 msgid "failed: "
@@ -513,23 +509,23 @@ msgid ""
 "your eix, you will have to upgrade to the most current ~x86 version of eix\n"
 "to use eix-remote: This inconvenience cannot be avoided and is not a bug!"
 msgstr ""
-"Wahrscheinlich wurde das eix-Cachefile nicht erfolgreich ge-updated.\n"
+"Wahrscheinlich wurde die eix-Cache-Datei *nicht* erfolgreich aktualisiert.\n"
 "Falls die obigen Meldungen keine andere Ursache nahelegen und falls Sie\n"
 "keinen falschen Dateinamen angegeben haben, ist die wahrscheinlichste\n"
 "Ursache, dass der Server eine andere eix-Version benutzt, oder dass er\n"
 "kaputte Daten produziert hat. Untersuchen Sie bitte, ob EIX_REMOTEARCHIVE\n"
-"ein korrektes *.tar.bz2-Archiv mit Eix-Cachefiles ist (Sie können es mit\n"
+"ein korrektes *.tar.bz2-Archiv mit eix-Cache-Datei ist (Sie können es mit\n"
 "fetch herunterladen).\n"
 "Falls das nicht der Fall ist (und es neu heruntergeladen wurde), melden Sie\n"
 "bitte den Fehler. Beachten Sie aber, dass das Archiv *nicht* kaputt ist,\n"
-"falls sich nur die Versionsnummern der Cachefile-Formate unterscheiden.\n"
+"falls sich nur die Versionsnummern der Cache-Datei-Formate unterscheiden.\n"
 "Melden Sie in diesem Fall nur dann einen Fehler, wenn diejenigen der\n"
 "heruntergeladenen Datei *älter* sind, als die des aktuellen ~x86 eix im\n"
 "Portage-Baum (aber warten Sie mit der Meldung zunächst, bis sie es nach\n"
 "einigen Tagen erneut probiert haben: Schließlich brauchen die Maintainer\n"
 "des Servers auch einige Zeit, bis sie eix nach einem Versionssprung\n"
 "upgraden). Falls umgekehrt die Versionen der heruntergeladenen\n"
-"Eix-Cachefiles sogar neuer sind, als diejenigen, die Ihrem eix bekannt sind,\n"
+"eix-Cache-Dateien sogar neuer sind, als diejenigen, die Ihrem eix bekannt sind,\n"
 "müssen Sie zunächst auf die aktuellste ~x86-Version von eix upgraden, um\n"
 "eix-remote benutzen zu können. Dies ist unbequem, kann aber leider nicht\n"
 "vermieden werden und ist kein Bug!"
@@ -546,7 +542,7 @@ msgstr "${a} ist nicht entpackbar"
 #: src/eix-remote.sh:324
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
-msgstr "Fehler beim Lesen einiger eix-Cachefiles von ${a}"
+msgstr "Fehler beim Lesen einiger eix-Cache-Dateien von ${a}"
 
 #: src/eix-remote.sh:331
 #, sh-format
@@ -555,12 +551,12 @@ msgstr "Ausgabe auf Remote-Datenbank ${eix_remote}"
 
 #: src/eix-remote.sh:350
 msgid "A temporary file makes only sense for update mode"
-msgstr "Eine Temporärdate ergibt nur im Update-Modus Sinn"
+msgstr "Eine temporäre Datei ergibt nur im Update-Modus Sinn"
 
 #: src/eix-remote.sh:361
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
-msgstr "Temporärdatei kann nicht nach ${file} kopiert werden"
+msgstr "temporäre Datei kann nicht nach ${file} kopiert werden"
 
 #: src/eix-remote.sh:373
 #, sh-format
@@ -639,8 +635,8 @@ msgid ""
 "-h   Show this text and exit."
 msgstr ""
 "Aufruf: ${n} [Optionen]\n"
-"Dieses Skript gehört zu ${p}.\n"
-"Es ruft layman/emerge --sync/--metadata auf und zeigt updates.\n"
+"Dieses Skript ruft layman/emerge --sync/--metadata auf und zeigt\n"
+"Aktualisierungen. (${p})\n"
 "\n"
 "Falls die Option -t nicht benutzt wird, wird die alte Datenbank als\n"
 "    ${eixprevious}\n"
@@ -651,20 +647,17 @@ msgstr ""
 "benutzt werden, und sie können auch verschiedene Hooks enthalten:\n"
 "\"man eix\" erklärt Genaueres hierzu.\n"
 "\n"
-"Die Vorgabe-Optionen (z.B. aus EIX_SYNC_OPTS) werden evaluiert, also kann\n"
-"falsches Quoten oder Kompromittierung zu einem Sicherheitsproblem werden.\n"
+"Die Vorgabe-Optionen (z.B. aus EIX_SYNC_OPTS) werden evaluiert, also quoten\n"
+"Sie sie richtig und sorgen Sie sich um Sicherheitsrisiken.\n"
 "Natürlich wird \"--\" in den Vorgabe-Optionen alle Kommandozeilenoptionen\n"
 "verhindern.\n"
-"Die Optionen sind:\n"
+"Die folgenden Optionen gibt es:\n"
 "\n"
 "-i   Ignoriere vorherige Optionen bis auf -n (sinnvoll bei ${eixsyncconf}).\n"
-"-d   Zeige nur die Unterschiede zur gespeicherten Datenbank an.\n"
-"     Außer dass auch die !!-Zeilen in ${eixsyncconf} ausgeführt werden,\n"
-"     ist dies das gleiche wie eix-diff.\n"
 "-a   Es wird stets angenommen, dass ein Baum/Overlay verändert wurde\n"
 "     (Mit have_changed=: in einem !-Hook kann dies erzwungen werden).\n"
 "-s [USER@]SERVER[:DIR] Synce via rsync vom SERVER.\n"
-"     USER/DIR sind per Vorgabe der augenblickliche User und PORTDIR.\n"
+"     USER/DIR sind per Vorgabe der aktuelle User und PORTDIR.\n"
 "     Ein leerer SERVER nimmt die Option zurück. Diese Option impliziert -0\n"
 "-0   Kein eix --sync. Dies impliziert -a\n"
 "-2 [USER@]CLIENT[:DIR] Synce via rsync *auf* den CLIENT, falls das Syncen\n"
@@ -672,12 +665,13 @@ msgstr ""
 "     aufgerufen werden. Falls bereits gesynct wurde, ist es sinnvoll,\n"
 "     diese Option mit mit -uU zu kombinieren.\n"
 "-U   Die Datenbank wird nicht geändert, die Hooks nach eix-update\n"
-"     (@-Zeilen) werden nicht ausgeführt, und natürlich wird eix-diff\n"
-"     nicht aufgerufen. Diese Option impliziert -R\n"
+"     (@-Zeilen) werden nicht ausgeführt, und zeige keine Unterschiede\n"
+"     Diese Option impliziert -R\n"
 "-u   Führe nur das Datenbank-Update durch und zeige die Unterschiede.\n"
-"     dies ist gleichbedeutend mit -0l@s \"\"\n"
+"     Dies ist gleichbedeutend mit -0l@s \"\"\n"
 "-F   Fehlerabbruch bei Problemen mit Layman oder Hooks (! !! ~ @ @@ Zeilen).\n"
-"     Hooks können das durch Setzen von FATAL_HOOKS or Aufruf von \"die\" ändern.\n"
+"     Hooks können durch Setzen von FATAL_HOOKS oder Aufruf von \"die\" "
+"     erzwungen oder überschrieben werden.\n"
 "-+   Kein Fehler bei layman oder Hooks (Zeilen mit ! !! ~ @ @@).\n"
 "     Dies können die Hooks mit der Variable NONFATAL_HOOKS überschreiben.\n"
 "-l   Kein Layman (und keine !-Zeilen in ${eixsyncconf});\n"
@@ -686,13 +680,13 @@ msgstr ""
 "-A   Kein Aufruf von eix-remote add1/add2\n"
 "-@   Keine Hooks (@- und @@-Zeilen) aus ${eixsyncconf}.\n"
 "-S   Keine Hooks nach emerge --sync (@-Zeilen).\n"
-"-M   Mit emerge --metadata. Dies kann nätig sein, wenn die Cachemethode\n"
+"-M   Mit emerge --metadata. Dies kann nötig sein, wenn die Cache-Methode\n"
 "     \"sqlite\", \"sqlite*\" oder \"flat\" für PORTDIR oder einem\n"
 "     synchronisierten Overlay benutzt wird. Diese Option ist die Vorgabe,\n"
 "     wenn PORTDIR_CACHE_METHOD einen dieser Werte hat.\n"
 "-N   Kein emerge --metadata. Dies ist normalerweise die Vorgabe, siehe -M.\n"
-"-t   Speichere die aktuelle Datenbank nur in Temporärdatei. Dies schließt\n"
-"     natürlich ein späteres eix-diff aus.\n"
+"-t   Speichere die aktuelle Datenbank nur in einer temporären Datei.\n"
+"     Dies schließt natürlich ein späteres eix-diff aus.\n"
 "-T   Keine Zeitmessungen\n"
 "-q   Keine Ausgabe (schließt stdout)\n"
 "-w   Benutze emerge-webrsync statt emerge --sync.\n"
@@ -739,13 +733,13 @@ msgid ""
 "a different syntax like quoting eix-remote."
 msgstr ""
 "Die Konfiguration von eix-sync enthält einen obsoleten Hook\n"
-"\"eix-remote*add*\" or \"eix-remote*update*\"\n"
+"\"eix-remote*add*\" oder \"eix-remote*update*\"\n"
 "Seit eix-0.29.0 wird \"eix-remote add*\" bei Bedarf automatisch von eix-sync\n"
 "aufgerufen, so dass dies normalerweise unnötig und vermutlich falsch ist.\n"
 "Entfernen Sie diesen Hook von EIX_SYNC_CONF oder /etc/eix-sync.conf.\n"
 "Wenn Sie das Kommando bewusst beibehalten wollen, können Sie diese\n"
 "Fehlermeldung durch Benutzung einer anderen Systax vermeiden, etwa indem\n"
-"Sie eix-remote in Anführungszeichen setzen."
+"Sie eix-remote quoten."
 
 #: src/eix-sync.sh:214
 msgid "Syncing all portage overlays"
@@ -798,7 +792,7 @@ msgstr "Client syncen"
 
 #: src/eix-sync.sh:434
 msgid "metadata update"
-msgstr "Metadata update"
+msgstr "Metadaten aktualisieren"
 
 #: src/eix-sync.sh:435
 msgid "eix-update"
@@ -853,21 +847,21 @@ msgstr "Konnte nicht auf ${hostdir} rsyncen"
 
 #: src/eix-sync.sh:539
 msgid "eix-cache does not exist."
-msgstr "Eix-Cache existiert nicht."
+msgstr "eix-Cache existiert nicht."
 
 #: src/eix-sync.sh:541
 msgid "eix-cache format has changed."
-msgstr "Eix-Cache-Format hat sich geändert."
+msgstr "eix-Cache-Format hat sich geändert."
 
 #: src/eix-sync.sh:548
 #, sh-format
 msgid "Copying old ${eixcache} cache to temporary file"
-msgstr "Kopiere alten ${eixcache} Cache in Temporärdatei"
+msgstr "Kopiere alten ${eixcache} Cache in temporäre Datei"
 
 #: src/eix-sync.sh:552
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
-msgstr "Konnte die Datenbank nicht in Temporärdatei ${tmpfile} kopieren"
+msgstr "Konnte die Datenbank nicht in temporäre Datei ${tmpfile} kopieren"
 
 #: src/eix-sync.sh:556
 #, sh-format
@@ -957,15 +951,14 @@ msgid ""
 "The argument can be abbreviated, e.g. instead of \"brief\" you can just use \"b\"."
 msgstr ""
 "Aufruf: ${n} [Optionen] detail|brief|quick\n"
-"oder:   ${n} repo|no-repo|buildtime|no-buildtime\n"
 "Dies ist ein Wrapper-Skript für eix (${p}).\n"
 "\n"
 "Es ruft eix -tTc mehrfach mit verschiedenen Variablen auf, um fehlende\n"
 "Pakete oder Pakete mit obsoleten Einträgen in /etc/portage/package.*\n"
 "etwas organisierter anzuzeigen als nur eix -tTc.\n"
 "\n"
-"Geschwindigkeit und angezeigte Details des Skripts hängen davon ab, ob das\n"
-"Argument \"detail\", \"brief\", oder \"quick\" benutzt wird. In allen drei\n"
+"Geschwindigkeit und angezeigte Details des Skripts hängen davon ab, ob die\n"
+"Option \"detail\", \"brief\", oder \"quick\" benutzt wird. In allen drei\n"
 "Fällen werden die selben Tests gemacht; der Unterschied in der Ausgabe\n"
 "betrifft nur die Details für Treffer.\n"
 "Zur Ausgabe der Pakete wird das Format der Variablen FORMAT_TEST_OBSOLETE\n"
@@ -977,8 +970,8 @@ msgstr ""
 "auf \"false\" gesetzt.\n"
 "Um also beispielsweise die beiden Tests für /etc/portage/package.use zu\n"
 "aktivieren, sollte so etwas wie REDUNDANT_IF_IN_USE=\"-some\" und\n"
-"REDUNDANT_IF_DOUBLE_USE=\"some\" gesetzt werden.\n"
-"\n"
+"REDUNDANT_IF_DOUBLE_USE=\"some\" (beispielsweise in /etc/eixrc) gesetzt\n"
+"werden.\n"
 "Optionen:\n"
 "\t-c  Benutze CHECK_INSTALLED_OVERLAYS=true\n"
 "\t-C  Benutze CHECK_INSTALLED_OVERLAYS=repository\n"
@@ -1008,22 +1001,22 @@ msgstr "... wegen ${z}"
 #: src/eix-test-obsolete.sh:217
 #, sh-format
 msgid "Skipping check of entries in ${rump}*"
-msgstr "Übergehe Test:   Redundanz von Einträgen in ${rump}*"
+msgstr "Übergehe Test: Einträge in ${rump}*"
 
 #: src/eix-test-obsolete.sh:221
 #, sh-format
 msgid "No redundant entries in any ${rump}*"
-msgstr "Keine Redundanz in ${rump}*"
+msgstr "Keine redundanten Einträge in ${rump}*"
 
 #: src/eix-test-obsolete.sh:222
 #, sh-format
 msgid "Redundant in some ${rump}*:"
-msgstr "Redundanz in ${rump}*:"
+msgstr "Redundant in ${rump}*:"
 
 #: src/eix-test-obsolete.sh:226
 #, sh-format
 msgid "No  redundant  entries in ${rump}{,accept_}keywords"
-msgstr "Keine   Redundanz   in    ${rump}{,accept_}keywords"
+msgstr "Keine     redundanten     Einträge in ${rump}{,accept_}keywords"
 
 #: src/eix-test-obsolete.sh:227
 #, sh-format
@@ -1033,27 +1026,27 @@ msgstr "Redundant in ${rump}{,accept_}keywords:"
 #: src/eix-test-obsolete.sh:229
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}{,accept_}keywords"
-msgstr "Übergehe Test:   Redundanz   in    ${rump}{,accept_}keywords"
+msgstr "Übergehe Test: redundante Einträge in         ${rump}{,accept_}keywords"
 
 #: src/eix-test-obsolete.sh:231
 #, sh-format
 msgid "No uninstalled entries in ${rump}{,accept_}keywords"
-msgstr "Nichts Uninstalliertes in ${rump}{,accept_}keywords"
+msgstr "Keine nicht-installierten Einträge in ${rump}{,accept_}keywords"
 
 #: src/eix-test-obsolete.sh:232
 #, sh-format
 msgid "Not installed but in ${rump}{,accept_}keywords:"
-msgstr "Uninstalliert, aber in ${rump}{,accept_}keywords:"
+msgstr "Nicht installiert, aber in ${rump}{,accept_}keywords:"
 
 #: src/eix-test-obsolete.sh:234
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}{,accept_}keywords"
-msgstr "Übergehe Test:  Uninstalliertes in ${rump}{,accept_}keywords"
+msgstr "Übergehe Test: nicht-installierte Einträge in ${rump}{,accept_}keywords"
 
 #: src/eix-test-obsolete.sh:237
 #, sh-format
 msgid "No  redundant  entries in ${rump}mask"
-msgstr "Keine   Redundanz   in    ${rump}mask"
+msgstr "Keine    redundanten      Einträge in ${rump}mask"
 
 #: src/eix-test-obsolete.sh:238
 #, sh-format
@@ -1063,27 +1056,27 @@ msgstr "Redundant in ${rump}mask:"
 #: src/eix-test-obsolete.sh:239
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}mask"
-msgstr "Übergehe Test:   Redundanz   in    ${rump}mask"
+msgstr "Übergehe Test:     redundante     Einträge in ${rump}mask"
 
 #: src/eix-test-obsolete.sh:241
 #, sh-format
 msgid "No uninstalled entries in ${rump}mask"
-msgstr "Nichts Uninstalliertes in ${rump}mask"
+msgstr "Keine nicht-installierten Einträge in ${rump}mask"
 
 #: src/eix-test-obsolete.sh:242
 #, sh-format
 msgid "Not installed but in ${rump}mask:"
-msgstr "Uninstalliert, aber in ${rump}mask:"
+msgstr "Nicht installiert, aber in ${rump}mask:"
 
 #: src/eix-test-obsolete.sh:243
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}mask"
-msgstr "Übergehe Test:  Uninstalliertes in ${rump}mask"
+msgstr "Übergehe Test: nicht-installierte Einträge in ${rump}mask"
 
 #: src/eix-test-obsolete.sh:246
 #, sh-format
 msgid "No  redundant  entries in ${rump}unmask"
-msgstr "Keine   Redundanz   in    ${rump}unmask"
+msgstr "Keine    redundanten      Einträge in ${rump}unmask"
 
 #: src/eix-test-obsolete.sh:247
 #, sh-format
@@ -1093,27 +1086,27 @@ msgstr "Redundant in ${rump}unmask:"
 #: src/eix-test-obsolete.sh:248
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}unmask"
-msgstr "Übergehe Test:   Redundanz   in    ${rump}unmask"
+msgstr "Übergehe Test:     redundante     Einträge in ${rump}unmask"
 
 #: src/eix-test-obsolete.sh:250
 #, sh-format
 msgid "No uninstalled entries in ${rump}unmask"
-msgstr "Nichts Uninstalliertes in ${rump}unmask"
+msgstr "Keine nicht-installierten Einträge in ${rump}unmask"
 
 #: src/eix-test-obsolete.sh:251
 #, sh-format
 msgid "Not installed but in ${rump}unmask:"
-msgstr "Uninstalliert, aber in ${rump}unmask:"
+msgstr "Nicht installiert, aber in ${rump}unmask:"
 
 #: src/eix-test-obsolete.sh:252
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}unmask"
-msgstr "Übergehe Test:  Uninstalliertes in ${rump}unmask"
+msgstr "Übergehe Test: nicht-installierte Einträge in ${rump}unmask"
 
 #: src/eix-test-obsolete.sh:255
 #, sh-format
 msgid "No  redundant  entries in ${rump}use"
-msgstr "Keine   Redundanz   in    ${rump}use"
+msgstr "Keine    redundanten      Einträge in ${rump}use"
 
 #: src/eix-test-obsolete.sh:256
 #, sh-format
@@ -1123,27 +1116,27 @@ msgstr "Redundant in ${rump}use:"
 #: src/eix-test-obsolete.sh:257
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}use"
-msgstr "Übergehe Test:   Redundanz   in    ${rump}use"
+msgstr "Übergehe Test:     redundante     Einträge in ${rump}use"
 
 #: src/eix-test-obsolete.sh:259
 #, sh-format
 msgid "No uninstalled entries in ${rump}use"
-msgstr "Nichts Uninstalliertes in ${rump}use"
+msgstr "Keine nicht-installierten Einträge in ${rump}use"
 
 #: src/eix-test-obsolete.sh:260
 #, sh-format
 msgid "Not installed but in ${rump}use:"
-msgstr "Uninstalliert, aber in ${rump}use:"
+msgstr "Nicht installiert, aber in ${rump}use:"
 
 #: src/eix-test-obsolete.sh:261
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}use"
-msgstr "Übergehe Test:  Uninstalliertes in ${rump}use"
+msgstr "Übergehe Test: nicht-installierte Einträge in ${rump}use"
 
 #: src/eix-test-obsolete.sh:264
 #, sh-format
 msgid "No  redundant  entries in ${rump}env"
-msgstr "Keine   Redundanz   in    ${rump}env"
+msgstr "Keine    redundanten      Einträge in ${rump}env"
 
 #: src/eix-test-obsolete.sh:265
 #, sh-format
@@ -1153,27 +1146,27 @@ msgstr "Redundant in ${rump}env:"
 #: src/eix-test-obsolete.sh:266
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}env"
-msgstr "Übergehe Test:   Redundanz   in    ${rump}env"
+msgstr "Übergehe Test:     redundante     Einträge in ${rump}env"
 
 #: src/eix-test-obsolete.sh:268
 #, sh-format
 msgid "No uninstalled entries in ${rump}env"
-msgstr "Nichts Uninstalliertes in ${rump}env"
+msgstr "Keine nicht-installierten Einträge in ${rump}env"
 
 #: src/eix-test-obsolete.sh:269
 #, sh-format
 msgid "Not installed but in ${rump}env:"
-msgstr "Uninstalliert, aber in ${rump}env:"
+msgstr "Nicht installiert, aber in ${rump}env:"
 
 #: src/eix-test-obsolete.sh:270
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}env"
-msgstr "Übergehe Test:  Uninstalliertes in ${rump}env"
+msgstr "Übergehe Test: nicht-installierte Einträge in ${rump}env"
 
 #: src/eix-test-obsolete.sh:273
 #, sh-format
 msgid "No  redundant  entries in ${rump}license"
-msgstr "Keine   Redundanz   in    ${rump}license"
+msgstr "Keine    redundanten      Einträge in  ${rump}license"
 
 #: src/eix-test-obsolete.sh:274
 #, sh-format
@@ -1183,27 +1176,27 @@ msgstr "Redundant in ${rump}license:"
 #: src/eix-test-obsolete.sh:275
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}license"
-msgstr "Übergehe Test:   Redundanz   in    ${rump}license"
+msgstr "Übergehe Test:     redundante     Einträge in ${rump}license"
 
 #: src/eix-test-obsolete.sh:277
 #, sh-format
 msgid "No uninstalled entries in ${rump}license"
-msgstr "Nichts Uninstalliertes in ${rump}license"
+msgstr "Keine nicht-installierten Einträge in ${rump}license"
 
 #: src/eix-test-obsolete.sh:278
 #, sh-format
 msgid "Not installed but in ${rump}license:"
-msgstr "Uninstalliert, aber in ${rump}license:"
+msgstr "Nicht installiert, aber in ${rump}license:"
 
 #: src/eix-test-obsolete.sh:279
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}license"
-msgstr "Übergehe Test:  Uninstalliertes in ${rump}license"
+msgstr "Übergehe Test: nicht-installierte Einträge in ${rump}license"
 
 #: src/eix-test-obsolete.sh:282
 #, sh-format
 msgid "No  redundant  entries in ${rump}accept_restrict"
-msgstr "Keine   Redundanz   in    ${rump}accept_restrict"
+msgstr "Keine    redundanten      Einträge in  ${rump}accept_restrict"
 
 #: src/eix-test-obsolete.sh:283
 #, sh-format
@@ -1213,27 +1206,27 @@ msgstr "Redundant in ${rump}accept_restrict:"
 #: src/eix-test-obsolete.sh:284
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}accept_restrict"
-msgstr "Übergehe Test:   Redundanz   in    ${rump}accept_restrict"
+msgstr "Übergehe Test:     redundante     Einträge in ${rump}accept_restrict"
 
 #: src/eix-test-obsolete.sh:286
 #, sh-format
 msgid "No uninstalled entries in ${rump}accept_restrict"
-msgstr "Nichts Uninstalliertes in ${rump}accept_restrict"
+msgstr "Keine nicht-installierten Einträge in ${rump}accept_restrict"
 
 #: src/eix-test-obsolete.sh:287
 #, sh-format
 msgid "Not installed but in ${rump}accept_restrict:"
-msgstr "Uninstalliert, aber in ${rump}accept_restrict:"
+msgstr "Nicht-installiert, aber in ${rump}accept_restrict:"
 
 #: src/eix-test-obsolete.sh:288
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}accept_restrict"
-msgstr "Übergehe Test:  Uninstalliertes in ${rump}accept_restrict"
+msgstr "Übergehe Test: nicht-installierte Einträge in ${rump}accept_restrict"
 
 #: src/eix-test-obsolete.sh:291
 #, sh-format
 msgid "No  redundant  entries in ${rump}cflags"
-msgstr "Keine   Redundanz   in    ${rump}cflags"
+msgstr "Keine    redundanten      Einträge in ${rump}cflags"
 
 #: src/eix-test-obsolete.sh:292
 #, sh-format
@@ -1243,22 +1236,22 @@ msgstr "Redundant in ${rump}cflags:"
 #: src/eix-test-obsolete.sh:293
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}cflags"
-msgstr "Übergehe Test:   Redundanz   in    ${rump}cflags"
+msgstr "Übergehe Test:     redundante     Einträge in ${rump}cflags"
 
 #: src/eix-test-obsolete.sh:295
 #, sh-format
 msgid "No uninstalled entries in ${rump}cflags"
-msgstr "Nichts Uninstalliertes in ${rump}cflags"
+msgstr "Keine nicht-installierten Einträge in ${rump}cflags"
 
 #: src/eix-test-obsolete.sh:296
 #, sh-format
 msgid "Not installed but in ${rump}cflags:"
-msgstr "Uninstalliert, aber in ${rump}cflags:"
+msgstr "Nicht-installiert, aber in ${rump}cflags:"
 
 #: src/eix-test-obsolete.sh:297
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}cflags"
-msgstr "Übergehe Test:  Uninstalliertes in ${rump}cflags"
+msgstr "Übergehe Test: nicht-installierte Einträge in ${rump}cflags"
 
 #: src/eix-test-obsolete.sh:301
 msgid "All installed versions of packages are in the database."
@@ -1270,7 +1263,7 @@ msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 
 #: src/eix-test-obsolete.sh:304
 msgid "Skipping check: installed but not in the database"
-msgstr "Übergehe Check für installierte Pakete nicht in der Datenbank"
+msgstr "Übergehe Check für installierte Pakete, die nicht in der Datenbank sind"
 
 #: src/eix.cc:87
 #, c-format
@@ -1437,26 +1430,25 @@ msgid ""
 msgstr ""
 "Aufruf: %s [Optionen] EXPRESSION\n"
 "\n"
-"Durchsucht die von eix-update generierte Datenbank.\n"
-"Es werden diejenigen Pakete ausgegeben, für die EXPRESSION einen wahren\n"
-"Ausdruck ergibt.\n"
-"\n"
+"Durchsucht die von eix-update generierte Datenbank nach Paketen.\n"
+"EXPRESSION ist wahr oder falsch. Es werden diejenigen ausgegeben, für die\n"
+"EXPRESSION einen wahren Ausdruck ergibt.\n"
 "\n"
 "EXPRESSION ::= [ --not | -! ] BRACE_OR_TEST |\n"
 "               EXPRESSION [ --and | -a ] EXPRESSION |\n"
 "               EXPRESSION [ --or  | -o ] EXPRESSION |\n"
 "BRACE_OR_TEST ::= --open | -( EXPRESSION --close | -) |\n"
-"               TEST_MIT_OPTIONEN\n"
-"TEST_MIT_OPTIONEN ::= [TEST_OPTIONEN] [PATTERN]\n"
+"               TEST_WITH_OPTIONEN\n"
+"TEST_WITH_OPTIONEN ::= [TEST_OPTIONEN] [PATTERN]\n"
 "\n"
 "Globale Optionen:\n"
 "   Ausschließende Optionen:\n"
-"     -h, --help            Zeige diesen Text und stoppe dann\n"
-"     -V, --version         Zeige die Version und stoppe dann\n"
+"     -h, --help            Zeige diesen Text und ende dann\n"
+"     -V, --version         Zeige die Version und ende dann\n"
 "     --dump                Ausgabe aller internen Variablen auf stdout\n"
-"     --dump-defaults       Ausgabe der Vorgabewerte der internen Variables\n"
+"     --dump-defaults       Ausgabe der Vorgabewerte der internen Variablen\n"
 "     --print               Ausgabe eines expandierten Variablenwerts\n"
-"     --known-vars          Ausgabe der --print bekannten Variablennamen\n"
+"     --known-vars          Ausgabe aller --print bekannten Variablennamen\n"
 "     --print-all-useflags  Ausgabe aller irgendwo benutzten IUSE-Werte\n"
 "     --print-all-keywords  Ausgabe aller irgendwo benutzten KEYWORDS-Werte\n"
 "     --print-all-slots     Ausgabe aller irgendwo benutzten SLOT-Werte\n"
@@ -1477,45 +1469,46 @@ msgstr ""
 "     -t  --test-non-matching Gibt vor anderen Ausgaben nicht-passende\n"
 "                             Einträge /etc/portage/package.* und\n"
 "                             nicht-passende Namen installierter Pakete aus;\n"
-"                             am besten wird diese Option mit -T kombiniert\n"
-"                             /etc/portage/package.* aufzuräumen\n"
+"                             am besten wird diese Option mit -T kombiniert,\n"
+"                             um /etc/portage/package.* aufzuräumen\n"
 "     -Q, --quick (toggle)    Ignoriere unbekannte Slots installierter Pakete\n"
 "         --care              Lese immer die Slots installierter Pakete\n"
 "         --deps-installed    Lese immer die Deps  installierter Pakete\n"
+"         --cache-file        Benutze cache-file statt %s\n"
 "     -R  --remote (toggle)   Benutze Remote-Datenbank %s\n"
 "     -Z  --remote2 (toggle)  Benutze Remote-Datenbank %s\n"
-"         --cache-file        Benutze cache-file statt %s\n"
 "\n"
 "   Ausgabe:\n"
 "     -q, --quiet (toggle)  keine Ausgabe. Dies wird meist kombiniert mit -0\n"
-"         --ansi            Rücksetzen der Ansi 256-Farbpalette\n"
+"         --ansi            Zurücksetzen der Ansi 256-Farbpalette\n"
 "     -n, --nocolor         keine Farbausgaben\n"
 "     -F, --force-color     Farbausgabe, unabhängig von Ausgabe auf Terminal\n"
 "     -*, --pure-packages   Ohne Overlay-Namen und Anzahl der Pakete\n"
 "     -#, --only-names      --pure-packages mit Format <category>/<name>\n"
-"     -0  --brief (toggle)  Stop nach Ausgabe des ersten Pakets. Siehe -q\n"
+"     -0  --brief (toggle)  Stop nach Ausgabe höcstens eines Pakets. Siehe -q\n"
 "                           Dies ist schneller mit COUNT_ONLY_PRINTED=false\n"
-"         --brief2 (toggle) Stop nach Ausgabe des zweiten Pakets\n"
+"         --brief2 (toggle) Stop nach Ausgabe höchstens zweiter Pakete\n"
 "     --xml (toggle)        Ausgabe in XML-Format\n"
 "     -c, --compact         Kompakte Ausgabe\n"
 "     -v, --verbose         Ausführliche Ausgabe\n"
 "     -N, --normal          ignoriert -c, -v und DEFAULT_FORMAT\n"
 "         --format          Formatstring\n"
-"     -x, --versionsort  (toggle) Sortiert die Ausgabe nach Versionen/Slots\n"
+"     -x, --versionsort  (toggle) Sortiert die Ausgabe nach Slots/Versionen\n"
 "     -l, --versionlines (toggle) Jede Version in eigene Zeile (und Ausgabe\n"
 "                           zusätzlicher Informationen für jede Version)\n"
 "\n"
 "TEST_OPTIONEN:\n"
 "  Verschiedene:\n"
-"    -I, --installed       EXPRESSION ist höchstens für installierte Pakete wahr.\n"
-"    -i, --multi-installed Nur für mehrfach installierte Pakete wahr.\n"
+"    -I, --installed       Ausdruck trifft nur auf installierte Pakete zu.\n"
+"    -i, --multi-installed Nur für mehrfach installierte Pakete.\n"
 "    -d, --dup-packages    Nur für doppelte Pakete.\n"
 "    -D, --dup-versions    Nur für doppelte Versionen.\n"
 "    -1, --slotted         Nur mit nichttrivialem Slot.\n"
 "    -2, --slots           Nur mit zwei verschiedenen Slots.\n"
 "    -u, --upgrade[+-]     Nur für Pakete, die nicht die beste Version\n"
 "                          des Slots installiert haben.\n"
-"                          +/-: Konfig. wie LOCAL_PORTAGE_CONFIG=true/false\n"
+"                          +: Konfiguration von LOCAL_PORTAGE_CONFIG=true\n"
+"                          -: Konfiguration von LOCAL_PORTAGE_CONFIG=false\n"
 "    --stable[+-]          Pakete mit einer stabilen Version\n"
 "    --testing[+-]         Pakete mit einer instabilen oder stabilen Version.\n"
 "    --non-masked[+-]      Pakete mit einer nicht-maskierter Version.\n"
@@ -1535,7 +1528,7 @@ msgstr ""
 "    -O, --overlay                    Pakete aus Overlays\n"
 "    --in-overlay OVERLAY             Pakete aus OVERLAY.\n"
 "    --only-in-overlay OVERLAY        Pakete nur aus OVERLAY.\n"
-"    -J, --installed-overlay Match packages Installiert aus Overlays.\n"
+"    -J, --installed-overlay Nur Pakete, die aus Overlays installiert wurden.\n"
 "    --installed-from-overlay OVERLAY Pakete installiert aus OVERLAY.\n"
 "    --installed-in-some-overlay      Pakete mit einer installierten\n"
 "                                     Version aus einem Overlay.\n"
@@ -1558,7 +1551,6 @@ msgstr ""
 "    -T, --test-obsolete   Paket hat obsolete Einträge in\n"
 "                          /etc/portage/package.* (siehe man eix);\n"
 "                          mit -t findet man nicht existierende Pakete.\n"
-"    -!, --not (toggle)    Invertiere das Ergebnis von EXPRESSION.\n"
 "    -|, --pipe            Eingabe aus Pipe von emerge -pv\n"
 "    --pipe-mask           Wie --pipe, aber Eingabe wie als Maske betrachtet\n"
 "\n"
@@ -1567,26 +1559,26 @@ msgstr ""
 "    -S, --description       Beschreibung\n"
 "    -A, --category-name     \"Kategorie/Name\"\n"
 "    -C, --category          Kategorie\n"
-"    -s, --name              Name (default)\n"
+"    -s, --name              Name (Vorgabe)\n"
 "    -H, --homepage          Homepage\n"
-"    -L, --license           Licenz\n"
+"    -L, --license           Lizenz\n"
 "    --deps                  wie --depend --rdepend --pdepend --hdepend\n"
 "    --depend                DEPEND (benötigt DEP=true)\n"
 "    --rdepend               RDEPEND (benötigt DEP=true)\n"
 "    --pdepend               PDEPEND (benötigt DEP=true)\n"
 "    --hdepend               HDEPEND (benötigt DEP=true)\n"
-"    --set                   lokaler Set-Name\n"
+"    --set                   lokaler Set-Name des Pakets\n"
 "    --slot                  Slot\n"
 "    --fullslot              Slot mit Subslot\n"
 "    --installed-slot        Slot einer installierten Version\n"
-"    --installed-fullslot    Slot einer installierten version it Subslot\n"
-"    -U, --use               Useflag (des ebuilds)\n"
-"    --installed-with-use    aktiviertes   Useflag (installierter Pakete)\n"
-"    --installed-without-use deaktiviertes Useflag (installierter Pakete)\n"
+"    --installed-fullslot    Slot einer installierten version oder Subslot\n"
+"    -U, --use               USEflag (des ebuilds)\n"
+"    --installed-with-use    aktiviertes   USEflag (installierter Pakete)\n"
+"    --installed-without-use deaktiviertes USEflag (installierter Pakete)\n"
 "\n"
 "  Art des PATTERNs:\n"
 "    -r, --regex           PATTERN ist regulärer Ausdruck (Vorgabe)\n"
-"    -e, --exact           PATTERN ist exakt\n"
+"    -e, --exact           PATTERN ist exakter String\n"
 "    -z, --substring       PATTERN ist ein Teilstring\n"
 "    -b, --begin           PATTERN ist der Stringanfang\n"
 "        --end             PATTERN ist das Stringende\n"
@@ -1613,7 +1605,7 @@ msgid ""
 msgstr ""
 "%s wurd mit inkompatiblem eix-update erzeugt:\n"
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
-"Bitte mit %r neu erzeugen."
+"Bitte %r ausführen und erneut probieren."
 
 #: src/eix.cc:1033 src/eix.cc:1054
 #, c-format
@@ -1643,8 +1635,8 @@ msgid ""
 "Cannot open the database file %s for reading.\n"
 "Did you forget to create it with %r?"
 msgstr ""
-"Datenbankfile %s kann nicht geöffnet werden.\n"
-"Wurde es denn mit %r erzeugt?"
+"Datenbank-Datei %s kann nicht geöffnet werden.\n"
+"Wurde es mit %r erzeugt?"
 
 #: src/eix.cc:1172
 #, c-format
@@ -1654,7 +1646,7 @@ msgstr "Einträge in %s passen und sind nicht leer.\n"
 #: src/eix.cc:1173
 #, c-format
 msgid "No non-matching entries in %s.\n"
-msgstr "Alle Einträge in %s passen.\n"
+msgstr "Einträge in %s passen.\n"
 
 #: src/eix.cc:1178
 #, c-format
@@ -1687,7 +1679,7 @@ msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
 msgstr ""
-"Folgende installierte Pakete sind nicht in der Datenbank:\n"
+"Folgende installierte Pakete befinden sich nicht in der Datenbank:\n"
 "\n"
 
 #: src/eix-diff.cc:72
@@ -1722,11 +1714,11 @@ msgstr ""
 " -q, --quiet (toggle)    keine Ausgabe\n"
 "     --ansi              Rücksetzen der Ansi 256-Farbpalette\n"
 " -n, --nocolor           keine Farbausgaben\n"
-" -F, --force-color       Farbausgabe, unabhängig von Ausgabe auf Terminal\n"
+" -F, --force-color       Erzwinge Farbausgabe bei allem außer Terminals\n"
 "     --dump              Ausgabe aller internen Variablen auf stdout\n"
 "     --dump-defaults     Ausgabe der Vorgabewerte der internen Variables\n"
 "     --print             Ausgabe eines expandierten Variablenwerts\n"
-"     --known-vars        Ausgabe der --print bekannten Variablennamen\n"
+"     --known-vars        Ausgabe aller --print bekannten Variablennamen\n"
 "\n"
 " -h, --help              Ausgabe eines Hilfstexts\n"
 " -V, --version           Ausgabe der Versionsnummer\n"
@@ -1736,11 +1728,11 @@ msgstr ""
 
 #: src/eix-diff.cc:151
 msgid "error in database file %r: %s"
-msgstr "Fehler in Datenbankfile %r: %s"
+msgstr "Fehler in Datenbank-Datei %r: %s"
 
 #: src/eix-diff.cc:153 src/eix-header.cc:238
 msgid "Can't open the database file %r for reading (mode = 'rb')"
-msgstr "Datenbankfile %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
+msgstr "Datenbank-Datei %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
 
 #: src/eix-diff.cc:407
 #, c-format
@@ -1796,7 +1788,7 @@ msgid ""
 "further information.\n"
 msgstr ""
 "Aufruf: %s [-q] [-f DATEI] [-s TRENNER] [-c] [-l OV] [-p OV] [-o OV] ...\n"
-"Überprüft die eix Datenbank DATEI auf aktuelles Format und gibt Label, Pfad\n"
+"Überprüft die eix-Datenbank DATEI auf aktuelles Format und gibt Label, Pfad\n"
 "bzw. beides des angebenen Overlay OV aus DATEI aus, wobei an jede\n"
 "Ausgabe der TRENNER angehängt wird.\n"
 "Alle Optionen können wiederholt werden; DATEI und TRENNER bleiben unverändert,\n"
@@ -1809,8 +1801,9 @@ msgstr ""
 "\tReadVar EIX_CACHEFILE EIX_CACHEFILE || die 'Cachename unbekannt'\n"
 "\t%s -qf \"${EIX_CACHEFILE}\" -c || die 'Datenbank nicht aktuell'\n"
 "TRENNER ist zunächst das Nullzeichen (zu unterscheiden vom Leerstring).\n"
-"-c kann benutzt werden, um nur zu prüfen, ob DATEI aktuelles Format hat.\n"
-"Nach der Option -q erfolgt für gewöhnlich keine weitere Ausgabe.\n"
+"-c kann benutzt werden, um nur zu prüfen, ob DATEI aktuelles Format hat,\n"
+"ohne eine Ausgabe zu erzeugen.\n"
+"Nach der Option -q folgt für gewöhnlich keine weitere Ausgabe.\n"
 "Falls gar keine Ausgabe gewünscht wird, sollte also die Option -q als\n"
 "erste angegeben werden.\n"
 "Die Option -h gibt diese Hilfeseite aus und beendet das Programm.\n"
@@ -1871,9 +1864,9 @@ msgstr ""
 " -h, --help              Ausgabe eines Hilfstexts\n"
 " -V, --version           Ausgabe der Versionsnummer\n"
 "     --dump              Ausgabe aller internen Variablen auf stdout\n"
-"     --dump-defaults     Ausgabe der Vorgabewerte der internen Variables\n"
+"     --dump-defaults     Ausgabe der Vorgabewerte der internen Variablen\n"
 "     --print             Ausgabe eines expandierten Variablenwerts\n"
-"     --known-vars        Ausgabe der --print bekannten Variablennamen\n"
+"     --known-vars        Ausgabe aller --print bekannten Variablennamen\n"
 " -H, --nostatus          Keine Ausgabe der Statuszeile\n"
 " -n, --nocolor           Keine Ausgabe von Effekten (Prozent-Status)\n"
 "     --force-status      Statuszeile immer ausgeben\n"
@@ -1883,12 +1876,12 @@ msgstr ""
 " -q, --quiet             keine Ausgabe\n"
 "\n"
 " -o  --output            Ausgabe in eine andere Datei als %s\n"
-"                         Außerdem werden keine Rechte getestet.\n"
-" -x  --exclude-overlay   Schließt entsprechende Overlay vom Update-Process\n"
+"                         Außerdem werden keine Rechte geprüft.\n"
+" -x  --exclude-overlay   Schließt entsprechende Overlay vom Update-Prozess\n"
 "                         aus. Man kann auch PORTDIR mit dieser\n"
 "                         Option ausschließen.\n"
 "\n"
-" -a  --add-overlay       Fügt Overlay zum Update-Process hinzu.\n"
+" -a  --add-overlay       Fügt Overlay zum Update-Prozess hinzu.\n"
 "\n"
 " -m  --override-method   Ändert Cache-Methode für passenden Overlay.\n"
 "\n"
@@ -1964,12 +1957,12 @@ msgstr "ABBRUCH!"
 #: src/eix-update.cc:621
 #, c-format
 msgid "     Reading category %s|%s (%s%%)"
-msgstr "     Lese Category %s|%s (%s%%)"
+msgstr "     Lese Kategorie %s|%s (%s%%)"
 
 #: src/eix-update.cc:625
 #, c-format
 msgid "     Reading up to %s categories of packages .. "
-msgstr "     Paketdaten aus bis zu %s Categorien werden gelesen... "
+msgstr "     Paketdaten aus bis zu %s Kategorien werden gelesen... "
 
 #: src/eix-update.cc:640
 #, c-format
@@ -1991,11 +1984,11 @@ msgstr "Berechne Hash-Tabellen...\n"
 #: src/eix-update.cc:678
 #, c-format
 msgid "Writing database file %s ..\n"
-msgstr "Schreibe Datenbankfile %s...\n"
+msgstr "Schreibe Datenbank-Datei %s...\n"
 
 #: src/eix-update.cc:690
 msgid "Can't open the database file %r for writing (mode = 'wb')"
-msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
+msgstr "Datenbank-Datei %r nicht beschreibbar (mode = 'wb')"
 
 #: src/eix-update.cc:702
 #, c-format
@@ -2021,15 +2014,16 @@ msgid ""
 "further information.\n"
 msgstr ""
 "Aufruf: %s [Optionen] Kategorie/Name-Version[:Slot][::Repo] ...\n"
-"Ausgabe aller Argumente, die auf eine Maskeliste passt.Optionen:\n"
+"Ausgabe aller Argumente, die auf eine Masken-Liste passt.\n"
+"Optionen:\n"
 " -h, --help              Ausgabe eines Hilfstexts\n"
 " -q, --quiet (Toggle)    keine Ausgabe, aber der Rückkehrstatus ist nur\n"
 "                         erfolgreich, falls mindestens ein Argument passt.\n"
-" -m, --mask MASKE        Fügt MASKE zur Maskenliste hinzu\n"
-" -f, --file DATEI        Für Masken aus DATEI hinzu.\n"
+" -m, --mask MASKE        Fügt MASKE zur Masken-Liste hinzu\n"
+" -f, --file DATEI        Fügt Masken aus DATEI hinzu.\n"
 " -F, --read-file DATEI   Nimmt die Worte aus DATEI als Argumente.\n"
 "Verzeichnisse werden rekursiv gelesen.\n"
-"Ein leerer/weggelassener Filename wird als Standard-Eingabe interpretiert.\n"
+"Ein leerer/weggelassener Dateiname wird als Standard-Eingabe interpretiert.\n"
 "\n"
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
@@ -2051,26 +2045,26 @@ msgstr "Unbekannter Cache %r für Ordner %r"
 #: src/cache/common/flat_reader.cc:38
 #, c-format
 msgid "cannot read cache file %s: %s"
-msgstr "Cachefile %s nicht lesbar: %s"
+msgstr "Cache-Datei %s nicht lesbar: %s"
 
 #: src/cache/common/ebuild_exec.cc:157
 #, c-format
 msgid "cannot unlink tempfile %s"
-msgstr "Temporärdatei %s kann nicht gelöscht werden"
+msgstr "Temporäre Datei %s kann nicht gelöscht werden"
 
 #: src/cache/common/ebuild_exec.cc:159
 #, c-format
 msgid "tempfile %s still there after unlink"
-msgstr "Temporärdatei %s trotz Löschens vorhanden"
+msgstr "Temporäre Datei %s trotz Löschens vorhanden"
 
 #: src/cache/common/ebuild_exec.cc:161
 #, c-format
 msgid "tempfile %s is not a file"
-msgstr "Temporärdatei %s ist keine Datei"
+msgstr "Temporäre Datei %s ist keine Datei"
 
 #: src/cache/common/ebuild_exec.cc:250
 msgid "creation of tempfile failed"
-msgstr "Temporärdatei konnte nicht erzeugt werden"
+msgstr "Temporäre Datei konnte nicht erzeugt werden"
 
 #: src/cache/common/ebuild_exec.cc:272 src/cache/common/ebuild_exec.cc:336
 msgid "forking failed"
@@ -2116,12 +2110,12 @@ msgstr "%s kann nicht geöffnet werden: %s"
 
 #: src/cache/eixcache/eixcache.cc:134
 msgid "Cache file %s does not contain overlay %r [%s]"
-msgstr "Cachefile %s enthält nicht Overlay %r [%s]"
+msgstr "Cache-Datei %s enthält nicht Overlay %r [%s]"
 
 #: src/cache/eixcache/eixcache.cc:139
 #, c-format
 msgid "Cache file %s does not contain overlay %s"
-msgstr "Cachefile %s enthält nicht Overlay %s"
+msgstr "Cache-Date %s enthält nicht Overlay %s"
 
 #: src/cache/eixcache/eixcache.cc:235
 #, c-format
@@ -2155,12 +2149,12 @@ msgstr "Dateiname des Ebuilds %s/%s kann nicht unterteilt werden"
 
 #: src/cache/sqlite/sqlite.cc:195
 msgid "sqlite dataset does not contain a package name"
-msgstr "sqlite Datensatz enthält keinen Paketnamen"
+msgstr "sqlite-Datensatz enthält keinen Paketnamen"
 
 #: src/cache/sqlite/sqlite.cc:201
 #, c-format
 msgid "sqlite dataset for %s is too small"
-msgstr "sqlite Datensatz für %s ist zu klein"
+msgstr "sqlite-Datensatz für %s ist zu klein"
 
 #: src/cache/sqlite/sqlite.cc:207
 msgid "%r not of the form package/category-version"
@@ -2173,7 +2167,7 @@ msgstr "Falscher Datenbank-Pfad"
 #: src/cache/sqlite/sqlite.cc:293
 #, c-format
 msgid "Can't open cache file %s"
-msgstr "Cachefile %s kann nicht geöffnet werden"
+msgstr "Cache-Datei %s kann nicht geöffnet werden"
 
 #: src/cache/sqlite/sqlite.cc:307
 #, c-format
@@ -2207,12 +2201,12 @@ msgstr "Fehler beim Schreiben der Datenbank"
 #: src/database/io_header.cc:52
 #, c-format
 msgid "cachefile uses newer format %s (current is %s)"
-msgstr "Cachefile benutzt neueres Format %s (aktuell ist %s)"
+msgstr "Cache-Datei benutzt neueres Format %s (aktuell ist %s)"
 
 #: src/database/io_header.cc:53
 #, c-format
 msgid "cachefile uses obsolete format %s (current is %s)"
-msgstr "Cachefile benutzt veraltetes Format %s (aktuell ist %s)"
+msgstr "Cache-Datei benutzt veraltetes Format %s (aktuell ist %s)"
 
 #: src/eixTk/ansicolor.cc:147
 msgid "Illegal color name %r in %r"
@@ -2301,27 +2295,27 @@ msgstr "Flags sollten nicht mit einem '+' beginnen: %s"
 
 #: src/eixTk/stringutils.cc:425
 msgid "Internal error: Storing required after finalizing"
-msgstr "Interner Fehler: Storing required after finalizing"
+msgstr "Interner Fehler: Speichern nach Finalisierung benötigt"
 
 #: src/eixTk/stringutils.cc:433
 msgid "Internal error: Hashing required after finalizing"
-msgstr "Interner Fehler: Hashing required after finalizing"
+msgstr "Interner Fehler: Hashing nach Finalisierung benötigt"
 
 #: src/eixTk/stringutils.cc:437
 msgid "Internal error: Hashing required in non-hash mode"
-msgstr "Interner Fehler: Hashing required in non-hash mode"
+msgstr "Interner Fehler: Hashing in non-hash Modus benötigt"
 
 #: src/eixTk/stringutils.cc:463
 msgid "Internal error: Index required before sorting."
-msgstr "Interner Fehler: Index required before sorting."
+msgstr "Interner Fehler: Index vor der Sortierung benötigt."
 
 #: src/eixTk/stringutils.cc:468
 msgid "Internal error: Trying to shortcut non-hashed string."
-msgstr "Interner Fehler: Trying to shortcut non-hashed string."
+msgstr "Interner Fehler: Versuch, einen nicht gehashted String zu kürzen."
 
 #: src/eixTk/stringutils.cc:476
 msgid "Database corrupt: Nonexistent hash required"
-msgstr "Datenbank defekt: Nichtexistierender Hash angefordert"
+msgstr "Datenbank defekt: Nichtexistierender Hash wurde angefordert"
 
 #: src/eixTk/utils.cc:118
 #, c-format
@@ -2350,7 +2344,7 @@ msgstr "Datei %r kann nicht gemapped werden"
 
 #: src/eixTk/varsreader.cc:1041
 msgid "recursively sourced file %r"
-msgstr "File %r wird rekursiv gesourced"
+msgstr "Datei %r wurde rekursiv gesourced"
 
 #: src/eixrc/defaults.cc:23
 msgid ""
@@ -2358,7 +2352,7 @@ msgid ""
 "This variable can of course only be set in the environment."
 msgstr ""
 "Die Datei, die statt /etc/eixrc und ~/.eixrc benutzt wird.\n"
-"Diese Variable kann natürlich nur in der Umgebung verändert werden."
+"Diese Variable kann natürlich nur in der Umgebung gesetzt werden."
 
 #: src/eixrc/defaults.cc:28
 msgid ""
@@ -2384,7 +2378,7 @@ msgid ""
 "If set in /etc/eixrc it temporarily overrides the environment.\n"
 "You must not use delayed substitution in this variable."
 msgstr ""
-"Dieser Pfad wird bei Source-Kommandos in /etc/eixrc vorne angehängt.\n"
+"Dieser Pfad wird bei source-Kommandos in /etc/eixrc vorangestellt.\n"
 "Falls er in /etc/eixrc gesetzt wird, überschreibt er kurzzeitig die Umgebung.\n"
 "In dieser Variablen darf keine verzögerte Ersetzung benutzt werden."
 
@@ -2422,7 +2416,7 @@ msgid ""
 "This variable contains default options for the eix-layman script.\n"
 "Note that its content is evaluated, so quote correctly."
 msgstr ""
-"Diese Variable enthält Vorgabe-Optionen für das Skript eix-laman.\n"
+"Diese Variable enthält Vorgabe-Optionen für das Skript eix-layman.\n"
 "Ihr Inhalt wird evaluiert, also Vorsicht!"
 
 #: src/eixrc/defaults.cc:67
@@ -2447,9 +2441,9 @@ msgid ""
 "and EPREFIX_SOURCE."
 msgstr ""
 "Falls dieser Variable in der Umgebung gesetzt ist, wird sie bei den\n"
-"Suchpfaden für /etc/eixrc vorne angehängt. Falls sie nicht in der Umgebung\n"
+"Suchpfaden für /etc/eixrc vorangestellt. Falls sie nicht in der Umgebung\n"
 "gesetzt ist, wird statt dessen PORTAGE_CONFIGROOT dafür benutzt.\n"
-"Falls beides ungesetzt ist, wird der EIX_PREFIX Vorgabewert benutzt.\n"
+"Falls beides nicht gesetzt ist, wird der EIX_PREFIX Vorgabewert benutzt.\n"
 "Außerdem wird EIX_PREFIX für verzögerte Ersetzung bei EPREFIX und\n"
 "EPREFIX_SOURCE benutzt."
 
@@ -2462,10 +2456,10 @@ msgid ""
 "PORTAGE_CONFIGROOT, portage/scripts-internal stuff and the eix cachefile."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie beeinflusst die meisten Pfade außer $HOME/.eixrc, ein beim Aufruf\n"
-"übergebenes Cachefile, PORTAGE_PROFILE, PORTDIR, und Overlays.\n"
+"Sie beeinflusst die meisten Pfade außer $HOME/.eixrc, eine beim Aufruf\n"
+"übergebene Cache-Datei, PORTAGE_PROFILE, PORTDIR, und Overlays.\n"
 "Anders als bei EPREFIX gibt es weitere Ausnahmen:\n"
-"PORTAGE_CONFIGROOT, portage/Skript-interne Dinge und das eix Cachefile."
+"PORTAGE_CONFIGROOT, portage/Skript-interne Dinge und das eix-Cache-Datei."
 
 #: src/eixrc/defaults.cc:92
 msgid ""
@@ -2475,7 +2469,7 @@ msgid ""
 msgstr ""
 "Diese Variable dient nur zur verzögerten Ersetzung für Pfad-Präfixe.\n"
 "Sie beeinflusst die meisten Pfade außer $HOME/.eixrc, ein beim Aufruf\n"
-"übergebenes Cachefile, PORTAGE_PROFILE, PORTDIR, und Overlays."
+"übergebenes Cache-Datei, PORTAGE_PROFILE, PORTDIR, und Overlays."
 
 #: src/eixrc/defaults.cc:98
 msgid ""
@@ -2494,7 +2488,7 @@ msgid ""
 msgstr ""
 "Dies wirkt sich auf diejenigen Pfade aus, die sowohl von EPREFIX als auch\n"
 "von ROOT beeinflusst werden sollen. Hier wird also festgelegt,\n"
-"was zu tun ist, wenn beide nichtleer sind.\n"
+"was zu tun ist, wenn beide nicht-leer sind.\n"
 "Beispielsweise wird %{EPREFIX}%{ROOT} beides anwenden;\n"
 "die Vorgabe wendet EPREFIX aber nicht ROOT an, wenn beides nichtleer ist."
 
@@ -2516,11 +2510,11 @@ msgid ""
 "if it exists. This is reasonable for >=portage-2.2*"
 msgstr ""
 "Diese Datei wird anstelle von %{PORTAGE_CONFIGROOT}/etc/make.globals\n"
-"benutzt (falls es existiert). Dies ist sinnvoll für >=portage-2.2*"
+"benutzt (falls sie existiert). Dies ist sinnvoll für >=portage-2.2*"
 
 #: src/eixrc/defaults.cc:124
 msgid "This file is used to set the default repository information."
-msgstr "Diese Datei wird als Default für Repository-Informationen eingelesen."
+msgstr "Diese Datei wird als Standard für Repository-Informationen eingelesen."
 
 #: src/eixrc/defaults.cc:128
 msgid ""
@@ -2534,7 +2528,7 @@ msgstr ""
 msgid "This path is prepended to source commands in /etc/make.{conf,globals}."
 msgstr ""
 "Dieser Pfad wird bei Source-Kommandos in\n"
-"/etc/make.{conf,globals} vorne angehängt."
+"/etc/make.{conf,globals} vorangestellt."
 
 #: src/eixrc/defaults.cc:137
 msgid ""
@@ -2548,15 +2542,16 @@ msgstr "Dieser Präfix wird dem Portage Cachepfad vorangestellt."
 
 #: src/eixrc/defaults.cc:145
 msgid "This prefix is prepended to overlays when their files are accessed."
-msgstr "Dieser Präfix wird zum Zugriff auf Overlays vorne angehängt."
+msgstr "Dieser Präfix wird Overlays vorangestellt, sowie auf ihre Dateien\n"
+"zugegriffen wird."
 
 #: src/eixrc/defaults.cc:149
 msgid "This path is prepended to PORTDIR."
-msgstr "Dieser Pfad wird bei PORTDIR vorne angehängt."
+msgstr "Dieser Pfad wird PORTDIR vorangestellt."
 
 #: src/eixrc/defaults.cc:153
 msgid "This path is prepended to PORTIDIR_OVERLAY values."
-msgstr "Diesr Pfad wird bei allen PORTIDIR_OVERLAY-Einträgen vorne angehängt."
+msgstr "Dieser Pfad wird bei PORTIDIR_OVERLAY-Einträgen vorangestellt."
 
 #: src/eixrc/defaults.cc:157
 msgid "This path is prepended to PORTAGE_PROFILE."
@@ -2571,11 +2566,11 @@ msgstr ""
 
 #: src/eixrc/defaults.cc:165
 msgid "This file is the default eix cache."
-msgstr "Dies ist das (default) Cachefile von eix."
+msgstr "Dies ist die Standard-Cache-Datei von eix."
 
 #: src/eixrc/defaults.cc:169
 msgid "This file is the previous eix cache (used by eix-diff and eix-sync)."
-msgstr "Diese Datei ist das frühere eix Cachefile (für eix-diff, eix-sync)."
+msgstr "Diese Datei ist die frühere eix Cache-Datei (für eix-diff, eix-sync)."
 
 #: src/eixrc/defaults.cc:173
 msgid ""
@@ -2583,7 +2578,7 @@ msgid ""
 "eix-remote uses this file for the output."
 msgstr ""
 "Diese Datei wird als Datenbank benutzt, wenn -R aktiviert ist. Falls\n"
-"der String nichtleer ist, benutzt eix-remote diese Datanbank zur Ausgabe."
+"der String nicht-leer ist, benutzt eix-remote diese Datanbank zur Ausgabe."
 
 #: src/eixrc/defaults.cc:178
 msgid ""
@@ -2591,12 +2586,12 @@ msgid ""
 "eix-remote uses this file for the output."
 msgstr ""
 "Diese Datei wird als Datenbank benutzt, wenn -Z aktiviert ist. Falls\n"
-"der String nichtleer ist, benutzt eix-remote diese Datanbank zur Ausgabe."
+"der String nicht-leer ist, benutzt eix-remote diese Datanbank zur Ausgabe."
 
 #: src/eixrc/defaults.cc:183
 msgid "1, 2, or 0 means that eix option -R, -Z, or neither is the default."
 msgstr ""
-"1, 2 bzw. 0 bedeutet, dass die eix-Option -R, -Z bzw. weder noch an ist."
+"1, 2 bzw. 0 bedeutet, dass die eix-Option -R, -Z bzw. keine von beiden an ist."
 
 #: src/eixrc/defaults.cc:187 src/eixrc/defaults.cc:192
 msgid ""
@@ -2604,15 +2599,15 @@ msgid ""
 "If the name is empty, only a temporary file is used."
 msgstr ""
 "Dies ist eine lokale Kopie des Archivs, das von eix-remote geholt wird.\n"
-"Falls der Name leer ist, wird nur eine Temporärdatei benutzt."
+"Falls der Name leer ist, wird nur eine temporäre Datei benutzt."
 
 #: src/eixrc/defaults.cc:197
 msgid "If nonempty, this will override the heuristics for eix-remote -L."
-msgstr "Falls nichtleer, überschreibt dies die Heuristik von eix-remote -L."
+msgstr "Falls nicht-leer, überschreibt dies die Heuristik von eix-remote -L."
 
 #: src/eixrc/defaults.cc:201
 msgid "The path to the tempfile generated by \"ebuild depend\"."
-msgstr "Der Pfad zu der mit \"ebuild depend\" generierten Temporärdatei."
+msgstr "Der Pfad zu der mit \"ebuild depend\" generierten temporären Datei."
 
 #: src/eixrc/defaults.cc:205
 msgid "This file is considered as the world file."
@@ -2620,22 +2615,22 @@ msgstr "Die World-Datei."
 
 #: src/eixrc/defaults.cc:209
 msgid "This file is considered as the world_sets file."
-msgstr "Die Datei für die World-Sets."
+msgstr "Die Datei für die world_sets."
 
 #: src/eixrc/defaults.cc:213
 msgid ""
 "Store the information of the world file in the cache file.\n"
 "Set this to false if you do not want that everybody can get this information."
 msgstr ""
-"Sollen die Daten der World-Datei im Cachefile gespeichert werden?\n"
-"Nur zustimmen, falls jeder an diese Information gelangen darf!"
+"Sollen die Daten der World-Datei in der Cache-Datei gespeichert werden?\n"
+"Setzen Sie dies auf false, wenn Sie nicht wollen, dass jeder daran kommt."
 
 #: src/eixrc/defaults.cc:218
 msgid ""
 "Prefer the current world file (if readable) over the data in the cachefile."
 msgstr ""
-"Benutze das aktuelle World-Datei (falls lesbar) anstelle der Daten im\n"
-"Cachefile."
+"Benutze die aktuelle World-Datei (falls lesbar) anstelle der Daten in der\n"
+"Cache-Datei."
 
 #: src/eixrc/defaults.cc:222
 msgid "Attempt to change to this user if possible. See EIX_UID."
@@ -2658,7 +2653,7 @@ msgid ""
 "If true it is required that dropping of permission succeeds.\n"
 "The special value root means: true for UID 0, false otherwise."
 msgstr ""
-"Entscheidet, ob die Rechteänderungen erfolgreich sein müssen.\n"
+"Falls true, muss eine Rechte-Änderung erfolgreich enden.\n"
 "Der spezielle Wert root bedeutet: true für UID 0, andernfalls false."
 
 #: src/eixrc/defaults.cc:240
@@ -2706,7 +2701,7 @@ msgid ""
 "The maximal number of matches shown on terminal in non-compact mode.\n"
 "The value 0 means all matches are shown."
 msgstr ""
-"Die Maximaltrefferzahl auf einem Terminal im nicht-kompakten Modus;\n"
+"Die maximale Trefferzahl auf einem Terminal im nicht-kompakten Modus;\n"
 "der Wert 0 bedeutet, dass alle Treffer angezeigt werden."
 
 #: src/eixrc/defaults.cc:273
@@ -2714,7 +2709,7 @@ msgid ""
 "The maximal number of matches shown on terminal in compact mode.\n"
 "The value 0 means all matches are shown."
 msgstr ""
-"Die Maximaltrefferzahl auf einem Terminal im kompakten Modus;\n"
+"Die maximale Trefferzahl auf einem Terminal im kompakten Modus;\n"
 "der Wert 0 bedeutet, dass alle Treffer angezeigt werden."
 
 #: src/eixrc/defaults.cc:278
@@ -2731,9 +2726,9 @@ msgid ""
 "time from the directory timestamp. This is usually preferable but slower.\n"
 "The BUILD_TIME exists only for packages emerged with >=portage-2.2_rc63"
 msgstr ""
-"Soll der Build-Zeitpunkt aus dem BUILD_TIME-Eintrag ermittelt werden?\n"
-"Ansonsten würde die Installationszeit vermöge des Directory-Zeitstempels\n"
-"ermittelt. BUILD_TIME ist im Zweifelsfall vorzuziehen, aber langsamer.\n"
+"Falls true, benutze Buildtime aus dem BUILD_TIME-Eintrag anstelle des Lesens\n"
+"der Installationszeit vermöge des Verzeichnis-Zeitstempels.\n"
+"BUILD_TIME ist im Zweifelsfall vorzuziehen, aber langsamer.\n"
 "Außerdem wird sie erst ab >=portage-2.2_rc63 beim Emergen gespeichert."
 
 #: src/eixrc/defaults.cc:292
@@ -2763,7 +2758,7 @@ msgstr "Soll eix-diff Slots bei Versionsänderungen ignorieren?"
 
 #: src/eixrc/defaults.cc:310
 msgid "If false, eix-diff will mix deleted and changed packages"
-msgstr "Im negativen Fall wird eix-diff gelöschte und geänderte Pakete mischen"
+msgstr "Falls false, wird eix-diff gelöschte und geänderte Pakete mischen"
 
 #: src/eixrc/defaults.cc:314
 msgid "Should eix-diff print a header info line?"
@@ -2814,7 +2809,7 @@ msgid ""
 "If true, read RESTRICT for installed versions always from disk.\n"
 "This is ignored if RESTRICT_INSTALLED=false."
 msgstr ""
-"Soll RESTRICT für installierte Versionen stets von Disk gelesen werden?\n"
+"Soll RESTRICT für installierte Versionen stets von der Festplatte gelesen werden?\n"
 "Im Falle RESTRICT_INSTALLED=false hat die Variable keine Bedeutung."
 
 #: src/eixrc/defaults.cc:347
@@ -2822,7 +2817,7 @@ msgid ""
 "If true, read *DEPEND for installed versions always from disk.\n"
 "This is ignored if DEP=false."
 msgstr ""
-"Soll *DEPEND für installierte Versionen stets von Disk gelesen werden?\n"
+"Soll *DEPEND für installierte Versionen stets von der Festplatte gelesen werden?\n"
 "Im Falle DEP=false hat die Variable keine Bedeutung."
 
 #: src/eixrc/defaults.cc:352
@@ -2832,7 +2827,7 @@ msgid ""
 msgstr ""
 "Definiert ob {R,P,H,}DEPEND gespeichert/benutzt wird.\n"
 "Diese Daten sieht man beispielsweise mit eix -lv.\n"
-"Benutzung von DEP verdoppelt ungefähr den Benötigen Disk/Speicherplatz."
+"Benutzung von DEP verdoppelt ungefähr den benötigten Festplatten-/Speicherplatz."
 
 #: src/eixrc/defaults.cc:357
 msgid "Defines whether --compact or --verbose is on by default."
@@ -2843,7 +2838,7 @@ msgid ""
 "Allowed values are true/false/never.\n"
 "If true, always print the number of matches (even 0 or 1) in the last line."
 msgstr ""
-"Erlaubte Werte sind \"true\", \"false\" or \"never\" (niemals).\n"
+"Erlaubte Werte sind \"true\", \"false\" oder \"never\" (niemals).\n"
 "Im ersten Falle wird die Anzahl der Treffer (selbst bei 0 oder 1) als\n"
 "letzte Zeile ausgegeben."
 
@@ -2885,7 +2880,7 @@ msgid ""
 "If false, versions are only colored according to the local setting."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Im negativen Fall werden Versionen entsprechend der lokalen\n"
+"Falls false, werden Versionen entsprechend der lokalen\n"
 "Konfiguration angezeigt."
 
 #: src/eixrc/defaults.cc:400
@@ -2895,8 +2890,8 @@ msgid ""
 "only locally masked (i.e. [m])."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Im negativen Fall hat COLOR_ORIGINAL=false keinen Effekt auf Versionen,\n"
-"die nur lokal maskiert sind (also auf [m])."
+"Falls false, hat COLOR_ORIGINAL=false keinen Effekt auf Versionen, die nur\n"
+"lokal maskiert sind (also auf [m])."
 
 #: src/eixrc/defaults.cc:406
 msgid "Defines whether --versionsorted is on by default."
@@ -2997,7 +2992,7 @@ msgid ""
 "This is a list of pairs DIR-PATTERN METHOD. Later entries take precedence."
 msgstr ""
 "Ändert OVERLAY_CACHE_METHOD oder PORTDIR_CACHE_METHOD für einzelne\n"
-"Directories. Dies ist eine Liste von Paaren DIR-PATTERN METHOD.\n"
+"Verzeichnisse. Dies ist eine Liste von Paaren DIR-PATTERN METHOD.\n"
 "Spätere Einträge überschreiben frühere."
 
 #: src/eixrc/defaults.cc:473
@@ -3026,14 +3021,14 @@ msgid ""
 "The last matching DIR_PATTERN takes precedence."
 msgstr ""
 "Dies ist eine Liste von Paaren DIR-PATTERN OVERLAY_LABEL.\n"
-"Beim Erzeugen eines neuen Cachefiles erhält der Overlay zu DIR-PATTERN das\n"
-"Label OVERLAY_LABEL, unabhängig vom Inhalt des Dateien profiles/repo_name\n"
+"Beim Erzeugen einer neuen Cache-Datei erhält der Overlay zu DIR-PATTERN das\n"
+"Label OVERLAY_LABEL, unabhängig vom Inhalt der Dateien profiles/repo_name\n"
 "oder des mit KEEP_VIRTUALS übernommenen Labels.\n"
 "Spätere Einträge überschreiben frühere."
 
 #: src/eixrc/defaults.cc:491
 msgid "List of overlays that should be excluded from the index."
-msgstr "Liste aus Overlays, die vom Indizieren ausgenommen werden sollen."
+msgstr "Liste von Overlays, die vom Indizieren ausgenommen werden sollen."
 
 #: src/eixrc/defaults.cc:495
 msgid "List of overlays that should be added to the index."
@@ -3044,20 +3039,20 @@ msgid ""
 "If true and overlays are excluded or added, export modified PORTDIR_OVERLAY."
 msgstr ""
 "Falls Overlay hinzugefügt oder ausgeschlossen wurden und diese Variable\n"
-"wahr ist, wird ein modifiziertes PORTDIR_OVERLAY exportiert."
+"true ist, wird ein modifiziertes PORTDIR_OVERLAY exportiert."
 
 #: src/eixrc/defaults.cc:503
 msgid ""
 "Keep virtuals of the old cache file by adding corresponding entries\n"
 "implicitly to the values of ADD_OVERLAY and ADD_CACHE_METHOD"
 msgstr ""
-"Sollen virtuelle Overlays des vorherigen Cachefiles beibehalten werden,\n"
+"Sollen virtuelle Overlays der vorherigen Cache-Datei beibehalten werden,\n"
 "indem implizit entsprechende Werte zu ADD_OVERLAY und ADD_CACHE_METHOD\n"
 "hinzugefügt werden?"
 
 #: src/eixrc/defaults.cc:508
 msgid "If false, /etc/portage and ACCEPT_KEYWORDS are ignored."
-msgstr "Im negativen Fall wird /etc/portage und ACCEPT_KEYWORDS ignoriert."
+msgstr "Falls false, wird /etc/portage und ACCEPT_KEYWORDS ignoriert."
 
 #: src/eixrc/defaults.cc:512
 msgid ""
@@ -3071,7 +3066,7 @@ msgstr ""
 msgid "If +/-, eix -u will match as if LOCAL_PORTAGE_CONFIG=true/false."
 msgstr ""
 "Bei +/- wird eix -u die betroffenen Pakete bestimmen, als wenn\n"
-"LOCAL_PORTAGE_CONFIG=true/false gessetzt wäre."
+"LOCAL_PORTAGE_CONFIG=true/false gesetzt wäre."
 
 #: src/eixrc/defaults.cc:521
 msgid ""
@@ -3109,7 +3104,7 @@ msgstr ""
 #: src/eixrc/defaults.cc:544
 msgid "If false, count independently of whether the matches are printed."
 msgstr ""
-"Im Negativfall ist die Anzahl unabhängig davon, ob ein Treffer\n"
+"Falls false, ist die Anzahl unabhängig davon, ob ein Treffer\n"
 "aufgrund des Formatstrings eine Ausgabe erzeugt."
 
 #: src/eixrc/defaults.cc:548
@@ -3118,7 +3113,7 @@ msgid ""
 "It defines whether a bug reference is printed in verbose format."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie legt fest, ob eine Bug-Referenz im langen Format gedruckt wird."
+"Sie legt fest, ob eine Bug-Referenz im langen Format ausgegeben wird."
 
 #: src/eixrc/defaults.cc:553
 msgid ""
@@ -3134,7 +3129,7 @@ msgid ""
 "It is the command used to print the package set names."
 msgstr ""
 "Diese Variable dient nur zur verzögerten Ersetzung.\n"
-"Sie ist das Kommando zum Drucken der Set-Namen zum Paket."
+"Sie ist das Kommando zur Ausgabe der Set-Namen zum Paket."
 
 #: src/eixrc/defaults.cc:563
 msgid ""
@@ -3182,7 +3177,7 @@ msgid ""
 "If true, eix --versionlines (nonverbose) outputs IUSE for each version."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Soll eix --versionlines (nichtausführlich) IUSE pro Version ausgeben?"
+"Soll eix --versionlines (nicht-ausführlich) IUSE pro Version ausgeben?"
 
 #: src/eixrc/defaults.cc:598
 msgid ""
@@ -3198,7 +3193,7 @@ msgid ""
 "If false, KEYWORDS are never output."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Im negativen Fall werden niemals KEYWORDS ausgegeben"
+"Falls false, werden niemals KEYWORDS ausgegeben."
 
 #: src/eixrc/defaults.cc:608
 msgid ""
@@ -3206,7 +3201,7 @@ msgid ""
 "If true, eix --versionlines (nonverbose) outputs KEYWORDS."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Soll eix --versionlines (nichtausführlich) KEYWORDS ausgeben?"
+"Soll eix --versionlines (nicht-ausführlich) KEYWORDS ausgeben?"
 
 #: src/eixrc/defaults.cc:613
 msgid ""
@@ -3222,7 +3217,7 @@ msgid ""
 "If false, mask reasons are never output."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Im negativen Fall werden niemals Maskierungsgründe ausgegeben"
+"Falls false, werden niemals Maskierungsgründe ausgegeben."
 
 #: src/eixrc/defaults.cc:623
 msgid ""
@@ -3230,7 +3225,7 @@ msgid ""
 "If true, eix --versionlines (nonverbose) outputs mask reasons."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Soll eix --versionlines (nichtausführlich) Maskierungsgründe ausgeben?"
+"Soll eix --versionlines (nicht-ausführlich) Maskierungsgründe ausgeben?"
 
 #: src/eixrc/defaults.cc:628
 msgid ""
@@ -3246,7 +3241,7 @@ msgid ""
 "If true, eix --versionlines (nonverbose) outputs {,R,P}DEPEND."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Soll eix --versionlines (nichtausführlich) {,R,P}DEPEND ausgeben?"
+"Soll eix --versionlines (nicht-ausführlich) {,R,P}DEPEND ausgeben?"
 
 #: src/eixrc/defaults.cc:638
 msgid ""
@@ -3254,7 +3249,7 @@ msgid ""
 "If true, eix --versionlines --verbose outputs {,R,P}DEPEND."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Soll eix --versionlines (nichtausführlich) {,R,P}DEPEND ausgeben?"
+"Soll eix --versionlines --verbose {,R,P}DEPEND ausgeben?"
 
 #: src/eixrc/defaults.cc:643
 msgid ""
@@ -3278,7 +3273,7 @@ msgid ""
 "If true, compact format prints no version if none is installable."
 msgstr ""
 "Diese Variable dient nur zur verzögerten Ersetzung.\n"
-"Sie legt fest, ob das kompakte Format keine Version drucken soll,\n"
+"Sie legt fest, ob das kompakte Format keine Version ausgeben soll,\n"
 "falls keine installierbar ist."
 
 #: src/eixrc/defaults.cc:658
@@ -3287,7 +3282,7 @@ msgid ""
 "If true, compact format prints no versions if all installable vanished."
 msgstr ""
 "Diese Variable dient nur zur verzögerten Ersetzung.\n"
-"Sie legt fest, ob das kompakte Format keine Version drucken soll,\n"
+"Sie legt fest, ob das kompakte Format keine Version ausgeben soll,\n"
 "falls alle installierbaren verschwunden sind."
 
 #: src/eixrc/defaults.cc:663
@@ -3296,7 +3291,7 @@ msgid ""
 "If true, eix-diff prints no version if none is installable."
 msgstr ""
 "Diese Variable dient nur zur verzögerten Ersetzung.\n"
-"Sie legt fest, ob eix-diff keine Version drucken soll, falls keine\n"
+"Sie legt fest, ob eix-diff keine Version ausgeben soll, falls keine\n"
 "installierbar ist."
 
 #: src/eixrc/defaults.cc:668
@@ -3305,7 +3300,7 @@ msgid ""
 "If true, eix-diff prints no versions if all installable vanished."
 msgstr ""
 "Diese Variable dient nur zur verzögerten Ersetzung.\n"
-"Sie legt fest, ob eix-diff keine Version drucken soll, falls alle\n"
+"Sie legt fest, ob eix-diff keine Version ausgeben soll, falls alle\n"
 "installierbaren verschwunden sind."
 
 #: src/eixrc/defaults.cc:673
@@ -3327,14 +3322,14 @@ msgid ""
 "if a status line is active, also a soft status line will be output."
 msgstr ""
 "Wenn sich der Anfang von TERM in einem Wort dieser Liste findet, und wenn\n"
-"die Sttuszeile aktiv ist, dann wird auch eine Softstatuszeile ausgegeben."
+"die Statuszeile aktiv ist, dann wird auch eine Soft-Statuszeile ausgegeben."
 
 #: src/eixrc/defaults.cc:687
 msgid ""
 "If this is nonempty, it is used as the exit statusline.\n"
 "An optional leading space in this string is ignored."
 msgstr ""
-"Falls dies nichtleer ist, wird es als Exit-Statuszeile benutzt.\n"
+"Falls dies nicht-leer ist, wird es als Exit-Statuszeile benutzt.\n"
 "Ein optionales führendes Leerzeichen wird ignoriert."
 
 #: src/eixrc/defaults.cc:692
@@ -3345,7 +3340,7 @@ msgid ""
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie legt fest, ob die Hintergrundfarbe bei jedem Zeilenende zurückgesetzt\n"
-"wird. Dies kann gewünscht sein, wenn BG? nicht none ist."
+"wird. Dies kann gewünscht sein, wenn BG? nicht \"none\" ist."
 
 #: src/eixrc/defaults.cc:698
 msgid ""
@@ -3394,7 +3389,7 @@ msgid ""
 "specified terminals default to 256 colors."
 msgstr ""
 "Dies ist eine Liste regulärer Ausdrücke; wenn einer auf TERM passt, so wird\n"
-"COLORSCHEME1 statt COLORSCHEME0 benutzt. Die Intention ist, dass die\n"
+"COLORSCHEME1 statt COLORSCHEME0 benutzt. Der Hintergedanke ist, dass die\n"
 "spezifizierten Terminals 256 Farben haben."
 
 #: src/eixrc/defaults.cc:729
@@ -3409,7 +3404,7 @@ msgid ""
 "specified terminals default to 88 colors."
 msgstr ""
 "Dies ist eine Liste regulärer Ausdrücke; wenn einer auf TERM passt, so wird\n"
-"COLORSCHEME2 statt COLORSCHEME0 benutzt. Die Intention ist, dass die\n"
+"COLORSCHEME2 statt COLORSCHEME0 benutzt. Der Hintergedanke ist, dass die\n"
 "spezifizierten Terminals 88 Farben haben."
 
 #: src/eixrc/defaults.cc:739
@@ -3424,7 +3419,7 @@ msgid ""
 "these terminals are exceptions made on user request."
 msgstr ""
 "Dies ist eine Liste regulärer Ausdrücke; wenn einer auf TERM passt, so wird\n"
-"COLORSCHEME3 statt COLORSCHEME0 benutzt. Die Intention ist, dass diese\n"
+"COLORSCHEME3 statt COLORSCHEME0 benutzt. Der Hintergedanke ist, dass diese\n"
 "Terminals benutzerspezifizierte Ausnahmen sind."
 
 #: src/eixrc/defaults.cc:749
@@ -3435,7 +3430,7 @@ msgid ""
 msgstr ""
 "Der Wert \"true\" oder \"false\" bedeutet, dass der erste bzw. zweite\n"
 "Eintrag der COLORSCHEME*-Variablen benutzt wird (was dunklen bzw. hellen\n"
-"Hintergrund bedeutet). Mit \"auto\" wird eine Heuristic gewählt, die auf\n"
+"Hintergrund bedeutet). Mit \"auto\" wird eine Heuristik gewählt, die auf\n"
 "TERM_DARK und COLORFGBG_DARK basiert."
 
 #: src/eixrc/defaults.cc:755
@@ -3458,7 +3453,7 @@ msgid ""
 msgstr ""
 "Dies ist eine Liste regulärer Ausdrücke.\n"
 "Falls die darkmode-Werte true* oder false* in TERM_DARK aktiv sind und\n"
-"falls COLORFGBG nichtleer ist, dann hängt der Dunkelmodus davon ab, ob\n"
+"falls COLORFGBG nicht-leer ist, dann hängt der Dunkelmodus davon ab, ob\n"
 "COLORFGBG auf einen Listeneintrag passt."
 
 #: src/eixrc/defaults.cc:767
@@ -3477,7 +3472,7 @@ msgid ""
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung in COLORSCHEME? benutzt.\n"
 "Setzen Sie sie (beispielsweise in der Umgebung) wenn ihr Terminal für\n"
-"das Solarized Farbschema von Ethan Schoonover konfiguriert ist."
+"das Solarized-Farbschema von Ethan Schoonover konfiguriert ist."
 
 #: src/eixrc/defaults.cc:778
 msgid ""
@@ -3538,7 +3533,7 @@ msgstr ""
 #: src/eixrc/defaults.cc:810
 msgid "If false, sort installed useflags by whether they are set."
 msgstr ""
-"Im Negativfall werden die Useflags nach gesetzten/ungesetzten\n"
+"Falls false, werden die Useflags nach gesetzten/ungesetzten\n"
 "sortiert."
 
 #: src/eixrc/defaults.cc:814
@@ -3552,15 +3547,14 @@ msgid ""
 msgstr ""
 "Zulässige Werte sind \"true\", \"false\" und \"repository\".\n"
 "Bei \"true\" wird für alle Versionen überprüft, aus welchem Overlay sie\n"
-"installiert wurden (zuverlässig, aber langsam).\n"
+"installiert wurden.\n"
 "Bei \"false\" geschieht dies nur für Pakete, die in mindestens zwei\n"
-"Overlays vorkommen (PORTDIR wird hier als Overlay gezählt).\n"
+"Overlays vorkommen.\n"
 "Bei \"repository\" werden als ein gewisser Kompromiss zumindest stets die\n"
-"REPOSITORY-Dateien überprüft (die aber erst von jüngeren Portage-Versionen\n"
-"stets erstellt werden.\n"
+"repository-Dateien überprüft.\n"
 "Im Falle einer fehlenden Überprüfung kann der vermutete Overlay falsch\n"
-"falsch sein, wenn die betreffende Version aus einem Overlay installiert\n"
-"wurde, in dem es das Paket nicht mehr gibt."
+"sein, wenn die betreffende Version aus einem Overlay installiert wurde,\n"
+"in dem es das Paket nicht mehr gibt."
 
 #: src/eixrc/defaults.cc:823
 msgid ""
@@ -3616,10 +3610,10 @@ msgid ""
 "description, license, homepage, set, slot, installed-slot, use\n"
 "with-use, without-use."
 msgstr ""
-"Dies ist eine Stringliste von Ausdrücken der Gestalt Regexp[ ]Suchfeld.\n"
-"Falls Regexp auf das Suchpattern zutrifft, wird Suchfeld das\n"
-"Vorgabe-Suchfeld. Ein Fallback-Suchfeld kann als letzter Eintrag der\n"
-"Liste angegeben werden. Zulässige Werte für Suchfeld sind:\n"
+"Dies ist eine Stringliste von Ausdrücken der Gestalt regexp[ ]match_field.\n"
+"Falls regexp auf das Suchmuster zutrifft, benutze match_field als\n"
+"Vorgabe. Ein Fallback-match_field kann als letzter Eintrag der\n"
+"Liste angegeben werden. Zulässige Werte für match_field sind:\n"
 "name, category, category/name, description, license, homepage,\n"
 "set, slot, installed-slot, use, with-use, without-use."
 
@@ -3677,11 +3671,11 @@ msgid ""
 "begin, end, exact, fuzzy."
 msgstr ""
 "Dies ist eine Stringliste von Ausdrücken der Gestalt\n"
-"regexp[ ]Matchalgorithmus.\n"
-"Falls regexp auf das Suchpattern zutrifft, wird Matchalgorithmus der\n"
-"Vorgabe-Matchalgorithmus. Ein Fallback-Matchalgorithmus kann als letzter\n"
+"regexp[ ]match_algorithm.\n"
+"Falls regexp auf das Suchmuster zutrifft, benutze match_algorithm als\n"
+"Vorgabe. Ein Fallback-match_algorithm kann als letzter\n"
 "Eintrag der Liste angegeben werden. Zulässige Werte für\n"
-"Matchalgorithmus sind: regex, pattern, substring,\n"
+"match_algorithm sind: regex, pattern, substring,\n"
 "begin, end, exact, fuzzy."
 
 #: src/eixrc/defaults.cc:912
@@ -3738,7 +3732,7 @@ msgid ""
 "if they come from a different overlay than the installed version."
 msgstr ""
 "Legt fest, ob für TEST_FOR_NONEXISTENT diejenigen Versionen als\n"
-"nicht existent gelten, die von einem anderen Overlay als die installierte\n"
+"nicht-existent gelten, die von einem anderen Overlay als die installierte\n"
 "kommen."
 
 #: src/eixrc/defaults.cc:961
@@ -3746,7 +3740,7 @@ msgid ""
 "Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT."
 msgstr ""
 "Legt fest, ob für TEST_FOR_NONEXISTENT maskierte Versionen als\n"
-"nicht existent gelten."
+"nicht-existent gelten."
 
 #: src/eixrc/defaults.cc:965
 msgid "Defines whether redundant entries are positive for -T."
@@ -3806,7 +3800,7 @@ msgid ""
 msgstr ""
 "Testet, ob /etc/portage/package.accept_keywords für die fraglichen\n"
 "Versionen ein seltsames Keyword enthält, etwas UNKNOWNARCH (unbekannt für\n"
-"das ebuild und ARCH) oder -OTHERARCH."
+"das .ebuild und ARCH) oder -OTHERARCH."
 
 #: src/eixrc/defaults.cc:1003
 msgid ""
@@ -3815,7 +3809,7 @@ msgid ""
 msgstr ""
 "Testet, ob /etc/portage/package.accept_keywords für die fraglichen\n"
 "Versionen ein Keyword enthält, das den Status der Version nicht\n"
-"beeinflussen."
+"beeinflusst."
 
 #: src/eixrc/defaults.cc:1008
 msgid ""
@@ -3944,7 +3938,7 @@ msgid ""
 "It is the directory where eix searches for its package.*.*/sets.eix files."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie enthält das Directory, in dem eix nach seinen\n"
+"Sie enthält das Verzeichnis, in dem eix nach seinen\n"
 "package.*.*/sets.eix-Dateien sucht."
 
 #: src/eixrc/defaults.cc:1090
@@ -3952,7 +3946,7 @@ msgid ""
 "If UPGRADE_TO_HIGHEST_SLOT=true, then packages listed in these files/dirs\n"
 "are treated as if UPGRADE_TO_HIGHEST_SLOT=false."
 msgstr ""
-"Falls UPGRADE_TO_HIGHEST_SLOT=true werden Pakete dieses Dateien/Directories\n"
+"Falls UPGRADE_TO_HIGHEST_SLOT=true werden Pakete diesen Dateien/Verzeichnissen\n"
 "behandelt, als wenn UPGRADE_TO_HIGHEST_SLOT=false wäre."
 
 #: src/eixrc/defaults.cc:1098
@@ -3960,62 +3954,61 @@ msgid ""
 "If UPGRADE_TO_HIGHEST_SLOT=false, then packages listed in these files/dirs\n"
 "are treated as if UPGRADE_TO_HIGHEST_SLOT=true."
 msgstr ""
-"Falls UPGRADE_TO_HIGHEST_SLOT=false werden Pakete dieses Dateien/"
-"Directories\n"
+"Falls UPGRADE_TO_HIGHEST_SLOT=false werden Pakete diesen Dateien/Verzeichnissen\n"
 "behandelt, als wenn UPGRADE_TO_HIGHEST_SLOT=true wäre."
 
 #: src/eixrc/defaults.cc:1104
 msgid "Entries listed in these files/dirs are excluded for -t TEST_KEYWORDS."
 msgstr ""
-"Einträge dieser Dateien/Directories werden von -t TEST_KEYWORDS\n"
+"Einträge dieser Dateien/Verzeichnisse werden von -t TEST_KEYWORDS\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:1108
 msgid "Entries listed in these files/dirs are excluded for -t TEST_MASK."
 msgstr ""
-"Einträge dieser Dateien/Directories werden von -t TEST_MASK\n"
+"Einträge dieser Dateien/Verzeichnisse werden von -t TEST_MASK\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:1112
 msgid "Entries listed in these files/dirs are excluded for -t TEST_UNMASK."
 msgstr ""
-"Einträge dieser Dateien/Directories werden von -t TEST_UNMASK\n"
+"Einträge dieser Dateien/Verzeichnisse werden von -t TEST_UNMASK\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:1116
 msgid "Entries listed in these files/dire are excluded for -t TEST_USE."
 msgstr ""
-"Einträge dieser Dateien/Directories werden von -t TEST_USE\n"
+"Einträge dieser Dateien/Verzeichnisse werden von -t TEST_USE\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:1120
 msgid "Entries listed in these files/dire are excluded for -t TEST_ENV."
 msgstr ""
-"Einträge dieser Dateien/Directories werden von -t TEST_ENV\n"
+"Einträge dieser Dateien/Verzeichnisse werden von -t TEST_ENV\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:1124
 msgid "Entries listed in these files/dirs are excluded for -t TEST_LICENSE."
 msgstr ""
-"Einträge dieser Dateien/Directories werden von -t TEST_LICENSE\n"
+"Einträge dieser Dateien/Verzeichnisse werden von -t TEST_LICENSE\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:1128
 msgid "Entries listed in these files/dirs are excluded for -t TEST_RESTRICT."
 msgstr ""
-"Einträge dieser Dateien/Directories werden von -t TEST_RESTRICT\n"
+"Einträge dieser Dateien/Verzeichnisse werden von -t TEST_RESTRICT\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:1132
 msgid "Entries listed in these files/dirs are excluded for -t TEST_CFLAGS."
 msgstr ""
-"Einträge dieser Dateien/Directories werden von -t TEST_CFLAGS\n"
+"Einträge dieser Dateien/Verzeichnisse werden von -t TEST_CFLAGS\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:1136
 msgid "Packages listed in these files/dirs are excluded for -t TEST_REMOVED."
 msgstr ""
-"Einträge dieser Dateien/Directories werden von -t TEST_REMOVED\n"
+"Einträge dieser Dateien/Verzeichnisse werden von -t TEST_REMOVED\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:1140
@@ -4032,7 +4025,7 @@ msgid ""
 "If it is set then the files from OBSOLETE_PACKAGE_NOWARN are used."
 msgstr ""
 "Diese Variable wird nur für verzögerten Ersetzung in PACKAGE_NOWARN benutzt.\n"
-"Wenn sie gesetzt ist, werden die Files von OBSOLETE_PACKAGE_NOWARN benutzt."
+"Wenn sie gesetzt ist, werden die Dateien von OBSOLETE_PACKAGE_NOWARN benutzt."
 
 #: src/eixrc/defaults.cc:1159
 msgid ""
@@ -4044,7 +4037,7 @@ msgstr ""
 
 #: src/eixrc/defaults.cc:1168
 msgid "This file/directory contains exceptions for -T tests."
-msgstr "Diese Datei/Directory enthält Ausnahmen für -T."
+msgstr "Diese Datei/dieses Verzeichnis enthält Ausnahmen für -T."
 
 #: src/eixrc/defaults.cc:1172
 msgid ""
@@ -4052,13 +4045,13 @@ msgid ""
 "It specifies directories for EIX_LOCAL_SETS."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie gibt die Directories für EIX_LOCAL_SETS an."
+"Sie gibt die Verzeichnisse für EIX_LOCAL_SETS an."
 
 #: src/eixrc/defaults.cc:1181
 msgid ""
 "This is a space-separated list of directories containing set definitions."
 msgstr ""
-"Dies ist eine Liste von Directories (durch Leerzeichen getrennt) mit\n"
+"Dies ist eine Liste von durch Leerzeichen getrennten Verzeichnissen mit\n"
 "Set-Definitionen."
 
 #: src/eixrc/defaults.cc:1185
@@ -4067,7 +4060,7 @@ msgid ""
 "You might need to modify it according to the installed portage version.\n"
 "Leave it empty if EAPI-suffixed ebuilds (GLEP 55) should be ignored."
 msgstr ""
-"Dieser reguläre Ausdruck gibt die EAPIs an, die als .ebuild Suffixes\n"
+"Dieser reguläre Ausdruck gibt die EAPIs an, die als .ebuild-Suffixes\n"
 "erkannt werden sollen. Der Wert muss ggf. an die installierte\n"
 "Portage-Version angepasst werden. Wenn er leer ist, werden alle\n"
 "Ebuilds mit EAPI-Suffixen (s. GLEP 55) ignoriert."
@@ -4078,7 +4071,7 @@ msgid ""
 "It is the color used for default colors."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie legt die Farbe für Normalausgaben fest."
+"Sie legt die Farbe für Standard-Ausgaben fest."
 
 #: src/eixrc/defaults.cc:1201
 msgid ""
@@ -4175,7 +4168,7 @@ msgid ""
 "which have gained a stable version."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie definiert die Farbe für Tags uninstallierter Pakete, die ein stabile\n"
+"Sie definiert die Farbe für Tags nicht-installierter Pakete, die ein stabile\n"
 "Version bekommen haben."
 
 #: src/eixrc/defaults.cc:1262
@@ -4250,7 +4243,7 @@ msgid ""
 "It defines the color used for tagging uninstalled packages."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie definiert die Farbe der Tags für uninstallierte Pakete."
+"Sie definiert die Farbe der Tags für nicht-installierte Pakete."
 
 #: src/eixrc/defaults.cc:1308
 msgid ""
@@ -4394,7 +4387,7 @@ msgid ""
 "It defines the color used for printing a marked version of a packages."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie definiert die Farbe, in der markierte Versionen gedruckt werden."
+"Sie definiert die Farbe, in der markierte Versionen ausgegeben werden."
 
 #: src/eixrc/defaults.cc:1398
 msgid ""
@@ -4414,7 +4407,7 @@ msgstr ""
 
 #: src/eixrc/defaults.cc:1408
 msgid "Color for the overlaykey in version listings."
-msgstr "Farbe für die Overlaynummer bei der Versionsausgabe."
+msgstr "Farbe für den Overlay-Schlüssel bei der Versionsausgabe."
 
 #: src/eixrc/defaults.cc:1412
 msgid "Color for the overlaykey for virtual overlays in version listings."
@@ -4461,7 +4454,7 @@ msgstr ""
 msgid ""
 "Color for the properties tags. This is only used for delayed substitution."
 msgstr ""
-"Farbe für PROPERTIES Tags. Dies wird nur für verzögerten Ersetzung benutzt."
+"Farbe für properties-Tags. Dies wird nur für verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1452
 msgid "Color for keywords. This is only used for delayed substitution."
@@ -4533,7 +4526,7 @@ msgid ""
 "It defines the character printed for uninstalled packages."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie enthält das Zeichen für uninstallierte Pakete."
+"Sie enthält das Zeichen für nicht-installierte Pakete."
 
 #: src/eixrc/defaults.cc:1500
 msgid ""
@@ -4542,8 +4535,8 @@ msgid ""
 "a stable version."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie enthält das Zeichen für uninstallierte Pakete, die eine stabile Version\n"
-"bekommen haben."
+"Sie enthält das Zeichen für nicht-installierte Pakete, die eine stabile\n"
+"Version bekommen haben."
 
 #: src/eixrc/defaults.cc:1506
 msgid ""
@@ -4609,7 +4602,7 @@ msgid ""
 "It defines the tag printed for uninstalled packages."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie enthält das Tag für uninstallierte Pakete."
+"Sie enthält das Tag für nicht-installierte Pakete."
 
 #: src/eixrc/defaults.cc:1551
 msgid ""
@@ -4657,7 +4650,7 @@ msgid ""
 "It defines the string used for \"plain\" tagging uninstalled packages."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie enthält das Tag für \"normale\" uninstallierte Pakete."
+"Sie enthält das Tag für \"normale\" nicht-installierte Pakete."
 
 #: src/eixrc/defaults.cc:1581
 msgid ""
@@ -4705,94 +4698,94 @@ msgid ""
 "Tag for versions with *.tbz2. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für Versionen mit *.tbz2-Dateien.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1614
 msgid "Tag for RESTRICT=fetch. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für RESTRICT=fetch.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1618
 msgid "Tag for RESTRICT=mirror. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für RESTRICT=mirror.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1622
 msgid ""
 "Tag for RESTRICT=primaryuri. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für RESTRICT=primaryuri.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1626
 msgid "Tag for RESTRICT=binchecks. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für RESTRICT=binchecks.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1633
 msgid "Tag for RESTRICT=strip. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für RESTRICT=strip.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1637
 msgid "Tag for RESTRICT=test. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für RESTRICT=test.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1641
 msgid "Tag for RESTRICT=userpriv. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für RESTRICT=userpriv.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1645
 msgid ""
 "Tag for RESTRICT=installsources. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für RESTRICT=installsources.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1649
 msgid "Tag for RESTRICT=bindist. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für RESTRICT=bindist.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1653
 msgid "Tag for RESTRICT=parallel. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für RESTRICT=parallel.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1657
 msgid ""
 "Tag for PROPERTIES=interactive. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für PROPERTIES=interactive.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1661
 msgid "Tag for PROPERTIES=live. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für PROPERTIES=live.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1665
 msgid "Tag for PROPERTIES=virtual. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für PROPERTIES=virtual.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1669
 msgid "Tag for PROPERTIES=set. This is only used for delayed substitution."
 msgstr ""
 "Das Tag für PROPERTIES=set.\n"
-"Dies wird nur für verzögerten Ersetzung benutzt."
+"Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc:1673
 msgid ""
@@ -4968,7 +4961,7 @@ msgid ""
 "This variable is used by delayed substitution in version formatters.\n"
 "It prints a newline at the end of a version."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable dient nur zur verzögerten Ersetzung in Versionsformatierern.\n"
 "Sie gibt einen Zeilenvorschub am Ende einer Version aus."
 
 #: src/eixrc/defaults.cc:1779
@@ -5107,7 +5100,7 @@ msgid ""
 "It is used for colored <use> in available versions; color is not reset."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie wird zur Ausgabe gefärbter <iuse> in verfügbaren Versionen benutzt.\n"
+"Sie wird zur Ausgabe gefärbter <use> in verfügbaren Versionen benutzt.\n"
 "Die Farbe wird nicht zurückgesetzt."
 
 #: src/eixrc/defaults.cc:1880
@@ -5163,7 +5156,7 @@ msgid ""
 "runtime variable $color is set, it outputs the color and sets $color."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie definiert die Laufzeit-Variable $stable für das Stability-Tag, und\n"
+"Sie definiert die Laufzeit-Variable $stable für das Stabilitäts-Tag, und\n"
 "außer falls die Laufzeit-Variable $color gesetzt ist, ändert sie die Farbe\n"
 "und setzt $color."
 
@@ -5174,7 +5167,7 @@ msgid ""
 "It sets the runtime variable $color depending on whether color was changed."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie gibt das Stability-Tag aus und ändert dabei ggf. die Farbe. Sie setzt\n"
+"Sie gibt das Stabilitäts-Tag aus und ändert dabei ggf. die Farbe. Sie setzt\n"
 "die Laufzeit-Variable $color, je nachdem ob die Farbe geändert wurde."
 
 #: src/eixrc/defaults.cc:1986
@@ -5298,7 +5291,7 @@ msgid ""
 "It defines the format for an available version without slot."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie legt das Format einer verfügbare Version ohne Slot fest."
+"Sie legt das Format einer verfügbaren Version ohne Slot fest."
 
 #: src/eixrc/defaults.cc:2129
 msgid ""
@@ -5307,7 +5300,7 @@ msgid ""
 "with its optional subslot."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie legt das Format einer verfügbare Version mit optionalem Subslot fest."
+"Sie legt das Format einer verfügbaren Version mit optionalen Subslot fest."
 
 #: src/eixrc/defaults.cc:2135
 msgid ""
@@ -5315,7 +5308,7 @@ msgid ""
 "It defines the format for printing an available version with its slot."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie legt das Format einer verfügbare Version mit Slot fest."
+"Sie legt das Format einer verfügbaren Version mit Slot fest."
 
 #: src/eixrc/defaults.cc:2140
 msgid ""
@@ -5412,7 +5405,7 @@ msgid ""
 "It defines the format for an available version with important data and slot."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie legt das Format einer verfügbare Version mit den wichtigsten Daten\n"
+"Sie legt das Format einer verfügbaren Version mit den wichtigsten Daten\n"
 "und Slot fest."
 
 #: src/eixrc/defaults.cc:2196
@@ -5432,7 +5425,7 @@ msgid ""
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Dieser String wird vor dem KEYWORDS einer Version ausgegeben\n"
-"(mit --versionlines and nicht-ausfürhlich)."
+"(mit --versionlines and nicht-ausführlich)."
 
 #: src/eixrc/defaults.cc:2207
 msgid ""
@@ -5442,7 +5435,7 @@ msgid ""
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Dieser String wird nach dem KEYWORDS einer Version ausgegeben\n"
-"(mit --versionlines and nicht-ausfürhlich)."
+"(mit --versionlines and nicht-ausführlich)."
 
 #: src/eixrc/defaults.cc:2213
 msgid ""
@@ -5466,7 +5459,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the first column after the version."
 msgstr ""
-"This variable is only used for delayed substitution.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie legt die erste Spalte nach der Version fest."
 
 #: src/eixrc/defaults.cc:2228
@@ -5546,7 +5539,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the first column of the slot with versionsort."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie legt die erste Spalte des Slots bei --versionsort fest."
 
 #: src/eixrc/defaults.cc:2278
@@ -5563,7 +5556,7 @@ msgid ""
 "It defines the first column of the collected USE."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie legt die erste Spalte für die gesammelten IUSE fest."
+"Sie legt die erste Spalte für die gesammelten USE fest."
 
 #: src/eixrc/defaults.cc:2288
 msgid ""
@@ -5571,14 +5564,14 @@ msgid ""
 "It defines the column for the main tag in eix-diff."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie legt die Spalte für das Haupttag bei eix-diff fest."
+"Sie legt die Spalte für das Haupt-Tag bei eix-diff fest."
 
 #: src/eixrc/defaults.cc:2293
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the column after the tags in eix-diff."
 msgstr ""
-"This variable is only used for delayed substitution.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie legt die Spalte nach den Tags bei eix-diff fest."
 
 #: src/eixrc/defaults.cc:2298
@@ -5587,7 +5580,7 @@ msgid ""
 "It defines the lineskip used for the versionline appendix."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie legt den Lineskip für den Appendix bei --versionlines fest."
+"Sie legt den Zeilensprung für den Anhang bei --versionlines fest."
 
 #: src/eixrc/defaults.cc:2313
 msgid ""
@@ -5651,7 +5644,7 @@ msgid ""
 "It defines normal data appended to available versions with --versionlines"
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Der normale Appendix einer verfügbare Versionen bei --versionlines"
+"Der normale Anhang einer verfügbaren Versionen bei --versionlines"
 
 #: src/eixrc/defaults.cc:2486
 msgid ""
@@ -5659,7 +5652,7 @@ msgid ""
 "It defines verbose data appended to available versions with --versionlines"
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Der ausführliche Appendix einer verfügbare Versionen bei --versionlines"
+"Der ausführliche Anhang einer verfügbaren Versionen bei --versionlines"
 
 #: src/eixrc/defaults.cc:2495
 msgid ""
@@ -5667,7 +5660,7 @@ msgid ""
 "It defines the data appended to available versions with --versionlines"
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie definiert den Appendix einerverfügbare Versionen bei --versionlines."
+"Sie definiert den Anhang einer verfügbaren Versionen bei --versionlines."
 
 #: src/eixrc/defaults.cc:2500
 msgid ""
@@ -5675,7 +5668,7 @@ msgid ""
 "It defines lineskip + slot if slotsorted versionlines are used."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie legt den Lineskip + Slot bei Slotsort und --versionlines fest."
+"Sie legt den Zeilensprung + Slot bei Slotsortierung und --versionlines fest."
 
 #: src/eixrc/defaults.cc:2505
 msgid ""
@@ -5683,7 +5676,7 @@ msgid ""
 "It defines lineskip + slot if slotsort but no versionlines are used."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie legt den Lineskip + Slot bei Slotsort ohne --versionlines fest."
+"Sie legt den Zeilensprung + Slot bei Slotsortierung ohne --versionlines fest."
 
 #: src/eixrc/defaults.cc:2510
 msgid ""
@@ -5691,7 +5684,7 @@ msgid ""
 "It defines lineskip + stability if lineskip is used."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie legt den Lineskip + Slot fest, falls lineskip benutzt wird."
+"Sie legt den Zeilensprung + Slot fest, falls lineskip benutzt wird."
 
 #: src/eixrc/defaults.cc:2515
 msgid ""
@@ -5699,7 +5692,7 @@ msgid ""
 "It defines the lineskip for installed versions."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie legt den Lineskip für installierte Versionen fest."
+"Sie legt den Zeilensprung für installierte Versionen fest."
 
 #: src/eixrc/defaults.cc:2521
 msgid ""
@@ -5858,7 +5851,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with installed versions."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für eine Zeile mit den installierten Versionen."
 
 #: src/eixrc/defaults.cc:2735
@@ -5866,7 +5859,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for eix-diff for installed versions."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für eix-diff für installierte Versionen."
 
 #: src/eixrc/defaults.cc:2740
@@ -5882,7 +5875,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the printing the package name."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für den Paketnamen."
 
 #: src/eixrc/defaults.cc:2771
@@ -5890,7 +5883,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the normal header symbols."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert das \"normale\" Kopfsymbol."
 
 #: src/eixrc/defaults.cc:2778
@@ -5898,7 +5891,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the verbose header symbols."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert das ausführliche Kopfsymbol."
 
 #: src/eixrc/defaults.cc:2789
@@ -5906,7 +5899,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the compact header symbols."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert das kompakte Kopfsymbol."
 
 #: src/eixrc/defaults.cc:2802
@@ -5914,7 +5907,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the diff-new header symbols."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert das \"geändert: neu\"-Kopfsymbol."
 
 #: src/eixrc/defaults.cc:2813
@@ -5922,7 +5915,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the diff-delete header symbols."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert das \"geändert: gelöscht\"-Kopfsymbol."
 
 #: src/eixrc/defaults.cc:2828
@@ -5930,7 +5923,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the diff-changed header symbols."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert das \"geändert: geändert\"-Kopfsymbol."
 
 #: src/eixrc/defaults.cc:2845
@@ -5938,7 +5931,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the compact format for the best version(s)."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für die beste(n) installierbare(n) Version(en)."
 
 #: src/eixrc/defaults.cc:2862
@@ -5946,7 +5939,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the compact format for the best version(s) in case of changes."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für die beste(n) Version(en) im Falle von Änderungen."
 
 #: src/eixrc/defaults.cc:2879
@@ -5954,7 +5947,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the eix-diff format for the best version(s)."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für eix-diff für die beste(n) Version(en)."
 
 #: src/eixrc/defaults.cc:2896
@@ -5962,7 +5955,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the eix-diff format for the best version(s) in case of changes."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für eix-diff für die beste(n) Version(en) im Falle von\n"
 "Änderungen."
 
@@ -5971,7 +5964,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the eix-diff format for the old best versions in case of changes."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für eix-diff für die alten besten Versionen im Falle von\n"
 "Änderungen."
 
@@ -5980,7 +5973,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the eix-diff format for changed versions."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für eix-diff für geänderte Versionen."
 
 #: src/eixrc/defaults.cc:2928
@@ -5988,15 +5981,15 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the printing the optional overlay key."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
-"Sie ist das Format für die optionale Overlaynummer."
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
+"Sie ist das Format für den optionale Overlaynummer."
 
 #: src/eixrc/defaults.cc:2933
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the normal header line."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für die \"normale\" Kopfzeile."
 
 #: src/eixrc/defaults.cc:2938
@@ -6004,7 +5997,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the verbose header line."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für die ausführliche Kopfzeile."
 
 #: src/eixrc/defaults.cc:2943
@@ -6012,7 +6005,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the compact header line."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für die kompakte Kopfzeile."
 
 #: src/eixrc/defaults.cc:2948
@@ -6020,7 +6013,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the diff-new header."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert den \"geändert: neu\"-Kopf."
 
 #: src/eixrc/defaults.cc:2953
@@ -6028,7 +6021,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the diff-delete header."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert den \"geändert: gelöscht\"-Kopf."
 
 #: src/eixrc/defaults.cc:2958
@@ -6036,7 +6029,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for the diff-changed header."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert den \"geändert: geändert\"-Kopf."
 
 #: src/eixrc/defaults.cc:2972
@@ -6044,7 +6037,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the eix-diff line for the best versions/slots."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert die eix-diff-Zeile für die besten Versionen pro Slot."
 
 #: src/eixrc/defaults.cc:2978
@@ -6052,7 +6045,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the eix-diff line for changed versions."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert die eix-diff-Zeile für geänderte Versionen."
 
 #: src/eixrc/defaults.cc:2989
@@ -6060,7 +6053,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with marked versions."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für eine Zeile mit markierten Versionen."
 
 #: src/eixrc/defaults.cc:3001
@@ -6068,39 +6061,39 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with package sets."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
-"Sie ist das Format für die Set-Namen."
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
+"Sie ist das Format für eine Zeile mit den Set-Namen."
 
 #: src/eixrc/defaults.cc:3013
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with the package homepage."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
-"Sie ist das Format für die Ausgabe der Homepage."
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
+"Sie ist das Format für eine Zeile mit der Homepage."
 
 #: src/eixrc/defaults.cc:3027
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with the package bug-reference."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
-"Sie ist das Format für die Ausgabe der Bug-Referenz."
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
+"Sie ist das Format für eine Zeile mit der Bug-Referenz."
 
 #: src/eixrc/defaults.cc:3039
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with the package description."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
-"Sie ist das Format für die Paketbeschreibung."
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
+"Sie ist das Format für eine Zeile mit der Paketbeschreibung."
 
 #: src/eixrc/defaults.cc:3050
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with the best versions/slots."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für eine Zeile mit der besten Version pro Slot."
 
 #: src/eixrc/defaults.cc:3069
@@ -6108,7 +6101,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with the up-/downgrade recommendations."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für eine Zeile mit den Up-/Downgrade-Empfehlungen."
 
 #: src/eixrc/defaults.cc:3081
@@ -6116,7 +6109,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for a line with the package licenses."
 msgstr ""
-"Diese Variable dient nur zur verzögerten Ersetzung.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für eine Zeile mit der Paket-Lizenz."
 
 #: src/eixrc/defaults.cc:3089
@@ -6124,7 +6117,7 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format for eix-diff after the versions."
 msgstr ""
-"This variable is only used for delayed substitution.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie ist das Format für eix-diff nach Ausgabe der Versionen."
 
 #: src/eixrc/defaults.cc:3101
@@ -6132,7 +6125,7 @@ msgid ""
 "This format is only used for delayed substitution in FORMAT.\n"
 "It defines the format of the normal output of eix."
 msgstr ""
-"This variable is only used for delayed substitution.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert das \"normale\" Ausgabeformat von eix."
 
 #: src/eixrc/defaults.cc:3118
@@ -6140,7 +6133,7 @@ msgid ""
 "This format is only used for delayed substitution in FORMAT_COMPACT.\n"
 "It defines the format of the compact output of eix (option -c)."
 msgstr ""
-"This variable is only used for delayed substitution.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert das kompakte Ausgabeformat von eix (Option -c)."
 
 #: src/eixrc/defaults.cc:3135
@@ -6148,7 +6141,7 @@ msgid ""
 "This format is only used for delayed substitution in FORMAT_VERBOSE.\n"
 "It defines the format of the verbose output of eix (option -v)."
 msgstr ""
-"This variable is only used for delayed substitution.\n"
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert das ausführliche Ausgabeformat von eix (Option -v)."
 
 #: src/eixrc/defaults.cc:3140
@@ -6157,7 +6150,7 @@ msgid ""
 "Do not modify it in a config file; modify FORMAT_ALL instead."
 msgstr ""
 "Das Format für die \"normale\" Ausgabe von eix.\n"
-"In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
+"In einer Konfigurations-Datei sollte dies nicht verändert werden, sondern\n"
 "statt dessen FORMAT_ALL."
 
 #: src/eixrc/defaults.cc:3145
@@ -6166,7 +6159,7 @@ msgid ""
 "Do not modify it in a config file; modify FORMAT_ALL_COMPACT instead."
 msgstr ""
 "Das Format für die kompakte Ausgabe von eix (Option -c).\n"
-"In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
+"In einer Konfigurations-Datei sollte dies nicht verändert werden, sondern\n"
 "statt dessen FORMAT_ALL_COMPACT."
 
 #: src/eixrc/defaults.cc:3150
@@ -6175,7 +6168,7 @@ msgid ""
 "Do not modify it in a config file; modify FORMAT_ALL_VERBOSE instead."
 msgstr ""
 "Das Format für die ausführliche Ausgabe von eix (Option -v).\n"
-"In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
+"In einer Konfigurations-Datei sollte dies nicht verändert werden, sondern\n"
 "statt dessen FORMAT_ALL_VERBOSE."
 
 #: src/eixrc/defaults.cc:3155
@@ -6216,7 +6209,7 @@ msgid ""
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_NEW instead."
 msgstr ""
 "Das Format für neue Pakete (eix-diff).\n"
-"In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
+"In einer Konfigurations-Datei sollte dies nicht verändert werden, sondern\n"
 "statt dessen DIFF_FORMAT_ALL_NEW."
 
 #: src/eixrc/defaults.cc:3186
@@ -6225,7 +6218,7 @@ msgid ""
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_DELETE instead."
 msgstr ""
 "Das Format für gelöschte Pakete (eix-diff).\n"
-"In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
+"In einer Konfigurations-Datei sollte dies nicht verändert werden, sondern\n"
 "statt dessen DIFF_FORMAT_ALL_DELETE."
 
 #: src/eixrc/defaults.cc:3191
@@ -6234,7 +6227,7 @@ msgid ""
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_CHANGED instead."
 msgstr ""
 "Das Format für geänderte Pakete (eix-diff).\n"
-"In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
+"In einer Konfigurations-Datei sollte dies nicht verändert werden, sondern\n"
 "statt dessen DIFF_FORMAT_ALL_CHANGED."
 
 #: src/eixrc/defaults.cc:3196
@@ -6484,7 +6477,7 @@ msgid ""
 "This variable is ignored. You can use it to collect delayed references to\n"
 "locally added (unused) variables so that they are printed with --dump."
 msgstr ""
-"Diese Variable ist unbenutzt. Sie ist gedacht, benutzt zu werden,\n"
+"Diese Variable ist unbenutzt. Sie ist dazu gedacht, benutzt zu werden,\n"
 "um verzögerten Referenzen auf lokal hinzugefügte (unbenutzte) Variablen\n"
 "hinzuzufügen, so dass diese per --dump ausgegeben werden können."
 
@@ -6562,24 +6555,24 @@ msgstr ""
 " * Installieren Sie gdb (sys-devel/gdb)\n"
 " * Reemergen Sie eix mit FEATURES=\"nostrip\" USE=\"debug\"\n"
 "   oder mit FEATURES=\"nostrip\" CXXFLAGS=\"-g -ggdb3\" LDFLAGS=\"\"\n"
-" * Starten Sie gdb mit \"gdb --args %s Parameter_für_%s\"\n"
-" * Nach \"run\" sollte der Segfault auftreten.\n"
+" * Starten Sie gdb mit \"gdb --args %s Parameter_fuer_%s\"\n"
+" * Nach \"run\" sollte der Speicherzugriffsfehler (Segfault) auftreten.\n"
 " * Nach \"bt\" erhalten Sie ein Backtrace (dies hilft uns enorm).\n"
 " * Melden Sie einen Bug mit der Ausgabe des gdb.\n"
 "\n"
-"Vielen Dank für Ihre Mühe!"
+"Vielen Dank im Voraus für Ihre Mühe!"
 
 #: src/output/formatstring-print.cc:581
 msgid "Unknown property %r"
-msgstr "Unbekannte Property %r"
+msgstr "Unbekannte Eigenschaft %r"
 
 #: src/output/formatstring-print.cc:587
 msgid "Property %r used outside version context"
-msgstr "Property %r wurde außerhalb eines Versionen-Zusammenhangs benutzt"
+msgstr "Eigenschaft %r wurde außerhalb eines Versionen-Zusammenhangs benutzt"
 
 #: src/output/formatstring.cc:104
 msgid "Variable %r calls itself for printing"
-msgstr "Die Variable %r ruft sich selbst zum Drucken auf"
+msgstr "Die Variable %r ruft sich selbst zur Ausgabe auf"
 
 #: src/output/formatstring.cc:202
 #, c-format
@@ -6588,7 +6581,7 @@ msgstr "DARK_TERM hat unzulässiges Format: %s"
 
 #: src/output/formatstring.cc:447
 msgid "Internal error: bad node for parse_colors."
-msgstr "Interner Fehler: bad node for parse_colors."
+msgstr "Interner Fehler: Schlechter Knoten für parse_colors."
 
 #: src/output/formatstring.cc:507
 msgid "'(' without closing ')'"
@@ -6605,7 +6598,7 @@ msgstr "'<' ohne schließendes '>'"
 
 #: src/output/formatstring.cc:603
 msgid "No name of property/variable found after '{'."
-msgstr "Kein Name einer Property/Variablen nach '{' gefunden."
+msgstr "Kein Name einer Eigenschaft/Variablen nach '{' gefunden."
 
 #: src/output/formatstring.cc:607 src/output/formatstring.cc:628
 #: src/output/formatstring.cc:687
@@ -6639,15 +6632,15 @@ msgstr "Zeile %s, Spalte %s: %s"
 
 #: src/portage/basicversion.cc:108
 msgid "internal error: unknown PartType on (%r,%r)"
-msgstr "Interner Fehler: unknown PartType on (%r,%r)"
+msgstr "Interner Fehler: unbekannter PartType bei (%r,%r)"
 
 #: src/portage/basicversion.cc:153
 msgid "malformed (first primary at %r) version string %r"
-msgstr "Versionsstring unerlaubt (erstes Primary bei %r): %r"
+msgstr "Versionsstring unerlaubt (erster Auftritt bei %r): %r"
 
 #: src/portage/basicversion.cc:172
 msgid "malformed (primary at %r) version string %r"
-msgstr "Versionsstring unerlaubt (Primary bei %r): %r"
+msgstr "Versionsstring unerlaubt (Auftritt bei %r): %r"
 
 #: src/portage/basicversion.cc:216
 msgid "malformed (suffix at %r) version string %r"
@@ -6670,20 +6663,21 @@ msgid ""
 "Recursion level for cascading profiles exceeded; stopping reading parents"
 msgstr ""
 "Rekursionslevel für kaskadierende Profile überschritten;\n"
-"weitere Parent-Directories werden ignoriert."
+"weitere Eltern-Verzeichnisse werden ignoriert."
 
 #: src/portage/conf/cascadingprofile.cc:104
 msgid "warning: ignoring parent %r of file %r"
-msgstr "Warnung: Ignoriere Parent %r der Datei %r"
+msgstr "Warnung: Ignoriere Elternteil %r der Datei %r"
 
 #: src/portage/conf/portagesettings.cc:1252
 #: src/portage/conf/portagesettings.cc:1279
 msgid "internal error: Tried to restore nonlocal mask without saving"
-msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
+msgstr "Interner Fehler: Versuch eine nicht-lokale Maske ohne Speichern\n"
+"wiederherzustellen"
 
 #: src/portage/mask.cc:107
 msgid "Can't read category."
-msgstr "Category nicht lesbar."
+msgstr "Kategorie nicht lesbar."
 
 #: src/portage/mask.cc:131
 msgid "Repository name must be separated with :: (one : is missing)."
@@ -6699,7 +6693,7 @@ msgstr "Versionsangabe fehlt."
 
 #: src/portage/mask.cc:204
 msgid "A wildcard is only valid with the = operator."
-msgstr "Ein Wildcard ist nur mit dem = Operator zulässig."
+msgstr "Ein Wildcard ist nur mit dem =-Operator zulässig."
 
 #: src/portage/mask.cc:208
 msgid ""
@@ -6707,13 +6701,13 @@ msgid ""
 "Portage would also accept something like ~app-shells/bash-3*,\n"
 "but behave just like ~app-shells/bash-3."
 msgstr ""
-"Ein Wildcard ist nur mit dem = Operator zulässig.\n"
+"Ein Wildcard ist nur mit dem =-Operator zulässig.\n"
 "Portage würde auch so etwas wie ~app-shells/bash-3* akzeptieren,\n"
 "es aber als ~app-shells/bash-3 interpretieren."
 
 #: src/portage/set_stability.cc:110
 msgid "internal error: SetStability calculates wrong index"
-msgstr "Interner Fehler: SetStability calculates wrong index"
+msgstr "Interner Fehler: SetStability berechnet falschen Index"
 
 #: src/search/matchtree.cc:262
 msgid "warning: ignoring --close without --open"
@@ -6725,12 +6719,12 @@ msgstr "unbekanntes Suchfeld %r"
 
 #: src/search/packagetest.cc:291
 msgid "cannot find match algorithm %r"
-msgstr "unbekannter Matchalgorithmus %r"
+msgstr "unbekannter Match-Algorithmus %r"
 
 #: src/various/drop_permissions.cc:65
 msgid "failed to drop permissions"
-msgstr "Rechteänderung schlug fehl"
+msgstr "Rechte-Änderung schlug fehl"
 
 #: src/various/drop_permissions.cc:68
 msgid "warning: failed to drop permissions"
-msgstr "Warnung: Rechteänderung schlug fehl"
+msgstr "Warnung: Rechte-Änderung schlug fehl"
