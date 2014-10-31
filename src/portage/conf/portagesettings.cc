@@ -225,16 +225,16 @@ void PortageSettings::init(EixRc *eixrc, bool getlocal, bool init_world, bool pr
 
 	override_by_env(test_in_env_early); {
 		/* Read repos.conf */
+		bool have_repos;
 		VarsReader reposfile(VarsReader::SUBST_VARS|VarsReader::PORTAGE_SECTIONS|VarsReader::RECURSE);
 		reposfile.setPrefix(eprefixsource);
-		bool have_repos(reposfile.read((*eixrc)["PORTAGE_REPOS_CONF"].c_str(), NULLPTR, true));
-		if(reposfile.read((m_eprefixconf + USER_REPOS_CONF).c_str(), NULLPTR, true)) {
-			have_repos = true;
-		}
 		string &repositories = (*this)["PORTAGE_REPOSITORIES"];
 		if(!repositories.empty()) {
 			const char *s = repositories.c_str();
-			if(reposfile.readmem(s, s + repositories.size(), NULLPTR)) {
+			have_repos = reposfile.readmem(s, s + repositories.size(), NULLPTR);
+		} else {
+			have_repos = reposfile.read((*eixrc)["PORTAGE_REPOS_CONF"].c_str(), NULLPTR, true);
+			if(reposfile.read((m_eprefixconf + USER_REPOS_CONF).c_str(), NULLPTR, true)) {
 				have_repos = true;
 			}
 		}

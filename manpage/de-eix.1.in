@@ -2046,7 +2046,13 @@ Der Vorgabewert entspricht dem Verhalten von >=portage-2.2*
 
 .TP
 .BR PORTAGE_REPOS_CONF " " (string)
-Diese Datei wird als Default für Repository-Informationen eingelesen.
+Diese Datei wird zur Vorgabe der Repository-Informationen eingelesen.
+Erst danach wird I</etc/portage/repos.conf> berücksichtigt.
+
+.TP
+.BR PORTAGE_REPOSITORIES " " (string)
+Wenn diese Variable nichtleer ist, wird ihr Inhalt ähnlich wie von Portage
+anstelle aller repos.conf-Dateien benutzt.
 
 .TP
 .BR EPREFIX_PORTAGE_EXEC " " (prefix-string)

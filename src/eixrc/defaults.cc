@@ -121,7 +121,13 @@ AddOption(STRING, "MAKE_GLOBALS",
 
 AddOption(STRING, "PORTAGE_REPOS_CONF",
 	"%{PORTAGE_DEFAULTS}/repos.conf", _(
-	"This file is used to set the default repository information."));
+	"This file is used to set the default repository information.\n"
+	"The file /etc/portage/repos.conf is read only after this."));
+
+AddOption(STRING, "PORTAGE_REPOSITORIES",
+	"", _(
+	"If this variable is nonempty, its content is used as a substitute\n"
+	"for all repos.conf files."));
 
 AddOption(PREFIXSTRING, "EPREFIX_PORTAGE_EXEC",
 	"%{EPREFIX}", _(

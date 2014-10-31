@@ -2025,6 +2025,12 @@ The default value corresponds to >=portage-2.2* behavior.
 .TP
 .BR PORTAGE_REPOS_CONF " " (string)
 This file is used to set the default repository information.
+The file I</etc/portage/repos.conf> is read only after this.
+
+.TP
+.BR PORTAGE_REPOSITORIES " " (string)
+If this variable is nonempty, its content is used as by portage as a substitute
+for all repos.conf files.
 
 .TP
 .BR EPREFIX_PORTAGE_EXEC " " (prefix-string)
