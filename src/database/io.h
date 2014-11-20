@@ -159,7 +159,7 @@ class Database : public File {
 template<typename m_Tp> bool Database::read_num(m_Tp *ret, std::string *errtext) {
 	int ch(getch());
 	if(likely(ch != EOF)) {
-		eix::UChar c = eix::UChar(ch);
+		eix::UChar c = static_cast<eix::UChar>(ch);
 		// The one-byte case is exceptional w.r.t. to leading 0:
 		if(c != MAGICNUMCHAR) {
 			*ret = m_Tp(c);
@@ -167,14 +167,14 @@ template<typename m_Tp> bool Database::read_num(m_Tp *ret, std::string *errtext)
 		}
 		unsigned int toget(1);
 		while(likely((ch = getch()) != EOF)) {
-			if((c = eix::UChar(ch)) == MAGICNUMCHAR) {
+			if((c = static_cast<eix::UChar>(ch)) == MAGICNUMCHAR) {
 				++toget;
 				continue;
 			}
 			if(c != 0) {
-				*ret = m_Tp(c);
+				*ret = static_cast<m_Tp>(c);
 			} else {  // leading 0 after MAGICNUMCHAR:
-				*ret = m_Tp(MAGICNUMCHAR);
+				*ret = static_cast<m_Tp>(MAGICNUMCHAR);
 				--toget;
 			}
 			for(;;) {
@@ -184,7 +184,8 @@ template<typename m_Tp> bool Database::read_num(m_Tp *ret, std::string *errtext)
 				if(unlikely((ch = getch()) == EOF)) {
 					break;
 				}
-				*ret = ((*ret) << 8) | m_Tp(eix::UChar(ch));
+				*ret = ((*ret) << 8) |
+					static_cast<m_Tp>(static_cast<eix::UChar>(ch));
 				--toget;
 			}
 			break;
@@ -199,7 +200,7 @@ GCC_DIAG_OFF(sign-conversion)
 	eix::UChar c(t & 0xFFU);
 GCC_DIAG_ON(sign-conversion)
 	// Test the most common case explicitly to speed up:
-	if(t == m_Tp(c)) {
+	if(t == static_cast<m_Tp>(c)) {
 		if(counting) {
 			if(unlikely(c == MAGICNUMCHAR)) {
 				counter += 2;

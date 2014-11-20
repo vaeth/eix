@@ -95,7 +95,7 @@ void File::writeError(string *errtext) {
 bool Database::readUChar(eix::UChar *c, string *errtext) {
 	int ch(getch());
 	if(likely(ch != EOF)) {
-		*c = eix::UChar(ch);
+		*c = static_cast<eix::UChar>(ch);
 		return true;
 	}
 	readError(errtext);

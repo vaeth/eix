@@ -5,6 +5,7 @@
 	- Let PORTAGE_REPOSITORIES _override_ (not only add to) repos.conf
 	  to match with portage's behaviour
 	- zsh-completion: fix checks for _tags
+	- internal: Replace type(...) casting by static_cast<type>(...)
 	- German translation: Many fixes and extensions by
 	  André Jaenisch <andre.jaenisch at openmailbox.org>
 	- Bump gettext
