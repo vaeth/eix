@@ -98,16 +98,16 @@ PackageTest::PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f
 	vardbpkg = vdb;
 	portagesettings = p;
 	print_format = f;
-	stability= set_stability;
-	header   = dbheader;
+	stability = set_stability;
+	header = dbheader;
 	overlay_list = overlay_only_list = in_overlay_inst_list = NULLPTR;
 	algorithm = NULLPTR;
 	from_overlay_inst_list = NULLPTR;
 	from_foreign_overlay_inst_list = NULLPTR;
 	marked_list = NULLPTR;
 
-	field    = NONE;
-	need     = PackageReader::NONE;
+	field = NONE;
+	need = PackageReader::NONE;
 	overlay = obsolete = upgrade = binary =
 		installed = multi_installed =
 		slotted = multi_slot =
@@ -119,8 +119,8 @@ PackageTest::PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f
 	restrictions = ExtendedVersion::RESTRICT_NONE;
 	properties = ExtendedVersion::PROPERTIES_NONE;
 	test_installed = INS_NONE;
-	test_instability =
-	test_stability_default = test_stability_local = test_stability_nonlocal = STABLE_NONE;
+	test_instability = test_stability_default =
+		test_stability_local = test_stability_nonlocal = STABLE_NONE;
 }
 
 PackageTest::~PackageTest() {
@@ -1167,7 +1167,7 @@ bool PackageTest::match(PackageReader *pkg) const {
 
 	// all tests succeeded:
 	return true;
-}
+}  // NOLINT(readability/fn_size)
 
 void PackageTest::get_nowarn_list() {
 	NowarnPreList prelist;

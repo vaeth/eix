@@ -296,7 +296,8 @@ GCC_DIAG_ON(old-style-cast)
 		munmap(filebuffer, filesize);
 	}
 #ifdef DEBUG_MD5
-	cout << "file: " << file << " size: "<< filesize << " should be: " <<  md5sum << " is: "; debug_md5(resarr);
+	cout << "file: " << file << " size: "<< filesize << " should be: " <<  md5sum << " is: ";
+	debug_md5(resarr);
 #endif
 	string::size_type curr(0);
 	for(int i(0); i < 4; ++i) {

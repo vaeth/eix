@@ -1083,7 +1083,7 @@ GCC_DIAG_OFF(sign-conversion)
 GCC_DIAG_ON(sign-conversion)
 	}
 	return EXIT_SUCCESS;
-}
+}  // NOLINT(readability/fn_size)
 
 static bool opencache(Database *db, const char *filename, const char *tooltext) {
 	if(likely(db->openread(filename))) {

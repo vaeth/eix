@@ -16,6 +16,6 @@
 #define DEFAULT_PART 4
 
 void fill_defaults_part_4(EixRc *eixrc) {
-#include "eixrc/defaults.cc"
+#include "eixrc/defaults.cc"  // NOLINT(build/include)
 // _( SYSCONFDIR This comment  satisfies check_includes script
 }

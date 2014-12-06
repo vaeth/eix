@@ -425,7 +425,7 @@ void PrintXml::package(Package *pkg) {
 	}
 	cout << "\t\t</package>\n";
 	++count;
-}
+}  // NOLINT(readability/fn_size)
 
 string PrintXml::escape_xmlstring(const string& s) {
 	string ret;

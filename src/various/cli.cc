@@ -508,6 +508,6 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 			}
 		}
 	}
-}
+}  // NOLINT(readability/fn_size)
 
 // vim:set foldmethod=marker foldlevel=0:

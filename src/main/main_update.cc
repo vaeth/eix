@@ -10,4 +10,4 @@
 #include <config.h>
 
 #define UPDATE_BINARY 1
-#include "main/main.cc"
+#include "main/main.cc"  // NOLINT(build/include)

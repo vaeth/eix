@@ -31,7 +31,7 @@
 static EixRc *static_eixrc = NULLPTR;
 
 void fill_defaults_part_1(EixRc *eixrc) {
-#include "eixrc/defaults.cc"
+#include "eixrc/defaults.cc"  // NOLINT(build/include)
 // _( SYSCONFDIR This comment  satisfies check_includes script
 }
 

@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.30.6
+	Martin Väth <martin at mvath.de>:
+	- internal: silence some stupid cpplint warnings
+
 *eix-0.30.5
 	Martin Väth <martin at mvath.de>:
 	- Let PORTAGE_REPOSITORIES _override_ (not only add to) repos.conf

@@ -12,4 +12,4 @@
 #define EIX_BINARY 1
 #define DIFF_BINARY 1
 #define UPDATE_BINARY 1
-#include "main/main.cc"
+#include "main/main.cc"  // NOLINT(build/include)
