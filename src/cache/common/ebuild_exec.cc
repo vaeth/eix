@@ -167,7 +167,7 @@ void EbuildExec::delete_cachefile() {
 
 /// This is a subfunction of make_cachefile() to ensure that make_cachefile()
 /// has no local variable when vfork() is called.
-void EbuildExec::calc_environment(const char *name, const string& dir, const Package& package, const Version& version) {
+void EbuildExec::calc_environment(const char *name, const string& dir, const Package& package, const Version& version, const string& eapi) {
 	c_env = NULLPTR;
 	envstrings = NULLPTR;
 	// non-sh: environment is kept except for possibly new PORTDIR_OVERLAY
@@ -197,6 +197,7 @@ void EbuildExec::calc_environment(const char *name, const string& dir, const Pac
 		if(likely(!portage_rootpath.empty())) {
 			env["PORTAGE_ROOTPATH"] = portage_rootpath;
 		}
+		env["EAPI"] = eapi;
 		env["PORTAGE_BIN_PATH"] = settings->portage_bin_path;
 		env["PORTAGE_PYM_PATH"] = settings->portage_pym_path;
 		env["PORTAGE_REPO_NAME"] = base->getOverlayName();
@@ -236,7 +237,7 @@ void EbuildExec::calc_environment(const char *name, const string& dir, const Pac
 
 static CONSTEXPR int EXECLE_FAILED = 127;
 
-string *EbuildExec::make_cachefile(const char *name, const string& dir, const Package& package, const Version& version) {
+string *EbuildExec::make_cachefile(const char *name, const string& dir, const Package& package, const Version& version, const string& eapi) {
 	if(unlikely(!calc_settings())) {
 		return NULLPTR;
 	}
@@ -256,7 +257,7 @@ string *EbuildExec::make_cachefile(const char *name, const string& dir, const Pa
 		cachefile = settings->ebuild_depend_temp;
 		cache_defined = true;
 	}
-	calc_environment(name, dir, package, version);
+	calc_environment(name, dir, package, version, eapi);
 #ifndef HAVE_SETENV
 	if((!use_ebuild_sh) && (c_env != NULLPTR)) {
 		exec_name = settings->exec_ebuild.c_str();

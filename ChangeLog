@@ -2,6 +2,9 @@
 
 *eix-0.30.6
 	Martin Väth <martin at mvath.de>:
+	- Fix: pass EAPI in environment for cache method ebuild*.
+	  Thanks to Michał Górny for the analysis, see
+	  https://bugs.gentoo.org/show_bug.cgi?id=532952
 	- internal: silence some stupid cpplint warnings
 
 *eix-0.30.5

@@ -50,7 +50,7 @@ bool ParseCache::initialize(const string& name) {
 	if(unlikely(s.empty())) {
 		return false;
 	}
-	try_parse = nosubst = false;
+	try_parse = ebuild_sh = nosubst = false;
 	bool try_ebuild(false), use_sh(false);
 	for(WordVec::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
 		if(*it == "parse") {
@@ -70,6 +70,7 @@ bool ParseCache::initialize(const string& name) {
 		}
 	}
 	if(try_ebuild) {
+		ebuild_sh = use_sh;
 		ebuild_exec = new EbuildExec(use_sh, this);
 	}
 	while(++it_name != names.end()) {
@@ -100,7 +101,7 @@ const char *ParseCache::getType() const {
 	}
 	if(ebuild_exec != NULLPTR) {
 		const char *t;
-		if(ebuild_exec->use_sh()) {
+		if(ebuild_sh) {
 			t = "ebuild*";
 		} else {
 			t = "ebuild";
@@ -186,9 +187,9 @@ void ParseCache::set_checking(string *str, const char *item, const VarsReader& e
 
 void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool read_onetime_info, bool *have_onetime_info, Package *pkg, Version *version) {
 	version->overlay_key = m_overlay_key;
-	string keywords, restr, props, iuse, slot;
+	string keywords, restr, props, iuse, slot, eapi;
 	bool ok(try_parse);
-	if(ok) {
+	if(ok || ebuild_sh) {
 		VarsReader::Flags flags(VarsReader::NONE);
 		if(!read_onetime_info) {
 			flags |= VarsReader::ONLY_KEYWORDS_SLOT;
@@ -207,43 +208,55 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 			m_error_callback(eix::format(_("Could not properly parse %s: %s")) % fullpath % errtext);
 		}
 
-		set_checking(&keywords, "KEYWORDS", ebuild, &ok);
-		set_checking(&slot, "SLOT", ebuild, &ok);
-		// Empty SLOT is not ok:
-		if(ok && (ebuild_exec != NULLPTR) && slot.empty()) {
-			ok = false;
+		bool set_eapi(ebuild_sh);
+		if(ok) {
+			set_checking(&keywords, "KEYWORDS", ebuild, &ok);
+			set_checking(&slot, "SLOT", ebuild, &ok);
+			// Empty SLOT is not ok:
+			if(ok && (ebuild_exec != NULLPTR) && slot.empty()) {
+				ok = false;
+			}
+			set_checking(&restr, "RESTRICT", ebuild);
+			set_checking(&props, "PROPERTIES", ebuild);
+			set_checking(&iuse, "IUSE", ebuild, &ok);
+			if(Depend::use_depend) {
+				string depend, rdepend, pdepend, hdepend;
+				set_checking(&depend, "DEPEND", ebuild);
+				set_checking(&rdepend, "RDEPEND", ebuild);
+				set_checking(&pdepend, "PDEPEND", ebuild);
+				set_checking(&hdepend, "HDEPEND", ebuild);
+				version->depend.set(depend, rdepend, pdepend, hdepend, true);
+			}
+			if(read_onetime_info) {
+				set_checking(&(pkg->homepage), "HOMEPAGE",    ebuild, &ok);
+				set_checking(&(pkg->licenses), "LICENSE",     ebuild, &ok);
+				set_checking(&(pkg->desc),     "DESCRIPTION", ebuild, &ok);
+				*have_onetime_info = true;
+			}
+			set_eapi = !ok;
 		}
-		set_checking(&restr, "RESTRICT", ebuild);
-		set_checking(&props, "PROPERTIES", ebuild);
-		set_checking(&iuse, "IUSE", ebuild, &ok);
-		if(Depend::use_depend) {
-			string depend, rdepend, pdepend, hdepend;
-			set_checking(&depend, "DEPEND", ebuild);
-			set_checking(&rdepend, "RDEPEND", ebuild);
-			set_checking(&pdepend, "PDEPEND", ebuild);
-			set_checking(&hdepend, "HDEPEND", ebuild);
-			version->depend.set(depend, rdepend, pdepend, hdepend, true);
-		}
-		if(read_onetime_info) {
-			set_checking(&(pkg->homepage), "HOMEPAGE",    ebuild, &ok);
-			set_checking(&(pkg->licenses), "LICENSE",     ebuild, &ok);
-			set_checking(&(pkg->desc),     "DESCRIPTION", ebuild, &ok);
-			*have_onetime_info = true;
+		if(set_eapi) {
+			const string *s(ebuild.find("EAPI"));
+			if(likely(s != NULLPTR)) {
+				eapi = *s;
+			} else {
+				eapi.assign("0");
+			}
 		}
 	}
 	if(verbose) {
 		const char *used_type;
 		if(ok) {
-			used_type = ( nosubst ? "parse*" : "parse" );
+			used_type = (nosubst ? "parse*" : "parse");
 		} else {
-			used_type = ((ebuild_exec->use_sh()) ? "ebuild*" : "ebuild");
+			used_type = (ebuild_sh ? "ebuild*" : "ebuild");
 		}
 		m_error_callback(eix::format("%s/%s-%s: %s") %
 			m_catname % pkg->name % version->getFull() %
 			used_type);
 	}
 	if(!ok) {
-		string *cachefile(ebuild_exec->make_cachefile(fullpath, dirpath, *pkg, *version));
+		string *cachefile(ebuild_exec->make_cachefile(fullpath, dirpath, *pkg, *version, eapi));
 		if(likely(cachefile != NULLPTR)) {
 			flat_get_keywords_slot_iuse_restrict(*cachefile, &keywords, &slot, &iuse, &restr, &props, &(version->depend), m_error_callback);
 			flat_read_file(cachefile->c_str(), pkg, m_error_callback);

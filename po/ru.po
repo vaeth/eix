@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2014-11-22 09:39+0100\n"
+"POT-Creation-Date: 2014-12-21 16:36+0100\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -2018,44 +2018,44 @@ msgstr "Временный файл %s всё ещё на месте после 
 msgid "tempfile %s is not a file"
 msgstr "Временный файл %s не является файлом"
 
-#: src/cache/common/ebuild_exec.cc:250
+#: src/cache/common/ebuild_exec.cc:251
 msgid "creation of tempfile failed"
 msgstr "Ошибка создания временного файла"
 
-#: src/cache/common/ebuild_exec.cc:272 src/cache/common/ebuild_exec.cc:336
+#: src/cache/common/ebuild_exec.cc:273 src/cache/common/ebuild_exec.cc:337
 msgid "forking failed"
 msgstr "Ошибка форкинга"
 
-#: src/cache/common/ebuild_exec.cc:297
+#: src/cache/common/ebuild_exec.cc:298
 #, c-format
 msgid "got signal %s"
 msgstr "Получен сигнал %s"
 
-#: src/cache/common/ebuild_exec.cc:301
+#: src/cache/common/ebuild_exec.cc:302
 #, c-format
 msgid "ebuild got signal %s"
 msgstr "Ебилд получил сигнал %s"
 
-#: src/cache/common/ebuild_exec.cc:313
+#: src/cache/common/ebuild_exec.cc:314
 #, c-format
 msgid "could not start %s"
 msgstr "Не получилось запустить %s"
 
-#: src/cache/common/ebuild_exec.cc:315
+#: src/cache/common/ebuild_exec.cc:316
 #, c-format
 msgid "ebuild failed with status %s"
 msgstr "Ошибка ебилда с состоянием %s"
 
-#: src/cache/common/ebuild_exec.cc:318
+#: src/cache/common/ebuild_exec.cc:319
 msgid "child aborted in a strange way"
 msgstr "Дитя прервано в странной манере"
 
-#: src/cache/common/ebuild_exec.cc:329
+#: src/cache/common/ebuild_exec.cc:330
 #, fuzzy
 msgid "cannot setup pipe"
 msgstr "Ошибка setup pipe"
 
-#: src/cache/common/ebuild_exec.cc:361
+#: src/cache/common/ebuild_exec.cc:362
 #, fuzzy
 msgid "portageq failed"
 msgstr "Ошибка portageq"
@@ -2090,17 +2090,17 @@ msgstr "Ошибка чтения %s: %s"
 msgid "Can't split %r into package and version"
 msgstr "Невозможно разделить %r на пакет и версию"
 
-#: src/cache/parse/parse.cc:207
+#: src/cache/parse/parse.cc:208
 #, c-format
 msgid "Could not properly parse %s: %s"
 msgstr "Не получилось обработать %s: %s"
 
-#: src/cache/parse/parse.cc:252
+#: src/cache/parse/parse.cc:265
 #, c-format
 msgid "Could not properly execute %s"
 msgstr "Не получилось исполнить %s"
 
-#: src/cache/parse/parse.cc:284
+#: src/cache/parse/parse.cc:297
 #, c-format
 msgid "Can't split filename of ebuild %s/%s"
 msgstr "Невозможно отделить имя файла ebuild %s/%s"

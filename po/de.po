@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2014-11-22 09:39+0100\n"
+"POT-Creation-Date: 2014-12-21 16:36+0100\n"
 "PO-Revision-Date: 2014-10-29 21:03+0100\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
@@ -2051,43 +2051,43 @@ msgstr "Temporäre Datei %s trotz Löschens vorhanden"
 msgid "tempfile %s is not a file"
 msgstr "Temporäre Datei %s ist keine Datei"
 
-#: src/cache/common/ebuild_exec.cc:250
+#: src/cache/common/ebuild_exec.cc:251
 msgid "creation of tempfile failed"
 msgstr "Temporäre Datei konnte nicht erzeugt werden"
 
-#: src/cache/common/ebuild_exec.cc:272 src/cache/common/ebuild_exec.cc:336
+#: src/cache/common/ebuild_exec.cc:273 src/cache/common/ebuild_exec.cc:337
 msgid "forking failed"
 msgstr "Forken schlug fehl"
 
-#: src/cache/common/ebuild_exec.cc:297
+#: src/cache/common/ebuild_exec.cc:298
 #, c-format
 msgid "got signal %s"
 msgstr "Erhielt Signal %s"
 
-#: src/cache/common/ebuild_exec.cc:301
+#: src/cache/common/ebuild_exec.cc:302
 #, c-format
 msgid "ebuild got signal %s"
 msgstr "Ebuild erhielt Signal %s"
 
-#: src/cache/common/ebuild_exec.cc:313
+#: src/cache/common/ebuild_exec.cc:314
 #, c-format
 msgid "could not start %s"
 msgstr "Konnte mit %s nicht beginnen"
 
-#: src/cache/common/ebuild_exec.cc:315
+#: src/cache/common/ebuild_exec.cc:316
 #, c-format
 msgid "ebuild failed with status %s"
 msgstr "Ebuild schlug fehl mit Status %s"
 
-#: src/cache/common/ebuild_exec.cc:318
+#: src/cache/common/ebuild_exec.cc:319
 msgid "child aborted in a strange way"
 msgstr "Kindprozess wurde auf seltsame Art beendet"
 
-#: src/cache/common/ebuild_exec.cc:329
+#: src/cache/common/ebuild_exec.cc:330
 msgid "cannot setup pipe"
 msgstr "Pipe kann nicht erstellt werden"
 
-#: src/cache/common/ebuild_exec.cc:361
+#: src/cache/common/ebuild_exec.cc:362
 msgid "portageq failed"
 msgstr "portageq schlug fehl"
 
@@ -2121,17 +2121,17 @@ msgstr "Fehler in Datei %s: %s"
 msgid "Can't split %r into package and version"
 msgstr "%r kann nicht in Paket und Version unterteilt werden"
 
-#: src/cache/parse/parse.cc:207
+#: src/cache/parse/parse.cc:208
 #, c-format
 msgid "Could not properly parse %s: %s"
 msgstr "Fehler beim Parsen von %s: %s"
 
-#: src/cache/parse/parse.cc:252
+#: src/cache/parse/parse.cc:265
 #, c-format
 msgid "Could not properly execute %s"
 msgstr "Konnte %s nicht korrekt ausführen"
 
-#: src/cache/parse/parse.cc:284
+#: src/cache/parse/parse.cc:297
 #, c-format
 msgid "Can't split filename of ebuild %s/%s"
 msgstr "Dateiname des Ebuilds %s/%s kann nicht unterteilt werden"
@@ -2501,7 +2501,8 @@ msgstr ""
 msgid ""
 "This file is used to set the default repository information.\n"
 "The file /etc/portage/repos.conf is read only after this."
-msgstr "Diese Datei wird als Standard für Repository-Informationen eingelesen.\n"
+msgstr ""
+"Diese Datei wird als Standard für Repository-Informationen eingelesen.\n"
 "Die Datei /etc/portage/repos.conf wird erst anschließend gelesen."
 
 #: src/eixrc/defaults.cc:129

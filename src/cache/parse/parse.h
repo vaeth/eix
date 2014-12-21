@@ -30,7 +30,7 @@ class ParseCache : public BasicCache {
 		FurtherCaches further;
 		typedef std::vector<bool> FurtherWorks;
 		FurtherWorks further_works;
-		bool try_parse, nosubst;
+		bool try_parse, nosubst, ebuild_sh;
 		EbuildExec *ebuild_exec;
 		WordVec m_packages;
 		std::string m_catpath;
