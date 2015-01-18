@@ -1,5 +1,13 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.30.7
+	Martin Väth <martin at mvath.de>:
+	- Support @profile: Add it to database (new database version: 34)
+	- new option --profile{,+,-}
+	- new package property "profile"
+	- include profile in "allsetnames"
+	- encode @profile as colors in default format strings
+
 *eix-0.30.6
 	Martin Väth <martin at mvath.de>:
 	- Fix: pass EAPI in environment for cache method ebuild*.

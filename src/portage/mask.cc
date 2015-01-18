@@ -450,8 +450,9 @@ void Mask::apply(Version *ve, bool do_test, Keywords::Redundant check) const {
 			ve->add_reason(comments);
 			break;
 		case maskInSystem:
-			if(ve->maskflags.isSystem() && ve->maskflags.isProfileMask())	/* Won't change anything cause already masked by profile */
+			if(ve->maskflags.isSystem() && ve->maskflags.isProfileMask()) {  /* Won't change anything */
 				break;
+			}
 			if((!do_test) || test(ve)) {
 				ve->maskflags.setbits(MaskFlags::MASK_SYSTEM);
 			} else {
@@ -466,12 +467,12 @@ void Mask::apply(Version *ve, bool do_test, Keywords::Redundant check) const {
 				ve->maskflags.setbits(MaskFlags::MASK_WORLD);
 			}
 			break;
-		case maskAllowedByProfile:
-			if(ve->maskflags.isProfileMask()) { /* Won't change anything cause already masked by profile */
+		case maskInProfile:
+			if(ve->maskflags.isProfile()) {  /* Won't change anything */
 				break;
 			}
-			if(do_test && (!test(ve))) {
-				ve->maskflags.setbits(MaskFlags::MASK_PROFILE);
+			if((!do_test) || test(ve)) {
+				ve->maskflags.setbits(MaskFlags::MASK_IN_PROFILE);
 			}
 			break;
 		case maskMark:

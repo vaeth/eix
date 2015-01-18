@@ -40,7 +40,7 @@ class Mask : public BasicVersion {
 		 * system-profile, entry in packages-file and in system-profile,
 		 * entry in package.mask, entry in package.unmask */
 		typedef enum {
-			maskTypeNone, maskAllowedByProfile,
+			maskTypeNone, maskInProfile,
 			maskInSystem, maskInWorld,
 			maskMask, maskUnmask,
 			maskPseudomask, maskMark, maskMarkOptional

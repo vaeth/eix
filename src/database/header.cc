@@ -35,7 +35,10 @@ const DBHeader::OverlayTest
 const DBHeader::DBVersion DBHeader::current;
 
 /** Which version we do accept. The list must end with 0 */
-const DBHeader::DBVersion DBHeader::accept[] = { DBHeader::current, 32, 31, 0 };
+const DBHeader::DBVersion DBHeader::accept[] = {
+	DBHeader::current, 33, 32, 31,
+	0
+};
 
 const char *DBHeader::magic = "eix\n";
 

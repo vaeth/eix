@@ -1223,9 +1223,14 @@ AddOption(STRING, "COLOR_CATEGORY",
 	"It defines the color used for the category of packages."));
 
 AddOption(STRING, "COLOR_CATEGORY_SYSTEM",
-	"yellow;%{BG0S}|154,1;%{BG1}|blue;%{BG2}|57,1;%{BG3}", _(
+	"yellow;%{BG0S}|154,1;%{BG1}|blue;%{BG2}|69,1;%{BG3}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the category of system packages."));
+
+AddOption(STRING, "COLOR_CATEGORY_PROFILE",
+	"cyan;%{BG0S}|81,1;%{BG1}|cyan;%{BG2}|57,1;%{BG3}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the category of profile packages."));
 
 AddOption(STRING, "COLOR_CATEGORY_WORLD",
 	"%{COLOR_WORLD}", _(
@@ -2749,10 +2754,13 @@ AddOption(STRING, "FORMAT_FINISH",
 AddOption(STRING, "FORMAT_NAME",
 	"{system}(%{COLOR_CATEGORY_SYSTEM})"
 	"{else}"
-		"{world}(%{COLOR_CATEGORY_WORLD})"
+		"{profile}(%{COLOR_CATEGORY_PROFILE})"
 		"{else}"
-			"{world_sets}(%{COLOR_CATEGORY_WORLD_SETS})"
-			"{else}(%{COLOR_CATEGORY}){}"
+			"{world}(%{COLOR_CATEGORY_WORLD})"
+			"{else}"
+				"{world_sets}(%{COLOR_CATEGORY_WORLD_SETS})"
+				"{else}(%{COLOR_CATEGORY}){}"
+			"{}"
 		"{}"
 	"{}<category>(%{COLOR_NORMAL})/"
 	"{marked}(%{COLOR_MARKED_NAME})"

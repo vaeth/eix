@@ -245,6 +245,7 @@ class PrintFormat {
 		void PKG_MAINREPO(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_OVERLAYKEY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_SYSTEM(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_PROFILE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_WORLD(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_WORLD_SETS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_SETNAMES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;

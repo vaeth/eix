@@ -145,17 +145,22 @@ class Package : public eix::ptr_list<Version> {
 			return (version_collects & COLLECT_AT_LEAST_TWO_OVERLAYS);
 		}
 
-		/** True if any version is in the system profile. */
+		/** True if some version is in @system. */
 		bool is_system_package() const {
 			return local_collects.isSystem();
 		}
 
-		/** True if any version is in the world file. */
+		/** True if some version is in @profile. */
+		bool is_profile_package() const {
+			return local_collects.isProfile();
+		}
+
+		/** True if some version is in the world file. */
 		bool is_world_package() const {
 			return local_collects.isWorld();
 		}
 
-		/** True if any version is in the world sets. */
+		/** True if some version is in the world sets. */
 		bool is_world_sets_package() const {
 			return local_collects.isWorldSets();
 		}

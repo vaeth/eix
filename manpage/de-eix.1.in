@@ -530,16 +530,16 @@ Undernfalls wird diese Entscheidung von B<UPGRADE_LOCAL_MODE> gefällt.
 Falls Sie nur Pakete mit Downgrade-Empfehlung sehen wollen, können Sie
 die später beschriebenen B<FORMATSTRING>-Features benutzen.
 .TP
-.BR --stable ", " --testing ", " --non-masked ", " --system
+.BR --stable ", " --testing ", " --non-masked ", " --system ", " --profile
 Findet nur Pakete, die zumindest eine Version haben, die stabil (und nicht-maskiert),
-testing oder stabil (und nicht maskiert), nicht-maskiert, bzw. in @system ist.
+testing oder stabil (und nicht maskiert), nicht-maskiert, bzw. in @system oder @profile ist.
 Falls mehrere dieser Optionen in einem Test kombiniert werden, muss die selbe Version
 allen Kriterien genügen.
 .TP
-.BR --stable+ ", " --testing+ ", " --non-masked+ ", " --system+
+.BR --stable+ ", " --testing+ ", " --non-masked+ ", " --system+ ", " --profile+
 Wie eben, nur dass sich der Test so verhält, als wenn  B<LOCAL_PORTAGE_CONFIG=true> gesetzt wäre.
 .TP
-.BR --stable- ", " --testing- ", " --non-masked- ", " --system-
+.BR --stable- ", " --testing- ", " --non-masked- ", " --system- ", " --profile-
 Wie eben, nur dass sich der Test so verhält, als wenn  B<LOCAL_PORTAGE_CONFIG=false> gesetzt wäre.
 .TP
 .BR --installed-unstable ", " --installed-testing ", " --installed-masked
@@ -830,8 +830,8 @@ Versionen zu spezifizieren.
 Name eine lokalen Paket-Sets oder Version in der Datenbank
 (d.h. entsprechend einer Datei aus B</etc/portage/sets>, B</etc/portage/sets.eix>,
 oder eines anderen Verzeichnisses ausB<EIX_LOCAL_SETS_ADD>; siehe die Kommentare zu B<EIX_LOCAL_SETS>).
-Die "system" und "world" sets sind hier bewusst ausgeshlossen, da Letzteres mit
-B<--system[+-]>, B<--world>, B<--world-all> oder B<--world-sets> getestet werden sollte.
+Die "profile", "system" und "world" sets sind hier bewusst ausgenommen, da diese mit
+B<--profile[+-]>, B<--system[+-]>, B<--world>, B<--world-all> oder B<--world-sets> getestet werden sollten.
 .TP
 .B --slot
 Slotname einer Version in der Datenbank, z.B. "kde-4"
@@ -1357,7 +1357,7 @@ Option angegeben wurde, ist die leer.
 .TP
 .BR setnames ", " allsetnames
 Die Namen aller lokalen Sets, zu denen das Paket gehört, durch Leerzeichen separiert.
-Mit B<allsetnames> ist auch das @system-Set dabei.
+Mit B<allsetnames> können auch "system" und "profile" dabei sein.
 .TP
 .B binary
 Ist 1 oder leer, je nachdem, ob mindestens eine Version (verfügbar oder installiert) eine *.tbz2 Datei besitzt.
@@ -1374,6 +1374,9 @@ Ist 1 or leer, je nachdem ob mindestens eine verfügbare Version aus einem (nich
 .TP
 .B system
 1, falls das Paket zu @system gehört.
+.TP
+.B profile
+1, falls das Paket zu @profile gehört.
 .TP
 .B world
 1, falls das Paket zur world-Datei gehört.

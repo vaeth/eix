@@ -558,8 +558,14 @@ void PortageSettings::get_setnames(WordSet *names, const Package *p, bool also_n
 			names->insert(set_names[*sit]);
 		}
 	}
-	if(also_nonlocal && p->is_system_package())
-		names->insert("system");
+	if(also_nonlocal) {
+		if(unlikely(p->is_system_package())) {
+			names->insert("system");
+		}
+		if(unlikely(p->is_profile_package())) {
+			names->insert("profile");
+		}
+	}
 }
 
 string PortageSettings::get_setnames(const Package *p, bool also_nonlocal) const {

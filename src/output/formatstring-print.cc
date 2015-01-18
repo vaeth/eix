@@ -404,6 +404,7 @@ class Scanner {
 			prop_pkg("overlaykey", &PrintFormat::PKG_OVERLAYKEY);
 			prop_pkg("binary", &PrintFormat::PKG_BINARY);
 			prop_pkg("system", &PrintFormat::PKG_SYSTEM);
+			prop_pkg("profile", &PrintFormat::PKG_PROFILE);
 			prop_pkg("world", &PrintFormat::PKG_WORLD);
 			prop_pkg("world_sets", &PrintFormat::PKG_WORLD_SETS);
 			prop_pkg("setnames", &PrintFormat::PKG_SETNAMES);
@@ -815,6 +816,12 @@ void PrintFormat::PKG_MAINREPO(OutputString *s, Package *package) const {
 
 void PrintFormat::PKG_SYSTEM(OutputString *s, Package *package) const {
 	if(package->is_system_package()) {
+		s->set_one();
+	}
+}
+
+void PrintFormat::PKG_PROFILE(OutputString *s, Package *package) const {
+	if(package->is_profile_package()) {
 		s->set_one();
 	}
 }

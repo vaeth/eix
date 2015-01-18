@@ -156,6 +156,9 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 			case O_SYSTEM_DEFAULT: USE_TEST;
 				test->SetStabilityDefault(PackageTest::STABLE_SYSTEM);
 				break;
+			case O_PROFILE_DEFAULT: USE_TEST;
+				test->SetStabilityDefault(PackageTest::STABLE_PROFILE);
+				break;
 			case O_STABLE_LOCAL: USE_TEST;
 				test->SetStabilityLocal(PackageTest::STABLE_FULL);
 				break;
@@ -168,6 +171,9 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 			case O_SYSTEM_LOCAL: USE_TEST;
 				test->SetStabilityLocal(PackageTest::STABLE_SYSTEM);
 				break;
+			case O_PROFILE_LOCAL: USE_TEST;
+				test->SetStabilityLocal(PackageTest::STABLE_PROFILE);
+				break;
 			case O_STABLE_NONLOCAL: USE_TEST;
 				test->SetStabilityNonlocal(PackageTest::STABLE_FULL);
 				break;
@@ -179,6 +185,9 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 				break;
 			case O_SYSTEM_NONLOCAL: USE_TEST;
 				test->SetStabilityNonlocal(PackageTest::STABLE_SYSTEM);
+				break;
+			case O_PROFILE_NONLOCAL: USE_TEST;
+				test->SetStabilityNonlocal(PackageTest::STABLE_PROFILE);
 				break;
 			case O_INSTALLED_UNSTABLE: USE_TEST;
 				test->SetInstability(PackageTest::STABLE_FULL);

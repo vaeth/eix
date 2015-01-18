@@ -509,16 +509,16 @@ Otherwise, this decision is based upon B<UPGRADE_LOCAL_MODE>.
 If you want to see only packages with downgrade recommendations, you might make
 use of the B<FORMATSTRING> features described below.
 .TP
-.BR --stable ", " --testing ", " --non-masked ", " --system
+.BR --stable ", " --testing ", " --non-masked ", " --system ", " --profile
 Only match packages which have at least one version which is stable (and non-masked),
-testing or stable (and non-masked), non-masked, or in system, respectively.
+testing or stable (and non-masked), non-masked, or in system or profile, respectively.
 If several of these options are combined in one test, it is the same version
 which must satisfy all.
 .TP
-.BR --stable+ ", " --testing+ ", " --non-masked+ ", " --system+
+.BR --stable+ ", " --testing+ ", " --non-masked+ ", " --system+ ", " --profile+
 This is as the above ones just that the test acts as if B<LOCAL_PORTAGE_CONFIG=true>.
 .TP
-.BR --stable- ", " --testing- ", " --non-masked- ", " --system-
+.BR --stable- ", " --testing- ", " --non-masked- ", " --system- ", " --profile-
 This is as the above ones just that the test acts as if B<LOCAL_PORTAGE_CONFIG=false>.
 .TP
 .BR --installed-unstable ", " --installed-testing ", " --installed-masked
@@ -808,8 +808,8 @@ Name of a local package set of a version in the database
 (i.e. corresponding to a file in B</etc/portage/sets>, B</etc/portage/sets.eix>,
 or from another directory specified in B<EIX_LOCAL_SETS_ADD>;
 see the comments to B<EIX_LOCAL_SETS>).
-The "system" and "world" sets are intentionally excluded here, since the latter
-should be tested with B<--system[+-]>, B<--world>, B<--world-all>, or B<--world-sets>.
+The "profile", "system" and "world" sets are intentionally excluded here, since these
+should be tested with B<--profile[+-]>, B<--system[+-]>, B<--world>, B<--world-all>, or B<--world-sets>.
 .TP
 .B --slot
 Slotname of a version in the database, e.g. "kde-4"
@@ -1330,7 +1330,7 @@ option is used, this will be empty.
 .TP
 .BR setnames ", " allsetnames
 The name of all local sets to which the package belongs, separated by spaces.
-With B<allsetnames> also the "system" set name is included.
+With B<allsetnames> also the "system" and "profile" set names are included.
 .TP
 .B binary
 Is 1 or empty, depending on whether at least one version (available or installed) has a corresponding *.tbz2 file.
@@ -1346,7 +1346,10 @@ If all versions are in the same overlay, "[overlaykey]" is output with correspon
 Is 1 or empty, depending on whether at least one available version is from a (non)virtual overlay.
 .TP
 .B system
-expands to 1 if the package is in the system profile
+expands to 1 if the package is in @system
+.TP
+.B profile
+expands to 1 if the package is in @profile
 .TP
 .B world
 expands to 1 if the package is in the world file

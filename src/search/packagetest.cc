@@ -85,7 +85,9 @@ const PackageTest::TestStability
 		PackageTest::STABLE_FULL,
 		PackageTest::STABLE_TESTING,
 		PackageTest::STABLE_NONMASKED,
-		PackageTest::STABLE_SYSTEM;
+		PackageTest::STABLE_SYSTEM,
+		PackageTest::STABLE_PROFILE,
+		PackageTest::STABLE_SYSTEMPROFILE;
 
 NowarnMaskList *PackageTest::nowarn_list = NULLPTR;
 
@@ -642,11 +644,18 @@ static bool stabilitytest(const Package *p, PackageTest::TestStability what) {
 		return true;
 	}
 	for(Package::const_iterator it(p->begin()); likely(it != p->end()); ++it) {
-		if(what & PackageTest::STABLE_SYSTEM) {
-			if(!it->maskflags.isSystem()) {
-				continue;
+		if((what & PackageTest::STABLE_SYSTEMPROFILE) != PackageTest::STABLE_NONE) {
+			if((what & PackageTest::STABLE_SYSTEM) != PackageTest::STABLE_NONE) {
+				if(!it->maskflags.isSystem()) {
+					continue;
+				}
 			}
-			if(!(what & ~PackageTest::STABLE_SYSTEM)) {
+			if((what & PackageTest::STABLE_PROFILE) != PackageTest::STABLE_NONE) {
+				if(!it->maskflags.isProfile()) {
+					continue;
+				}
+			}
+			if(!(what & ~PackageTest::STABLE_SYSTEMPROFILE)) {
 				return true;
 			}
 		}

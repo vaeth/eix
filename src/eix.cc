@@ -168,6 +168,7 @@ static void dump_help() {
 "    --testing[+-]         Match packages with a testing or stable version.\n"
 "    --non-masked[+-]      Match packages with a non-masked version.\n"
 "    --system[+-]          Match @system packages.\n"
+"    --profile[+-]         Match @profile packages.\n"
 "    --installed-unstable  Match packages with a non-stable installed version.\n"
 "    --installed-testing   Match packages with a testing    installed version.\n"
 "    --installed-masked    Match packages with a masked     installed version.\n"
@@ -390,14 +391,17 @@ EixOptionList::EixOptionList() {
 	push_back(Option("selected-set",  O_SELECTED_SET));
 	push_back(Option("selected",      O_SELECTED_ALL));
 	push_back(Option("system",        O_SYSTEM_DEFAULT));
+	push_back(Option("profile",       O_PROFILE_DEFAULT));
 	push_back(Option("stable+",       O_STABLE_LOCAL));
 	push_back(Option("testing+",      O_TESTING_LOCAL));
 	push_back(Option("non-masked+",   O_NONMASKED_LOCAL));
 	push_back(Option("system+",       O_SYSTEM_LOCAL));
+	push_back(Option("profile+",      O_PROFILE_LOCAL));
 	push_back(Option("stable-",       O_STABLE_NONLOCAL));
 	push_back(Option("testing-",      O_TESTING_NONLOCAL));
 	push_back(Option("non-masked-",   O_NONMASKED_NONLOCAL));
 	push_back(Option("system-",       O_SYSTEM_NONLOCAL));
+	push_back(Option("profile-",      O_PROFILE_NONLOCAL));
 	push_back(Option("installed-unstable", O_INSTALLED_UNSTABLE));
 	push_back(Option("installed-testing",  O_INSTALLED_TESTING));
 	push_back(Option("installed-masked",   O_INSTALLED_MASKED));

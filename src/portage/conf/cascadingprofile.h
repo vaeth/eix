@@ -56,13 +56,13 @@ class CascadingProfile {
 		ProfileFiles m_profile_files; /**< List of files in profile. */
 		PortageSettings *m_portagesettings; /**< Profilesettings to which this instance "belongs" */
 
-		MaskList<Mask> m_system;         /**< Packages in system profile. */
-		MaskList<Mask> m_system_allowed; /**< Packages that are not in system profile but only allowed to have specific versions.*/
+		MaskList<Mask> m_system;         /**< Packages in @system */
+		MaskList<Mask> m_profile;        /**< Packages in @profile */
 		MaskList<Mask> m_package_masks;  /**< Masks from package.mask */
 		MaskList<Mask> m_package_unmasks;/**< Masks from package.unmask */
 		MaskList<PKeywordMask> m_package_keywords;/**< Masks from package.keywords */
 		MaskList<KeywordMask> m_package_accept_keywords;/**< Masks from package.accept_keywords */
-		PreList p_system, p_system_allowed, p_package_masks, p_package_unmasks,
+		PreList p_system, p_profile, p_package_masks, p_package_unmasks,
 			p_package_keywords, p_package_accept_keywords;
 
 	private:
@@ -76,7 +76,7 @@ class CascadingProfile {
 		typedef bool (CascadingProfile::*Handler)(const std::string& filename, const char *repo);
 
 		/** Read all "packages" files found in profile.
-		 * Populate p_system and p_system_allowed.
+		 * Populate p_system and p_profile.
 		 * @return true if data was changed */
 		bool readPackages(const std::string& filename, const char *repo);
 

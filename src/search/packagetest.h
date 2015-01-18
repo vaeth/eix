@@ -89,7 +89,9 @@ class PackageTest {
 			STABLE_FULL         = 0x01U,  /**< Test for stable keyword */
 			STABLE_TESTING      = 0x02U,  /**< Test for testing keyword */
 			STABLE_NONMASKED    = 0x04U,  /**< Test for non-masked packages */
-			STABLE_SYSTEM       = 0x08U;  /**< Test for system packages */
+			STABLE_SYSTEM       = 0x08U,  /**< Test for system packages */
+			STABLE_PROFILE      = 0x10U,  /**< Test for stable packages */
+			STABLE_SYSTEMPROFILE = (STABLE_SYSTEM|STABLE_PROFILE);
 
 		/** Set default values. */
 		PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f, const SetStability *stability, const DBHeader *dbheader) ATTRIBUTE_NONNULL_;

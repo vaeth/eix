@@ -191,7 +191,7 @@ bool CascadingProfile::readPackages(const string& filename, const char *repo) {
 	pushback_lines(filename.c_str(), &lines, true, true);
 	bool ret(false);
 	PreList::FilenameIndex file_system(p_system.push_name(filename, repo));
-	PreList::FilenameIndex file_system_allowed(p_system_allowed.push_name(filename, repo));
+	PreList::FilenameIndex file_profile(p_profile.push_name(filename, repo));
 	PreList::LineNumber number(1);
 	for(LineVec::const_iterator it(lines.begin());
 		likely(it != lines.end()); ++number, ++it) {
@@ -212,9 +212,9 @@ bool CascadingProfile::readPackages(const string& filename, const char *repo) {
 				ret |= p_system.add_line(p, file_system, number, false);
 			}
 		} else if(unlikely(remove)) {
-			ret |= p_system_allowed.remove_line(p);
+			ret |= p_profile.remove_line(p);
 		} else {
-			ret |= p_system_allowed.add_line(p, file_system_allowed, number, false);
+			ret |= p_profile.add_line(p, file_profile, number, false);
 		}
 	}
 	return ret;
@@ -262,7 +262,7 @@ void CascadingProfile::finalize() {
 	}
 	finalized = true;
 	p_system.initialize(&m_system, Mask::maskInSystem);
-	p_system_allowed.initialize(&m_system_allowed, Mask::maskAllowedByProfile);
+	p_profile.initialize(&m_profile, Mask::maskInProfile);
 	p_package_masks.initialize(&m_package_masks, Mask::maskMask, true);
 	p_package_unmasks.initialize(&m_package_unmasks, Mask::maskUnmask);
 	p_package_keywords.initialize(&m_package_keywords);
@@ -299,7 +299,7 @@ GCC_DIAG_OFF(sign-conversion)
 GCC_DIAG_ON(sign-conversion)
 		}
 	}
-	m_system_allowed.applyMasks(p);
+	m_profile.applyMasks(p);
 	m_system.applyMasks(p);
 	m_package_masks.applyMasks(p);
 	m_package_unmasks.applyMasks(p);
@@ -315,7 +315,7 @@ GCC_DIAG_ON(sign-conversion)
 		for(Version::SetsIndizes::const_iterator it(v->sets_indizes.begin());
 			unlikely(it != v->sets_indizes.end()); ++it) {
 			const string& set_name(m_portagesettings->set_names[*it]);
-			m_system_allowed.applySetMasks(*v, set_name);
+			m_profile.applySetMasks(*v, set_name);
 			m_system.applySetMasks(*v, set_name);
 			m_package_masks.applySetMasks(*v, set_name);
 			m_package_unmasks.applySetMasks(*v, set_name);
