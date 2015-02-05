@@ -7,6 +7,7 @@
 	- new package property "profile"
 	- include profile in "allsetnames"
 	- encode @profile as colors in default format strings
+	- separate PORTDIR_OVERLAY by newlines (for output in other programs)
 	- internal tools: avoid GREP_OPTIONS for compatibility with grep-2.21
 
 *eix-0.30.6

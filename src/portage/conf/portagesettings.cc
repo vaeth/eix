@@ -299,7 +299,7 @@ void PortageSettings::init(EixRc *eixrc, bool getlocal, bool init_world, bool pr
 			overlayvec.push_back(it->path);
 		}
 		ref.clear();
-		join_to_string(&ref, overlayvec);
+		join_to_string(&ref, overlayvec, "\n");
 	}
 
 	user_config = NULLPTR;
