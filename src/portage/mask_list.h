@@ -31,69 +31,63 @@ class Package;
 class Version;
 
 template<typename m_Type> class Masks : public std::list<m_Type> {
-		std::string full;
-
 	public:
-		using std::list<m_Type>::push_back;
-		using std::list<m_Type>::begin;
-		using std::list<m_Type>::end;
-		typedef typename std::list<m_Type>::iterator iterator;
-		typedef typename std::list<m_Type>::const_iterator const_iterator;
+		typedef typename std::list<m_Type> MasksList;
+		using MasksList::begin;
+		using MasksList::end;
+		using MasksList::insert;
+		using MasksList::push_back;
+		typedef typename MasksList::iterator iterator;
+		typedef typename MasksList::const_iterator const_iterator;
 
-		Masks(const std::string& f, const m_Type& m) : std::list<m_Type>(1, m), full(f) {
+		Masks() : MasksList() {
 		}
 
 		void add(const m_Type& m) {
+			for(iterator it(begin()); it != end(); ++it) {
+				if(m.priority < it->priority) {
+					insert(it, m);
+					return;
+				}
+			}
 			push_back(m);
-		}
-
-		bool match_full(const char *cat_name) const ATTRIBUTE_NONNULL_ {
-			return !fnmatch(full.c_str(), cat_name, FNM_PATHNAME);
 		}
 };
 
-template<typename m_Type> class MaskList : std::vector<Masks<m_Type> > {
+template<typename m_Type> class MaskList {
 	private:
-		typedef typename std::vector<Masks<m_Type> > super;
-		typedef typename super::size_type size_type;
-		typedef typename super::iterator iterator;
-		typedef typename super::const_iterator const_iterator;
 		typedef typename Masks<m_Type>::const_iterator m_const_iterator;
-		using super::begin;
-		using super::end;
-		using super::size;
-		using super::operator[];
-		typedef typename std::map<std::string, Masks<m_Type> > LookupType;
-		typedef typename std::map<std::string, size_type> MapType;
-		typedef typename MapType::const_iterator map_const_iterator;
-		typedef typename LookupType::iterator lookup_iterator;
-		typedef typename LookupType::const_iterator lookup_const_iterator;
-		using super::push_back;
+		typedef typename std::map<std::string, Masks<m_Type> > FullType;
+		typedef typename FullType::const_iterator full_const_iterator;
+		typedef typename std::map<std::string, Masks<m_Type> > ExactType;
+		typedef typename ExactType::const_iterator exact_const_iterator;
 
-		// We collect only the patterns in the vector.
-		// The exact ones are in a lookup-table.
-		LookupType exact_name;
-		MapType full_index;
+		ExactType exact_name;
+		FullType full_name;
 
 	public:
 		typedef typename eix::ptr_list<const m_Type> Get;
 
 		bool empty() const {
-			return (exact_name.empty() && super::empty());
+			return (exact_name.empty() && full_name.empty());
 		}
 
 		void clear() {
-			super::clear();
 			exact_name.clear();
-			full_index.clear();
+			full_name.clear();
+		}
+
+		inline static bool match_full(const std::string& mask, const std::string& name) {
+			return !fnmatch(mask.c_str(), name.c_str(), FNM_PATHNAME);
 		}
 
 		bool match_full(const std::string& full) const {
 			if(exact_name.find(full) != exact_name.end()) {
 				return true;
 			}
-			for(const_iterator it(begin()); likely(it != end()); ++it) {
-				if(unlikely(it->match_full(full.c_str()))) {
+			for(full_const_iterator it(full_name.begin());
+				likely(it != full_name.end()); ++it) {
+				if(unlikely(match_full(it->first, full))) {
 					return true;
 				}
 			}
@@ -115,12 +109,13 @@ template<typename m_Type> class MaskList : std::vector<Masks<m_Type> > {
 
 		Get *get_full(const std::string& full) const {
 			Get *l(NULLPTR);
-			for(const_iterator it(begin()); likely(it != end()); ++it) {
-				if(unlikely(it->match_full(full.c_str()))) {
-					push_result(&l, *it);
+			for(full_const_iterator it(full_name.begin());
+				likely(it != full_name.end()); ++it) {
+				if(unlikely(match_full(it->first, full))) {
+					push_result(&l, it->second);
 				}
 			}
-			lookup_const_iterator it(exact_name.find(full));
+			exact_const_iterator it(exact_name.find(full));
 			if(it != exact_name.end()) {
 				push_result(&l, it->second);
 			}
@@ -140,21 +135,10 @@ template<typename m_Type> class MaskList : std::vector<Masks<m_Type> > {
 			full.append(1, '/');
 			full.append(m.getName());
 			if(full.find_first_of("*?[") == std::string::npos) {
-				lookup_iterator l(exact_name.find(full));
-				if(l != exact_name.end()) {
-					l->second.add(m);
-					return;
-				}
-				exact_name.insert(std::pair<std::string, Masks<m_Type> >(full, Masks<m_Type>("", m)));
+				exact_name[full].add(m);
 				return;
 			}
-			map_const_iterator f(full_index.find(full));
-			if(f != full_index.end()) {
-				(*this)[f->second].add(m);
-				return;
-			}
-			full_index.insert(std::pair<std::string, size_type>(full, size()));
-			push_back(Masks<m_Type>(full, m));
+			full_name[full].add(m);
 		}
 
 		/* return true if something was added */
@@ -166,7 +150,6 @@ template<typename m_Type> class MaskList : std::vector<Masks<m_Type> > {
 		/** This can be optionally called after the last add():
 		 *  It will release memory. */
 		void finalize() {
-			full_index.clear();
 		}
 
 		void applyListItems(Package *p) const ATTRIBUTE_NONNULL_ {

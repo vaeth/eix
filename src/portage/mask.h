@@ -55,6 +55,7 @@ class Mask : public BasicVersion {
 			maskIsSet
 		} Operator;
 
+		eix::TinyUnsigned priority;
 		StringList comments;
 
 	protected:

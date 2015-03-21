@@ -30,29 +30,40 @@
 
 using std::string;
 
-/** Data-driven programming is nice :).
- * Must be in order .. no previous operator is allowed to be a prefix of a
- * following operator. */
+// Data-driven programming is nice :).
+// Must be in order .. no previous operator is allowed to be a prefix of a
+// following operator.
+//
+// The priority is still modified, depending on whether version-wildard,
+// slot and/or repository are specified. The result is similar to
+// best_match_to_list() from portage's portage/dep/__init__.py
+// Note that wildcards (extended syntax) have alway higher priority due to
+// our treatmeant in mask_list.h; we only distinguish for identical masks.
+// Thus, for example, we have the priority order
+// */* */*::foo */bar */bar::foo cat/pkg cat/pkg::foo
+// which deviates from that of portage which orders extended+repo lower:
+// */* */bar */*::foo */bar::foo cat/pkg cat/pkg::foo
 static const struct OperatorTable {
 	const char *str;
 	eix::TinyUnsigned len;
 	Mask::Operator op;
+	eix::TinyUnsigned priority;
 } operators[] = { {
-		"<=", 2, Mask::maskOpLessEqual
+		"<=", 2, Mask::maskOpLessEqual, 16
 	}, {
-		"<" , 1, Mask::maskOpLess
+		"<" , 1, Mask::maskOpLess, 16
 	}, {
-		">=", 2, Mask::maskOpGreaterEqual
+		">=", 2, Mask::maskOpGreaterEqual, 16
 	}, {
-		">" , 1, Mask::maskOpGreater
+		">" , 1, Mask::maskOpGreater, 16
 	}, {
-		"=" , 1, Mask::maskOpEqual
+		"=" , 1, Mask::maskOpEqual, 40
 	}, {
-		"~" , 1, Mask::maskOpRevisions
+		"~" , 1, Mask::maskOpRevisions, 32
 	}, {
-		"@" , 1, Mask::maskIsSet
+		"@" , 1, Mask::maskIsSet, 8
 	}, {
-		""  , 0, Mask::maskOpAll /* this must be the last one */
+		""  , 0, Mask::maskOpAll, 0  // this must be the last one
 	}
 };
 
@@ -78,17 +89,19 @@ BasicVersion::ParseResult Mask::parseMask(const char *str, string *errtext, eix:
 	if(unlikely(m_type == maskPseudomask)) {
 		m_operator = maskOpEqual;
 	} else {
-		for(eix::TinyUnsigned i(0); ; ++i) {
-			eix::TinyUnsigned len(operators[i].len);
+		for(const OperatorTable *curr = operators; ; ++curr) {
+			eix::TinyUnsigned len(curr->len);
 			if(unlikely(len == 0)) {
 				// no operator
-				m_operator = operators[i].op;
+				m_operator = curr->op;
+				priority = curr->priority;
 				break;
 			}
-			if(unlikely(strncmp(str, operators[i].str, len) == 0)) {
-				m_operator = operators[i].op;
+			if(unlikely(strncmp(str, curr->str, len) == 0)) {
+				m_operator = curr->op;
+				priority = curr->priority;
 				// Skip the operator-part
-				str += strlen(operators[i].str);
+				str += strlen(curr->str);
 				if(unlikely(m_operator == maskIsSet)) {
 					m_category = SET_CATEGORY;
 					m_name = str;
@@ -132,14 +145,17 @@ GCC_DIAG_ON(sign-conversion)
 					return parsedError;
 				}
 				source = slot_end + 2;
+				priority += 3;  // Slot + Repository specified
 				dest = &m_reponame;
 			} else {
 				m_reponame.clear();
+				priority += 2;  // Slot (but no Repository) specified
 				dest = &m_slotname;
 			}
 		} else {
 			++source;
 			m_test_slot = false;
+			priority += 1;  // Repository (but no Slot) specified
 			m_slotname.clear();
 			dest = &m_reponame;
 		}
@@ -196,6 +212,9 @@ GCC_DIAG_ON(sign-conversion)
 			(likely((end == NULLPTR) || (wildcard <= end))))) {
 			if(unlikely(m_operator == maskOpAll)) {  // maskMarkOptional without explicit "="
 				m_operator = maskOpEqual;
+				priority += 24;
+			} else if(m_operator == maskOpEqual) {
+				priority -= 16;
 			}
 			// Only the = operator can have a wildcard-version
 			if(unlikely(m_operator != maskOpEqual)) {

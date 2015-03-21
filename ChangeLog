@@ -1,5 +1,13 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.30.8
+	Martin Väth <martin at mvath.de>:
+	- Order mask lists (/etc/portage/package.*) more similar to portage:
+	  a) Wildcards are treated alphabetically
+	  b) More specifications (slot, repo, version, ...) increase priority
+	  However, b) is only distinguished for identical wildcards which
+	  slightly deviates from portage.
+
 *eix-0.30.7
 	Martin Väth <martin at mvath.de>:
 	- Support @profile: Add it to database (new database version: 34)
