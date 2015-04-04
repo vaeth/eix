@@ -46,8 +46,8 @@ static CONSTEXPR PrintOverlayMode
 
 static void print_help();
 int overlay_loop(string *result, const OverlayOptionList& options) ATTRIBUTE_NONNULL_;
-bool open_database(Database *db, DBHeader *header, const char *name, bool verbose) ATTRIBUTE_NONNULL_;
-bool print_overlay_data(string *result, const DBHeader& header, const char *overlay, const string& sep, const char *name, PrintOverlayMode mode, bool verbose) ATTRIBUTE_NONNULL_;
+bool open_database(DBHeader *header, const char *name, bool verbose) ATTRIBUTE_NONNULL_;
+bool print_overlay_data(string *result, const DBHeader *header, const char *overlay, const string& sep, const char *name, PrintOverlayMode mode, bool verbose) ATTRIBUTE_NONNULL_;
 
 static void print_help() {
 	cout << eix::format(_(
@@ -165,8 +165,7 @@ int overlay_loop(string *result, const OverlayOptionList& options) {
 	bool verbose(true);
 	string separator(1, '\0');
 	const char *name(EIX_CACHEFILE);
-	Database db;
-	DBHeader header;
+	DBHeader *header = NULLPTR;
 	int ret(EXIT_SUCCESS);
 	bool changedname(true);
 	for(OverlayOptionList::const_iterator it(options.begin());
@@ -199,7 +198,9 @@ int overlay_loop(string *result, const OverlayOptionList& options) {
 		}
 		if(changedname) {
 			changedname = false;
-			if(unlikely(!open_database(&db, &header, name, verbose))) {
+			delete header;
+			header = new DBHeader;
+			if(unlikely(!open_database(header, name, verbose))) {
 				name = NULLPTR;
 				ret = EXIT_FAILURE;
 			}
@@ -217,12 +218,14 @@ int overlay_loop(string *result, const OverlayOptionList& options) {
 			ret = EXIT_FAILURE;
 		}
 	}
+	delete header;
 	return ret;
 }
 
-bool open_database(Database *db, DBHeader *header, const char *name, bool verbose) {
-	if(likely((name[0] != '\0') && db->openread(name))) {
-		if(likely(db->read_header(header, NULLPTR))) {
+bool open_database(DBHeader *header, const char *name, bool verbose) {
+	Database db;
+	if(likely((name[0] != '\0') && db.openread(name))) {
+		if(likely(db.read_header(header, NULLPTR))) {
 			return true;
 		}
 		if(likely(verbose)) {
@@ -242,9 +245,9 @@ bool open_database(Database *db, DBHeader *header, const char *name, bool verbos
 	return false;
 }
 
-bool print_overlay_data(string *result, const DBHeader& header, const char *overlay, const string& print_append, const char *name, PrintOverlayMode mode, bool verbose) {
+bool print_overlay_data(string *result, const DBHeader *header, const char *overlay, const string& print_append, const char *name, PrintOverlayMode mode, bool verbose) {
 	ExtendedVersion::Overlay num;
-	if(unlikely(!header.find_overlay(&num, overlay, NULLPTR, 0, DBHeader::OVTEST_ALL))) {
+	if(unlikely(!header->find_overlay(&num, overlay, NULLPTR, 0, DBHeader::OVTEST_ALL))) {
 		if(likely(verbose)) {
 			cerr << eix::format(_("Can't find overlay %s in %s")) % overlay % name << endl;
 		}
@@ -253,7 +256,7 @@ bool print_overlay_data(string *result, const DBHeader& header, const char *over
 	if(unlikely(!verbose)) {
 		return true;
 	}
-	const OverlayIdent& ov(header.getOverlay(num));
+	const OverlayIdent& ov(header->getOverlay(num));
 	if((mode & PRINT_OVERLAY_LABEL) != PRINT_OVERLAY_NONE) {
 		result->append(ov.label);
 		result->append(print_append);

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-03-21 19:13+0100\n"
+"POT-Creation-Date: 2015-04-04 17:51+0200\n"
 "PO-Revision-Date: 2014-10-29 21:03+0100\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
@@ -38,7 +38,7 @@ msgstr "Probleme mit ${eixf_cmd}"
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-functions.sh.in:320 src/eix-remote.sh:340
+#: src/eix-functions.sh.in:320 src/eix-remote.sh:331
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
@@ -530,31 +530,31 @@ msgstr "Entpacken der Daten"
 msgid "cannot unpack ${a}"
 msgstr "${a} ist nicht entpackbar"
 
-#: src/eix-remote.sh:324
+#: src/eix-remote.sh:315
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "Fehler beim Lesen einiger eix-Cache-Dateien von ${a}"
 
-#: src/eix-remote.sh:331
+#: src/eix-remote.sh:322
 #, sh-format
 msgid "Output to remote database ${eix_remote}"
 msgstr "Ausgabe auf Remote-Datenbank ${eix_remote}"
 
-#: src/eix-remote.sh:350
+#: src/eix-remote.sh:341
 msgid "A temporary file makes only sense for update mode"
 msgstr "Eine temporäre Datei ergibt nur im Update-Modus Sinn"
 
-#: src/eix-remote.sh:361
+#: src/eix-remote.sh:352
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
 msgstr "temporäre Datei kann nicht nach ${file} kopiert werden"
 
-#: src/eix-remote.sh:373
+#: src/eix-remote.sh:364
 #, sh-format
 msgid "cannot read ${archive}"
 msgstr "Datei ${archive} nicht lesbar"
 
-#: src/eix-remote.sh:392
+#: src/eix-remote.sh:383
 #, sh-format
 msgid "mkdir ${tmpsub} failed"
 msgstr "Fehler bei mkdir ${tmpsub}"
@@ -1721,7 +1721,7 @@ msgstr ""
 msgid "error in database file %r: %s"
 msgstr "Fehler in Datenbank-Datei %r: %s"
 
-#: src/eix-diff.cc:153 src/eix-header.cc:238
+#: src/eix-diff.cc:153 src/eix-header.cc:241
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Datenbank-Datei %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
 
@@ -1802,7 +1802,7 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-header.cc:230
+#: src/eix-header.cc:233
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1811,7 +1811,7 @@ msgstr ""
 "%s wurd mit inkompatiblem eix-update erzeugt:\n"
 "Es benutzt Datenbank-Format %s (aktuell ist %s)."
 
-#: src/eix-header.cc:249
+#: src/eix-header.cc:252
 #, c-format
 msgid "Can't find overlay %s in %s"
 msgstr "Overlay %s ist nicht in %s"

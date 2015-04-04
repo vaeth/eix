@@ -275,24 +275,15 @@ AddArchive() {
 	set +f
 	chmod a+r *
 	for i in *
-	do	n=${i%.eix}
-		while :
-		do	case ${n} in
-			_*)
-				n=${n#_};;
-			*_*_*_*)
-				n=${n#*_};;
-			*)
-				break;;
-			esac
-		done
-		Replace -g n '_' '?'
-		n="*/${n}"
+	do	case ${i} in
+		gentoo.eix)
+			continue;;
+		esac
 		p="${2}/${i}"
 		Replace -g p '\' '\\'
 		Replace -g p ':' '\:'
-		Push eixoverlay "-f${p}" "-o${n}"
-		Push method "eix*:${p}:${n}"
+		Push eixoverlay "-f${p}" "-o0"
+		Push method "eix*:${p}:0"
 	done
 	set -f
 	sep=mAgIcsEp

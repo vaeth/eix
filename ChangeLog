@@ -5,8 +5,11 @@
 	- Order mask lists (/etc/portage/package.*) more similar to portage:
 	  a) Wildcards are treated alphabetically
 	  b) More specifications (slot, repo, version, ...) increase priority
-	  However, b) is only distinguished for identical wildcards which
-	  slightly deviates from portage.
+	  However, b) is only distinguished for identical wildcards;
+	  this slightly deviates from portage.
+	- Fix eix-header: Let -f create fresh data, not add to previous -f
+	- eix-remote: Compatibility fix for recent changes in zugaina, see
+	  https://github.com/vaeth/eix/issues/6
 
 *eix-0.30.7
 	Martin Väth <martin at mvath.de>:
