@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-04-04 17:51+0200\n"
+"POT-Creation-Date: 2015-04-05 13:51+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -44,7 +44,7 @@ msgstr "Проблема при запуске ${eixf_cmd}"
 msgid "Calling eix-update"
 msgstr "Запускаю eix-update"
 
-#: src/eix-functions.sh.in:320 src/eix-remote.sh:331
+#: src/eix-functions.sh.in:320 src/eix-remote.sh:340
 msgid "eix-update failed"
 msgstr "ошибка eix-update"
 
@@ -531,31 +531,51 @@ msgstr "Распаковка данных"
 msgid "cannot unpack ${a}"
 msgstr "невозможно распаковать ${a}"
 
-#: src/eix-remote.sh:315
+#: src/eix-remote.sh:299
+#, fuzzy, sh-format
+msgid "file ${p} of ${a} contains no overlay"
+msgstr "Файл ${p} in ${a} не содержит оверлей"
+
+#: src/eix-remote.sh:317
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "невозможно прочесть все файлы кэша eix от ${a}"
 
-#: src/eix-remote.sh:322
+#: src/eix-remote.sh:319
+#, fuzzy, sh-format
+msgid "no file in ${a} contains an overlay"
+msgstr "No Файл in ${a} не содержит оверлей"
+
+#: src/eix-remote.sh:321
+#, fuzzy, sh-format
+msgid "${failcount} files in ${a} contain no overlay"
+msgstr "${failcount} Файл in ${a} не содержит оверлей"
+
+#: src/eix-remote.sh:323
+#, fuzzy, sh-format
+msgid "A file in ${a} contains no overlay"
+msgstr "1 Файл in ${a} не содержит оверлей"
+
+#: src/eix-remote.sh:331
 #, sh-format
 msgid "Output to remote database ${eix_remote}"
 msgstr "Вывод в удалённую БД ${eix_remote}"
 
-#: src/eix-remote.sh:341
+#: src/eix-remote.sh:350
 msgid "A temporary file makes only sense for update mode"
 msgstr "Временный файл имеет смысл только для режима обновления"
 
-#: src/eix-remote.sh:352
+#: src/eix-remote.sh:361
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
 msgstr "невозможно сделать копию ${file} временного файла"
 
-#: src/eix-remote.sh:364
+#: src/eix-remote.sh:373
 #, sh-format
 msgid "cannot read ${archive}"
 msgstr "невозможно прочесть ${archive}"
 
-#: src/eix-remote.sh:383
+#: src/eix-remote.sh:392
 #, sh-format
 msgid "mkdir ${tmpsub} failed"
 msgstr "ошибка создания каталога ${tmpsub}"
@@ -1709,7 +1729,7 @@ msgstr ""
 msgid "error in database file %r: %s"
 msgstr "Запись файла базы данных %r: %s .."
 
-#: src/eix-diff.cc:153 src/eix-header.cc:241
+#: src/eix-diff.cc:153 src/eix-header.cc:243
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Невозможно открыть базу данных %r для чтения (режим = 'rb')"
 
@@ -1757,6 +1777,8 @@ msgid ""
 "\tReadVar EIX_CACHEFILE EIX_CACHEFILE || die 'cache name not known'\n"
 "\t%s -qf \"${EIX_CACHEFILE}\" -c || die 'no current database'\n"
 "SEP defaults to the null character (to be distinguished from the empty string).\n"
+"For the case the OV is the empty string, the main overlay is printed (as if OV\n"
+"is 0), but if there is no overlay in file, no error (but empty data) is output.\n"
 "-c can be used to check only whether FILE has current format without producing\n"
 "any output.\n"
 "After option -q no further output is made, usually.\n"
@@ -1767,7 +1789,7 @@ msgid ""
 "further information.\n"
 msgstr ""
 
-#: src/eix-header.cc:233
+#: src/eix-header.cc:235
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1776,7 +1798,7 @@ msgstr ""
 "%s был создан несовместимым eix-update:\n"
 "Используется формат базы данных %s (текущий ― %s)."
 
-#: src/eix-header.cc:252
+#: src/eix-header.cc:257
 #, c-format
 msgid "Can't find overlay %s in %s"
 msgstr ""
@@ -3615,14 +3637,10 @@ msgid ""
 msgstr ""
 
 #: src/eixrc/defaults.cc:1232
-#, fuzzy
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for the category of profile packages."
 msgstr ""
-"Эта переменная используется исключительно для отложенной замены.\n"
-"Она определяет наличие у Вас большого терминала (>80 столбцов).\n"
-"Значение \"auto\" или отсутствие такового означает подсчёт COLUMNS."
 
 #: src/eixrc/defaults.cc:1237
 msgid ""

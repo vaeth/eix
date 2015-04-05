@@ -63,6 +63,8 @@ static void print_help() {
 "\tReadVar EIX_CACHEFILE EIX_CACHEFILE || die 'cache name not known'\n"
 "\t%s -qf \"${EIX_CACHEFILE}\" -c || die 'no current database'\n"
 "SEP defaults to the null character (to be distinguished from the empty string).\n"
+"For the case the OV is the empty string, the main overlay is printed (as if OV\n"
+"is 0), but if there is no overlay in file, no error (but empty data) is output.\n"
 "-c can be used to check only whether FILE has current format without producing\n"
 "any output.\n"
 "After option -q no further output is made, usually.\n"
@@ -247,7 +249,10 @@ bool open_database(DBHeader *header, const char *name, bool verbose) {
 
 bool print_overlay_data(string *result, const DBHeader *header, const char *overlay, const string& print_append, const char *name, PrintOverlayMode mode, bool verbose) {
 	ExtendedVersion::Overlay num;
-	if(unlikely(!header->find_overlay(&num, overlay, NULLPTR, 0, DBHeader::OVTEST_ALL))) {
+	bool emptysearch(overlay[0] == '\0');
+	bool found(header->find_overlay(&num, emptysearch ? "0" : overlay, NULLPTR,
+		0, emptysearch ? DBHeader::OVTEST_NUMBER : DBHeader::OVTEST_ALL));
+	if(unlikely((!found) && !emptysearch)) {
 		if(likely(verbose)) {
 			cerr << eix::format(_("Can't find overlay %s in %s")) % overlay % name << endl;
 		}
@@ -256,14 +261,20 @@ bool print_overlay_data(string *result, const DBHeader *header, const char *over
 	if(unlikely(!verbose)) {
 		return true;
 	}
-	const OverlayIdent& ov(header->getOverlay(num));
+	const OverlayIdent *ov(found ? &header->getOverlay(num)
+		: new OverlayIdent(""));
 	if((mode & PRINT_OVERLAY_LABEL) != PRINT_OVERLAY_NONE) {
-		result->append(ov.label);
+		if(likely(ov->know_label)) {
+			result->append(ov->label);
+		}
 		result->append(print_append);
 	}
 	if((mode & PRINT_OVERLAY_PATH) != PRINT_OVERLAY_NONE) {
-		result->append(ov.path);
+		result->append(ov->path);
 		result->append(print_append);
+	}
+	if(unlikely(!found)) {
+		delete ov;
 	}
 	return true;
 }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-04-04 17:51+0200\n"
+"POT-Creation-Date: 2015-04-05 13:51+0200\n"
 "PO-Revision-Date: 2014-10-29 21:03+0100\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
@@ -38,7 +38,7 @@ msgstr "Probleme mit ${eixf_cmd}"
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-functions.sh.in:320 src/eix-remote.sh:331
+#: src/eix-functions.sh.in:320 src/eix-remote.sh:340
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
@@ -530,31 +530,51 @@ msgstr "Entpacken der Daten"
 msgid "cannot unpack ${a}"
 msgstr "${a} ist nicht entpackbar"
 
-#: src/eix-remote.sh:315
+#: src/eix-remote.sh:299
+#, sh-format
+msgid "file ${p} of ${a} contains no overlay"
+msgstr "Die Datei ${p} aus ${a} enthält keinen Overlay"
+
+#: src/eix-remote.sh:317
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
-msgstr "Fehler beim Lesen einiger eix-Cache-Dateien von ${a}"
+msgstr "Fehler beim Lesen einiger eix-Cache-Dateien aus ${a}"
 
-#: src/eix-remote.sh:322
+#: src/eix-remote.sh:319
+#, sh-format
+msgid "no file in ${a} contains an overlay"
+msgstr "Keine Datei aus ${a} enthält einen Overlay"
+
+#: src/eix-remote.sh:321
+#, sh-format
+msgid "${failcount} files in ${a} contain no overlay"
+msgstr "${failcount} Dateien aus ${a} enthalten keinen Overlay"
+
+#: src/eix-remote.sh:323
+#, sh-format
+msgid "A file in ${a} contains no overlay"
+msgstr "Eine Datei aus ${a} enthält keinen Overlay"
+
+#: src/eix-remote.sh:331
 #, sh-format
 msgid "Output to remote database ${eix_remote}"
 msgstr "Ausgabe auf Remote-Datenbank ${eix_remote}"
 
-#: src/eix-remote.sh:341
+#: src/eix-remote.sh:350
 msgid "A temporary file makes only sense for update mode"
 msgstr "Eine temporäre Datei ergibt nur im Update-Modus Sinn"
 
-#: src/eix-remote.sh:352
+#: src/eix-remote.sh:361
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
 msgstr "temporäre Datei kann nicht nach ${file} kopiert werden"
 
-#: src/eix-remote.sh:364
+#: src/eix-remote.sh:373
 #, sh-format
 msgid "cannot read ${archive}"
 msgstr "Datei ${archive} nicht lesbar"
 
-#: src/eix-remote.sh:383
+#: src/eix-remote.sh:392
 #, sh-format
 msgid "mkdir ${tmpsub} failed"
 msgstr "Fehler bei mkdir ${tmpsub}"
@@ -1721,7 +1741,7 @@ msgstr ""
 msgid "error in database file %r: %s"
 msgstr "Fehler in Datenbank-Datei %r: %s"
 
-#: src/eix-diff.cc:153 src/eix-header.cc:241
+#: src/eix-diff.cc:153 src/eix-header.cc:243
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Datenbank-Datei %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
 
@@ -1769,6 +1789,8 @@ msgid ""
 "\tReadVar EIX_CACHEFILE EIX_CACHEFILE || die 'cache name not known'\n"
 "\t%s -qf \"${EIX_CACHEFILE}\" -c || die 'no current database'\n"
 "SEP defaults to the null character (to be distinguished from the empty string).\n"
+"For the case the OV is the empty string, the main overlay is printed (as if OV\n"
+"is 0), but if there is no overlay in file, no error (but empty data) is output.\n"
 "-c can be used to check only whether FILE has current format without producing\n"
 "any output.\n"
 "After option -q no further output is made, usually.\n"
@@ -1792,6 +1814,9 @@ msgstr ""
 "\tReadVar EIX_CACHEFILE EIX_CACHEFILE || die 'Cachename unbekannt'\n"
 "\t%s -qf \"${EIX_CACHEFILE}\" -c || die 'Datenbank nicht aktuell'\n"
 "TRENNER ist zunächst das Nullzeichen (zu unterscheiden vom Leerstring).\n"
+"Wenn OV der leere String ist, werden die Daten des Haupt-Overlays augegeben\n"
+"(als wenn OV 0 wäre), aber wenn die Datei keinen Overlay enthält, wird kein\n"
+"Fehler (sondern nur leere Daten) ausgegeben.\n"
 "-c kann benutzt werden, um nur zu prüfen, ob DATEI aktuelles Format hat,\n"
 "ohne eine Ausgabe zu erzeugen.\n"
 "Nach der Option -q folgt für gewöhnlich keine weitere Ausgabe.\n"
@@ -1802,7 +1827,7 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-header.cc:233
+#: src/eix-header.cc:235
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1811,7 +1836,7 @@ msgstr ""
 "%s wurd mit inkompatiblem eix-update erzeugt:\n"
 "Es benutzt Datenbank-Format %s (aktuell ist %s)."
 
-#: src/eix-header.cc:252
+#: src/eix-header.cc:257
 #, c-format
 msgid "Can't find overlay %s in %s"
 msgstr "Overlay %s ist nicht in %s"

@@ -8,6 +8,7 @@
 	  However, b) is only distinguished for identical wildcards;
 	  this slightly deviates from portage.
 	- Fix eix-header: Let -f create fresh data, not add to previous -f
+	- eix-header: Special treatment of empty OV value
 	- eix-remote: Compatibility fix for recent changes in zugaina, see
 	  https://github.com/vaeth/eix/issues/6
 

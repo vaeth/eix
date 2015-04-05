@@ -275,20 +275,18 @@ AddArchive() {
 	set +f
 	chmod a+r *
 	for i in *
-	do	case ${i} in
-		gentoo.eix)
-			continue;;
-		esac
-		p="${2}/${i}"
+	do	p="${2}/${i}"
 		Replace -g p '\' '\\'
 		Replace -g p ':' '\:'
-		Push eixoverlay "-f${p}" "-o0"
+		Push eixoverlay "-f${p}" "-o" ''
 		Push method "eix*:${p}:0"
 	done
 	set -f
 	sep=mAgIcsEp
 	eval "set -- ${eixoverlay}"
 	eixoverlay=`eix-header -s"${sep}" "${@}"` || exitcode=1
+	failcount=0
+	success=false
 	eval "set -- ${method}"
 	for i
 	do	l=${eixoverlay%%${sep}*}
@@ -296,9 +294,13 @@ AddArchive() {
 		name=${eixoverlay%%${sep}*}
 		eixoverlay=${eixoverlay#*${sep}}
 		[ -n "${l}${name}" ] || {
-			exitcode=1
+			p=${i##*/}
+			p=${p%:*}
+			ewarn "`eval_gettext 'file ${p} of ${a} contains no overlay'`"
+			failcount=`Expr ${failcount} + 1`
 			continue
 		}
+		success=:
 		name=${name##*/}
 		[ "${exclude}" = 'remote' ] && \
 			test -r "${local_layman}/${name}" && continue
@@ -311,8 +313,15 @@ AddArchive() {
 			AddExcludes "${local_layman}/${name}"
 	done
 	msg=
-	[ ${exitcode} -ne 0 ] && \
-		msg=`eval_gettext 'could not read all eix cachefiles of ${a}'`
+	if [ ${exitcode} -ne 0 ]
+	then	msg=`eval_gettext 'could not read all eix cachefiles of ${a}'`
+	elif ! ${success}
+	then	msg=`eval_gettext 'no file in ${a} contains an overlay'`
+	elif [ ${failcount} -gt 1 ]
+	then	ewarn "`eval_gettext '${failcount} files in ${a} contain no overlay'`"
+	elif [ ${failcount} -gt 0 ]
+	then	ewarn "`eval_gettext 'A file in ${a} contains no overlay'`"
+	fi
 	die_on_update_failure=false
 	ReadVar ${eix_remote_var} ${eix_remote_var}
 	eval eix_remote=\${${eix_remote_var}}
