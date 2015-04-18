@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-04-05 13:51+0200\n"
+"POT-Creation-Date: 2015-04-18 14:21+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -1965,11 +1965,11 @@ msgstr "Расчёт хеш-таблиц ..\n"
 msgid "Writing database file %s ..\n"
 msgstr "Запись файла базы данных %s ..\n"
 
-#: src/eix-update.cc:690
+#: src/eix-update.cc:689
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Невозможно открыть файл базы данных %r для записи (режим = 'wb')"
 
-#: src/eix-update.cc:702
+#: src/eix-update.cc:700
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "База данных содержит %s пакетов в %s категориях.\n"
@@ -5472,53 +5472,53 @@ msgstr "Переменная %r вызывает себя для печати"
 msgid "DARK_TERM has illegal format: %s"
 msgstr "DARK_TERM имеет неправильный формат: %s"
 
-#: src/output/formatstring.cc:447
+#: src/output/formatstring.cc:446
 msgid "Internal error: bad node for parse_colors."
 msgstr "Внутренняя ошибка: плохой узел для parse_colors."
 
-#: src/output/formatstring.cc:507
+#: src/output/formatstring.cc:505
 msgid "'(' without closing ')'"
 msgstr "'(' без закрывающего ')'"
 
-#: src/output/formatstring.cc:516
+#: src/output/formatstring.cc:514
 #, c-format
 msgid "Error while parsing color: %s"
 msgstr "Ошибка при обработке цвета: %s"
 
-#: src/output/formatstring.cc:535
+#: src/output/formatstring.cc:533
 msgid "'<' without closing '>'"
 msgstr "'<' без закрывающего '>'"
 
-#: src/output/formatstring.cc:603
+#: src/output/formatstring.cc:601
 msgid "No name of property/variable found after '{'."
 msgstr "Не найдено имя свойства/переменной после '{'."
 
-#: src/output/formatstring.cc:607 src/output/formatstring.cc:628
-#: src/output/formatstring.cc:687
+#: src/output/formatstring.cc:605 src/output/formatstring.cc:626
+#: src/output/formatstring.cc:685
 msgid "Found '{' without closing '}'."
 msgstr "Найден '{' без закрывающего '}'."
 
-#: src/output/formatstring.cc:622
+#: src/output/formatstring.cc:620
 msgid "Unexpected symbol %r found after '{'."
 msgstr "Неожиданный символ %r найден после '{'."
 
-#: src/output/formatstring.cc:706
+#: src/output/formatstring.cc:704
 msgid "Found ELSE without IF."
 msgstr "Найден ELSE без IF"
 
-#: src/output/formatstring.cc:731
+#: src/output/formatstring.cc:729
 msgid "Found FI without IF."
 msgstr "Найден FI без IF."
 
-#: src/output/formatstring.cc:751
+#: src/output/formatstring.cc:749
 msgid "Check your syntax"
 msgstr "Проверьте синтаксис"
 
-#: src/output/formatstring.cc:774
+#: src/output/formatstring.cc:772
 msgid "Bad state: undefined"
 msgstr "Плохое состояние: не определено"
 
-#: src/output/formatstring.cc:788
+#: src/output/formatstring.cc:786
 #, c-format
 msgid "Line %s, column %s: %s"
 msgstr "Строка %s, столбец %s: %s"

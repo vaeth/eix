@@ -24,7 +24,13 @@ using std::string;
 using std::cout;
 
 bool OutputString::is_equal(const OutputString& t) const {
-	return ((m_string == t.m_string) && likely(m_insert == t.m_insert));
+	return ((m_string == t.m_string) &&
+		// gcc-5 has problems for == with empty vectors
+			likely(m_insert.empty() ? t.m_insert.empty() :
+				(t.m_insert.empty() ? false :
+		likely(m_insert == t.m_insert)
+			))
+		);
 }
 
 void OutputString::assign(const OutputString& s) {

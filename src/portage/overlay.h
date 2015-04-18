@@ -27,17 +27,17 @@ class OverlayIdent {
 		Priority priority;
 		bool is_main;
 
-		void init(const char *Path, const char *Label) ATTRIBUTE_NONNULL((2));
+		void init(const char *Path, const char *Label);
 
-		OverlayIdent(const char *Path, const char *Label, Priority prio, bool ismain) ATTRIBUTE_NONNULL((2)) : priority(prio), is_main(ismain) {
+		OverlayIdent(const char *Path, const char *Label, Priority prio, bool ismain) : priority(prio), is_main(ismain) {
 			init(Path, Label);
 		}
 
-		OverlayIdent(const char *Path, const char *Label) ATTRIBUTE_NONNULL((2)) : priority(0), is_main(false) {
+		OverlayIdent(const char *Path, const char *Label) : priority(0), is_main(false) {
 			init(Path, Label);
 		}
 
-		explicit OverlayIdent(const char *Path) ATTRIBUTE_NONNULL_ : priority(0), is_main(false) {
+		explicit OverlayIdent(const char *Path) : priority(0), is_main(false) {
 			init(Path, NULLPTR);
 		}
 

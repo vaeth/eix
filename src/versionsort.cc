@@ -68,11 +68,9 @@ static const char *get_version(const char **name, const char *v) {
 	if(unlikely(s == NULLPTR)) {
 		failparse(v);
 	}
-	if(name != NULLPTR) {
-		n = new string(first_alnum(s[0]));
-		*name = n->c_str();
-	}
+	n = new string(first_alnum(s[0]));
 	free(s[0]);
+	*name = n->c_str();
 	r = new string(s[1]);
 	free(s[1]);
 	return r->c_str();

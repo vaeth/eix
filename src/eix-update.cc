@@ -686,9 +686,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		umask(old_umask);
 	}
 	if(unlikely(!ok)) {
-		if(errtext != NULLPTR) {
-			*errtext = eix::format(_("Can't open the database file %r for writing (mode = 'wb')")) % outputfile;
-		}
+		*errtext = eix::format(_("Can't open the database file %r for writing (mode = 'wb')")) % outputfile;
 		return false;
 	}
 
@@ -703,4 +701,3 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		% package_tree.countPackages() % dbheader.size);
 	return true;
 }
-

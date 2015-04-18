@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-04-05 13:51+0200\n"
+"POT-Creation-Date: 2015-04-18 14:21+0200\n"
 "PO-Revision-Date: 2014-10-29 21:03+0100\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
@@ -2002,11 +2002,11 @@ msgstr "Berechne Hash-Tabellen...\n"
 msgid "Writing database file %s ..\n"
 msgstr "Schreibe Datenbank-Datei %s...\n"
 
-#: src/eix-update.cc:690
+#: src/eix-update.cc:689
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Datenbank-Datei %r nicht beschreibbar (mode = 'wb')"
 
-#: src/eix-update.cc:702
+#: src/eix-update.cc:700
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "Datenbank enthält %s Pakete in %s Kategorien.\n"
@@ -6578,53 +6578,53 @@ msgstr "Die Variable %r ruft sich selbst zur Ausgabe auf"
 msgid "DARK_TERM has illegal format: %s"
 msgstr "DARK_TERM hat unzulässiges Format: %s"
 
-#: src/output/formatstring.cc:447
+#: src/output/formatstring.cc:446
 msgid "Internal error: bad node for parse_colors."
 msgstr "Interner Fehler: Schlechter Knoten für parse_colors."
 
-#: src/output/formatstring.cc:507
+#: src/output/formatstring.cc:505
 msgid "'(' without closing ')'"
 msgstr "'(' ohne schließendes ')'"
 
-#: src/output/formatstring.cc:516
+#: src/output/formatstring.cc:514
 #, c-format
 msgid "Error while parsing color: %s"
 msgstr "Fehler beim Parsen der Farbe: %s"
 
-#: src/output/formatstring.cc:535
+#: src/output/formatstring.cc:533
 msgid "'<' without closing '>'"
 msgstr "'<' ohne schließendes '>'"
 
-#: src/output/formatstring.cc:603
+#: src/output/formatstring.cc:601
 msgid "No name of property/variable found after '{'."
 msgstr "Kein Name einer Eigenschaft/Variablen nach '{' gefunden."
 
-#: src/output/formatstring.cc:607 src/output/formatstring.cc:628
-#: src/output/formatstring.cc:687
+#: src/output/formatstring.cc:605 src/output/formatstring.cc:626
+#: src/output/formatstring.cc:685
 msgid "Found '{' without closing '}'."
 msgstr " '{' ohne schließendes '}' gefunden."
 
-#: src/output/formatstring.cc:622
+#: src/output/formatstring.cc:620
 msgid "Unexpected symbol %r found after '{'."
 msgstr "Unerwartetes Symbol %r nach '{'."
 
-#: src/output/formatstring.cc:706
+#: src/output/formatstring.cc:704
 msgid "Found ELSE without IF."
 msgstr "ELSE ohne IF gefunden."
 
-#: src/output/formatstring.cc:731
+#: src/output/formatstring.cc:729
 msgid "Found FI without IF."
 msgstr "FI ohne IF gefunden."
 
-#: src/output/formatstring.cc:751
+#: src/output/formatstring.cc:749
 msgid "Check your syntax"
 msgstr "Bitte überprüfen Sie die Syntax"
 
-#: src/output/formatstring.cc:774
+#: src/output/formatstring.cc:772
 msgid "Bad state: undefined"
 msgstr "Unerlaubter Status: undefiniert"
 
-#: src/output/formatstring.cc:788
+#: src/output/formatstring.cc:786
 #, c-format
 msgid "Line %s, column %s: %s"
 msgstr "Zeile %s, Spalte %s: %s"

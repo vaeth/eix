@@ -443,9 +443,7 @@ static bool parse_colors(OutputString *ret, const string& colorstring, bool colo
 			return true;
 		}
 	}
-	if(errtext != NULLPTR) {
-		*errtext = _("Internal error: bad node for parse_colors.");
-	}
+	*errtext = _("Internal error: bad node for parse_colors.");
 	return false;
 }
 

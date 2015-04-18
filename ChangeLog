@@ -1,5 +1,13 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.30.9
+	Martin Väth <martin at mvath.de>:
+	- Add gcc-5 options
+	- Add other optimization options which should have been added earlier
+	- Fix broken ATTRIBUTE_NONNULL in OverlayIndent constructors
+	- Remove some redundant NULL tests
+	- Work around a gcc-5 regression when comparing empty vectors
+
 *eix-0.30.8
 	Martin Väth <martin at mvath.de>:
 	- Order mask lists (/etc/portage/package.*) more similar to portage:

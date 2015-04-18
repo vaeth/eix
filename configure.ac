@@ -43,7 +43,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.30.8], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
+AC_INIT([eix], [0.30.9], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
 AC_PREREQ([2.64])
 
 m4_ifdef([AC_CONFIG_MACRO_DIR],
@@ -208,6 +208,7 @@ AS_VAR_SET([my_cxxfatal], [])
 AS_VAR_SET([my_ldfatal], [])
 MV_ADDFLAGS([my_cxxfatal], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
 		-Werror \
+		-Werror=unknown-warning-option \
 		-Wunknown-warning-option \
 	])
 MV_ADDFLAGS([my_ldfatal], [LDFLAGS], [AC_LINK_IFELSE], [ \
@@ -223,6 +224,10 @@ AS_IF([${new_dialect}],
 	[AS_CASE([" ${CXXFLAGS} ${my_cxxadd}"],
 		[*" -std="*], [],
 		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+				-std=gnu++1z \
+				-std=c++1z \
+				-std=gnu++14 \
+				-std=c++14 \
 				-std=gnu++1y \
 				-std=c++1y \
 				-std=gnu++11 \
@@ -278,6 +283,13 @@ AS_IF([${optimization}],
 			-fno-ident \
 			-freorder-functions \
 			-fdevirtualize-speculatively \
+			-fdevirtualize-at-ltrans \
+			-fno-semantic-interposition \
+			-fira-loop-pressure \
+			-ftree-loop-distribution \
+			-ftree-loop-distribute-patterns \
+			-ftree-loop-im \
+			-fivopts \
 		], [${my_cxxfatal}], [], [:])
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_FALSE], [ \
 			-Wl,-O1 \
@@ -287,7 +299,13 @@ AS_IF([${optimization}],
 			-Wl,-z,combreloc \
 		], [${my_ldfatal}], [], [:])])
 AS_IF([${strong_optimization}],
-	[AS_VAR_SET([flto], ["-use-linker-plugin -flto -flto-partition=none -emit-llvm"])
+	[AS_VAR_SET([flto], ["
+		-use-linker-plugin \
+		-flto \
+		-flto-partition=none \
+		-flto-odr-type-merging \
+		-emit-llvm \
+		"])
 # We first modify the LDFLAGS: This is important because of -flto:
 # Without -flto in LDFLAGS, -flto in CXXFLAGS might not fail even if it
 # should produce broken code.
@@ -344,16 +362,19 @@ AS_IF([${strong_optimization}],
 			-DG_DISABLE_ASSERT \
 		], [${my_cxxfatal}], [${CPPFLAGS}], [:])])])
 dnl We do not use:
-dnl Would not cahange anything:
+dnl Would not change anything:
 dnl			-ffast-math \
 dnl Too much memory/time for compilation:
 dnl			-fipa-pta
+dnl Default (e.g. with -O2):
+dnl			-fipa-icf
+dnl			-fipa-ra
 AS_IF([${warnings}],
 dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 	[AS_VAR_SET([zero_as_null_pointer], [-Wzero-as-null-pointer-constant])
 	AS_CASE([" ${CXXFLAGS} "],
-		[*" -std=c++11 "*], [],
-		[*" -std=gnu++11 "*], [],
+		[*" -std=c++"??" "*], [],
+		[*" -std=gnu++"??" "*], [],
 		[AS_VAR_SET([zero_as_null_pointer], [])])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
 			-fno-common \
@@ -365,6 +386,7 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wpedantic \
 			-pedantic \
 			-Wall \
+			-Weverything \
 			-Wextra \
 			-Wformat=2 \
 			-Wunused-variable \
@@ -415,6 +437,10 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wcomment \
 			-WNSObject-attribute \
 			-fdiagnostic-color=always \
+			-Wswitch-bool \
+			-Wlogical-not-parantheses \
+			-Wsizeof-array-argument \
+			-Wbool-compare \
 		], [${my_cxxfatal}], [], [:])
 dnl We do not use:
 dnl Not needed anymore with current clang:
@@ -503,6 +529,13 @@ AS_IF([${strong_security}],
 			-fsanitize=unreachable
 			-fsanitize=null
 			-fsanitize=return
+			-fsanitize=float-divide-by-zero
+			-fsanitize=float-cast-overflow
+			-fsanitize=bounds
+			-fsanitize=alignment
+			-fsanitize=object-size
+			-fsanitize=vptr
+			-fcheck-pointer-bounds
 		"])
 	# The following -fsanitize do not work properly
 	# -fsanitize=threads
