@@ -36,7 +36,7 @@ class EixCache : public BasicCache {
 		void allerrors(const Slaves& slaves, const std::string& msg);
 		void thiserror(const std::string& msg);
 		bool get_overlaydat(const DBHeader& header);
-		bool get_destcat(PackageTree *packagetree, const char *cat_name, Category *category, const std::string& pcat) ATTRIBUTE_NONNULL((3));
+		bool get_destcat(PackageTree *packagetree, const char *cat_name, Category *category, const std::string& pcat);
 		void get_package(Package *p) ATTRIBUTE_NONNULL_;
 
 	public:

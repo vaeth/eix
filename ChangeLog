@@ -4,7 +4,7 @@
 	Martin Väth <martin at mvath.de>:
 	- Add gcc-5 options
 	- Add other optimization options which should have been added earlier
-	- Fix broken ATTRIBUTE_NONNULL in OverlayIndent constructors
+	- Fix ATTRIBUTE_NONNULL in OverlayIndent constructors and get_destcat
 	- Remove some redundant NULL tests
 	- Work around a gcc-5 regression when comparing empty vectors
 
