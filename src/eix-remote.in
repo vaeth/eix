@@ -111,7 +111,9 @@ DefaultOpts() {
 	verbose=:
 	statusline=:
 	keep=false
-	exclude=
+	excludelocal=false
+	excluderemote=false
+	excludedebug=false
 }
 
 DefaultOpts
@@ -122,9 +124,9 @@ do	case ${opt} in
 	[kK])	:;;
 	v)	verbose=:;;
 	q)	verbose=false;;
-	x)	exclude=local;;
-	X)	exclude=remote;;
-	L)	exclude=debug;;
+	x)	excludelocal=:;;
+	X)	excluderemote=:;;
+	L)	excludedebug=:;;
 	l)	local_layman=${OPTARG};;
 	a)	addr=${OPTARG};;
 	H)	statusline=false;;
@@ -169,16 +171,17 @@ InitLocalLayman() {
 	done
 	return 1
 }
-if [ -n "${exclude:++}" ]
+if ${excluderemote} || ${excludelocal} || ${excludedebug}
 then	InitLocalLayman && SanitizeLocalLayman || {
 		ewarn "`gettext 'cannot determine useful $LOCAL_LAYMAN'`"
-		if [ "${exclude}" = 'debug' ]
+		if ${excludedebug}
 		then	[ -n "${local_layman:++}" ] && Echo "${local_layman}"
 			Exit 1
 		fi
-		exclude=
+		excludelocal=false
+		excluderemote=false
 	}
-	if [ "${exclude}" = 'debug' ]
+	if ${excludedebug}
 	then	Echo "${local_layman}"
 		Exit
 	fi
@@ -302,15 +305,14 @@ AddArchive() {
 		}
 		success=:
 		name=${name##*/}
-		[ "${exclude}" = 'remote' ] && \
+		${excludelocal} && AddExcludes "${local_layman}/${name}"
+		${excluderemote} && \
 			test -r "${local_layman}/${name}" && continue
 		virtual="layman/${name}"
 		printf '%s -> %s\n' "${virtual}" "${l:-no repo-name}"
 		AddMethod "${virtual}" "${i}"
 		AddOverlays "${virtual}"
 		[ -n "${l:++}" ] && AddRepoName "${virtual}" "${l}"
-		[ "${exclude}" = 'local' ] && \
-			AddExcludes "${local_layman}/${name}"
 	done
 	msg=
 	if [ ${exitcode} -ne 0 ]

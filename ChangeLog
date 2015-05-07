@@ -7,6 +7,8 @@
 	- Fix ATTRIBUTE_NONNULL in OverlayIndent constructors and get_destcat
 	- Remove some redundant NULL tests
 	- Work around a gcc-5 regression when comparing empty vectors
+	- eix-remote: Support combination of -x and -X,
+	  see https://forums.gentoo.org/viewtopic.php?p=7744098
 
 *eix-0.30.8
 	Martin Väth <martin at mvath.de>:
