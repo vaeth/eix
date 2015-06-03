@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-04-18 14:21+0200\n"
+"POT-Creation-Date: 2015-06-03 23:54+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -44,7 +44,7 @@ msgstr "Проблема при запуске ${eixf_cmd}"
 msgid "Calling eix-update"
 msgstr "Запускаю eix-update"
 
-#: src/eix-functions.sh.in:320 src/eix-remote.sh:340
+#: src/eix-functions.sh.in:320 src/eix-remote.sh:342
 msgid "eix-update failed"
 msgstr "ошибка eix-update"
 
@@ -324,7 +324,7 @@ msgstr ""
 "-H            Подавить обновление строки состояния\n"
 "-q            Тихо"
 
-#: src/eix-layman.sh:133 src/eix-remote.sh:274 src/eix-update.cc:659
+#: src/eix-layman.sh:133 src/eix-remote.sh:277 src/eix-update.cc:659
 msgid "Analyzing"
 msgstr "Анализ"
 
@@ -454,39 +454,39 @@ msgstr ""
 "-H       Подавить обновление строки состояния\n"
 "-q       Тихо"
 
-#: src/eix-remote.sh:139
+#: src/eix-remote.sh:141
 #, sh-format
 msgid "$LOCAL_LAYMAN must not be empty"
 msgstr "$LOCAL_LAYMAN не может быть пустым"
 
-#: src/eix-remote.sh:141
+#: src/eix-remote.sh:143
 #, sh-format
 msgid "$LOCAL_LAYMAN must start with /"
 msgstr "$LOCAL_LAYMAN должен начинаться с /"
 
-#: src/eix-remote.sh:174
+#: src/eix-remote.sh:176
 #, sh-format
 msgid "cannot determine useful $LOCAL_LAYMAN"
 msgstr "невозможно определить полезный $LOCAL_LAYMAN"
 
-#: src/eix-remote.sh:190
+#: src/eix-remote.sh:193
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "невозможно перейти в ${a}"
 
-#: src/eix-remote.sh:221
+#: src/eix-remote.sh:224
 msgid "Downloading remote data"
 msgstr "Загрузка удалённых данных"
 
-#: src/eix-remote.sh:223
+#: src/eix-remote.sh:226
 msgid "cannot cd to tempdir"
 msgstr "невозможно перейти в tempdir"
 
-#: src/eix-remote.sh:234
+#: src/eix-remote.sh:237
 msgid "failed: "
 msgstr "ошибка: "
 
-#: src/eix-remote.sh:244
+#: src/eix-remote.sh:247
 #, sh-format
 msgid ""
 "Probably your eix cachefile was *not* updated successfully.\n"
@@ -522,60 +522,60 @@ msgstr ""
 "чтобы использовать eix-remote:\n"
 "Это неудобство неизбежно и ошибкой не является!"
 
-#: src/eix-remote.sh:265
+#: src/eix-remote.sh:268
 msgid "Unpacking data"
 msgstr "Распаковка данных"
 
-#: src/eix-remote.sh:266
+#: src/eix-remote.sh:269
 #, sh-format
 msgid "cannot unpack ${a}"
 msgstr "невозможно распаковать ${a}"
 
-#: src/eix-remote.sh:299
+#: src/eix-remote.sh:302
 #, fuzzy, sh-format
 msgid "file ${p} of ${a} contains no overlay"
 msgstr "Файл ${p} in ${a} не содержит оверлей"
 
-#: src/eix-remote.sh:317
+#: src/eix-remote.sh:319
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "невозможно прочесть все файлы кэша eix от ${a}"
 
-#: src/eix-remote.sh:319
+#: src/eix-remote.sh:321
 #, fuzzy, sh-format
 msgid "no file in ${a} contains an overlay"
 msgstr "No Файл in ${a} не содержит оверлей"
 
-#: src/eix-remote.sh:321
+#: src/eix-remote.sh:323
 #, fuzzy, sh-format
 msgid "${failcount} files in ${a} contain no overlay"
 msgstr "${failcount} Файл in ${a} не содержит оверлей"
 
-#: src/eix-remote.sh:323
+#: src/eix-remote.sh:325
 #, fuzzy, sh-format
 msgid "A file in ${a} contains no overlay"
 msgstr "1 Файл in ${a} не содержит оверлей"
 
-#: src/eix-remote.sh:331
+#: src/eix-remote.sh:333
 #, sh-format
 msgid "Output to remote database ${eix_remote}"
 msgstr "Вывод в удалённую БД ${eix_remote}"
 
-#: src/eix-remote.sh:350
+#: src/eix-remote.sh:352
 msgid "A temporary file makes only sense for update mode"
 msgstr "Временный файл имеет смысл только для режима обновления"
 
-#: src/eix-remote.sh:361
+#: src/eix-remote.sh:363
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
 msgstr "невозможно сделать копию ${file} временного файла"
 
-#: src/eix-remote.sh:373
+#: src/eix-remote.sh:375
 #, sh-format
 msgid "cannot read ${archive}"
 msgstr "невозможно прочесть ${archive}"
 
-#: src/eix-remote.sh:392
+#: src/eix-remote.sh:394
 #, sh-format
 msgid "mkdir ${tmpsub} failed"
 msgstr "ошибка создания каталога ${tmpsub}"
@@ -5564,27 +5564,27 @@ msgstr "внимание: игнорирую родителя %r файла %r"
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr "внутренняя ошибка: Попытка восстановить нелокальную маску без сохранения"
 
-#: src/portage/mask.cc:120
+#: src/portage/mask.cc:108
 msgid "Can't read category."
 msgstr "Невозможно прочесть категорию."
 
-#: src/portage/mask.cc:144
+#: src/portage/mask.cc:132
 msgid "Repository name must be separated with :: (one : is missing)."
 msgstr "Имя репозитория должно быть отделено с помощью :: (одно : отсутствует)."
 
-#: src/portage/mask.cc:195
+#: src/portage/mask.cc:187
 msgid "Operator without a version part."
 msgstr "Оператор без части с версией."
 
-#: src/portage/mask.cc:196
+#: src/portage/mask.cc:188
 msgid "Version specification is missing."
 msgstr "Отсутствует указание версии."
 
-#: src/portage/mask.cc:223
+#: src/portage/mask.cc:215
 msgid "A wildcard is only valid with the = operator."
 msgstr "Шаблон поиска имеет смысл только с оператором =."
 
-#: src/portage/mask.cc:227
+#: src/portage/mask.cc:219
 msgid ""
 "A wildcard is only valid with the = operator.\n"
 "Portage would also accept something like ~app-shells/bash-3*,\n"

@@ -87,8 +87,6 @@ class Mask : public BasicVersion {
 		 * @param check      check these for changes */
 		void apply(Version *ve, bool do_test, Keywords::Redundant check) const ATTRIBUTE_NONNULL_;
 
-		Mask(Type type, const char *repo);
-
 		explicit Mask(Type type) :
 			m_type(type),
 			m_test_slot(false),
@@ -101,9 +99,12 @@ class Mask : public BasicVersion {
 		 * @param str_mask the string to be dissected
 		 * @param errtext contains error message if not 0 and not parseOK
 		 * @param accept_garbage passed to parseVersion if appropriate */
-		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, eix::SignedBool accept_garbage) ATTRIBUTE_NONNULL_;
+		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, eix::SignedBool accept_garbage, const char *default_repo) ATTRIBUTE_NONNULL((2, 3));
+		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, eix::SignedBool accept_garbage) ATTRIBUTE_NONNULL_ {
+			return parseMask(str, errtext, accept_garbage, NULLPTR);
+		}
 		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext) ATTRIBUTE_NONNULL_ {
-			return parseMask(str, errtext, 1);
+			return parseMask(str, errtext, 1, NULLPTR);
 		}
 
 		void match(Matches *m, Package *pkg) const ATTRIBUTE_NONNULL_;
@@ -144,11 +145,6 @@ class KeywordMask : public Mask {
 		std::string keywords;
 		bool locally_double;
 
-		explicit KeywordMask(const char *repo) :
-			Mask(maskTypeNone, repo),
-			locally_double(false) {
-		}
-
 		KeywordMask() :
 			Mask(maskTypeNone),
 			locally_double(false) {
@@ -165,9 +161,6 @@ class PKeywordMask : public Mask {
 	public:
 		std::string keywords;
 
-		explicit PKeywordMask(const char *repo) : Mask(maskTypeNone, repo) {
-		}
-
 		PKeywordMask() : Mask(maskTypeNone) {
 		}
 
@@ -181,9 +174,6 @@ class PKeywordMask : public Mask {
 class SetMask : public Mask {
 	public:
 		SetsIndex m_set;
-
-		SetMask(SetsIndex set_index, const char *repo) : Mask(maskTypeNone, repo), m_set(set_index) {
-		}
 
 		explicit SetMask(SetsIndex set_index) : Mask(maskTypeNone), m_set(set_index) {
 		}

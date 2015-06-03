@@ -368,9 +368,10 @@ void PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines
 			continue;
 		}
 		finishcomment = true;
-		Mask m(t, repo(it->filename_index));
+		Mask m(t);
 		string errtext;
-		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(), &errtext));
+		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(),
+			&errtext, 1, repo(it->filename_index)));
 		if(unlikely(r != BasicVersion::parsedOK)) {
 			portage_parse_error(file_name(it->filename_index),
 				it->linenumber, it->name + " ...", errtext);
@@ -395,9 +396,10 @@ void PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines
 void PreList::initialize(MaskList<KeywordMask> *l, string raised_arch) {
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
-		KeywordMask m(repo(it->filename_index));
+		KeywordMask m;
 		string errtext;
-		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(), &errtext));
+		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(),
+			&errtext, 1, repo(it->filename_index)));
 		if(unlikely(r != BasicVersion::parsedOK)) {
 			portage_parse_error(file_name(it->filename_index),
 				it->linenumber, it->name + " ...", errtext);
@@ -419,9 +421,10 @@ void PreList::initialize(MaskList<KeywordMask> *l, string raised_arch) {
 void PreList::initialize(MaskList<PKeywordMask> *l) {
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
-		PKeywordMask m(repo(it->filename_index));
+		PKeywordMask m;
 		string errtext;
-		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(), &errtext));
+		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(),
+			&errtext, 1, repo(it->filename_index)));
 		if(unlikely(r != BasicVersion::parsedOK)) {
 			portage_parse_error(file_name(it->filename_index),
 				it->linenumber, it->name + " ...", errtext);

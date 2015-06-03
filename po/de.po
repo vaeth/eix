@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-04-18 14:21+0200\n"
+"POT-Creation-Date: 2015-06-03 23:54+0200\n"
 "PO-Revision-Date: 2014-10-29 21:03+0100\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
@@ -38,7 +38,7 @@ msgstr "Probleme mit ${eixf_cmd}"
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-functions.sh.in:320 src/eix-remote.sh:340
+#: src/eix-functions.sh.in:320 src/eix-remote.sh:342
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
@@ -317,7 +317,7 @@ msgstr ""
 "-H            Keine Ausgabe der Statuszeile\n"
 "-q            Keine Ausgabe"
 
-#: src/eix-layman.sh:133 src/eix-remote.sh:274 src/eix-update.cc:659
+#: src/eix-layman.sh:133 src/eix-remote.sh:277 src/eix-update.cc:659
 msgid "Analyzing"
 msgstr "Analyse"
 
@@ -448,39 +448,39 @@ msgstr ""
 "-H      Keine Ausgabe der Statuszeile\n"
 "-q      Keine Ausgabe"
 
-#: src/eix-remote.sh:139
+#: src/eix-remote.sh:141
 #, sh-format
 msgid "$LOCAL_LAYMAN must not be empty"
 msgstr "$LOCAL_LAYMAN darf nicht leer sein"
 
-#: src/eix-remote.sh:141
+#: src/eix-remote.sh:143
 #, sh-format
 msgid "$LOCAL_LAYMAN must start with /"
 msgstr "$LOCAL_LAYMAN muss mit / beginnen"
 
-#: src/eix-remote.sh:174
+#: src/eix-remote.sh:176
 #, sh-format
 msgid "cannot determine useful $LOCAL_LAYMAN"
 msgstr "kann kein sinnvolles $LOCAL_LAYMAN festlegen"
 
-#: src/eix-remote.sh:190
+#: src/eix-remote.sh:193
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "Wechseln ins Verzeichnis ${a} nicht möglich"
 
-#: src/eix-remote.sh:221
+#: src/eix-remote.sh:224
 msgid "Downloading remote data"
 msgstr "Daten herunterladen"
 
-#: src/eix-remote.sh:223
+#: src/eix-remote.sh:226
 msgid "cannot cd to tempdir"
 msgstr "Wechseln ins temporäre Verzeichnis nicht möglich"
 
-#: src/eix-remote.sh:234
+#: src/eix-remote.sh:237
 msgid "failed: "
 msgstr "Fehler bei: "
 
-#: src/eix-remote.sh:244
+#: src/eix-remote.sh:247
 #, sh-format
 msgid ""
 "Probably your eix cachefile was *not* updated successfully.\n"
@@ -521,60 +521,60 @@ msgstr ""
 "eix-remote benutzen zu können. Dies ist unbequem, kann aber leider nicht\n"
 "vermieden werden und ist kein Bug!"
 
-#: src/eix-remote.sh:265
+#: src/eix-remote.sh:268
 msgid "Unpacking data"
 msgstr "Entpacken der Daten"
 
-#: src/eix-remote.sh:266
+#: src/eix-remote.sh:269
 #, sh-format
 msgid "cannot unpack ${a}"
 msgstr "${a} ist nicht entpackbar"
 
-#: src/eix-remote.sh:299
+#: src/eix-remote.sh:302
 #, sh-format
 msgid "file ${p} of ${a} contains no overlay"
 msgstr "Die Datei ${p} aus ${a} enthält keinen Overlay"
 
-#: src/eix-remote.sh:317
+#: src/eix-remote.sh:319
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "Fehler beim Lesen einiger eix-Cache-Dateien aus ${a}"
 
-#: src/eix-remote.sh:319
+#: src/eix-remote.sh:321
 #, sh-format
 msgid "no file in ${a} contains an overlay"
 msgstr "Keine Datei aus ${a} enthält einen Overlay"
 
-#: src/eix-remote.sh:321
+#: src/eix-remote.sh:323
 #, sh-format
 msgid "${failcount} files in ${a} contain no overlay"
 msgstr "${failcount} Dateien aus ${a} enthalten keinen Overlay"
 
-#: src/eix-remote.sh:323
+#: src/eix-remote.sh:325
 #, sh-format
 msgid "A file in ${a} contains no overlay"
 msgstr "Eine Datei aus ${a} enthält keinen Overlay"
 
-#: src/eix-remote.sh:331
+#: src/eix-remote.sh:333
 #, sh-format
 msgid "Output to remote database ${eix_remote}"
 msgstr "Ausgabe auf Remote-Datenbank ${eix_remote}"
 
-#: src/eix-remote.sh:350
+#: src/eix-remote.sh:352
 msgid "A temporary file makes only sense for update mode"
 msgstr "Eine temporäre Datei ergibt nur im Update-Modus Sinn"
 
-#: src/eix-remote.sh:361
+#: src/eix-remote.sh:363
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
 msgstr "temporäre Datei kann nicht nach ${file} kopiert werden"
 
-#: src/eix-remote.sh:373
+#: src/eix-remote.sh:375
 #, sh-format
 msgid "cannot read ${archive}"
 msgstr "Datei ${archive} nicht lesbar"
 
-#: src/eix-remote.sh:392
+#: src/eix-remote.sh:394
 #, sh-format
 msgid "mkdir ${tmpsub} failed"
 msgstr "Fehler bei mkdir ${tmpsub}"
@@ -6674,27 +6674,27 @@ msgstr ""
 "Interner Fehler: Versuch eine nicht-lokale Maske ohne Speichern\n"
 "wiederherzustellen"
 
-#: src/portage/mask.cc:120
+#: src/portage/mask.cc:108
 msgid "Can't read category."
 msgstr "Kategorie nicht lesbar."
 
-#: src/portage/mask.cc:144
+#: src/portage/mask.cc:132
 msgid "Repository name must be separated with :: (one : is missing)."
 msgstr "Repository-Name muss mit :: abgetrennt werden (ein : fehlt)."
 
-#: src/portage/mask.cc:195
+#: src/portage/mask.cc:187
 msgid "Operator without a version part."
 msgstr "Operator ohne Versionsspezifizierung."
 
-#: src/portage/mask.cc:196
+#: src/portage/mask.cc:188
 msgid "Version specification is missing."
 msgstr "Versionsangabe fehlt."
 
-#: src/portage/mask.cc:223
+#: src/portage/mask.cc:215
 msgid "A wildcard is only valid with the = operator."
 msgstr "Ein Wildcard ist nur mit dem =-Operator zulässig."
 
-#: src/portage/mask.cc:227
+#: src/portage/mask.cc:219
 msgid ""
 "A wildcard is only valid with the = operator.\n"
 "Portage would also accept something like ~app-shells/bash-3*,\n"

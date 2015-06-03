@@ -67,24 +67,12 @@ static const struct OperatorTable {
 	}
 };
 
-/** Constructor. */
-Mask::Mask(Type type, const char *repo) {
-	m_type = type;
-	if(repo != NULLPTR) {
-		m_test_reponame = true;
-		m_reponame = repo;
-	} else {
-		m_test_reponame = false;
-	}
-	m_test_slot = m_test_subslot = false;
-}
-
 /** split a "mask string" into its components
  * @return whether/which error occurred
  * @param str_mask the string to be dissected
  * @param errtext contains error message if not 0 and not parseOK
  * @param accept_garbage passed to parseVersion if appropriate */
-BasicVersion::ParseResult Mask::parseMask(const char *str, string *errtext, eix::SignedBool accept_garbage) {
+BasicVersion::ParseResult Mask::parseMask(const char *str, string *errtext, eix::SignedBool accept_garbage, const char *default_repo) {
 	// determine comparison operator
 	if(unlikely(m_type == maskPseudomask)) {
 		m_operator = maskOpEqual;
@@ -181,6 +169,10 @@ GCC_DIAG_ON(sign-conversion)
 		end = strchr(str, '[');
 		if((end != NULLPTR) && (strchr(end + 1, ']') == NULLPTR))
 			end = NULLPTR;
+	}
+	if((!m_test_reponame) && (default_repo != NULLPTR)) {
+		m_test_reponame = true;
+		m_reponame.assign(default_repo);
 	}
 
 	// Get the rest (name-version|name)
