@@ -3,7 +3,7 @@
 *eix-0.30.9
 	Martin Väth <martin at mvath.de>:
 	- Fix https://bugs.gentoo.org/show_bug.cgi?id=551108
-	  This was a regression of eix-0.30.8 by resetting default repo. Fix by
+	  This was a regression of eix-0.30.0 by resetting default repo. Fix by
 	  using only local logic: Allow default repo only in parseMask()
 	- Add gcc-5 options
 	- Add other optimization options which should have been added earlier
