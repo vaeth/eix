@@ -92,7 +92,7 @@ class NowarnPreList : public PreList {
 		}
 
 		NowarnPreList(const LineVec& lines, const std::string& filename, bool only_add)
-			: super(lines, filename, NULLPTR, only_add) {
+			: super(lines, filename, NULLPTR, only_add, false) {
 		}
 
 		void initialize(NowarnMaskList *l);

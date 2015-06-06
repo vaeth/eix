@@ -121,7 +121,7 @@ static void add_file(PreList *pre_list, const string& name) {
 	LineVec lines;
 	string new_name;
 	add_file(&lines, name, &new_name);
-	pre_list->handle_file(lines, new_name, NULLPTR, false);
+	pre_list->handle_file(lines, new_name, NULLPTR, false, false, false);
 }
 
 static void add_words(WordVec *words, const string& name) {
@@ -155,7 +155,7 @@ static void read_args(MaskList<Mask> *mask_list, WordVec *args, const ArgumentRe
 			case 'm':
 				if(need_argindex) {
 					need_argindex = false;
-					argindex =  pre_list.push_name("(arg)", NULLPTR);
+					argindex =  pre_list.push_name("(arg)", NULLPTR, false);
 				}
 				pre_list.handle_line(opt_arg(&arg, ar), argindex, ++linenr, false, false);
 				break;

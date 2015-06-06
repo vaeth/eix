@@ -15,7 +15,6 @@
 #include <list>
 #include <map>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "eixTk/likely.h"
@@ -222,16 +221,18 @@ class PreListOrderEntry : public LineVec {
 class PreListFilename {
 	private:
 		std::string filename, m_repo;
-		bool know_repo;
+		bool know_repo, honour_repo;
 
 	public:
-		PreListFilename(const std::string& n, const char *label);
+		PreListFilename(const std::string& n, const char *label, bool only_repo);
 
 		const std::string& name() const {
 			return filename;
 		}
 
 		const char *repo() const ATTRIBUTE_PURE;
+
+		const char *repo_if_only() const ATTRIBUTE_PURE;
 };
 
 /* The PreList is needed to Prepare a MaskList:
@@ -289,27 +290,26 @@ class PreList : public std::vector<PreListEntry> {
 			return filenames[file].repo();
 		}
 
-		FilenameIndex push_name(const std::string& filename, const char *reponame) {
+		const char *repo_if_only(FilenameIndex file) const {
+			return filenames[file].repo_if_only();
+		}
+
+		FilenameIndex push_name(const std::string& filename, const char *reponame, bool only_repo) {
 			FilenameIndex i(filenames.size());
-			filenames.push_back(PreListFilename(filename, reponame));
+			filenames.push_back(PreListFilename(filename, reponame, only_repo));
 			return i;
 		}
 
 		PreList() : finalized(false) {
 		}
 
-		PreList(const std::vector<std::string>& lines, const std::string& filename, const char *reponame, bool only_add) : finalized(false) {
-			handle_file(lines, filename, reponame, only_add);
+		PreList(const std::vector<std::string>& lines, const std::string& filename, const char *reponame, bool only_add, bool only_repo) : finalized(false) {
+			handle_file(lines, filename, reponame, only_add, false, only_repo);
 		}
 
 		/// return true if something was changed
-		bool handle_file(const std::vector<std::string>& lines, const std::string& filename, const char *reponame, bool only_add, bool keep_commentlines) {
-			return handle_lines(lines, push_name(filename, reponame), only_add, NULLPTR, keep_commentlines);
-		}
-
-		/// return true if something was changed
-		bool handle_file(const std::vector<std::string>& lines, const std::string& filename, const char *reponame, bool only_add) {
-			return handle_lines(lines, push_name(filename, reponame), only_add, NULLPTR, false);
+		bool handle_file(const std::vector<std::string>& lines, const std::string& filename, const char *reponame, bool only_add, bool keep_commentlines, bool only_repo) {
+			return handle_lines(lines, push_name(filename, reponame, only_repo), only_add, NULLPTR, keep_commentlines);
 		}
 
 		/// return true if something was changed

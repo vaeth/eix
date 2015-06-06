@@ -117,7 +117,7 @@ bool CascadingProfile::addProfile(const char *profile, WordSet *sourced_files) {
 	bool r(pushback_files(truename, &filenames, profile_exclude, 3));
 	for(WordVec::const_iterator it(filenames.begin());
 		likely(it != filenames.end()); ++it) {
-		listaddFile(*it, 0);
+		listaddFile(*it, 0, false);
 	}
 	return r;
 }
@@ -167,18 +167,20 @@ bool CascadingProfile::readremoveFiles() {
 	for(ProfileFiles::iterator file(m_profile_files.begin());
 		likely(file != m_profile_files.end()); ++file) {
 		const char *filename(strrchr(file->c_str(), '/'));
-		if(filename == NULLPTR)
+		if(filename == NULLPTR) {
 			continue;
+		}
 		++filename;
 		CascadingProfile::Handler handler((*profile_filenames)[filename]);
 		if(handler == NULLPTR) {
 			continue;
 		}
 
-		OverlayIdent& overlay(m_portagesettings->repos[file->reponum]);
+		OverlayIdent& overlay(m_portagesettings->repos[file->repo_num()]);
 		overlay.readLabel();
 		if((this->*handler)(file->name(),
-			overlay.label.empty() ? NULLPTR : overlay.label.c_str())) {
+			(overlay.label.empty() ? NULLPTR : overlay.label.c_str()),
+			file->only_repo())) {
 			ret = true;
 		}
 	}
@@ -186,12 +188,12 @@ bool CascadingProfile::readremoveFiles() {
 	return ret;
 }
 
-bool CascadingProfile::readPackages(const string& filename, const char *repo) {
+bool CascadingProfile::readPackages(const string& filename, const char *repo, bool only_repo) {
 	LineVec lines;
 	pushback_lines(filename.c_str(), &lines, true, true);
 	bool ret(false);
-	PreList::FilenameIndex file_system(p_system.push_name(filename, repo));
-	PreList::FilenameIndex file_profile(p_profile.push_name(filename, repo));
+	PreList::FilenameIndex file_system(p_system.push_name(filename, repo, only_repo));
+	PreList::FilenameIndex file_profile(p_profile.push_name(filename, repo, only_repo));
 	PreList::LineNumber number(1);
 	for(LineVec::const_iterator it(lines.begin());
 		likely(it != lines.end()); ++number, ++it) {
@@ -220,28 +222,28 @@ bool CascadingProfile::readPackages(const string& filename, const char *repo) {
 	return ret;
 }
 
-bool CascadingProfile::readPackageMasks(const string& filename, const char *repo) {
+bool CascadingProfile::readPackageMasks(const string& filename, const char *repo, bool only_repo) {
 	LineVec lines;
 	pushback_lines(filename.c_str(), &lines, true, true, -1);
-	return p_package_masks.handle_file(lines, filename, repo, false, true);
+	return p_package_masks.handle_file(lines, filename, repo, false, true, only_repo);
 }
 
-bool CascadingProfile::readPackageUnmasks(const string& filename, const char *repo) {
+bool CascadingProfile::readPackageUnmasks(const string& filename, const char *repo, bool only_repo) {
 	LineVec lines;
 	pushback_lines(filename.c_str(), &lines, true, true);
-	return p_package_unmasks.handle_file(lines, filename, repo, false);
+	return p_package_unmasks.handle_file(lines, filename, repo, false, false, only_repo);
 }
 
-bool CascadingProfile::readPackageKeywords(const string& filename, const char *repo) {
+bool CascadingProfile::readPackageKeywords(const string& filename, const char *repo, bool only_repo) {
 	LineVec lines;
 	pushback_lines(filename.c_str(), &lines, true, true);
-	return p_package_keywords.handle_file(lines, filename, repo, false);
+	return p_package_keywords.handle_file(lines, filename, repo, false, false, only_repo);
 }
 
-bool CascadingProfile::readPackageAcceptKeywords(const string& filename, const char *repo) {
+bool CascadingProfile::readPackageAcceptKeywords(const string& filename, const char *repo, bool only_repo) {
 	LineVec lines;
 	pushback_lines(filename.c_str(), &lines, true, true);
-	return p_package_accept_keywords.handle_file(lines, filename, repo, true);
+	return p_package_accept_keywords.handle_file(lines, filename, repo, true, false, only_repo);
 }
 
 /** Read all "make.defaults" files found in profile. */

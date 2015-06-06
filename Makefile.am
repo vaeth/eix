@@ -6,7 +6,7 @@
 #     Emil Beinroth <emilbeinroth@gmx.net>
 #     Martin V\"ath <martin@mvath.de>
 
-AUTOMAKE_OPTIONS = foreign 1.11.2 no-dist-gzip dist-xz -Wobsolete -Wportability -Wextra-portability
+AUTOMAKE_OPTIONS = foreign 1.11.2 no-dist-gzip dist-bzip2 -Wobsolete -Wportability -Wextra-portability
 
 if EXTRA_DOC
 extra_doc_subdir = doc

@@ -161,18 +161,26 @@ template<> void MaskList<Mask>::applySetMasks(Version *v, const string& set_name
 	delete masks;
 }
 
-PreListFilename::PreListFilename(const string& n, const char *label) {
+PreListFilename::PreListFilename(const string& n, const char *label, bool only_repo) {
 	filename = n;
 	if(label == NULLPTR) {
-		know_repo = false;
+		know_repo = honour_repo = false;
 		return;
 	}
 	know_repo = true;
 	m_repo = label;
+	honour_repo = only_repo;
 }
 
 const char *PreListFilename::repo() const {
 	if(know_repo) {
+		return m_repo.c_str();
+	}
+	return NULLPTR;
+}
+
+const char *PreListFilename::repo_if_only() const {
+	if(honour_repo) {
 		return m_repo.c_str();
 	}
 	return NULLPTR;
@@ -371,7 +379,7 @@ void PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines
 		Mask m(t);
 		string errtext;
 		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(),
-			&errtext, 1, repo(it->filename_index)));
+			&errtext, 1, repo_if_only(it->filename_index)));
 		if(unlikely(r != BasicVersion::parsedOK)) {
 			portage_parse_error(file_name(it->filename_index),
 				it->linenumber, it->name + " ...", errtext);
@@ -399,7 +407,7 @@ void PreList::initialize(MaskList<KeywordMask> *l, string raised_arch) {
 		KeywordMask m;
 		string errtext;
 		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(),
-			&errtext, 1, repo(it->filename_index)));
+			&errtext, 1, repo_if_only(it->filename_index)));
 		if(unlikely(r != BasicVersion::parsedOK)) {
 			portage_parse_error(file_name(it->filename_index),
 				it->linenumber, it->name + " ...", errtext);
@@ -424,7 +432,7 @@ void PreList::initialize(MaskList<PKeywordMask> *l) {
 		PKeywordMask m;
 		string errtext;
 		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(),
-			&errtext, 1, repo(it->filename_index)));
+			&errtext, 1, repo_if_only(it->filename_index)));
 		if(unlikely(r != BasicVersion::parsedOK)) {
 			portage_parse_error(file_name(it->filename_index),
 				it->linenumber, it->name + " ...", errtext);

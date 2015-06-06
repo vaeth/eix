@@ -13,6 +13,7 @@
 #include <string>
 
 #include "eixTk/eixint.h"
+#include "eixTk/null.h"
 #include "eixTk/ptr_list.h"
 #include "eixTk/stringlist.h"
 #include "portage/basicversion.h"

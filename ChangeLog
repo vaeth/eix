@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.30.10
+	Martin Väth <martin at mvath.de>:
+	- Let only non-main profiles/package.mask mask repo-locally
+	- Bump to gettext-0.19.4
+
 *eix-0.30.9
 	Martin Väth <martin at mvath.de>:
 	- Fix https://bugs.gentoo.org/show_bug.cgi?id=551108

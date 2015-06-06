@@ -1186,7 +1186,7 @@ void PackageTest::get_nowarn_list() {
 	for(WordVec::const_iterator it(name.begin()); it != name.end(); ++it) {
 		LineVec lines;
 		pushback_lines(it->c_str(), &lines, true, true);
-		prelist.handle_file(lines, *it, NULLPTR, true);
+		prelist.handle_file(lines, *it, NULLPTR, true, false, false);
 	}
 	nowarn_list = new NowarnMaskList;
 	prelist.initialize(nowarn_list);
