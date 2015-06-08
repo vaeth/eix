@@ -24,6 +24,7 @@
 #include "eixTk/eixint.h"
 #include "eixTk/exceptions.h"
 #include "eixTk/filenames.h"
+#include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -674,25 +675,61 @@ bool PortageSettings::calc_allow_upgrade_slots(const Package *p) const {
 	return upgrade_policy;
 }
 
+/** Verify whether categories in vec, starting at index for file name are ok.
+    Give an error if not and throw out inappropriate ones.
+    Return index for next push_back */
+static WordVec::size_type verify_categories(const string &name, WordVec *vec, WordVec::size_type index) {
+	while(index < vec->size()) {
+		string &s = (*vec)[index];
+		// Remove trailing and leading /, see https://github.com/vaeth/eix/issues/8
+		while(likely(!s.empty())) {
+			if(unlikely(s[s.size() - 1] == '/')) {
+				s.erase(s.size() - 1, 1);
+			} else if(unlikely(s[0] == '/')) {
+				s.erase(0, 1);
+			} else {
+				break;
+			}
+		}
+		// Do not allow other bad symbols:
+		if(likely(!s.empty())) {
+			if(likely((*first_not_alnum_or_ok(s.c_str(), "+-_./,;!?*")) == '\0')) {
+				++index;
+				continue;
+			} else {
+				cerr << eix::format(_("category name %s in %s is ignored"))
+					% s % name << endl;
+			}
+		}
+GCC_DIAG_OFF(sign-conversion)
+		vec->erase((vec->begin()) + index);
+GCC_DIAG_ON(sign-conversion)
+	}
+	return index;
+}
+
 /** pushback categories from profiles to vec. Categories may be duplicate.
     Result is not cashed, i.e. this should be called only once. */
 void PortageSettings::pushback_categories(WordVec *vec) {
+	WordVec::size_type index(vec->size());
 	/* Merge categories from /etc/portage/categories and
 	 * portdir/profile/categories */
-	pushback_lines((m_eprefixconf + USER_CATEGORIES_FILE).c_str(), vec);
+	string filename(m_eprefixconf + USER_CATEGORIES_FILE);
+	pushback_lines(filename.c_str(), vec);
+	index = verify_categories(filename, vec, index);
 
 	for(RepoList::const_iterator i(repos.begin()); likely(i != repos.end()); ++i) {
 		string errtext;
 		if(!i->know_path) {
 			continue;
 		}
-		if(!pushback_lines((m_eprefixaccessoverlays + (i->path) + "/" + PORTDIR_CATEGORIES_FILE).c_str(),
-			vec, false, false, 0, &errtext)) {
+		filename.assign(m_eprefixaccessoverlays + (i->path) + "/" + PORTDIR_CATEGORIES_FILE);
+		if(!pushback_lines(filename.c_str(), vec, false, false, 0, &errtext)) {
 			if(i == repos.begin()) {
 				cerr << errtext << endl;
-				exit(EXIT_FAILURE);
 			}
 		}
+		index = verify_categories(filename, vec, index);
 	}
 }
 

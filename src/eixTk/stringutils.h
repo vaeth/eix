@@ -79,6 +79,9 @@ bool is_numeric(const char *str) ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
 /** return pointer to first alphanumeric or to 0 symbol */
 const char *first_alnum(const char *s);
 
+/** return pointer to the first non-alphanumeric not in ok, maybe to 0 symbol */
+const char *first_not_alnum_or_ok(const char *s, const char *ok);
+
 /** Add symbol if it is not already the last one */
 void optional_append(std::string *s, char symbol) ATTRIBUTE_NONNULL_;
 

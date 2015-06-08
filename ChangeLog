@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.30.11
+	Martin Väth <martin at mvath.de>:
+	- Verify (and in trivial cases: fix) content of profiles/categories
+	  https://github.com/vaeth/eix/issues/8
+
 *eix-0.30.10
 	Martin Väth <martin at mvath.de>:
 	- Let only non-main profiles/package.mask mask repo-locally

@@ -95,10 +95,11 @@ void optional_append(std::string *s, char symbol) {
 void ltrim(std::string *str, const char *delims) {
 	// trim leading whitespace
 	std::string::size_type notwhite(str->find_first_not_of(delims));
-	if(notwhite != std::string::npos)
+	if(notwhite != std::string::npos) {
 		str->erase(0, notwhite);
-	else
+	} else {
 		str->clear();
+	}
 }
 
 /** Trim characters on right side of string.
@@ -107,10 +108,11 @@ void ltrim(std::string *str, const char *delims) {
 void rtrim(std::string *str, const char *delims) {
 	// trim trailing whitespace
 	std::string::size_type notwhite(str->find_last_not_of(delims));
-	if(notwhite != std::string::npos)
+	if(notwhite != std::string::npos) {
 		str->erase(notwhite+1);
-	else
+	} else {
 		str->clear();
+	}
 }
 
 /** Trim characters on left and right side of string.
@@ -545,6 +547,15 @@ bool match_list(const char **str_list, const char *str) {
 const char *first_alnum(const char *s) {
 	for(char c(*s); likely(c != '\0'); c = *(++s)) {
 		if(isalnum(c, localeC)) {
+			return s;
+		}
+	}
+	return s;
+}
+
+const char *first_not_alnum_or_ok(const char *s, const char *ok) {
+	for(char c(*s); likely(c != '\0'); c = *(++s)) {
+		if(unlikely((!isalnum(c, localeC)) && (strchr(ok, c) == NULLPTR))) {
 			return s;
 		}
 	}

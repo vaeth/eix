@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-06-03 23:54+0200\n"
+"POT-Creation-Date: 2015-06-08 18:30+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -2270,32 +2270,32 @@ msgstr "отсутствует указатель формата"
 msgid "unknown format specifier '%%%s'"
 msgstr "неизвестный указатель формата '%%%s'"
 
-#: src/eixTk/stringutils.cc:386
+#: src/eixTk/stringutils.cc:388
 #, c-format
 msgid "flags should not start with a '+': %s"
 msgstr "флаги не должны начинаться с '+': %s"
 
-#: src/eixTk/stringutils.cc:425
+#: src/eixTk/stringutils.cc:427
 msgid "Internal error: Storing required after finalizing"
 msgstr "Внутренняя ошибка: Требуется хранение после финализации"
 
-#: src/eixTk/stringutils.cc:433
+#: src/eixTk/stringutils.cc:435
 msgid "Internal error: Hashing required after finalizing"
 msgstr "Внутренняя ошибка: Требуется хеширование после финализации"
 
-#: src/eixTk/stringutils.cc:437
+#: src/eixTk/stringutils.cc:439
 msgid "Internal error: Hashing required in non-hash mode"
 msgstr "Внутренняя ошибка: Требуется хеширование в нехешевом режиме"
 
-#: src/eixTk/stringutils.cc:463
+#: src/eixTk/stringutils.cc:465
 msgid "Internal error: Index required before sorting."
 msgstr "Внутренняя ошибка: Требуется индекс перед сортировкой."
 
-#: src/eixTk/stringutils.cc:468
+#: src/eixTk/stringutils.cc:470
 msgid "Internal error: Trying to shortcut non-hashed string."
 msgstr "Внутренняя ошибка: Попытка создать ярлык на нехешированную строку."
 
-#: src/eixTk/stringutils.cc:476
+#: src/eixTk/stringutils.cc:478
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "База данных испорчена: требуется несуществующий хеш"
 
@@ -5559,8 +5559,13 @@ msgstr "Превышен уровень рекурсии для каскадны
 msgid "warning: ignoring parent %r of file %r"
 msgstr "внимание: игнорирую родителя %r файла %r"
 
-#: src/portage/conf/portagesettings.cc:1258
-#: src/portage/conf/portagesettings.cc:1285
+#: src/portage/conf/portagesettings.cc:700
+#, c-format
+msgid "category name %s in %s is ignored"
+msgstr ""
+
+#: src/portage/conf/portagesettings.cc:1295
+#: src/portage/conf/portagesettings.cc:1322
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr "внутренняя ошибка: Попытка восстановить нелокальную маску без сохранения"
 

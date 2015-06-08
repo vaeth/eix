@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-06-03 23:54+0200\n"
+"POT-Creation-Date: 2015-06-08 18:30+0200\n"
 "PO-Revision-Date: 2014-10-29 21:03+0100\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
@@ -2304,32 +2304,32 @@ msgstr "Format-Zeichen fehlt"
 msgid "unknown format specifier '%%%s'"
 msgstr "Unbekannte Formatangabe '%%%s'"
 
-#: src/eixTk/stringutils.cc:386
+#: src/eixTk/stringutils.cc:388
 #, c-format
 msgid "flags should not start with a '+': %s"
 msgstr "Flags sollten nicht mit einem '+' beginnen: %s"
 
-#: src/eixTk/stringutils.cc:425
+#: src/eixTk/stringutils.cc:427
 msgid "Internal error: Storing required after finalizing"
 msgstr "Interner Fehler: Speichern nach Finalisierung benötigt"
 
-#: src/eixTk/stringutils.cc:433
+#: src/eixTk/stringutils.cc:435
 msgid "Internal error: Hashing required after finalizing"
 msgstr "Interner Fehler: Hashing nach Finalisierung benötigt"
 
-#: src/eixTk/stringutils.cc:437
+#: src/eixTk/stringutils.cc:439
 msgid "Internal error: Hashing required in non-hash mode"
 msgstr "Interner Fehler: Hashing in non-hash Modus benötigt"
 
-#: src/eixTk/stringutils.cc:463
+#: src/eixTk/stringutils.cc:465
 msgid "Internal error: Index required before sorting."
 msgstr "Interner Fehler: Index vor der Sortierung benötigt."
 
-#: src/eixTk/stringutils.cc:468
+#: src/eixTk/stringutils.cc:470
 msgid "Internal error: Trying to shortcut non-hashed string."
 msgstr "Interner Fehler: Versuch, einen nicht gehashted String zu kürzen."
 
-#: src/eixTk/stringutils.cc:476
+#: src/eixTk/stringutils.cc:478
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "Datenbank defekt: Nichtexistierender Hash wurde angefordert"
 
@@ -6667,8 +6667,13 @@ msgstr ""
 msgid "warning: ignoring parent %r of file %r"
 msgstr "Warnung: Ignoriere Elternteil %r der Datei %r"
 
-#: src/portage/conf/portagesettings.cc:1258
-#: src/portage/conf/portagesettings.cc:1285
+#: src/portage/conf/portagesettings.cc:700
+#, c-format
+msgid "category name %s in %s is ignored"
+msgstr "Kategorienname %s in %s wird ignoriert"
+
+#: src/portage/conf/portagesettings.cc:1295
+#: src/portage/conf/portagesettings.cc:1322
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr ""
 "Interner Fehler: Versuch eine nicht-lokale Maske ohne Speichern\n"
