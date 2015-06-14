@@ -330,6 +330,7 @@ void PortageSettings::init(EixRc *eixrc, bool getlocal, bool init_world, bool pr
 
 	string& my_path((*this)["PORTDIR"]);
 	profile->listaddFile(my_path + PORTDIR_MASK_FILE, 0, false);
+	profile->listaddFile(my_path + PORTDIR_UNMASK_FILE, 0, false);
 	profile->listaddProfile();
 	if(unlikely(print_profile_paths)) {
 		return;
@@ -743,6 +744,7 @@ void PortageSettings::addOverlayProfiles(CascadingProfile *p) const {
 		path.append(i->path);
 		path.append(1, '/');
 		p->listaddFile(path + PORTDIR_MASK_FILE, j, true);
+		p->listaddFile(path + PORTDIR_UNMASK_FILE, j, true);
 		p->listaddFile(path + PORTDIR_MAKE_DEFAULTS, j, false);
 	}
 }

@@ -44,6 +44,7 @@ class Version;
 #define USER_PROFILE_DIR        "/etc/portage/profile"
 #define PORTDIR_CATEGORIES_FILE "profiles/categories"
 #define PORTDIR_MASK_FILE       "profiles/package.mask"
+#define PORTDIR_UNMASK_FILE     "profiles/package.unmask"
 #define PORTDIR_MAKE_DEFAULTS   "profiles/make.defaults"
 
 class PortageSettings;
