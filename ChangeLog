@@ -5,6 +5,7 @@
 	- Honour profiles/package.unmask, https://github.com/vaeth/eix/issues/9
 	- Verify (and in trivial cases: fix) content of profiles/categories
 	  https://github.com/vaeth/eix/issues/8
+	- Fix ATTRIBUTE_NONNULL in PortageUserConfig constructor
 
 *eix-0.30.10
 	Martin Väth <martin at mvath.de>:

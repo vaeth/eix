@@ -72,7 +72,7 @@ class PortageUserConfig {
 		void pushback_set_accepted_keywords(WordVec *result, const Version *v) const ATTRIBUTE_NONNULL_;
 
 	public:
-		PortageUserConfig(PortageSettings *psettings, CascadingProfile *local_profile) ATTRIBUTE_NONNULL_;
+		PortageUserConfig(PortageSettings *psettings, CascadingProfile *local_profile) ATTRIBUTE_NONNULL((2));
 
 		~PortageUserConfig();
 

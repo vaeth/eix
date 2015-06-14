@@ -1275,7 +1275,7 @@ void PortageUserConfig::setProfileMasks(Package *p) const {
 	if(p->restore_maskflags(Version::SAVEMASK_USERPROFILE)) {
 		return;
 	}
-	if(profile) {
+	if(profile != NULLPTR) {
 		profile->applyMasks(p);
 	} else {
 		m_settings->setMasks(p);
