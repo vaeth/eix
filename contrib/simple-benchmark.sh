@@ -9,7 +9,7 @@
 #   Emil Beinroth <emilbeinroth@gmx.net>
 
 _get_time() {
-    TIMEFORMAT="%3$1" eval time "$2 &>/dev/null" 2>&1
+    TIMEFORMAT=%3$1 eval time "$2 &>/dev/null" 2>&1
 }
 
 real() {

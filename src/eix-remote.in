@@ -14,13 +14,13 @@ my_getopts='KvqxXLl:a:kiHh?'
 
 set -f
 eval "Push -c opt `eix-update --print EIX_REMOTE_OPTS`"
-Push opt "${@}"
-eval "set -- ${opt}"
+Push opt "$@"
+eval "set -- $opt"
 
 drop_permissions=:
 OPTIND=1
-while getopts "${my_getopts}" opt
-do	case ${opt} in
+while getopts "$my_getopts" opt
+do	case $opt in
 	K)	drop_permissions=false
 		break;;
 	k)	drop_permissions=false;;
@@ -28,11 +28,11 @@ do	case ${opt} in
 	*)	:;;
 	esac
 done
-if ${drop_permissions}
+if $drop_permissions
 then	prg=./eix-drop-permissions
 	me=./eix-remote.in
-	exec "${prg}" -- "${me}" -K "${@}"
-	die "`eval_gettext 'failed to execute ${prg}'`"
+	exec "$prg" -- "$me" -K "$@"
+	die "`eval_gettext 'failed to execute $prg'`"
 fi
 
 addr1='@DEFAULT_REMOTE_PATH1@'
@@ -44,17 +44,17 @@ ReadVar local_layman LOCAL_LAYMAN
 Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	f1=${archive1}
-	f2=${archive2}
+	f1=$archive1
+	f2=$archive2
 	[ -n "${f:+}" ] || f=`gettext 'temporary file'`
-	eval_gettext 'Usage: ${n} [options] command
-Get data from a remote database for ${p}.
+	eval_gettext 'Usage: $n [options] command
+Get data from a remote database for $p.
 The following commands are provided:
 
 update1 (=update) or update2:
         Fetch the eix-caches of some layman overlays, store them locally in
-        EIX_REMOTEARCHIVE1 (${f1}) or
-        EIX_REMOTEARCHIVE2 (${f2}),
+        EIX_REMOTEARCHIVE1 ($f1) or
+        EIX_REMOTEARCHIVE2 ($f2),
         respectively and add them to the eix database.
         If EIX_REMOTE1 or EIX_REMOTE2, respectively, is nonempty the output
         goes to that separate database.
@@ -95,15 +95,15 @@ The following options are available:
         Set LOCAL_LAYMAN or use option -l to override the heuristics.
 -l PATH Use PATH as LOCAL_LAYMAN
 -a ADDR Use ADDR as remote database address instead of:
-        ${addr1}
-        ${addr2}
+        $addr1
+        $addr2
 -i      Ignore all previous options (e.g. ignore EIX_REMOTE_OPTS).
 -v      Verbose (default)
 -H      Suppress status line update
 -q      Quiet'
 	echo
 	exitcode=${1:-1}
-	Exit ${exitcode}
+	Exit $exitcode
 }
 
 DefaultOpts() {
@@ -118,8 +118,8 @@ DefaultOpts() {
 
 DefaultOpts
 OPTIND=1
-while getopts "${my_getopts}" opt
-do	case ${opt} in
+while getopts "$my_getopts" opt
+do	case $opt in
 	i)	DefaultOpts;;
 	[kK])	:;;
 	v)	verbose=:;;
@@ -127,14 +127,14 @@ do	case ${opt} in
 	x)	excludelocal=:;;
 	X)	excluderemote=:;;
 	L)	excludedebug=:;;
-	l)	local_layman=${OPTARG};;
-	a)	addr=${OPTARG};;
+	l)	local_layman=$OPTARG;;
+	a)	addr=$OPTARG;;
 	H)	statusline=false;;
 	*)	Usage 0;;
 	esac
 done
-[ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
-${statusline} || export NOSTATUSLINE=true
+[ $OPTIND -le 1 ] || shift `Expr $OPTIND - 1`
+$statusline || export NOSTATUSLINE=true
 
 SanitizeLocalLayman() {
 	normalize_resolve=false NormalizeNames local_layman \
@@ -146,12 +146,12 @@ SanitizeLocalLayman() {
 PrintLaymanStorage() {
 	printf '%s\n%s\n' 'from layman.config import BareConfig' \
 	"print(BareConfig(read_configfile=True)['storage'])" \
-		| python -- "${@}" 2>/dev/null
+		| python -- "$@" 2>/dev/null
 }
 
 PrintLaymanStorageOld() {
 	printf '%s\n%s\n' 'from layman.config import Config' \
-	"print(Config()['storage'])" | python -- "${@}" 2>/dev/null
+	"print(Config()['storage'])" | python -- "$@" 2>/dev/null
 }
 
 InitLocalLayman() {
@@ -161,36 +161,36 @@ InitLocalLayman() {
 	then	local_layman=`PrintLaymanStorageOld` || local_layman=
 	fi
 	for i in \
-		"${local_layman}" \
+		"$local_layman" \
 		'/usr/local/portage/layman' \
 		"${local_portdir:-/}local/layman/make.conf" \
 		"${local_portdir%/*/}/layman/make.conf" \
 		'/var/lib/layman'
-	do	[ -n "${i:++}" ] && test -d "${i}" && local_layman=${i} \
+	do	[ -n "${i:++}" ] && test -d "$i" && local_layman=$i \
 			&& return
 	done
 	return 1
 }
-if ${excluderemote} || ${excludelocal} || ${excludedebug}
+if $excluderemote || $excludelocal || $excludedebug
 then	InitLocalLayman && SanitizeLocalLayman || {
 		ewarn "`gettext 'cannot determine useful $LOCAL_LAYMAN'`"
-		if ${excludedebug}
-		then	[ -n "${local_layman:++}" ] && Echo "${local_layman}"
+		if $excludedebug
+		then	[ -n "${local_layman:++}" ] && Echo "$local_layman"
 			Exit 1
 		fi
 		excludelocal=false
 		excluderemote=false
 	}
-	if ${excludedebug}
-	then	Echo "${local_layman}"
+	if $excludedebug
+	then	Echo "$local_layman"
 		Exit
 	fi
 fi
 
 CdDir() {
-	cd "${1}" >/dev/null && return
-	a=${1}
-	die "`eval_gettext 'cannot cd to ${a}'`"
+	cd "$1" >/dev/null && return
+	a=$1
+	die "`eval_gettext 'cannot cd to $a'`"
 }
 
 tmpdir=
@@ -198,16 +198,16 @@ exitcode=0
 Cleanup() {
 	trap : EXIT HUP INT TERM
 	if [ -n "${tmpdir:++}" ]
-	then	test -d "${tmpdir}" && rm -rf -- "${tmpdir}"
+	then	test -d "$tmpdir" && rm -rf -- "$tmpdir"
 	fi
 	tmpdir=
 	trap - EXIT HUP INT TERM
-	Exit ${exitcode}
+	Exit $exitcode
 }
 MakeTempDir() {
 	trap Cleanup EXIT HUP INT TERM
 	AssignTemp tmpdir -d
-	chmod -- a+rx "${tmpdir}"
+	chmod -- a+rx "$tmpdir"
 }
 
 tmpfile=
@@ -218,26 +218,26 @@ FetchTemp() {
 Please specify a valid remote file with option -a.
 The default should have been set with ./configure --remote-file'`"
 	MakeTempDir
-	tmpfile="${tmpdir}/${eixcachesname}"
-	[ -n "${archive:++}" ] && test -e "${archive}" \
-		&& cp -p -- "${archive}" "${tmpfile}" >/dev/null 2>&1
+	tmpfile=$tmpdir/$eixcachesname
+	[ -n "${archive:++}" ] && test -e "$archive" \
+		&& cp -p -- "$archive" "$tmpfile" >/dev/null 2>&1
 	Statusline "`gettext 'Downloading remote data'`"
 	(
-		CdDir "${tmpdir}" || die "`gettext 'cannot cd to tempdir'`"
+		CdDir "$tmpdir" || die "`gettext 'cannot cd to tempdir'`"
 		umask 002
 		set -- wget -N
-		${verbose} || set -- "${@}" --no-verbose
-		set -- "${@}" -- "${addr}"
-		if ${verbose}
-		then	"${@}"
-		else	a=`"${@}" 2>&1` || {
-				Echo "${a}" >&2
+		$verbose || set -- "$@" --no-verbose
+		set -- "$@" -- "$addr"
+		if $verbose
+		then	"$@"
+		else	a=`"$@" 2>&1` || {
+				Echo "$a" >&2
 				false
 			}
-		fi || die "`gettext 'failed: '` ${*}"
+		fi || die "`gettext 'failed: '` $*"
 	) || {
-		exitcode=${?}
-		exit ${exitcode}
+		exitcode=$?
+		exit $exitcode
 	}
 }
 
@@ -263,12 +263,12 @@ to use eix-remote: This inconvenience cannot be avoided and is not a bug!'
 }
 
 AddArchive() {
-	a=${1}
-	CdDir "${2}"
-	RunCommand "`gettext 'Unpacking data'`" tar xjf "${a}" || {
-		msg=`eval_gettext 'cannot unpack ${a}'`
-		msg=${msg}`BugReport`
-		die "${msg}"
+	a=$1
+	CdDir "$2"
+	RunCommand "`gettext 'Unpacking data'`" tar xjf "$a" || {
+		msg=`eval_gettext 'cannot unpack $a'`
+		msg=$msg`BugReport`
+		die "$msg"
 	}
 	ClearUpdateArgs
 	AddLocalMethods
@@ -278,73 +278,73 @@ AddArchive() {
 	set +f
 	chmod a+r *
 	for i in *
-	do	p="${2}/${i}"
+	do	p=$2/$i
 		Replace -g p '\' '\\'
 		Replace -g p ':' '\:'
-		Push eixoverlay "-f${p}" "-o" ''
-		Push method "eix*:${p}:0"
+		Push eixoverlay "-f$p" "-o" ''
+		Push method "eix*:$p:0"
 	done
 	set -f
 	sep=mAgIcsEp
-	eval "set -- ${eixoverlay}"
-	eixoverlay=`eix-header -s"${sep}" "${@}"` || exitcode=1
+	eval "set -- $eixoverlay"
+	eixoverlay=`eix-header -s"$sep" "$@"` || exitcode=1
 	failcount=0
 	success=false
-	eval "set -- ${method}"
+	eval "set -- $method"
 	for i
-	do	l=${eixoverlay%%${sep}*}
-		eixoverlay=${eixoverlay#*${sep}}
-		name=${eixoverlay%%${sep}*}
-		eixoverlay=${eixoverlay#*${sep}}
-		[ -n "${l}${name}" ] || {
+	do	l=${eixoverlay%%$sep*}
+		eixoverlay=${eixoverlay#*$sep}
+		name=${eixoverlay%%$sep*}
+		eixoverlay=${eixoverlay#*$sep}
+		[ -n "$l$name" ] || {
 			p=${i##*/}
 			p=${p%:*}
-			ewarn "`eval_gettext 'file ${p} of ${a} contains no overlay'`"
-			failcount=`Expr ${failcount} + 1`
+			ewarn "`eval_gettext 'file $p of $a contains no overlay'`"
+			failcount=`Expr $failcount + 1`
 			continue
 		}
 		success=:
 		name=${name##*/}
-		${excludelocal} && AddExcludes "${local_layman}/${name}"
-		${excluderemote} && \
-			test -r "${local_layman}/${name}" && continue
-		virtual="layman/${name}"
-		printf '%s -> %s\n' "${virtual}" "${l:-no repo-name}"
-		AddMethod "${virtual}" "${i}"
-		AddOverlays "${virtual}"
-		[ -n "${l:++}" ] && AddRepoName "${virtual}" "${l}"
+		$excludelocal && AddExcludes "$local_layman/$name"
+		$excluderemote && \
+			test -r "$local_layman/$name" && continue
+		virtual=layman/$name
+		printf '%s -> %s\n' "$virtual" "${l:-no repo-name}"
+		AddMethod "$virtual" "$i"
+		AddOverlays "$virtual"
+		[ -n "${l:++}" ] && AddRepoName "$virtual" "$l"
 	done
 	msg=
-	if [ ${exitcode} -ne 0 ]
-	then	msg=`eval_gettext 'could not read all eix cachefiles of ${a}'`
-	elif ! ${success}
-	then	msg=`eval_gettext 'no file in ${a} contains an overlay'`
-	elif [ ${failcount} -gt 1 ]
-	then	ewarn "`eval_gettext '${failcount} files in ${a} contain no overlay'`"
-	elif [ ${failcount} -gt 0 ]
-	then	ewarn "`eval_gettext 'A file in ${a} contains no overlay'`"
+	if [ $exitcode -ne 0 ]
+	then	msg=`eval_gettext 'could not read all eix cachefiles of $a'`
+	elif ! $success
+	then	msg=`eval_gettext 'no file in $a contains an overlay'`
+	elif [ $failcount -gt 1 ]
+	then	ewarn "`eval_gettext '$failcount files in $a contain no overlay'`"
+	elif [ $failcount -gt 0 ]
+	then	ewarn "`eval_gettext 'A file in $a contains no overlay'`"
 	fi
 	die_on_update_failure=false
-	ReadVar ${eix_remote_var} ${eix_remote_var}
-	eval eix_remote=\${${eix_remote_var}}
+	ReadVar $eix_remote_var $eix_remote_var
+	eval eix_remote=\$$eix_remote_var
 	(
 		if [ -n "${eix_remote:++}" ]
 		then	einfo "`eval_gettext \
-				'Output to remote database ${eix_remote}'`"
-			AddUpdateArgs '-o' "${eix_remote}"
+				'Output to remote database $eix_remote'`"
+			AddUpdateArgs '-o' "$eix_remote"
 			umask 002
 		fi
 		KEEP_VIRTUALS=true
 		export KEEP_VIRTUALS
 		CallUpdate
 	) || {
-		exitcode=${?}
+		exitcode=$?
 		msg=`gettext 'eix-update failed'; \
-			[ -n "${msg:++}" ] && printf '\n%s' "${msg}"`
+			[ -n "${msg:++}" ] && printf '\n%s' "$msg"`
 	}
 	[ -z "${msg:++}" ] && return
-	msg=${msg}`BugReport`
-	die "${msg}"
+	msg=$msg`BugReport`
+	die "$msg"
 }
 
 CheckTemp() {
@@ -354,13 +354,13 @@ CheckTemp() {
 
 FetchFile() {
 	FetchTemp
-	file=${archive}
+	file=$archive
 	if [ -z "${file:++}" ]
-	then	file=${tmpfile}
+	then	file=$tmpfile
 		return
 	fi
-	cp -p -- "${tmpfile}" "${file}" || die "`eval_gettext \
-		'cannot copy temporary file to ${file}'`"
+	cp -p -- "$tmpfile" "$file" || die "`eval_gettext \
+		'cannot copy temporary file to $file'`"
 }
 
 
@@ -371,10 +371,10 @@ Fetch() {
 
 Add() {
 	CheckTemp
-	test -r "${archive}" || \
-		die "`eval_gettext 'cannot read ${archive}'`"
+	test -r "$archive" || \
+		die "`eval_gettext 'cannot read $archive'`"
 	MakeTempDir
-	AddArchive "${archive}" "${tmpdir}"
+	AddArchive "$archive" "$tmpdir"
 }
 
 Remove() {
@@ -388,22 +388,22 @@ Update() {
 	FetchFile
 	if [ -z "${tmpdir:++}" ]
 	then	MakeTempDir
-		tmpsup=${tmpdir}
-	else	tmpsub="${tmpdir}/1"
-		mkdir -m 700 -- "${tmpsub}" \
-			|| die "`eval_gettext 'mkdir ${tmpsub} failed'`"
+		tmpsup=$tmpdir
+	else	tmpsub=$tmpdir/1
+		mkdir -m 700 -- "$tmpsub" \
+			|| die "`eval_gettext 'mkdir $tmpsub failed'`"
 	fi
-	AddArchive "${file}" "${tmpsub}"
+	AddArchive "$file" "$tmpsub"
 }
 
 number=1
-case ${1} in
+case $1 in
 *2)
 	number=2;;
 esac
-[ -n "${addr:++}" ] || eval addr=\${addr${number}}
-eval archive=\${archive${number}}
-eix_remote_var=EIX_REMOTE${number}
+[ -n "${addr:++}" ] || eval addr=\${addr$number}
+eval archive=\${archive$number}
+eix_remote_var=EIX_REMOTE$number
 
 case ${1-} in
 update|update[12])

@@ -13,38 +13,38 @@
 export LC_ALL='C'
 unset GREP_COLORS GREP_COLOR GREP_OPTIONS
 grep_plain=grep
-grep_cmd="${grep_plain} --color=always"
-name=`echo 1 | ${grep_cmd} 1 1>/dev/null` && [ -z "${name}" ] \
-	|| grep_cmd=${grep_plain}
+grep_cmd="$grep_plain --color=always"
+name=`echo 1 | $grep_cmd 1 1>/dev/null` && [ -z "$name" ] \
+	|| grep_cmd=$grep_plain
 
 name=${0##*/}
 
 Echo() {
-	printf '%s\n' "${*}"
+	printf '%s\n' "$*"
 }
 
 Die() {
-	Echo "${name}: ${*}" >&2
+	Echo "$name: $*" >&2
 	exit ${1:-1}
 }
 
-test -f "contrib/${name}" || {
-	test -f "${name}" && cd ..
+test -f "contrib/$name" || {
+	test -f "$name" && cd ..
 }
-test -f "contrib/${name}" || Die 'must be run from the main directory'
+test -f "contrib/$name" || Die 'must be run from the main directory'
 
 EchoResultPositive() {
-	Echo "${*}"
-	Echo "${result}"
+	Echo "$*"
+	Echo "$result"
 	echo
 }
 
 EchoResultNegative() {
-	Echo "${*}" 'none'
+	Echo "$*" 'none'
 }
 
-if [ ${#} -eq 0 ]
-then	Echo "${name}: no parameters given: non-verbose"
+if [ $# -eq 0 ]
+then	Echo "$name: no parameters given: non-verbose"
 	echo
 	EchoResultNegative() {
 	:
@@ -52,63 +52,63 @@ then	Echo "${name}: no parameters given: non-verbose"
 fi
 
 EchoResult() {
-	if [ -n "${result}" ]
-	then	EchoResultPositive "${@}"
-	else	EchoResultNegative "${@}"
+	if [ -n "$result" ]
+	then	EchoResultPositive "$@"
+	else	EchoResultNegative "$@"
 	fi
 }
 
 GrepAllSub() {
 	find . '(' -name "generate*.sh" -o -name "*.cc" -o -name "*.h" ')' \
-		'-!' -name "config.h" -exec ${grep_cmd} -l "${@}" -- '{}' '+'
+		'-!' -name "config.h" -exec $grep_cmd -l "$@" -- '{}' '+'
 }
 
 GrepAllSubQ() (
-	grep_cmd=${grep_plain}
-	GrepAllSub "${@}"
+	grep_cmd=$grep_plain
+	GrepAllSub "$@"
 )
 
 GrepAllWith() {
-	result=`GrepAllSub "${@}"`
-	EchoResult "Files with ${*}:"
+	result=`GrepAllSub "$@"`
+	EchoResult "Files with $*:"
 }
 
 GrepHWith() {
-	result=`find . -name "*.h" -exec ${grep_cmd} -l -e "${@}" -- '{}' '+'`
-	EchoResult "*.h files with ${*}:"
+	result=`find . -name "*.h" -exec $grep_cmd -l -e "$@" -- '{}' '+'`
+	EchoResult "*.h files with $*:"
 }
 
 GrepCCWithout() {
 	result=`find . '(' -name "generate*.sh" -o -name "*.cc" ')' \
-		-exec ${grep_cmd} -L -e "${@}" -- '{}' '+'`
-	EchoResult "*.cc files without ${*}:"
+		-exec $grep_cmd -L -e "$@" -- '{}' '+'`
+	EchoResult "*.cc files without $*:"
 }
 
-SetG='case ${1} in
+SetG='case $1 in
 ':')	shift
-	g="using std::${1}[^<]";;
-*)	g="include ${1}";;
+	g="using std::$1[^<]";;
+*)	g="include $1";;
 esac
 shift
-${colon}'
+$colon'
 
 CheckWithout() {
 	local g
-	eval "${SetG}" || return 0
-	result=`GrepAllSubQ "${@}" | xargs -- ${grep_cmd} -L -e "${g}" --`
-	EchoResult "Files with ${*} but not ${g}:"
+	eval "$SetG" || return 0
+	result=`GrepAllSubQ "$@" | xargs -- $grep_cmd -L -e "$g" --`
+	EchoResult "Files with $* but not $g:"
 }
 
 CheckWith() {
 	local g
-	eval "${SetG}"
-	result=`GrepAllSubQ -e "${g}" | xargs -- ${grep_cmd} -L "${@}" --`
-	EchoResult "Files with ${g} but not ${*}:"
+	eval "$SetG"
+	result=`GrepAllSubQ -e "$g" | xargs -- $grep_cmd -L "$@" --`
+	EchoResult "Files with $g but not $*:"
 }
 
 Check() {
-	CheckWithout "${@}"
-	CheckWith "${@}"
+	CheckWithout "$@"
+	CheckWith "$@"
 }
 
 GrepAllWith -e 'ATTRIBUTE_NONNULL_(' -e 'ATTRIBUTE_NONNULL\([^(_]\|$\)' -e 'ATTRIBUTE_NONNULL(\([^(]\|$\)'

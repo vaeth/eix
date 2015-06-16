@@ -18,18 +18,18 @@ ReadVar local_varcache EPREFIX_PORTAGE_CACHE
 ReadVar eixcache EIX_CACHEFILE
 ReadVar eixprevious EIX_PREVIOUS
 ReadVar local_portage_configroot PORTAGE_CONFIGROOT
-eixsyncconf="${local_portage_configroot}/etc/eix-sync.conf"
+eixsyncconf=$local_portage_configroot/etc/eix-sync.conf
 
 Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	eval_gettext 'Usage: ${n} [options]
-Call layman/emerge --sync/--metadata and show updates. (${p})
+	eval_gettext 'Usage: $n [options]
+Call layman/emerge --sync/--metadata and show updates. ($p)
 
 Unless the -t option is used, the old database will be saved to
-    ${eixprevious}.
+    $eixprevious.
 
-The file ${eixsyncconf} and the eix (environment) variable EIX_SYNC_CONF
+The file $eixsyncconf and the eix (environment) variable EIX_SYNC_CONF
 (which defaults to delayed substitution of EIX_SYNC_OPTS) determine for
 which overlays layman is called, which default options are used, and they
 can contain various hooks - "man eix" for details.
@@ -40,7 +40,7 @@ Moreover, "--" in the default options will forbid command line options.
 The following options are available:
 
 -i   Ignore all previous options except -n
-     (useful to ignore ${eixsyncconf} options).
+     (useful to ignore $eixsyncconf options).
 -a   Always assume that some tree/overlay changes
      (set have_changed=: in a !-hook to force this)
 -s [USER@]SERVER[:DIR] Sync via rsync from SERVER.
@@ -55,11 +55,11 @@ The following options are available:
 -u   Update database only and show differences. This is equivalent to -0l@As ""
 -F   Make layman or failed hooks (! !! ~ @ @@ entries) fatal. This can be
      forced/overridden in hooks by (un)setting FATAL_HOOKS or calling die.
--l   Do not call layman (and the !commands in ${eixsyncconf}).
+-l   Do not call layman (and the !commands in $eixsyncconf).
      However, the !! lines and postponed hooks (@ and @@ entries)
      will be executed anyway.
 -A   Do not call eix-remote add1/add2
--@   Do not execute the hooks (@ and @@ entries) of ${eixsyncconf}.
+-@   Do not execute the hooks (@ and @@ entries) of $eixsyncconf.
 -S   Do not execute the hooks after emerge --sync (@ entries).
 -M   Run emerge --metadata.  You might need this when you use the cache method
      "sqlite", "sqlite*", or "flat" for PORTDIR or in a synced overlay.
@@ -80,31 +80,31 @@ The following options are available:
 -r   Clear /var/cache/edb/dep/* before syncing. This is only useful when you
      use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer
      is active. (This option is not default anymore).
--R   Cancel previous -r (e.g. if it was used in ${eixsyncconf}).
+-R   Cancel previous -r (e.g. if it was used in $eixsyncconf).
 -v   Verbose: output of executed commands.
 -n   Dry run. You might want to combine this with -v. This implies -aHT
 -H   Suppress status line update.
 -h   Show this text and exit.'
 	echo
 	exitcode=${1:-1}
-	Exit ${exitcode}
+	Exit $exitcode
 }
 
 WarnOrDie() {
-	[ -z "${FATAL_HOOKS:++}" ] || die "${@}"
-	ewarn "${@}"
+	[ -z "${FATAL_HOOKS:++}" ] || die "$@"
+	ewarn "$@"
 }
 
 PrintCmd() {
-	Echo "# ${*}"
+	Echo "# $*"
 }
 
 DoExecute() {
 	for curr_cmd
 	do	set +f
-		! ${printcmd} || PrintCmd "${curr_cmd}"
-		${dryrun} || eval "${curr_cmd}" || WarnOrDie "`eval_gettext \
-			'Something went wrong with ${curr_cmd}'`"
+		! $printcmd || PrintCmd "$curr_cmd"
+		$dryrun || eval "$curr_cmd" || WarnOrDie "`eval_gettext \
+			'Something went wrong with $curr_cmd'`"
 	done
 }
 
@@ -123,8 +123,8 @@ LaymanHooksInfo() {
 }
 
 CheckAdd() {
-	${remoteadd} || return 0
-	case ${1} in
+	$remoteadd || return 0
+	case $1 in
 	'eix-remote'*'add'*|'eix-remote'*'update'*)
 		PerLineArg "`gettext \
 'Your eix-sync configuration contains an obsolete hook
@@ -139,9 +139,9 @@ a different syntax like quoting eix-remote.'`" eerror
 }
 
 ParseConfigLine() {
-	j=${2}
+	j=$2
 	while :
-	do	case ${j} in
+	do	case $j in
 		' '*|'	'*)
 			j=${j#?};;
 		*' '|*'	')
@@ -152,76 +152,76 @@ ParseConfigLine() {
 			break;;
 		esac
 	done
-	case ${j} in
+	case $j in
 	'!!'*)
 		j=${j#??}
-		if [ "${1}" = 'opts' ]
+		if [ "$1" = 'opts' ]
 		then	ConfigHooksInfo
-			CheckAdd "${j}"
-			DoExecute "${j}"
+			CheckAdd "$j"
+			DoExecute "$j"
 		fi
 		return;;
 	'!'*)
 		j=${j#?}
-		CheckAdd "${j}"
+		CheckAdd "$j"
 		mycmd='!';;
 	'@@'*)
 		j=${j#??}
-		CheckAdd "${j}"
+		CheckAdd "$j"
 		mycmd='@@';;
 	'@'*)
 		j=${j#?}
-		CheckAdd "${j}"
+		CheckAdd "$j"
 		mycmd='@';;
 	'~'*)
 		j=${j#?}
-		CheckAdd "${j}"
+		CheckAdd "$j"
 		mycmd='~';;
 	'-'*)
-		config_opts="${config_opts} ${j}"
+		config_opts="$config_opts $j"
 		return;;
 	*)
 		mycmd='layman';;
 	esac
-	[ "${1}" = 'opts' ] && return
-	case ${mycmd} in
+	[ "$1" = 'opts' ] && return
+	case $mycmd in
 	'@@')
-		Push after_update "${j}"
+		Push after_update "$j"
 		return;;
 	'@')
-		Push after_sync "${j}"
+		Push after_sync "$j"
 		return;;
 	'~')
-		Push before_rsync "${j}"
+		Push before_rsync "$j"
 		return;;
 	'!')
-		if ! ${nolayman}
+		if ! $nolayman
 		then	LaymanHooksInfo
-			DoExecute "${j}"
+			DoExecute "$j"
 		fi
 		return;;
 	esac
-	${nolayman} && return
-	case ${-} in
+	$nolayman && return
+	case $- in
 	*f*)
-		eval "set -- ${layman_opt}";;
+		eval "set -- $layman_opt";;
 	*)
 		set -f
-		eval "set -- ${layman_opt}"
+		eval "set -- $layman_opt"
 		set +f;;
 	esac
-	if [ "${j}" = '*' ]
+	if [ "$j" = '*' ]
 	then	MyRunCommand "`gettext 'Syncing all portage overlays'`" \
-			"${mycmd}" -S "${@}" \
-			|| WarnOrDie "`eval_gettext '${mycmd} -S failed'`"
+			"$mycmd" -S "$@" \
+			|| WarnOrDie "`eval_gettext '$mycmd -S failed'`"
 		return
 	fi
-	MyRunCommand "`eval_gettext 'Syncing portage overlay ${j}'`" \
-		"${mycmd}" -s "${j}" "${@}" \
-		|| WarnOrDie "`eval_gettext '${mycmd} -s ${j} failed'`"
+	MyRunCommand "`eval_gettext 'Syncing portage overlay $j'`" \
+		"$mycmd" -s "$j" "$@" \
+		|| WarnOrDie "`eval_gettext '$mycmd -s $j failed'`"
 }
 
-test -r "${eixsyncconf}" && haveconf=: || haveconf=false
+test -r "$eixsyncconf" && haveconf=: || haveconf=false
 ReadVar eix_sync_conf EIX_SYNC_CONF
 ExecuteConfig() {
 	after_sync=
@@ -230,14 +230,14 @@ ExecuteConfig() {
 	config_opts=
 	rsync_opts=
 	confline=
-	${haveconf} && while read -r confline
-	do	ParseConfigLine "${1}" "${confline}"
-	done <"${eixsyncconf}"
-	[ -z "${confline:++}" ] || ParseConfigLine "${1}" "${confline}"
+	$haveconf && while read -r confline
+	do	ParseConfigLine "$1" "$confline"
+	done <"$eixsyncconf"
+	[ -z "${confline:++}" ] || ParseConfigLine "$1" "$confline"
 	while read -r confline
-	do	ParseConfigLine "${1}" "${confline}"
+	do	ParseConfigLine "$1" "$confline"
 	done <<END_EIX_SYNC_CONF
-${eix_sync_conf}
+$eix_sync_conf
 END_EIX_SYNC_CONF
 }
 
@@ -270,18 +270,18 @@ dryrun=false
 DefaultOpts
 ExecuteConfig 'opts'
 set -f
-eval "Push -c opt ${config_opts}"
-Push opt "${@}"
-eval "set -- ${opt}"
+eval "Push -c opt $config_opts"
+Push opt "$@"
+eval "set -- $opt"
 set +f
 OPTIND=1
 while getopts 'ias:02:UuFlA@SMNtTqwWL:c:C:o:rRHvnh?' opt
-do	case ${opt} in
+do	case $opt in
 	i)	DefaultOpts;;
 	a)	have_changed=:;;
-	s)	server=${OPTARG};;
+	s)	server=$OPTARG;;
 	0)	skip_sync=:;;
-	2)	client=${OPTARG};;
+	2)	client=$OPTARG;;
 	U)	doupdate=false;;
 	u)	nolayman=:
 		nohooks=:
@@ -298,12 +298,12 @@ do	case ${opt} in
 	t)	usetemp=:;;
 	T)	measure_time=false;;
 	q)	quiet=:;;
-	L)	Push layman_opt "${OPTARG}";;
+	L)	Push layman_opt "$OPTARG";;
 	w)	Push -c emergecmd 'emerge-webrsync';;
 	W)	Push -c emergecmd 'emerge-delta-webrsync';;
-	c)	Push -c emergecmd "${OPTARG}";;
-	C)	Push emergecmd "${OPTARG}";;
-	o)	Push updatecmd "${OPTARG}";;
+	c)	Push -c emergecmd "$OPTARG";;
+	C)	Push emergecmd "$OPTARG";;
+	o)	Push updatecmd "$OPTARG";;
 	r)	clearcache=:;;
 	R)	clearcache=false;;
 	H)	statusline=false;;
@@ -312,106 +312,106 @@ do	case ${opt} in
 	*)	Usage 0;;
 	esac
 done
-[ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
+[ $OPTIND -le 1 ] || shift `Expr $OPTIND - 1`
 unset opt
-if ${dryrun}
+if $dryrun
 then	have_changed=:
 	statusline=false
 	measure_time=false
 fi
 [ -z "${server:++}" ] || skip_sync=:
-${skip_sync} && have_changed=:
-${statusline} || export NOSTATUSLINE=true
+$skip_sync && have_changed=:
+$statusline || export NOSTATUSLINE=true
 
 if [ -z "${metadata:++}" ]
 then	metadata=false
 	ReadVar cache_method PORTDIR_CACHE_METHOD || cache_method=
-	case ${cache_method} in
+	case $cache_method in
 	sqlite*|flat)
 		metadata=:
 	esac
 fi
 
-${measure_time} || time_begin=
+$measure_time || time_begin=
 measure_time=false
 
 IsNumber() (
 	unset LC_ALL
 	LC_COLLATE=C
-	case ${1} in
+	case $1 in
 	*[!0-9]*)	false;;
 	esac
 )
 
-IsNumber "${time_begin:-x}" && [ "${time_begin}" -gt 99 ] && {
-	t=`Expr "${time_begin}" - 99 2>/dev/null` || t=0
-	[ "${t}" -gt 0 ] && [ "${time_begin}" -gt "${t}" ]
+IsNumber "${time_begin:-x}" && [ "$time_begin" -gt 99 ] && {
+	t=`Expr "$time_begin" - 99 2>/dev/null` || t=0
+	[ "$t" -gt 0 ] && [ "$time_begin" -gt "$t" ]
 } >/dev/null 2>&1 && measure_time=:
 
 MyRunning() {
-	if ${printcmd}
-	then	Push -c myrun "${@}"
-		PrintCmd "${myrun}"
+	if $printcmd
+	then	Push -c myrun "$@"
+		PrintCmd "$myrun"
 	fi
-	${dryrun} && return
-	"${@}"
+	$dryrun && return
+	"$@"
 }
 
 MyRun() {
-	if [ "${1}" = '-t' ]
-	then	if ${measure_time}
-		then	timevar="time_${2}"
+	if [ "$1" = '-t' ]
+	then	if $measure_time
+		then	timevar=time_$2
 			shift 2
 			begt=`date '+%s' 2>/dev/null` || measure_time=false
-			MyRunning "${@}"
-			runstat=${?}
-			${measure_time} && endt=`date +%s 2>/dev/null` \
+			MyRunning "$@"
+			runstat=$?
+			$measure_time && endt=`date +%s 2>/dev/null` \
 				|| measure_time=false
-			${measure_time} && \
-				eval ${timevar}'=`Expr "${endt}" - "${begt}"`'
-			return ${runstat}
+			$measure_time && \
+				eval $timevar'=`Expr "$endt" - "$begt"`'
+			return $runstat
 		fi
 		shift 2
 	fi
-	MyRunning "${@}"
+	MyRunning "$@"
 }
 
 MyRunCommand() {
-	StatusInfo "${1}"
+	StatusInfo "$1"
 	shift
-	MyRun "${@}"
+	MyRun "$@"
 }
 
 DoHook() {
-	${nohooks} || [ -z "${1:++}" ] && return
-	[ -z "${2:++}" ] || StatusInfo "${2}"
-	case ${-} in
+	$nohooks || [ -z "${1:++}" ] && return
+	[ -z "${2:++}" ] || StatusInfo "$2"
+	case $- in
 	*f*)
-		eval "set -- ${1}";;
+		eval "set -- $1";;
 	*)
 		set -f
-		eval "set -- ${1}"
+		eval "set -- $1"
 		set +f;;
 	esac
-	DoExecute "${@}"
+	DoExecute "$@"
 }
 
 MyVarCommand() {
-	myvarcmdvar=${1}
+	myvarcmdvar=$1
 	shift
-	myvarcmdargs=${*}
-	case ${-} in
+	myvarcmdargs=$*
+	case $- in
 	*f*)
-		eval "set -- ${myvarcmdvar}";;
+		eval "set -- $myvarcmdvar";;
 	*)
 		set -f
-		eval "set -- ${myvarcmdvar}"
+		eval "set -- $myvarcmdvar"
 		set +f;;
 	esac
-	myvarcmd=${*}
-	MyRunCommand "`eval_gettext 'Running ${myvarcmd}'`" \
-		${myvarcmdargs} "${@}" \
-		|| die "`eval_gettext '${myvarcmd} failed'`"
+	myvarcmd=$*
+	MyRunCommand "`eval_gettext 'Running $myvarcmd'`" \
+		$myvarcmdargs "$@" \
+		|| die "`eval_gettext '$myvarcmd failed'`"
 }
 
 time_iupdate=
@@ -421,35 +421,35 @@ time_metadata=
 time_update=
 time_diff=
 PrintingTimes() {
-	[ -n "${1:++}" ] && [ "${1}" -gt 0 ] && \
-		printf "`gettext '%6d seconds for %s\n'`" "${1}" "${2}"
+	[ -n "${1:++}" ] && [ "$1" -gt 0 ] && \
+		printf "`gettext '%6d seconds for %s\n'`" "$1" "$2"
 }
 PrintTimes() {
-	${measure_time} || return 0
+	$measure_time || return 0
 	measure_time=false
 	einfo "`gettext 'Time statistics:'`"
-	PrintingTimes "${time_iupdate}"  "`gettext 'initial eix-update'`"
-	PrintingTimes "${time_sync}"     "`gettext 'syncing'`"
-	PrintingTimes "${time_client}"   "`gettext 'client syncing'`"
-	PrintingTimes "${time_metadata}" "`gettext 'metadata update'`"
-	PrintingTimes "${time_update}"   "`gettext 'eix-update'`"
-	PrintingTimes "${time_diff}"     "`gettext 'eix-diff'`"
+	PrintingTimes "$time_iupdate"  "`gettext 'initial eix-update'`"
+	PrintingTimes "$time_sync"     "`gettext 'syncing'`"
+	PrintingTimes "$time_client"   "`gettext 'client syncing'`"
+	PrintingTimes "$time_metadata" "`gettext 'metadata update'`"
+	PrintingTimes "$time_update"   "`gettext 'eix-update'`"
+	PrintingTimes "$time_diff"     "`gettext 'eix-diff'`"
 	ftime=`date '+%s' 2>/dev/null` || return
-	ftime=`Expr "${ftime}" - "${time_begin}" 2>/dev/null` && \
-		printf "`gettext '%6d seconds total\n'`" "${ftime}"
+	ftime=`Expr "$ftime" - "$time_begin" 2>/dev/null` && \
+		printf "`gettext '%6d seconds total\n'`" "$ftime"
 }
 
 tmpfile=
 exitcode=0
 ExitAll() {
 	trap : EXIT HUP INT TERM
-	[ -z "${tmpfile:++}" ] || rm -f -- "${tmpfile}"
+	[ -z "${tmpfile:++}" ] || rm -f -- "$tmpfile"
 	tmpfile=
 	trap - EXIT HUP INT TERM
 	PrintTimes
-	Exit ${exitcode}
+	Exit $exitcode
 }
-${measure_time} && trap ExitAll EXIT HUP INT TERM
+$measure_time && trap ExitAll EXIT HUP INT TERM
 
 MakeTempFile() {
 	AssignTemp tmpfile
@@ -460,161 +460,161 @@ preprsync=false
 PrepRsync() {
 	GetPortdir
 	hostdir=${1#*:}
-	if [ -n "${hostdir:++}" ] && [ "${hostdir}" != "${1}" ]
-	then	hostdir=${1}
-	else	hostdir="${1%%:*}:${local_portdir}"
+	if [ -n "${hostdir:++}" ] && [ "$hostdir" != "$1" ]
+	then	hostdir=$1
+	else	hostdir=${1%%:*}:$local_portdir
 	fi
-	hostdir="${hostdir%/}/"
-	${preprsync} || [ -n "${rsync_opts:++}" ] && return
+	hostdir=${hostdir%/}/
+	$preprsync || [ -n "${rsync_opts:++}" ] && return
 	ReadVar portage_rsync_opts PORTAGE_RSYNC_OPTS || \
 		portage_rsync_opts='--recursive --links --safe-links --perms --times --compress --force --whole-file --delete --stats --timeout=180 --exclude=/distfiles --exclude=/local --exclude=/packages'
 	ReadVar portage_rsync_extra_opts PORTAGE_RSYNC_EXTRA_OPTS
-	case ${-} in
+	case $- in
 	*f*)
-		eval "set -- ${before_rsync}";;
+		eval "set -- $before_rsync";;
 	*)
 		set -f
-		eval "set -- ${before_rsync}"
+		eval "set -- $before_rsync"
 		set +f;;
 	esac
-	[ ${#} -eq 0 ] || StatusInfo "`gettext 'Running ~-hooks'`"
+	[ $# -eq 0 ] || StatusInfo "`gettext 'Running ~-hooks'`"
 	for curr_cmd
-	do	! ${printcmd} || PrintCmd 'eval "$(eval "'"${curr_cmd}"'")"'
-		${dryrun} && continue
-		if c=`eval "${curr_cmd}"`
-		then	eval "${c}" || WarnOrDie "`eval_gettext \
-				'${c} (output of ${curr_cmd}) failed'`"
-		else	WarnOrDie "`eval_gettext '${curr_cmd} failed'`"
+	do	! $printcmd || PrintCmd 'eval "$(eval "'"$curr_cmd"'")"'
+		$dryrun && continue
+		if c=`eval "$curr_cmd"`
+		then	eval "$c" || WarnOrDie "`eval_gettext \
+				'$c (output of $curr_cmd) failed'`"
+		else	WarnOrDie "`eval_gettext '$curr_cmd failed'`"
 		fi
 	done
-	rsync_opts="${portage_rsync_opts} ${portage_rsync_extra_opts} --exclude=/.unionfs"
+	rsync_opts="$portage_rsync_opts $portage_rsync_extra_opts --exclude=/.unionfs"
 	preprsync=:
 }
 
 ClearCache() {
-	${clearcache} || return 0
+	$clearcache || return 0
 	# Cleaning old cache
 	# portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
-	case ${-} in
+	case $- in
 	*f*)
 		set +f
-		set -- "${local_varcache}"/var/cache/edb/dep/*
+		set -- "$local_varcache"/var/cache/edb/dep/*
 		set -f;;
 	*)
-		set -- "${local_varcache}"/var/cache/edb/dep/*;;
+		set -- "$local_varcache"/var/cache/edb/dep/*;;
 	esac
 	MyRunCommand "`eval_gettext \
-	'Removing old portage-cache in ${local_varcache}/var/cache/edb/dep'`" \
-		rm -rf -- "${@}" || WarnOrDie "`eval_gettext \
-		'rm -rf ${local_varcache}/var/cache/edb/dep/* failed'`"
+	'Removing old portage-cache in $local_varcache/var/cache/edb/dep'`" \
+		rm -rf -- "$@" || WarnOrDie "`eval_gettext \
+		'rm -rf $local_varcache/var/cache/edb/dep/* failed'`"
 }
 
 CallEmergeSync() {
 	if [ -n "${server:++}" ]
-	then	PrepRsync "${server}"
-		MyRunCommand "rsyncing from ${hostdir}" -t sync \
-		rsync ${rsync_opts} -- "${hostdir}" "${local_portdir}" || \
-			die "`eval_gettext 'Could not rsync from ${hostdir}'`"
+	then	PrepRsync "$server"
+		MyRunCommand "rsyncing from $hostdir" -t sync \
+		rsync $rsync_opts -- "$hostdir" "$local_portdir" || \
+			die "`eval_gettext 'Could not rsync from $hostdir'`"
 		return
 	fi
-	${skip_sync} && return
-	MyVarCommand "${emergecmd}" -t sync
+	$skip_sync && return
+	MyVarCommand "$emergecmd" -t sync
 }
 
 CallSyncClient() {
 	[ -z "${client:++}" ] && return
-	PrepRsync "${client}"
-	MyRunCommand "`eval_gettext 'rsyncing to ${hostdir}'`" -t client \
-		rsync ${rsync_opts} -- "${local_portdir}" "${hostdir}" || \
-			die "`eval_gettext 'Could not rsync to ${hostdir}'`"
+	PrepRsync "$client"
+	MyRunCommand "`eval_gettext 'rsyncing to $hostdir'`" -t client \
+		rsync $rsync_opts -- "$local_portdir" "$hostdir" || \
+			die "`eval_gettext 'Could not rsync to $hostdir'`"
 }
 
 CallEmergeMetadata() {
-	${doupdate} && ${metadata} || return 0
+	$doupdate && $metadata || return 0
 	MyVarCommand 'emerge --metadata' -t metadata
 }
 
 CondUpdate() {
-	if test ! -f "${eixcache}"
+	if test ! -f "$eixcache"
 	then	einfo "`gettext 'eix-cache does not exist.'`"
-	else	eix-header -f "${eixcache}" -qc && return
+	else	eix-header -f "$eixcache" -qc && return
 		einfo "`gettext 'eix-cache format has changed.'`"
 	fi
-	MyVarCommand "${updatecmd}" -t iupdate
+	MyVarCommand "$updatecmd" -t iupdate
 }
 
 CopyToTemp() {
 	StatusInfo "`eval_gettext \
-		'Copying old ${eixcache} cache to temporary file'`"
+		'Copying old $eixcache cache to temporary file'`"
 	MakeTempFile
-	chmod a+r -- "${tmpfile}"
-	MyRun cp -p -- "${eixcache}" "${tmpfile}" || die "`eval_gettext \
-		'Could not copy database to temporary file ${tmpfile}'`"
+	chmod a+r -- "$tmpfile"
+	MyRun cp -p -- "$eixcache" "$tmpfile" || die "`eval_gettext \
+		'Could not copy database to temporary file $tmpfile'`"
 }
 
 CopyToPrevious() {
-	StatusInfo "`eval_gettext 'Copying old database to ${eixprevious}'`"
-	MyRun cp -p -- "${eixcache}" "${eixprevious}" || die "`eval_gettext \
-		'Could not copy database to ${eixprevious}'`"
+	StatusInfo "`eval_gettext 'Copying old database to $eixprevious'`"
+	MyRun cp -p -- "$eixcache" "$eixprevious" || die "`eval_gettext \
+		'Could not copy database to $eixprevious'`"
 }
 
 CopyPrevious() {
-	${doupdate} || return 0
-	if ${usetemp}
+	$doupdate || return 0
+	if $usetemp
 	then	CopyToTemp
 	else	CopyToPrevious
 	fi
 }
 
 RemoteAdd() {
-	${remoteadd} || return 0
+	$remoteadd || return 0
 	for remote_num in 1 2
-	do	ReadVar archive${remote_num} EIX_REMOTEARCHIVE${remote_num}
-		eval archive=\${archive${remote_num}}
-		[ -n "${archive}" ] && test -r "${archive}" || continue
-		[ -n "${eixcache}" ] && test -r "${eixcache}" || continue
-		ReadVar eixremote${remote_num} EIX_REMOTE${remote_num}
-		eval eixremote=\${eixremote${remote_num}}
-		[ -z "${eixremote}" ] && continue
-		[ "${eixremote}" = "${eixcache}" ] && continue
-		test -r "${eixremote}" || continue
-		! ${dryrun} && {
-			test "${eixremote}" -nt "${eixcache}" && \
-			test "${eixremote}" -nt "${archive}"
+	do	ReadVar archive$remote_num EIX_REMOTEARCHIVE$remote_num
+		eval archive=\${archive$remote_num}
+		[ -n "$archive" ] && test -r "$archive" || continue
+		[ -n "$eixcache" ] && test -r "$eixcache" || continue
+		ReadVar eixremote$remote_num EIX_REMOTE$remote_num
+		eval eixremote=\${eixremote$remote_num}
+		[ -z "$eixremote" ] && continue
+		[ "$eixremote" = "$eixcache" ] && continue
+		test -r "$eixremote" || continue
+		! $dryrun && {
+			test "$eixremote" -nt "$eixcache" && \
+			test "$eixremote" -nt "$archive"
 		} >/dev/null 2>&1 && continue
-		StatusInfo eix-remote add${remote_num}
-		MyRun eix-remote add${remote_num} || WarnOrDie "`eval_gettext \
-			'eix-remote add${remote_num} failed'`"
+		StatusInfo eix-remote add$remote_num
+		MyRun eix-remote add$remote_num || WarnOrDie "`eval_gettext \
+			'eix-remote add$remote_num failed'`"
 	done
 	return 0
 }
 
 UpdateDiff() {
-	${doupdate} || return 0
-	if ${usetemp}
-	then	d=${tmpfile}
-	else	d=${eixprevious}
+	$doupdate || return 0
+	if $usetemp
+	then	d=$tmpfile
+	else	d=$eixprevious
 	fi
-	if ! ${dryrun} && test "${eixcache}" -nt "${d}" >/dev/null 2>&1
+	if ! $dryrun && test "$eixcache" -nt "$d" >/dev/null 2>&1
 	then	einfo "`gettext \
 			'eix-update was apparently already called in a hook'`"
-	else	MyVarCommand "${updatecmd}" -t update
+	else	MyVarCommand "$updatecmd" -t update
 	fi
-	DoHook "${after_update}" "`gettext 'Running @@-hooks'`"
+	DoHook "$after_update" "`gettext 'Running @@-hooks'`"
 	RemoteAdd
 	MyRunCommand "`gettext 'Calling eix-diff'`" \
-		-t diff eix-diff -- "${d}" || \
+		-t diff eix-diff -- "$d" || \
 		die "`gettext 'failed to diff against current cache'`"
 	PrintTimes
 }
 
 ReadTimeStamp() {
-	eval ${1}=
-	${have_changed} && return
+	eval $1=
+	$have_changed && return
 	GetPortdir
 	{
-		eval "read -r ${1} <\"\${local_portdir%/}/metadata/timestamp.chk\""
-	} 2>/dev/null && eval "[ -n \"\${${1}}\" ]" || have_changed=:
+		eval "read -r $1 <\"\${local_portdir%/}/metadata/timestamp.chk\""
+	} 2>/dev/null && eval "[ -n \"\$$1\" ]" || have_changed=:
 }
 
 NotChanged() {
@@ -631,16 +631,16 @@ MainSync() {
 	ReadTimeStamp previous_timestamp
 	CallEmergeSync
 	ReadTimeStamp current_timestamp
-	[ "${previous_timestamp}" != "${current_timestamp}" ] && have_changed=:
-	${have_changed} || NotChanged
-	${synchooks} && DoHook "${after_sync}" "`gettext 'Running @-hooks'`"
+	[ "$previous_timestamp" != "$current_timestamp" ] && have_changed=:
+	$have_changed || NotChanged
+	$synchooks && DoHook "$after_sync" "`gettext 'Running @-hooks'`"
 	CallSyncClient
 	CallEmergeMetadata
 	CopyPrevious
 	UpdateDiff
 }
 
-${quiet} && exec >/dev/null
+$quiet && exec >/dev/null
 
 MainSync
 

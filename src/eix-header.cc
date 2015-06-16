@@ -61,7 +61,7 @@ static void print_help() {
 "first options, e.g. as in this script snippet:\n"
 "\t. eix-functions.sh; ReadFunctions\n"
 "\tReadVar EIX_CACHEFILE EIX_CACHEFILE || die 'cache name not known'\n"
-"\t%s -qf \"${EIX_CACHEFILE}\" -c || die 'no current database'\n"
+"\t%s -qf \"$EIX_CACHEFILE\" -c || die 'no current database'\n"
 "SEP defaults to the null character (to be distinguished from the empty string).\n"
 "For the case the OV is the empty string, the main overlay is printed (as if OV\n"
 "is 0), but if there is no overlay in file, no error (but empty data) is output.\n"

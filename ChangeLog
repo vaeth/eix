@@ -6,6 +6,7 @@
 	- Verify (and in trivial cases: fix) content of profiles/categories
 	  https://github.com/vaeth/eix/issues/8
 	- Fix ATTRIBUTE_NONNULL in PortageUserConfig constructor
+	- Remove redundant sh quoting
 
 *eix-0.30.10
 	Martin Väth <martin at mvath.de>:
@@ -312,7 +313,7 @@
 	- Remove --pipe-name --pipe-version hacks (--pipe-mask is better).
 	- Removed <installedmarkedversions:*> since new --pipe matches only
 	  available versions. As a substitute use e.g. <markedversion:VAR>
-	  with VAR="{installedversion}...{}"
+	  with VAR={installedversion}...{}
 	- Introduce --enable-strong-security
 	- Make \C<number> slower but reliable (OutputString::..._smart())
 
@@ -382,7 +383,7 @@
 	  TERM_ALT{1..3} corresponding to COLORSCHEME{0..3}
 	  Previous TERM_ALT and COLORSCHEME{,_ALT} variables are obsolete.
 	- Example: To select 8/16 colors on all terminals and dark background
-	  (e.g. for solarized) set TERM_ALT3="." and e.g. DARK=true or
+	  (e.g. for solarized) set TERM_ALT3=. and e.g. DARK=true or
 	  COLORSCHEME3=0.
 	  See the BUGS section on the eix manpage.
 	- Let DARK=auto use a heuristic based on TERM_DARK, COLORFGBG_DARK,
@@ -491,7 +492,7 @@
 	  "@@eix-sync add" to your /etc/eix-sync.conf
 	  Set EIX_REMOTE="" to keep the old behavior with only one database.
 	- Introduce search options --nonvirtual, --virtual and attributes
-	  {virtual} {havevirtual} {havenonvirtual} and in xml: virtual="1"
+	  {virtual} {havevirtual} {havenonvirtual} and in xml: virtual=1
 	- Make configure cross-compile friendly, see
 	  https://bugs.gentoo.org/show_bug.cgi?id=432122
 	- Fix --without-sqlite compile regression, see
@@ -887,7 +888,7 @@
 	- Switch off REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} by default:
 	  Usually, double entries are intentional here, and most people will
 	  want to leave some settings after deinstallation for later usage.
-	- Put EIX_TEST_OBSOLETE_OPTS="-d" since most people will want it.
+	- Put EIX_TEST_OBSOLETE_OPTS=-d since most people will want it.
 	- Security-fix: Some auto-destruction in std::vector-elements was
 	  removed (this would also have led to segfaults in bad cases).
 	- Fix: Handle sets in local {un}masks and for -t
@@ -1031,7 +1032,7 @@
 	  see https://sourceforge.net/tracker/index.php?
 	  func=detail&aid=2921161&group_id=128101&atid=710611
 	- "Export" EPREFIX when sourcing make.{globals,conf} so that e.g.
-	  ${EPREFIX} can be used in etc/make.conf
+	  $EPREFIX can be used in etc/make.conf
 	- Fix incremental keys hack in varsreader.cc at the cost of speed:
 	  Variables now can be exported for sourcing with APPEND_VALUES.
 	  In particular, they are not clean(ed) when accessed which caused
@@ -1446,7 +1447,7 @@
 	- Fix ERPEFIX_SOURCE (previously it had no effect...)
 	- Fix varsreader.cc to deal also with files following DOS conventions;
 	  improve handling of unclosed "${".
-	- Fix segfault and hash problems with USE="--" (which might occur
+	- Fix segfault and hash problems with USE=-- (which might occur
 	  if e.g. cache method parse fails), see
 	  https://bugs.gentoo.org/show_bug.cgi?id=238216
 	- Fix minor bugs in escape handling in lists.
@@ -1460,7 +1461,7 @@
 	  https://bugs.gentoo.org/show_bug.cgi?id=236036
 	- Fix scripts to use proper printf instead of echo.
 	- Introduce MARK_UPGRADE.
-	- Allow combining marker attributes, e.g. MARK_UPGRADE="bold,underline"
+	- Allow combining marker attributes, e.g. MARK_UPGRADE=bold,underline
 	- Allow escaping for all variables containing space-separated paths.
 	- Introduce <fullbest...> format.
 	- Introduce <bestslotsupgrade...> (and <fullbestslotsupgrade...>)
@@ -1732,9 +1733,9 @@
 *eix-0.12.0
 	Martin Väth <martin at mvath.de>:
 	- BE AWARE!!
-	  The new default OVERLAY_CACHE_METHOD="parse|ebuild*"
+	  The new default OVERLAY_CACHE_METHOD=parse|ebuild*
 	  is a security risk if you have untrusted ebuilds in your overlay!
-	  Use OVERLAY_CACHE_METHOD="parse" if you do not trust your overlays!
+	  Use OVERLAY_CACHE_METHOD=parse if you do not trust your overlays!
 	- Introduce new cache methods parse{,*}|ebuild{,*}
 	- Introduce EBUILD_{USER,GROUP,UID,GID} to make cache method ebuild{,*}
 	  reasonably secure.
@@ -2188,7 +2189,7 @@
 	  stored in separate variables and can such be easily customized.
 	- Introduce TAG_FOR_* variables (in particular, it is now possible
 	  to completely revert to the old behaviour by setting the
-	  TAG_FOR_EX_* variables empty and TAG_FOR_LOCALLY_MASKED="[M]").
+	  TAG_FOR_EX_* variables empty and TAG_FOR_LOCALLY_MASKED=[M]).
 	- Enable escaping of ':' in the installedversions* string arguments.
 	- Bugfix: Put DIFF_NEW_SLOTS into defaults.cc
 	- Fix installation date in default FORMAT_COMPACT (the separating "@"
@@ -2634,7 +2635,7 @@
 
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Made the fsm recognize references to variables in declarations ..
-	  i.e. USE="${USE} -kde".
+	  i.e. USE="$USE -kde".
 	  This is important for proper make.conf/make.defaults parsing.
 	- Created CascadingProfile as a subclass of PortageSettings
 	- Added maskings from profile

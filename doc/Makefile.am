@@ -36,8 +36,8 @@ call_rst2html.sh
 SUFFIXES = .in
 .in:
 	$(AM_V_GEN)A='s/^.*static * CONSTEXPR *.* current *= *\([0-9]*\) *;.*$$/\1/p' ; \
-	H=`$(SED) -n -e "$${A}" ../src/database/header.h` ; \
-	X=`$(SED) -n -e "$${A}" ../src/output/print-xml.h` ; \
+	H=`$(SED) -n -e "$$A" ../src/database/header.h` ; \
+	X=`$(SED) -n -e "$$A" ../src/output/print-xml.h` ; \
 	$(SED) \
 		-e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
 		-e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
@@ -55,8 +55,8 @@ SUFFIXES = .in
 		-e "s,\@DEFAULT_REMOTE_PATH1\@,$(DEFAULT_REMOTE_PATH1),g" \
 		-e "s,\@DEFAULT_REMOTE_PATH2\@,$(DEFAULT_REMOTE_PATH2),g" \
 		-e "s,/dev/null,$(DEV_NULL),g" \
-		-e "s,\@CURRENT\@,$${H},g" \
-		-e "s,\@CURRENTXML\@,$${X},g" \
+		-e "s,\@CURRENT\@,$$H,g" \
+		-e "s,\@CURRENTXML\@,$$X,g" \
 		-e 's,^#!/usr/bin/env sh$$,#!$(SH_SHEBANG),g' \
 	"$<" > "$@"
 

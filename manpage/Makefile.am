@@ -39,16 +39,16 @@ tags
 install-man1:
 	@for file in $(MAN_FILES); do \
 	 for lang in $(MAN_LINGUAS); do \
-	  case ' $(INST_MAN_LINGUAS) en' in *" $${lang}"*|*"*"*) \
-		if [ "$${lang}" = en ]; \
+	  case ' $(INST_MAN_LINGUAS) en' in *" $$lang"*|*"*"*) \
+		if [ "$$lang" = en ]; \
 		then mansubdir=man1; \
-		else mansubdir="$${lang}/man1"; \
+		else mansubdir=$$lang/man1; \
 		fi; \
-		mandestdir='$(DESTDIR)$(mandir)/'"$${mansubdir}"; \
-		sourcefile="$${lang}-$${file}"; \
-		test -d "$${mandestdir}" || $(mkinstalldirs) "$${mandestdir}"; \
-		echo " $(INSTALL_DATA) $${sourcefile} $${mandestdir}/$${file}"; \
-		$(INSTALL_DATA) "$${sourcefile}" "$${mandestdir}/$${file}";; \
+		mandestdir='$(DESTDIR)$(mandir)/'"$$mansubdir"; \
+		sourcefile=$$lang-$$file; \
+		test -d "$$mandestdir" || $(mkinstalldirs) "$$mandestdir"; \
+		echo " $(INSTALL_DATA) $$sourcefile $$mandestdir/$$file"; \
+		$(INSTALL_DATA) "$$sourcefile" "$$mandestdir/$$file";; \
 	  esac; \
 	 done; \
 	done
@@ -56,14 +56,14 @@ install-man1:
 uninstall-man1:
 	@for file in $(MAN_FILES); do \
 	 for lang in $(MAN_LINGUAS); do \
-	  case ' $(INST_MAN_LINGUAS) en' in *" $${lang}"*|*"*"*) \
-		if [ "$${lang}" = en ]; \
+	  case ' $(INST_MAN_LINGUAS) en' in *" $$lang"*|*"*"*) \
+		if [ "$$lang" = en ]; \
 		then mansubdir=man1; \
-		else mansubdir="$${lang}/man1"; \
+		else mansubdir=$$lang/man1; \
 		fi; \
-		mandestdir='$(DESTDIR)$(mandir)/'"$${mansubdir}"; \
-		echo " $(RM) -f $${mandestdir}/$${file}"; \
-		$(RM) -f "$${mandestdir}/$${file}";; \
+		mandestdir='$(DESTDIR)$(mandir)/'"$$mansubdir"; \
+		echo " $(RM) -f $$mandestdir/$$file"; \
+		$(RM) -f "$$mandestdir/$$file";; \
 	  esac
 	 done; \
 	done

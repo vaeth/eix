@@ -34,7 +34,7 @@ class VarsReader {
 			ONLY_KEYWORDS_SLOT   = 0x0001U,  /**< Flag: Only read "KEYWORDS" and "SLOT" once, then stop the parser. */
 			KEYWORDS_READ        = 0x0002U,  /**< Flag: Have already read "KEYWORDS" once. */
 			SLOT_READ            = 0x0004U,  /**< Flag: Have already read "SLOT" once. */
-			SUBST_VARS           = 0x0008U,  /**< Flag: Allow references to variable in declarations of a variable. i.e.  USE="${USE} -kde" */
+			SUBST_VARS           = 0x0008U,  /**< Flag: Allow references to variable in declarations of a variable. i.e.  USE="$USE -kde" */
 			INTO_MAP             = 0x0010U,  /**< Flag: Init but don't parse .. you must first supply a pointer to my_map with useMap (...) */
 			APPEND_VALUES        = 0x0020U,  /**< Flag: Respect IncrementalKeys */
 			ALLOW_SOURCE         = 0x0040U,  /**< Flag: Allow "source"/"." command. */

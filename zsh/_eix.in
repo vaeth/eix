@@ -229,7 +229,7 @@ case $service in
 		done
 	fi
 	: ${field:='package'}
-	i=(${installed} ${field})
+	i=($installed $field)
 	service_opts+=(
 '*:'"$i"':->args'
 );;
@@ -251,7 +251,7 @@ case $state in
 	_tags variables
 	_tags && {
 		_description variables expl 'eix variable name'
-		compadd "$expl[@]" - ${(f)"$(_call_program ${service}-known-vars '$service --known-vars 2>/dev/null')"}
+		compadd "$expl[@]" - ${(f)"$(_call_program $service-known-vars '$service --known-vars 2>/dev/null')"}
 		ret=$?
 	};;
 (overlay)
@@ -297,7 +297,7 @@ case $state in
 			_description packages expl 'category/name'
 			i=${PREFIX%/*}
 			compset -P '*/'
-			compadd "$expl[@]" - $(FORMAT='<name>\n' _call_program packages-category${installed:+-installed} 'eix $eixopt -C "${i}" 2>/dev/null');;
+			compadd "$expl[@]" - $(FORMAT='<name>\n' _call_program packages-category${installed:+-installed} 'eix $eixopt -C "$i" 2>/dev/null');;
 		(*)
 			_description packages expl 'package'
 			i=($(FORMAT='<category>/<name>\n' _call_program packages${installed:+-installed} 'eix $eixopt 2>/dev/null'))

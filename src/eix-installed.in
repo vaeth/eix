@@ -12,8 +12,8 @@ ReadGettext
 Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	eval_gettext 'Usage: ${n} [options] ARG [ARG ARG ...]
-This script is part of ${p}.
+	eval_gettext 'Usage: $n [options] ARG [ARG ARG ...]
+This script is part of $p.
 It outputs all installed packages, or packages installed with/without
 repository or buildtime information.
 Packages emerged with new version of portage contain repository and buildtime
@@ -43,7 +43,7 @@ equal=
 quiet=false
 OPTIND=1
 while getopts 'aq=h?' opt
-do	case ${opt} in
+do	case $opt in
 	a)	quiet=:
 		forced=:;;
 	q)	quiet=:;;
@@ -51,39 +51,39 @@ do	case ${opt} in
 	*)	Usage 0;;
 	esac
 done
-[ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
-${forced} && set -- all
+[ $OPTIND -le 1 ] || shift `Expr $OPTIND - 1`
+$forced && set -- all
 
 ScanVarDbPkg() {
-	n=${1}
-	${quiet} || printf '%s\n\n' "${2}"
+	n=$1
+	$quiet || printf '%s\n\n' "$2"
 	shift 2
 	c=0
 	set +f
 	for i in *
-	do	for j in "${i}"/*
-		do	test -d "${j}" || continue
+	do	for j in "$i"/*
+		do	test -d "$j" || continue
 			f=false
 			for k
-			do	if test -r "${j}/${k}"
+			do	if test -r "$j/$k"
 				then	f=:
 					break
 				fi
 			done
-			if ${f}
-			then	${n} || continue
-			else	${n} && continue
+			if $f
+			then	$n || continue
+			else	$n && continue
 			fi
-			Echo "${equal}${j}"
-			${quiet} || c=`Expr "${c}" + 1`
+			Echo "$equal$j"
+			$quiet || c=`Expr "$c" + 1`
 		done
 	done
-	${quiet} && return
-	if [ ${c} -eq 0 ]
+	$quiet && return
+	if [ $c -eq 0 ]
 	then	gettext 'none'
-	elif [ ${c} -ne 1 ]
+	elif [ $c -ne 1 ]
 	then	echo
-		eval_gettext '(total number of versions listed above: ${c})'
+		eval_gettext '(total number of versions listed above: $c)'
 	fi
 	echo
 }
@@ -94,22 +94,22 @@ All() {
 }
 
 Repository() {
-	if ${1}
-	then	ScanVarDbPkg ${1} "`gettext \
+	if $1
+	then	ScanVarDbPkg $1 "`gettext \
 'The following package versions are installed with repository information:'`" \
 repository REPOSITORY
-	else	ScanVarDbPkg ${1} "`gettext \
+	else	ScanVarDbPkg $1 "`gettext \
 'The following package versions are installed without repository information:'`" \
 repository REPOSITORY
 	fi
 }
 
 BuildTime() {
-	if ${1}
-	then	ScanVarDbPkg ${1} "`gettext \
+	if $1
+	then	ScanVarDbPkg $1 "`gettext \
 'The following package versions are installed with build-time information:'`" \
 BUILD_TIME
-	else	ScanVarDbPkg ${1} "`gettext \
+	else	ScanVarDbPkg $1 "`gettext \
 'The following package versions are installed without build-time information:'`" \
 BUILD_TIME
 	fi
@@ -118,36 +118,36 @@ BUILD_TIME
 ParseArgs() {
 	while myarg=${1#-}
 	do	myarg=${myarg#-}
-		case ${myarg} in
+		case $myarg in
 		[aA]*)
-			${emulatemode} || All :;;
+			$emulatemode || All :;;
 		[nN]*[bBdDtT]*)
-			${emulatemode} || BuildTime false;;
+			$emulatemode || BuildTime false;;
 		[bBdDtT]*)
-			${emulatemode} || BuildTime :;;
+			$emulatemode || BuildTime :;;
 		[nN]*[rR]*)
-			${emulatemode} || Repository false;;
+			$emulatemode || Repository false;;
 		[rR]*)
-			${emulatemode} || Repository :;;
+			$emulatemode || Repository :;;
 		[hH]*)
 			Usage 0;;
 		*)
 			Usage;;
 		esac
-		[ ${#} -eq 1 ] && break
+		[ $# -eq 1 ] && break
 		shift
-		${emulatemode} || printf '\n%s\n' '--'
+		$emulatemode || printf '\n%s\n' '--'
 	done
 }
 
-[ ${#} -ge 1 ] || Usage
+[ $# -ge 1 ] || Usage
 emulatemode=:
-ParseArgs "${@}"
+ParseArgs "$@"
 
 ReadVar vardb EPREFIX_INSTALLED
-vardb="${vardb%/}/var/db/pkg"
-cd "${vardb}" >/dev/null 2>&1 \
+vardb=${vardb%/}/var/db/pkg
+cd "$vardb" >/dev/null 2>&1 \
 	|| die "`gettext 'cannot locate your database of installed packages'`"
 emulatemode=false
-ParseArgs "${@}"
+ParseArgs "$@"
 Exit 0

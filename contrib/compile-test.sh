@@ -18,13 +18,13 @@ get_avail_gcc() {
 
 reset_gcc() {
 	trap : EXIT INT
-	gcc-config "${original_gcc}" >/dev/null
+	gcc-config "$original_gcc" >/dev/null
 	trap - EXIT INT
 	exit
 }
 
 set_status() {
-	gcc_faild[$1]="$2"
+	gcc_faild[$1]=$2
 }
 
 gcc=($(get_avail_gcc))
@@ -61,16 +61,16 @@ for ((gcc_n=0;gcc_n<"${#gcc[@]}";++gcc_n)); do
 		export CXXFLAGS="-Wall -W -Werror"
 	else
 		source /etc/profile
-		export CXX="${gcc[$gcc_n]}"
-		export CXXFLAGS=""
+		export CXX=${gcc[$gcc_n]}
+		export CXXFLAGS=
 	fi
 
 	eix_prefix=$(mktemp -dt eix-prefix.XXXXXXXXXX)
 
-	echo ./configure CXXFLAGS="${CXXFLAGS}" --prefix="$eix_prefix" \
-		--exec-prefix="$eix_prefix"
-	if ! ./configure CXXFLAGS="${CXXFLAGS}" --prefix="$eix_prefix" \
-		--exec-prefix="$eix_prefix"; then
+	echo ./configure CXXFLAGS="$CXXFLAGS" --prefix="$eix_prefix" \
+		--exec-prefix=$eix_prefix
+	if ! ./configure CXXFLAGS="$CXXFLAGS" --prefix="$eix_prefix" \
+		--exec-prefix=$eix_prefix; then
 		set_status $gcc_n "(2 of 6) configure failed"
 		continue
 	fi
@@ -82,10 +82,10 @@ for ((gcc_n=0;gcc_n<"${#gcc[@]}";++gcc_n)); do
 
 	# Try a make distcheck if the toolchain can build eix.
 	if ! [ "$did_distcheck" ]; then
-		if ! CXXFLAGS="${CXXFLAGS}" make distcheck; then
-			did_distcheck="failed"
+		if ! CXXFLAGS=$CXXFLAGS make distcheck; then
+			did_distcheck=failed
 		else
-			did_distcheck="ok"
+			did_distcheck=ok
 		fi
 	fi
 
@@ -94,12 +94,12 @@ for ((gcc_n=0;gcc_n<"${#gcc[@]}";++gcc_n)); do
 		continue
 	fi
 
-	if ! "${eix_prefix}"/bin/eix-update; then
+	if ! "$eix_prefix"/bin/eix-update; then
 		set_status $gcc_n "(5 of 6) running eix-update (in $eix_prefix)"
 		continue
 	fi
 
-	if ! "${eix_prefix}"/bin/eix eix; then
+	if ! "$eix_prefix"/bin/eix eix; then
 		set_status $gcc_n "(6 of 6) running eix (in $eix_prefix)"
 		continue
 	fi

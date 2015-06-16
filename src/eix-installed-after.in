@@ -17,15 +17,15 @@ ReadFunctions
 # Prepend content of eix variable EIX_INSTALLED_AFTER to the arguments
 
 ReadVar EIX_INSTALLED_AFTER EIX_INSTALLED_AFTER
-eval "set -- ${EIX_INSTALLED_AFTER} \"\${@}\""
+eval "set -- $EIX_INSTALLED_AFTER \"\$@\""
 
 # The following function outputs the usage of the script and then dies.
 
 Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	eval_gettext 'Usage: ${n} [options] category/package[:slot]
-This is a well-commented demo script for eix (${p}).
+	eval_gettext 'Usage: $n [options] category/package[:slot]
+This is a well-commented demo script for eix ($p).
 It lists packages installed after (or before) the last (or first) install
 of the given package/version in an output format which is convenient
 as an argument for "emerge -1".
@@ -73,7 +73,7 @@ The following options are available:
 -T   Never use build time'
 	echo
 	exitcode=${1:-1}
-	Exit ${exitcode}
+	Exit $exitcode
 }
 
 
@@ -95,14 +95,14 @@ DefaultOpts() {
 DefaultOpts
 OPTIND=1
 while getopts 'fF:lL:e:a:A:bdsv=SViItTh?' opt
-do	case ${opt} in
+do	case $opt in
 	f)	full=:;;
-	F)	timefile=${OPTARG};;
+	F)	timefile=$OPTARG;;
 	l)	logfile='/var/log/emerge.log';;
-	L)	logfile=${OPTARG};;
-	e)	epoch=${OPTARG};;
-	a)	addtime=${OPTARG};;
-	A)	subtime=${OPTARG};;
+	L)	logfile=$OPTARG;;
+	e)	epoch=$OPTARG;;
+	a)	addtime=$OPTARG;;
+	A)	subtime=$OPTARG;;
 	b)	before=:;;
 	d)	date_output='\t<date:DATE_OUTPUT>';;
 	s)	output='NAMEASLOT';;
@@ -117,36 +117,36 @@ do	case ${opt} in
 	*)	Usage 0;;
 	esac
 done
-[ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
+[ $OPTIND -le 1 ] || shift `Expr $OPTIND - 1`
 
-# After the options there should be exactly one argument: ${match}
+# After the options there should be exactly one argument: $match
 
 if [ -n "${timefile:++}" ]
-then	epoch=`stat -c '%Y' -- "${timefile}" 2>/dev/null` || epoch=
+then	epoch=`stat -c '%Y' -- "$timefile" 2>/dev/null` || epoch=
 fi
 
 # "found" is our flag in the loop whether we already found our package.
 found=false
-if ${full}
+if $full
 then	logfile=
 	before=false
 	epoch=
 	found=:
 elif [ -z "${epoch:++}" ]
-then	[ ${#} -eq 1 ] || Usage
-	match=${1}
+then	[ $# -eq 1 ] || Usage
+	match=$1
 fi
 
 
 # With options -l or -L, we also have to parse the logfile:
 
 if [ -n "${logfile:++}" ]
-then	test -r "${logfile}" || die "`eval_gettext 'cannot read ${logfile}'`"
+then	test -r "$logfile" || die "`eval_gettext 'cannot read $logfile'`"
 	epoch=`unset LC_ALL
 LC_COLLATE=C
-sed -ne "\\: Merging (${match}\\:\\:.*):{s/^\([0-9]*\).*/\\1/p
-q}" "${logfile}"` && [ -n "${epoch:++}" ] || die "`eval_gettext \
-		'cannot find merge of ${match} in ${logfile}'`"
+sed -ne "\\: Merging ($match\\:\\:.*):{s/^\([0-9]*\).*/\\1/p
+q}" "$logfile"` && [ -n "${epoch:++}" ] || die "`eval_gettext \
+		'cannot find merge of $match in $logfile'`"
 fi
 
 # We will let eix output for each installed package (and then sort by time):
@@ -155,34 +155,34 @@ fi
 #	package (in the output format) [TAB date (in the format "%x %X")]
 #	newline
 # (the [...] part occurs only with option -d).
-# The functions Check resp. Output are called with each ${line} as argument
+# The functions Check resp. Output are called with each $line as argument
 # (which thus undergoes the usual splitting at spaces or tabs).
-# Check  returns 0 if the package matches ${match} (or is known to be younger).
+# Check  returns 0 if the package matches $match (or is known to be younger).
 # Output outputs the package (and date).
 # Both functions ignore empty lines.
 
 if [ -z "${epoch:++}" ]
 then
 Check() {
-	[ ${#} -ge 2 ] && case "${2}:" in
-	${match}:*)
+	[ $# -ge 2 ] && case "$2:" in
+	$match:*)
 		return 0;;
 	esac
 	return 1
 }
-else	[ -z "${addtime:++}" ] || epoch=`Expr "${epoch}" + "${addtime}"`
-	[ -z "${subtime:++}" ] || epoch=`Expr "${epoch}" - "${subtime}"`
+else	[ -z "${addtime:++}" ] || epoch=`Expr "$epoch" + "$addtime"`
+	[ -z "${subtime:++}" ] || epoch=`Expr "$epoch" - "$subtime"`
 # With options -f, -e, -l, -L, we need a different Check function:
 Check() {
-	[ ${#} -ne 0 ] && [ "${1}" -ge "${epoch}" ]
+	[ $# -ne 0 ] && [ "$1" -ge "$epoch" ]
 }
 fi
 
 Output() {
-	if [ ${#} -eq 3 ]
-	then	Echo "${3}"
-	elif [ ${#} -gt 3 ]
-	then	printf '%-43s %-11s %s\n' "${3}" "${4}" "${5}"
+	if [ $# -eq 3 ]
+	then	Echo "$3"
+	elif [ $# -gt 3 ]
+	then	printf '%-43s %-11s %s\n' "$3" "$4" "$5"
 	fi
 }
 
@@ -231,19 +231,19 @@ VERSION_NEWLINE= \
 DATE_FORMAT='%s' \
 DATE_OUTPUT='%x %X' \
 NAME='<category>/<package>' \
-LINE='<date:DATE_FORMAT>\t%{'${input}'}\t%{'${output}'}'${date_output}'\n' \
+LINE='<date:DATE_FORMAT>\t%{'$input'}\t%{'$output'}'$date_output'\n' \
 eix --format '<installedversions:LINE>' '-I*' \
 | sort -n \
 | {
 	while read -r line
-	do	if ${found}
-		then	${before} || Output ${line}
-		elif Check ${line}
+	do	if $found
+		then	$before || Output $line
+		elif Check $line
 		then	found=:
-			${including} && Output ${line}
-		else	${before} && Output ${line}
+			$including && Output $line
+		else	$before && Output $line
 		fi
 	done
-	${found}
+	$found
 }
 Exit

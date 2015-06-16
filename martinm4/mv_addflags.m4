@@ -6,7 +6,7 @@ dnl  Martin V\"ath <martin@mvath.de>
 dnl
 dnl MV_ADDFLAGS([ADDCFLAGS], [CFLAGS], [AC_LINK_IFELSE],
 dnl     [sh-list of flags], [sh-list of fatal-flags],
-dnl     [sh-list of skip-flags, e.g. ${CPPFLAGS}], [action], [mode])
+dnl     [sh-list of skip-flags, e.g. $CPPFLAGS], [action], [mode])
 dnl adds each flag of [sh-list of flags] to [ADDCFLAGS] if [AC_LINK_IFELSE]
 dnl succeeds with the corresponding [CFLAGS]. The flag is skipped if it is
 dnl already contained in [ADDCFLAGS] or in [CFLAGS] or in
@@ -30,15 +30,16 @@ AC_DEFUN([MV_ADDFLAGS],
 	[export $2
 	for mv_currflag in $4
 	do
-		AS_CASE([" ${$1} ${$2} $6 ${mv_f$2_cache} "],
-			[*" ${mv_currflag} "*], [],
+		AS_CASE([" $$1 $$2 $6 $mv_f$2_cache "],
+			[*" $mv_currflag "*], [],
 			[AS_CASE([" ${mv_s$2_cache} "],
-				[*" ${mv_currflag} "*], [mv_result=:],
-				[AC_MSG_CHECKING([whether $2=${mv_currflag} is known])
+				[*" $mv_currflag "*],
+					[AS_VAR_SET([mv_result], [:])],
+				[AC_MSG_CHECKING([whether $2=$mv_currflag is known])
 				MV_IF_EMPTY([$8],
 					[AS_VAR_COPY([mv_saveflags], [$2])
 					MV_APPEND([$2], [$5])
-					MV_APPEND([$2], [${mv_currflag}])
+					MV_APPEND([$2], [$mv_currflag])
 					m4_indir([$3],
 dnl The program should use STL and C libraries and "stress" the linker with
 dnl constant and dynamic variables, but also be standard, short and quick...
@@ -67,15 +68,15 @@ return my_func();
 						AS_VAR_SET([mv_result], [:])],
 						[MV_MSG_RESULT([no], [on request])
 						AS_VAR_SET([mv_result], [false])])])
-				AS_IF([${mv_result}],
+				AS_IF([$mv_result],
 					[MV_APPEND([mv_s$2_cache],
-						[${mv_currflag}])],
+						[$mv_currflag])],
 					[MV_APPEND([mv_f$2_cache],
-						[${mv_currflag}])])])
-			AS_IF([${mv_result}],
-				MV_APPEND([$1], [${mv_currflag}])
+						[$mv_currflag])])])
+			AS_IF([$mv_result],
+				MV_APPEND([$1], [$mv_currflag])
 				[m4_ifval([$7],
-					[MV_PREPEND([$2], [${mv_currflag}])
+					[MV_PREPEND([$2], [$mv_currflag])
 					$7
 					])])])
 	done])

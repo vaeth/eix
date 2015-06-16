@@ -3,7 +3,7 @@
 export LC_ALL=C
 
 Echo() {
-	printf '%s\n' "${*}"
+	printf '%s\n' "$*"
 }
 
 Usage() {
@@ -27,7 +27,7 @@ Available options are
   -X  Clear CCACHE
   -y  Use new c++ dialect
   -Y  Do not use new c++ dialect
-  -jX Use -jX (currently ${jarg})
+  -jX Use -jX (currently $jarg)
   -c OPT Add OPT to ./configure
   -d  As -c --enable-debugging
   -O  As -c --enable-strong-optimization -c --enable-security
@@ -37,56 +37,56 @@ Available options are
 }
 
 Info() {
-	${quiet} || printf '\033[01;32m%s\033[0m\n' "${*}"
+	$quiet || printf '\033[01;32m%s\033[0m\n' "$*"
 }
 
 InfoVerbose() {
-	${quiet} || printf '\n\033[01;33m%s\033[0m\n\n' "${*}"
+	$quiet || printf '\n\033[01;33m%s\033[0m\n\n' "$*"
 }
 
 Die() {
-	Echo "${0##*/}: error: ${1}" >&2
+	Echo "${0##*/}: error: $1" >&2
 	exit ${2:-1}
 }
 
 SetCcache() {
 	dircc='/usr/lib/ccache/bin'
-	if ${use_ccache} && case ":${PATH}:" in
-	*":${dircc}:"*)
+	if $use_ccache && case ":$PATH:" in
+	*":$dircc:"*)
 		false;;
 	esac
-	then	Info "export PATH=${dircc}:\${PATH}"
-		PATH="${dircc}:${PATH}"
+	then	Info "export PATH=$dircc:\$PATH"
+		PATH=$dircc:$PATH
 		export PATH
 	fi
-	if ${recache}
+	if $recache
 	then	Info "export CCACHE_RECACHE=true"
 		export CCACHE_RECACHE=true
 	fi
 	CCACHE_SLOPPINESS='file_macro,time_macros,include_file_mtime'
-	Info "export CCACHE_SLOPPINESS='${CCACHE_SLOPPINESS}'"
+	Info "export CCACHE_SLOPPINESS='$CCACHE_SLOPPINESS'"
 	export CCACHE_SLOPPINESS
 	testcc=
 	for dircc in \
-		"${HOME}/.ccache" \
+		"$HOME/.ccache" \
 		../.ccache \
 		../ccache \
 		../../.ccache \
 		../../ccache
-	do	[ -z "${dircc:++}" ] || ! test -d "${dircc}" && continue
-		testcc=`cd -P -- "${dircc}" >/dev/null 2>&1 && \
-				printf '%sA' "${PWD}"` && \
+	do	[ -z "${dircc:++}" ] || ! test -d "$dircc" && continue
+		testcc=`cd -P -- "$dircc" >/dev/null 2>&1 && \
+				printf '%sA' "$PWD"` && \
 			testcc=${testcc%A} && [ -n "${testcc:++}" ] \
-			&& test -d "${testcc}" && break
+			&& test -d "$testcc" && break
 	done
 	if [ -n "${testcc:++}" ]
-	then	Info "export CCACHE_DIR=${testcc}"
+	then	Info "export CCACHE_DIR=$testcc"
 		Info 'export CCACHE_COMPRESS=true'
-		CCACHE_DIR=${testcc}
+		CCACHE_DIR=$testcc
 		export CCACHE_DIR
 		export CCACHE_COMPRESS=true
 	fi
-	${clear_ccache} || return 0
+	$clear_ccache || return 0
 	Info 'ccache -C'
 	ccache -C
 }
@@ -112,15 +112,15 @@ dialect='enable'
 strong_security=:
 OPTIND=1
 while getopts 'q1234gGdnewWsSrOoCxXyYdc:j:hH?' opt
-do	case ${opt} in
+do	case $opt in
 	q)	quiet=:;;
 	1)	separate_all=false;;
 	2)	separate_all=false
-		configure_extra=${configure_extra}' --enable-separate-update';;
+		configure_extra=$configure_extra' --enable-separate-update';;
 	3)	separate_all=false
-		configure_extra=${configure_extra}' --enable-separate-binaries';;
+		configure_extra=$configure_extra' --enable-separate-binaries';;
 	4)	separate_all=false
-		configure_extra=${configure_extra}' --enable-separate-tools';;
+		configure_extra=$configure_extra' --enable-separate-tools';;
 	g)	clang=:;;
 	G)	clang=false;;
 	d)	dep_default=false;;
@@ -128,8 +128,8 @@ do	case ${opt} in
 	e)	keepenv=:;;
 	w)	werror=:;;
 	W)	warnings=false;;
-	s)	configure_extra=${configure_extra}' --with-sqlite';;
-	S)	configure_extra=${configure_extra}' --without-sqlite';;
+	s)	configure_extra=$configure_extra' --with-sqlite';;
+	S)	configure_extra=$configure_extra' --without-sqlite';;
 	r)	use_chown=:;;
 	O)	optimization=:;;
 	o)	strong_security=false;;
@@ -139,27 +139,27 @@ do	case ${opt} in
 	y)	dialect='enable';;
 	Y)	dialect='disable';;
 	d)	debugging=:;;
-	c)	configure_extra=${configure_extra}" ${OPTARG}";;
-	j)	[ -n "${OPTARG:++}" ] && jarg='-j'${OPTARG} || jarg=;;
+	c)	configure_extra=$configure_extra" $OPTARG";;
+	j)	[ -n "${OPTARG:++}" ] && jarg='-j'$OPTARG || jarg=;;
 	*)	Usage 0;;
 	esac
 done
-if [ ${OPTIND} -gt 1 ]
+if [ $OPTIND -gt 1 ]
 then	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && \
-	eval 'shift "$(( ${OPTIND} - 1 ))"' || shift "`expr ${OPTIND} - 1`"
+	eval 'shift "$(( $OPTIND - 1 ))"' || shift "`expr $OPTIND - 1`"
 fi
 
 SetCcache
-[ -n "${dialect:++}" ] && configure_extra=${configure_extra}" --${dialect}-new-dialect"
-${dep_default} && configure_extra=${configure_extra}' --with-dep-default'
-${separate_all} && configure_extra=${configure_extra}' --enable-separate-binaries --enable-separate-tools'
-${optimization} && configure_extra=${configure_extra}' --enable-strong-optimization --enable-security'
-${strong_security} && configure_extra=${configure_extra}' --enable-strong-security'
-${debugging} && configure_extra=${configure_extra}' --enable-debugging'
+[ -n "${dialect:++}" ] && configure_extra=$configure_extra" --$dialect-new-dialect"
+$dep_default && configure_extra=$configure_extra' --with-dep-default'
+$separate_all && configure_extra=$configure_extra' --enable-separate-binaries --enable-separate-tools'
+$optimization && configure_extra=$configure_extra' --enable-strong-optimization --enable-security'
+$strong_security && configure_extra=$configure_extra' --enable-strong-security'
+$debugging && configure_extra=$configure_extra' --enable-debugging'
 
-${quiet} && quietredirect='>/dev/null' || quietredirect=
+$quiet && quietredirect='>/dev/null' || quietredirect=
 
-if ${use_chown}
+if $use_chown
 then	ls /root >/dev/null 2>&1 && \
 		Die 'you should not really be root when you use -r' 2
 	chown -R root:root .
@@ -171,15 +171,15 @@ Filter() {
 		CXXFLAGS \
 		LDFLAGS \
 		CPPFLAGS
-	do	eval oldflags=\${${currvar}}
+	do	eval oldflags=\$$currvar
 		newflags=
-		for currflag in ${oldflags}
-		do	case " ${*} " in
-			*" ${currflag} "*)	continue;;
+		for currflag in $oldflags
+		do	case " $* " in
+			*" $currflag "*)	continue;;
 			esac
-			newflags=${newflags}${newflags:+ }${currflag}
+			newflags=$newflags${newflags:+ }$currflag
 		done
-		eval ${currvar}=\${newflags}
+		eval $currvar=\$newflags
 	done
 }
 
@@ -207,49 +207,49 @@ FilterClang() {
 		-ftracer
 }
 
-if ! ${keepenv}
+if ! $keepenv
 then	CFLAGS=`portageq envvar CFLAGS`
 	CXXFLAGS=`portageq envvar CXXFLAGS`
 	LDFLAGS=`portageq envvar LDFLAGS`
 	CPPFLAGS=`portageq envvar CPPFLAGS`
 	CXX=`portageq envvar CXX`
 	export CFLAGS CXXFLAGS LDFLAGS CPPFLAGS
-	if ${clang}
+	if $clang
 	then	CXX='clang++'
 		FilterClang
 	fi
-	[ -z "${CXX}" ] || export CXX
-	if ${warnings}
-	then	configure_extra=${configure_extra}' --enable-strong-warnings'
-		automake_extra=${automake_extra}' -Wall'
+	[ -z "$CXX" ] || export CXX
+	if $warnings
+	then	configure_extra=$configure_extra' --enable-strong-warnings'
+		automake_extra=$automake_extra' -Wall'
 	fi
-	if ${werror}
-	then	CXXFLAGS=${CXXFLAGS}' -Werror'
-		automake_extra=${automake_extra}' -Werror'
+	if $werror
+	then	CXXFLAGS=$CXXFLAGS' -Werror'
+		automake_extra=$automake_extra' -Werror'
 	fi
 fi
-Info "export CXXFLAGS='${CXXFLAGS}'"
-Info "export LDFLAGS='${LDFLAGS}'"
-Info "export CPPFLAGS='${CPPFLAGS}'"
-[ -z "${CXX}" ] ||  Info "export CXX='${CXX}'"
+Info "export CXXFLAGS='$CXXFLAGS'"
+Info "export LDFLAGS='$LDFLAGS'"
+Info "export CPPFLAGS='$CPPFLAGS'"
+[ -z "$CXX" ] ||  Info "export CXX='$CXX'"
 if ! test -e Makefile
 then	if ! test -e configure || ! test -e Makefile.in
-	then	InfoVerbose './autogen.sh' ${automake_extra}
-		eval "./autogen.sh ${automake_extra} ${quietredirect}" \
+	then	InfoVerbose './autogen.sh' $automake_extra
+		eval "./autogen.sh $automake_extra $quietredirect" \
 			|| Die 'autogen failed'
 	fi
-	InfoVerbose './configure' ${configure_extra}
-	eval "./configure ${configure_extra} ${quietredirect}" || \
+	InfoVerbose './configure' $configure_extra
+	eval "./configure $configure_extra $quietredirect" || \
 		Die 'configure failed'
 fi
-${earlystop} && {
-	InfoVerbose 'make' ${jarg} config.h
-	exec make ${jarg} config.h
+$earlystop && {
+	InfoVerbose 'make' $jarg config.h
+	exec make $jarg config.h
 	Die 'cannot exec make'
 }
-InfoVerbose 'make' ${jarg} ${*}
+InfoVerbose 'make' $jarg $*
 command -v make >/dev/null 2>&1 || Die 'cannot find make'
-if ${quiet}
-then	exec make ${jarg} "${@}" >/dev/null
-else	exec make ${jarg} "${@}"
+if $quiet
+then	exec make $jarg "$@" >/dev/null
+else	exec make $jarg "$@"
 fi

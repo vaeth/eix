@@ -234,7 +234,7 @@ AddOption(STRING, "EIX_GROUP",
 AddOption(INTEGER, "EIX_UID",
 	"250", _(
 	"If EIX_USER is empty or nonexistent, use this user id.\n"
-	"In this case and if ${EIX_UID} <= 0, the user id is not changed."));
+	"In this case and if $EIX_UID <= 0, the user id is not changed."));
 
 AddOption(STRING, "REQUIRE_DROP",
 	"root", _(
@@ -248,7 +248,7 @@ AddOption(BOOLEAN, "NODROP_FATAL",
 AddOption(INTEGER, "EIX_GID",
 	"%{EIX_UID}", _(
 	"If EIX_GROUP is empty or nonexistent, use this group id.\n"
-	"In this case and if ${EIX_GID} <= 0, the group id is not changed."));
+	"In this case and if $EIX_GID <= 0, the group id is not changed."));
 
 AddOption(STRING, "PORTAGE_ROOTPATH",
 	PORTAGE_ROOTPATH_DEFAULT, _(

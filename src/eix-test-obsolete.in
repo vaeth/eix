@@ -14,8 +14,8 @@ ReadGettext
 Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	eval_gettext 'Usage: ${n} [options] detail|brief|quick
-This is a wrapper script for eix (${p}).
+	eval_gettext 'Usage: $n [options] detail|brief|quick
+This is a wrapper script for eix ($p).
 
 It calls eix -tTc several times with various variable settings in order to
 display missing packages or packages with obsolete entries in
@@ -32,7 +32,7 @@ REDUNDANT_IF_*, and NONEXISTENT_IF_* variables. In particular, the variables
 REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} and REDUNDANT_IF_MIXED are
 false by default. Thus, e.g. to activate the two possible tests for
 /etc/portage/package.use you should set (e.g. in /etc/eixrc) something like
-REDUNDANT_IF_IN_USE="-some" REDUNDANT_IF_DOUBLE_USE="some"
+REDUNDANT_IF_IN_USE=-some REDUNDANT_IF_DOUBLE_USE=some
 
 The following options are available:
 	-c  use CHECK_INSTALLED_OVERLAYS=true
@@ -62,12 +62,12 @@ myarg=
 # necessary to turn the next command into eval "Push -c ..."
 # In the moment this seems not necessary, so we avoid that security risk:
 Push -c opt `eix --print EIX_TEST_OBSOLETE_OPTS`
-Push opt "${@}"
+Push opt "$@"
 set -f
-eval "set -- ${opt}"
+eval "set -- $opt"
 OPTIND=1
 while getopts 'cCdbqHh?' opt
-do	case ${opt} in
+do	case $opt in
 	c) export CHECK_INSTALLED_OVERLAYS=true;;
 	C) export CHECK_INSTALLED_OVERLAYS=repository;;
 	d) myarg='detail';;
@@ -77,9 +77,9 @@ do	case ${opt} in
 	*) Usage 0;;
 	esac
 done
-[ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
-[ ${#} -gt 1 ] && Usage
-[ ${#} -eq 1 ] && myarg=${1#-}
+[ $OPTIND -le 1 ] || shift `Expr $OPTIND - 1`
+[ $# -gt 1 ] && Usage
+[ $# -eq 1 ] && myarg=${1#-}
 quickmode=false
 case ${myarg#-} in
 [dD]*)	nodetails=false;;
@@ -102,40 +102,40 @@ sets=
 
 # Defines a new set_* variable
 DefineSet() {
-	sets="${sets} ${1}"
+	sets="$sets $1"
 	eval "shift
-	set_${1}=\${*}"
+	set_$1=\$*"
 }
 
 # Return true if all variables in arg are "false" according to eix.
 AllFalse() {
 	for s
-	do	ReadBoolean "${s}" eix && return 1
+	do	ReadBoolean "$s" eix && return 1
 	done
 	return 0
 }
 
-# Set all variables listed in set_${1} to "false"
+# Set all variables listed in set_$1 to "false"
 SetFalse() {
-	eval "for c in \${set_${1}}
-	do	eval export \${c}=false
+	eval "for c in \${set_$1}
+	do	eval export \$c=false
 	done"
 }
 
-# Set all variables listed in set_* to "false" except for those in set_${1}
+# Set all variables listed in set_* to "false" except for those in set_$1
 FalseExcept() {
-	for s in ${sets}
-	do	[ "${s}" = "${1}" ] || SetFalse ${s}
+	for s in $sets
+	do	[ "$s" = "$1" ] || SetFalse $s
 	done
 }
 
 Output() {
 	if ! NOFOUND_STATUS=1 COUNT_ONLY_PRINTED=false eix -Tq0
-	then	[ -z "${1:++}" ] || Echo "${1}"
+	then	[ -z "${1:++}" ] || Echo "$1"
 		return
 	fi
-	printf '\n%s\n' "${2}"
-	if [ ${#} -le 3 ] || ${nodetails}
+	printf '\n%s\n' "$2"
+	if [ $# -le 3 ] || $nodetails
 	then	eix -T
 		echo
 		return
@@ -144,31 +144,31 @@ Output() {
 	for z
 	do	(
 			for j
-			do	[ "${z}" = "${j}" ] || eval export ${j}=false
+			do	[ "$z" = "$j" ] || eval export $j=false
 			done
-			Output '' "`eval_gettext '... considered as ${z}'`"
+			Output '' "`eval_gettext '... considered as $z'`"
 		)
 	done
 }
 
 Check() (
-	if eval AllFalse \${set_${1}}
-	then	Echo "${4}"
+	if eval AllFalse \${set_$1}
+	then	Echo "$4"
 		return
 	fi
-	FalseExcept ${1}
+	FalseExcept $1
 	eval "shift
-	Output \"\${1}\" \"\${2}\" \${set_${1}}"
+	Output \"\$1\" \"\$2\" \${set_$1}"
 )
 
 OutputExcept() (
-	SetFalse ${1}
+	SetFalse $1
 	shift
-	Output "${@}"
+	Output "$@"
 )
 
 ReadVar rump PORTAGE_CONFIGROOT
-rump="${rump}/etc/portage/package."
+rump=$rump/etc/portage/package.
 
 DefineSet nonexistent \
 	TEST_FOR_NONEXISTENT
@@ -214,24 +214,24 @@ DefineSet in_cflags \
 
 if AllFalse TEST_FOR_REDUNDANCY
 then	Echo \
-	"`eval_gettext 'Skipping check of entries in ${rump}*'`"
-elif ${quickmode}
+	"`eval_gettext 'Skipping check of entries in $rump*'`"
+elif $quickmode
 then	Statusline 'package.*'
 	OutputExcept nonexistent \
-	"`eval_gettext 'No redundant entries in any ${rump}*'`" \
-	"`eval_gettext 'Redundant in some ${rump}*:'`"
+	"`eval_gettext 'No redundant entries in any $rump*'`" \
+	"`eval_gettext 'Redundant in some $rump*:'`"
 else
 Statusline 'accept_keywords'
 Check keywords "`eval_gettext \
-	'No  redundant  entries in ${rump}{,accept_}keywords'`" \
-	"`eval_gettext 'Redundant in ${rump}{,accept_}keywords:'`" \
+	'No  redundant  entries in $rump{,accept_}keywords'`" \
+	"`eval_gettext 'Redundant in $rump{,accept_}keywords:'`" \
 	"`eval_gettext \
-	'Skipping check:  redundant  entries in ${rump}{,accept_}keywords'`"
+	'Skipping check:  redundant  entries in $rump{,accept_}keywords'`"
 Check in_keywords "`eval_gettext \
-	'No uninstalled entries in ${rump}{,accept_}keywords'`" \
-	"`eval_gettext 'Not installed but in ${rump}{,accept_}keywords:'`" \
+	'No uninstalled entries in $rump{,accept_}keywords'`" \
+	"`eval_gettext 'Not installed but in $rump{,accept_}keywords:'`" \
 	"`eval_gettext \
-	'Skipping check: uninstalled entries in ${rump}{,accept_}keywords'`"
+	'Skipping check: uninstalled entries in $rump{,accept_}keywords'`"
 Statusline 'mask'
 Check mask "`eval_gettext \
 	'No  redundant  entries in ${rump}mask'`" \

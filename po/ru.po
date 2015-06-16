@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-06-14 12:20+0200\n"
+"POT-Creation-Date: 2015-06-16 14:13+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -37,8 +37,8 @@ msgstr "Ошибка"
 
 #: src/eix-functions.sh.in:188
 #, sh-format
-msgid "Problems running ${eixf_cmd}"
-msgstr "Проблема при запуске ${eixf_cmd}"
+msgid "Problems running $eixf_cmd"
+msgstr "Проблема при запуске $eixf_cmd"
 
 #: src/eix-functions.sh.in:319
 msgid "Calling eix-update"
@@ -50,8 +50,8 @@ msgstr "ошибка eix-update"
 
 #: src/eix-functions.sh.in:372
 #, sh-format
-msgid "${eixf_patha} cannot be found in PATH"
-msgstr "${eixf_patha} не найден в PATH"
+msgid "$eixf_patha cannot be found in PATH"
+msgstr "$eixf_patha не найден в PATH"
 
 #: src/eix-functions.sh.in:516
 msgid "found no free temporary name after 10000 attempts"
@@ -68,8 +68,8 @@ msgstr "невозможно создать временный каталог"
 #: src/eix-installed.sh:15
 #, sh-format
 msgid ""
-"Usage: ${n} [options] ARG [ARG ARG ...]\n"
-"This script is part of ${p}.\n"
+"Usage: $n [options] ARG [ARG ARG ...]\n"
+"This script is part of $p.\n"
 "It outputs all installed packages, or packages installed with/without\n"
 "repository or buildtime information.\n"
 "Packages emerged with new version of portage contain repository and buildtime\n"
@@ -91,8 +91,8 @@ msgid ""
 "\n"
 "ARG can be abbreviated, e.g. instead of \"no-repo\" you can use \"nr\"."
 msgstr ""
-"Использование: ${n} [опции] АРГ [АРГ АРГ ...]\n"
-"Этот скрипт - часть ${p}.\n"
+"Использование: $n [опции] АРГ [АРГ АРГ ...]\n"
+"Этот скрипт - часть $p.\n"
 "Он показывает все установленные пакеты или пакеты с/без\n"
 "информации о репозитории или сборке.\n"
 "Пакеты установленные новой версией portage содержат репозиторную и сборочную\n"
@@ -116,8 +116,8 @@ msgstr ""
 
 #: src/eix-installed.sh:86
 #, sh-format
-msgid "(total number of versions listed above: ${c})"
-msgstr "(общее количество версий перечисленных выше: ${c})"
+msgid "(total number of versions listed above: $c)"
+msgstr "(общее количество версий перечисленных выше: $c)"
 
 #: src/eix-installed.sh:93
 msgid "The following package versions are installed:"
@@ -146,8 +146,8 @@ msgstr "невозможно найти базу данных установле
 #: src/eix-installed-after.sh:27
 #, sh-format
 msgid ""
-"Usage: ${n} [options] category/package[:slot]\n"
-"This is a well-commented demo script for eix (${p}).\n"
+"Usage: $n [options] category/package[:slot]\n"
+"This is a well-commented demo script for eix ($p).\n"
 "It lists packages installed after (or before) the last (or first) install\n"
 "of the given package/version in an output format which is convenient\n"
 "as an argument for \"emerge -1\".\n"
@@ -194,8 +194,8 @@ msgid ""
 "     independent of the value of USE_BUILD_TIME\n"
 "-T   Never use build time"
 msgstr ""
-"Использование: ${n} [ключи] категория/пакет[:слот]\n"
-"Это хорошо задокументированный демо-сценарий для eix (${p}).\n"
+"Использование: $n [ключи] категория/пакет[:слот]\n"
+"Это хорошо задокументированный демо-сценарий для eix ($p).\n"
 "Он показывает пакеты, установленные после (до) последней (первой) установки\n"
 "данного пакета/версии; формат вывода подходит на роль аргумента для\n"
 "\"emerge -1\".\n"
@@ -249,19 +249,19 @@ msgstr ""
 
 #: src/eix-installed-after.sh:144
 #, sh-format
-msgid "cannot read ${logfile}"
-msgstr "невозможно прочесть ${logfile}"
+msgid "cannot read $logfile"
+msgstr "невозможно прочесть $logfile"
 
 #: src/eix-installed-after.sh:149
 #, sh-format
-msgid "cannot find merge of ${match} in ${logfile}"
-msgstr "невозможно найти установку ${match} в ${logfile}"
+msgid "cannot find merge of $match in $logfile"
+msgstr "невозможно найти установку $match в $logfile"
 
 #: src/eix-layman.sh:20
 #, sh-format
 msgid ""
-"Usage: ${n} [options] command\n"
-"Add or remove local layman overlays to the eix database (${p}).\n"
+"Usage: $n [options] command\n"
+"Add or remove local layman overlays to the eix database ($p).\n"
 "\n"
 "Explanation: If your /etc/make.conf does not source layman/make.conf,\n"
 "then the layman overlays are not considered as part of your PORTDIR_OVERLAY;\n"
@@ -282,8 +282,8 @@ msgid ""
 "-A PATH       Add PATH to the sourced make.confs used to determine\n"
 "              the layman overlays. Current value:"
 msgstr ""
-"Использование: ${n} [ключи] команда\n"
-"Добавить или удалить местные оверлеи layman в базе данных eix (${p}).\n"
+"Использование: $n [ключи] команда\n"
+"Добавить или удалить местные оверлеи layman в базе данных eix ($p).\n"
 "\n"
 "Объяснение: Если в Вашем /etc/make.conf нет отсылки к layman/make.conf,\n"
 "то оверлеи layman не считаются частью Вашего PORTDIR_OVERLAY;\n"
@@ -330,8 +330,8 @@ msgstr "Анализ"
 
 #: src/eix-remote.sh:35
 #, sh-format
-msgid "failed to execute ${prg}"
-msgstr "ошибка выполнения ${prg}"
+msgid "failed to execute $prg"
+msgstr "ошибка выполнения $prg"
 
 #: src/eix-remote.sh:49
 msgid "temporary file"
@@ -340,14 +340,14 @@ msgstr "временный файл"
 #: src/eix-remote.sh:50
 #, fuzzy, sh-format
 msgid ""
-"Usage: ${n} [options] command\n"
-"Get data from a remote database for ${p}.\n"
+"Usage: $n [options] command\n"
+"Get data from a remote database for $p.\n"
 "The following commands are provided:\n"
 "\n"
 "update1 (=update) or update2:\n"
 "        Fetch the eix-caches of some layman overlays, store them locally in\n"
-"        EIX_REMOTEARCHIVE1 (${f1}) or\n"
-"        EIX_REMOTEARCHIVE2 (${f2}),\n"
+"        EIX_REMOTEARCHIVE1 ($f1) or\n"
+"        EIX_REMOTEARCHIVE2 ($f2),\n"
 "        respectively and add them to the eix database.\n"
 "        If EIX_REMOTE1 or EIX_REMOTE2, respectively, is nonempty the output\n"
 "        goes to that separate database.\n"
@@ -388,22 +388,22 @@ msgid ""
 "        Set LOCAL_LAYMAN or use option -l to override the heuristics.\n"
 "-l PATH Use PATH as LOCAL_LAYMAN\n"
 "-a ADDR Use ADDR as remote database address instead of:\n"
-"        ${addr1}\n"
-"        ${addr2}\n"
+"        $addr1\n"
+"        $addr2\n"
 "-i      Ignore all previous options (e.g. ignore EIX_REMOTE_OPTS).\n"
 "-v      Verbose (default)\n"
 "-H      Suppress status line update\n"
 "-q      Quiet"
 msgstr ""
-"Использование: ${n} [ключи] команда\n"
-"Получить данные из удалённой базы данных для ${p}.\n"
+"Использование: $n [ключи] команда\n"
+"Получить данные из удалённой базы данных для $p.\n"
 "Доступны следующие команды:\n"
 "\n"
 "update1 (=update) или update2:\n"
 "        Получить кэши eix для некоторых хранилищ layman,\n"
 "        местно сохранить их в\n"
-"        EIX_REMOTEARCHIVE1 (${f1})\n"
-"        EIX_REMOTEARCHIVE2 (${f2})\n"
+"        EIX_REMOTEARCHIVE1 ($f1)\n"
+"        EIX_REMOTEARCHIVE2 ($f2)\n"
 "        и добавить в базу данных eix.\n"
 "        Если EIX_REMOTE1 или EIX_REMOTE2 не пуст, то вывод\n"
 "        первого или второго соответственно будет записан в ту отдельную БД.\n"
@@ -447,8 +447,8 @@ msgstr ""
 "         Set LOCAL_LAYMAN or use option -l to override the heuristics.\n"
 "-l ПУТЬ  Использовать ПУТЬ как LOCAL_LAYMAN\n"
 "-a АДРЕС Указать АДРЕС удалённой БД вместо:\n"
-"         ${addr1}\n"
-"         ${addr2}\n"
+"         $addr1\n"
+"         $addr2\n"
 "-i       Игнорировать все предыдущие ключи (например, EIX_REMOTE_OPTS).\n"
 "-v       Подробно (по умолчанию)\n"
 "-H       Подавить обновление строки состояния\n"
@@ -471,8 +471,8 @@ msgstr "невозможно определить полезный $LOCAL_LAYMAN
 
 #: src/eix-remote.sh:193
 #, sh-format
-msgid "cannot cd to ${a}"
-msgstr "невозможно перейти в ${a}"
+msgid "cannot cd to $a"
+msgstr "невозможно перейти в $a"
 
 #: src/eix-remote.sh:224
 msgid "Downloading remote data"
@@ -528,38 +528,38 @@ msgstr "Распаковка данных"
 
 #: src/eix-remote.sh:269
 #, sh-format
-msgid "cannot unpack ${a}"
-msgstr "невозможно распаковать ${a}"
+msgid "cannot unpack $a"
+msgstr "невозможно распаковать $a"
 
 #: src/eix-remote.sh:302
 #, fuzzy, sh-format
-msgid "file ${p} of ${a} contains no overlay"
-msgstr "Файл ${p} in ${a} не содержит оверлей"
+msgid "file $p of $a contains no overlay"
+msgstr "Файл $p in $a не содержит оверлей"
 
 #: src/eix-remote.sh:319
 #, sh-format
-msgid "could not read all eix cachefiles of ${a}"
-msgstr "невозможно прочесть все файлы кэша eix от ${a}"
+msgid "could not read all eix cachefiles of $a"
+msgstr "невозможно прочесть все файлы кэша eix от $a"
 
 #: src/eix-remote.sh:321
 #, fuzzy, sh-format
-msgid "no file in ${a} contains an overlay"
-msgstr "No Файл in ${a} не содержит оверлей"
+msgid "no file in $a contains an overlay"
+msgstr "No Файл in $a не содержит оверлей"
 
 #: src/eix-remote.sh:323
 #, fuzzy, sh-format
-msgid "${failcount} files in ${a} contain no overlay"
-msgstr "${failcount} Файл in ${a} не содержит оверлей"
+msgid "$failcount files in $a contain no overlay"
+msgstr "$failcount Файл in $a не содержит оверлей"
 
 #: src/eix-remote.sh:325
 #, fuzzy, sh-format
-msgid "A file in ${a} contains no overlay"
-msgstr "1 Файл in ${a} не содержит оверлей"
+msgid "A file in $a contains no overlay"
+msgstr "1 Файл in $a не содержит оверлей"
 
 #: src/eix-remote.sh:333
 #, sh-format
-msgid "Output to remote database ${eix_remote}"
-msgstr "Вывод в удалённую БД ${eix_remote}"
+msgid "Output to remote database $eix_remote"
+msgstr "Вывод в удалённую БД $eix_remote"
 
 #: src/eix-remote.sh:352
 msgid "A temporary file makes only sense for update mode"
@@ -567,29 +567,29 @@ msgstr "Временный файл имеет смысл только для р
 
 #: src/eix-remote.sh:363
 #, sh-format
-msgid "cannot copy temporary file to ${file}"
-msgstr "невозможно сделать копию ${file} временного файла"
+msgid "cannot copy temporary file to $file"
+msgstr "невозможно сделать копию $file временного файла"
 
 #: src/eix-remote.sh:375
 #, sh-format
-msgid "cannot read ${archive}"
-msgstr "невозможно прочесть ${archive}"
+msgid "cannot read $archive"
+msgstr "невозможно прочесть $archive"
 
 #: src/eix-remote.sh:394
 #, sh-format
-msgid "mkdir ${tmpsub} failed"
-msgstr "ошибка создания каталога ${tmpsub}"
+msgid "mkdir $tmpsub failed"
+msgstr "ошибка создания каталога $tmpsub"
 
 #: src/eix-sync.sh:26
 #, fuzzy, sh-format
 msgid ""
-"Usage: ${n} [options]\n"
-"Call layman/emerge --sync/--metadata and show updates. (${p})\n"
+"Usage: $n [options]\n"
+"Call layman/emerge --sync/--metadata and show updates. ($p)\n"
 "\n"
 "Unless the -t option is used, the old database will be saved to\n"
-"    ${eixprevious}.\n"
+"    $eixprevious.\n"
 "\n"
-"The file ${eixsyncconf} and the eix (environment) variable EIX_SYNC_CONF\n"
+"The file $eixsyncconf and the eix (environment) variable EIX_SYNC_CONF\n"
 "(which defaults to delayed substitution of EIX_SYNC_OPTS) determine for\n"
 "which overlays layman is called, which default options are used, and they\n"
 "can contain various hooks - \"man eix\" for details.\n"
@@ -600,7 +600,7 @@ msgid ""
 "The following options are available:\n"
 "\n"
 "-i   Ignore all previous options except -n\n"
-"     (useful to ignore ${eixsyncconf} options).\n"
+"     (useful to ignore $eixsyncconf options).\n"
 "-a   Always assume that some tree/overlay changes\n"
 "     (set have_changed=: in a !-hook to force this)\n"
 "-s [USER@]SERVER[:DIR] Sync via rsync from SERVER.\n"
@@ -615,11 +615,11 @@ msgid ""
 "-u   Update database only and show differences. This is equivalent to -0l@As \"\"\n"
 "-F   Make layman or failed hooks (! !! ~ @ @@ entries) fatal. This can be\n"
 "     forced/overridden in hooks by (un)setting FATAL_HOOKS or calling die.\n"
-"-l   Do not call layman (and the !commands in ${eixsyncconf}).\n"
+"-l   Do not call layman (and the !commands in $eixsyncconf).\n"
 "     However, the !! lines and postponed hooks (@ and @@ entries)\n"
 "     will be executed anyway.\n"
 "-A   Do not call eix-remote add1/add2\n"
-"-@   Do not execute the hooks (@ and @@ entries) of ${eixsyncconf}.\n"
+"-@   Do not execute the hooks (@ and @@ entries) of $eixsyncconf.\n"
 "-S   Do not execute the hooks after emerge --sync (@ entries).\n"
 "-M   Run emerge --metadata.  You might need this when you use the cache method\n"
 "     \"sqlite\", \"sqlite*\", or \"flat\" for PORTDIR or in a synced overlay.\n"
@@ -640,19 +640,19 @@ msgid ""
 "-r   Clear /var/cache/edb/dep/* before syncing. This is only useful when you\n"
 "     use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer\n"
 "     is active. (This option is not default anymore).\n"
-"-R   Cancel previous -r (e.g. if it was used in ${eixsyncconf}).\n"
+"-R   Cancel previous -r (e.g. if it was used in $eixsyncconf).\n"
 "-v   Verbose: output of executed commands.\n"
 "-n   Dry run. You might want to combine this with -v. This implies -aHT\n"
 "-H   Suppress status line update.\n"
 "-h   Show this text and exit."
 msgstr ""
-"Использование: ${n} [ключи]\n"
-"Вызвать layman/emerge --sync/--metadata и показать обновления. (${p})\n"
+"Использование: $n [ключи]\n"
+"Вызвать layman/emerge --sync/--metadata и показать обновления. ($p)\n"
 "\n"
 "Без ключа -t старая база данных будет сохранена в\n"
-"    ${eixprevious}.\n"
+"    $eixprevious.\n"
 "\n"
-"Файл ${eixsyncconf} и переменная (окружения) eix EIX_SYNC_CONF\n"
+"Файл $eixsyncconf и переменная (окружения) eix EIX_SYNC_CONF\n"
 "(по умолчанию отложенная замена EIX_SYNC_OPTS) определяют\n"
 "для каких оверлеев вызывается layman, какие ключи по умолчанию\n"
 "используются и они могут содержать крюки - подробно в \"man eix\".\n"
@@ -664,7 +664,7 @@ msgstr ""
 "Доступны следующие ключи:\n"
 "\n"
 "-i   Игнорировать все предыдущие ключи except -n\n"
-"     (полезно для игнорирования ${eixsyncconf}).\n"
+"     (полезно для игнорирования $eixsyncconf).\n"
 "-a   Always assume that some tree/overlay changes\n"
 "     (set have_changed=: in a !-hook to force this)\n"
 "-s [ПОЛЬЗОВАТЕЛЬ@]СЕРВЕР[:ДИР] Синхронизация через rsync с СЕРВЕРом.\n"
@@ -681,11 +681,11 @@ msgstr ""
 "-u   Обновить только базу данных и показать различия. Равнозначно -0l@s \"\"\n"
 "-F   Сделать layman или ошибочные крюки (записи ! !! ~ @ @@) смертельными.\n"
 "     Также можно настроить FATAL_HOOKS или вызвать die.\n"
-"-l   Не вызывать layman (а также !commands в ${eixsyncconf}).\n"
+"-l   Не вызывать layman (а также !commands в $eixsyncconf).\n"
 "     Однако, строки !! и отложенные крюки (записи @ и @@)\n"
 "     всё равно будут исполнены.\n"
 "-A   Do not call eix-remote add1/add2\n"
-"-@   Не исполнять крюки (записи @ и @@) файла ${eixsyncconf}.\n"
+"-@   Не исполнять крюки (записи @ и @@) файла $eixsyncconf.\n"
 "-S   Не исполнять крюки после emerge --sync (записи @).\n"
 "-M   Запустить emerge --metadata.\n"
 "     Это может пригодиться при использовании методов кэширования\n"
@@ -710,7 +710,7 @@ msgstr ""
 "     например, используете PORTDIR_CACHE_METHOD=flat и\n"
 "     FEATURES=metadata-transfer активно.\n"
 "     (Этот ключ более не активирован по умолчанию).\n"
-"-R   Отменить предыдущий -r (например, если он использовался в ${eixsyncconf}).\n"
+"-R   Отменить предыдущий -r (например, если он использовался в $eixsyncconf).\n"
 "-v   Verbose: output of executed commands.\n"
 "-n   Dry run. You might want to combine this with -v. This implies -aHT\n"
 "-H   Подавить обновления строки состояния.\n"
@@ -718,8 +718,8 @@ msgstr ""
 
 #: src/eix-sync.sh:107
 #, sh-format
-msgid "Something went wrong with ${curr_cmd}"
-msgstr "Что-то не так с ${curr_cmd}"
+msgid "Something went wrong with $curr_cmd"
+msgstr "Что-то не так с $curr_cmd"
 
 #: src/eix-sync.sh:112
 msgid "Running !!-hooks"
@@ -746,28 +746,28 @@ msgstr "Синхронизация всех оверлеев"
 
 #: src/eix-sync.sh:216
 #, sh-format
-msgid "${mycmd} -S failed"
-msgstr "ошибка ${mycmd} -S"
+msgid "$mycmd -S failed"
+msgstr "ошибка $mycmd -S"
 
 #: src/eix-sync.sh:219
 #, sh-format
-msgid "Syncing portage overlay ${j}"
-msgstr "Синхронизация оверлея ${j}"
+msgid "Syncing portage overlay $j"
+msgstr "Синхронизация оверлея $j"
 
 #: src/eix-sync.sh:221
 #, sh-format
-msgid "${mycmd} -s ${j} failed"
-msgstr "ошибка ${mycmd} -s ${j}"
+msgid "$mycmd -s $j failed"
+msgstr "ошибка $mycmd -s $j"
 
 #: src/eix-sync.sh:412
 #, sh-format
-msgid "Running ${myvarcmd}"
-msgstr "Запуск ${myvarcmd}"
+msgid "Running $myvarcmd"
+msgstr "Запуск $myvarcmd"
 
 #: src/eix-sync.sh:414
 #, sh-format
-msgid "${myvarcmd} failed"
-msgstr "ошибка ${myvarcmd}"
+msgid "$myvarcmd failed"
+msgstr "ошибка $myvarcmd"
 
 #: src/eix-sync.sh:425
 msgid "%6d seconds for %s\\n"
@@ -811,38 +811,38 @@ msgstr "Выполняются ~-хуки"
 
 #: src/eix-sync.sh:486
 #, sh-format
-msgid "${c} (output of ${curr_cmd}) failed"
-msgstr "${c} (ошибка вывода ${curr_cmd})"
+msgid "$c (output of $curr_cmd) failed"
+msgstr "$c (ошибка вывода $curr_cmd)"
 
 #: src/eix-sync.sh:487
 #, sh-format
-msgid "${curr_cmd} failed"
-msgstr "Ошибка ${curr_cmd}"
+msgid "$curr_cmd failed"
+msgstr "Ошибка $curr_cmd"
 
 #: src/eix-sync.sh:507
 #, sh-format
-msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
-msgstr "Удаление старого кэша portage в ${local_varcache}/var/cache/edb/dep"
+msgid "Removing old portage-cache in $local_varcache/var/cache/edb/dep"
+msgstr "Удаление старого кэша portage в $local_varcache/var/cache/edb/dep"
 
 #: src/eix-sync.sh:509
 #, sh-format
-msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
-msgstr "Ошибка rm -rf ${local_varcache}/var/cache/edb/dep/*"
+msgid "rm -rf $local_varcache/var/cache/edb/dep/* failed"
+msgstr "Ошибка rm -rf $local_varcache/var/cache/edb/dep/*"
 
 #: src/eix-sync.sh:517
 #, sh-format
-msgid "Could not rsync from ${hostdir}"
-msgstr "Невозможно выполнить rsync из ${hostdir}"
+msgid "Could not rsync from $hostdir"
+msgstr "Невозможно выполнить rsync из $hostdir"
 
 #: src/eix-sync.sh:527
 #, sh-format
-msgid "rsyncing to ${hostdir}"
-msgstr "Выполняю rsync в ${hostdir}"
+msgid "rsyncing to $hostdir"
+msgstr "Выполняю rsync в $hostdir"
 
 #: src/eix-sync.sh:529
 #, sh-format
-msgid "Could not rsync to ${hostdir}"
-msgstr "Невозможно выполнить rsync в ${hostdir}"
+msgid "Could not rsync to $hostdir"
+msgstr "Невозможно выполнить rsync в $hostdir"
 
 #: src/eix-sync.sh:539
 msgid "eix-cache does not exist."
@@ -854,28 +854,28 @@ msgstr "Формат eix-cache изменился"
 
 #: src/eix-sync.sh:548
 #, sh-format
-msgid "Copying old ${eixcache} cache to temporary file"
-msgstr "Копирую старый кэш ${eixcache} во временный файл"
+msgid "Copying old $eixcache cache to temporary file"
+msgstr "Копирую старый кэш $eixcache во временный файл"
 
 #: src/eix-sync.sh:552
 #, sh-format
-msgid "Could not copy database to temporary file ${tmpfile}"
-msgstr "Невозможно скопировать базу данных во временный файл ${tmpfile}"
+msgid "Could not copy database to temporary file $tmpfile"
+msgstr "Невозможно скопировать базу данных во временный файл $tmpfile"
 
 #: src/eix-sync.sh:556
 #, sh-format
-msgid "Copying old database to ${eixprevious}"
-msgstr "Копирую старую базу данных в ${eixprevious}"
+msgid "Copying old database to $eixprevious"
+msgstr "Копирую старую базу данных в $eixprevious"
 
 #: src/eix-sync.sh:558
 #, sh-format
-msgid "Could not copy database to ${eixprevious}"
-msgstr "Невозможно скопировать базу данных в ${eixprevious}"
+msgid "Could not copy database to $eixprevious"
+msgstr "Невозможно скопировать базу данных в $eixprevious"
 
 #: src/eix-sync.sh:587
 #, fuzzy, sh-format
-msgid "eix-remote add${remote_num} failed"
-msgstr "ошибка eix-remote add${remote_num}"
+msgid "eix-remote add$remote_num failed"
+msgstr "ошибка eix-remote add$remote_num"
 
 #: src/eix-sync.sh:600
 msgid "eix-update was apparently already called in a hook"
@@ -908,8 +908,8 @@ msgstr "Выполняются @-хуки"
 #: src/eix-test-obsolete.sh:17
 #, sh-format
 msgid ""
-"Usage: ${n} [options] detail|brief|quick\n"
-"This is a wrapper script for eix (${p}).\n"
+"Usage: $n [options] detail|brief|quick\n"
+"This is a wrapper script for eix ($p).\n"
 "\n"
 "It calls eix -tTc several times with various variable settings in order to\n"
 "display missing packages or packages with obsolete entries in\n"
@@ -926,7 +926,7 @@ msgid ""
 "REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} and REDUNDANT_IF_MIXED are\n"
 "false by default. Thus, e.g. to activate the two possible tests for\n"
 "/etc/portage/package.use you should set (e.g. in /etc/eixrc) something like\n"
-"REDUNDANT_IF_IN_USE=\"-some\" REDUNDANT_IF_DOUBLE_USE=\"some\"\n"
+"REDUNDANT_IF_IN_USE=-some REDUNDANT_IF_DOUBLE_USE=some\n"
 "\n"
 "The following options are available:\n"
 "\t-c  use CHECK_INSTALLED_OVERLAYS=true\n"
@@ -948,8 +948,8 @@ msgid ""
 "\n"
 "The argument can be abbreviated, e.g. instead of \"brief\" you can just use \"b\"."
 msgstr ""
-"Использование: ${n} [ключи] detail|brief|quick\n"
-"Это скрипт-обёртка для eix (${p}).\n"
+"Использование: $n [ключи] detail|brief|quick\n"
+"Это скрипт-обёртка для eix ($p).\n"
 "\n"
 "Вызывает eix -tTc несколько раз с различными настройками переменных, чтобы\n"
 "показать отсутствующие пакеты или пакеты с устаревшими записями в\n"
@@ -961,7 +961,7 @@ msgstr ""
 "REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} и REDUNDANT_IF_MIXED по умолчанию\n"
 "false. Например, чтобы активировать два возможных теста для\n"
 "/etc/portage/package.use нужно выставить что-то типа\n"
-"REDUNDANT_IF_IN_USE=\"-some\" REDUNDANT_IF_DOUBLE_USE=\"some\".\n"
+"REDUNDANT_IF_IN_USE=-some REDUNDANT_IF_DOUBLE_USE=some.\n"
 "\n"
 "Доступны следующие ключи:\n"
 "\t-c  использовать CHECK_INSTALLED_OVERLAYS=true\n"
@@ -986,53 +986,53 @@ msgstr ""
 
 #: src/eix-test-obsolete.sh:149
 #, sh-format
-msgid "... considered as ${z}"
-msgstr "... считается как ${z} "
+msgid "... considered as $z"
+msgstr "... считается как $z "
 
 #: src/eix-test-obsolete.sh:217
 #, sh-format
-msgid "Skipping check of entries in ${rump}*"
-msgstr "Пропускаю проверку записей в ${rump}*"
+msgid "Skipping check of entries in $rump*"
+msgstr "Пропускаю проверку записей в $rump*"
 
 #: src/eix-test-obsolete.sh:221
 #, sh-format
-msgid "No redundant entries in any ${rump}*"
-msgstr "Нет  лишних  записей в любом ${rump}*"
+msgid "No redundant entries in any $rump*"
+msgstr "Нет  лишних  записей в любом $rump*"
 
 #: src/eix-test-obsolete.sh:222
 #, sh-format
-msgid "Redundant in some ${rump}*:"
-msgstr "Лишнее в некотором ${rump}*:"
+msgid "Redundant in some $rump*:"
+msgstr "Лишнее в некотором $rump*:"
 
 #: src/eix-test-obsolete.sh:226
 #, sh-format
-msgid "No  redundant  entries in ${rump}{,accept_}keywords"
-msgstr "Нет  лишних  записей в ${rump}{,accept_}keywords"
+msgid "No  redundant  entries in $rump{,accept_}keywords"
+msgstr "Нет  лишних  записей в $rump{,accept_}keywords"
 
 #: src/eix-test-obsolete.sh:227
 #, sh-format
-msgid "Redundant in ${rump}{,accept_}keywords:"
-msgstr "Лишнее в ${rump}{,accept_}keywords:"
+msgid "Redundant in $rump{,accept_}keywords:"
+msgstr "Лишнее в $rump{,accept_}keywords:"
 
 #: src/eix-test-obsolete.sh:229
 #, sh-format
-msgid "Skipping check:  redundant  entries in ${rump}{,accept_}keywords"
-msgstr "Пропускаю проверку: лишние записи в ${rump}{,accept_}keywords"
+msgid "Skipping check:  redundant  entries in $rump{,accept_}keywords"
+msgstr "Пропускаю проверку: лишние записи в $rump{,accept_}keywords"
 
 #: src/eix-test-obsolete.sh:231
 #, sh-format
-msgid "No uninstalled entries in ${rump}{,accept_}keywords"
-msgstr "Нет удалённых записей в ${rump}{,accept_}keywords"
+msgid "No uninstalled entries in $rump{,accept_}keywords"
+msgstr "Нет удалённых записей в $rump{,accept_}keywords"
 
 #: src/eix-test-obsolete.sh:232
 #, sh-format
-msgid "Not installed but in ${rump}{,accept_}keywords:"
-msgstr "Не установлено, но в ${rump}{,accept_}keywords:"
+msgid "Not installed but in $rump{,accept_}keywords:"
+msgstr "Не установлено, но в $rump{,accept_}keywords:"
 
 #: src/eix-test-obsolete.sh:234
 #, sh-format
-msgid "Skipping check: uninstalled entries in ${rump}{,accept_}keywords"
-msgstr "Пропускаю проверку: удалённые записи в ${rump}{,accept_}keywords"
+msgid "Skipping check: uninstalled entries in $rump{,accept_}keywords"
+msgstr "Пропускаю проверку: удалённые записи в $rump{,accept_}keywords"
 
 #: src/eix-test-obsolete.sh:237
 #, sh-format
@@ -1775,7 +1775,7 @@ msgid ""
 "first options, e.g. as in this script snippet:\n"
 "\t. eix-functions.sh; ReadFunctions\n"
 "\tReadVar EIX_CACHEFILE EIX_CACHEFILE || die 'cache name not known'\n"
-"\t%s -qf \"${EIX_CACHEFILE}\" -c || die 'no current database'\n"
+"\t%s -qf \"$EIX_CACHEFILE\" -c || die 'no current database'\n"
 "SEP defaults to the null character (to be distinguished from the empty string).\n"
 "For the case the OV is the empty string, the main overlay is printed (as if OV\n"
 "is 0), but if there is no overlay in file, no error (but empty data) is output.\n"
@@ -2573,7 +2573,7 @@ msgstr ""
 #: src/eixrc/defaults.cc:236
 msgid ""
 "If EIX_USER is empty or nonexistent, use this user id.\n"
-"In this case and if ${EIX_UID} <= 0, the user id is not changed."
+"In this case and if $EIX_UID <= 0, the user id is not changed."
 msgstr ""
 
 #: src/eixrc/defaults.cc:241
@@ -2589,7 +2589,7 @@ msgstr ""
 #: src/eixrc/defaults.cc:250
 msgid ""
 "If EIX_GROUP is empty or nonexistent, use this group id.\n"
-"In this case and if ${EIX_GID} <= 0, the group id is not changed."
+"In this case and if $EIX_GID <= 0, the group id is not changed."
 msgstr ""
 
 #: src/eixrc/defaults.cc:255

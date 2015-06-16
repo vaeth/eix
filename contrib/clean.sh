@@ -4,11 +4,11 @@ export LC_ALL=C
 umask 022
 
 Echo() {
-	printf '%s\n' "${*}"
+	printf '%s\n' "$*"
 }
 
 Die() {
-	Echo "${1}"
+	Echo "$1"
 	exit ${2:-1}
 }
 
@@ -24,7 +24,7 @@ fi
 	cd po && make -f Rules-clean maintainer-clean-local
 )
 for i in tar.xz tar.bz2 tar.gz zip
-do	rm -vf -- eix-*."${i}"
+do	rm -vf -- eix-*."$i"
 done
 find . '(' -type f '(' \
 		-name 'Makefile.in' -o \

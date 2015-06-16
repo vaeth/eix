@@ -26,20 +26,20 @@ cleanup_tempfiles() {
 
 trap cleanup_tempfiles INT HUP TERM KILL
 
-eix_prefix="${0%/*}/../src"
+eix_prefix=${0%/*}/../src
 
 echo testing eix located in "$eix_prefix"
 
 make -C "$eix_prefix"
 
 echo '>> running installed eix-update'
-EIX_CACHEFILE="$installed_cache" eix-update || die
+EIX_CACHEFILE=$installed_cache eix-update || die
 
 echo '>> running installed eix-update'
-EIX_CACHEFILE="$testing_cache" "$eix_prefix"/eix-update || did
+EIX_CACHEFILE=$testing_cache "$eix_prefix"/eix-update || did
 
-EIX_CACHEFILE="$installed_cache" eix > "$installed_output" || die
-EIX_CACHEFILE="$testing_cache" "$eix_prefix"/eix > "$testing_output" || die
+EIX_CACHEFILE=$installed_cache eix > "$installed_output" || die
+EIX_CACHEFILE=$testing_cache "$eix_prefix"/eix > "$testing_output" || die
 
 
 echo "------- diffing -------"

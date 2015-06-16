@@ -1685,7 +1685,7 @@ Output the B<eix-diff> stat to the terminal, even if redirection occurred.
 .B @@exit 0
 Do not execute B<eix-diff> at all.
 .TP
-.B !!export FORCE_USECOLORS="${FORCE_USECOLORS:-true}"
+.B !!export FORCE_USECOLORS=${FORCE_USECOLORS:-true}
 Unless FORCE_USECOLORS is set differently in your environment, eix output
 will be colored even if you use redirection.
 .TP
@@ -1762,15 +1762,15 @@ As a practical example, if you want that B<EIX_USER> has the value "nobody"
 when called from B<eix-drop-permissions> (e.g. from B<eix-remote>)
 but the default value "portage" otherwise, you can set:
 
-B<EIX_USER="%{*EIX_USER}">
+B<EIX_USER=%{*EIX_USER}>
 
-B<EIX_EIX_USER="portage">
+B<EIX_EIX_USER=portage>
 
-B<DIFF_EIX_USER="portage">
+B<DIFF_EIX_USER=portage>
 
-B<UPDATE_EIX_USER="portage">
+B<UPDATE_EIX_USER=portage>
 
-B<DROP_EIX_USER="nobody">
+B<DROP_EIX_USER=nobody>
 
 .TP
 B<\\>I<VARIABLE>
@@ -1795,11 +1795,11 @@ B<APPENDIX> is taken as-is, and it must not contain the symbol B<}>.
 The purpose of B<APPENDIX> is to make writing colors simpler.
 Example:
 
-B<COLOR_DEFAULT="blue|27">
+B<COLOR_DEFAULT=blue|27>
 
 B<FORMAT="(%{COLOR_DEFAULT,1)A (%{COLOR_DEFAULT;invert})B">
 
-B<BAD_FORMAT="(%{COLOR_DEFAULT},1;invert)A">
+B<BAD_FORMAT=(%{COLOR_DEFAULT},1;invert)A>
 
 In this example, B<FORMAT> will expand to
 
@@ -2006,7 +2006,7 @@ paths or use only one of them).
 You can of course also use other variables as delayed references,
 e.g. you might want to set
 
-.B EIX_CACHEFILE="%{EPREFIX_PROFILE}@EIX_CACHEFILE@"
+.B EIX_CACHEFILE=%{EPREFIX_PROFILE}@EIX_CACHEFILE@
 
 if you feel that the eix cachefile should depend (only) on the profile root.
 .RE
@@ -2127,8 +2127,8 @@ earlier entries of B<EIX_LOCAL_SETS> override later entries while for
 B<PORTDIR_OVERLAY> one expects the converse).
 
 The default of this variable contains B</etc/portage/sets>, B</etc/portage/sets.eix>, B<sets>
-(i.e. roughly B<${PORTDIR}/sets> according to the previous paragraph),
-B<*/sets> (i.e. roughly B<${PORTIDR_OVERLAY}/sets> according to the previous paragraph)
+(i.e. roughly B<$PORTDIR/sets> according to the previous paragraph),
+B<*/sets> (i.e. roughly B<$PORTIDR_OVERLAY/sets> according to the previous paragraph)
 as well as B<%{EIX_LOCAL_SETS_ADD}>.
 The reason for the latter is that you can just add additional directories
 to the variable B<%{EIX_LOCAL_SETS_ADD}> in I<@SYSCONFDIR@/eixrc>.
@@ -2746,7 +2746,7 @@ were not enabled by some profile/categories file.
 .TP
 .BR flat " or " flat:I<PATH>
 This is similar to B<metadata-flat> with the difference that the metadata is
-expected in the directory I<PATH>I<${PORTAGE_OR_OVERLAY_DIR}>.
+expected in the directory I<PATH>I<$PORTAGE_OR_OVERLAY_DIR>.
 If I<PATH> is omitted, it defaults to B</var/cache/edb/dep>.
 
 .RS
@@ -2769,8 +2769,8 @@ You will probably want to use a corresponding option in eix-sync in this case.
 .TP
 .BR repo-flat " or " repo-flat:I<PATH> " or " repo-assign " or " repo-assign:I<PATH>
 This is analogous to B<flat>/B<assign> with the difference that the metadata is
-expected in the directory I<PATH>B</>I<${repo_name}>.
-If I<${repo_name}> is empty, the name B<x->I<XXX> is assumed where I<XXX>
+expected in the directory I<PATH>B</>I<$repo_name>.
+If I<$repo_name> is empty, the name B<x->I<XXX> is assumed where I<XXX>
 is the last nonzero path component of the portage/overlay directory.
 This corresponds to the naming scheme of paludis.
 If this gives a wrong path for some overlay, you can still manually override
@@ -2911,7 +2911,7 @@ the local machine is unknown or not necessarily up-to-date.
 
 This is used for B<eix-remote>.
 
-Note that in particular with B<PORTDIR_CACHE_METHOD="eix*::~">,
+Note that in particular with B<PORTDIR_CACHE_METHOD=eix*::~>,
 the overlay data is by default just "copied" from the previous eix cachefile.
 .RE
 .RE
@@ -3469,7 +3469,7 @@ from the version part in a shell script by
 .RS
 B<split=1-font-adobe-75dpi-1.3-r1>
 
-B<version=`versionsort "X${split}"`; name=${split%"-${version}"}>
+B<version=`versionsort "X$split"`; name=${split%"-$version"}>
 .RE
 
 Although currently it makes no difference, it is safer in such a case
@@ -3490,17 +3490,17 @@ For example, after
 .RS
 B<split=1-font-adobe-75dpi-1.3-r1>
 
-B<PN=`versionsort -n "${split}"`>
+B<PN=`versionsort -n "$split"`>
 
-B<P=`versionsort -p "${split}"`>
+B<P=`versionsort -p "$split"`>
 
-B<PF=`versionsort -f "${split}"`>
+B<PF=`versionsort -f "$split"`>
 
-B<PV=`versionsort -v "X${split}"`>
+B<PV=`versionsort -v "X$split"`>
 
-B<PR=`versionsort -r "X${split}"`>
+B<PR=`versionsort -r "X$split"`>
 
-B<PVR=`versionsort -V "X${split}"`>
+B<PVR=`versionsort -V "X$split"`>
 .RE
 
 the variables B<PN>, B<P>, B<PF>,  B<PV>, B<PR>, and B<PVR> have an analogous meaning as in ebuilds, namely

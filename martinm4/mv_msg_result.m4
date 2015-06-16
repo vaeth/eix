@@ -19,7 +19,7 @@ dnl Do not quote comment!
 AC_DEFUN([MV_MSG_RESULT_VAR],
 	[AS_VAR_IF([$1], [],
 		[MV_MSG_RESULT([(empty)], [$2])],
-		[MV_MSG_RESULT([${$1}], [$2])])])
+		[MV_MSG_RESULT([$$1], [$2])])])
 dnl
 dnl MV_MSG_RESULT_BIN([res], [comment] behaves like
 dnl MV_MSG_RESULT([yes/no], [comment]) depending in whether res is true
