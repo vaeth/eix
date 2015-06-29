@@ -3749,25 +3749,68 @@ I</usr/local/portage> enthalten müssen/werden.
 
 Ab jetzt kann man jederzeit durch den Aufruf
 
-B<egencache --repo=>I<mein_lokaler_Overlay> B<--update --update-use-local-desc>
+B<egencache --repo=>I<my_local_overlay> B<--update>
+
+oder (falls der Overlay über kein aktuelles I<profile/use.desc> verfügt):
+
+B<egencache --repo=>I<my_local_overlay> B<--update --update-use-local-desc>
 
 die Metadaten erzeugen bzw. auf den neuesten Stand bringen.
 Beachten Sie, dass für den Fall, dass der Overlay eclassen vom Hauptbaum benutzt,
 der obige Befehl auch dann ausgeführt werden muss, wenn sich die eclassen ändern,
 also nach jedem B<emerge --sync>.
-Um den obigen Befehl automatisch rechtzeitig mit B<eix-sync> auszuführen,
-fügen Sie in I</etc/eix-sync.conf> die folgenden Zeilen ein:
+Um den obigen Befehl automatisch im richtigen Moment auszuführen, gibt es
+mehrere Methoden:
+
+Eine Methode besteht darin, ein ausführbares Shell-Skript in das Verzeichnis
+I</etc/portage/repo.postsync.d/> zu legen, das B<egencache>
+auf geeignete Weise in Abhängigkeit vom Repository-Namen B<$1> aufruft.
+Beispielsweise kann man ein ausführbares File
+I</etc/portage/repo.postsync.d/50-egencache> mit folgendem Inhalt anlegen:
+
+.RS
+#!/bin/sh
+
+[ -z "$1" ] && exit
+
+case $1 in
+
+# Für Repositories "mv" und "local" auch profile/use.desc aktualisieren:
+
+mv|local)
+
+.RS
+    exec egencache "--repo=$1" --update --update-use-local-desc;;
+.RE
+
+# Für alle anderen Repositories nur die Metadaten:
+
+*)
+
+.RS
+    exec egencache "--repo=$1" --update;;
+.RE
+
+esac
+.RE
+
+Wenn dieses Shell-Skript ausführbar ist, wird B<egencache> nach jedem
+B<emerge --sync> aufgerufen.
+
+Eine Alternative besteht darin, B<egencache> (nur) automatisch bei jedem
+Aufruf von B<eix-sync> auszuführen.
+Fügen Sie dazu die folgenden Zeilen in I</etc/eix-sync.conf> ein:
 
 B<@StatusInfo 'Erzeuge Metadaten für> I<mein_lokaler_Overlay><'>
 
 B<@egencache --repo=>I<mein_lokaler_Overlay> B<--update --update-use-local-desc>
 
-In ähnlicher Weise können auch beispielsweise alle Overlays gehandhabt werden, die von layman versorgt werden:
+In ähnlicher Weise können auch beispielsweise alle Overlays gehandhabt werden, die von layman aktualisiert werden:
 Fügen Sie einfach für jeden Layman-Overlay entsprechende B<egencache>-Aufrufe in F</etc/eix-sync.conf> ein.
 (Seien Sie dabei allerdings nochmals gewarnt, dass dies ein Sicherheitsrisiko darstellt,
 weil es bedeutet, dass die Ebuilds in den Overlays bei B<eix-sync> ausgeführt werden).
 
-Für layman-Overlays gibt es noch ein weiteres Problem:
+Unabhängig davon, welche Methode Sie verwenden: Für layman-Overlays gibt es noch ein weiteres Problem.
 Je nach Versionskontrollsystem des Overlays kann sich layman weigern,
 den Overlay zu synchronisieren, wenn Daten in das metadata/-Unterverzeichnis
 geschrieben wurden, oder layman kann dieses Verzeichnis beim Synchronisieren löschen.

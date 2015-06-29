@@ -4,6 +4,8 @@
 	Martin Väth <martin at mvath.de>:
 	- Fix handling of magic * in EIX_LOCAL_SETS, see
 	  https://bugs.gentoo.org/show_bug.cgi?id=553262
+	- Update manpage: Suggest usage (and example) of
+	  /etc/portage/repo.postsync.d/50-egencache
 
 *eix-0.30.11
 	Martin Väth <martin at mvath.de>:

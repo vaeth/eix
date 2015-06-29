@@ -3655,12 +3655,54 @@ in your overlay will/need not contain checksums of files from I</usr/local/porta
 
 Now, whenever you want, the metadata can be updated by calling
 
+B<egencache --repo=>I<my_local_overlay> B<--update>
+
+or (unless the overlay provides an up-to-date I<profile/use.desc>)
+
 B<egencache --repo=>I<my_local_overlay> B<--update --update-use-local-desc>
 
 Note that if the overlay uses eclasses from the main tree, the above command should be
 executed also if these eclasses change, i.e. after each B<emerge --sync>.
-To call the above command automatically at the right time with B<eix-sync>, put e.g.
-the following lines into I</etc/eix-sync.conf>:
+To call the above command automatically at the right time there are several
+methods:
+
+One method is to put an executable shell script into the directory
+I</etc/portage/repo.postsync.d/> which calls B<egencache>
+in the appropriate manner in dependence of the repository name B<$1>.
+For instance, you can generate an executable file
+I</etc/portage/repo.postsync.d/50-egencache> with the following content:
+
+.RS
+#!/bin/sh
+
+[ -z "$1" ] && exit
+
+case $1 in
+
+# For repositories "mv" and "local" update also profile/use.desc:
+
+mv|local)
+
+.RS
+    exec egencache "--repo=$1" --update --update-use-local-desc;;
+.RE
+
+# For all other repositories only update the metadata:
+
+*)
+
+.RS
+    exec egencache "--repo=$1" --update;;
+.RE
+
+esac
+.RE
+
+If the above shell script is executable, B<egencache> will be called after
+every B<emerge --sync>.
+
+An alternative is to call B<egencache> automatically (only) at each call of B<eix-sync>.
+To do the latter, put e.g. the following lines into I</etc/eix-sync.conf>:
 
 B<@StatusInfo 'Updating metadata for> I<my_local_overlay>B<'>
 
@@ -3672,7 +3714,7 @@ to B<egencache> into I</etc/eix-sync.conf> (however, please be warned again
 that this is a security risk since it means that the ebuilds in the overlays
 will be executed with B<eix-sync>).
 
-Moreover, for layman overlays there is an additional problem:
+No matter which method you use: For layman overlays there is an additional problem.
 Depending on the version control system of the overlay, layman might refuse to sync
 if you have written data into the metadata/ subdirectory, or layman
 might remove this subdirectory during syncing.
