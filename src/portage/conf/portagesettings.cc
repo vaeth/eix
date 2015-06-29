@@ -426,13 +426,13 @@ void PortageSettings::init(EixRc *eixrc, bool getlocal, bool init_world, bool pr
 			case '/':  // absolute path: Nothing special
 				break;
 			case '*': {  // the magic "*"
-GCC_DIAG_OFF(sign-conversion)
-					sets_dirs.erase(sets_dirs.begin() + i);
-GCC_DIAG_ON(sign-conversion)
 					string app;
 					if(sets_dirs[i].size() > 1) {
 						app.assign(sets_dirs[i], 1, string::npos);
 					}
+GCC_DIAG_OFF(sign-conversion)
+					sets_dirs.erase(sets_dirs.begin() + i);
+GCC_DIAG_ON(sign-conversion)
 					WordVec::size_type j(i);
 					for(RepoList::const_iterator it(repos.second()); likely(it != repos.end()); ++it) {
 						if(it->know_path) {

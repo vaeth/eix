@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.30.12
+	Martin Väth <martin at mvath.de>:
+	- Fix handling of magic * in EIX_LOCAL_SETS, see
+	  https://bugs.gentoo.org/show_bug.cgi?id=553262
+
 *eix-0.30.11
 	Martin Väth <martin at mvath.de>:
 	- Honour profiles/package.unmask, https://github.com/vaeth/eix/issues/9
