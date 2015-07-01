@@ -12,6 +12,10 @@
 #include <string>
 #include <vector>
 
+#ifdef HAVE_SYS_FILE_H
+#include <sys/file.h>
+#endif
+
 #include "database/header.h"
 #include "database/io.h"
 #include "eixTk/auto_list.h"
@@ -26,17 +30,41 @@ using std::string;
 using std::vector;
 
 bool File::openread(const char *name) {
-	return ((fp = fopen(name, "rb")) != NULLPTR);
+	if((fp = fopen(name, "rb")) == NULLPTR) {
+		return false;
+	}
+#ifdef HAVE_FILENO
+#ifdef HAVE_FLOCK
+	flock(fileno(fp), LOCK_SH);
+#endif
+#endif
+	return true;
 }
 
 bool File::openwrite(const char *name) {
-	return ((fp = fopen(name, "wb")) != NULLPTR);
+	if((fp = fopen(name, "wb")) == NULLPTR) {
+		return false;
+	}
+#ifdef HAVE_FILENO
+#ifdef HAVE_FLOCK
+	flock(fileno(fp), LOCK_EX);
+#endif
+#endif
+	return true;
 }
 
 File::~File() {
-	if(likely(fp != NULLPTR)) {
-		fclose(fp);
+	if(unlikely(fp == NULLPTR)) {
+		return;
 	}
+#ifdef HAVE_FILENO
+#ifdef HAVE_FLOCK
+	// do not unlock: fclose(fp) will unlock anyway, and maybe some
+	// caching of FILE handles might lead to races otherwise...
+	// flock(fileno(fp), LOCK_UN);
+#endif
+#endif
+	fclose(fp);
 }
 
 bool File::seek(eix::OffsetType offset, int whence, std::string *errtext) {

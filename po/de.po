@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-06-16 14:13+0200\n"
+"POT-Creation-Date: 2015-07-02 01:38+0200\n"
 "PO-Revision-Date: 2014-10-29 21:03+0100\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
@@ -2198,19 +2198,19 @@ msgstr ""
 "Cache-Methode sqlite ist nicht einkompiliert.\n"
 "Rekompilieren Sie eix mit ./configure-Option --with-sqlite"
 
-#: src/database/io.cc:50
+#: src/database/io.cc:78
 msgid "fseek failed"
 msgstr "fseek schlug fehl"
 
-#: src/database/io.cc:84
+#: src/database/io.cc:112
 msgid "error while reading from database: end of file"
 msgstr "Fehler beim Lesen der Datenbank: Zu frühes Dateiende"
 
-#: src/database/io.cc:85
+#: src/database/io.cc:113
 msgid "error while reading from database"
 msgstr "Fehler beim Lesen der Datenbank"
 
-#: src/database/io.cc:91
+#: src/database/io.cc:119
 msgid "error while writing to database"
 msgstr "Fehler beim Schreiben der Datenbank"
 

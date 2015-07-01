@@ -632,6 +632,7 @@ AC_CHECK_FUNCS([strtoul strtol atoi],
 AC_CHECK_HEADERS([sys/param.h \
 	termios.h \
 	stropts.h \
+	sys/file.h \
 	sys/ioctl.h \
 	sys/stream.h \
 	sys/ptem.h \
@@ -645,6 +646,8 @@ AC_CHECK_HEADERS([sys/param.h \
 # Concerning strndup, we have a home-brewed replacement,
 # for the others some less convenient workarounds.
 AC_CHECK_FUNCS([strndup \
+	fileno \
+	flock \
 	sigaction \
 	canonicalize_file_name \
 	realpath \

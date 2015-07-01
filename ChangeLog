@@ -2,6 +2,8 @@
 
 *eix-0.30.12
 	Martin Väth <martin at mvath.de>:
+	- Lock EIX_CACHEFILE (currently implemented without any timeout), see
+	  https://bugs.gentoo.org/show_bug.cgi?id=553574
 	- Fix handling of magic * in EIX_LOCAL_SETS, see
 	  https://bugs.gentoo.org/show_bug.cgi?id=553262
 	- Update manpage: Suggest usage (and example) of
