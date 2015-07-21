@@ -1,7 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.30.12
+*eix-0.31.0
 	Martin Väth <martin at mvath.de>:
+	- Important change: Defaulting to set -u in shell scripts.
+	  This can trigger currently hidden errors ("unbound variable" or
+	  "parameter not set" indicate such errors); please report them if you
+	  encounter them. The hope is that in the long run, this step will help
+	  to eliminate hidden errors, although in the moment it can cause pain.
 	- Lock EIX_CACHEFILE (currently implemented without any timeout), see
 	  https://bugs.gentoo.org/show_bug.cgi?id=553574
 	- Fix handling of magic * in EIX_LOCAL_SETS, see
