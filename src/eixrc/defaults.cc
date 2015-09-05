@@ -679,12 +679,12 @@ AddOption(STRING, "TERM",
 	"The current terminal. Usually this is set by the environment variable."));
 
 AddOption(STRING, "TERM_STATUSLINE",
-	"xterm screen rxvt aterm konsole gnome Eterm eterm kterm interix", _(
+	"xterm screen tmux rxvt aterm konsole gnome Eterm eterm kterm interix", _(
 	"If the beginning of TERM matches a word of this space-separated list,\n"
 	"it is assumed that the terminal supports a status line."));
 
 AddOption(STRING, "TERM_SOFTSTATUSLINE",
-	"screen", _(
+	"screen tmux", _(
 	"If the beginning of TERM matches a word of this space-separated list, and\n"
 	"if a status line is active, also a soft status line will be output."));
 

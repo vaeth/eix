@@ -7,6 +7,7 @@
 	  "parameter not set" indicate such errors); please report them if you
 	  encounter them. The hope is that in the long run, this step will help
 	  to eliminate hidden errors, although in the moment it can cause pain.
+	- Add tmux to TERM_{SOFT,}STATUSLINE
 	- Lock EIX_CACHEFILE (currently implemented without any timeout), see
 	  https://bugs.gentoo.org/show_bug.cgi?id=553574
 	- Fix handling of magic * in EIX_LOCAL_SETS, see
