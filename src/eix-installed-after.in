@@ -24,8 +24,8 @@ eval "set -- $EIX_INSTALLED_AFTER \"\$@\""
 Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	eval_gettext 'Usage: $n [options] category/package[:slot]
-This is a well-commented demo script for eix ($p).
+	eval_gettext 'Usage: ${n} [options] category/package[:slot]
+This is a well-commented demo script for eix (${p}).
 It lists packages installed after (or before) the last (or first) install
 of the given package/version in an output format which is convenient
 as an argument for "emerge -1".
@@ -141,12 +141,12 @@ fi
 # With options -l or -L, we also have to parse the logfile:
 
 if [ -n "${logfile:++}" ]
-then	test -r "$logfile" || die "`eval_gettext 'cannot read $logfile'`"
+then	test -r "$logfile" || die "`eval_gettext 'cannot read ${logfile}'`"
 	epoch=`unset LC_ALL
 LC_COLLATE=C
 sed -ne "\\: Merging ($match\\:\\:.*):{s/^\([0-9]*\).*/\\1/p
 q}" "$logfile"` && [ -n "${epoch:++}" ] || die "`eval_gettext \
-		'cannot find merge of $match in $logfile'`"
+		'cannot find merge of ${match} in ${logfile}'`"
 fi
 
 # We will let eix output for each installed package (and then sort by time):

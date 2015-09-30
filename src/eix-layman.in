@@ -17,8 +17,8 @@ Usage() {
 	exitcode=${1:-1}
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	eval_gettext 'Usage: $n [options] command
-Add or remove local layman overlays to the eix database ($p).
+	eval_gettext 'Usage: ${n} [options] command
+Add or remove local layman overlays to the eix database (${p}).
 
 Explanation: If your /etc/make.conf does not source layman/make.conf,
 then the layman overlays are not considered as part of your PORTDIR_OVERLAY;

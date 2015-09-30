@@ -32,7 +32,7 @@ if $drop_permissions
 then	prg=./eix-drop-permissions
 	me=./eix-remote.in
 	exec "$prg" -- "$me" -K "$@"
-	die "`eval_gettext 'failed to execute $prg'`"
+	die "`eval_gettext 'failed to execute ${prg}'`"
 fi
 
 addr1='@DEFAULT_REMOTE_PATH1@'
@@ -47,14 +47,14 @@ Usage() {
 	f1=$archive1
 	f2=$archive2
 	[ -n "${f:+}" ] || f=`gettext 'temporary file'`
-	eval_gettext 'Usage: $n [options] command
-Get data from a remote database for $p.
+	eval_gettext 'Usage: ${n} [options] command
+Get data from a remote database for ${p}.
 The following commands are provided:
 
 update1 (=update) or update2:
         Fetch the eix-caches of some layman overlays, store them locally in
-        EIX_REMOTEARCHIVE1 ($f1) or
-        EIX_REMOTEARCHIVE2 ($f2),
+        EIX_REMOTEARCHIVE1 (${f1}) or
+        EIX_REMOTEARCHIVE2 (${f2}),
         respectively and add them to the eix database.
         If EIX_REMOTE1 or EIX_REMOTE2, respectively, is nonempty the output
         goes to that separate database.
@@ -95,8 +95,8 @@ The following options are available:
         Set LOCAL_LAYMAN or use option -l to override the heuristics.
 -l PATH Use PATH as LOCAL_LAYMAN
 -a ADDR Use ADDR as remote database address instead of:
-        $addr1
-        $addr2
+        ${addr1}
+        ${addr2}
 -i      Ignore all previous options (e.g. ignore EIX_REMOTE_OPTS).
 -v      Verbose (default)
 -H      Suppress status line update
@@ -190,7 +190,7 @@ fi
 CdDir() {
 	cd "$1" >/dev/null && return
 	a=$1
-	die "`eval_gettext 'cannot cd to $a'`"
+	die "`eval_gettext 'cannot cd to ${a}'`"
 }
 
 tmpdir=
@@ -243,7 +243,7 @@ The default should have been set with ./configure --remote-file'`"
 
 BugReport() {
 	printf '\n\n'
-	eval_gettext \
+	gettext \
 'Probably your eix cachefile was *not* updated successfully.
 Unless the above messages suggest another cause or you specified a
 wrong filename, the most likely cause of this is that the server uses
@@ -266,7 +266,7 @@ AddArchive() {
 	a=$1
 	CdDir "$2"
 	RunCommand "`gettext 'Unpacking data'`" tar xjf "$a" || {
-		msg=`eval_gettext 'cannot unpack $a'`
+		msg=`eval_gettext 'cannot unpack ${a}'`
 		msg=$msg`BugReport`
 		die "$msg"
 	}
@@ -299,7 +299,7 @@ AddArchive() {
 		[ -n "$l$name" ] || {
 			p=${i##*/}
 			p=${p%:*}
-			ewarn "`eval_gettext 'file $p of $a contains no overlay'`"
+			ewarn "`eval_gettext 'file ${p} of ${a} contains no overlay'`"
 			failcount=`Expr $failcount + 1`
 			continue
 		}
@@ -316,13 +316,13 @@ AddArchive() {
 	done
 	msg=
 	if [ $exitcode -ne 0 ]
-	then	msg=`eval_gettext 'could not read all eix cachefiles of $a'`
+	then	msg=`eval_gettext 'could not read all eix cachefiles of ${a}'`
 	elif ! $success
-	then	msg=`eval_gettext 'no file in $a contains an overlay'`
+	then	msg=`eval_gettext 'no file in ${a} contains an overlay'`
 	elif [ $failcount -gt 1 ]
-	then	ewarn "`eval_gettext '$failcount files in $a contain no overlay'`"
+	then	ewarn "`eval_gettext '${failcount} files in ${a} contain no overlay'`"
 	elif [ $failcount -gt 0 ]
-	then	ewarn "`eval_gettext 'A file in $a contains no overlay'`"
+	then	ewarn "`eval_gettext 'A file in ${a} contains no overlay'`"
 	fi
 	die_on_update_failure=false
 	ReadVar $eix_remote_var $eix_remote_var
@@ -330,7 +330,7 @@ AddArchive() {
 	(
 		if [ -n "${eix_remote:++}" ]
 		then	einfo "`eval_gettext \
-				'Output to remote database $eix_remote'`"
+				'Output to remote database ${eix_remote}'`"
 			AddUpdateArgs '-o' "$eix_remote"
 			umask 002
 		fi
@@ -360,7 +360,7 @@ FetchFile() {
 		return
 	fi
 	cp -p -- "$tmpfile" "$file" || die "`eval_gettext \
-		'cannot copy temporary file to $file'`"
+		'cannot copy temporary file to ${file}'`"
 }
 
 
@@ -372,7 +372,7 @@ Fetch() {
 Add() {
 	CheckTemp
 	test -r "$archive" || \
-		die "`eval_gettext 'cannot read $archive'`"
+		die "`eval_gettext 'cannot read ${archive}'`"
 	MakeTempDir
 	AddArchive "$archive" "$tmpdir"
 }
@@ -391,7 +391,7 @@ Update() {
 		tmpsup=$tmpdir
 	else	tmpsub=$tmpdir/1
 		mkdir -m 700 -- "$tmpsub" \
-			|| die "`eval_gettext 'mkdir $tmpsub failed'`"
+			|| die "`eval_gettext 'mkdir ${tmpsub} failed'`"
 	fi
 	AddArchive "$file" "$tmpsub"
 }

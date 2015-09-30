@@ -14,8 +14,8 @@ ReadGettext
 Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	eval_gettext 'Usage: $n [options] detail|brief|quick
-This is a wrapper script for eix ($p).
+	eval_gettext 'Usage: ${n} [options] detail|brief|quick
+This is a wrapper script for eix (${p}).
 
 It calls eix -tTc several times with various variable settings in order to
 display missing packages or packages with obsolete entries in
@@ -146,7 +146,7 @@ Output() {
 			for j
 			do	[ "$z" = "$j" ] || eval export $j=false
 			done
-			Output '' "`eval_gettext '... considered as $z'`"
+			Output '' "`eval_gettext '... considered as ${z}'`"
 		)
 	done
 }
@@ -214,24 +214,24 @@ DefineSet in_cflags \
 
 if AllFalse TEST_FOR_REDUNDANCY
 then	Echo \
-	"`eval_gettext 'Skipping check of entries in $rump*'`"
+	"`eval_gettext 'Skipping check of entries in ${rump}*'`"
 elif $quickmode
 then	Statusline 'package.*'
 	OutputExcept nonexistent \
-	"`eval_gettext 'No redundant entries in any $rump*'`" \
-	"`eval_gettext 'Redundant in some $rump*:'`"
+	"`eval_gettext 'No redundant entries in any ${rump}*'`" \
+	"`eval_gettext 'Redundant in some ${rump}*:'`"
 else
 Statusline 'accept_keywords'
 Check keywords "`eval_gettext \
-	'No  redundant  entries in $rump{,accept_}keywords'`" \
-	"`eval_gettext 'Redundant in $rump{,accept_}keywords:'`" \
+	'No  redundant  entries in ${rump}{,accept_}keywords'`" \
+	"`eval_gettext 'Redundant in ${rump}{,accept_}keywords:'`" \
 	"`eval_gettext \
-	'Skipping check:  redundant  entries in $rump{,accept_}keywords'`"
+	'Skipping check:  redundant  entries in ${rump}{,accept_}keywords'`"
 Check in_keywords "`eval_gettext \
-	'No uninstalled entries in $rump{,accept_}keywords'`" \
-	"`eval_gettext 'Not installed but in $rump{,accept_}keywords:'`" \
+	'No uninstalled entries in ${rump}{,accept_}keywords'`" \
+	"`eval_gettext 'Not installed but in ${rump}{,accept_}keywords:'`" \
 	"`eval_gettext \
-	'Skipping check: uninstalled entries in $rump{,accept_}keywords'`"
+	'Skipping check: uninstalled entries in ${rump}{,accept_}keywords'`"
 Statusline 'mask'
 Check mask "`eval_gettext \
 	'No  redundant  entries in ${rump}mask'`" \

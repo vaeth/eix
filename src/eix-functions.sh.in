@@ -185,7 +185,7 @@ RunCommand() {
 	"$@" >/dev/null
 	eixf_ret=$?
 	eixf_cmd=$*
-	eend $eixf_ret "`eval_gettext 'Problems running $eixf_cmd'`"
+	eend $eixf_ret "`eval_gettext 'Problems running ${eixf_cmd}'`"
 	return $eixf_ret
 }
 
@@ -369,7 +369,7 @@ Pathify() {
 			eixf_pathb=${eixf_pathb%A} && Chomp eixf_pathb && \
 			[ -n "${eixf_pathb:++}" ] && test -x "$eixf_pathb" \
 			|| die "`eval_gettext \
-				'$eixf_patha cannot be found in PATH'`"
+				'${eixf_patha} cannot be found in PATH'`"
 		eval $eixf_pathc=\$eixf_pathb
 	done
 }

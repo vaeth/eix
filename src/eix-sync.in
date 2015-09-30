@@ -23,13 +23,13 @@ eixsyncconf=$local_portage_configroot/etc/eix-sync.conf
 Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	eval_gettext 'Usage: $n [options]
-Call layman/emerge --sync/--metadata and show updates. ($p)
+	eval_gettext 'Usage: ${n} [options]
+Call layman/emerge --sync/--metadata and show updates. (${p})
 
 Unless the -t option is used, the old database will be saved to
-    $eixprevious.
+    ${eixprevious}.
 
-The file $eixsyncconf and the eix (environment) variable EIX_SYNC_CONF
+The file ${eixsyncconf} and the eix (environment) variable EIX_SYNC_CONF
 (which defaults to delayed substitution of EIX_SYNC_OPTS) determine for
 which overlays layman is called, which default options are used, and they
 can contain various hooks - "man eix" for details.
@@ -40,7 +40,7 @@ Moreover, "--" in the default options will forbid command line options.
 The following options are available:
 
 -i   Ignore all previous options except -n
-     (useful to ignore $eixsyncconf options).
+     (useful to ignore ${eixsyncconf} options).
 -a   Always assume that some tree/overlay changes
      (set have_changed=: in a !-hook to force this)
 -s [USER@]SERVER[:DIR] Sync via rsync from SERVER.
@@ -55,11 +55,11 @@ The following options are available:
 -u   Update database only and show differences. This is equivalent to -0l@As ""
 -F   Make layman or failed hooks (! !! ~ @ @@ entries) fatal. This can be
      forced/overridden in hooks by (un)setting FATAL_HOOKS or calling die.
--l   Do not call layman (and the !commands in $eixsyncconf).
+-l   Do not call layman (and the !commands in ${eixsyncconf}).
      However, the !! lines and postponed hooks (@ and @@ entries)
      will be executed anyway.
 -A   Do not call eix-remote add1/add2
--@   Do not execute the hooks (@ and @@ entries) of $eixsyncconf.
+-@   Do not execute the hooks (@ and @@ entries) of ${eixsyncconf}.
 -S   Do not execute the hooks after emerge --sync (@ entries).
 -M   Run emerge --metadata.  You might need this when you use the cache method
      "sqlite", "sqlite*", or "flat" for PORTDIR or in a synced overlay.
@@ -80,7 +80,7 @@ The following options are available:
 -r   Clear /var/cache/edb/dep/* before syncing. This is only useful when you
      use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer
      is active. (This option is not default anymore).
--R   Cancel previous -r (e.g. if it was used in $eixsyncconf).
+-R   Cancel previous -r (e.g. if it was used in ${eixsyncconf}).
 -v   Verbose: output of executed commands.
 -n   Dry run. You might want to combine this with -v. This implies -aHT
 -H   Suppress status line update.
@@ -104,7 +104,7 @@ DoExecute() {
 	do	set +f
 		! $printcmd || PrintCmd "$curr_cmd"
 		$dryrun || eval "$curr_cmd" || WarnOrDie "`eval_gettext \
-			'Something went wrong with $curr_cmd'`"
+			'Something went wrong with ${curr_cmd}'`"
 	done
 }
 
@@ -213,12 +213,12 @@ ParseConfigLine() {
 	if [ "$j" = '*' ]
 	then	MyRunCommand "`gettext 'Syncing all portage overlays'`" \
 			"$mycmd" -S "$@" \
-			|| WarnOrDie "`eval_gettext '$mycmd -S failed'`"
+			|| WarnOrDie "`eval_gettext '${mycmd} -S failed'`"
 		return
 	fi
-	MyRunCommand "`eval_gettext 'Syncing portage overlay $j'`" \
+	MyRunCommand "`eval_gettext 'Syncing portage overlay ${j}'`" \
 		"$mycmd" -s "$j" "$@" \
-		|| WarnOrDie "`eval_gettext '$mycmd -s $j failed'`"
+		|| WarnOrDie "`eval_gettext '${mycmd} -s ${j} failed'`"
 }
 
 test -r "$eixsyncconf" && haveconf=: || haveconf=false
@@ -409,9 +409,9 @@ MyVarCommand() {
 		set +f;;
 	esac
 	myvarcmd=$*
-	MyRunCommand "`eval_gettext 'Running $myvarcmd'`" \
+	MyRunCommand "`eval_gettext 'Running ${myvarcmd}'`" \
 		$myvarcmdargs "$@" \
-		|| die "`eval_gettext '$myvarcmd failed'`"
+		|| die "`eval_gettext '${myvarcmd} failed'`"
 }
 
 time_iupdate=
@@ -483,8 +483,8 @@ PrepRsync() {
 		$dryrun && continue
 		if c=`eval "$curr_cmd"`
 		then	eval "$c" || WarnOrDie "`eval_gettext \
-				'$c (output of $curr_cmd) failed'`"
-		else	WarnOrDie "`eval_gettext '$curr_cmd failed'`"
+				'${c} (output of ${curr_cmd}) failed'`"
+		else	WarnOrDie "`eval_gettext '${curr_cmd} failed'`"
 		fi
 	done
 	rsync_opts="$portage_rsync_opts $portage_rsync_extra_opts --exclude=/.unionfs"
@@ -504,9 +504,9 @@ ClearCache() {
 		set -- "$local_varcache"/var/cache/edb/dep/*;;
 	esac
 	MyRunCommand "`eval_gettext \
-	'Removing old portage-cache in $local_varcache/var/cache/edb/dep'`" \
+	'Removing old portage-cache in ${local_varcache}/var/cache/edb/dep'`" \
 		rm -rf -- "$@" || WarnOrDie "`eval_gettext \
-		'rm -rf $local_varcache/var/cache/edb/dep/* failed'`"
+		'rm -rf ${local_varcache}/var/cache/edb/dep/* failed'`"
 }
 
 CallEmergeSync() {
@@ -514,7 +514,7 @@ CallEmergeSync() {
 	then	PrepRsync "$server"
 		MyRunCommand "rsyncing from $hostdir" -t sync \
 		rsync $rsync_opts -- "$hostdir" "$local_portdir" || \
-			die "`eval_gettext 'Could not rsync from $hostdir'`"
+			die "`eval_gettext 'Could not rsync from ${hostdir}'`"
 		return
 	fi
 	$skip_sync && return
@@ -524,9 +524,9 @@ CallEmergeSync() {
 CallSyncClient() {
 	[ -z "${client:++}" ] && return
 	PrepRsync "$client"
-	MyRunCommand "`eval_gettext 'rsyncing to $hostdir'`" -t client \
+	MyRunCommand "`eval_gettext 'rsyncing to ${hostdir}'`" -t client \
 		rsync $rsync_opts -- "$local_portdir" "$hostdir" || \
-			die "`eval_gettext 'Could not rsync to $hostdir'`"
+			die "`eval_gettext 'Could not rsync to ${hostdir}'`"
 }
 
 CallEmergeMetadata() {
@@ -545,17 +545,17 @@ CondUpdate() {
 
 CopyToTemp() {
 	StatusInfo "`eval_gettext \
-		'Copying old $eixcache cache to temporary file'`"
+		'Copying old ${eixcache} cache to temporary file'`"
 	MakeTempFile
 	chmod a+r -- "$tmpfile"
 	MyRun cp -p -- "$eixcache" "$tmpfile" || die "`eval_gettext \
-		'Could not copy database to temporary file $tmpfile'`"
+		'Could not copy database to temporary file ${tmpfile}'`"
 }
 
 CopyToPrevious() {
-	StatusInfo "`eval_gettext 'Copying old database to $eixprevious'`"
+	StatusInfo "`eval_gettext 'Copying old database to ${eixprevious}'`"
 	MyRun cp -p -- "$eixcache" "$eixprevious" || die "`eval_gettext \
-		'Could not copy database to $eixprevious'`"
+		'Could not copy database to ${eixprevious}'`"
 }
 
 CopyPrevious() {
@@ -584,7 +584,7 @@ RemoteAdd() {
 		} >/dev/null 2>&1 && continue
 		StatusInfo eix-remote add$remote_num
 		MyRun eix-remote add$remote_num || WarnOrDie "`eval_gettext \
-			'eix-remote add$remote_num failed'`"
+			'eix-remote add${remote_num} failed'`"
 	done
 	return 0
 }
