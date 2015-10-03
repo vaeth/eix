@@ -464,10 +464,16 @@ eval_gettext() {
 	unset eixf_gettexta eixf_gettextb eixf_gettextc
 }
 ngettext() {
-	gettext "$1"
+	if [ "$3" -gt 1 ]
+	then	gettext "$2"
+	else	gettext "$1"
+	fi
 }
 eval_ngettext() {
-	eval_gettext "$1"
+	if [ "$3" -gt 1 ]
+	then	eval_gettext "$2"
+	else	eval_gettext "$1"
+	fi
 }
 ReadGettext() {
 	return 1

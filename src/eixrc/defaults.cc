@@ -757,8 +757,9 @@ AddOption(STRING, "DARK",
 	"The value \"auto\" means a heuristic based on TERM_DARK and COLORFGBG_DARK."));
 
 AddOption(STRING, "TERM_DARK",
-	"linux true cygwin true putty true true*", _(
-	"A list of pairs regexp1 darkmode1 regexp2 darkmode2 ... [default darkmode].\n"
+	"linux true cygwin true putty true true*",
+	/* xgettext: no-space-ellipsis-check */
+	_("A list of pairs regexp1 darkmode1 regexp2 darkmode2 ... [default darkmode].\n"
 	"If DARK=auto the first darkmode for which TERM matches regexp is assumed.\n"
 	"In modes true* and false* also COLORGBGB is respected by COLORFGBG_DARK."));
 

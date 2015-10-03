@@ -37,6 +37,7 @@ using std::cout;
 using std::endl;
 
 static void print_help() {
+	/* xgettext: no-space-ellipsis-check */
 	cout << eix::format(_("Usage: %s [options] category/name-version[:slot][::repo] ...\n"
 "Output all arguments matching a list of mask\n"
 "Options:\n"

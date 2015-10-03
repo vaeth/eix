@@ -150,7 +150,7 @@ static void load_db(const char *file, DBHeader *header, PackageTree *body, Porta
 		}
 		cerr << eix::format(_("error in database file %r: %s")) % file % errtext << endl;
 	} else {
-		cerr << eix::format(_("Can't open the database file %r for reading (mode = 'rb')")) % file << endl;
+		cerr << eix::format(_("cannot open database file %r for reading (mode = 'rb')")) % file << endl;
 	}
 	exit(EXIT_FAILURE);
 }
@@ -266,7 +266,7 @@ static void parseFormat(Node **format, const char *varname, EixRc *rc) {
 	if(likely((format_for_new->parseFormat(format, (*rc)[varname].c_str(), &errtext)))) {
 		return;
 	}
-	cerr << eix::format(_("Problems while parsing %s: %s\n"))
+	cerr << eix::format(_("problems while parsing %s: %s\n"))
 			% varname % errtext << endl;
 	exit(EXIT_FAILURE);
 }
@@ -404,7 +404,10 @@ int run_eix_diff(int argc, char *argv[]) {
 		rc.getBool("DIFF_SEPARATE_DELETED"));
 
 	if(likely(rc.getBool("DIFF_PRINT_HEADER"))) {
-		cout << eix::format(_("Diffing databases (%s -> %s packages)\n"))
+		cout << eix::format(ngettext(
+			"Diffing databases (%s -> %s package)\n",
+			"Diffing databases (%s -> %s packages)\n",
+			new_tree.countPackages()))
 			% old_tree.countPackages()
 			% new_tree.countPackages();
 	}

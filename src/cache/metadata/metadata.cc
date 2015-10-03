@@ -294,7 +294,7 @@ bool MetadataCache::readCategory(Category *cat) {
 		/* Split string into package and version, and catch any errors. */
 		char **aux(ExplodeAtom::split(it->c_str()));
 		if(unlikely(aux == NULLPTR)) {
-			m_error_callback(eix::format(_("Can't split %r into package and version")) % (*it));
+			m_error_callback(eix::format(_("cannot split %r into package and version")) % (*it));
 			++it;
 			continue;
 		}
@@ -340,7 +340,7 @@ bool MetadataCache::readCategory(Category *cat) {
 			/* Split new filename into package and version, and catch any errors. */
 			aux = ExplodeAtom::split(it->c_str());
 			if(unlikely(aux == NULLPTR)) {
-				m_error_callback(eix::format(_("Can't split %r into package and version")) % (*it));
+				m_error_callback(eix::format(_("cannot split %r into package and version")) % (*it));
 				++it;
 				break;
 			}

@@ -227,7 +227,7 @@ void SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **
 	}
 	char **aux(ExplodeAtom::split(name_ver.c_str()));
 	if(unlikely(aux == NULLPTR)) {
-		m_error_callback(eix::format(_("Can't split %r into package and version")) % name_ver);
+		m_error_callback(eix::format(_("cannot split %r into package and version")) % name_ver);
 		return;
 	}
 	/* Search for existing package */
@@ -280,7 +280,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Cate
 	// Cut all trailing '/' and append ".sqlite" to the name
 	string::size_type pos(sqlitefile.find_last_not_of('/'));
 	if(unlikely(pos == string::npos)) {
-		m_error_callback(_("Database path incorrect"));
+		m_error_callback(_("database path incorrect"));
 		return false;
 	}
 	sqlitefile.resize(pos + 1);
@@ -290,7 +290,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Cate
 	int rc(sqlite3_open(sqlitefile.c_str(), &db));
 	if(rc) {
 		sqlite3_close(db);
-		m_error_callback(eix::format(_("Can't open cache file %s")) % sqlitefile);
+		m_error_callback(eix::format(_("cannot open cache file %s")) % sqlitefile);
 		return false;
 	}
 	callback_arg = this;
@@ -319,7 +319,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree ATTRIBUTE_UNUSED, const ch
 	UNUSED(pkgtree);
 	UNUSED(catname);
 	UNUSED(cat);
-	m_error_callback(_("Cache method sqlite is not compiled in.\n"
+	m_error_callback(_("cache method sqlite is not compiled in.\n"
 		"Recompile eix, using configure option --with-sqlite to add sqlite support"));
 	return false;
 }

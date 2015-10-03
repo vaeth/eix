@@ -144,7 +144,7 @@ bool AnsiColor::initcolor(const string& str, string *errtext) {
 			col = fg256;
 		} else {
 			if(errtext != NULLPTR) {
-				*errtext = eix::format(_("Illegal color name %r in %r")) % curr % str;
+				*errtext = eix::format(_("illegal color name %r in %r")) % curr % str;
 			}
 			ok = false;
 			break;
@@ -171,7 +171,7 @@ bool AnsiColor::initcolor(const string& str, string *errtext) {
 				bg.assign(buf);
 			} else {
 				if(errtext != NULLPTR) {
-					*errtext = eix::format(_("More than two colors specified in %r")) % str;
+					*errtext = eix::format(_("more than two colors specified in %r")) % str;
 				}
 				ok = false;
 				break;
@@ -190,7 +190,7 @@ bool AnsiColor::initcolor(const string& str, string *errtext) {
 				bold = false;
 			} else if(unlikely(curr.empty())) {
 				if(errtext != NULLPTR) {
-					*errtext = eix::format(_("Invalid brightness value %r")) % curr;
+					*errtext = eix::format(_("invalid brightness value %r")) % curr;
 				}
 				ok = false;
 				break;

@@ -7,7 +7,8 @@
 	  "parameter not set" indicate such errors); please report them if you
 	  encounter them. The hope is that in the long run, this step will help
 	  to eliminate hidden errors, although in the moment it can cause pain.
-	- Restore sh bracing for eval_gettext to fix poor man's implementation
+	- Restore sh bracing for eval_gettext to fix poor man's implementation,
+	  see https://forums.gentoo.org/viewtopic-t-1029872-highlight-.html
 	- Add tmux to TERM_{SOFT,}STATUSLINE
 	- Lock EIX_CACHEFILE (currently implemented without any timeout), see
 	  https://bugs.gentoo.org/show_bug.cgi?id=553574
@@ -15,6 +16,10 @@
 	  https://bugs.gentoo.org/show_bug.cgi?id=553262
 	- Update manpage: Suggest usage (and example) of
 	  /etc/portage/repo.postsync.d/50-egencache
+	- Improve English in some output
+	- Use ngettext when possible
+	- Use AM_GNU_GETTEXT_REQUIRE_VERSION which is finally available, hence:
+	- Require >=gettext-0.19.6 to create the tarball
 
 *eix-0.30.11
 	Martin Väth <martin at mvath.de>:

@@ -579,13 +579,13 @@ void PrintFormat::get_pkg_property(OutputString *s, Package *package, const stri
 			}
 		}
 		if(unlikely(col == string::npos)) {
-			cerr << eix::format(_("Unknown property %r")) % name << endl;
+			cerr << eix::format(_("unknown property %r")) % name << endl;
 			exit(EXIT_FAILURE);
 		}
 		after_colon.assign(name, col + 1, string::npos);
 	}
 	if(unlikely((t == Scanner::VER) && (version_variables == NULLPTR))) {
-		cerr << eix::format(_("Property %r used outside version context")) % name << endl;
+		cerr << eix::format(_("property %r used outside version context")) % name << endl;
 		exit(EXIT_FAILURE);
 	}
 	if(plain != NULLPTR) {

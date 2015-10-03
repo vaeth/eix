@@ -205,7 +205,7 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 		}
 		string errtext;
 		if(!ebuild.read(fullpath, &errtext, false)) {
-			m_error_callback(eix::format(_("Could not properly parse %s: %s")) % fullpath % errtext);
+			m_error_callback(eix::format(_("cannot properly parse %s: %s")) % fullpath % errtext);
 		}
 
 		bool set_eapi(ebuild_sh);
@@ -262,7 +262,7 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 			flat_read_file(cachefile->c_str(), pkg, m_error_callback);
 			ebuild_exec->delete_cachefile();
 		} else {
-			m_error_callback(eix::format(_("Could not properly execute %s")) % fullpath);
+			m_error_callback(eix::format(_("cannot properly execute %s")) % fullpath);
 		}
 	}
 	version->set_slotname(slot);
@@ -294,7 +294,7 @@ void ParseCache::readPackage(Category *cat, const string& pkg_name, const string
 		/* Check if we can split it */
 		char *ver(ExplodeAtom::split_version(fileit->substr(0, pos).c_str()));
 		if(unlikely(ver == NULLPTR)) {
-			m_error_callback(eix::format(_("Can't split filename of ebuild %s/%s")) %
+			m_error_callback(eix::format(_("cannot split filename of ebuild %s/%s")) %
 				directory_path % (*fileit));
 			continue;
 		}

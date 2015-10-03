@@ -131,12 +131,12 @@ bool EixCache::get_overlaydat(const DBHeader& header) {
 			found = header.find_overlay(&m_get_overlay, m_scheme.c_str(), portdir, 0, DBHeader::OVTEST_LABEL);
 		}
 		if(!found) {
-			thiserror(eix::format(_("Cache file %s does not contain overlay %r [%s]")) %
+			thiserror(eix::format(_("cache file %s does not contain overlay %r [%s]")) %
 				m_overlay_name % m_scheme);
 			return false;
 		}
 	} else if(!header.find_overlay(&m_get_overlay, m_overlay.c_str(), portdir, 0, DBHeader::OVTEST_ALL)) {
-		thiserror(eix::format(_("Cache file %s does not contain overlay %s")) %
+		thiserror(eix::format(_("cache file %s does not contain overlay %s")) %
 			m_full % m_overlay);
 		return false;
 	}
@@ -232,7 +232,7 @@ bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Ca
 	}
 	Database db;
 	if(unlikely(!db.openread(m_full.c_str()))) {
-		allerrors(slaves, eix::format(_("Can't read cache file %s: %s")) %
+		allerrors(slaves, eix::format(_("cannot read cache file %s: %s")) %
 			m_full % strerror(errno));
 		m_error_callback(err_msg);
 		return false;

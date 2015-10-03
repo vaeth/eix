@@ -256,7 +256,7 @@ static void add_virtuals(Overrides *override_list, PathVec *add, RepoNames *repo
 	DBHeader header;
 	bool is_current(db.read_header(&header, NULLPTR));
 	if(unlikely(!is_current)) {
-		cerr << _("Warning: KEEP_VIRTUALS ignored because database format has changed");
+		cerr << _("warning: KEEP_VIRTUALS ignored because database format has changed");
 		return;
 	}
 	for(ExtendedVersion::Overlay i(0); likely(i != header.countOverlays()); ++i) {
@@ -621,9 +621,11 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 					_("     Reading category %s|%s (%s%%)"),
 					package_tree.size());
 			} else {
-				reading_percent_status->init(eix::format(
-					_("     Reading up to %s categories of packages .. ")) %
-					package_tree.size());
+				reading_percent_status->init(eix::format(ngettext(
+					"     Reading %s category of packages .. ",
+					"     Reading up to %s categories of packages .. ",
+					package_tree.size()))
+					% package_tree.size());
 			}
 
 			/* iterator through categories */
@@ -686,7 +688,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		umask(old_umask);
 	}
 	if(unlikely(!ok)) {
-		*errtext = eix::format(_("Can't open the database file %r for writing (mode = 'wb')")) % outputfile;
+		*errtext = eix::format(_("cannot open database file %r for writing (mode = 'wb')")) % outputfile;
 		return false;
 	}
 
@@ -697,7 +699,10 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		return false;
 	}
 
-	INFO(eix::format(_("Database contains %s packages in %s categories.\n"))
+	INFO(eix::format(ngettext(
+		"Database contains %s packages in %s category.\n",
+		"Database contains %s packages in %s categories.\n",
+		dbheader.size))
 		% package_tree.countPackages() % dbheader.size);
 	return true;
 }

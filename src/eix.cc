@@ -546,7 +546,7 @@ static void parseFormat(const char *sourcename, const char *content) {
 	if(likely(format->parseFormat(content, &errtext))) {
 		return;
 	}
-	cerr << eix::format(_("Problems while parsing %s: %s\n"))
+	cerr << eix::format(_("problems while parsing %s: %s\n"))
 			% sourcename % errtext << endl;
 	exit(EXIT_FAILURE);
 }
@@ -1028,47 +1028,32 @@ int run_eix(int argc, char** argv) {
 	}
 	eix::SignedBool print_count_always(rc_options.pure_packages ? -1 :
 		eixrc.getBoolText("PRINT_COUNT_ALWAYS", "never"));
-	bool printed_matches(false);
 	if(likely(print_count_always >= 0)) {
-		if(unlikely(count == 0)) {
-			printed_matches = true;
-			cout << format->color_numbertext;
-			if(print_count_always) {
-				cout << eix::format(_("Found %s matches."))
-					% eix::ptr_list<Package>::size_type(0);
-			} else {
-				cout << _("No matches found.");
-			}
-		} else if(unlikely(count == 1)) {
-			if(print_count_always) {
-				printed_matches = true;
-				if(printed_overlay) {
-					cout << "\n";
-				}
-				cout << format->color_numbertext
-					<< eix::format(_("Found %s match."))
-					% eix::ptr_list<Package>::size_type(1);
-			}
-		} else {
-			printed_matches = true;
+		if((print_count_always != 0) || (count > 1)) {
+			have_printed = true;
 			if(printed_overlay) {
 				cout << "\n";
 			}
-			cout << format->color_numbertext <<
-				eix::format(_("Found %s matches.")) % count;
+			cout << format->color_numbertext
+				<< eix::format(ngettext("Found %s match.",
+				"Found %s matches.", count)) % count
+				<< format->color_numbertextend << "\n";
+		} else if(unlikely(count == 0)) {
+			have_printed = true;
+			cout << format->color_numbertext
+				<< _("No matches found.")
+				<< format->color_numbertextend << "\n";
 		}
-	}
-	if(printed_matches) {
-		have_printed = true;
-		cout << format->color_numbertextend << "\n";
 	}
 	if(likely(have_printed)) {
 		cout << format->color_end;
 		if(unlikely(over_limit)) {
-			cout << eix::format(_(
-			"Only %s matches displayed on terminal.\n"
-			"Set %s=0 to show all matches.\n"))
-			% limit % limit_var;
+			cout << eix::format(ngettext(
+			"Only %s match displayed on terminal.\n",
+			"Only %s matches displayed on terminal.\n", limit))
+				% limit
+			<< eix::format(_("Set %s=0 to show all matches.\n"))
+				% limit_var;
 		}
 	}
 
@@ -1094,7 +1079,7 @@ static bool opencache(Database *db, const char *filename, const char *tooltext) 
 		return true;
 	}
 	cerr << eix::format(_(
-		"Cannot open the database file %s for reading.\n"
+		"cannot open database file %s for reading.\n"
 		"Did you forget to create it with %r?"))
 		% filename % tooltext << endl;
 	return false;

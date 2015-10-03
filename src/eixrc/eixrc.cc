@@ -433,7 +433,7 @@ void EixRc::read_undelayed(set<string> *has_delayed) {
 		// override with EIX_USERRC
 		char *home(getenv("HOME"));
 		if(unlikely(home == NULLPTR)) {
-			cerr << _("No $HOME found in environment.") << endl;
+			cerr << _("no $HOME found in environment.") << endl;
 		} else {
 			string eixrc(home);
 			eixrc.append(EIX_USERRC);

@@ -299,7 +299,8 @@ AddArchive() {
 		[ -n "$l$name" ] || {
 			p=${i##*/}
 			p=${p%:*}
-			ewarn "`eval_gettext 'file ${p} of ${a} contains no overlay'`"
+			ewarn "`eval_gettext \
+				'file ${p} of ${a} contains no overlay'`"
 			failcount=`Expr $failcount + 1`
 			continue
 		}
@@ -319,10 +320,11 @@ AddArchive() {
 	then	msg=`eval_gettext 'could not read all eix cachefiles of ${a}'`
 	elif ! $success
 	then	msg=`eval_gettext 'no file in ${a} contains an overlay'`
-	elif [ $failcount -gt 1 ]
-	then	ewarn "`eval_gettext '${failcount} files in ${a} contain no overlay'`"
 	elif [ $failcount -gt 0 ]
-	then	ewarn "`eval_gettext 'A file in ${a} contains no overlay'`"
+	then	ewarn "`eval_ngettext \
+			'${failcount} file in ${a} contains no overlay' \
+			'${failcount} files in ${a} contain no overlay' \
+			${failcount}`"
 	fi
 	die_on_update_failure=false
 	ReadVar $eix_remote_var $eix_remote_var

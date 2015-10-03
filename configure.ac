@@ -560,7 +560,7 @@ AC_PROG_SED()
 
 # Add the libintl support if needed.
 dnl LT_INIT()
-AM_GNU_GETTEXT_VERSION([0.19.4])
+AM_GNU_GETTEXT_REQUIRE_VERSION([0.19.6])
 AM_GNU_GETTEXT([external])
 AS_CASE([$USE_NLS],
 	[yes],

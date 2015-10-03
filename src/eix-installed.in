@@ -12,6 +12,7 @@ ReadGettext
 Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
+	# xgettext: no-space-ellipsis-check
 	eval_gettext 'Usage: ${n} [options] ARG [ARG ARG ...]
 This script is part of ${p}.
 It outputs all installed packages, or packages installed with/without
@@ -83,7 +84,8 @@ ScanVarDbPkg() {
 	then	gettext 'none'
 	elif [ $c -ne 1 ]
 	then	echo
-		eval_gettext '(total number of versions listed above: ${c})'
+		eval_ngettext '(one version listed above)' \
+			'(${c} versions listed above)' ${c}
 	fi
 	echo
 }

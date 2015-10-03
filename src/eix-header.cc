@@ -50,8 +50,9 @@ bool open_database(DBHeader *header, const char *name, bool verbose) ATTRIBUTE_N
 bool print_overlay_data(string *result, const DBHeader *header, const char *overlay, const string& sep, const char *name, PrintOverlayMode mode, bool verbose) ATTRIBUTE_NONNULL_;
 
 static void print_help() {
-	cout << eix::format(_(
-"Usage: %s [-q] [-f FILE] [-s SEP] [-c] [-l OV] [-p OV] [-o OV] ...\n"
+	cout << eix::format(
+	/* xgettext: no-space-ellipsis-check */
+_("Usage: %s [-q] [-f FILE] [-s SEP] [-c] [-l OV] [-p OV] [-o OV] ...\n"
 "Check whether eix database FILE has current format, and print label, path,\n"
 "or both of specified overlay OV in FILE, appending SEP to each data.\n"
 "All options can be used repeatedly: FILE and SEP are active until modified.\n"
@@ -240,7 +241,7 @@ bool open_database(DBHeader *header, const char *name, bool verbose) {
 	} else {
 		if(likely(verbose)) {
 			cerr << eix::format(_(
-				"Can't open the database file %r for reading (mode = 'rb')"))
+				"cannot open database file %r for reading (mode = 'rb')"))
 				% name << endl;
 		}
 	}
@@ -254,7 +255,7 @@ bool print_overlay_data(string *result, const DBHeader *header, const char *over
 		0, emptysearch ? DBHeader::OVTEST_NUMBER : DBHeader::OVTEST_ALL));
 	if(unlikely((!found) && !emptysearch)) {
 		if(likely(verbose)) {
-			cerr << eix::format(_("Can't find overlay %s in %s")) % overlay % name << endl;
+			cerr << eix::format(_("cannot find overlay %s in %s")) % overlay % name << endl;
 		}
 		return false;
 	}

@@ -424,7 +424,7 @@ bool resolve_plus_minus(WordSet *s, const WordVec& l, const WordSet *warnignore)
 
 void StringHash::store_string(const string& s) {
 	if(finalized) {
-		cerr << _("Internal error: Storing required after finalizing") << endl;
+		cerr << _("internal error: Storing required after finalizing") << endl;
 		exit(EXIT_FAILURE);
 	}
 	push_back(s);
@@ -432,11 +432,11 @@ void StringHash::store_string(const string& s) {
 
 void StringHash::hash_string(const string& s) {
 	if(finalized) {
-		cerr << _("Internal error: Hashing required after finalizing") << endl;
+		cerr << _("internal error: Hashing required after finalizing") << endl;
 		exit(EXIT_FAILURE);
 	}
 	if(!hashing) {
-		cerr << _("Internal error: Hashing required in non-hash mode") << endl;
+		cerr << _("internal error: Hashing required in non-hash mode") << endl;
 		exit(EXIT_FAILURE);
 	}
 	// During hashing, we use str_map as a frequency counter to optimize
@@ -462,12 +462,12 @@ void StringHash::hash_words(const WordVec& v) {
 
 StringHash::size_type StringHash::get_index(const string& s) const {
 	if(!finalized) {
-		cerr << _("Internal error: Index required before sorting.") << endl;
+		cerr << _("internal error: Index required before sorting.") << endl;
 		exit(EXIT_FAILURE);
 	}
 	StrSizeMap::const_iterator i(str_map.find(s));
 	if(i == str_map.end()) {
-		cerr << _("Internal error: Trying to shortcut non-hashed string.") << endl;
+		cerr << _("internal error: Trying to shortcut non-hashed string.") << endl;
 		exit(EXIT_FAILURE);
 	}
 	return i->second;
@@ -475,7 +475,7 @@ StringHash::size_type StringHash::get_index(const string& s) const {
 
 const string& StringHash::operator[](StringHash::size_type i) const {
 	if(i >= size()) {
-		cerr << _("Database corrupt: Nonexistent hash required");
+		cerr << _("database corrupt: nonexistent hash required");
 		exit(EXIT_FAILURE);
 	}
 	return WordVec::operator[](i);

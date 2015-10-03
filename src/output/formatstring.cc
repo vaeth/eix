@@ -101,7 +101,7 @@ bool PrintFormat::parse_variable(Node **rootnode, const string& varname, string 
 	VarParserCacheNode& v(f->second);
 	if(unlikely(v.in_use)) {
 		if(errtext != NULLPTR) {
-			*errtext = eix::format(_("Variable %r calls itself for printing")) % varname;
+			*errtext = eix::format(_("variable %r calls itself for printing")) % varname;
 		}
 		return false;
 	}
@@ -443,7 +443,7 @@ static bool parse_colors(OutputString *ret, const string& colorstring, bool colo
 			return true;
 		}
 	}
-	*errtext = _("Internal error: bad node for parse_colors.");
+	*errtext = _("internal error: bad node for parse_colors.");
 	return false;
 }
 
@@ -511,7 +511,7 @@ FormatParser::ParserState FormatParser::state_COLOR() {
 GCC_DIAG_OFF(sign-conversion)
 		if(unlikely(!ac.initcolor(string(band_position, q - band_position), &errtext))) {
 GCC_DIAG_ON(sign-conversion)
-			last_error = eix::format(_("Error while parsing color: %s")) % errtext;
+			last_error = eix::format(_("error while parsing color: %s")) % errtext;
 			return ERROR;
 		}
 		keller.push(new Text(ac.asString(), 0));
@@ -598,11 +598,11 @@ FormatParser::ParserState FormatParser::state_IF() {
 		c = *(++band_position))
 		++i;
 	if(!i) {
-		last_error = _("No name of property/variable found after '{'.");
+		last_error = _("no name of property/variable found after '{'.");
 		return ERROR;
 	}
 	if(!*band_position) {
-		last_error = _("Found '{' without closing '}'.");
+		last_error = _("found '{' without closing '}'.");
 		return ERROR;
 	}
 	n->variable = Property(string(name_start, i));
@@ -617,13 +617,13 @@ FormatParser::ParserState FormatParser::state_IF() {
 	}
 	/* This MUST be a '=' */
 	if(*band_position != '=') {
-		last_error = eix::format(_("Unexpected symbol %r found after '{'.")) % (*band_position);
+		last_error = eix::format(_("unexpected symbol %r found after '{'.")) % (*band_position);
 		return ERROR;
 	}
 
 	band_position = seek_character(band_position + 1);
 	if(!*band_position) {
-		last_error = _("Found '{' without closing '}'.");
+		last_error = _("found '{' without closing '}'.");
 		return ERROR;
 	}
 
@@ -682,7 +682,7 @@ FormatParser::ParserState FormatParser::state_IF() {
 			band_position = seek_character(band_position + 1);
 		}
 		if(*band_position != '}') {
-			last_error = _("Found '{' without closing '}'.");
+			last_error = _("found '{' without closing '}'.");
 			return ERROR;
 		}
 	}
@@ -701,7 +701,7 @@ FormatParser::ParserState FormatParser::state_ELSE() {
 		p->next = q;
 		q = p;
 		if(keller.empty()) {
-			last_error = _("Found ELSE without IF.");
+			last_error = _("found ELSE without IF.");
 			return ERROR;
 		}
 		p = keller.top();
@@ -726,7 +726,7 @@ FormatParser::ParserState FormatParser::state_FI() {
 		p->next = q;
 		q = p;
 		if(keller.empty()) {
-			last_error = _("Found FI without IF.");
+			last_error = _("found FI without IF.");
 			return ERROR;
 		}
 		p = keller.top();
@@ -746,7 +746,7 @@ bool FormatParser::start(const char *fmt, bool colors, bool parse_only_colors, s
 	/* Initialize machine */
 	enable_colors = colors;
 	only_colors = parse_only_colors;
-	last_error = _("Check your syntax");
+	last_error = _("check your syntax");
 	state = START;
 	band = fmt;
 	band_position = fmt;
@@ -769,7 +769,7 @@ bool FormatParser::start(const char *fmt, bool colors, bool parse_only_colors, s
 			//             break;
 			case ERROR:    // break;
 			case STOP:     break;
-			default:       last_error = _("Bad state: undefined");
+			default:       last_error = _("bad state: undefined");
 			               state = ERROR;
 		}
 	}
@@ -783,7 +783,7 @@ bool FormatParser::start(const char *fmt, bool colors, bool parse_only_colors, s
 		if(errtext != NULLPTR) {
 			size_t line(0), column(0);
 			getPosition(&line, &column);
-			*errtext = eix::format(_("Line %s, column %s: %s")) % line % column % last_error;
+			*errtext = eix::format(_("line %s, column %s: %s")) % line % column % last_error;
 		}
 		return false;
 	}

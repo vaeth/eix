@@ -105,7 +105,7 @@ BasicVersion::ParseResult Mask::parseMask(const char *str, string *errtext, eix:
 	string::size_type l(0);
 	for(; likely(*p != '/'); ++l, ++p) {
 		if(unlikely(*p == '\0')) {
-			*errtext = (_("Can't read category."));
+			*errtext = (_("cannot read category"));
 			return parsedError;
 		}
 	}
@@ -129,7 +129,7 @@ GCC_DIAG_OFF(sign-conversion)
 				m_slotname.assign(source, slot_end - source);
 GCC_DIAG_ON(sign-conversion)
 				if(unlikely(slot_end[1] != ':')) {
-					*errtext = _("Repository name must be separated with :: (one : is missing).");
+					*errtext = _("repository name must be separated with :: (one : is missing)");
 					return parsedError;
 				}
 				source = slot_end + 2;
@@ -184,8 +184,8 @@ GCC_DIAG_ON(sign-conversion)
 		if(unlikely((p == NULLPTR) || ((end != NULLPTR) && (p >= end)))) {
 			if(unlikely(m_operator != maskOpAll)) {  // maskMarkOptional without explicit "="
 				*errtext = ((m_type != maskPseudomask) ?
-					_("Operator without a version part.") :
-					_("Version specification is missing."));
+					_("operator without a version part") :
+					_("version specification is missing"));
 				return parsedError;
 			}
 		} else {
@@ -212,11 +212,11 @@ GCC_DIAG_ON(sign-conversion)
 			if(unlikely(m_operator != maskOpEqual)) {
 				// A finer error-reporting
 				if(m_operator != maskOpRevisions) {
-					*errtext = _("A wildcard is only valid with the = operator.");
+					*errtext = _("a wildcard is only valid with the = operator");
 					return parsedError;
 				} else {
 					*errtext = _(
-						"A wildcard is only valid with the = operator.\n"
+						"a wildcard is only valid with the = operator.\n"
 						"Portage would also accept something like ~app-shells/bash-3*,\n"
 						"but behave just like ~app-shells/bash-3.");
 					return parsedError;
