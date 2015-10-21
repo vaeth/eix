@@ -31,6 +31,7 @@ class ExtendedVersion : public BasicVersion {
 			HAVEBINPKG_NO      = 0x01U,
 			HAVEBINPKG_YES     = 0x02U;
 		mutable HaveBinPkg have_bin_pkg_m;  // mutable: it is just a cache
+		mutable int have_xpak_bin_pkg_m;
 
 	public:
 		typedef uint16_t Restrict;
@@ -81,6 +82,7 @@ class ExtendedVersion : public BasicVersion {
 
 		ExtendedVersion() :
 			have_bin_pkg_m(HAVEBINPKG_UNKNOWN),
+			have_xpak_bin_pkg_m(-1),
 			restrictFlags(RESTRICT_NONE),
 			propertiesFlags(PROPERTIES_NONE),
 			overlay_key(0), priority(0) {
@@ -119,6 +121,8 @@ class ExtendedVersion : public BasicVersion {
 		}
 
 		bool have_bin_pkg(const PortageSettings *ps, const Package *pkg) const;
+
+		int have_xpak_bin_pkg(const PortageSettings *ps, const Package *pkg) const;
 
 		static eix::SignedBool compare(const ExtendedVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
 };

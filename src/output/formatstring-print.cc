@@ -783,7 +783,7 @@ void PrintFormat::PKG_LICENSES(OutputString *s, Package *package) const {
 
 void PrintFormat::PKG_BINARY(OutputString *s, Package *package) const {
 	for(Package::const_iterator it(package->begin()); likely(it != package->end()); ++it) {
-		if(it->have_bin_pkg(portagesettings, package)) {
+		if(it->have_bin_pkg(portagesettings, package) || it->have_xpak_bin_pkg(portagesettings, package) > 0) {
 			s->set_one();
 			return;
 		}
@@ -793,7 +793,7 @@ void PrintFormat::PKG_BINARY(OutputString *s, Package *package) const {
 	if(vec != NULLPTR) {
 		for(InstVec::iterator it(vec->begin());
 			likely(it != vec->end()); ++it) {
-			if(it->have_bin_pkg(portagesettings, package)) {
+			if(it->have_bin_pkg(portagesettings, package) || it->have_xpak_bin_pkg(portagesettings, package) > 0) {
 				s->set_one();
 				return;
 			}
@@ -1244,7 +1244,7 @@ void PrintFormat::VER_VIRTUAL(OutputString *s, Package *package) const {
 }
 
 void PrintFormat::VER_ISBINARY(OutputString *s, Package *package) const {
-	if(ver_version()->have_bin_pkg(portagesettings, package)) {
+	if(ver_version()->have_bin_pkg(portagesettings, package) || ver_version()->have_xpak_bin_pkg(portagesettings, package) > 0) {
 		s->set_one();
 	}
 }

@@ -941,7 +941,7 @@ bool PackageTest::match(PackageReader *pkg) const {
 		get_p(&p, pkg);
 		bool found(false);
 		for(Package::iterator it(p->begin()); it != p->end(); ++it) {
-			if(unlikely(it->have_bin_pkg(portagesettings, p))) {
+			if(unlikely(it->have_bin_pkg(portagesettings, p) || it->have_xpak_bin_pkg(portagesettings, p) > 0)) {
 				found = true;
 				break;
 			}
@@ -953,7 +953,7 @@ bool PackageTest::match(PackageReader *pkg) const {
 			}
 			for(InstVec::iterator it(installed_versions->begin());
 				likely(it != installed_versions->end()); ++it) {
-				if(unlikely(it->have_bin_pkg(portagesettings, p))) {
+				if(unlikely(it->have_bin_pkg(portagesettings, p) || it->have_xpak_bin_pkg(portagesettings, p) > 0)) {
 					found = true;
 					break;
 				}
