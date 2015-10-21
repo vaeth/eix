@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.31.1
+	Martin Väth <martin at mvath.de>:
+	- Fix compilation without nls
+
 *eix-0.31.0
 	Martin Väth <martin at mvath.de>:
 	- Important change: Default to set -u in shell scripts.

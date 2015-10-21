@@ -55,6 +55,8 @@
 #include "search/matchtree.h"
 #include "various/drop_permissions.h"
 #include "various/cli.h"
+// This must be the very last include:
+#include "eixTk/ngettext.h"
 
 #define VAR_DB_PKG "/var/db/pkg/"
 

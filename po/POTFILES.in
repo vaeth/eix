@@ -68,6 +68,7 @@ src/eixTk/inttypes.h
 src/eixTk/likely.h
 src/eixTk/md5.cc
 src/eixTk/md5.h
+src/eixTk/ngettext.h
 src/eixTk/null.h
 src/eixTk/outputstring.cc
 src/eixTk/outputstring.h

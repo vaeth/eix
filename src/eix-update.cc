@@ -44,6 +44,8 @@
 #include "portage/overlay.h"
 #include "portage/packagetree.h"
 #include "various/drop_permissions.h"
+// This must be the very last include:
+#include "eixTk/ngettext.h"
 
 using std::list;
 using std::string;

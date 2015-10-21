@@ -44,6 +44,8 @@
 #include "portage/set_stability.h"
 #include "portage/vardbpkg.h"
 #include "various/drop_permissions.h"
+// This must be the very last include:
+#include "eixTk/ngettext.h"
 
 #define VAR_DB_PKG "/var/db/pkg/"
 

@@ -123,6 +123,7 @@ Check '"eixTk/eixint\.h"' -e OffsetType -e UChar -e UNumber -e Treesize -e Catsi
 Check '"eixTk/exceptions\.h"' -e portage_parse_error
 Check '"eixTk/formated\.h"' -e '::format'
 Check '"eixTk/i18n\.h"' -e '_('
+Check '"eixTk/ngettext\.h"' -e 'ngettext('
 Check '"eixTk/inttypes\.h"' -e int8 -e int16 -e int32 -e int64
 Check '"eixTk/likely\.h"' -e 'likely('
 Check '"eixTk/null\.h"' -e 'NULLPTR'
