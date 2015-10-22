@@ -308,6 +308,7 @@ class PrintFormat {
 		void VER_USE0(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_VIRTUAL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_ISBINARY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_ISXPAKBINARY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		const ExtendedVersion *ver_restrict(Package *package) const ATTRIBUTE_NONNULL_;
 		void ver_restrict(OutputString *s, Package *package, ExtendedVersion::Restrict r) const ATTRIBUTE_NONNULL_;
 		void VER_RESTRICT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;

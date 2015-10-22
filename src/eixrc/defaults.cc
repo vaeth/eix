@@ -1621,6 +1621,10 @@ AddOption(STRING, "TAG_BINARY",
 	"\\{tbz2}", _(
 	"Tag for versions with *.tbz2. This is only used for delayed substitution."));
 
+AddOption(STRING, "TAG_XPAKBINARY",
+	"\\{xpak}", _(
+	"Tag for versions with *.xpak. This is only used for delayed substitution."));
+
 AddOption(STRING, "TAG_RESTRICT_FETCH",
 	"f", _(
 	"Tag for RESTRICT=fetch. This is only used for delayed substitution."));
@@ -2041,9 +2045,11 @@ AddOption(STRING, "FORMAT_PROPRESTRICT",
 
 AddOption(STRING, "FORMAT_BINARY",
 	"%{!NO_BINARY}"
-		"{isbinary}"
+		"{isxpakbinary}"
+			"<$sep>{!*sep}(%{COLOR_BINARY})%{TAG_XPAKBINARY}(%{COLOR_RESET})"
+		"{else}{isbinary}"
 			"<$sep>{!*sep}(%{COLOR_BINARY})%{TAG_BINARY}(%{COLOR_RESET})"
-		"{}"
+		"{}{}"
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the PROPERTIES and RESTRICT of a version\n"

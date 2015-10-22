@@ -1264,6 +1264,10 @@ property according to the local or default configuration, respectively.
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or empty depending on whether there is a corresponding *.tbz2 file for the version.
 .TP
+.B isxpakbinary
+This must occur only in I<VARIABLE> in the context of version printing.
+It returns 1 or empty depending on whether there is at least one corresponding *.xpak file for the version.
+.TP
 .BR restrict ", " restrictfetch ", " restrictmirror ", " restrictprimaryuri ", " restrictbincheck ", " restrictstrip ", " restricttest ", " restrictuserpriv ", " restrictinstalledsources ", " restrictbindist ", " restrictparallel
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or empty depending on whether some or the corresponding B<RESTRICT> attribute is set for the version.
