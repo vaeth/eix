@@ -1622,7 +1622,7 @@ AddOption(STRING, "TAG_BINARY",
 	"Tag for versions with *.tbz2. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_XPAKBINARY",
-	"\\{xpak}", _(
+	"\\{xpak}x", _(
 	"Tag for versions with *.xpak. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_FETCH",
@@ -2046,7 +2046,7 @@ AddOption(STRING, "FORMAT_PROPRESTRICT",
 AddOption(STRING, "FORMAT_BINARY",
 	"%{!NO_BINARY}"
 		"{isxpakbinary}"
-			"<$sep>{!*sep}(%{COLOR_BINARY})%{TAG_XPAKBINARY}(%{COLOR_RESET})"
+			"<$sep>{!*sep}(%{COLOR_BINARY})%{TAG_XPAKBINARY}<xpakbinarycount>(%{COLOR_RESET})"
 		"{else}{isbinary}"
 			"<$sep>{!*sep}(%{COLOR_BINARY})%{TAG_BINARY}(%{COLOR_RESET})"
 		"{}{}"
