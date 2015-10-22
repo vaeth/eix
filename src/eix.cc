@@ -178,7 +178,7 @@ static void dump_help() {
 "    --selected-file       Match packages of world file.\n"
 "    --selected-set        Match packages of a world set.\n"
 "    --selected            Match packages of @selected (world file or set).\n"
-"    --binary              Match packages with *.tbz2 files.\n"
+"    --binary              Match packages with *.tbz2 or *.xpak files.\n"
 "    --nonvirtual                     Match packages from nonvirtual overlays.\n"
 "    --virtual                        Match packages from virtual overlays.\n"
 "    -O, --overlay                    Match packages from overlays.\n"

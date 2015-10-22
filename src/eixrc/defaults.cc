@@ -1448,8 +1448,20 @@ AddOption(STRING, "COLOR_SLOTS",
 	"Color for slots. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_BINARY",
+	"blue,1;%{BG0S}|27,1;%{BG1}|blue,1;%{BG2}|27,1;%{BG3}|27,1", _(
+	"Color for braces for binaries. This is only used for delayed substitution."));
+
+AddOption(STRING, "COLOR_TBZ",
 	"blue,1;%{BG0S}|39,1;%{BG1}|blue,1;%{BG2}|39,1;%{BG3}|39,1", _(
-	"Color for versions with *.tbz2. This is only used for delayed substitution."));
+	"Color for tag for *.tbz2. This is only used for delayed substitution."));
+
+AddOption(STRING, "COLOR_PAK",
+	"blue,1;%{BG0S}|45,1;%{BG1}|blue,1;%{BG2}|45,1;%{BG3}|45,1", _(
+	"Color for tag for *.xpak. This is only used for delayed substitution."));
+
+AddOption(STRING, "COLOR_PAKCOUNT",
+	"purple,1;%{BG0S}|97,1;%{BG1}|blue,1;%{BG2}|97,1;%{BG3}|97,1", _(
+	"Color for number of *.xpak. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_RESTRICT",
 	"red;%{BG0S}|99;%{BG1}|red;%{BG2}|53;%{BG3}|99", _(
@@ -1617,13 +1629,17 @@ AddOption(STRING, "FORMAT_NOBEST_CHANGE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines what to print after \"->\" if there is no installable."));
 
-AddOption(STRING, "TAG_BINARY",
-	"\\{tbz2}", _(
-	"Tag for versions with *.tbz2. This is only used for delayed substitution."));
+AddOption(STRING, "TAG_TBZ",
+	"tbz2", _(
+	"Tag for *.tbz2. This is only used for delayed substitution."));
 
-AddOption(STRING, "TAG_XPAKBINARY",
-	"\\{xpak}x", _(
-	"Tag for versions with *.xpak. This is only used for delayed substitution."));
+AddOption(STRING, "TAG_PAK",
+	"xpak", _(
+	"Tag for *.xpak. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_MULTIPAK",
+	":", _(
+	"Tag for multiple *.xpak. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_FETCH",
 	"f", _(
@@ -2044,16 +2060,36 @@ AddOption(STRING, "FORMAT_PROPRESTRICT",
 	"and resets the color."));
 
 AddOption(STRING, "FORMAT_BINARY",
-	"%{!NO_BINARY}"
-		"{isxpakbinary}"
-			"<$sep>{!*sep}(%{COLOR_BINARY})%{TAG_XPAKBINARY}<xpakbinarycount>(%{COLOR_RESET})"
-		"{else}{isbinary}"
-			"<$sep>{!*sep}(%{COLOR_BINARY})%{TAG_BINARY}(%{COLOR_RESET})"
-		"{}{}"
-	"%{}", _(
+	"%{!NO_BINARY}{isbinary}"
+		"<$sep>{!*sep}(%{COLOR_BINARY})\\{"
+		"{istbz}"
+			"%{FORMAT_TBZ}"
+			"{ispak}(%{COLOR_BINARY}),{}"
+		"{}"
+		"(%{COLOR_RESET})"
+		"{ispak}"
+			"%{FORMAT_PAK}"
+		"{}"
+		"(%{COLOR_BINARY})}(%{COLOR_RESET})"
+	"{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the PROPERTIES and RESTRICT of a version\n"
 	"and resets the color."));
+
+AddOption(STRING, "FORMAT_TBZ",
+	"(%{COLOR_TBZ})%{TAG_TBZ}(%{COLOR_RESET})", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for versions with *.tbz2."));
+
+AddOption(STRING, "FORMAT_PAK",
+	"(%{COLOR_PAK})%{TAG_PAK}"
+	"{ismultipak}"
+		"%{TAG_MULTIPAK}"
+		"(%{COLOR_PAKCOUNT})<pakcount>"
+	"{}"
+	"(%{COLOR_RESET})", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for versions with *.xpak."));
 
 AddOption(STRING, "FORMAT_SLOT",
 	"(%{COLOR_SLOTS})\\(<slot>\\)(%{COLOR_RESET})", _(

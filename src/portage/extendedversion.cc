@@ -43,8 +43,10 @@ const ExtendedVersion::Properties
 
 const ExtendedVersion::HaveBinPkg
 	ExtendedVersion::HAVEBINPKG_UNKNOWN,
-	ExtendedVersion::HAVEBINPKG_NO,
-	ExtendedVersion::HAVEBINPKG_YES;
+	ExtendedVersion::HAVEBINPKG_TBZ_NO,
+	ExtendedVersion::HAVEBINPKG_TBZ_YES,
+	ExtendedVersion::HAVEBINPKG_TBZ,
+	ExtendedVersion::HAVEBINPKG_PAK;
 
 string ExtendedVersion::get_longfullslot() const {
 	return (subslotname.empty() ? (slotname.empty() ? "0" : slotname) :

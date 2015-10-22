@@ -576,11 +576,11 @@ Findet nur Pakete aus der world-Datei.
 Findet nur Pakete aus world_set.
 .TP
 .BR --binary
-Findet nur Pakete mit einem Binärfile (*.tbz2) in PKGDIR.
+Findet nur Pakete mit einer Binärdatei (*.tbz2 oder *.xpak) in PKGDIR.
 Die Version des Binärfiles muss mit mindestens einer vorhandenen oder einer installierten Version übereinstimmen.
 (Falls keine Version vorhanden ist, kann das Paket ebenfalls nicht gefunden werden).
-Nur die reine Existenz eines entsprechenden *.tbz2-files wird überprüft:
-Ob Portage die Datei tatsächlich benutzen kann, hängt auch von Meta-Daten innerhalb der *.tbz2-Datei ab (wie etwa USE settings), was von eix nicht beachtet wird.
+Nur die reine Existenz einer entsprechenden Datei mit *.tbz2 oder *.xpak wird überprüft:
+Ob Portage die Datei tatsächlich benutzen kann, hängt auch von Meta-Daten innerhalb dieser Datei ab (wie etwa USE settings), was von eix nicht beachtet wird.
 .TP
 .B --nonvirtual
 Findet nur Pakete mit mindestens einer Version aus dem Hauptbaum oder einem nicht-virtuellen Overlay.
@@ -1018,11 +1018,13 @@ Dies ist Version 3.14p, die in den Slot "GNAT-3.14p" installiert wird.
 .B 2.0.0_rc1-r6
 Dies ist Version 2.0.0_rc1-r6, und der SLOT ist leer oder "0".
 .TP
-.B 1.0*ilvs^fmpbstuidP{tbz2}
+.B 1.0*ilvs^fmpbstuidP{tbz2,pak:2}
 Dies ist Version 1.0, und gesetzt sind
 PROPERTIES="interactive live virtual set" sowie
 RESTRICT="fetch mirror primaryuri binchecks strip test userpriv installsources bindist parallel".
-Darüberhinaus existiert eine *.tbz2 Datei (Binärpaket) für diese Version in B<PKGDIR>.
+Darüberhinaus existiert eine *.tbz2 und zwei *.xpak-Dateien
+(Binärpakete ohne bzw. mit FEATURES==binpkg-multi-instance)
+für diese Version in B<PKGDIR>.
 .TP
 .B 5.0-r3(5.0R3)^f "   oder   " 5.0-r3:5.0R3^f
 Dies ist Version 5.0-r3, die in Slot 5.0R3 installiert wird, und die RESTRICT=fetch hat.
@@ -1289,7 +1291,23 @@ lokelen bzw. Standard-Konfiguration) die entsprechend Stabilitätseigenschaft ha
 .TP
 .B isbinary
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
-Dies ist 1 oder leer, je nachdem ob eine entsprechende *.tbz2-Datei für die Version existiert.
+Dies ist 1 oder leer, je nachdem ob eine entsprechende Datei mit *.tbz2 oder *.xpak für die Version existiert.
+.TP
+.B istbz
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Dies ist 1 oder leer, je nachdem ob eine entsprechende Datei mit *.tbz2 für die Version existiert.
+.TP
+.B ispak
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Dies ist 1 oder leer, je nachdem ob eine entsprechende Datei mit *.xpak für die Version existiert.
+.TP
+.B ismultipak
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Dies ist 1 oder leer, je nachdem ob mindestens zwei Dateien mit *.xpak für die Version existieren.
+.TP
+.B pakcount
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Es enthält die Anzahl der Dateien mit *.xpak für die Version. Falls keine existiert, ist es leer.
 .TP
 .BR restrict ", " restrictfetch ", " restrictmirror ", " restrictprimaryuri ", " restrictbincheck ", " restrictstrip ", " restricttest ", " restrictuserpriv ", " restrictinstalledsources ", " restrictbindist ", " restrictparallel
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.

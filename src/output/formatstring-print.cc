@@ -461,8 +461,10 @@ class Scanner {
 			prop_ver("use", &PrintFormat::VER_USE);
 			prop_ver("virtual", &PrintFormat::VER_VIRTUAL);
 			prop_ver("isbinary", &PrintFormat::VER_ISBINARY);
-			prop_ver("isxpakbinary", &PrintFormat::VER_ISXPAKBINARY);
-			prop_ver("xpakbinarycount", &PrintFormat::VER_XPAKBINARYCOUNT);
+			prop_ver("istbz", &PrintFormat::VER_ISTBZ);
+			prop_ver("ispak", &PrintFormat::VER_ISPAK);
+			prop_ver("ismultipak", &PrintFormat::VER_ISMULTIPAK);
+			prop_ver("pakcount", &PrintFormat::VER_PAKCOUNT);
 			prop_ver("restrict", &PrintFormat::VER_RESTRICT);
 			prop_ver("restrictfetch", &PrintFormat::VER_RESTRICTFETCH);
 			prop_ver("restrictmirror", &PrintFormat::VER_RESTRICTMIRROR);
@@ -786,7 +788,7 @@ void PrintFormat::PKG_LICENSES(OutputString *s, Package *package) const {
 
 void PrintFormat::PKG_BINARY(OutputString *s, Package *package) const {
 	for(Package::const_iterator it(package->begin()); likely(it != package->end()); ++it) {
-		if(it->have_bin_pkg(portagesettings, package) > 0) {
+		if(it->have_bin_pkg(portagesettings, package)) {
 			s->set_one();
 			return;
 		}
@@ -1252,17 +1254,28 @@ void PrintFormat::VER_ISBINARY(OutputString *s, Package *package) const {
 	}
 }
 
-void PrintFormat::VER_ISXPAKBINARY(OutputString *s, Package *package) const {
-	if(ver_version()->have_xpak_bin_pkg(portagesettings, package) > 0) {
+void PrintFormat::VER_ISTBZ(OutputString *s, Package *package) const {
+	if(ver_version()->have_tbz_pkg(portagesettings, package)) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::VER_XPAKBINARYCOUNT(OutputString *s, Package *package) const {
-	int count = ver_version()->have_xpak_bin_pkg(portagesettings, package);
-	if(count > 0) {
-		s->assign_smart(to_string(count));
-		return;
+void PrintFormat::VER_ISPAK(OutputString *s, Package *package) const {
+	if(ver_version()->num_pak_pkg(portagesettings, package) != 0) {
+		s->set_one();
+	}
+}
+
+void PrintFormat::VER_ISMULTIPAK(OutputString *s, Package *package) const {
+	if(ver_version()->num_pak_pkg(portagesettings, package) > 1) {
+		s->set_one();
+	}
+}
+
+void PrintFormat::VER_PAKCOUNT(OutputString *s, Package *package) const {
+	ExtendedVersion::CountBinPkg count(ver_version()->num_pak_pkg(portagesettings, package));
+	if(count != 0) {
+		s->assign_fast(to_string(count));
 	}
 }
 

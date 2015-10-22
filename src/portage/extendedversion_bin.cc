@@ -23,6 +23,7 @@
 #include "portage/extendedversion.h"
 #include "portage/package.h"
 
+using std::equal;
 using std::map;
 using std::string;
 
@@ -112,51 +113,57 @@ ExtendedVersion::Properties ExtendedVersion::calcProperties(const string& str) {
 }
 
 bool ExtendedVersion::have_bin_pkg(const PortageSettings *ps, const Package *pkg) const {
-	switch(have_bin_pkg_m) {
+	return (have_tbz_pkg(ps, pkg) || (num_pak_pkg(ps, pkg) != 0));
+}
+
+bool ExtendedVersion::have_tbz_pkg(const PortageSettings *ps, const Package *pkg) const {
+	switch(have_bin_pkg_m & HAVEBINPKG_TBZ) {
 		case HAVEBINPKG_UNKNOWN: {
 				const string& s((*ps)["PKGDIR"]);
 				if((s.empty()) || !is_file((s + "/" + pkg ->category + "/" + pkg->name + "-" + getFull() + ".tbz2").c_str())) {
-					have_bin_pkg_m = HAVEBINPKG_NO;
+					have_bin_pkg_m |= HAVEBINPKG_TBZ_NO;
 					return false;
 				}
-				have_bin_pkg_m = HAVEBINPKG_YES;
+				have_bin_pkg_m |= HAVEBINPKG_TBZ_YES;
 			}
 			break;
-		case HAVEBINPKG_NO:
+		case HAVEBINPKG_TBZ_NO:
 			return false;
 		default:
-		// case HAVEBINPKG_YES;
+		// case HAVEBINPKG_TBZ_YES:
 			break;
 	}
 	return true;
 }
 
-int ExtendedVersion::have_xpak_bin_pkg(const PortageSettings *ps, const Package *pkg) const {
-	if (have_xpak_bin_pkg_m >= 0)
-		return have_xpak_bin_pkg_m;
-
+ExtendedVersion::CountBinPkg ExtendedVersion::num_pak_pkg(const PortageSettings *ps, const Package *pkg) const {
+	if(likely((have_bin_pkg_m & HAVEBINPKG_PAK) != HAVEBINPKG_UNKNOWN)) {
+		return count_pak_m;
+	}
+	have_bin_pkg_m |= HAVEBINPKG_PAK;
+	count_pak_m = 0;
 	const string& s((*ps)["PKGDIR"]);
-	if (s.empty()) {
-		have_xpak_bin_pkg_m = 0;
+	if(unlikely(s.empty())) {
 		return 0;
 	}
-
 	const string pkgs = s + "/" + pkg->category + "/" + pkg->name + "/";
-	const string pkg_search = pkgs + pkg->name + "-" + getFull();
-
-	int count;
 	WordVec bin_packages;
-	if (!pushback_files(pkgs, &bin_packages, NULLPTR, 1)) {
-		have_xpak_bin_pkg_m = 0;
+	if(unlikely(!pushback_files(pkgs, &bin_packages, NULLPTR, 1))) {
 		return 0;
-	} else {
-		for(WordVec::const_iterator it(bin_packages.begin());
-			it != bin_packages.end(); ++it) {
-			if (pkg_search.size() <= (*it).size() && equal(pkg_search.begin(), pkg_search.end(), (*it).begin())) {
-				count++;
-			}
-		}
-		return count;
 	}
-			
+	const string pkg_search = pkgs + pkg->name + "-" + getFull() + "-";
+	for(WordVec::const_iterator it(bin_packages.begin());
+		it != bin_packages.end(); ++it) {
+		const string &name(*it);
+		string::size_type i(pkg_search.size());
+		if((i > name.size()) || (strncmp(pkg_search.c_str(), name.c_str(), i) != 0)) {
+			continue;
+		}
+		for(; (i != name.size()) && isdigit(name[i], localeC); ++i) {
+		}
+		if((i + 5 == name.size()) && (strncasecmp(".xpak", name.c_str() + i, 5) == 0)) {
+			++count_pak_m;
+		}
+	}
+	return count_pak_m;
 }
