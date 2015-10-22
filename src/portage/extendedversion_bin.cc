@@ -18,6 +18,7 @@
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/sysutils.h"
+#include "eixTk/utils.h"
 #include "portage/conf/portagesettings.h"
 #include "portage/extendedversion.h"
 #include "portage/package.h"
@@ -128,4 +129,34 @@ bool ExtendedVersion::have_bin_pkg(const PortageSettings *ps, const Package *pkg
 			break;
 	}
 	return true;
+}
+
+int ExtendedVersion::have_xpak_bin_pkg(const PortageSettings *ps, const Package *pkg) const {
+	if (have_xpak_bin_pkg_m >= 0)
+		return have_xpak_bin_pkg_m;
+
+	const string& s((*ps)["PKGDIR"]);
+	if (s.empty()) {
+		have_xpak_bin_pkg_m = 0;
+		return 0;
+	}
+
+	const string pkgs = s + "/" + pkg->category + "/" + pkg->name + "/";
+	const string pkg_search = pkgs + pkg->name + "-" + getFull();
+
+	int count;
+	WordVec bin_packages;
+	if (!pushback_files(pkgs, &bin_packages, NULLPTR, 1)) {
+		have_xpak_bin_pkg_m = 0;
+		return 0;
+	} else {
+		for(WordVec::const_iterator it(bin_packages.begin());
+			it != bin_packages.end(); ++it) {
+			if (pkg_search.size() <= (*it).size() && equal(pkg_search.begin(), pkg_search.end(), (*it).begin())) {
+				count++;
+			}
+		}
+		return count;
+	}
+			
 }

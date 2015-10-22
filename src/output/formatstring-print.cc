@@ -43,6 +43,7 @@
 using std::map;
 using std::pair;
 using std::string;
+using std::to_string;
 
 using std::cerr;
 using std::endl;
@@ -460,6 +461,8 @@ class Scanner {
 			prop_ver("use", &PrintFormat::VER_USE);
 			prop_ver("virtual", &PrintFormat::VER_VIRTUAL);
 			prop_ver("isbinary", &PrintFormat::VER_ISBINARY);
+			prop_ver("isxpakbinary", &PrintFormat::VER_ISXPAKBINARY);
+			prop_ver("xpakbinarycount", &PrintFormat::VER_XPAKBINARYCOUNT);
 			prop_ver("restrict", &PrintFormat::VER_RESTRICT);
 			prop_ver("restrictfetch", &PrintFormat::VER_RESTRICTFETCH);
 			prop_ver("restrictmirror", &PrintFormat::VER_RESTRICTMIRROR);
@@ -783,7 +786,7 @@ void PrintFormat::PKG_LICENSES(OutputString *s, Package *package) const {
 
 void PrintFormat::PKG_BINARY(OutputString *s, Package *package) const {
 	for(Package::const_iterator it(package->begin()); likely(it != package->end()); ++it) {
-		if(it->have_bin_pkg(portagesettings, package)) {
+		if(it->have_bin_pkg(portagesettings, package) > 0) {
 			s->set_one();
 			return;
 		}
@@ -1246,6 +1249,20 @@ void PrintFormat::VER_VIRTUAL(OutputString *s, Package *package) const {
 void PrintFormat::VER_ISBINARY(OutputString *s, Package *package) const {
 	if(ver_version()->have_bin_pkg(portagesettings, package)) {
 		s->set_one();
+	}
+}
+
+void PrintFormat::VER_ISXPAKBINARY(OutputString *s, Package *package) const {
+	if(ver_version()->have_xpak_bin_pkg(portagesettings, package) > 0) {
+		s->set_one();
+	}
+}
+
+void PrintFormat::VER_XPAKBINARYCOUNT(OutputString *s, Package *package) const {
+	int count = ver_version()->have_xpak_bin_pkg(portagesettings, package);
+	if(count > 0) {
+		s->assign_smart(to_string(count));
+		return;
 	}
 }
 
