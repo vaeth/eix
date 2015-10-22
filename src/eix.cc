@@ -1035,7 +1035,7 @@ int run_eix(int argc, char** argv) {
 				cout << "\n";
 			}
 			cout << format->color_numbertext
-				<< eix::format(ngettext("Found %s match.",
+				<< eix::format(N_("Found %s match.",
 				"Found %s matches.", count)) % count
 				<< format->color_numbertextend << "\n";
 		} else if(unlikely(count == 0)) {
@@ -1048,7 +1048,7 @@ int run_eix(int argc, char** argv) {
 	if(likely(have_printed)) {
 		cout << format->color_end;
 		if(unlikely(over_limit)) {
-			cout << eix::format(ngettext(
+			cout << eix::format(N_(
 			"Only %s match displayed on terminal.\n",
 			"Only %s matches displayed on terminal.\n", limit))
 				% limit

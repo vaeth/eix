@@ -621,7 +621,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 					_("     Reading category %s|%s (%s%%)"),
 					package_tree.size());
 			} else {
-				reading_percent_status->init(eix::format(ngettext(
+				reading_percent_status->init(eix::format(N_(
 					"     Reading %s category of packages .. ",
 					"     Reading up to %s categories of packages .. ",
 					package_tree.size()))
@@ -699,7 +699,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		return false;
 	}
 
-	INFO(eix::format(ngettext(
+	INFO(eix::format(N_(
 		"Database contains %s packages in %s category.\n",
 		"Database contains %s packages in %s categories.\n",
 		dbheader.size))

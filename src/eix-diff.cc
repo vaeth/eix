@@ -404,7 +404,7 @@ int run_eix_diff(int argc, char *argv[]) {
 		rc.getBool("DIFF_SEPARATE_DELETED"));
 
 	if(likely(rc.getBool("DIFF_PRINT_HEADER"))) {
-		cout << eix::format(ngettext(
+		cout << eix::format(N_(
 			"Diffing databases (%s -> %s package)\n",
 			"Diffing databases (%s -> %s packages)\n",
 			new_tree.countPackages()))

@@ -1,5 +1,14 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.31.2
+	Martin Väth <martin at mvath.de>:
+	- Fix --disable-nls cleanly
+
+*eix-0.31.1
+	Martin Väth <martin at mvath.de>:
+	- Urgent release with a hackish fix for --disable-nls, see
+	  https://bugs.gentoo.org/show_bug.cgi?id=563680
+
 *eix-0.31.0
 	Martin Väth <martin at mvath.de>:
 	- Important change: Default to set -u in shell scripts.
