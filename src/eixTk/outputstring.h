@@ -17,10 +17,15 @@ class OutputString {
 	private:
 		typedef std::vector<WordSize> InsertType;
 		std::string m_string;
-		WordSize m_size;
+		WordSize m_size;  // apparent size (within the line in absolute mode)
 		InsertType m_insert;
-		bool absolute;
+		bool absolute;  // absolute means string is considered as linestart
 
+		/**
+		 * Append std::string to OutputString
+		 * @param ts true/physical size of the current OutputString
+		 * @param s  apparent/optical size within the line
+		 * @param a  are we currently in absolute mode? */
 		void append_internal(const std::string& t, WordSize ts, WordSize s, bool a);
 
 		void append_internal(const std::string& t) {
@@ -70,17 +75,21 @@ class OutputString {
 		void assign(const std::string& t, WordSize s);
 		void assign_smart(const std::string& t);
 		void assign_smart(const char *s);
+
+		// assign_fast must not be used with utf8 or tabs/newlines
 		void assign_fast(const std::string& t);
 		void assign_fast(const char *s);
 		void assign_fast(const char s);
 		void clear();
 		void set_one();
 		void append_smart(char s);
+		// append_fast must not be used with utf8 or tabs/newlines
 		void append_fast(char s);
 		void append_column(WordSize s);
 		void append_escape(const char **pos) ATTRIBUTE_NONNULL_;
 		void append(const std::string& t, WordSize s);
 		void append_smart(const std::string& t);
+		// append_fast must not be used with utf8 or tabs/newlines
 		void append_fast(const std::string& t);
 		void append_fast(const char *c);
 		void append(const OutputString& a);

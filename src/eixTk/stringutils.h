@@ -300,6 +300,20 @@ inline static bool casecontains(const std::string& str, const char *pattern) {
 	return casecontains(str.c_str(), pattern);
 }
 
+/** Check whether char is utf8 first-byte */
+inline bool isutf8firstbyte(char c) {
+	return ((c & 0xC0) != 0x80);
+}
+
+/** Calculate size of utf8 string */
+std::string::size_type utf8size(const std::string& t, std::string::size_type begin, std::string::size_type end);
+inline static std::string::size_type utf8size(const std::string &t, std::string::size_type begin) {
+	return utf8size(t, begin, std::string::npos);
+}
+inline static std::string::size_type utf8size(const std::string &t) {
+	return utf8size(t, 0, std::string::npos);
+}
+
 class StringHash : public WordVec {
 	public:
 		StringHash() : hashing(true), finalized(false) {

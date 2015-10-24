@@ -1,11 +1,4 @@
 
-- Make OutputString UTF8-aware
-Currently UTF8 character length is not  honoured, leading to
-wrong tabular calculation with \C<...>.
-
-- Make German translation of "Available versions:" without spaces
-This is currrently a hack until OutputString is UTF8-aware.
-
 - Finish Russian translation of manpage
 
 - Russian translation of --dump (src/eixrc/defaults.cc in ru.po)

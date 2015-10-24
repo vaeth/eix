@@ -158,7 +158,9 @@ void OutputString::append_smart(char s) {
 			}
 			break;
 		default:
-			++m_size;
+			if(likely(isutf8firstbyte(s))) {
+				++m_size;
+			}
 			break;
 	}
 }
@@ -168,9 +170,8 @@ void OutputString::append_internal(const string& t, string::size_type ts, string
 	for(string::size_type currpos;
 		unlikely((currpos = t.find_first_of("\a\b\n\r\t", lastpos)) != string::npos);
 		lastpos = currpos + 1) {
-		string::size_type diff(currpos - lastpos);
-		s += diff;
-		ts += diff + 1;
+		s += utf8size(t, lastpos, currpos);
+		ts += currpos - lastpos + 1;
 		switch(t[currpos]) {
 			case '\n':
 			case '\r':
@@ -191,7 +192,7 @@ void OutputString::append_internal(const string& t, string::size_type ts, string
 				break;
 		}
 	}
-	m_size = t.size() - lastpos + s;
+	m_size = s + utf8size(t, lastpos);
 	absolute = a;
 }
 

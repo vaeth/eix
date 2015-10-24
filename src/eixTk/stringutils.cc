@@ -603,3 +603,16 @@ bool casecontains(const char *str, const char *pattern) {
 	}
 	return false;
 }
+
+string::size_type utf8size(const string &t, string::size_type begin, string::size_type end) {
+	if(end == string::npos) {
+		end = t.size();
+	}
+	string::size_type len(0);
+	for(string::size_type i(begin); likely(i < end); ++i) {
+		if(likely(isutf8firstbyte(t[i]))) {
+			++len;
+		}
+	}
+	return len;
+}

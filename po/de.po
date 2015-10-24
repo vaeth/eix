@@ -5165,7 +5165,7 @@ msgstr ""
 
 #: src/eixrc/defaults.cc:1874
 msgid "Available versions:"
-msgstr "Verfügbare Versionen:   "
+msgstr "Verfügbare Versionen:"
 
 #: src/eixrc/defaults.cc:1875
 msgid ""
