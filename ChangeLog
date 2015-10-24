@@ -2,10 +2,11 @@
 
 *eix-0.31.2
 	Daniel M. Weeks <dan at danweeks.net>:
-	- Initial implementation for FEATURES=binpkg-multi-instance.
+	- Initial implementation for FEATURES=binpkg-multi-instance
 
 	Martin Väth <martin at mvath.de>:
 	- Fix --disable-nls cleanly
+	- Internationalization and German translation of eix formatstring
 	- Extend support for FEATURES=binpkg-multi-instance: Be stricter in
 	  filename syntax, add further attributes, use new colors
 	- Update documentation for FEATURES=binpkg-multi-instance

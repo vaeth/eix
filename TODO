@@ -1,25 +1,34 @@
 
-- Finish Russian translation of manpage.
+- Make OutputString UTF8-aware
+Currently UTF8 character length is not  honoured, leading to
+wrong tabular calculation with \C<...>.
 
-Things to do perhaps:
+- Make German translation of "Available versions:" without spaces
+This is currrently a hack until OutputString is UTF8-aware.
+
+- Finish Russian translation of manpage
+
 - Russian translation of --dump (src/eixrc/defaults.cc in ru.po)
 
+
 Ambitious tasks which will probably not be implemented:
-- Support for Paludis.
-  Would require rather different mask/keywords handling,
-  in particular in connection with option -T and with overlays;
-  Probably a separated mask handling would have to be implemented to let -T
-  still work.  Moreover, overlay handling - especially for /var/db/pkg -
-  would have to be completely rewritten and in a way which would probably
-  exclude CAREMODE=false and break compatibility with older portage versions
-  which did not store repo_name in /var/db/pkg. On the other hand, the current
-  implementation of these things is a mess anyway, but even users of new
-  portage versions might still have entries without repo_name in /var/db/pkg.
-  Moreover, CAREMODE=false is really important for the speed in typical,
-  i.e. occasional, usage of eix.
-- Full support for USE-Flags.
-  Although initial implementation is not
-  extremely hard, it would require permanent updates, since frequently
-  new and different ways for configuration had been introduced in the
-  previous years, and it does not seem that this will ever reach a "final"
-  state. So I simply refuse to maintain it.
+
+- Support for Paludis
+This would require rather different mask/keywords handling,
+in particular in connection with option -T and with overlays;
+Probably a separated mask handling would have to be implemented to let -T
+still work.  Moreover, overlay handling - especially for /var/db/pkg -
+would have to be completely rewritten and in a way which would probably
+exclude CAREMODE=false and break compatibility with older portage versions
+which did not store repo_name in /var/db/pkg. On the other hand, the current
+implementation of these things is a mess anyway, but even users of new
+portage versions might still have entries without repo_name in /var/db/pkg.
+Moreover, CAREMODE=false is really important for the speed in typical,
+i.e. occasional, usage of eix.
+
+- Full support for USE-Flags
+Although initial implementation is not
+extremely hard, it would require permanent updates, since frequently
+new and different ways for configuration had been introduced in the
+previous years, and it does not seem that this will ever reach a "final"
+state. So I simply refuse to maintain it.
