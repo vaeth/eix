@@ -168,7 +168,9 @@ NORMALIZE_PATH_EXPORT string NORMALIZE_PATH(const char *path, bool resolve, bool
 	return name;
 }
 
-/** Compare whether two (normalized) filenames are identical */
+/**
+Compare whether two (normalized) filenames are identical
+**/
 bool same_filenames(const char *mask, const char *name, bool glob, bool resolve_mask) {
 	string m(normalize_path(mask, resolve_mask, false));
 	string n(normalize_path(name, false, false));
@@ -177,7 +179,9 @@ bool same_filenames(const char *mask, const char *name, bool glob, bool resolve_
 	return (!fnmatch(m.c_str(), n.c_str(), 0));
 }
 
-/** Compare whether (normalized) filename starts with mask */
+/**
+Compare whether (normalized) filename starts with mask
+**/
 bool filename_starts_with(const char *mask, const char *name, bool resolve_mask) {
 	string m(normalize_path(mask, resolve_mask, true));
 	string n(normalize_path(name, false, true));
@@ -187,7 +191,9 @@ bool filename_starts_with(const char *mask, const char *name, bool resolve_mask)
 	return (n.compare(0, m.size(), m) == 0);
 }
 
-/** Return first match in a list of filenames/patterns. */
+/**
+@return first match in a list of filenames/patterns
+**/
 WordVec::const_iterator find_filenames(const WordVec::const_iterator start,
 		const WordVec::const_iterator end, const char *search,
 		bool list_of_patterns, bool resolve_list) {
@@ -199,7 +205,9 @@ WordVec::const_iterator find_filenames(const WordVec::const_iterator start,
 	return end;
 }
 
-/** Test whether filename appears to be a "virtual" overlay */
+/**
+Test whether filename appears to be a "virtual" overlay
+**/
 bool is_virtual(const char *name) {
 	if(*name != '/') {
 		return true;

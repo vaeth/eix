@@ -26,15 +26,17 @@
 #include "eixTk/stringutils.h"
 #include "main/main.h"
 
-// You must define by a wrapper file - one or several of
-//   EIX_BINARY
-//   DIFF_BINARY
-//   UPDATE_BINARY
-//   VERSIONSORT_BINARY
-//   MASKED_BINARY
-//   DROP_PERMISSIONS_BINARY
-// to build the corresponding functionality into the generated binary.
-// If several are selected, main() will select depending on the call name.
+/*
+You must define by a wrapper file - one or several of
+	EIX_BINARY
+	DIFF_BINARY
+	UPDATE_BINARY
+	VERSIONSORT_BINARY
+	MASKED_BINARY
+	DROP_PERMISSIONS_BINARY
+to build the corresponding functionality into the generated binary.
+If several are selected, main() will select depending on the call name.
+*/
 
 #undef USE_BINARY
 #undef BINARY_COLLECTION
@@ -109,13 +111,17 @@ using std::string;
 using std::cerr;
 using std::endl;
 
-/** The name under which we have been called. */
+/**
+The name under which we have been called.
+**/
 const char *program_name;
 
 static void sig_handler(int sig) ATTRIBUTE_SIGNAL ATTRIBUTE_NORETURN;
 static void sanitize_filename(string *s) ATTRIBUTE_NONNULL_;
 
-/** On segfault: show some instructions to help us find the bug. */
+/**
+On segfault: show some instructions to help us find the bug.
+**/
 static void sig_handler(int sig) {
 	if(sig == SIGSEGV)
 		cerr << eix::format(_(
@@ -135,7 +141,9 @@ static void sig_handler(int sig) {
 	exit(EXIT_FAILURE);
 }
 
-/** Cut program path (if there is one) to get only the program name. */
+/**
+Cut program path (if there is one) to get only the program name.
+**/
 static void sanitize_filename(string *s) {
 	for(;;) {
 		string::size_type i(s->find_last_of('/'));

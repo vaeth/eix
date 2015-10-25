@@ -95,10 +95,14 @@ class Database : public File {
 		bool readUChar(eix::UChar *c, std::string *errtext);
 		bool writeUChar(eix::UChar c, std::string *errtext);
 
-		/// Read a nonnegative number (m_Tp must be big enough)
+		/**
+		Read a nonnegative number (m_Tp must be big enough)
+		**/
 		template<typename m_Tp> bool read_num(m_Tp *ret, std::string *errtext) ATTRIBUTE_NONNULL((2));
 
-		/// Write nonnegative number t to fp (undefined behaviour if t < 0)
+		/**
+		Write nonnegative number t to fp (undefined behaviour if t < 0)
+		**/
 		template<typename m_Tp> bool write_num(m_Tp t, std::string *errtext);
 
 		bool read_string(std::string *s, std::string *errtext) ATTRIBUTE_NONNULL((2));

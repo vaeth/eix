@@ -18,43 +18,63 @@
 #include <vector>
 
 
-/// Handles regular expressions.
-// It is normally used within global scope so that a regular expression doesn't
-// have to be compiled with every instance of a class using it.
+/**
+Handle regular expressions.
+It is normally used within global scope so that a regular expression doesn't
+have to be compiled with every instance of a class using it.
+**/
 
 class Regex {
 	public:
-		/// Initalize class.
+		/**
+		Initalize class
+		**/
 		Regex() : m_compiled(false) {
 		}
 
-		/// Initalize and compile regular expression.
+		/**
+		Initalize and compile regular expression
+		**/
 		Regex(const char *regex, int eflags) : m_compiled(false) {
 			compile(regex, eflags);
 		}
 
-		/// Initalize and compile regular expression.
+		/**
+		Initalize and compile regular expression
+		**/
 		explicit Regex(const char *regex) : m_compiled(false) {
 			compile(regex, REG_EXTENDED);
 		}
 
-		/// Free the regular expression.
+		/**
+		Free the regular expression
+		**/
 		void free();
 
 		~Regex() {
 			free();
 		}
 
-		/// Compile a regular expression.
+		/**
+		Compile a regular expression
+		**/
 		void compile(const char *regex, int eflags);
 		void compile(const char *regex) {
 			compile(regex, REG_EXTENDED);
 		}
 
-		/// Does the regular expression match s?
+		/**
+		@arg s string to match.
+		@return true if the regular expression matches
+		**/
 		bool match(const char *s) const ATTRIBUTE_NONNULL_;
 
-		/// Does the regular expression match s? Get beginning/end
+		/**
+		@arg s string to match
+		@arg b beginning of match
+		@arg e end of match
+		@return true if the regular expression matches
+		**/
 		bool match(const char *s, std::string::size_type *b, std::string::size_type *e) const ATTRIBUTE_NONNULL((2));
 
 		bool compiled() const {
@@ -62,15 +82,21 @@ class Regex {
 		}
 
 	protected:
-		/// Gets the internal regular expression structure.
+		/**
+		Get the internal regular expression structure
+		**/
 		const regex_t *get() const {
 			return &m_re;
 		}
 
-		/// The actual regular expression (GNU C Library).
+		/**
+		The actual regular expression (GNU C Library)
+		**/
 		regex_t m_re;
 
-		/// Is the regex already compiled and nonempty?
+		/**
+		Is the regex already compiled and nonempty?
+		**/
 		bool m_compiled;
 };
 

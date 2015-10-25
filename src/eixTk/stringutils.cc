@@ -54,10 +54,11 @@ template<typename T> inline static void split_string_template(T *vec, const stri
 template<typename T> inline static void join_to_string_template(string *s, const T& vec, const string& glue) ATTRIBUTE_NONNULL_;
 
 #ifndef HAVE_STRNDUP
-/* If we don't have strndup, we use our own ..
- * darwin (macos) doesn't have strndup, it's a GNU extension
- * See http://bugs.gentoo.org/show_bug.cgi?id=111912 */
-
+/**
+If we don't have strndup, we use our own ..
+darwin (macos) doesn't have strndup, it's a GNU extension
+See http://bugs.gentoo.org/show_bug.cgi?id=111912
+**/
 char *strndup(const char *s, size_t n) {
 	const char *p(s);
 	while(likely(*p++ && n--)) {
@@ -72,7 +73,9 @@ char *strndup(const char *s, size_t n) {
 }
 #endif /* HAVE_STRNDUP */
 
-/** Check string if it only contains digits. */
+/**
+Check string if it only contains digits.
+**/
 bool is_numeric(const char *str) {
 	for(char c(*str); likely(c != '\0'); c = *(++str)) {
 		if(!isdigit(c, localeC)) {
@@ -82,16 +85,20 @@ bool is_numeric(const char *str) {
 	return true;
 }
 
-/** Add symbol if it is not already the last one */
+/**
+Add symbol if it is not already the last one
+**/
 void optional_append(std::string *s, char symbol) {
 	if(s->empty() || ((*(s->rbegin()) != symbol))) {
 		s->append(1, symbol);
 	}
 }
 
-/** Trim characters on left side of string.
- * @param str String that should be trimmed
- * @param delims characters that should me removed */
+/**
+Trim characters on left side of string.
+@param str String that should be trimmed
+@param delims characters that should me removed
+**/
 void ltrim(std::string *str, const char *delims) {
 	// trim leading whitespace
 	std::string::size_type notwhite(str->find_first_not_of(delims));
@@ -102,9 +109,11 @@ void ltrim(std::string *str, const char *delims) {
 	}
 }
 
-/** Trim characters on right side of string.
- * @param str String that should be trimmed
- * @param delims characters that should me removed */
+/**
+Trim characters on right side of string.
+@param str String that should be trimmed
+@param delims characters that should me removed
+**/
 void rtrim(std::string *str, const char *delims) {
 	// trim trailing whitespace
 	std::string::size_type notwhite(str->find_last_not_of(delims));
@@ -115,17 +124,21 @@ void rtrim(std::string *str, const char *delims) {
 	}
 }
 
-/** Trim characters on left and right side of string.
- * @param str String that should be trimmed
- * @param delims characters that should me removed */
+/**
+Trim characters on left and right side of string.
+@param str String that should be trimmed
+@param delims characters that should me removed
+**/
 void trim(string *str, const char *delims) {
 	ltrim(str, delims);
 	rtrim(str, delims);
 }
 
-/** Trim characters on left and right side of string.
- * @param str String that should be trimmed
- * @param delims characters that should me removed */
+/**
+Trim characters on left and right side of string.
+@param str String that should be trimmed
+@param delims characters that should me removed
+**/
 void trimall(string *str, const char *delims, char c) {
 	string::size_type pos(0);
 	while(unlikely((pos = str->find_first_of(delims, pos)) != string::npos)) {
@@ -144,8 +157,10 @@ void trimall(string *str, const char *delims, char c) {
 	}
 }
 
-/** Check if slot contains a subslot and if yes, split it away.
-    Also turn slot "0" into nothing */
+/**
+Check if slot contains a subslot and if yes, split it away.
+Also turn slot "0" into nothing
+**/
 bool slot_subslot(string *slot, string *subslot) {
 	string::size_type sep(slot->find('/'));
 	if(sep == string::npos) {
@@ -163,8 +178,10 @@ bool slot_subslot(string *slot, string *subslot) {
 	return true;
 }
 
-/** Split full to slot and subslot. Also turn slot "0" into nothing
- * @return true if subslot exists */
+/**
+Split full to slot and subslot. Also turn slot "0" into nothing
+@return true if subslot exists
+**/
 bool slot_subslot(const string& full, string *slot, string *subslot) {
 	string::size_type sep(full.find('/'));
 	if(sep == string::npos) {
@@ -336,25 +353,31 @@ WordVec split_string(const string& str, bool handle_escape, const char *at, bool
 	return vec;
 }
 
-/** Calls split_string() with a vector and then join_to_string().
- * @param source string to split
- * @param dest   result. May be identical to source. */
+/**
+Call split_string() with a vector and then join_to_string().
+@param source string to split
+@param dest   result. May be identical to source.
+**/
 void split_and_join(string *dest, const string& source, const string& glue, bool handle_escape, const char *at, bool ignore_empty) {
 	WordVec vec;
 	split_string(&vec, source, handle_escape, at, ignore_empty);
 	join_to_string(dest, vec, glue);
 }
 
-/** Calls split_string() with a vector and then join_to_string().
- * @param source string to split
- * @return result. */
+/**
+Call split_string() with a vector and then join_to_string().
+@param source string to split
+@return result.
+**/
 string split_and_join_string(const string& source, const string& glue, bool handle_escape, const char *at, bool ignore_empty) {
 	string r;
 	split_and_join(&r, source, glue, handle_escape, at, ignore_empty);
 	return r;
 }
 
-/** Resolve a string of -/+ keywords to a set of actually set keywords */
+/**
+Resolve a string of -/+ keywords to a set of actually set keywords
+**/
 bool resolve_plus_minus(WordSet *s, const string& str, const WordSet *warnignore) {
 	WordVec l;
 	split_string(&l, str);
@@ -562,7 +585,9 @@ const char *first_not_alnum_or_ok(const char *s, const char *ok) {
 	return s;
 }
 
-/** Match str against a lowercase pattern case-insensitively */
+/**
+Match str against a lowercase pattern case-insensitively
+**/
 bool caseequal(const char *str, const char *pattern) {
 	for(char c(*str); c != '\0'; c = *(++str)) {
 		if(tolower(c, localeC) != *pattern) {
@@ -573,7 +598,9 @@ bool caseequal(const char *str, const char *pattern) {
 	return(*pattern == '\0');
 }
 
-/** Subroutine for Knuth-Morris-Pratt algorithm */
+/**
+Subroutine for Knuth-Morris-Pratt algorithm
+**/
 template<typename S, typename T> inline static S calc_table_pos(const vector<S>& table, S pos, const T *pattern, T c) {
 	while(pattern[pos] != c) {
 		if(pos == 0) {
@@ -584,7 +611,9 @@ template<typename S, typename T> inline static S calc_table_pos(const vector<S>&
 	return pos + 1;
 }
 
-/** Check whether str contains a nonempty lowercase pattern case-insensitively */
+/**
+Check whether str contains a nonempty lowercase pattern case-insensitively
+**/
 bool casecontains(const char *str, const char *pattern) {
 	// Knuth-Morris-Pratt algorithm
 	typedef string::size_type IndexType;

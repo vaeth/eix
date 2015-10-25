@@ -28,7 +28,9 @@ using std::vector;
 using std::cerr;
 using std::endl;
 
-/// Free the regular expression.
+/**
+Free the regular expression
+**/
 void Regex::free() {
 	if(m_compiled) {
 		regfree(&m_re);
@@ -36,7 +38,9 @@ void Regex::free() {
 	}
 }
 
-/// Compile a regular expression.
+/**
+Compile a regular expression
+**/
 void Regex::compile(const char *regex, int eflags) {
 	if(unlikely(m_compiled)) {
 		regfree(&m_re);
@@ -56,12 +60,20 @@ void Regex::compile(const char *regex, int eflags) {
 	m_compiled = true;
 }
 
-/// Does the regular expression match s?
+/**
+@arg s string to match.
+@return true if the regular expression matches
+**/
 bool Regex::match(const char *s) const {
 	return (!m_compiled) || (!regexec(get(), s, 0, NULLPTR, 0));
 }
 
-/// Does the regular expression match s? Get beginning/end
+/**
+@arg s string to match
+@arg b beginning of match
+@arg e end of match
+@return true if the regular expression matches
+**/
 bool Regex::match(const char *s, string::size_type *b, string::size_type *e) const {
 	regmatch_t pmatch[1];
 	if(!m_compiled) {

@@ -81,7 +81,9 @@ bool scandir_cc(const string& dir, WordVec *namelist, select_dirent select, bool
 	return true;
 }
 
-/** push_back every line of file into v. */
+/**
+push_back every line of file into v.
+**/
 static bool pushback_lines_file(const char *file, LineVec *v, bool keep_empty, eix::SignedBool keep_comments, string *errtext) {
 	string line;
 	std::ifstream ifstr(file);
@@ -120,10 +122,14 @@ static bool pushback_lines_file(const char *file, LineVec *v, bool keep_empty, e
 	return false;
 }
 
-/** Files excluded for pushback_lines in recursive mode */
+/**
+Files excluded for pushback_lines in recursive mode
+**/
 const char *pushback_lines_exclude[] = { "..", ".", "CVS", "RCS", "SCCS", NULLPTR };
 
-/** push_back every line of file or dir into v. */
+/**
+push_back every line of file or dir into v.
+**/
 bool pushback_lines(const char *file, LineVec *v, bool recursive, bool keep_empty, eix::SignedBool keep_comments, string *errtext) {
 	static int depth(0);
 	WordVec files;
@@ -151,9 +157,11 @@ bool pushback_lines(const char *file, LineVec *v, bool recursive, bool keep_empt
 	}
 }
 
-/** These variables and function are only supposed to be used from
- *  pushback_files. We cannot use a class here, because scandir wants a
- *  "blank" selector-function */
+/**
+These variables and function are only supposed to be used from
+pushback_files. We cannot use a class here, because scandir wants a
+"blank" selector-function
+**/
 static const char **pushback_files_exclude;
 static bool pushback_files_no_hidden;
 static size_t pushback_files_only_type;
@@ -203,16 +211,18 @@ static int pushback_files_selector(SCANDIR_ARG3 dir_entry) {
 	return 0;
 }
 
-/** List of files in directory.
- * Pushed names of file in directory into string-vector if the don't match any
- * char * in given exlude list.
- * @param dir_path Path to directory
- * @param into pointer to WordVec .. files get append here (with full path)
- * @param exclude list of char * that don't need to be put into vector
- * @param only_type: if 1: consider only ordinary files, if 2: consider only dirs, if 3: consider only files or dirs
- * @param no_hidden ignore hidden files
- * @param full_path return full pathnames
- * @return true if everything is ok */
+/**
+List of files in directory.
+Pushed names of file in directory into string-vector if the don't match any
+char * in given exlude list.
+@param dir_path Path to directory
+@param into pointer to WordVec .. files get append here (with full path)
+@param exclude list of char * that don't need to be put into vector
+@param only_type: if 1: consider only ordinary files, if 2: consider only dirs, if 3: consider only files or dirs
+@param no_hidden ignore hidden files
+@param full_path return full pathnames
+@return true if everything is ok
+**/
 bool pushback_files(const string& dir_path, WordVec *into, const char *exclude[], unsigned char only_type, bool no_hidden, bool full_path) {
 	pushback_files_exclude = exclude;
 	pushback_files_no_hidden = no_hidden;
@@ -235,8 +245,10 @@ bool pushback_files(const string& dir_path, WordVec *into, const char *exclude[]
 	return true;
 }
 
-/** Cycle through map using it, until it is it_end, append all values from it
- * to the value with the same key in append_to. */
+/**
+Cycle through map using it, until it is it_end, append all values from it
+to the value with the same key in append_to.
+**/
 void join_map(WordMap *append_to, WordMap::const_iterator it, WordMap::const_iterator it_end) {
 	for(; likely(it != it_end); ++it) {
 		string& to((*append_to)[it->first]);

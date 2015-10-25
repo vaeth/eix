@@ -16,8 +16,10 @@
 #include "eixTk/diagnostics.h"
 #include "eixTk/stringtypes.h"
 
-/// Provide a common look for error-messages for parse-errors in
-/// portage.{mask,keywords,..}.
+/**
+Provide a common look for error-messages for parse-errors in
+portage.{mask,keywords,..}
+**/
 void portage_parse_error(const std::string& file, LineVec::size_type line_nr, const std::string& line, const std::string& errtext);
 
 template<class Iterator> inline static void portage_parse_error(const std::string& file, const Iterator& begin, const Iterator& line, const std::string& errtext);

@@ -24,11 +24,11 @@ using std::vector;
 using std::min;
 
 /**
- * Calculates the Levenshtein distance of two strings
- * @param str_a string a
- * @param str_b string b
- * @return int Levenshtein distance of str_a <> str_b
- */
+Calculates the Levenshtein distance of two strings
+@param str_a string a
+@param str_b string b
+@return int Levenshtein distance of str_a <> str_b
+**/
 Levenshtein get_levenshtein_distance(const char *str_a, const char *str_b) {
 	size_t n(strlen(str_a));
 	size_t m(strlen(str_b));

@@ -26,7 +26,7 @@ class CascadingProfile;
 class EixRc;
 class Version;
 
-/* Files for categories the user defined and categories from the official tree */
+// Files for categories the user defined and categories from the official tree
 #define MAKE_GLOBALS_FILE       "/etc/make.globals"
 #define MAKE_CONF_FILE          "/etc/make.conf"
 #define MAKE_CONF_FILE_NEW      "/etc/portage/make.conf"
@@ -58,10 +58,14 @@ class PortageUserConfig {
 		MaskList<KeywordMask> m_use, m_env, m_license, m_restrict, m_cflags;
 		bool read_use, read_env, read_license, read_restrict, read_cflags;
 
-		/** Your cascading profile, including local settings */
+		/**
+		Your cascading profile, including local settings
+		**/
 		CascadingProfile     *profile;
 
-		/** return true if something was added */
+		/**
+		@return true if something was added
+		**/
 		bool readMasks();
 		bool readKeywords();
 
@@ -78,7 +82,9 @@ class PortageUserConfig {
 
 		void setProfileMasks(Package *p) const ATTRIBUTE_NONNULL_;
 
-		/// @return true if something from /etc/portage/package.* applied and check involves masks
+		/**
+		@return true if something from /etc/portage/package.* applied and check involves masks
+		**/
 		bool setMasks(Package *p, Keywords::Redundant check, bool file_mask_is_profile) const ATTRIBUTE_NONNULL_;
 		bool setMasks(Package *p, Keywords::Redundant check) const ATTRIBUTE_NONNULL_ {
 			return setMasks(p, check, false);
@@ -87,41 +93,53 @@ class PortageUserConfig {
 			return setMasks(p, Keywords::RED_NOTHING);
 		}
 
-		/// @return true if something from /etc/portage/package.* applied and check involves keywords
+		/**
+		@return true if something from /etc/portage/package.* applied and check involves keywords
+		**/
 		bool setKeyflags(Package *p, Keywords::Redundant check) const ATTRIBUTE_NONNULL_;
 		bool setKeyflags(Package *p) const ATTRIBUTE_NONNULL_ {
 			return setKeyflags(p, Keywords::RED_NOTHING);
 		}
 
-		/// @return true if something from /etc/portage/package.use applied
+		/**
+		@return true if something from /etc/portage/package.use applied
+		**/
 		bool CheckUse(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
 			if(check & Keywords::RED_ALL_USE) {
 				return CheckFile(p, USER_USE_FILE, &m_use, &read_use, check & Keywords::RED_DOUBLE_USE, check & Keywords::RED_IN_USE);
 			}
 			return false;
 		}
-		/// @return true if something from /etc/portage/package.env applied
+		/**
+		@return true if something from /etc/portage/package.env applied
+		**/
 		bool CheckEnv(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
 			if(check & Keywords::RED_ALL_ENV) {
 				return CheckFile(p, USER_ENV_FILE, &m_env, &read_env, check & Keywords::RED_DOUBLE_ENV, check & Keywords::RED_IN_ENV);
 			}
 			return false;
 		}
-		/// @return true if something from /etc/portage/package.license applied
+		/**
+		@return true if something from /etc/portage/package.license applied
+		**/
 		bool CheckLicense(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
 			if(check & Keywords::RED_ALL_LICENSE) {
 				return CheckFile(p, USER_LICENSE_FILE, &m_license, &read_license, check & Keywords::RED_DOUBLE_LICENSE, check & Keywords::RED_IN_LICENSE);
 			}
 			return false;
 		}
-		// @return true if something from /etc/portage/package.accept_restrict applied
+		/**
+		@return true if something from /etc/portage/package.accept_restrict applied
+		**/
 		bool CheckAcceptRestrict(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
 			if(check & Keywords::RED_ALL_RESTRICT) {
 				return CheckFile(p, USER_RESTRICT_FILE, &m_restrict, &read_restrict, check & Keywords::RED_DOUBLE_RESTRICT, check & Keywords::RED_IN_RESTRICT);
 			}
 			return false;
 		}
-		/// @return true if something from /etc/portage/package.cflags applied
+		/**
+		@return true if something from /etc/portage/package.cflags applied
+		**/
 		bool CheckCflags(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
 			if(check & Keywords::RED_ALL_CFLAGS) {
 				return CheckFile(p, USER_CFLAGS_FILE, &m_cflags, &read_cflags, check & Keywords::RED_DOUBLE_CFLAGS, check & Keywords::RED_IN_CFLAGS);
@@ -130,8 +148,10 @@ class PortageUserConfig {
 		}
 };
 
-/** Holds Portage's settings, e.g. masks, categories, overlay paths.
- * Reads needed files if content is requested .. so don't worry about initialization :) */
+/**
+Holds Portage's settings, e.g. masks, categories, overlay paths.
+Reads needed files if content is requested .. so don't worry about initialization :)
+**/
 class PortageSettings : public std::map<std::string, std::string> {
 	private:
 		friend class CascadingProfile;
@@ -140,7 +160,11 @@ class PortageSettings : public std::map<std::string, std::string> {
 		typedef WordMap my_map;
 
 		EixRc *settings_rc;
-		WordVec                  m_categories; /**< Vector of all allowed categories. */
+		/**
+		Vector of all allowed categories
+		**/
+		WordVec                  m_categories;
+
 		WordVec                  m_accepted_keywords;
 		WordSet                  m_accepted_keywords_set, m_arch_set,
 		                         m_plain_accepted_keywords_set,
@@ -152,8 +176,10 @@ class PortageSettings : public std::map<std::string, std::string> {
 		typedef std::vector<SetsList> InheritSets;
 		InheritSets parent_sets, children_sets;
 
-		/** One may argue whether reading the settings for the upgrade policy
-		/ * is only a cache, but it makes things simpler if we say so */
+		/**
+		One may argue whether reading the settings for the upgrade policy
+		is only a cache, but it makes things simpler if we say so
+		**/
 		mutable bool know_upgrade_policy, upgrade_policy;
 		mutable MaskList<Mask> upgrade_policy_exceptions;
 
@@ -165,7 +191,9 @@ class PortageSettings : public std::map<std::string, std::string> {
 		bool world_setslist_up_to_date;
 		SetsList world_setslist;
 
-		/** Your cascading profile, excluding local settings */
+		/**
+		Your cascading profile, excluding local settings
+		**/
 		CascadingProfile  *profile;
 
 		void override_by_env(const char **vars) ATTRIBUTE_NONNULL_;
@@ -211,7 +239,9 @@ class PortageSettings : public std::map<std::string, std::string> {
 
 		const char *cstr(const std::string& var) const ATTRIBUTE_PURE;
 
-		/** Read make.globals and make.conf. */
+		/**
+		Read make.globals and make.conf
+		**/
 		void init(EixRc *eixrc, bool getlocal, bool init_world, bool print_profile_paths);
 
 		PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, bool print_profile_paths) {
@@ -222,7 +252,9 @@ class PortageSettings : public std::map<std::string, std::string> {
 			init(eixrc, getlocal, init_world, false);
 		}
 
-		/** Free memory. */
+		/**
+		Free memory
+		**/
 		~PortageSettings();
 
 		std::string resolve_overlay_name(const std::string& path, bool resolve);
@@ -255,8 +287,10 @@ class PortageSettings : public std::map<std::string, std::string> {
 			return &world_sets;
 		}
 
-		/** pushback categories from profiles to vec. Categories may be duplicate.
-		    Result is not cashed, i.e. this should be called only once. */
+		/**
+		pushback categories from profiles to vec. Categories may be duplicate.
+		Result is not cashed, i.e. this should be called only once.
+		**/
 		void pushback_categories(WordVec *vec) ATTRIBUTE_NONNULL_;
 
 		void setMasks(Package *p, bool filemask_is_profile) const ATTRIBUTE_NONNULL_;
@@ -264,7 +298,9 @@ class PortageSettings : public std::map<std::string, std::string> {
 			setMasks(p, false);
 		}
 
-		/// Set stability according to arch or local ACCEPTED_KEYWORDS
+		/**
+		Set stability according to arch or local ACCEPTED_KEYWORDS
+		**/
 		void setKeyflags(Package *pkg, bool use_accepted_keywords) const ATTRIBUTE_NONNULL_;
 
 		void add_name(SetsList *l, const std::string& s, bool recurse) const ATTRIBUTE_NONNULL_;

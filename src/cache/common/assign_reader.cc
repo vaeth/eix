@@ -74,7 +74,9 @@ const char *assign_get_md5sum(const string& filename) {
 	return md5->second.c_str();
 }
 
-/** Read stability and other data from an "assign type" cache file. */
+/**
+Read stability and other data from an "assign type" cache file
+**/
 void assign_get_keywords_slot_iuse_restrict(const string& filename, string *keywords, string *slotname, string *iuse, string *restr, string *props,
 	Depend *dep, BasicCache::ErrorCallback error_callback) {
 	WordMap *cf(get_map_from_cache(filename.c_str()));
@@ -93,7 +95,9 @@ void assign_get_keywords_slot_iuse_restrict(const string& filename, string *keyw
 	}
 }
 
-/** Read an "assign type" cache file. */
+/**
+Read an "assign type" cache file
+**/
 void assign_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback) {
 	WordMap *cf(get_map_from_cache(filename));
 	if(unlikely(cf == NULLPTR)) {

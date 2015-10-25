@@ -33,7 +33,9 @@ const Package::Versioncollects
 	Package::COLLECT_HAVE_MAIN_REPO_KEY,
 	Package::COLLECT_DEFAULT;
 
-/** Check if a package has duplicated versions. */
+/**
+Check if a package has duplicated versions.
+**/
 void Package::checkDuplicates(const Version *version) {
 	if(have_duplicate_versions == DUP_OVERLAYS) {
 		return;
@@ -70,12 +72,15 @@ void Package::collect_iuse(Version *version) {
 	if(version->iuse.empty())
 		return;
 
-	/// collect iuse
+	/**
+	collect iuse
+	**/
 	iuse.insert(version->iuse);
 }
 
-/** Finishes addVersionStart() after the remaining data
-    have been filled */
+/**
+Finishes addVersionStart() after the remaining data have been filled
+**/
 void Package::addVersionFinalize(Version *version) {
 	ExtendedVersion::Overlay key(version->overlay_key);
 
@@ -111,7 +116,9 @@ void Package::addVersionFinalize(Version *version) {
 	m_has_cached_slotlist = m_has_cached_subslots = false;
 }
 
-/** Call this after modifying system or world state of versions */
+/**
+Call this after modifying system or world state of versions
+**/
 void Package::finalize_masks() {
 	local_collects.set(MaskFlags::MASK_NONE);
 	for(iterator i(begin()); likely(i != end()); ++i) {

@@ -35,7 +35,9 @@ class PrintFormat;
 class VarDbPkg;
 template<typename m_Type> class MaskList;
 
-/** Test a package if it matches some criteria. */
+/**
+Test a package if it matches some criteria
+**/
 class PackageTest {
 		friend class MatcherField;
 		friend class MatcherAlgorithm;
@@ -43,25 +45,25 @@ class PackageTest {
 	public:
 		typedef uint32_t MatchField;
 		static CONSTEXPR MatchField
-			NONE          = 0x00000U,  /**< Search in name */
-			NAME          = 0x00001U,  /**< Search in name */
-			DESCRIPTION   = 0x00002U,  /**< Search in description */
-			LICENSE       = 0x00004U,  /**< Search in license */
-			CATEGORY      = 0x00008U,  /**< Search in category */
-			CATEGORY_NAME = 0x00010U,  /**< Search in category/name */
-			HOMEPAGE      = 0x00020U,  /**< Search in homepage */
-			IUSE          = 0x00040U,  /**< Search in iuse */
-			USE_ENABLED   = 0x00080U,  /**< Search in enabled  useflags of installed packages */
-			USE_DISABLED  = 0x00100U,  /**< Search in disabled useflags of installed packages */
-			SLOT          = 0x00200U,  /**< Search in slots */
-			FULLSLOT      = 0x00400U,  /**< Search in full slots */
-			INST_SLOT     = 0x00800U,  /**< Search in installed slots */
-			INST_FULLSLOT = 0x01000U,  /**< Search in installed full slots */
-			SET           = 0x02000U,  /**< Search in sets */
-			DEPEND        = 0x04000U,  /**< Search in DEPEND */
-			RDEPEND       = 0x08000U,  /**< Search in RDEPEND */
-			PDEPEND       = 0x10000U,  /**< Search in PDEPEND */
-			HDEPEND       = 0x20000U,  /**< Search in HDEPEND */
+			NONE          = 0x00000U,  ///< Search in name
+			NAME          = 0x00001U,  ///< Search in name
+			DESCRIPTION   = 0x00002U,  ///< Search in description
+			LICENSE       = 0x00004U,  ///< Search in license
+			CATEGORY      = 0x00008U,  ///< Search in category
+			CATEGORY_NAME = 0x00010U,  ///< Search in category/name
+			HOMEPAGE      = 0x00020U,  ///< Search in homepage
+			IUSE          = 0x00040U,  ///< Search in iuse
+			USE_ENABLED   = 0x00080U,  ///< Search in enabled  useflags of installed packages
+			USE_DISABLED  = 0x00100U,  ///< Search in disabled useflags of installed packages
+			SLOT          = 0x00200U,  ///< Search in slots
+			FULLSLOT      = 0x00400U,  ///< Search in full slots
+			INST_SLOT     = 0x00800U,  ///< Search in installed slots
+			INST_FULLSLOT = 0x01000U,  ///< Search in installed full slots
+			SET           = 0x02000U,  ///< Search in sets
+			DEPEND        = 0x04000U,  ///< Search in DEPEND
+			RDEPEND       = 0x08000U,  ///< Search in RDEPEND
+			PDEPEND       = 0x10000U,  ///< Search in PDEPEND
+			HDEPEND       = 0x20000U,  ///< Search in HDEPEND
 			DEPS          = (DEPEND|RDEPEND|PDEPEND|HDEPEND),
 			ANY           = (NAME|DESCRIPTION|LICENSE|CATEGORY|CATEGORY_NAME|HOMEPAGE|IUSE|USE_ENABLED|USE_DISABLED|SLOT|FULLSLOT|INST_SLOT|INST_FULLSLOT|SET|DEPS);
 
@@ -78,22 +80,24 @@ class PackageTest {
 		typedef uint8_t TestInstalled;
 		static CONSTEXPR TestInstalled
 			INS_NONE        = 0x00U,
-			INS_NONEXISTENT = 0x01U,  /**< Test for nonexistent installed packages */
-			INS_OVERLAY     = 0x02U,  /**< Test for nonexistent overlays of installed packages */
-			INS_MASKED      = 0x04U,  /**< Test for masked installed packages */
+			INS_NONEXISTENT = 0x01U,  ///< Test for nonexistent installed packages
+			INS_OVERLAY     = 0x02U,  ///< Test for nonexistent overlays of installed packages
+			INS_MASKED      = 0x04U,  ///< Test for masked installed packages
 			INS_SOME        = INS_NONEXISTENT|INS_OVERLAY|INS_MASKED;
 
 		typedef uint8_t TestStability;
 		static CONSTEXPR TestStability
 			STABLE_NONE         = 0x00U,
-			STABLE_FULL         = 0x01U,  /**< Test for stable keyword */
-			STABLE_TESTING      = 0x02U,  /**< Test for testing keyword */
-			STABLE_NONMASKED    = 0x04U,  /**< Test for non-masked packages */
-			STABLE_SYSTEM       = 0x08U,  /**< Test for system packages */
-			STABLE_PROFILE      = 0x10U,  /**< Test for stable packages */
+			STABLE_FULL         = 0x01U,  ///< Test for stable keyword
+			STABLE_TESTING      = 0x02U,  ///< Test for testing keyword
+			STABLE_NONMASKED    = 0x04U,  ///< Test for non-masked packages
+			STABLE_SYSTEM       = 0x08U,  ///< Test for system packages
+			STABLE_PROFILE      = 0x10U,  ///< Test for stable packages
 			STABLE_SYSTEMPROFILE = (STABLE_SYSTEM|STABLE_PROFILE);
 
-		/** Set default values. */
+		/**
+		Set default values.
+		**/
 		PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f, const SetStability *stability, const DBHeader *dbheader) ATTRIBUTE_NONNULL_;
 
 		~PackageTest();
@@ -106,16 +110,19 @@ class PackageTest {
 
 		bool match(PackageReader *pkg) const;
 
-		/** Set defaults (e.g. matchfield if unspecified),
-		    calculate needs. */
+		/**
+		Set defaults (e.g. matchfield if unspecified), calculate needs
+		**/
 		void finalize();
 
-		// The constructor of the class *must* set the least restrictive choice.
-		// Since --selected --world must act like --selected, the less restrictive
-		// choice (here --selected) must change the variable unconditionally,
-		// and so the default set in the constructor must have been opposite.
-		// We thus name the variables such that the less restrictive version
-		// corresponds to false/NULLPTR and let the constructor set all to false/NULLPTR.
+		/*
+		The constructor of the class *must* set the least restrictive choice.
+		Since --selected --world must act like --selected, the less restrictive
+		choice (here --selected) must change the variable unconditionally,
+		and so the default set in the constructor must have been opposite.
+		We thus name the variables such that the less restrictive version
+		corresponds to false/NULLPTR and let the constructor set all to false/NULLPTR.
+		*/
 
 		void Installed() {
 			installed = true;
@@ -280,21 +287,35 @@ class PackageTest {
 		static NowarnMaskList *nowarn_list;
 		static void get_nowarn_list();
 
-		/* What to match. */
+		/**
+		What to match
+		**/
 		MatchField field;
-		/** Lookup stuff about installed packages here. */
+		/**
+		Lookup stuff about installed packages here
+		**/
 		VarDbPkg *vardbpkg;
-		/** Check virtual overlays with the aid of this */
+		/**
+		Check virtual overlays with the aid of this
+		**/
 		const PrintFormat *print_format;
-		/** When reading overlay information use this: */
+		/**
+		When reading overlay information use this
+		**/
 		const DBHeader *header;
 
-		/** What we need to read so we can do our testing. */
+		/**
+		What we need to read so we can do our testing
+		**/
 		PackageReader::Attributes need;
-		/** Our string matching algorithm. */
+		/**
+		Our string matching algorithm
+		**/
 		BaseAlgorithm *algorithm;
 
-		/** Other flags for tests */
+		/**
+		Other flags for tests
+		**/
 		bool	overlay, obsolete, upgrade, binary,
 			installed, multi_installed,
 			slotted, multi_slot,
@@ -318,10 +339,14 @@ class PackageTest {
 		MaskList<Mask> *marked_list;
 
 		PortageSettings *portagesettings;
-		/** Lookup stuff about user flags here. */
+		/**
+		Lookup stuff about user flags here
+		**/
 		const SetStability *stability,
 			*stability_local, *stability_nonlocal;
-		/* Test for this redundancy: */
+		/**
+		Test for this redundancy
+		**/
 		Keywords::Redundant redundant_flags;
 		RedAtom first_test, second_test;
 		TestInstalled test_installed;
@@ -342,7 +367,9 @@ class PackageTest {
 			}
 		}
 
-		/** Get the Fetched-value that is required to determine the match */
+		/**
+		Get the Fetched-value that is required to determine the match
+		**/
 		void calculateNeeds();
 
 		bool have_redundant(const Package& p, Keywords::Redundant r, const RedAtom& t) const;

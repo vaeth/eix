@@ -9,9 +9,7 @@
 
 #include <config.h>
 
-/*
- * Everyone wanted something like esync from esearch .. so here it is!
- */
+// Everyone wanted something like esync from esearch .. so here it is!
 
 #include <unistd.h>
 
@@ -115,7 +113,9 @@ enum cli_options {
 };
 
 
-/** Arguments and options. */
+/**
+Arguments and options
+**/
 class EixDiffOptionList : public OptionList {
 	public:
 		EixDiffOptionList();
@@ -179,7 +179,9 @@ class DiffTrees {
 			m_slots(compare_slots), m_separate_deleted(separate_deleted) {
 		}
 
-		/// Diff the trees and run callbacks
+		/**
+		Diff the trees and run callbacks
+		**/
 		void diff(PackageTree *old_tree, PackageTree *new_tree) ATTRIBUTE_NONNULL_ {
 			// Diff every category from the old tree with the category from the new tree
 			for(PackageTree::iterator old_cat(old_tree->begin());
@@ -211,8 +213,10 @@ class DiffTrees {
 			return new_pkg->differ(*old_pkg, m_vardbpkg, m_portage_settings, true, m_only_installed, m_slots);
 		}
 
-		/// Diff two categories and run callbacks.
-		/// Remove already diffed packages from both categories.
+		/**
+		Diff two categories and run callbacks.
+		Remove already diffed packages from both categories.
+		**/
 		void diff_category(Category *old_cat, Category *new_cat) ATTRIBUTE_NONNULL_ {
 			Category::iterator old_pkg(old_cat->begin());
 
@@ -243,7 +247,8 @@ class DiffTrees {
 		}
 };
 
-/* Diff everything from old-tree with the according package from new-tree.
+/*
+ * Diff everything from old-tree with the according package from new-tree.
  * They diff if
  * a) the package does not exist in the new tree :) or
  * b) the new package has a different best-match than the old. */

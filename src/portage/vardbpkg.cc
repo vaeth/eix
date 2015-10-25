@@ -43,8 +43,10 @@ void VarDbPkg::sort_installed(VarDbPkg::InstVecPkg *maping) {
 	}
 }
 
-/** Find installed versions of packet "name" in category "category".
- * @return NULLPTR if not found .. else pointer to vector of versions. */
+/**
+Find installed versions of packet "name" in category "category".
+@return NULLPTR if not found .. else pointer to vector of versions.
+**/
 InstVec *VarDbPkg::getInstalledVector(const string& category, const string& name) {
 	InstVecCat::iterator map_it(installed.find(category));
 	/* Not yet read */
@@ -67,8 +69,10 @@ InstVec *VarDbPkg::getInstalledVector(const string& category, const string& name
 	return &(cat_it->second);
 }
 
-/** Returns true if v is in vec. v=NULLPTR is always in vec.
-    If a serious result is found and r is nonzero, r points to that result */
+/**
+@return true if v is in vec. v=NULLPTR is always in vec.
+If a serious result is found and r is nonzero, r points to that result
+**/
 bool VarDbPkg::isInVec(InstVec *vec, const BasicVersion *v, InstVersion **r) {
 	if(likely(vec != NULLPTR)) {
 		if(unlikely(v == NULLPTR)) {
@@ -100,7 +104,9 @@ eix::SignedBool VarDbPkg::isInstalledVersion(InstVersion **inst, const Package& 
 	return 1;
 }
 
-/** Return matching available version or NULLPTR */
+/**
+@return matching available version or NULLPTR
+**/
 Version *VarDbPkg::getAvailable(const Package& p, InstVersion *v, const DBHeader& header) const {
 	for(Package::const_iterator it(p.begin()); likely(it != p.end()); ++it) {
 		if(BasicVersion::compare(**it, *v) != 0) {
@@ -121,8 +127,10 @@ Version *VarDbPkg::getAvailable(const Package& p, InstVersion *v, const DBHeader
 	return NULLPTR;
 }
 
-/** Returns number of installed versions of this package
- * @param p Check for this Package. */
+/**
+@param p Check for this Package.
+@return number of installed versions of this package
+**/
 InstVec::size_type VarDbPkg::numInstalled(const Package& p) {
 	InstVec *vec(getInstalledVector(p));
 	if(vec == NULLPTR) {
@@ -345,7 +353,9 @@ void VarDbPkg::readDepend(const Package& p, InstVersion *v, const DBHeader& head
 	v->depend.set(depend[0], depend[1], depend[2], depend[3], true);
 }
 
-/** Read category from db-directory. */
+/**
+Read category from db-directory
+**/
 void VarDbPkg::readCategory(const char *category) {
 	/* Pointer to category DIRectory */
 	DIR *dir_category;

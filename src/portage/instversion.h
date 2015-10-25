@@ -18,24 +18,36 @@
 #include "portage/extendedversion.h"
 #include "portage/version.h"
 
-/** InstVersion expands the BasicVersion class by data relevant for vardbpkg */
+/**
+InstVersion expands the BasicVersion class by data relevant for vardbpkg
+**/
 class InstVersion : public ExtendedVersion, public Keywords {
 	public:
-		/** For versions in vardbpkg we might not yet know the slot.
-		    For caching, we mark this here: */
+		/**
+		For versions in vardbpkg we might not yet know the slot.
+		For caching, we mark this here.
+		**/
 		bool know_slot, read_failed;
-		/** Similarly for iuse and usedUse: */
+		/**
+		Similarly for iuse and usedUse
+		**/
 		bool know_use;
-		/** And the same for restricted: */
+		/**
+		And the same for restricted
+		**/
 		bool know_restricted;
-		/** and for deps: */
+		/**
+		and for deps
+		**/
 		bool know_deps;
 
-		time_t instDate;    /**< Installation date according to vardbpkg */
-		WordVec inst_iuse;  /**< Useflags in iuse according to vardbpkg  */
-		WordSet usedUse;    /**< Those useflags in iuse actually used    */
+		time_t instDate;    ///< Installation date according to vardbpkg
+		WordVec inst_iuse;  ///< Useflags in iuse according to vardbpkg
+		WordSet usedUse;    ///< Those useflags in iuse actually used
 
-		/** Similarly for overlay_keys */
+		/**
+		Similarly for overlay_keys
+		**/
 		bool know_overlay, overlay_failed;
 
 		void init() {
@@ -60,7 +72,9 @@ class InstVersion : public ExtendedVersion, public Keywords {
 		static eix::SignedBool compare(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
 };
 
-// Short compare-stuff
+/**
+Short compare-stuff
+**/
 inline static bool operator<(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
 inline static bool operator<(const ExtendedVersion& left, const InstVersion& right) {
 	return InstVersion::compare(left, right) < 0;

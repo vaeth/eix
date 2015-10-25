@@ -20,7 +20,9 @@
 class Package;
 class matchtree;
 
-/** That's how every Algorithm will look like. */
+/**
+That's how every algorithm will look like.
+**/
 class BaseAlgorithm {
 		friend class matchtree;
 	protected:
@@ -38,7 +40,9 @@ class BaseAlgorithm {
 		virtual bool operator()(const char *s, Package *p) ATTRIBUTE_NONNULL((2)) = 0;
 };
 
-/** Use regex to test strings for a match. */
+/**
+Use regex to test strings for a match.
+**/
 class RegexAlgorithm : public BaseAlgorithm {
 	protected:
 		Regex re;
@@ -62,13 +66,17 @@ class RegexAlgorithm : public BaseAlgorithm {
 		}
 };
 
-/** exact string matching */
+/**
+exact string matching
+**/
 class ExactAlgorithm : public BaseAlgorithm {
 	public:
 		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
 };
 
-/** substring matching */
+/**
+substring matching
+**/
 class SubstringAlgorithm : public BaseAlgorithm {
 	public:
 		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2)) {
@@ -77,27 +85,35 @@ class SubstringAlgorithm : public BaseAlgorithm {
 		}
 };
 
-/** begin-of-string matching */
+/**
+begin-of-string matching
+**/
 class BeginAlgorithm : public BaseAlgorithm {
 	public:
 		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
 };
 
-/** end-of-string matching */
+/**
+end-of-string matching
+**/
 class EndAlgorithm : public BaseAlgorithm {
 	public:
 		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
 };
 
-/** Store distance to searchstring in Package and sort out packages with a
- * higher distance than max_levenshteindistance. */
+/**
+Store distance to searchstring in Package and sort out packages with a
+higher distance than max_levenshteindistance.
+**/
 class FuzzyAlgorithm : public BaseAlgorithm {
 	protected:
 		Levenshtein max_levenshteindistance;
 
-		/** FIXME: We need to have a package->levenshtein mapping that we can
-		 * access from the static FuzzyAlgorithm::compare.
-		 * I really don't know how to do this .. */
+		/**
+		FIXME: We need to have a package->levenshtein mapping that we can
+		access from the static FuzzyAlgorithm::compare.
+		I really don't know how to do this ..
+		**/
 		static std::map<std::string, Levenshtein> *levenshtein_map;
 
 	public:
@@ -115,7 +131,9 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 		static void init_static();
 };
 
-/** Use fnmatch to test if the package matches. */
+/**
+Use fnmatch to test if the package matches.
+**/
 class PatternAlgorithm : public BaseAlgorithm {
 	public:
 		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2));

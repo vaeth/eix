@@ -32,14 +32,18 @@ class Package;
 //                              ONLY ~app-shells/bash-3
 //  =app-shells/bash-3*      <- OK
 
-/** A class for parsing masking definitions
- * like those in the profile and /etc/portage/package.(un)mask */
+/**
+A class for parsing masking definitions like those in the profile and
+/etc/portage/package.(un)mask
+**/
 class Mask : public BasicVersion {
 	public:
-		/** Describes the type of a mask.
-		 * Nothing specific, entry in "packages"-file but not in
-		 * system-profile, entry in packages-file and in system-profile,
-		 * entry in package.mask, entry in package.unmask */
+		/**
+		Describes the type of a mask.
+		Nothing specific, entry in "packages"-file but not in
+		system-profile, entry in packages-file and in system-profile,
+		entry in package.mask, entry in package.unmask
+		**/
 		typedef enum {
 			maskTypeNone, maskInProfile,
 			maskInSystem, maskInWorld,
@@ -47,7 +51,9 @@ class Mask : public BasicVersion {
 			maskPseudomask, maskMark, maskMarkOptional
 		} Type;
 
-		/** Describes the comparison operator before the mask. */
+		/**
+		Describes the comparison operator before the mask.
+		**/
 		typedef enum {
 			maskOpAll, maskOpEqual,
 			maskOpLess, maskOpLessEqual,
@@ -60,32 +66,36 @@ class Mask : public BasicVersion {
 		StringList comments;
 
 	protected:
-		Operator m_operator; /**< Operator for mask. */
-		Type m_type;   /**< Mask type for this mask. */
+		Operator m_operator; ///< Operator for mask.
+		Type m_type;   ///< Mask type for this mask.
 
-		std::string m_category; /**< category */
-		std::string m_name;     /**< package name */
+		std::string m_category; ///< category
+		std::string m_name;     ///< package name
 		std::string m_slotname;
 		std::string m_subslotname;
 		std::string m_reponame;
-		std::string m_glob;     /**< the glob string for MaskOpGlob */
-		bool m_test_slot;       /**< must we match a slot? */
-		bool m_test_subslot;    /**< must we match a subslot? */
-		bool m_test_reponame;   /**< must we match a reponame? */
+		std::string m_glob;     ///< the glob string for MaskOpGlob
+		bool m_test_slot;       ///< must we match a slot?
+		bool m_test_subslot;    ///< must we match a subslot?
+		bool m_test_reponame;   ///< must we match a reponame?
 
 
-		/** Tests if the mask applies to a Version.
-		 * @param ev test this version
-		 * @return true if applies. */
+		/**
+		Test if the mask applies to a Version.
+		@param ev test this version
+		@return true if applies.
+		**/
 		bool test(const ExtendedVersion *ev) const ATTRIBUTE_NONNULL_;
 
 	public:
 		typedef eix::ptr_list<Version> Matches;
 
-		/** Sets the stability & masked members of ve according to the mask
-		 * @param ve         Version instance to be set
-		 * @param do_test    set conditionally or unconditionally
-		 * @param check      check these for changes */
+		/**
+		Set the stability & masked members of ve according to the mask
+		@param ve         Version instance to be set
+		@param do_test    set conditionally or unconditionally
+		@param check      check these for changes
+		**/
 		void apply(Version *ve, bool do_test, Keywords::Redundant check) const ATTRIBUTE_NONNULL_;
 
 		explicit Mask(Type type) :
@@ -95,11 +105,13 @@ class Mask : public BasicVersion {
 			m_test_reponame(false) {
 		}
 
-		/** split a "mask string" into its components
-		 * @return whether/which error occurred
-		 * @param str_mask the string to be dissected
-		 * @param errtext contains error message if not 0 and not parseOK
-		 * @param accept_garbage passed to parseVersion if appropriate */
+		/**
+		split a "mask string" into its components
+		@return whether/which error occurred
+		@param str_mask the string to be dissected
+		@param errtext contains error message if not 0 and not parseOK
+		@param accept_garbage passed to parseVersion if appropriate
+		**/
 		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, eix::SignedBool accept_garbage, const char *default_repo) ATTRIBUTE_NONNULL((2, 3));
 		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, eix::SignedBool accept_garbage) ATTRIBUTE_NONNULL_ {
 			return parseMask(str, errtext, accept_garbage, NULLPTR);
@@ -126,9 +138,11 @@ class Mask : public BasicVersion {
 			return m_type;
 		}
 
-		/** Sets the stability members of all version in package according to the mask.
-		 * @param pkg            package you want tested
-		 * @param check          Redundancy checks which should apply */
+		/**
+		Set the stability members of all version in package according to the mask.
+		@param pkg            package you want tested
+		@param check          Redundancy checks which should apply
+		**/
 		void checkMask(Package *pkg, Keywords::Redundant check) const ATTRIBUTE_NONNULL_;
 		void checkMask(Package *pkg) const ATTRIBUTE_NONNULL_ {
 			checkMask(pkg, Keywords::RED_NOTHING);

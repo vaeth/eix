@@ -102,8 +102,9 @@ class IUseSet {
 		void insert(const IUse& iuse);
 };
 
-/** Version expands the BasicVersion class by data relevant for versions in tree/overlays.
- */
+/**
+Version expands the BasicVersion class by data relevant for versions in tree/overlays.
+**/
 class Version : public ExtendedVersion, public Keywords {
 	public:
 		typedef std::set<StringList> Reasons;
@@ -231,8 +232,10 @@ class Version : public ExtendedVersion, public Keywords {
 			effective_keywords.clear();
 		}
 
-		/** Calls must be initialized with reset_effective_keywords().
-		    Call save_effective_keywords only after the last modify command! */
+		/**
+		Calls must be initialized with reset_effective_keywords().
+		Call save_effective_keywords only after the last modify command!
+		**/
 		void modify_effective_keywords(const std::string& modify_keys);
 
 		void add_accepted_keywords(const std::string& accepted_keywords);

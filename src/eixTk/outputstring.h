@@ -17,15 +17,22 @@ class OutputString {
 	private:
 		typedef std::vector<WordSize> InsertType;
 		std::string m_string;
-		WordSize m_size;  // apparent size (within the line in absolute mode)
+		/**
+		apparent size (within the line in absolute mode)
+		**/
+		WordSize m_size;
 		InsertType m_insert;
-		bool absolute;  // absolute means string is considered as linestart
+		/**
+		absolute means string is known to start from beginning of line
+		**/
+		bool absolute;
 
 		/**
-		 * Append std::string to OutputString
-		 * @param ts true/physical size of the current OutputString
-		 * @param s  apparent/optical size within the line
-		 * @param a  are we currently in absolute mode? */
+		Append std::string to OutputString
+		@param ts true/physical size of the current OutputString
+		@param s  apparent/optical size within the line
+		@param a  are we currently in absolute mode?
+		**/
 		void append_internal(const std::string& t, WordSize ts, WordSize s, bool a);
 
 		void append_internal(const std::string& t) {
@@ -48,6 +55,9 @@ class OutputString {
 			m_string(s.m_string), m_size(s.m_size), m_insert(s.m_insert), absolute(s.absolute) {
 		}
 
+		/**
+		@arg s is the size in visible characters
+		**/
 		OutputString(const std::string& t, WordSize s) :
 			m_string(t), m_size(s), absolute(false) {
 		}
@@ -72,25 +82,46 @@ class OutputString {
 
 		bool is_equal(const OutputString& t) const ATTRIBUTE_PURE;
 		void assign(const OutputString& t);
+		/**
+		@arg s is the size in visible characters
+		**/
 		void assign(const std::string& t, WordSize s);
 		void assign_smart(const std::string& t);
 		void assign_smart(const char *s);
 
-		// assign_fast must not be used with utf8 or tabs/newlines
+		/**
+		assign_fast must not be used with utf8 or tabs/newlines
+		**/
 		void assign_fast(const std::string& t);
+		/**
+		assign_fast must not be used with utf8 or tabs/newlines
+		**/
 		void assign_fast(const char *s);
+		/**
+		assign_fast must not be used with utf8 or tabs/newlines
+		**/
 		void assign_fast(const char s);
 		void clear();
 		void set_one();
 		void append_smart(char s);
-		// append_fast must not be used with utf8 or tabs/newlines
+		/**
+		append_fast must not be used with utf8 or tabs/newlines
+		**/
 		void append_fast(char s);
 		void append_column(WordSize s);
 		void append_escape(const char **pos) ATTRIBUTE_NONNULL_;
+		/**
+		@arg s is the size in visible characters
+		**/
 		void append(const std::string& t, WordSize s);
 		void append_smart(const std::string& t);
-		// append_fast must not be used with utf8 or tabs/newlines
+		/**
+		append_fast must not be used with utf8 or tabs/newlines
+		**/
 		void append_fast(const std::string& t);
+		/**
+		append_fast must not be used with utf8 or tabs/newlines
+		**/
 		void append_fast(const char *c);
 		void append(const OutputString& a);
 		void print(std::string *dest, WordSize *s) const ATTRIBUTE_NONNULL_;

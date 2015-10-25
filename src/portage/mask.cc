@@ -67,11 +67,13 @@ static const struct OperatorTable {
 	}
 };
 
-/** split a "mask string" into its components
- * @return whether/which error occurred
- * @param str_mask the string to be dissected
- * @param errtext contains error message if not 0 and not parseOK
- * @param accept_garbage passed to parseVersion if appropriate */
+/**
+Split a "mask string" into its components
+@return whether/which error occurred
+@param str_mask the string to be dissected
+@param errtext contains error message if not 0 and not parseOK
+@param accept_garbage passed to parseVersion if appropriate
+**/
 BasicVersion::ParseResult Mask::parseMask(const char *str, string *errtext, eix::SignedBool accept_garbage, const char *default_repo) {
 	// determine comparison operator
 	if(unlikely(m_type == maskPseudomask)) {
@@ -268,8 +270,10 @@ void Mask::to_package(Package *p) const {
 	p->addVersion(v);
 }
 
-/** Tests if the mask applies to a Version.
- * @return true if applies. */
+/**
+Test if the mask applies to a Version.
+@return true if applies.
+**/
 bool Mask::test(const ExtendedVersion *ev) const {
 	if(m_test_slot) {
 		if(m_slotname != ev->slotname) {
@@ -368,9 +372,11 @@ bool Mask::have_match(const Package& pkg) const {
 	return false;
 }
 
-/** Sets the stability members of all version in package according to the mask.
- * @param pkg            package you want tested
- * @param check          Redundancy checks which should apply */
+/**
+Set the stability members of all version in package according to the mask.
+@param pkg            package you want tested
+@param check          Redundancy checks which should apply
+**/
 void Mask::checkMask(Package *pkg, Keywords::Redundant check) const {
 	for(Package::iterator i(pkg->begin()); likely(i != pkg->end()); ++i) {
 		apply(*i, true, check);
@@ -414,10 +420,12 @@ bool Mask::ismatch(const Package& pkg) const {
 	return false;
 }
 
-/** Sets the stability & masked members of ve according to the mask
- * @param ve         Version instance to be set
- * @param do_test    set conditionally or unconditionally
- * @param check      check these for changes */
+/**
+Set the stability & masked members of ve according to the mask
+@param ve         Version instance to be set
+@param do_test    set conditionally or unconditionally
+@param check      check these for changes
+**/
 void Mask::apply(Version *ve, bool do_test, Keywords::Redundant check) const {
 	switch(m_type) {
 		case maskUnmask:

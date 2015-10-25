@@ -30,12 +30,18 @@ class SqliteCache : public BasicCache {
 		TrueIndexMap trueindex;
 		int maxindex;
 
-		/** This variable is actually the this-parameter for our sqlite_callback function.
-		    Note that this makes readCategories non-reentrant. */
+		/**
+		This variable is actually the this-parameter for our sqlite_callback function.
+		Note that this makes readCategories non-reentrant.
+		**/
 		static SqliteCache *callback_arg;
-		/** Our sqlite_callback() will set this to true in case of an error. */
+		/**
+		Our sqlite_callback() will set this to true in case of an error
+		**/
 		bool sqlite_callback_error;
-		/** Parameter passing to sqlite_callback() */
+		/**
+		Parameter passing to sqlite_callback()
+		**/
 		PackageTree *packagetree;
 		Category *category;
 		const char *cat_name;

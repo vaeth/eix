@@ -43,7 +43,9 @@ static bool skip_lines(const eix::TinyUnsigned nr, ifstream *is, const string& f
 	return true;
 }
 
-/** Read the keywords and slot from a flat cache file. */
+/**
+Read the keywords and slot from a flat cache file
+**/
 void flat_get_keywords_slot_iuse_restrict(const string& filename, string *keywords, string *slotname, string *iuse, string *restr, string *props, Depend *dep, BasicCache::ErrorCallback error_callback) {
 	ifstream is(filename.c_str());
 	if(!is.is_open()) {
@@ -82,7 +84,9 @@ void flat_get_keywords_slot_iuse_restrict(const string& filename, string *keywor
 	is.close();
 }
 
-/** Read a flat cache file. */
+/**
+Read a flat cache file
+**/
 void flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback) {
 	ifstream is(filename);
 	if(!is.is_open()) {

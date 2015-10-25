@@ -24,11 +24,12 @@ template<typename m_Type> class MaskList;
 
 void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, MaskList<Mask> **marked_list, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
 
-/*	If you want to add a new parameter to eix just insert a line into
- *	long_options. If you only want a longopt, add a new define.
- *
- *	-- ebeinroth
- */
+/*
+	If you want to add a new parameter to eix just insert a line into
+	long_options. If you only want a longopt, add a new define.
+
+	-- ebeinroth
+*/
 
 enum cli_options {
 	O_FMT = 256,

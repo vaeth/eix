@@ -35,24 +35,30 @@ using std::stringstream;
 const string::size_type BasicPart::max_type;
 
 eix::SignedBool BasicPart::compare(const BasicPart& left, const BasicPart& right) {
-	// There is some documentation online at http://dev.gentoo.org/~spb/pms.pdf,
-	// but I suppose this is not yet sanctioned by gentoo.
-	// We are going to follow the text from section 2.3 "Version Comparison" here.
+	/*
+	There is some documentation online at http://dev.gentoo.org/~spb/pms.pdf,
+	but I suppose this is not yet sanctioned by gentoo.
+	We are going to follow the text from section 2.3 "Version Comparison" here
+	*/
 	eix::SignedBool ret(eix::default_compare(left.parttype, right.parttype));
 	if(ret != 0) {
 		return ret;
 	}
 
-	// We can short-circuit numeric_compare(..) and cutting of trailing 0
-	// by using string comparison if both parts have the same length.
+	/*
+	We can short-circuit numeric_compare(..) and cutting of trailing 0
+	by using string comparison if both parts have the same length.
+	*/
 	if(left.partcontent.size() == right.partcontent.size()) {
 		return eix::toSignedBool(left.partcontent.compare(right.partcontent));
 	}
 	if(left.parttype == BasicPart::primary) {
-		// "[..] if a component has a leading zero, any trailing zeroes in that
-		//  component are stripped (if this makes the component empty, proceed
-		//  as if it were 0 instead), and the components are compared using a
-		//  stringwise comparison."
+		/*
+		"[..] if a component has a leading zero, any trailing zeroes in that
+		component are stripped (if this makes the component empty, proceed
+		as if it were 0 instead), and the components are compared using a
+		stringwise comparison."
+		*/
 
 		if((left.partcontent)[0] == '0' || (right.partcontent)[0] == '0') {
 			string l1(left.partcontent);
@@ -61,23 +67,28 @@ eix::SignedBool BasicPart::compare(const BasicPart& left, const BasicPart& right
 			rtrim(&l1, "0");
 			rtrim(&l2, "0");
 
-			/* No need to check if stripping zeros makes the component empty,
-			 * since that only happens for components that _only_ contain zeros
-			 * and comparing to "0" or "" will yield the same result - every
-			 * other possible value is bigger.
-			 */
+			/*
+			No need to check if stripping zeros makes the component empty,
+			since that only happens for components that _only_ contain zeros
+			and comparing to "0" or "" will yield the same result - every
+			other possible value is bigger.
+			*/
 
 			return eix::toSignedBool(l1.compare(l2));
 		}
-		// "If neither component has a leading zero, components are compared
-		//  using strict integer comparison."
+		/*
+		"If neither component has a leading zero, components are compared
+		using strict integer comparison."
+		*/
 	} else if(left.parttype == BasicPart::garbage) {
 		// garbage gets string comparison.
 		return eix::toSignedBool(left.partcontent.compare(left.partcontent));
 	}
 
-	// "The first component of the number part is compared using strict integer
-	//  comparison."
+	/*
+	"The first component of the number part is compared using strict integer
+	comparison."
+	*/
 	return eix::numeric_compare(left.partcontent, right.partcontent);
 }
 

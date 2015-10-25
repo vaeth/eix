@@ -165,8 +165,10 @@ void EbuildExec::delete_cachefile() {
 	cachefile.clear();
 }
 
-/// This is a subfunction of make_cachefile() to ensure that make_cachefile()
-/// has no local variable when vfork() is called.
+/**
+This is a subfunction of make_cachefile() to ensure that make_cachefile()
+has no local variable when vfork() is called.
+**/
 void EbuildExec::calc_environment(const char *name, const string& dir, const Package& package, const Version& version, const string& eapi) {
 	c_env = NULLPTR;
 	envstrings = NULLPTR;

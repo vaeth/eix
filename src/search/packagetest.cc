@@ -296,8 +296,10 @@ PackageTest::MatchAlgorithm PackageTest::name2algorithm(const string& p) {
 	return it->second;
 }
 
-/// It is more convenient to make this a macro than a template,
-/// because otherwise we would have to pass initialization functions
+/**
+It is more convenient to make this a macro than a template,
+because otherwise we would have to pass initialization functions
+**/
 
 #define MatcherClassDefinition(N, T, f, d) \
 class N { \
@@ -417,7 +419,9 @@ void PackageTest::finalize() {
 	calculateNeeds();
 }
 
-/** Return true if pkg matches test. */
+/**
+@return true if pkg matches test
+**/
 bool PackageTest::stringMatch(Package *pkg) const {
 	if((((field & NAME) != NONE) && (*algorithm)(pkg->name.c_str(), pkg))
 	|| (((field & DESCRIPTION) != NONE)  && (*algorithm)(pkg->desc.c_str(), pkg))
@@ -716,34 +720,32 @@ bool PackageTest::match(PackageReader *pkg) const {
 
 	pkg->read(need);
 
-	/**
-	   Test the local options.
-	   Each test must start with get_p(&p, pkg) to get p; remember to modify
-	   "need" in CalculateNeeds() to ensure that you will have all
-	   required data in the (possibly only partly filled) package "p".
-	   If a test fails, "return false";
-	   if a test succeeds, pass to the next test,
-	   i.e. within the same Matchatom, we always have "-a" concatenation.
+	/* Test the local options.
+	Each test must start with get_p(&p, pkg) to get p; remember to modify
+	need" in CalculateNeeds() to ensure that you will have all
+	required data in the (possibly only partly filled) package "p".
+	If a test fails, "return false";
+	if a test succeeds, pass to the next test,
+	i.e. within the same Matchatom, we always have "-a" concatenation.
 
-	   If a test needs that keywords/mask are set correctly,
-	   recall that they are not set in the database.
-	   You have to do three things in such a case.
-	   (Note that these are time consuming, so do other tests first,
-	   if possible.)
-	   1. Place your test after the "obsolete" tests.
-	      These need a special treatment, since they certainly must
-	      calculate StabilityLocal. It might save time to use their
-	      results (implicitly in step 2.)
-	   2. Call one of
+	If a test needs that keywords/mask are set correctly,
+	recall that they are not set in the database.
+	You have to do three things in such a case.
+	(Note that these are time consuming, so do other tests first,
+	if possible.)
+	1. Place your test after the "obsolete" tests.
+	   These need a special treatment, since they certainly must
+	   calculate StabilityLocal. It might save time to use their
+	   results (implicitly in step 2.)
+	2. Call one of
 		StabilityDefault(p)
 		StabilityLocal(p)
 		StabilityNonlocal(p)
-	      depending on which type of stability you want.
-	      (Default means according to LOCAL_PORTAGE_CONFIG,
-	      Nonlocal means as with LOCAL_PORTAGE_CONFIG=false)
-	   3. Once more: remember to modify "need" in CalculateNeeds() to
-	      ensure the versions really have been read for the package.
-	*/
+	   depending on which type of stability you want.
+	   (Default means according to LOCAL_PORTAGE_CONFIG,
+	   Nonlocal means as with LOCAL_PORTAGE_CONFIG=false)
+	3. Once more: remember to modify "need" in CalculateNeeds() to
+	   ensure the versions really have been read for the package. */
 
 	if(unlikely(algorithm != NULLPTR)) {
 		get_p(&p, pkg);

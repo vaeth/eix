@@ -108,7 +108,9 @@ static bool grab_setmasks(const char *file, MaskList<SetMask> *masklist, SetsInd
 }
 
 
-/** Keys that should accumulate their content rathern then replace. */
+/**
+Keys that should accumulate their content rathern then replace
+**/
 static const char *default_accumulating_keys[] = {
 	"USE",
 	"USE_EXPAND*",
@@ -118,7 +120,9 @@ static const char *default_accumulating_keys[] = {
 	NULLPTR
 };
 
-/** Environment variables which should take effect before reading profiles. */
+/**
+Environment variables which should take effect before reading profiles
+**/
 static const char *test_in_env_early[] = {
 	"PORTAGE_PROFILE",
 	"PORTAGE_REPOSITORIES",
@@ -127,7 +131,9 @@ static const char *test_in_env_early[] = {
 	NULLPTR
 };
 
-/** Environment variables which should add/override all other settings. */
+/**
+Environment variables which should add/override all other settings
+**/
 static const char *test_in_env_late[] = {
 	"USE",
 	"USE_EXPAND",
@@ -189,7 +195,9 @@ void PortageSettings::add_repo_vector(const WordVec& v, bool resolve) {
 	}
 }
 
-/** Read make.globals and make.conf. */
+/**
+Read make.globals and make.conf
+**/
 void PortageSettings::init(EixRc *eixrc, bool getlocal, bool init_world, bool print_profile_paths) {
 	settings_rc = eixrc;
 #ifndef HAVE_SETENV
@@ -585,7 +593,9 @@ void PortageSettings::read_local_sets(const WordVec& dir_list) {
 
 	// Pushback all set names into set_names, setting dir_size appropriately.
 	vector<WordVec::size_type> dir_size(dir_list.size());
-	/// all_set_names is used as a cache to find duplicate set names faster
+	/**
+	all_set_names is used as a cache to find duplicate set names faster
+	**/
 	WordSet all_set_names;
 	for(WordVec::size_type i(0); likely(i != dir_list.size()); ++i) {
 		WordVec temporary_set_names;
@@ -676,9 +686,11 @@ bool PortageSettings::calc_allow_upgrade_slots(const Package *p) const {
 	return upgrade_policy;
 }
 
-/** Verify whether categories in vec, starting at index for file name are ok.
-    Give an error if not and throw out inappropriate ones.
-    Return index for next push_back */
+/**
+Verify whether categories in vec, starting at index for file name are ok.
+Give an error if not and throw out inappropriate ones.
+@return index for next push_back
+**/
 static WordVec::size_type verify_categories(const string &name, WordVec *vec, WordVec::size_type index) {
 	while(index < vec->size()) {
 		string &s = (*vec)[index];
@@ -709,12 +721,16 @@ GCC_DIAG_ON(sign-conversion)
 	return index;
 }
 
-/** pushback categories from profiles to vec. Categories may be duplicate.
-    Result is not cashed, i.e. this should be called only once. */
+/**
+pushback categories from profiles to vec. Categories may be duplicate.
+Result is not cashed, i.e. this should be called only once
+**/
 void PortageSettings::pushback_categories(WordVec *vec) {
 	WordVec::size_type index(vec->size());
-	/* Merge categories from /etc/portage/categories and
-	 * portdir/profile/categories */
+	/**
+	Merge categories from /etc/portage/categories and
+	portdir/profile/categories
+	**/
 	string filename(m_eprefixconf + USER_CATEGORIES_FILE);
 	pushback_lines(filename.c_str(), vec);
 	index = verify_categories(filename, vec, index);
@@ -820,7 +836,9 @@ inline static void increase(char *s) {
 	}
 }
 
-/// @return true if some mask from list applied
+/**
+@return true if some mask from list applied
+**/
 bool PortageUserConfig::CheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const {
 	bool rvalue(false);
 	map<Version*, char> counter;
@@ -1000,7 +1018,9 @@ static ArchUsed apply_keyword(const string& key, const WordSet& keywords_set, Ke
 	return ARCH_ALIENSTABLE;
 }
 
-/// @return true if something from /etc/portage/package.* applied and check involves keywords
+/**
+@return true if something from /etc/portage/package.* applied and check involves keywords
+**/
 bool PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const {
 	if((check & Keywords::RED_ALL_KEYWORDS) == Keywords::RED_NOTHING) {
 		if(p->restore_keyflags(Version::SAVEKEY_USER))
@@ -1228,7 +1248,9 @@ void PortageUserConfig::pushback_set_accepted_keywords(WordVec *result, const Ve
 	}
 }
 
-/// Set stability according to arch or local ACCEPT_KEYWORDS
+/**
+Set stability according to arch or local ACCEPT_KEYWORDS
+**/
 void PortageSettings::setKeyflags(Package *p, bool use_accepted_keywords) const {
 	const WordSet *accept_set;
 	Version::SavedKeyIndex ind;
@@ -1283,7 +1305,9 @@ void PortageUserConfig::setProfileMasks(Package *p) const {
 	p->save_maskflags(Version::SAVEMASK_USERPROFILE);
 }
 
-/// @return true if something from /etc/portage/package.* applied and check involves masks
+/**
+@return true if something from /etc/portage/package.* applied and check involves masks
+**/
 bool PortageUserConfig::setMasks(Package *p, Keywords::Redundant check, bool file_mask_is_profile) const {
 	Version::SavedMaskIndex ind(file_mask_is_profile ?
 		Version::SAVEMASK_USERFILE : Version::SAVEMASK_USER);

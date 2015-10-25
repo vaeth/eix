@@ -96,22 +96,28 @@ class EixRc {
 
 		void modify_value(std::string *value, const std::string& key);
 
-		/** This will fetch a variable which was not set in the
-		    defaults (or its modification or its delayed references),
-		    i.e. it must be fetched from the config or ENV setting.
-		    Of course, it will be resolved for delayed substitutions,
-		    and delayed references are also be added similarly. */
+		/**
+		This will fetch a variable which was not set in the
+		defaults (or its modification or its delayed references),
+		i.e. it must be fetched from the config or ENV setting.
+		Of course, it will be resolved for delayed substitutions,
+		and delayed references are also be added similarly.
+		**/
 		void add_later_variable(const std::string& key);
 
 		void resolve_delayed(const std::string& key, std::set<std::string> *has_delayed) ATTRIBUTE_NONNULL_;
 		std::string *resolve_delayed_recurse(const std::string& key, std::set<std::string> *visited, std::set<std::string> *has_delayed, const char **errtext, std::string *errvar) ATTRIBUTE_NONNULL_;
 
-		/** Create defaults and main_map with all variables
-		   (including all values required by delayed references).
-		   @arg has_delayed is initialized to corresponding keys */
+		/**
+		Create defaults and main_map with all variables
+		(including all values required by delayed references).
+		@arg has_delayed is initialized to corresponding keys
+		**/
 		void read_undelayed(std::set<std::string> *has_delayed) ATTRIBUTE_NONNULL_;
-		/** Recursively join key and its delayed references to
-		    main_map and default; set has_delayed if appropriate */
+		/**
+		Recursively join key and its delayed references to
+		main_map and default; set has_delayed if appropriate
+		**/
 		void join_key(const std::string& key, std::set<std::string> *has_delayed, bool add_top_to_defaults, const std::set<std::string> *exclude_defaults) ATTRIBUTE_NONNULL((3));
 		void join_key_rec(const std::string& key, const std::string& val, std::set<std::string> *has_delayed, const std::set<std::string> *exclude_defaults) ATTRIBUTE_NONNULL((4));
 		void join_key_if_new(const std::string& key, std::set<std::string> *has_delayed, const std::set<std::string> *exclude_defaults) ATTRIBUTE_NONNULL((3));

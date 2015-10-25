@@ -47,9 +47,10 @@ using std::cout;
 
 
 
-/** All stuff related to our sqlite_callback()
-    Essentially, this is just a C-wrapper to get the implicit this argument in */
-
+/**
+All stuff related to our sqlite_callback()
+Essentially, this is just a C-wrapper to get the implicit this argument in
+*/
 SqliteCache *SqliteCache::callback_arg;
 
 inline static const char *welldefine(const char *s) ATTRIBUTE_CONST;
@@ -72,26 +73,26 @@ int sqlite_callback(void *NotUsed ATTRIBUTE_UNUSED, int argc, char **argv, char 
 }
 
 /**
-    The following is all related to get the proper index for the lookups.
-    The main idea is the following: We let
-    SqliteCache::trueindex[TrueIndex::Names] = actual index or negative
-    where the negative value indicates that the data is not available
-    because the sqlite dataset is too short; the minimal dataset length
-    for all mandatory data is stored in SqliteCache::maxindex.
+The following is all related to get the proper index for the lookups.
+The main idea is the following: We let
+SqliteCache::trueindex[TrueIndex::Names] = actual index or negative
+where the negative value indicates that the data is not available
+because the sqlite dataset is too short; the minimal dataset length
+for all mandatory data is stored in SqliteCache::maxindex.
 
-    The class TrueIndex and the static (and only) instance *true_index
-    is used to calculate the initial value of trueindex/maxindex
-    at the first database access by first filling it with default parameters
-    and - for the case that appropriate data is stored in azColName -
-    modifying this correspondingly: This has the advantage that if some
-    portage versions use different names, we still have (hopefully correct)
-    default values.
+The class TrueIndex and the static (and only) instance *true_index
+is used to calculate the initial value of trueindex/maxindex
+at the first database access by first filling it with default parameters
+and - for the case that appropriate data is stored in azColName -
+modifying this correspondingly: This has the advantage that if some
+portage versions use different names, we still have (hopefully correct)
+default values.
 
-    The class TrueIndex itself is independent of SqliteCache and gets passed
-    all required data by parameters. Note that it stores nothing except for
-    the static default data, and so, except for the first initialization in
-    the constructor, all functions should be const or static.
-*/
+The class TrueIndex itself is independent of SqliteCache and gets passed
+all required data by parameters. Note that it stores nothing except for
+the static default data, and so, except for the first initialization in
+the constructor, all functions should be const or static.
+**/
 
 typedef SqliteCache::TrueIndexMap::size_type TrueIndexRes;
 typedef map<string, TrueIndexRes> TrueIndexMapper;

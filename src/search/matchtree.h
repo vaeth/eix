@@ -30,13 +30,17 @@ class MatchAtom {
 		explicit MatchAtom(bool negate) : m_negate(negate) {
 		}
 
-		/// Virtual deconstructor
+		/**
+		Virtual deconstructor
+		**/
 		virtual ~MatchAtom() {
 		}
 
-		/** Check (recursively if necessary) whether the atom matches.
-		 * @param p Package to match
-		 * @return true if match; else false */
+		/**
+		Check (recursively if necessary) whether the atom matches.
+		@param p Package to match
+		@return true if match; else false
+		**/
 		virtual bool match(PackageReader *p) ATTRIBUTE_PURE;
 
 		virtual MatchAtomOperator *as_operator() {
@@ -92,12 +96,27 @@ class MatchAtomTest : public MatchAtom {
 
 class MatchParseData {
 	public:
-		MatchAtom **parent;  /// parent of the current subroot. Always Non-NULLPTR.
-		                     /// Modified only when the current tree is finished.
-		MatchAtom *subroot;  /// root of the current tree, possibly NULLPTR.
-		bool useright;       /// subroot is an operator and grow right leaf.
-		bool negatebrace;    /// Must the whole result be negated at the end?
-	                     /// This is only set after -! -(
+		/**
+		parent of the current subroot. Always Non-NULLPTR.
+		Modified only when the current tree is finished.
+		**/
+		MatchAtom **parent;
+
+		/**
+		root of the current tree, possibly NULLPTR
+		**/
+		MatchAtom *subroot;
+
+		/**
+		subroot is an operator and grow right leaf
+		**/
+		bool useright;
+
+		/**
+		Must the whole result be negated at the end?
+		This is only set after -! -(
+		**/
+		bool negatebrace;
 
 		explicit MatchParseData(MatchAtom **p) ATTRIBUTE_NONNULL((2))
 			: parent(p), subroot(NULLPTR), useright(false), negatebrace(false) {
@@ -109,25 +128,41 @@ class MatchTree {
 		MatchAtom *root, *piperoot;
 		MatchAtomOperator::AtomOperator default_operator;
 
-		// The following flags must be carefully honoured and updated
-		// in every public parse_* function
-		// (the private function sometimes ignore these flags):
-		bool local_negate;    /// Is currently some -! active?
-		bool local_finished;  /// Will -( -! or a test cast a binary operator?
+		/**
+		The following flags must be carefully honoured and updated
+		in every public parse_* function
+		(the private function sometimes ignore these flags):
+		**/
+
+		/**
+		Is currently some -! active?
+		**/
+		bool local_negate;
+
+		/**
+		Will -( -! or a test cast a binary operator?
+		**/
+		bool local_finished;
 		std::stack<MatchParseData> parser_stack;
 
 		MatchAtomTest *parse_new_leaf();
 
-		/// Update parser_stack.top() according to local_negate
-		/// Clear local_negate afterwards.
+		/**
+		Update parser_stack.top() according to local_negate.
+		Clear local_negate afterwards.
+		**/
 		void parse_local_negate();
 
-		/// Modifies parser_stack.top() according to op.
-		/// Ignores local_negate and local_finished.
+		/**
+		Modify parser_stack.top() according to op.
+		Ignores local_negate and local_finished.
+		**/
 		void parse_new_operator(MatchAtomOperator::AtomOperator op);
 
-		/// Internal form of parse_close() which can also clear the
-		/// first (root) element on parser_stack() and ignores local_negate.
+		/**
+		Internal form of parse_close() which can also clear the
+		first (root) element on parser_stack() and ignores local_negate.
+		**/
 		void parse_closeforce();
 
 	public:

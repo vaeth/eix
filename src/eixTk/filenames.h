@@ -12,7 +12,9 @@
 
 #include "eixTk/stringtypes.h"
 
-/** canonicalize_file_name() if possible or some substitute */
+/**
+canonicalize_file_name() if possible or some substitute
+**/
 std::string normalize_path(const char *path, bool resolve, bool want_slash) ATTRIBUTE_NONNULL_;
 inline static std::string normalize_path(const char *path, bool resolve) ATTRIBUTE_NONNULL_;
 inline static std::string normalize_path(const char *path, bool resolve) {
@@ -23,7 +25,9 @@ inline static std::string normalize_path(const char *path) {
 	return normalize_path(path, true);
 }
 
-/** Compare whether two (normalized) filenames are identical */
+/**
+Compare whether two (normalized) filenames are identical
+**/
 bool same_filenames(const char *mask, const char *name, bool glob, bool resolve_mask) ATTRIBUTE_NONNULL_;
 inline static bool same_filenames(const char *mask, const char *name, bool glob) ATTRIBUTE_NONNULL_;
 inline static bool same_filenames(const char *mask, const char *name, bool glob) {
@@ -34,10 +38,14 @@ inline static bool same_filenames(const char *mask, const char *name) {
 	return same_filenames(mask, name, false);
 }
 
-/** Compare whether (normalized) filename starts with mask */
+/**
+Compare whether (normalized) filename starts with mask
+**/
 bool filename_starts_with(const char *mask, const char *name, bool resolve_mask) ATTRIBUTE_NONNULL_;
 
-/** Return first match in a list of filenames/patterns. */
+/**
+@return first match in a list of filenames/patterns
+**/
 WordVec::const_iterator find_filenames(const WordVec::const_iterator start,
 	const WordVec::const_iterator end, const char *search,
 	bool list_of_patterns, bool resolve_list) ATTRIBUTE_NONNULL_;
@@ -56,7 +64,9 @@ inline static WordVec::const_iterator find_filenames(const WordVec::const_iterat
 	return find_filenames(start, end, search, false);
 }
 
-/** Test whether filename appears to be a "virtual" overlay */
+/**
+Test whether filename appears to be a "virtual" overlay
+**/
 bool is_virtual(const char *name) ATTRIBUTE_NONNULL_;
 
 #endif  // SRC_EIXTK_FILENAMES_H_

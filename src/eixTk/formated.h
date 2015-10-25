@@ -26,8 +26,9 @@
 
 namespace eix {
 
-/** printf-like, typesafe text formating that replaces tokens in the given
-    string with textual representations of values.
+/**
+printf-like, typesafe text formating that replaces tokens in the given
+string with textual representations of values.
 
 Specifier syntax is just like basic printf:
 - @b %N is the specifier of type @b N
@@ -51,34 +52,51 @@ Example usage:
   std::cout << eix::format(_("problems while parsing %r in line %r, column %r -- %s"))
           % file % message % line % column << std::endl;
   // problems while parsing "/etc/make.conf" in line 10, column 20 -- something bad happend
-\endcode */
+\endcode
+**/
 
 class format {
 	private:
-		/// Currently processed specifier, 0 if there are no more specifiers.
+		/**
+		Currently processed specifier, 0 if there are no more specifiers
+		**/
 		char m_spec;
-		/// The current state of the formated string.
+		/**
+		The current state of the formated string
+		**/
 		std::ostringstream m_stream;
-		/// What is left of the format string.
+		/**
+		What is left of the format string
+		**/
 		std::string m_format;
 
 	public:
-		/// Set the template string.
+		/**
+		Set the template string
+		**/
 		explicit format(const std::string& format_string) : m_spec(0), m_stream(), m_format(format_string) {
 			goto_next_spec();
 		}
 
-		/// Copy current state into new formater.
+		/**
+		Copy current state into new formater
+		**/
 		format(const format& e) : m_spec(e.m_spec), m_stream(e.m_stream.str()), m_format(e.m_format) {
 		}
 
-		/// Copy current state of formater.
+		/**
+		Copy current state of formater
+		**/
 		format& operator=(const format& e);
 
-		/// Reset the internal state and use format_string as the new format string.
+		/**
+		Reset the internal state and use format_string as the new format string
+		**/
 		format& reset(const std::string& format_string);
 
-		/// Insert the value for the next placeholder.
+		/**
+		Insert the value for the next placeholder
+		**/
 		template<typename T> format& operator%(const T& s) {
 			switch(m_spec) {
 				case 's':
@@ -105,37 +123,51 @@ class format {
 			return *this;
 		}
 
-		/// Return the formated string.
+		/**
+		@return the formated string
+		**/
 		std::string str() const {
 			eix_assert_paranoic(m_spec == 0);
 			return m_stream.str();
 		}
 
-		/// Convenience wrapper for str().
+		/**
+		Convenience wrapper for str()
+		**/
 		operator std::string() {
 			return str();
 		}
 
-		/// Write formated string to ostream os.
+		/**
+		Write formated string to ostream os
+		**/
 		friend std::ostream& operator<<(std::ostream& os, const format& formater) {
 			return os << formater.str();
 		}
 
 	protected:
-		/// Find the next specifiers in the format string.
+		/**
+		Find the next specifiers in the format string
+		**/
 		void goto_next_spec();
 
-		/// Write string t enclosed in single quotes into stream s.
+		/**
+		Write string t enclosed in single quotes into stream s
+		**/
 		std::ostream& write_representation(std::ostream& s, const char *t) {  // NOLINT(runtime/references)
 			return s << "'" << t << "'";
 		}
 
-		/// Write string t enclosed in single quotes into stream s.
+		/**
+		Write string t enclosed in single quotes into stream s
+		**/
 		std::ostream& write_representation(std::ostream& s, const std::string& t) {  // NOLINT(runtime/references)
 			return s << "'" << t << "'";
 		}
 
-		/// Write size_type or "<string::npos>" to stream.
+		/**
+		Write size_type or "<string::npos>" to stream
+		**/
 		std::ostream& write_representation(std::ostream& s, const std::string::size_type& t) {  // NOLINT(runtime/references)
 			if(t == std::string::npos) {
 				return s << "<string::npos>";
@@ -143,7 +175,9 @@ class format {
 			return s << t;
 		}
 
-		/// Write t into stream s.
+		/**
+		Write t into stream s
+		**/
 		template<typename T> std::ostream& write_representation(std::ostream& s, const T& t) {  // NOLINT(runtime/references)
 			return s << t;
 		}

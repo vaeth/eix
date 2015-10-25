@@ -23,8 +23,10 @@
 #include "search/algorithms.h"
 #include "search/levenshtein.h"
 
-/* Check if we have FNM_CASEFOLD ..
- * fnmatch(3) tells that this is a GNU extension. */
+/*
+Check if we have FNM_CASEFOLD ..
+fnmatch(3) tells that this is a GNU extension.
+*/
 #ifdef FNM_CASEFOLD
 #define FNMATCH_FLAGS FNM_CASEFOLD
 #else

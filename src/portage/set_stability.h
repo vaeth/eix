@@ -19,9 +19,11 @@ class Package;
 class PackageTree;
 class PortageSettings;
 
-/* Define this if some day if the complexity in the calculation of
- * SetStability::keyword_index or SetStability::mask_index becomes so large
- * that it is not worth doing it in order to avoid some re-calculations */
+/*
+Define this if some day the complexity in the calculation of
+SetStability::keyword_index or SetStability::mask_index becomes so large
+that it is not worth doing it in order to avoid some re-calculations
+*/
 // #define ALWAYS_RECALCULATE_STABILITY 1
 
 class SetStability {
@@ -30,11 +32,13 @@ class SetStability {
 		bool m_local, m_filemask_is_profile, m_always_accept_keywords;
 
 #ifndef ALWAYS_RECALCULATE_STABILITY
-		/* Calculating the index manually makes it sometimes unnecessary
-		 * to recalculate the stability setting of the whole package.
-		 * Of course, this is clumsy, because we must take care about how
-		 * the "saved" data is stored in Version, and we must make sure
-		 * that our calculated index really is correct in all cases... */
+		/*
+		Calculating the index manually makes it sometimes unnecessary
+		to recalculate the stability setting of the whole package.
+		Of course, this is clumsy, because we must take care about how
+		the "saved" data is stored in Version, and we must make sure
+		that our calculated index really is correct in all cases...
+		*/
 
 		Version::SavedKeyIndex keyword_index(bool get_local) const ATTRIBUTE_PURE;
 		Version::SavedKeyIndex keyword_index() const ATTRIBUTE_PURE {

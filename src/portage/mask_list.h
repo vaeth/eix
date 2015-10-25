@@ -140,14 +140,18 @@ template<typename m_Type> class MaskList {
 			full_name[full].add(m);
 		}
 
-		/* return true if something was added */
+		/**
+		@return true if something was added
+		**/
 		bool add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines) ATTRIBUTE_NONNULL_;
 		bool add_file(const char *file, Mask::Type mask_type, bool recursive) ATTRIBUTE_NONNULL_ {
 			return add_file(file, mask_type, recursive, false);
 		}
 
-		/** This can be optionally called after the last add():
-		 *  It will release memory. */
+		/**
+		This can be optionally called after the last add():
+		It will release memory.
+		**/
 		void finalize() {
 		}
 
@@ -175,19 +179,25 @@ template<typename m_Type> class MaskList {
 			delete masks;
 		}
 
-		// return true if some mask potentially applied
+		/**
+		@return true if some mask potentially applied
+		**/
 		bool applyMasks(Package *p, Keywords::Redundant check) const ATTRIBUTE_NONNULL_;
 		bool applyMasks(Package *p) const ATTRIBUTE_NONNULL_ {
 			return applyMasks(p, Keywords::RED_NOTHING);
 		}
 
-		// return true if some mask matches
+		/**
+		@return true if some mask matches
+		**/
 		bool MaskMatches(Package *p) const ATTRIBUTE_NONNULL_;
 
 		void applySetMasks(Version *v, const std::string& set_name) const ATTRIBUTE_NONNULL_;
 };
 
-// This is only needed for PreList
+/**
+This is only needed for PreList
+**/
 class PreListEntry {
 	public:
 		typedef WordVec::size_type FilenameIndex;
@@ -199,7 +209,9 @@ class PreListEntry {
 		bool locally_double;
 };
 
-// This is only needed for PreList
+/**
+This is only needed for PreList
+**/
 class PreListOrderEntry : public LineVec {
 	public:
 		typedef PreListEntry::FilenameIndex FilenameIndex;
@@ -235,23 +247,24 @@ class PreListFilename {
 		const char *repo_if_only() const ATTRIBUTE_PURE;
 };
 
-/* The PreList is needed to Prepare a MaskList:
- *
- * Until we call finalize() or initialize(), one can insert and delete lines.
- * (A line is a std::vector<std::string>). Duplicate lines are recognized, too.
- * However, the original order is preserved.
- * Moreover, after finalize() the entries are collected: For the lines
- *   foo/bar 1
- *   foo/bar 2
- *   =foo/bar-1 3
- *   =foo/bar-1 4
- *
- * the result looks like this
- *   foo/bar    -> 1 2
- *   =foo/bar-1 -> 3 4
- *
- * This corresponds to portage's sorting.
- */
+/**
+The PreList is needed to Prepare a MaskList:
+
+Until we call finalize() or initialize(), one can insert and delete lines.
+(A line is a std::vector<std::string>). Duplicate lines are recognized, too.
+However, the original order is preserved.
+Moreover, after finalize() the entries are collected: For the lines
+   foo/bar 1
+   foo/bar 2
+   =foo/bar-1 3
+   =foo/bar-1 4
+
+the result looks like this
+  foo/bar    -> 1 2
+  =foo/bar-1 -> 3 4
+
+This corresponds to portage's sorting.
+**/
 class PreList : public std::vector<PreListEntry> {
 	public:
 		typedef PreListEntry::FilenameIndex FilenameIndex;
@@ -307,27 +320,41 @@ class PreList : public std::vector<PreListEntry> {
 			handle_file(lines, filename, reponame, only_add, false, only_repo);
 		}
 
-		/// return true if something was changed
+		/**
+		@return true if something was changed
+		**/
 		bool handle_file(const std::vector<std::string>& lines, const std::string& filename, const char *reponame, bool only_add, bool keep_commentlines, bool only_repo) {
 			return handle_lines(lines, push_name(filename, reponame, only_repo), only_add, NULLPTR, keep_commentlines);
 		}
 
-		/// return true if something was changed
+		/**
+		@return true if something was changed
+		**/
 		bool handle_lines(const std::vector<std::string>& lines, FilenameIndex file, bool only_add, LineNumber *num, bool keep_commentlines);
 
-		/// return true if something was changed
+		/**
+		@return true if something was changed
+		**/
 		bool handle_line(const std::string& line, FilenameIndex file, LineNumber number, bool only_add, bool keep_commentlines);
 
-		/// return true if something was changed
+		/**
+		@return true if something was changed
+		**/
 		bool add_line(const std::string& line, FilenameIndex file, LineNumber number, bool keep_commentlines);
 
-		/// return true if something was changed
+		/**
+		@return true if something was changed
+		**/
 		bool remove_line(const std::string& line);
 
-		/// return true if something was changed
+		/**
+		@return true if something was changed
+		**/
 		bool add_splitted(const std::vector<std::string>& line, FilenameIndex file, LineNumber number);
 
-		/// return true if something was changed
+		/**
+		@return true if something was changed
+		**/
 		bool remove_splitted(const std::vector<std::string>& line);
 
 		void finalize();

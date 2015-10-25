@@ -34,7 +34,9 @@ const DBHeader::OverlayTest
 
 const DBHeader::DBVersion DBHeader::current;
 
-/** Which version we do accept. The list must end with 0 */
+/**
+Which version we do accept. The list must end with 0
+**/
 const DBHeader::DBVersion DBHeader::accept[] = {
 	DBHeader::current, 33, 32, 31,
 	0
@@ -42,7 +44,9 @@ const DBHeader::DBVersion DBHeader::accept[] = {
 
 const char *DBHeader::magic = "eix\n";
 
-/** Get overlay for key from table. */
+/**
+Get overlay for key from table
+**/
 const OverlayIdent& DBHeader::getOverlay(ExtendedVersion::Overlay key) const {
 	static const OverlayIdent *not_found = NULLPTR;
 	if(key > countOverlays()) {
@@ -54,7 +58,9 @@ const OverlayIdent& DBHeader::getOverlay(ExtendedVersion::Overlay key) const {
 	return overlays[key];
 }
 
-/** Add overlay to directory-table and return key. */
+/**
+Add overlay to directory-table and return key
+**/
 ExtendedVersion::Overlay DBHeader::addOverlay(const OverlayIdent& overlay) {
 	overlays.push_back(overlay);
 	return countOverlays() - 1;

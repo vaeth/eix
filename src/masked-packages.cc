@@ -54,14 +54,18 @@ static void print_help() {
 "further information.\n")) % program_name;
 }
 
-/** Local options for argument reading. */
+/**
+Local options for argument reading
+**/
 static struct LocalOptions {
 	bool
 		be_quiet,
 		help;
 } rc_options;
 
-/** Arguments and options. */
+/**
+Arguments and options
+**/
 class MaskedOptionList : public OptionList {
 	public:
 		MaskedOptionList();

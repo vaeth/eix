@@ -44,10 +44,14 @@ using std::cout;
 using std::endl;
 
 
-/** Exclude this files from listing of files in profile. */
+/**
+Exclude this files from listing of files in profile
+**/
 static const char *profile_exclude[] = { "parent", "..", "." , NULLPTR };
 
-/** Add all files from profile and its parents to m_profile_files. */
+/**
+Add all files from profile and its parents to m_profile_files
+**/
 bool CascadingProfile::addProfile(const char *profile, WordSet *sourced_files) {
 	string truename(normalize_path(profile, true, true));
 	if(unlikely(print_profile_paths)) {
@@ -246,7 +250,9 @@ bool CascadingProfile::readPackageAcceptKeywords(const string& filename, const c
 	return p_package_accept_keywords.handle_file(lines, filename, repo, true, false, only_repo);
 }
 
-/** Read all "make.defaults" files found in profile. */
+/**
+Read all "make.defaults" files found in profile
+**/
 void CascadingProfile::readMakeDefaults() {
 	for(WordVec::size_type i(0); likely(i < m_profile_files.size()); ++i) {
 		if(unlikely(strcmp(strrchr(m_profile_files[i].c_str(), '/'), "/make.defaults") == 0)) {
@@ -255,9 +261,11 @@ void CascadingProfile::readMakeDefaults() {
 	}
 }
 
-/** Populate MaskLists from PreLists.
-    All files must have been read and m_raised_arch
-    must be known when this is called. */
+/**
+Populate MaskLists from PreLists.
+All files must have been read and m_raised_arch
+must be known when this is called.
+**/
 void CascadingProfile::finalize() {
 	if(finalized) {
 		return;
@@ -271,7 +279,9 @@ void CascadingProfile::finalize() {
 	p_package_accept_keywords.initialize(&m_package_accept_keywords, m_portagesettings->m_raised_arch);
 }
 
-/** Cycle through profile and put path to files into this->m_profile_files. */
+/**
+Cycle through profile and put path to files into this->m_profile_files.
+**/
 void CascadingProfile::listaddProfile(const char *profile_dir) {
 	if(profile_dir) {
 		addProfile(profile_dir);

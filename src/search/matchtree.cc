@@ -164,8 +164,10 @@ MatchAtomTest *MatchTree::parse_new_leaf() {
 	return t;
 }
 
-/// Update parser_stack.top() according to local_negate
-/// Clear local_negate afterwards.
+/**
+Update parser_stack.top() according to local_negate
+Clear local_negate afterwards.
+**/
 void MatchTree::parse_local_negate() {
 	if(!local_negate) {
 		return;
@@ -183,8 +185,10 @@ void MatchTree::parse_local_negate() {
 	return;
 }
 
-/// Modifies parser_stack.top() according to op.
-/// Ignores local_negate and local_finished.
+/**
+Modify parser_stack.top() according to op.
+Ignores local_negate and local_finished.
+**/
 void MatchTree::parse_new_operator(MatchAtomOperator::AtomOperator op) {
 	MatchAtomOperator *p(new MatchAtomOperator(op));
 	MatchParseData& top(parser_stack.top());
@@ -242,8 +246,10 @@ void MatchTree::parse_open() {
 	}
 }
 
-/// Internal form of parse_close() which can also clear the
-/// first (root) element on parser_stack() and ignores local_negate.
+/**
+Internal form of parse_close() which can also clear the
+first (root) element on parser_stack() and ignores local_negate.
+**/
 void MatchTree::parse_closeforce() {
 	MatchParseData& top(parser_stack.top());
 	if(top.negatebrace) {

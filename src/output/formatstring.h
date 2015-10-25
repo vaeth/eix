@@ -135,7 +135,9 @@ class FormatParser {
 			return root_node;
 		}
 
-		/** Calculate line and column of current position. */
+		/**
+		Calculate line and column of current position
+		**/
 		void getPosition(size_t *line, size_t *column);
 };
 
@@ -375,16 +377,16 @@ class PrintFormat {
 		void VER_MASKREASONSS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 
 	public:
-		bool	no_color,            /**< Shall we use colors? */
-			style_version_lines, /**< Shall we show versions linewise? */
-			slot_sorted,         /**< Print sorted by slots */
-			alpha_use;           /**< Print use in alphabetical order (not by set/unset) */
+		bool	no_color,            ///< Shall we use colors?
+			style_version_lines, ///< Shall we show versions linewise?
+			slot_sorted,         ///< Print sorted by slots
+			alpha_use;           ///< Print use in alphabetical order (not by set/unset)
 
 		LocalMode recommend_mode;
 
 		std::string
-			color_overlaykey,  /**< Color for the overlay key */
-			color_virtualkey,  /**< Color for the virtual key */
+			color_overlaykey,  ///< Color for the overlay key
+			color_virtualkey,  ///< Color for the virtual key
 			color_keyend,
 			color_overlayname, color_overlaynameend,
 			color_numbertext, color_numbertextend, color_end;

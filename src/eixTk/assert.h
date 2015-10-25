@@ -18,8 +18,10 @@
 #include <cassert>
 #endif
 
-// eix_assert_static is used to check that static initializers (for static classes)
-// are called exactly once
+/**
+eix_assert_static is used to check that static initializers (for static classes)
+are called exactly once
+**/
 
 #ifdef EIX_STATIC_ASSERT
 #define eix_assert_static(a) assert(a)

@@ -25,28 +25,41 @@ class PrintFormat;
 class DBHeader;
 
 typedef std::vector<InstVersion> InstVec;
-/** Holds every installed version of a package. */
+/**
+Holds every installed version of a package.
+**/
 class VarDbPkg {
 	private:
 		typedef std::map<std::string, InstVec> InstVecPkg;
 		typedef std::map<std::string, InstVecPkg *> InstVecCat;
 		static void sort_installed(VarDbPkg::InstVecPkg *maping) ATTRIBUTE_NONNULL_;
-		/** Mapping of [category][package] to list versions. */
+		/**
+		Mapping of [category][package] to list versions.
+		**/
 		InstVecCat installed;
-		std::string m_directory; /**< This is the db-directory. */
+		/**
+		This is the db-directory.
+		**/
+		std::string m_directory;
 		bool get_slots, care_of_slots, care_of_deps;
 		bool get_restrictions, care_of_restrictions, use_build_time;
 
-		/** Find installed versions of packet "name" in category "category".
-		 * @return NULLPTR if not found .. else pointer to vector of versions. */
+		/**
+		Find installed versions of packet "name" in category "category".
+		@return NULLPTR if not found .. else pointer to vector of versions.
+		**/
 		InstVec *getInstalledVector(const std::string& category, const std::string& name);
 
-		/** Read category from db-directory.
-		 * @param category read this category. */
+		/**
+		Read category from db-directory.
+		@param category read this category.
+		**/
 		void readCategory(const char *category) ATTRIBUTE_NONNULL_;
 
 	public:
-		/** Default constructor. */
+		/**
+		Default constructor
+		**/
 		VarDbPkg(std::string directory, bool read_slots, bool care_about_slots, bool care_about_deps,
 			bool calc_restrictions, bool care_about_restrictions, bool build_time) :
 			m_directory(directory),
@@ -79,14 +92,18 @@ class VarDbPkg {
 		std::string readOverlayLabel(const Package *p, const BasicVersion *v) const ATTRIBUTE_NONNULL_;
 		eix::SignedBool check_installed_overlays;
 
-		/** Find installed versions
-		 * @return NULLPTR if not found .. else pointer to vector of versions. */
+		/**
+		Find installed versions
+		@return NULLPTR if not found .. else pointer to vector of versions.
+		**/
 		InstVec *getInstalledVector(const Package& p) {
 			return getInstalledVector(p.category, p.name);
 		}
 
-		/** Returns true if v is in vec. v=NULLPTR is always in vec.
-		    If a serious result is found and r is nonzero, r points to that result */
+		/**
+		@return true if v is in vec. v=NULLPTR is always in vec.
+		If a serious result is found and r is nonzero, r points to that result
+		**/
 		static bool isInVec(InstVec *vec, const BasicVersion *v, InstVersion **r);
 		inline static bool isInVec(InstVec *vec, const BasicVersion *v) {
 			return isInVec(vec, v, NULLPTR);
@@ -95,10 +112,12 @@ class VarDbPkg {
 			return isInVec(vec, NULLPTR);
 		}
 
-		/** Returns true if a Package installed.
-		 * @param p Check for this Package.
-		 * @param v If not NULLPTR, check for this BasicVersion.
-		   If a particular version is found and r is nonzero, r points to that version */
+		/**
+		@return true if a Package installed.
+		@param p Check for this Package.
+		@param v If not NULLPTR, check for this BasicVersion.
+		If a particular version is found and r is nonzero, r points to that version
+		**/
 		bool isInstalled(const Package& p, const BasicVersion *v, InstVersion **r) {
 			return isInVec(getInstalledVector(p), v, r);
 		}
@@ -106,21 +125,29 @@ class VarDbPkg {
 			return isInVec(getInstalledVector(p));
 		}
 
-		/** Test if a particular version is installed from the correct overlay.
-		 * @return 1 (yes) or 0 (no) or -1 (might be - overlay unclear) */
+		/**
+		Test if a particular version is installed from the correct overlay.
+		@return 1 (yes) or 0 (no) or -1 (might be - overlay unclear)
+		**/
 		eix::SignedBool isInstalledVersion(const Package& p, const Version *v, const DBHeader& header) ATTRIBUTE_NONNULL_ {
 			InstVersion *inst;
 			return isInstalledVersion(&inst, p, v, header);
 		}
 
-		/** As above and store pointer to installed version in *inst */
+		/**
+		As above and store pointer to installed version in *inst
+		**/
 		eix::SignedBool isInstalledVersion(InstVersion **inst, const Package& p, const Version *v, const DBHeader& header) ATTRIBUTE_NONNULL_;
 
-		/** Return matching available version or NULLPTR */
+		/**
+		@return matching available version or NULLPTR
+		**/
 		Version *getAvailable(const Package& p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
 
-		/** Returns number of installed versions of this package
-		 * @param p Check for this Package. */
+		/**
+		@param p Check for this Package
+		@return number of installed versions of this package
+		**/
 		InstVec::size_type numInstalled(const Package& p);
 };
 

@@ -97,8 +97,10 @@ bool PackageReader::skip() {
 	return true;
 }
 
-/// Release the package.
-// Complete the current package, and release it.
+/**
+Release the package.
+Complete the current package, and release it.
+**/
 Package *PackageReader::release() {
 	if(unlikely(!read())) {
 		return NULLPTR;

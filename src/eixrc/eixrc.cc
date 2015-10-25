@@ -215,11 +215,13 @@ const string& EixRc::operator[](const string& key) {
 	return main_map[key];
 }
 
-/** This will fetch a variable which was not set in the
-    defaults (or its modification or its delayed references),
-    i.e. it must be fetched from the config or ENV setting.
-    Of course, it will be resolved for delayed substitutions,
-    and delayed references are also be added similarly. */
+/**
+This will fetch a variable which was not set in the
+defaults (or its modification or its delayed references),
+i.e. it must be fetched from the config or ENV setting.
+Of course, it will be resolved for delayed substitutions,
+and delayed references are also be added similarly.
+**/
 void EixRc::add_later_variable(const string& key) {
 	set<string> has_delayed;
 	join_key(key, &has_delayed, true, NULLPTR);
@@ -397,9 +399,11 @@ static void override_by_env(map<string, string> *m) {
 	}
 }
 
-/** Create defaults and the main_map with all variables
-   (including all values required by delayed references).
-   @arg has_delayed is initialized to corresponding keys */
+/**
+Create defaults and the main_map with all variables
+(including all values required by delayed references).
+@arg has_delayed is initialized to corresponding keys
+**/
 void EixRc::read_undelayed(set<string> *has_delayed) {
 	// Initialize with the default variables
 	for(default_index i(0); likely(i < defaults.size()); ++i)
@@ -480,14 +484,18 @@ void EixRc::read_undelayed(set<string> *has_delayed) {
 	}
 }
 
-/** Recursively eval and join key and its delayed references to
-    main_map and default; set has_delayed if appropriate */
+/**
+Recursively eval and join key and its delayed references to
+main_map and default; set has_delayed if appropriate
+**/
 void EixRc::join_key(const string& key, set<string> *has_delayed, bool add_top_to_defaults, const set<string> *exclude_defaults) {
 	string *val(&main_map[key]);
 	my_map::const_iterator f(filevarmap.find(key));
 	if(unlikely(f != filevarmap.end())) {
-	// Note that if a variable is defined in a file and in ENV,
-	// its value was already overridden from ENV.
+	/*
+	Note that if a variable is defined in a file and in ENV,
+	its value was already overridden from ENV.
+	*/
 		*val = f->second;
 	} else {
 	// If it was not defined in a file, it might be in ENV anyway:
@@ -495,9 +503,11 @@ void EixRc::join_key(const string& key, set<string> *has_delayed, bool add_top_t
 		if(unlikely(envval != NULLPTR))
 			*val = string(envval);
 	}
-	// for the case that some day e.g. prefix_keys (variables with
-	// PREFIXSTRING) should possibly also allow to contain local variables,
-	// better modify it:
+	/*
+	For the case that some day e.g. prefix_keys (variables with
+	PREFIXSTRING) should possibly also allow to contain local variables,
+	better modify it:
+	*/
 	modify_value(val, key);
 
 	if(unlikely(add_top_to_defaults)) {

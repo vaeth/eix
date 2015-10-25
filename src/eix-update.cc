@@ -179,7 +179,9 @@ static RepoArgs *repo_args;
 static const char *outputname = NULLPTR;
 static const char *var_to_print = NULLPTR;
 
-/** Arguments and options. */
+/**
+Arguments and options
+**/
 class EixUpdateOptionList : public OptionList {
 	public:
 		EixUpdateOptionList();

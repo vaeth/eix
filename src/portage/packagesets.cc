@@ -12,7 +12,9 @@
 #include "portage/packagesets.h"
 
 
-/// @return true if something has changed
+/**
+@return true if something has changed
+**/
 bool SetsList::add_system() {
 	if(have_system) {
 		return false;
@@ -24,7 +26,9 @@ bool SetsList::has(SetsIndex i) const {
 	return (std::find(begin(), end(), i) != end());
 }
 
-/// @return true if something has changed
+/**
+@return true if something has changed
+**/
 bool SetsList::add(SetsIndex i) {
 	if(has(i)) {
 		return false;
@@ -33,7 +37,9 @@ bool SetsList::add(SetsIndex i) {
 	return true;
 }
 
-/// @return true if something has changed
+/**
+@return true if something has changed
+**/
 bool SetsList::add(const SetsList& l) {
 	bool r(false);
 	if(l.has_system()) {

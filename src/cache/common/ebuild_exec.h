@@ -41,7 +41,9 @@ class EbuildExec {
 		/* volatile */ signal_handler *handleTERM, *handleINT, *handleHUP;
 #endif
 		bool use_ebuild_sh;
-		/// local data for make_cachefile which should be saved for vfork:
+		/**
+		local data for make_cachefile which should be saved for vfork
+		**/
 		const char *exec_name;
 		const char **c_env;
 		int exec_status;

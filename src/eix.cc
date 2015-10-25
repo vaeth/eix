@@ -82,7 +82,9 @@ inline static void print_unused(const string& filename, const string& excludefil
 	print_unused(filename, excludefiles, packagelist, false);
 }
 
-/** Show a short help screen with options and commands. */
+/**
+Show a short help screen with options and commands
+**/
 static void dump_help() {
 	cout << eix::format(_("Usage: %s [options] EXPRESSION\n"
 "\n"
@@ -267,7 +269,9 @@ static PrintFormat *format;
 
 static eix::TinyUnsigned remote_default;
 
-/** Local options for argument reading. */
+/**
+Local options for argument reading
+**/
 static struct LocalOptions {
 	bool
 		ansi,
@@ -311,7 +315,9 @@ static struct LocalOptions {
 		world_sets;
 } rc_options;
 
-/** Arguments and options. */
+/**
+Arguments and options
+**/
 class EixOptionList : public OptionList {
 	public:
 		EixOptionList();
@@ -473,7 +479,9 @@ EixOptionList::EixOptionList() {
 	push_back(Option("close",         ')'));
 }
 
-/** Setup default values for all global variables. */
+/**
+Setup default values for all global variables
+**/
 static void setup_defaults(EixRc *rc, bool is_tty) {
 	// Setup defaults
 	memset(&rc_options, 0, sizeof(rc_options));

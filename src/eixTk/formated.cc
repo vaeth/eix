@@ -16,7 +16,9 @@ using std::string;
 
 using eix::format;
 
-/// Copy current state of formater.
+/**
+Copy current state of formater
+**/
 format& format::operator=(const format& e) {
 	m_spec = e.m_spec;
 	m_stream.str(e.m_stream.str());
@@ -24,7 +26,9 @@ format& format::operator=(const format& e) {
 	return *this;
 }
 
-/// Reset the internal state and use format_string as the new format string.
+/**
+Reset the internal state and use format_string as the new format string
+**/
 format& format::reset(const string& format_string) {
 	m_spec = 0;
 	m_stream.str("");

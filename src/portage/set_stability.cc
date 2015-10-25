@@ -35,11 +35,13 @@ using std::cerr;
 using std::endl;
 #endif
 
-/* Calculating the index manually makes it sometimes unnecessary
- * to recalculate the stability setting of the whole package.
- * Of course, this is clumsy, because we must take care about how
- * the "saved" data is stored in Version, and we must make sure
- * that our calculated index really is correct in all cases... */
+/*
+Calculating the index manually makes it sometimes unnecessary
+to recalculate the stability setting of the whole package.
+Of course, this is clumsy, because we must take care about how
+the "saved" data is stored in Version, and we must make sure
+that our calculated index really is correct in all cases...
+*/
 
 Version::SavedKeyIndex SetStability::keyword_index(bool get_local) const {
 	if(get_local)
@@ -97,13 +99,15 @@ void SetStability::calc_version_flags(bool get_local, MaskFlags *maskflags, Keyw
 #ifndef ALWAYS_RECALCULATE_STABILITY
 #ifndef NDEBUG
 #ifdef EIX_PARANOIC_ASSERT
-	/* The next test should actually be unnecessary.
-	 * But in the above calculation of keyword_index or mask_index
-	 * there might easily be a forgotten case (in particular, since
-	 * it might have been forgotten to update these functions when
-	 * another change was made).
-	 * So we test at least at run-time that for the current version
-	 * the correct index with the correct result was set. */
+	/*
+	The next test should actually be unnecessary.
+	But in the above calculation of keyword_index or mask_index
+	there might easily be a forgotten case (in particular, since
+	it might have been forgotten to update these functions when
+	another change was made).
+	So we test at least at run-time that for the current version
+	the correct index with the correct result was set.
+	*/
 	if(!(v->have_saved_masks[mi]) || !(v->have_saved_keywords[ki]) ||
 		((maskflags != NULLPTR) && (v->saved_masks[mi]) != *maskflags) ||
 		((keyflags != NULLPTR) && ((v->saved_keywords[ki]) != *keyflags))) {

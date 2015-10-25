@@ -66,23 +66,33 @@ class ExtendedVersion : public BasicVersion {
 		Restrict restrictFlags;
 		Properties propertiesFlags;
 
-		/** The slot, the version represents.
-		    For saving space, the default "0" is always stored as "" */
+		/**
+		The slot, the version represents.
+		For saving space, the default "0" is always stored as ""
+		**/
 		std::string slotname;
 		std::string subslotname;
 
-		/** The repository name */
+		/**
+		The repository name
+		**/
 		std::string reponame;
 
-		/** The dependencies */
+		/**
+		The dependencies
+		**/
 		Depend depend;
 
 		typedef eix::UNumber Overlay;
-		/** Key for Portagedb.overlays/overlaylist from header. */
+		/**
+		Key for Portagedb.overlays/overlaylist from header.
+		**/
 		Overlay overlay_key;
 
 		typedef OverlayIdent::Priority Priority;
-		/** Priority of overlay */
+		/**
+		Priority of overlay
+		**/
 		Priority priority;
 
 		ExtendedVersion() :

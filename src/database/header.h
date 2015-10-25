@@ -22,12 +22,16 @@
 
 class PortageSettings;
 
-/** Representation of a database-header.
- * Contains your arch, the version of the db, the number of packages/categories
- * and a table of key->directory mappings. */
+/**
+Representation of a database-header.
+Contains your arch, the version of the db, the number of packages/categories
+and a table of key->directory mappings.
+**/
 class DBHeader {
 	private:
-		/** The mapping from key->directory. */
+		/**
+		The mapping from key->directory
+		**/
 		OverlayVec overlays;
 
 	public:
@@ -57,32 +61,50 @@ class DBHeader {
 
 		static const char *magic;
 
-		/** Current version of database-format and what we accept */
+		/**
+		Current version of database-format and what we accept
+		**/
 		static CONSTEXPR DBVersion current = 34;
 		static const DBVersion accept[];
 
-		DBVersion version;  /**< Version of the db. */
-		eix::Catsize size;  /**< Number of categories. */
+		/**
+		Version of the db.
+		**/
+		DBVersion version;
+		/**
+		Number of categories
+		**/
+		eix::Catsize size;
 
-		/** Get overlay for key from table. */
+		/**
+		Get overlay for key from table
+		**/
 		const OverlayIdent& getOverlay(ExtendedVersion::Overlay key) const;
 
-		/** Add overlay to directory-table and return key. */
+		/**
+		Add overlay to directory-table and return key
+		**/
 		ExtendedVersion::Overlay addOverlay(const OverlayIdent& overlay);
 
-		/** Set Priorities of overlays */
+		/**
+		Set Priorities of overlays
+		**/
 		void set_priorities(PortageSettings *ps);
 
-		/** Find first overlay-number >=minimal for name.
-		    Name might be either a label, a filename, or a number string.
-		    The special name portdir (if defined) matches 0 (if OVTEST_PATH)
-		    The special name '' matches everything but 0. */
+		/**
+		Find first overlay-number >=minimal for name.
+		Name might be either a label, a filename, or a number string.
+		The special name portdir (if defined) matches 0 (if OVTEST_PATH)
+		The special name '' matches everything but 0.
+		**/
 		bool find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const ATTRIBUTE_NONNULL((2, 3));
 		bool find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir) const ATTRIBUTE_NONNULL((2, 3)) {
 			return find_overlay(num, name, portdir, 0, OVTEST_NOT_SAVED_PORTDIR);
 		}
 
-		/** Add all overlay-numbers >=minimal for name to vec (name might be a number string). */
+		/**
+		Add all overlay-numbers >=minimal for name to vec (name might be a number string)
+		**/
 		void get_overlay_vector(std::set<ExtendedVersion::Overlay> *overlayset, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const ATTRIBUTE_NONNULL((2, 3));
 		void get_overlay_vector(std::set<ExtendedVersion::Overlay> *overlayset, const char *name, const char *portdir) const ATTRIBUTE_NONNULL((2, 3)) {
 			get_overlay_vector(overlayset, name, portdir, 0, OVTEST_NOT_SAVED_PORTDIR);

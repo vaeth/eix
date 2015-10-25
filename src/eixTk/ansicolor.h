@@ -17,18 +17,21 @@
 
 class AnsiColor;
 
-/** A class for using ANSI color codes and marker
- * Example:
- * @code
- * include <iostream>
- * AnsiColor::init_static(); // must be called exactly once
- * AnsiColor special("yellow,1;blue;underline", 0);
- * std::cout << special << "marked text" << AnsiColor::reset() << "normal text";
- * @endcode
- */
+/**
+A class for using ANSI color codes and marker
+Example:
+@code
+ include <iostream>
+ AnsiColor::init_static(); // must be called exactly once
+ AnsiColor special("yellow,1;blue;underline", 0);
+ std::cout << special << "marked text" << AnsiColor::reset() << "normal text";
+@endcode
+**/
 class AnsiColor {
 	private:
-		/** The parsed string */
+		/**
+		The parsed string
+		**/
 		std::string code;
 
 		static const char *reset_string;

@@ -261,12 +261,14 @@ bool Package::guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const cha
 	return false;
 }
 
-/** Test whether p has a worse best_slot()
-    @return
-	-  1: p has  a worse best_slot
-	-  3: p has no worse best_slot, but an identical
-	      from a different overlay
-	-  0: else */
+/**
+Test whether p has a worse best_slot()
+@return
+-  1: p has  a worse best_slot
+-  3: p has no worse best_slot, but an identical
+      from a different overlay
+-  0: else
+**/
 eix::TinySigned Package::worse_best_slots(const Package& p) const {
 	eix::TinySigned ret(0);
 	for(SlotList::const_iterator it(slotlist().begin());
@@ -292,13 +294,15 @@ eix::TinySigned Package::worse_best_slots(const Package& p) const {
 	return ret;
 }
 
-/** Compare best_slots() versions with that of p.
-    @return
-	-  0: Everything matches
-	-  1: p has a worse/missing best_slot, and *this has not
-	- -1: *this has a worse/missing best_slot, and p has not
-	-  2: p and *this both have a worse/missing best_slot
-	-  3: all matches, but at least one overlay differs */
+/**
+Compare best_slots() versions with that of p.
+@return
+-  0: Everything matches
+-  1: p has a worse/missing best_slot, and *this has not
+- -1: *this has a worse/missing best_slot, and p has not
+-  2: p and *this both have a worse/missing best_slot
+-  3: all matches, but at least one overlay differs
+**/
 eix::TinySigned Package::compare_best_slots(const Package& p) const {
 	eix::TinySigned worse(worse_best_slots(p));
 	eix::TinySigned better(p.worse_best_slots(*this));
@@ -317,13 +321,15 @@ eix::TinySigned Package::compare_best_slots(const Package& p) const {
 	return 0;
 }
 
-/** Compare best() version with that of p.
-    @return
-	-  0: same
-	-  1: p is smaller
-	- -1: p is larger
-	-  3: same, but overlays (or slots if test_slot)
-	      are different */
+/**
+Compare best() version with that of p.
+@return
+-  0: same
+-  1: p is smaller
+- -1: p is larger
+-  3: same, but overlays (or slots if test_slot)
+      are different
+**/
 eix::TinySigned Package::compare_best(const Package& p, bool test_slot) const {
 	Version *t_best(best());
 	Version *p_best(p.best());
@@ -351,18 +357,20 @@ eix::TinySigned Package::compare_best(const Package& p, bool test_slot) const {
 	return 0;
 }
 
-/** Compare best_slots() versions with that installed in v.
-    if v is NULLPTR, it is assumed that none is installed.
-    @return
-	-  0: All installed versions are best and
-	      (unless only_installed) one is installed
-	      or nothing is installed and nothing can be
-	      installed
-	-  1: upgrade   necessary but no downgrade
-	- -1: downgrade necessary but no upgrade
-	-  2: upgrade and downgrade necessary
-	-  4: (if only_installed) nothing is installed,
-	      but one can be installed */
+/**
+Compare best_slots() versions with that installed in v.
+if v is NULLPTR, it is assumed that none is installed.
+@return
+-  0: All installed versions are best and
+      (unless only_installed) one is installed
+      or nothing is installed and nothing can be
+      installed
+-  1: upgrade   necessary but no downgrade
+- -1: downgrade necessary but no upgrade
+-  2: upgrade and downgrade necessary
+-  4: (if only_installed) nothing is installed,
+      but one can be installed
+**/
 eix::TinySigned Package::check_best_slots(VarDbPkg *v, bool only_installed) const {
 	InstVec *ins(NULLPTR);
 	if(likely(v != NULLPTR)) {
@@ -416,19 +424,21 @@ eix::TinySigned Package::check_best_slots(VarDbPkg *v, bool only_installed) cons
 	return 0;
 }
 
-/** Compare best() version with that installed in v.
-    if v is NULLPTR, it is assumed that none is installed.
-    @return
-	-  0: All installed versions are best and
-	      (unless only_installed) one is installed
-	      or nothing is installed and nothing can be
-	      installed
-	-  1: upgrade necessary
-	- -1: downgrade necessary
-	-  3: (if test_slot) everything matches,
-	      but slots are different.
-	-  4: (if only_installed) nothing is installed,
-	      but one can be installed */
+/**
+Compare best() version with that installed in v.
+if v is NULLPTR, it is assumed that none is installed.
+@return
+-  0: All installed versions are best and
+      (unless only_installed) one is installed
+      or nothing is installed and nothing can be
+      installed
+-  1: upgrade necessary
+- -1: downgrade necessary
+-  3: (if test_slot) everything matches,
+      but slots are different.
+-  4: (if only_installed) nothing is installed,
+      but one can be installed
+**/
 eix::TinySigned Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const {
 	ExtendedVersion *t_best(best());
 	InstVec *ins(NULLPTR);

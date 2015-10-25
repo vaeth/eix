@@ -24,7 +24,9 @@ class DBHeader;
 class Package;
 class PortageSettings;
 
-/// Forward-iterate for packages stored in the cachefile.
+/**
+Forward-iterate for packages stored in the cachefile
+**/
 class PackageReader {
 	public:
 		enum Attributes {
@@ -33,8 +35,10 @@ class PackageReader {
 			ALL = 7
 		};
 
-		/** Initialize with file-stream and number of packages.
-		    @arg ps is used to define the local package sets while version reading */
+		/**
+		Initialize with file-stream and number of packages.
+		@arg ps is used to define the local package sets while version reading
+		**/
 		PackageReader(Database *db, const DBHeader& hdr, PortageSettings *ps)
 			: m_db(db), m_frames(hdr.size), m_cat_size(0), m_pkg(NULLPTR), header(&hdr), m_portagesettings(ps), m_error(false) {
 		}
@@ -45,40 +49,56 @@ class PackageReader {
 
 		~PackageReader();
 
-		/// Read attributes from the database into the current package.
+		/**
+		Read attributes from the database into the current package
+		**/
 		bool read(Attributes need);
 		bool read() {
 			return read(ALL);
 		}
 
-		/// Get pointer to the package.
-		// It's possible that some attributes of the package are not yet read
-		// from the database.
+		/**
+		Get pointer to the package.
+		It's possible that some attributes of the package are not yet read
+		from the database.
+		**/
 		Package *get() const {
 			return m_pkg;
 		}
 
-		/// Skip the current package.
-		// The file pointer is moved to the next package.
+		/**
+		Skip the current package.
+		The file pointer is moved to the next package.
+		**/
 		bool skip();
 
-		/// Release the package.
-		// Complete the current package, and release it.
+		/**
+		Release the package.
+		Complete the current package, and release it.
+		**/
 		Package *release();
 
-		/// Return true if there is a next package.
-		// Read the package-header
+		/**
+		@return true if there is a next package.
+		Read the package-header
+		**/
 		bool next();
 
-		/// Go into the next (or first) category part.
-		// @return false if there are none more.
+		/**
+		Go into the next (or first) category part.
+		@return false if there are none more.
+		**/
 		bool nextCategory();
 
-		/// Read the whole next package in the current category.
-		// @return false if there are none more.
+		/**
+		Read the whole next package in the current category.
+		return false if there are none more.
+		**/
 		bool nextPackage();
 
-		/// Return name of current category.
+		/**
+		@return name of current category
+		**/
 		const std::string& category() const {
 			return m_cat_name;
 		}

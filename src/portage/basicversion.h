@@ -68,7 +68,9 @@ class BasicPart {
 };
 
 
-/** Parse and represent a portage version-string. */
+/**
+Parse and represent a portage version-string.
+**/
 class BasicVersion {
 		friend class Database;
 	public:
@@ -80,16 +82,22 @@ class BasicVersion {
 
 		virtual ~BasicVersion() { }
 
-		/// Parse the version-string pointed to by str.
+		/**
+		Parse the version-string pointed to by str
+		**/
 		BasicVersion::ParseResult parseVersion(const std::string& str, std::string *errtext, eix::SignedBool accept_garbage);
 		BasicVersion::ParseResult parseVersion(const std::string& str, std::string *errtext) {
 			return parseVersion(str, errtext, 1);
 		}
 
-		/// Compare all except gentoo revisions
+		/**
+		Compare all except gentoo revisions
+		**/
 		static eix::SignedBool compareTilde(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
 
-		/// Compare the version.
+		/**
+		Compare the version
+		**/
 		static eix::SignedBool compare(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
 
 		std::string getFull() const;
@@ -99,13 +107,17 @@ class BasicVersion {
 		std::string getRevision() const;
 
 	protected:
-		/// Splitted m_primsplit-version.
+		/**
+		Splitted m_primsplit-version
+		**/
 		typedef std::list<BasicPart> PartsType;
 		PartsType m_parts;
 };
 
 
-// Short compare-stuff
+/**
+Short compare-stuff
+**/
 inline static bool operator<(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
 inline static bool operator<(const BasicVersion& left, const BasicVersion& right) {
 	return BasicVersion::compare(left, right) < 0;

@@ -52,7 +52,7 @@ The following options are available:
      time of the given package. In this case, the argument must be a
      regular expression matching category/package-version.
      Note that the time in the log file and the time recorded in the database
-     usually differ slightly so that usage/non-usage of option -i need not
+     usually differ slightly so that usage/non-usage of option -I need not
      have the expected effect: The package may or may not be included.
      You can use -a/-A to fix the time. Note also that -t or -T have no
      effect on the data in the log file.

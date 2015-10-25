@@ -119,9 +119,11 @@ eix::TinyUnsigned ArgumentReader::numargs(const int opt, const OptionList& opt_t
 	return 0;
 }
 
-/** Return shortopt for longopt stored in opt.
- * @param long_opt longopt that should be resolved.
- * @return shortopt for given longopt */
+/**
+Return shortopt for longopt stored in opt.
+@param long_opt longopt that should be resolved.
+@return shortopt for given longopt
+**/
 int ArgumentReader::lookup_longopt(const char *long_opt, const OptionList& opt_table) {
 	for(OptionList::const_iterator it(opt_table.begin());
 		likely(it != opt_table.end()); ++it) {
@@ -134,9 +136,11 @@ int ArgumentReader::lookup_longopt(const char *long_opt, const OptionList& opt_t
 	return 0;  // never reached, but might avoid compiler warning
 }
 
-/** Check if short_opt is a known option.
- * @param long_opt longopt that should be resolved.
- * @return shortopt for given longopt */
+/**
+Check if short_opt is a known option.
+@param long_opt longopt that should be resolved.
+@return shortopt for given longopt
+**/
 int ArgumentReader::lookup_shortopt(const char short_opt, const OptionList& opt_table) {
 	for(OptionList::const_iterator it(opt_table.begin());
 		likely(it != opt_table.end()); ++it) {
