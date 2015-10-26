@@ -11,8 +11,9 @@
 
 #include "eixrc/globals.h"
 
-#define DEFAULT_PART 2
+#define DEFAULT_PART 6
 
-void fill_defaults_part_2(EixRc *eixrc) {
+void fill_defaults_part_6(EixRc *eixrc) {
 #include "eixrc/defaults.cc"  // NOLINT(build/include)
+#include "eixrc/def_i18n.cc"  // NOLINT(build/include)
 }

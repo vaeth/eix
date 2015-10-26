@@ -94,12 +94,15 @@ nodist_eixtk_src =
 eixrc_src = \
 eixrc/eixrc.cc \
 eixrc/eixrc.h \
+eixrc/global.cc \
+eixrc/global.h \
 eixrc/global1.cc \
 eixrc/global2.cc \
 eixrc/global3.cc \
 eixrc/global4.cc \
 eixrc/global5.cc \
-eixrc/global.h
+eixrc/global6.cc \
+eixrc/globals.h
 
 nodist_eixrc_src =
 
@@ -253,6 +256,7 @@ $(nodist_portage_src) \
 $(nodist_eixrc_src)
 
 extra_common_src = \
+eixrc/def_i18n.cc \
 eixrc/defaults.cc \
 main/main.cc \
 main/main_eix.cc \
@@ -543,6 +547,13 @@ eix-drop-permissions$(EXEEXT): $(drop_permissions_link)
 	$(AM_V_GEN)$(LN_S) $(drop_permissions_link) eix-drop-permissions$(EXEEXT)
 
 endif
+
+eixrc/global1.cc: eixrc/defaults.cc
+eixrc/global2.cc: eixrc/defaults.cc
+eixrc/global3.cc: eixrc/defaults.cc
+eixrc/global4.cc: eixrc/defaults.cc
+eixrc/global5.cc: eixrc/defaults.cc
+eixrc/global6.cc: eixrc/defaults.cc eixrc/def_i18n.cc
 
 uninstall-local:
 	$(AM_V_at)$(use_separate_tools) || \

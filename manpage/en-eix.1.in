@@ -1134,12 +1134,9 @@ which follows another policy.
 .SH FORMATSTRING
 .LP
 A formatstring can contain conditional blocks, package properties, colors and
-normal strings.
-If a formatstring expands to the empty string for a package, also the trailing
-newline is not printed.
-Thus you can put the whole formatstring into a conditional block to output
-only packages matching the conditional.
-An example of this wrapping is given below.
+normal strings. The normal strings are output as expected (with special escape
+sequences being recognized, see below); for size calculations for e.g. tabs,
+UTF8 encoding is supposed.
 .\" {{{ -------- Conditional blocks
 .SS Conditional blocks
 Conditions are very simple: A property is expanded and the resulting string is
@@ -1443,16 +1440,20 @@ the available versions of the current (i.e. new) package.
 .TP
 .B \\\\n \\\\r  \\\\t  \\\\b  \\\\a
 These are interpreted in the usual way as in printf.
+Within B<FORMATSTRING>, tabs are calculated into spaces,
+assuming that the B<FORMATSTRING> is in UTF8.
 
 .TP
 .B \\\\C\<I<COLUMN>>
-This special escape sequence is only admissible in formatstrings.
+This special escape sequence is only admissible in B<FORMATSTRING>.
 Here, I<COLUMN> is a number (which must be enclosed in the braces).
 During output, this is interpreted by eix in such a way that if
 the column I<COLUMN> is not yet reached during output of the current line,
 so many spaces are output that this is the case.
 Thus, in a sense, this can be considered as a powerful tabulator
 which does not leave the interpretation to the terminal.
+For the calculation of the length of the current line, it is assumed that
+the B<FORMATSTRING> is in UTF8.
 .\" }}}
 
 .\" {{{ -------- Colors
@@ -3885,9 +3886,60 @@ Since eix-0.29.6 the options B<--verbose> and B<--compact> are no longer togglin
 for switching off, there is the new option B<--normal>.
 .\" }}}
 
+.\" {{{ TRANSLATION
+.SH "TRANSLATION"
+.LP
+For a simple fixed translation of the default B<FORMATSTRING> to your language,
+it suffices to set the variables starting with I18N_... in your B</etc/eixrc> or B<~/.eixrc>:
+Redirect the output of B<eix --dump-defaults> to a file to get a list of all variables.
+Some of the last ones are those starting with I18N_.... you are looking for.
+
+The variables starting with I18N_COLUMN_.... are special and can be used to
+adopt the columns to a new layout which might be necessary due to different
+lengths of the translations. (Note that the column counting will be garbled
+if you do not use UTF8 encoding for your language.)
+You can see the default values of that variables in the corresponding
+variables C_COLUMN_.... which appear nearby (but which should not be modified
+for the purpose of translation.)
+Normally, it should be sufficient to redefine B<I18N_COLUMN_CONTENT> and
+B<I18N_INST_COLUMN_CONTENT> to appropriate numbers.
+To make sure that all columns are correct, you should finally consider the
+output of all of the commands
+
+eix -vxe binutils
+
+eix -ve binutils
+
+eix -le binutils -oe sun-jdk
+
+eix -xle binutils
+
+eix -vle binutils
+
+eix -xvle binutils
+
+eix -vle sun-jdk
+
+Here, binutils means an B<installed> and B<slotted> package, while
+sun-jdk means a B<masked> (with an explanation in package.mask) package.
+
+Once you have your translation finished, you can send the changed
+variables to the eix maintainer or to eix on github or - even better:
+Add your language to po/LINGUAS, call contrib/make to generate a corresponding
+po/*.po file, and add your translation to that data in the file which refers to
+src/eixrc/def_i18n.cc
+
+Of course, you are welcome to translate also other texts in that file:
+People might acknowledge even partial translations of the most important messages.
+
+You can send your new po/*.po file to the eix maintainer or, even better:
+You can put your changes to github and make a pull request.
+.\" }}}
+
 .\" {{{ AUTHORS
 .SH "AUTHORS"
 .LP
+Main authors of the programm:
 
 Martin V\(:ath <martin at mvath.de> (developer, current maintainer)
 
@@ -3897,6 +3949,8 @@ Emil Beinroth <emilbeinroth at gmx.net> (developer, previous maintainer)
 Wolfgang Frisch <xororand at users.sourceforge.net> (inactive developer, initial author)
 
 Roland Wittmann <linuxcommando at users.sourceforge.net> (inactive developer)
+
+Many other contributors can be found in the B<AUTHORS> file.
 .\" }}}
 
 .\" {{{ SEE ALSO

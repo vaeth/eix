@@ -60,20 +60,20 @@ class CascadingProfile {
 		bool print_profile_paths;
 		std::string profile_paths_append;
 		bool use_world, finalized;
-		MaskList<Mask> m_world;          ///< Packages in world. This must be set externally
+		MaskList<Mask> m_world;            ///< Packages in world. This must be set externally
 
 	protected:
 		bool m_init_world;
 		typedef std::vector<ProfileFile> ProfileFiles;
-		ProfileFiles m_profile_files; ///< List of files in profile.
-		PortageSettings *m_portagesettings; ///< Profilesettings to which this instance "belongs"
+		ProfileFiles m_profile_files;      ///< List of files in profile.
+		PortageSettings *m_portagesettings;  ///< Profilesettings to which this instance "belongs"
 
-		MaskList<Mask> m_system;         ///< Packages in @system
-		MaskList<Mask> m_profile;        ///< Packages in @profile
-		MaskList<Mask> m_package_masks;  ///< Masks from package.mask
-		MaskList<Mask> m_package_unmasks;///< Masks from package.unmask
-		MaskList<PKeywordMask> m_package_keywords;///< Masks from package.keywords
-		MaskList<KeywordMask> m_package_accept_keywords;///< Masks from package.accept_keywords
+		MaskList<Mask> m_system;           ///< Packages in @system
+		MaskList<Mask> m_profile;          ///< Packages in @profile
+		MaskList<Mask> m_package_masks;    ///< Masks from package.mask
+		MaskList<Mask> m_package_unmasks;  ///< Masks from package.unmask
+		MaskList<PKeywordMask> m_package_keywords;  ///< Masks from package.keywords
+		MaskList<KeywordMask> m_package_accept_keywords;  ///< Masks from package.accept_keywords
 		PreList p_system, p_profile, p_package_masks, p_package_unmasks,
 			p_package_keywords, p_package_accept_keywords;
 

@@ -66,18 +66,18 @@ class Mask : public BasicVersion {
 		StringList comments;
 
 	protected:
-		Operator m_operator; ///< Operator for mask.
-		Type m_type;   ///< Mask type for this mask.
+		Operator m_operator;     ///< Operator for mask.
+		Type m_type;             ///< Mask type for this mask.
 
-		std::string m_category; ///< category
-		std::string m_name;     ///< package name
+		std::string m_category;  ///< category
+		std::string m_name;      ///< package name
 		std::string m_slotname;
 		std::string m_subslotname;
 		std::string m_reponame;
-		std::string m_glob;     ///< the glob string for MaskOpGlob
-		bool m_test_slot;       ///< must we match a slot?
-		bool m_test_subslot;    ///< must we match a subslot?
-		bool m_test_reponame;   ///< must we match a reponame?
+		std::string m_glob;      ///< the glob string for MaskOpGlob
+		bool m_test_slot;        ///< must we match a slot?
+		bool m_test_subslot;     ///< must we match a subslot?
+		bool m_test_reponame;    ///< must we match a reponame?
 
 
 		/**

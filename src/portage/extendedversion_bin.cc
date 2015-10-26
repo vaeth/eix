@@ -9,6 +9,8 @@
 
 #include <config.h>
 
+#include <cstring>
+
 #include <map>
 #include <string>
 

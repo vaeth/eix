@@ -27,5 +27,6 @@ void fill_defaults_part_2(EixRc *eixrc) ATTRIBUTE_NONNULL_;
 void fill_defaults_part_3(EixRc *eixrc) ATTRIBUTE_NONNULL_;
 void fill_defaults_part_4(EixRc *eixrc) ATTRIBUTE_NONNULL_;
 void fill_defaults_part_5(EixRc *eixrc) ATTRIBUTE_NONNULL_;
+void fill_defaults_part_6(EixRc *eixrc) ATTRIBUTE_NONNULL_;
 
 #endif  // SRC_EIXRC_GLOBAL_H_

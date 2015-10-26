@@ -742,8 +742,7 @@ void EixRc::getRedundantFlags(const string& key, Keywords::Redundant type, RedPa
 		const char *s(it->c_str());
 		if(caseequal(*it, "or") ||
 			(strcmp(s, "||") == 0) ||
-			(strcmp(s, "|") == 0) ||
-			(strcmp(s, _("or")) == 0)) {
+			(strcmp(s, "|") == 0)) {
 			++it;
 			if(unlikely(it == a.end())) {
 				break;

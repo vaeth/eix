@@ -5,8 +5,10 @@
 	- Initial implementation for FEATURES=binpkg-multi-instance
 
 	Martin Väth <martin at mvath.de>:
-	- Fix --disable-nls cleanly
 	- Internationalization and German translation of eix formatstring
+	- manpage: document how to translate default formatstrings to
+	  other languages
+	- Fix --disable-nls cleanly
 	- Extend support for FEATURES=binpkg-multi-instance: Be stricter in
 	  filename syntax, add further attributes, use new colors
 	- Update documentation for FEATURES=binpkg-multi-instance

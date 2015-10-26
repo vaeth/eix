@@ -7,14 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
-// This file is supposed to be included by a wrapper which should contain
-// #include <config.h>
-// #include "eixTk/i18n.h"
-// #include <cstdlib>
-
-#define AddOption(opt_type, opt_name, opt_default, opt_description) \
-	eixrc->addDefault(EixRcOption(EixRcOption::opt_type, opt_name, \
-		opt_default, opt_description))
+// Make check_includes happy:
+// #include <config.h> #include "eixTk/i18n.h" #include <cstdlib>
 
 #if (DEFAULT_PART == 1)
 
@@ -1448,7 +1442,7 @@ AddOption(STRING, "COLOR_SLOTS",
 	"Color for slots. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_BINARY",
-	"blue,1;%{BG0S}|21,1;%{BG1}|blue,1;%{BG2}|21,1;%{BG3}|21,1", _(
+	"blue,1;%{BG0S}|25,1;%{BG1}|blue,1;%{BG2}|25,1;%{BG3}|25,1", _(
 	"Color for braces for binaries. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_TBZ",
@@ -1579,6 +1573,9 @@ AddOption(STRING, "TAG_NEW",
 	"(%{DIFF_COLOR_NEW_TAG})%{DIFF_CHAR_NEW}(%{COLOR_RESET})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the tag printed for new packages (eix-diff)."));
+#endif
+
+#if (DEFAULT_PART == 4)
 
 AddOption(STRING, "TAG_BETTER",
 	"(%{DIFF_COLOR_BETTER})%{DIFF_CHAR_BETTER}(%{COLOR_RESET})", _(
@@ -1656,9 +1653,6 @@ AddOption(STRING, "TAG_RESTRICT_PRIMARYURI",
 AddOption(STRING, "TAG_RESTRICT_BINCHECKS",
 	"b", _(
 	"Tag for RESTRICT=binchecks. This is only used for delayed substitution."));
-#endif
-
-#if (DEFAULT_PART == 4)
 
 AddOption(STRING, "TAG_RESTRICT_STRIP",
 	"s", _(
@@ -1799,136 +1793,6 @@ AddOption(STRING, "TAG_FOR_EX_MISSING_KEYWORD",
 	"(**)", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is the tag for \"originally no keyword but now stable\" versions."));
-
-AddOption(STRING, "I18N_INSTALLEDVERSIONS",
-	_("Installed versions:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"Installed versions:\""));
-
-AddOption(STRING, "I18N_VERSION",
-	_("Version:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"Version:\""));
-
-AddOption(STRING, "I18N_DATE",
-	_("Date:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"Date:\""));
-
-AddOption(STRING, "I18N_IUSE",
-	_("IUSE:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"IUSE:\""));
-
-AddOption(STRING, "I18N_IUSEALLVERSIONS",
-	_("IUSE \\(all versions\\):"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"IUSE \\(all versions\\):\""));
-
-AddOption(STRING, "I18N_USE",
-	_("USE:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"USE:\""));
-
-AddOption(STRING, "I18N_DEPEND",
-	_("DEPEND:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"DEPEND:\""));
-
-AddOption(STRING, "I18N_RDEPEND",
-	_("RDEPEND:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"RDEPEND:\""));
-
-AddOption(STRING, "I18N_PDEPEND",
-	_("PDEPEND:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"PDEPEND:\""));
-
-AddOption(STRING, "I18N_HDEPEND",
-	_("HDEPEND:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"HDEPEND:\""));
-
-AddOption(STRING, "I18N_KEYWORDS",
-	_("KEYWORDS:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"KEYWORDS:\""));
-
-AddOption(STRING, "I18N_KEYWORDSS",
-	_("KEYWORDS*:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"KEYWORDS*:\""));
-
-AddOption(STRING, "I18N_MASK",
-	_("Mask:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"Mask:\""));
-
-AddOption(STRING, "I18N_MARKED",
-	_("Marked:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"Marked:\""));
-
-AddOption(STRING, "I18N_AVAILABLEVERSIONS",
-	_("Available versions:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"Available versions:\""));
-
-AddOption(STRING, "I18N_BESTVERSIONSSLOT",
-	_("Best versions/slot:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"Best versions/slot:\""));
-
-AddOption(STRING, "I18N_RECOMMENDATION",
-	_("Recommendation:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"Recommendation:\""));
-
-AddOption(STRING, "I18N_UPGRADE",
-	_("Upgrade"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"Upgrade\""));
-
-AddOption(STRING, "I18N_DOWNGRADE",
-	_("Downgrade"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"Downgrade\""));
-
-AddOption(STRING, "I18N_AND",
-	_(" and "), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \" and \""));
-
-AddOption(STRING, "I18N_NONE",
-	_("None"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"None\""));
-
-AddOption(STRING, "I18N_PACKAGESETS",
-	_("Package sets:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"Package sets:\""));
-
-AddOption(STRING, "I18N_HOMEPAGE",
-	_("Homepage:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"Homepage:\""));
-
-AddOption(STRING, "I18N_FINDOPENBUGS",
-	_("Find open bugs:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"Find open bugs:\""));
-
-AddOption(STRING, "I18N_DESCRIPTION",
-	_("Description:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"Description:\""));
-
-AddOption(STRING, "I18N_LICENSE",
-	_("License:"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It translates \"License:\""));
 
 AddOption(STRING, "VERSION_NEWLINE",
 	"\\n", _(
@@ -2343,6 +2207,9 @@ AddOption(STRING, "IVERSIONS_VERBOSE",
 	"%{IVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}%{OVERLAYVER}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an installed version with most data and slot."));
+#endif
+
+#if (DEFAULT_PART == 5)
 
 AddOption(STRING, "PVERSIONO_VERBOSE",
 	"%{PVERSIONO}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}%{OVERLAYVER}", _(
@@ -2397,60 +2264,13 @@ AddOption(STRING, "FORMAT_NEWLINE",
 	"This variable only used for delayed substitution.\n"
 	"It prints a newline, optionally handling background colors for some terminals."));
 
-AddOption(STRING, "COLUMN_TITLE",
-	"5", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the first column for the titles."));
-
 AddOption(STRING, "COLUMN_KEYWORDS",
 	"22", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the first column after the version."));
 
-AddOption(STRING, "COLUMN_CONTENT_NOI18N",
-	"26", _(
-	"This variable is only used for delayed substitution in COLUMN_CONTENT."));
-
-AddOption(STRING, "COLUMN_CONTENT",
-	_("%{COLUMN_CONTENT_NOI18N}"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the first column for the content."));
-
-AddOption(STRING, "COLUMN_INST_TITLE_NOI18N",
-	"26", _(
-	"This variable is only used for delayed substitution in COLUMN_INST_TITLE."));
-
-AddOption(STRING, "COLUMN_INST_TITLE",
-	_("%{COLUMN_INST_TITLE_NOI18N}"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the first column for the title of installed versions."));
-
-AddOption(STRING, "COLUMN_INST_CONTENT_NOI18N",
-	"37", _(
-	"This variable is only used for delayed substitution in COLUMN_INST_CONTENT."));
-
-AddOption(STRING, "COLUMN_INST_CONTENT",
-	_("%{COLUMN_INST_CONTENT_NOI18N}"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the first column for the content of installed versions."));
-
-AddOption(STRING, "COLUMN_AVAILABLE_TITLE",
-	"15", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the first column for the title of available versions."));
-
-AddOption(STRING, "COLUMN_AVAILBLE_CONTENT_NOI18N",
-	"26", _(
-	"This variable is only used for delayed substitution in\n"
-	"COLUMN_AVAILABLE_CONTENT."));
-
-AddOption(STRING, "COLUMN_AVAILABLE_CONTENT",
-	_("%{COLUMN_AVAILABLE_CONTENT_NOI18N}"), _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the first column for the content of available versions."));
-
 AddOption(STRING, "COLUMN_SLOT",
-	"%{COLUMN_TITLE}", _(
+	"%{C_COLUMN_TITLE}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the first column for the slot without versionlines."));
 
@@ -2475,7 +2295,7 @@ AddOption(STRING, "COLUMN_SLOT_APPEND",
 	"It defines the first column of the slot with versionsort."));
 
 AddOption(STRING, "COLUMN_VER_APPEND",
-	"22", _(
+	"%{COLUMN_SLOT_APPEND}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the first column after the version without versionsort."));
 
@@ -2495,7 +2315,7 @@ AddOption(STRING, "DIFF_COLUMNB",
 	"It defines the column after the tags in eix-diff."));
 
 AddOption(STRING, "FORMAT_VER_LINESKIP",
-	"%{FORMAT_NEWLINE}\\C<%{COLUMN_AVAILABLE_TITLE}>", _(
+	"%{FORMAT_NEWLINE}\\C<%{I18N_COLUMN_AVAILABLE_TITLE}>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the lineskip used for the versionline appendix."));
 
@@ -2533,25 +2353,25 @@ AddOption(STRING, "FORMAT_DEPS_NORMAL",
 			"{havedepend}"
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})%{I18N_DEPEND}(%{COLOR_RESET})"
-				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_DEPEND}"
 			"{}"
 			"{haverdepend}"
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})%{I18N_RDEPEND}(%{COLOR_RESET})"
-				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_RDEPEND}"
 			"{}"
 			"{havepdepend}"
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})%{I18N_PDEPEND}(%{COLOR_RESET})"
-				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_PDEPEND}"
 			"{}"
 			"{havehdepend}"
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})%{I18N_HDEPEND}(%{COLOR_RESET})"
-				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_HDEPEND}"
 			"{}"
 		"%{}"
@@ -2578,7 +2398,7 @@ AddOption(STRING, "FORMAT_VERSION_KEYWORDS_VERBOSE",
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})%{I18N_KEYWORDS}(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{versionkeywords}%{}"
-				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_KEYWORDS}(%{COLOR_RESET})"
 			"{}"
 			"%{!PRINT_ALWAYS}{versionekeywords}%{}"
@@ -2586,11 +2406,11 @@ AddOption(STRING, "FORMAT_VERSION_KEYWORDS_VERBOSE",
 				"(%{COLOR_AVAILABLE_TITLE})%{I18N_KEYWORDSS}(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}"
 					"{!versionekeywords}"
-						"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+						"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 						"%{FORMAT_KEYWORDS_EQUAL}"
 					"{else}"
 				"%{}"
-				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_KEYWORDSS}(%{COLOR_RESET})"
 			"{}"
 		"%{}"
@@ -2605,16 +2425,13 @@ AddOption(STRING, "FORMAT_IUSE_VERBOSE",
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})%{I18N_IUSE}(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{haveuse}%{}"
-				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_VERSION_IUSE}(%{COLOR_RESET})"
 			"{}"
 		"%{}"
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the verbose format for IUSE for an available version."));
-#endif
-
-#if (DEFAULT_PART == 5)
 
 AddOption(STRING, "FORMAT_DEPS_VERBOSE",
 	"%{?DEP}"
@@ -2623,28 +2440,28 @@ AddOption(STRING, "FORMAT_DEPS_VERBOSE",
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})%{I18N_DEPEND}(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{depend}%{}"
-				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_DEPEND_VERBOSE}"
 			"{}"
 			"%{!PRINT_ALWAYS}{haverdepend}%{}"
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})%{I18N_RDEPEND}(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{haverdepend}%{}"
-				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_RDEPEND_VERBOSE}"
 			"{}"
 			"%{!PRINT_ALWAYS}{havepdepend}%{}"
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})%{I18N_PDEPEND}(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{havepdepend}%{}"
-				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_PDEPEND_VERBOSE}"
 			"{}"
 			"%{!PRINT_ALWAYS}{havehdepend}%{}"
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})%{I18N_HDEPEND}(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{havehdepend}%{}"
-				"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_HDEPEND_VERBOSE}"
 			"{}"
 		"%{}"
@@ -2660,7 +2477,7 @@ AddOption(STRING, "FORMAT_MASKREASONS_VERBOSE",
 				"(%{COLOR_AVAILABLE_TITLE})%{I18N_MASK}(%{COLOR_RESET})"
 				"%{?PRINT_ALWAYS}{havemaskreasons}%{}"
 				"%{?WIDETERM}"
-					"\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+					"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{else}"
 					"%{FORMAT_NEWLINE}"
 				"%{}"
@@ -2712,7 +2529,7 @@ AddOption(STRING, "FORMAT_VERSLINESKIP",
 	"It defines lineskip + stability if lineskip is used."));
 
 AddOption(STRING, "FORMAT_INST_LINESKIP",
-	"%{FORMAT_NEWLINE}\\C<%{COLUMN_INST_TITLE}>", _(
+	"%{FORMAT_NEWLINE}\\C<%{I18N_COLUMN_INST_TITLE}>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the lineskip for installed versions."));
 
@@ -2756,10 +2573,10 @@ AddOption(STRING, "FORMAT_COLL_SEP",
 AddOption(STRING, "FORMAT_COLL_VERBOSE",
 	"%{!PRINT_ALWAYS}{havecolliuse}%{}"
 		"%{FORMAT_NEWLINE}"
-		"\\C<%{COLUMN_TITLE}>"
+		"\\C<%{I18N_COLUMN_TITLE}>"
 		"(%{COLOR_TITLE})%{I18N_IUSEALLVERSIONS}(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{havecolliuse}%{}"
-		"\\C<%{COLUMN_CONTENT}>"
+		"\\C<%{I18N_COLUMN_CONTENT}>"
 		"%{FORMAT_COLLIUSE}(%{COLOR_RESET})"
 	"{}",  _(
 	"This variable is only used for delayed substitution.\n"
@@ -2822,16 +2639,16 @@ AddOption(STRING, "ICOMPACT",
 
 AddOption(STRING, "IVERBOSE",
 	"(%{COLOR_INST_TITLE})%{I18N_VERSION}(%{COLOR_RESET})"
-	"\\C<%{COLUMN_INST_CONTENT}>"
+	"\\C<%{I18N_COLUMN_INST_CONTENT}>"
 	"%{IVERSIONS_VERBOSE}(%{COLOR_RESET})"
 	"%{FORMAT_INST_LINESKIP}"
 	"(%{COLOR_INST_TITLE})%{I18N_DATE}(%{COLOR_RESET})"
-	"\\C<%{COLUMN_INST_CONTENT}>"
+	"\\C<%{I18N_COLUMN_INST_CONTENT}>"
 	"(%{COLOR_DATE})<date:FORMAT_INSTALLATION_DATE>(%{COLOR_RESET})"
 	"{haveuse}"
 		"%{FORMAT_INST_LINESKIP}"
 		"(%{COLOR_INST_TITLE})%{I18N_USE}(%{COLOR_RESET})"
-		"\\C<%{COLUMN_INST_CONTENT}>"
+		"\\C<%{I18N_COLUMN_INST_CONTENT}>"
 		"%{?OMIT_EXPAND}"
 			"<use0>"
 		"%{else}"
@@ -2842,25 +2659,25 @@ AddOption(STRING, "IVERBOSE",
 		"{havedepend}"
 			"%{FORMAT_INST_LINESKIP}"
 			"(%{COLOR_INST_TITLE})%{I18N_DEPEND}(%{COLOR_RESET})"
-			"\\C<%{COLUMN_INST_CONTENT}>"
+			"\\C<%{I18N_COLUMN_INST_CONTENT}>"
 			"%{FORMAT_DEPEND_VERBOSE}"
 		"{}"
 		"{haverdepend}"
 			"%{FORMAT_INST_LINESKIP}"
 			"(%{COLOR_INST_TITLE})%{I18N_RDEPEND}(%{COLOR_RESET})"
-			"\\C<%{COLUMN_INST_CONTENT}>"
+			"\\C<%{I18N_COLUMN_INST_CONTENT}>"
 			"%{FORMAT_RDEPEND_VERBOSE}"
 		"{}"
 		"{havepdepend}"
 			"%{FORMAT_INST_LINESKIP}"
 			"(%{COLOR_INST_TITLE})%{I18N_PDEPEND}(%{COLOR_RESET})"
-			"\\C<%{COLUMN_INST_CONTENT}>"
+			"\\C<%{I18N_COLUMN_INST_CONTENT}>"
 			"%{FORMAT_PDEPEND_VERBOSE}"
 		"{}"
 		"{havehdepend}"
 			"%{FORMAT_INST_LINESKIP}"
 			"(%{COLOR_INST_TITLE})%{I18N_HDEPEND}(%{COLOR_RESET})"
-			"\\C<%{COLUMN_INST_CONTENT}>"
+			"\\C<%{I18N_COLUMN_INST_CONTENT}>"
 			"%{FORMAT_HDEPEND_VERBOSE}"
 		"{}"
 	"%{}"
@@ -2920,13 +2737,13 @@ AddOption(STRING, "INSTALLEDVERSIONS",
 
 AddOption(STRING, "FORMATLINE_INSTALLEDVERSIONS",
 	"%{!PRINT_ALWAYS}{installed}%{}"
-		"\\C<%{COLUMN_TITLE}>"
+		"\\C<%{I18N_COLUMN_TITLE}>"
 		"(%{COLOR_TITLE})%{I18N_INSTALLEDVERSIONS}(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{installed}%{}"
-			"\\C<%{COLUMN_CONTENT}>"
+			"\\C<%{I18N_COLUMN_CONTENT}>"
 			"%{INSTALLEDVERSIONS}"
 		"%{?PRINT_ALWAYS}{else}"
-			"\\C<%{COLUMN_CONTENT}>"
+			"\\C<%{I18N_COLUMN_CONTENT}>"
 			"%{I18N_NONE}{}%{FORMAT_NEWLINE}"
 		"%{else}%{FORMAT_NEWLINE}{}"
 	"%{}", _(
@@ -3166,9 +2983,9 @@ AddOption(STRING, "DIFF_FORMATLINE_NAME_CHANGED",
 	"It defines the format for the diff-changed header."));
 
 AddOption(STRING, "FORMATLINE_AVAILABLEVERSIONS",
-	"\\C<%{COLUMN_TITLE}>"
+	"\\C<%{I18N_COLUMN_TITLE}>"
 	"(%{COLOR_TITLE})%{I18N_AVAILABLEVERSIONS}(%{COLOR_RESET})"
-	"\\C<%{COLUMN_CONTENT}>"
+	"\\C<%{I18N_COLUMN_CONTENT}>"
 	"%{FORMAT_AVAILABLEVERSIONS}%{FORMAT_NEWLINE}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with installed versions."));
@@ -3187,10 +3004,10 @@ AddOption(STRING, "DIFF_FORMATLINE_CHANGED_VERSIONS",
 
 AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
 	"%{!PRINT_ALWAYS}{havemarkedversion}%{}"
-		"\\C<%{COLUMN_TITLE}>"
+		"\\C<%{I18N_COLUMN_TITLE}>"
 		"(%{COLOR_TITLE})%{I18N_MARKED}(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{havemarkedversion}%{}"
-		"\\C<%{COLUMN_CONTENT}>"
+		"\\C<%{I18N_COLUMN_CONTENT}>"
 		"<markedversions:MARKEDVERSION>"
 	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -3198,10 +3015,10 @@ AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
 
 AddOption(STRING, "FORMATLINE_PACKAGESETS",
 	"%{!PRINT_ALWAYS}{%{PRINT_SETNAMES}}%{}"
-		"\\C<%{COLUMN_TITLE}>"
+		"\\C<%{I18N_COLUMN_TITLE}>"
 		"(%{COLOR_TITLE})%{I18N_PACKAGESETS}(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{%{PRINT_SETNAMES}}%{}"
-		"\\C<%{COLUMN_CONTENT}>"
+		"\\C<%{I18N_COLUMN_CONTENT}>"
 		"(%{COLOR_PACKAGESETS})<%{PRINT_SETNAMES}>"
 		"%{!RESET_ALL_LINES}(%{COLOR_RESET})%{}"
 	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
@@ -3210,10 +3027,10 @@ AddOption(STRING, "FORMATLINE_PACKAGESETS",
 
 AddOption(STRING, "FORMATLINE_HOMEPAGE",
 	"%{!PRINT_ALWAYS}{homepage}%{}"
-		"\\C<%{COLUMN_TITLE}>"
+		"\\C<%{I18N_COLUMN_TITLE}>"
 		"(%{COLOR_TITLE})%{I18N_HOMEPAGE}(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{homepage}%{}"
-		"\\C<%{COLUMN_CONTENT}>"
+		"\\C<%{I18N_COLUMN_CONTENT}>"
 		"(%{COLOR_NORMAL})<homepage>"
 		"%{!RESET_ALL_LINES}(%{COLOR_NORMAL_END})%{}"
 	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
@@ -3222,10 +3039,10 @@ AddOption(STRING, "FORMATLINE_HOMEPAGE",
 
 AddOption(STRING, "FORMATLINE_BUGS",
 	"%{?PRINT_BUGS}%{!PRINT_ALWAYS}{mainrepo}%{}"
-		"\\C<%{COLUMN_TITLE}>"
+		"\\C<%{I18N_COLUMN_TITLE}>"
 		"(%{COLOR_TITLE})%{I18N_FINDOPENBUGS}(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{mainrepo}%{}"
-		"\\C<%{COLUMN_CONTENT}>"
+		"\\C<%{I18N_COLUMN_CONTENT}>"
 		"(%{COLOR_NORMAL})"
 		"https://bugs.gentoo.org/buglist.cgi?quicksearch="
 		"<category>%2F<name>"
@@ -3236,10 +3053,10 @@ AddOption(STRING, "FORMATLINE_BUGS",
 
 AddOption(STRING, "FORMATLINE_DESCRIPTION",
 	"%{!PRINT_ALWAYS}{description}%{}"
-		"\\C<%{COLUMN_TITLE}>"
+		"\\C<%{I18N_COLUMN_TITLE}>"
 		"(%{COLOR_TITLE})%{I18N_DESCRIPTION}(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{description}%{}"
-		"\\C<%{COLUMN_CONTENT}>"
+		"\\C<%{I18N_COLUMN_CONTENT}>"
 		"(%{COLOR_NORMAL})<description>"
 		"%{!RESET_ALL_LINES}(%{COLOR_NORMAL_END})%{}"
 	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
@@ -3248,10 +3065,10 @@ AddOption(STRING, "FORMATLINE_DESCRIPTION",
 
 AddOption(STRING, "FORMATLINE_BEST",
 	"%{!PRINT_ALWAYS}{havebest}%{}"
-		"\\C<%{COLUMN_TITLE}>"
+		"\\C<%{I18N_COLUMN_TITLE}>"
 		"(%{COLOR_TITLE})%{I18N_BESTVERIONSSLOT}(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{havebest}%{}"
-		"\\C<%{COLUMN_CONTENT}>"
+		"\\C<%{I18N_COLUMN_CONTENT}>"
 		"<bestslotversions:VSORT>"
 	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -3259,10 +3076,10 @@ AddOption(STRING, "FORMATLINE_BEST",
 
 AddOption(STRING, "FORMATLINE_RECOMMEND",
 	"%{!PRINT_ALWAYS}{recommend}%{}"
-		"\\C<%{COLUMN_TITLE}>"
+		"\\C<%{I18N_COLUMN_TITLE}>"
 		"(%{COLOR_TITLE})%{I18N_RECOMMENDATION}(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{recommend}%{}"
-		"\\C<%{COLUMN_CONTENT}>"
+		"\\C<%{I18N_COLUMN_CONTENT}>"
 		"{upgrade}(%{COLOR_UPGRADE_TEXT})%{I18N_UPGRADE}(%{COLOR_RESET})"
 			"{downgrade}"
 				"%{I18N_AND}"
@@ -3278,15 +3095,18 @@ AddOption(STRING, "FORMATLINE_RECOMMEND",
 
 AddOption(STRING, "FORMATLINE_LICENSES",
 	"%{!PRINT_ALWAYS}{licenses}%{}"
-		"\\C<%{COLUMN_TITLE}>"
+		"\\C<%{I18N_COLUMN_TITLE}>"
 		"(%{COLOR_TITLE})%{I18N_LICENSE}(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{licenses}%{}"
-		"\\C<%{COLUMN_CONTENT}>"
+		"\\C<%{I18N_COLUMN_CONTENT}>"
 		"(%{COLOR_NORMAL})<licenses>"
 		"%{!RESET_ALL_LINES}(%{COLOR_NORMAL_END})%{}"
 	"%{?PRINT_ALWAYS}{}%{FORMAT_NEWLINE}%{else}%{FORMAT_NEWLINE}{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the package licenses."));
+#endif
+
+#if (DEFAULT_PART == 6)
 
 AddOption(STRING, "DIFF_FORMATLINE",
 	"%{FORMAT_OVERLAYKEY}"
@@ -3440,7 +3260,7 @@ AddOption(STRING, "FORMAT_MASKREASONS_SEP",
 
 AddOption(STRING, "FORMAT_MASKREASONSS_LINESKIP",
 	"%{?WIDETERM}"
-		"%{FORMAT_VER_LINESKIP}\\C<%{COLUMN_AVAILABLE_CONTENT}>"
+		"%{FORMAT_VER_LINESKIP}\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 	"%{else}"
 		"%{FORMAT_NEWLINE}"
 	"%{}"

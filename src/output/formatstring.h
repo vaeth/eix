@@ -377,10 +377,10 @@ class PrintFormat {
 		void VER_MASKREASONSS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 
 	public:
-		bool	no_color,            ///< Shall we use colors?
-			style_version_lines, ///< Shall we show versions linewise?
-			slot_sorted,         ///< Print sorted by slots
-			alpha_use;           ///< Print use in alphabetical order (not by set/unset)
+		bool	no_color,             ///< Shall we use colors?
+			style_version_lines,  ///< Shall we show versions linewise?
+			slot_sorted,          ///< Print sorted by slots
+			alpha_use;            ///< Print use in alphabetical order (not by set/unset)
 
 		LocalMode recommend_mode;
 

@@ -43,7 +43,6 @@
 using std::map;
 using std::pair;
 using std::string;
-using std::to_string;
 
 using std::cerr;
 using std::endl;
@@ -1275,7 +1274,7 @@ void PrintFormat::VER_ISMULTIPAK(OutputString *s, Package *package) const {
 void PrintFormat::VER_PAKCOUNT(OutputString *s, Package *package) const {
 	ExtendedVersion::CountBinPkg count(ver_version()->num_pak_pkg(portagesettings, package));
 	if(count != 0) {
-		s->assign_fast(to_string(count));
+		s->assign_fast(eix::format("%s") % count);
 	}
 }
 

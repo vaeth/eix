@@ -1160,12 +1160,9 @@ zu definieren, der einer anderen Politik folgt.
 .SH FORMATSTRING
 .LP
 Ein Formatstring kann konditionelle Blocks, Paketeigenschaften, Farben,
-und normale Strings enthalten.
-Wenn ein Formatstring zu einem Leerstring für ein Paket expandiert,
-so wird auch der folgende Zielenumbruch nicht ausgegeben.
-Daher kann man den gesamten Formatstring in einen konditionallen Block
-packen, um nur nur die Pakete auszugeben, die der Bedingung entsprechen.
-Ein Beispiel einer solchen "Umrahmung" wird weiter unten gegeben.
+und normale Strings enthalten. Normale Strings werden wie erwartet ausgegeben
+(wobei spezielle Escape-Sequenzen berücksichtigt werden, s. unten);
+für die Berechnung von Größen wie z.B. Tabs wird UTF8-Kodierung unterstellt.
 .\" {{{ -------- konditionelle Blocks
 .SS konditionelle Blocks
 Bedingungen sind sehr einfach: Eine Eigenschaft wird expandiert, und der
@@ -1465,16 +1462,20 @@ verfügbaren Versionen des aktuellen (d.h. neuen) Pakets ausgeben.
 .TP
 .B \\\\n \\\\r  \\\\t  \\\\b  \\\\a
 Diese werden auf die übliche Art wie in printf interpretiert.
+Innerhalb von B<FORMATSTRING> werden Tabs in Leerzeichen umgerechnet,
+wobei unterstellt wird, dass der B<FORMATSTRING> in UTF8 kodiert ist.
 
 .TP
 .B \\\\C\<I<SPALTE>>
-Diese spezielle Escape-Folge ist nur in Formatstrings zulässig.
+Diese spezielle Escape-Folge ist nur in B<FORMATSTRING> zulässig.
 Hierbei ist I<SPALTE> eine Zahl (die eingeklammert sein muss).
 Während der Ausgabe, wird das Ganze von eix folgendermaßen interpretiert:
 Falls die Spalte I<SPALTE> noch während der Ausgabe der aktuellen Zeile
 noch nicht erreicht wurde, werden so viele Leerzeichen ausgegben, dass dies der Fall ist.
 In gewissem Sinne kann dies also als ein mächtiger Tabulator betrachtet werden,
 dessen Interpretation nicht dem Terminal überlassen wird.
+For die Berechnung der aktuellen Zeichenposition in der Zeile wird unterstellt,
+dass der B<FORMATSTRING> in UTF8 kodiert ist.
 .\" }}}
 
 .\" {{{ -------- Farben
@@ -3980,9 +3981,63 @@ Sei eix-0.29.6 haben die Optionen B<--verbose> und B<--compact> nur noch Einscha
 zum Ausschalten gibt es die neue Option B<--normal>.
 .\" }}}
 
+.\" {{{ ÜBERSETZUNG
+.SH "ÜBERSETZUNG"
+.LP
+Für eine einfache feste Übersetzung des voreingestellten B<FORMATSTRING> in Ihre Sprache,
+genügt es die Variablen, die mit I18N_... beginning in B</etc/eixrc> oder B<~/.eixrc> zu setzen:
+Leiten Sie die Ausgabe von B<eix --dump-defaults> in eine Datei um, um eine Liste
+aller Variablen zu erhalten: Einige der letzten sind diejenigen, die sie suchen,
+die mit I18N_.... beginnen.
+
+Die Variablen, die mit I18N_COLUMN_.... beginnen, sind dabei speziell und können
+benutzt werden, die Spalten an ein neues Layout anzupassen, das aufgrund abweichender
+Länge verschiedener Übersetzungen notwendig sein kann. (Beachten Sie, dass die
+Formatierung der Spalten durcheinander geraten kann, wenn Sie für Ihre Übersetzung
+keine UT8-Kodierung benutzen!)
+SIe können die Default-Werte dieser Variablen in den entsprfechenden
+C_COLUMN_....-Variablen ablesen, die in der Nähe stehen (aber die für
+Übersetzungszwecke nicht verändert werden sollten).
+Normalerweise sollte es genügen, B<I18N_COLUMN_CONTENT> und
+B<I18N_INST_COLUMN_CONTENT> auf geeignete Zahlen umzudefinieren.
+Um sicherzugehen, dass alle Spalten korrekt sind, sollten Sie am Ende die
+Ausgabe der Kommandos
+
+eix -vxe binutils
+
+eix -ve binutils
+
+eix -le binutils -oe sun-jdk
+
+eix -xle binutils
+
+eix -vle binutils
+
+eix -xvle binutils
+
+eix -vle sun-jdk
+
+betrachten.
+Hierbei steht binutils für ein B<installiertes> Paket mit B<Slots>, während
+sun-jdk für ein B<maskiertes> (mit Erklärung des Grunds in package.mask) steht.
+
+Sobald Sie eine Übersetung fertig haben, können Sie Ihre geänderten Variablen
+an den Eix-Maintainer oder eix auf Github schicken, oder noch besser:
+Fügen Sie Ihre Sprache der Datei po/LINGUAS hinzu, rufen Sie contrib/make auf,
+um eine entsprechende po/*.po-Datei zu erhalten, und fügen Sie Ihre Übersetzung
+dieser Datei an jenen Stellen hinzu, die sich auf src/eixrc/def_i18n.cc beziehen.
+
+Natürlich können Sie dabei gerne auch andere Texte dieser Datei übersetzen:
+Benutzer können auch für unfertige Übersetzungen der wichtigsten Meldungen dankbar sein!
+
+Sie können Ihre neue po/*.po-Datei dem Eix-Maintainer schicken, oder noch besser:
+Sie können Ihre Änderung auf Github mit einem Pull Request machen.
+.\" }}}
+
 .\" {{{ AUTOREN
 .SH "AUTOREN"
 .LP
+Hauptautoren des Programms:
 
 Martin Väth <martin at mvath.de> (developer, current maintainer)
 
@@ -3992,6 +4047,8 @@ Emil Beinroth <emilbeinroth at gmx.net> (developer, previous maintainer)
 Wolfgang Frisch <xororand at users.sourceforge.net> (inactive developer, initial author)
 
 Roland Wittmann <linuxcommando at users.sourceforge.net> (inactive developer)
+
+Viele weitere Autoren sind in der Datei B<AUTHORS> zu finden.
 .\" }}}
 
 .\" {{{ SIEHE AUCH

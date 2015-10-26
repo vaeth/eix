@@ -398,8 +398,8 @@ class VarsReader {
 
 		std::string m_errtext;
 
-		const char *filebuffer,  ///< The filebuffer everyone is taking about
-			*filebuffer_end; ///< Marks the end of the filebuffer
+		const char *filebuffer,   ///< The filebuffer everyone is taking about
+			*filebuffer_end;  ///< Marks the end of the filebuffer
 		/**
 		c-array of pattern for keys which values should be prepended to the new value
 		**/
