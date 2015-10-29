@@ -443,7 +443,7 @@ static bool parse_colors(OutputString *ret, const string& colorstring, bool colo
 			return true;
 		}
 	}
-	*errtext = _("internal error: bad node for parse_colors.");
+	*errtext = _("internal error: bad node for parse_colors");
 	return false;
 }
 
@@ -598,11 +598,11 @@ FormatParser::ParserState FormatParser::state_IF() {
 		c = *(++band_position))
 		++i;
 	if(!i) {
-		last_error = _("no name of property/variable found after '{'.");
+		last_error = _("no name of property/variable after '{'");
 		return ERROR;
 	}
 	if(!*band_position) {
-		last_error = _("found '{' without closing '}'.");
+		last_error = _("'{' without closing '}'");
 		return ERROR;
 	}
 	n->variable = Property(string(name_start, i));
@@ -617,13 +617,13 @@ FormatParser::ParserState FormatParser::state_IF() {
 	}
 	/* This MUST be a '=' */
 	if(*band_position != '=') {
-		last_error = eix::format(_("unexpected symbol %r found after '{'.")) % (*band_position);
+		last_error = eix::format(_("unexpected symbol %r after '{'")) % (*band_position);
 		return ERROR;
 	}
 
 	band_position = seek_character(band_position + 1);
 	if(!*band_position) {
-		last_error = _("found '{' without closing '}'.");
+		last_error = _("'{' without closing '}'");
 		return ERROR;
 	}
 
@@ -682,7 +682,7 @@ FormatParser::ParserState FormatParser::state_IF() {
 			band_position = seek_character(band_position + 1);
 		}
 		if(*band_position != '}') {
-			last_error = _("found '{' without closing '}'.");
+			last_error = _("'{' without closing '}'");
 			return ERROR;
 		}
 	}
@@ -701,7 +701,7 @@ FormatParser::ParserState FormatParser::state_ELSE() {
 		p->next = q;
 		q = p;
 		if(keller.empty()) {
-			last_error = _("found ELSE without IF.");
+			last_error = _("ELSE without IF");
 			return ERROR;
 		}
 		p = keller.top();
@@ -726,7 +726,7 @@ FormatParser::ParserState FormatParser::state_FI() {
 		p->next = q;
 		q = p;
 		if(keller.empty()) {
-			last_error = _("found FI without IF.");
+			last_error = _("FI without IF");
 			return ERROR;
 		}
 		p = keller.top();

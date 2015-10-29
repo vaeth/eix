@@ -118,6 +118,18 @@ bool ExtendedVersion::have_bin_pkg(const PortageSettings *ps, const Package *pkg
 	return (have_tbz_pkg(ps, pkg) || (num_pak_pkg(ps, pkg) != 0));
 }
 
+bool ExtendedVersion::have_bin_pkg(const PortageSettings *ps, const Package *pkg, CountBinPkg minimal) const {
+	// Call tests only if necessary; prefer have_tbz_pkg if sufficient
+	if(unlikely(minimal == 0)) {
+		return true;
+	}
+	if(minimal == 1) {
+		return have_bin_pkg(ps, pkg);
+	}
+	CountBinPkg have(num_pak_pkg(ps, pkg));
+	return ((have >= minimal) || ((have + 1 == minimal) && have_tbz_pkg(ps, pkg)));
+}
+
 bool ExtendedVersion::have_tbz_pkg(const PortageSettings *ps, const Package *pkg) const {
 	switch(have_bin_pkg_m & HAVEBINPKG_TBZ) {
 		case HAVEBINPKG_UNKNOWN: {

@@ -34,14 +34,24 @@
 using std::string;
 
 static bool optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
-
 static bool optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) {
 	ArgumentReader::const_iterator next(*arg);
-	if(unlikely(++next == ar.end())) {
-		return false;
+	if(likely(++next != ar.end()) && (next->type == Parameter::ARGUMENT)) {
+		*arg = next;
+		return true;
 	}
-	*arg = next;
-	return true;
+	return false;
+}
+
+static bool optional_numeric_increase(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
+static bool optional_numeric_increase(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) {
+	ArgumentReader::const_iterator next(*arg);
+	if(likely(++next != ar.end()) && (next->type == Parameter::ARGUMENT)
+		&& is_numeric(next->m_argument)) {
+		*arg = next;
+		return true;
+	}
+	return false;
 }
 
 #define FINISH_FORCE do { \
@@ -133,7 +143,14 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 				test->SetStabilityDefault(PackageTest::STABLE_NONMASKED);
 				break;
 			case O_BINARY: USE_TEST;
-				test->Binary();
+				test->Binary(1);
+				break;
+			case O_MULTIBINARY: USE_TEST;
+				if(optional_numeric_increase(&arg, ar)) {
+					test->Binary(my_atoi(arg->m_argument));
+				} else {
+					test->Binary(2);
+				}
 				break;
 			case O_SELECTED_FILE: USE_TEST;
 				test->SelectedFile();
@@ -439,13 +456,10 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 
 			// Check for algorithms {{{
 			case 'f': USE_TEST;
-				if(unlikely((++arg != ar.end())
-					&& (arg->type == Parameter::ARGUMENT)
-					&& is_numeric(arg->m_argument))) {
+				if(optional_numeric_increase(&arg, ar)) {
 					test->setAlgorithm(new FuzzyAlgorithm(my_atoi(arg->m_argument)));
 				} else {
 					test->setAlgorithm(PackageTest::ALGO_FUZZY);
-					--arg;
 				}
 				break;
 			case 'r': USE_TEST;

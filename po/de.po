@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-10-26 19:41+0100\n"
+"POT-Creation-Date: 2015-10-29 17:54+0100\n"
 "PO-Revision-Date: 2014-10-29 21:03+0100\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
@@ -1348,58 +1348,59 @@ msgid ""
 "\n"
 "TEST_OPTIONS:\n"
 "  Miscellaneous:\n"
-"    -I, --installed       Next expression only matches installed packages.\n"
-"    -i, --multi-installed Match packages installed in several versions.\n"
-"    -d, --dup-packages    Match duplicated packages.\n"
-"    -D, --dup-versions    Match packages with duplicated versions.\n"
-"    -1, --slotted         Match packages with a nontrivial slot.\n"
-"    -2, --slots           Match packages with two different slots.\n"
-"    -u, --upgrade[+-]     Match packages without best slotted version.\n"
+"    -I, --installed       Next expression only matches installed packages\n"
+"    -i, --multi-installed Match packages installed in several versions\n"
+"    -d, --dup-packages    Match duplicated packages\n"
+"    -D, --dup-versions    Match packages with duplicated versions\n"
+"    -1, --slotted         Match packages with a nontrivial slot\n"
+"    -2, --slots           Match packages with two different slots\n"
+"    -u, --upgrade[+-]     Match packages without best slotted version\n"
 "                          +: settings from LOCAL_PORTAGE_CONFIG=true\n"
 "                          -: settings from LOCAL_PORTAGE_CONFIG=false\n"
 "    --stable[+-]          Match packages with a stable version\n"
-"    --testing[+-]         Match packages with a testing or stable version.\n"
-"    --non-masked[+-]      Match packages with a non-masked version.\n"
-"    --system[+-]          Match @system packages.\n"
-"    --profile[+-]         Match @profile packages.\n"
-"    --installed-unstable  Match packages with a non-stable installed version.\n"
-"    --installed-testing   Match packages with a testing    installed version.\n"
-"    --installed-masked    Match packages with a masked     installed version.\n"
-"    --world-file          Match packages of world file or @system.\n"
-"    --world-set           Match packages of a world set or @system.\n"
-"    --world               Match packages of @world (file, set or @system).\n"
-"    --selected-file       Match packages of world file.\n"
-"    --selected-set        Match packages of a world set.\n"
-"    --selected            Match packages of @selected (world file or set).\n"
-"    --binary              Match packages with *.tbz2 or *.xpak files.\n"
-"    --nonvirtual                     Match packages from nonvirtual overlays.\n"
-"    --virtual                        Match packages from virtual overlays.\n"
-"    -O, --overlay                    Match packages from overlays.\n"
-"    --in-overlay OVERLAY             Match packages from OVERLAY.\n"
-"    --only-in-overlay OVERLAY        Match packages only in OVERLAY.\n"
-"    -J, --installed-overlay Match packages installed from overlays.\n"
-"    --installed-from-overlay OVERLAY Packages installed from OVERLAY.\n"
+"    --testing[+-]         Match packages with a testing or stable version\n"
+"    --non-masked[+-]      Match packages with a non-masked version\n"
+"    --system[+-]          Match @system packages\n"
+"    --profile[+-]         Match @profile packages\n"
+"    --installed-unstable  Match packages with a non-stable installed version\n"
+"    --installed-testing   Match packages with a testing    installed version\n"
+"    --installed-masked    Match packages with a masked     installed version\n"
+"    --world-file          Match packages of world file or @system\n"
+"    --world-set           Match packages of a world set or @system\n"
+"    --world               Match packages of @world (file, set or @system)\n"
+"    --selected-file       Match packages of world file\n"
+"    --selected-set        Match packages of a world set\n"
+"    --selected            Match packages of @selected (world file or set)\n"
+"    --binary              Match packages with *.tbz2 or *.xpak files\n"
+"    --multi-binary NR     Match packages with at least NR *.tbz2 or *.xpak\n"
+"    --nonvirtual                     Match packages from nonvirtual overlays\n"
+"    --virtual                        Match packages from virtual overlays\n"
+"    -O, --overlay                    Match packages from overlays\n"
+"    --in-overlay OVERLAY             Match packages from OVERLAY\n"
+"    --only-in-overlay OVERLAY        Match packages only in OVERLAY\n"
+"    -J, --installed-overlay Match packages installed from overlays\n"
+"    --installed-from-overlay OVERLAY Packages installed from OVERLAY\n"
 "    --installed-in-some-overlay      Packages with an installed version\n"
-"                                     provided by some overlay.\n"
+"                                     provided by some overlay\n"
 "    --installed-in-overlay OVERLAY   Packages with an installed version\n"
-"                                     provided from OVERLAY.\n"
-"    --restrict-fetch          Match packages with RESTRICT=fetch.\n"
-"    --restrict-mirror         Match packages with RESTRICT=mirror.\n"
-"    --restrict-primaryuri     Match packages with RESTRICT=primaryuri.\n"
-"    --restrict-binchecks      Match packages with RESTRICT=binchecks.\n"
-"    --restrict-strip          Match packages with RESTRICT=strip.\n"
-"    --restrict-test           Match packages with RESTRICT=test.\n"
-"    --restrict-userpriv       Match packages with RESTRICT=userpriv.\n"
-"    --restrict-installsources Match packages with RESTRICT=installsources.\n"
-"    --restrict-bindist        Match packages with RESTRICT=bindist.\n"
-"    --restrict-parallel       Match packages with RESTRICT=parallel.\n"
-"    --properties-interactive  Match packages with PROPERTIES=interactive.\n"
-"    --properties-live         Match packages with PROPERTIES=live.\n"
-"    --properties-virtual      Match packages with PROPERTIES=virtual.\n"
-"    --properties-set          Match packages with PROPERTIES=set.\n"
+"                                     provided from OVERLAY\n"
+"    --restrict-fetch          Match packages with RESTRICT=fetch\n"
+"    --restrict-mirror         Match packages with RESTRICT=mirror\n"
+"    --restrict-primaryuri     Match packages with RESTRICT=primaryuri\n"
+"    --restrict-binchecks      Match packages with RESTRICT=binchecks\n"
+"    --restrict-strip          Match packages with RESTRICT=strip\n"
+"    --restrict-test           Match packages with RESTRICT=test\n"
+"    --restrict-userpriv       Match packages with RESTRICT=userpriv\n"
+"    --restrict-installsources Match packages with RESTRICT=installsources\n"
+"    --restrict-bindist        Match packages with RESTRICT=bindist\n"
+"    --restrict-parallel       Match packages with RESTRICT=parallel\n"
+"    --properties-interactive  Match packages with PROPERTIES=interactive\n"
+"    --properties-live         Match packages with PROPERTIES=live\n"
+"    --properties-virtual      Match packages with PROPERTIES=virtual\n"
+"    --properties-set          Match packages with PROPERTIES=set\n"
 "    -T, --test-obsolete   Match packages with obsolete entries in\n"
-"                          /etc/portage/package.* (see man eix).\n"
-"                          Use -t to check non-existing packages.\n"
+"                          /etc/portage/package.* (see man eix)\n"
+"                          Use -t to check non-existing packages\n"
 "    -|, --pipe            Use input from pipe of emerge -pv\n"
 "    --pipe-mask           As --pipe, but input is assumed to be masks\n"
 "\n"
@@ -1432,7 +1433,7 @@ msgid ""
 "    -b, --begin           Pattern is the beginning of the string\n"
 "        --end             Pattern is the end       of the string\n"
 "    -p, --pattern         Pattern is a wildcards-pattern\n"
-"    -f [m], --fuzzy [m]   Use fuzzy-search with a max. levenshtein-distance m.\n"
+"    -f [m], --fuzzy [m]   Use fuzzy-search with a max. levenshtein-distance m\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
 "further information.\n"
@@ -1508,59 +1509,60 @@ msgstr ""
 "\n"
 "TEST_OPTIONEN:\n"
 "  Verschiedene:\n"
-"    -I, --installed       Ausdruck trifft nur auf installierte Pakete zu.\n"
-"    -i, --multi-installed Nur für mehrfach installierte Pakete.\n"
-"    -d, --dup-packages    Nur für doppelte Pakete.\n"
-"    -D, --dup-versions    Nur für doppelte Versionen.\n"
-"    -1, --slotted         Nur mit nichttrivialem Slot.\n"
-"    -2, --slots           Nur mit zwei verschiedenen Slots.\n"
+"    -I, --installed       Ausdruck trifft nur auf installierte Pakete zu\n"
+"    -i, --multi-installed Nur für mehrfach installierte Pakete\n"
+"    -d, --dup-packages    Nur für doppelte Pakete\n"
+"    -D, --dup-versions    Nur für doppelte Versionen\n"
+"    -1, --slotted         Nur mit nichttrivialem Slot\n"
+"    -2, --slots           Nur mit zwei verschiedenen Slots\n"
 "    -u, --upgrade[+-]     Nur für Pakete, die nicht die beste Version\n"
-"                          des Slots installiert haben.\n"
+"                          des Slots installiert haben\n"
 "                          +: Konfiguration von LOCAL_PORTAGE_CONFIG=true\n"
 "                          -: Konfiguration von LOCAL_PORTAGE_CONFIG=false\n"
 "    --stable[+-]          Pakete mit einer stabilen Version\n"
-"    --testing[+-]         Pakete mit einer instabilen oder stabilen Version.\n"
-"    --non-masked[+-]      Pakete mit einer nicht-maskierter Version.\n"
-"    --system[+-]          Pakete aus @system.\n"
-"    --profile[+-]         Pakete aus @profile.\n"
-"    --installed-unstable  Pakete mit nicht-stabiler installierter Version.\n"
-"    --installed-testing   Pakete mit instabiler     installierter Version.\n"
-"    --installed-masked    Pakete mit maskierter     installierter Version.\n"
-"    --world-file          Pakete aus world-Datei oder @system.\n"
-"    --world-set           Pakete aus world_sets oder @system.\n"
-"    --world               Pakete aus @world (World-Datei, Sets oder @system).\n"
-"    --selected-file       Pakete aus world-Datei.\n"
-"    --selected-set        Pakete aus world_sets.\n"
-"    --selected            Pakete aus @selected (world-Datei oder world_sets).\n"
-"    --binary              Pakete mit *.tbz2 oder *.xpak.\n"
-"    --nonvirtual                     Pakete aus nicht-virtuellen Overlays.\n"
-"    --virtual                        Pakete aus virtuellen Overlays.\n"
+"    --testing[+-]         Pakete mit einer instabilen oder stabilen Version\n"
+"    --non-masked[+-]      Pakete mit einer nicht-maskierter Version\n"
+"    --system[+-]          Pakete aus @system\n"
+"    --profile[+-]         Pakete aus @profile\n"
+"    --installed-unstable  Pakete mit nicht-stabiler installierter Version\n"
+"    --installed-testing   Pakete mit instabiler     installierter Version\n"
+"    --installed-masked    Pakete mit maskierter     installierter Version\n"
+"    --world-file          Pakete aus world-Datei oder @system\n"
+"    --world-set           Pakete aus world_sets oder @system\n"
+"    --world               Pakete aus @world (World-Datei, Sets oder @system)\n"
+"    --selected-file       Pakete aus world-Datei\n"
+"    --selected-set        Pakete aus world_sets\n"
+"    --selected            Pakete aus @selected (world-Datei oder world_sets)\n"
+"    --binary              Pakete mit *.tbz2 oder *.xpak\n"
+"    --multi-binary NR     Pakate mit mindestens NR *.tbz2 oder *.xpak\n"
+"    --nonvirtual                     Pakete aus nicht-virtuellen Overlays\n"
+"    --virtual                        Pakete aus virtuellen Overlays\n"
 "    -O, --overlay                    Pakete aus Overlays\n"
-"    --in-overlay OVERLAY             Pakete aus OVERLAY.\n"
-"    --only-in-overlay OVERLAY        Pakete nur aus OVERLAY.\n"
-"    -J, --installed-overlay Nur Pakete, die aus Overlays installiert wurden.\n"
-"    --installed-from-overlay OVERLAY Pakete installiert aus OVERLAY.\n"
+"    --in-overlay OVERLAY             Pakete aus OVERLAY\n"
+"    --only-in-overlay OVERLAY        Pakete nur aus OVERLAY\n"
+"    -J, --installed-overlay Nur Pakete, die aus Overlays installiert wurden\n"
+"    --installed-from-overlay OVERLAY Pakete installiert aus OVERLAY\n"
 "    --installed-in-some-overlay      Pakete mit einer installierten\n"
-"                                     Version aus einem Overlay.\n"
+"                                     Version aus einem Overlay\n"
 "    --installed-in-overlay OVERLAY   Pakete mit einer installierten\n"
-"                                     Version aus OVERLAY.\n"
-"    --restrict-fetch          Paket hat RESTRICT=fetch.\n"
-"    --restrict-mirror         Paket hat RESTRICT=mirror.\n"
-"    --restrict-primaryuri     Paket hat RESTRICT=primaryuri.\n"
-"    --restrict-binchecks      Paket hat RESTRICT=binchecks.\n"
-"    --restrict-strip          Paket hat RESTRICT=strip.\n"
-"    --restrict-test           Paket hat RESTRICT=test.\n"
-"    --restrict-userpriv       Paket hat RESTRICT=userpriv.\n"
-"    --restrict-installsources Paket hat RESTRICT=installsources.\n"
-"    --restrict-bindist        Paket hat RESTRICT=bindist.\n"
-"    --restrict-parallel       Paket hat RESTRICT=parallel.\n"
-"    --properties-interactive  Paket hat PROPERTIES=interactive.\n"
-"    --properties-live         Paket hat PROPERTIES=live.\n"
-"    --properties-virtual      Paket hat PROPERTIES=virtual.\n"
-"    --properties-set          Paket hat PROPERTIES=set.\n"
+"                                     Version aus OVERLAY\n"
+"    --restrict-fetch          Paket hat RESTRICT=fetch\n"
+"    --restrict-mirror         Paket hat RESTRICT=mirror\n"
+"    --restrict-primaryuri     Paket hat RESTRICT=primaryuri\n"
+"    --restrict-binchecks      Paket hat RESTRICT=binchecks\n"
+"    --restrict-strip          Paket hat RESTRICT=strip\n"
+"    --restrict-test           Paket hat RESTRICT=test\n"
+"    --restrict-userpriv       Paket hat RESTRICT=userpriv\n"
+"    --restrict-installsources Paket hat RESTRICT=installsources\n"
+"    --restrict-bindist        Paket hat RESTRICT=bindist\n"
+"    --restrict-parallel       Paket hat RESTRICT=parallel\n"
+"    --properties-interactive  Paket hat PROPERTIES=interactive\n"
+"    --properties-live         Paket hat PROPERTIES=live\n"
+"    --properties-virtual      Paket hat PROPERTIES=virtual\n"
+"    --properties-set          Paket hat PROPERTIES=set\n"
 "    -T, --test-obsolete   Paket hat obsolete Einträge in\n"
 "                          /etc/portage/package.* (siehe man eix);\n"
-"                          mit -t findet man nicht existierende Pakete.\n"
+"                          mit -t findet man nicht existierende Pakete\n"
 "    -|, --pipe            Eingabe aus Pipe von emerge -pv\n"
 "    --pipe-mask           Wie --pipe, aber Eingabe wie als Maske betrachtet\n"
 "\n"
@@ -1593,21 +1595,21 @@ msgstr ""
 "    -b, --begin           PATTERN ist der Stringanfang\n"
 "        --end             PATTERN ist das Stringende\n"
 "    -p, --pattern         PATTERN ist ein Wildcard-Pattern\n"
-"    -f [m], --fuzzy [m]   Fuzzy-Suche mit max. Levenshtein-Abstand m.\n"
+"    -f [m], --fuzzy [m]   Fuzzy-Suche mit max. Levenshtein-Abstand m\n"
 "\n"
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:557 src/eix-diff.cc:274
+#: src/eix.cc:559 src/eix-diff.cc:274
 #, c-format
 msgid "problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:679 src/eix-diff.cc:345 src/eix-update.cc:385
+#: src/eix.cc:681 src/eix-diff.cc:345 src/eix-update.cc:385
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
-#: src/eix.cc:762
+#: src/eix.cc:764
 msgid ""
 "%s was created with an incompatible eix-update:\n"
 "It uses database format %s (current is %s).\n"
@@ -1617,30 +1619,30 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte %r ausführen und erneut probieren."
 
-#: src/eix.cc:1046
+#: src/eix.cc:1048
 #, c-format
 msgid "Found %s match."
 msgid_plural "Found %s matches."
 msgstr[0] "%s Treffer."
 msgstr[1] "%s Treffer."
 
-#: src/eix.cc:1052
+#: src/eix.cc:1054
 msgid "No matches found."
 msgstr "Kein Treffer."
 
-#: src/eix.cc:1060
+#: src/eix.cc:1062
 #, c-format
 msgid "Only %s match displayed on terminal.\n"
 msgid_plural "Only %s matches displayed on terminal.\n"
 msgstr[0] "Auf dem Terminal wird nur %s Treffer angezeigt.\n"
 msgstr[1] "Auf dem Terminal werden nur %s Treffer angezeigt.\n"
 
-#: src/eix.cc:1063
+#: src/eix.cc:1065
 #, c-format
 msgid "Set %s=0 to show all matches.\n"
 msgstr "Setzen Sie %s=0, um alle anzuzeigen.\n"
 
-#: src/eix.cc:1090
+#: src/eix.cc:1092
 msgid ""
 "cannot open database file %s for reading.\n"
 "Did you forget to create it with %r?"
@@ -1648,17 +1650,17 @@ msgstr ""
 "Datenbank-Datei %s kann nicht geöffnet werden.\n"
 "Wurde sie mit %r erzeugt?"
 
-#: src/eix.cc:1169
+#: src/eix.cc:1171
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:1170
+#: src/eix.cc:1172
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Einträge in %s passen.\n"
 
-#: src/eix.cc:1175
+#: src/eix.cc:1177
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1667,7 +1669,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1176
+#: src/eix.cc:1178
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1676,7 +1678,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1235
+#: src/eix.cc:1237
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1684,7 +1686,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:1238
+#: src/eix.cc:1240
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -6747,7 +6749,7 @@ msgstr ""
 
 #: src/eixrc/def_i18n.cc:123
 msgid "Homepage:"
-msgstr "Homepage:"
+msgstr "Startseite:"
 
 #: src/eixrc/def_i18n.cc:124
 msgid ""
@@ -6942,11 +6944,11 @@ msgstr ""
 msgid "fatal config error: %s in delayed substitution of %s"
 msgstr "Fataler Konfigurationsfehler: %s in verzögerter Ersetzung von %s"
 
-#: src/eixrc/eixrc.cc:263
+#: src/eixrc/eixrc.cc:263 src/output/formatstring.cc:729
 msgid "FI without IF"
 msgstr "FI ohne IF"
 
-#: src/eixrc/eixrc.cc:267
+#: src/eixrc/eixrc.cc:267 src/output/formatstring.cc:704
 msgid "ELSE without IF"
 msgstr "ELSE ohne IF"
 
@@ -7032,8 +7034,8 @@ msgid "DARK_TERM has illegal format: %s"
 msgstr "DARK_TERM hat unzulässiges Format: %s"
 
 #: src/output/formatstring.cc:446
-msgid "internal error: bad node for parse_colors."
-msgstr "Interner Fehler: Schlechter Knoten für parse_colors."
+msgid "internal error: bad node for parse_colors"
+msgstr "Interner Fehler: Schlechter Knoten für parse_colors"
 
 #: src/output/formatstring.cc:505
 msgid "'(' without closing ')'"
@@ -7049,25 +7051,17 @@ msgid "'<' without closing '>'"
 msgstr "'<' ohne schließendes '>'"
 
 #: src/output/formatstring.cc:601
-msgid "no name of property/variable found after '{'."
-msgstr "Kein Name einer Eigenschaft/Variablen nach '{' gefunden."
+msgid "no name of property/variable after '{'"
+msgstr "Kein Name einer Eigenschaft/Variablen nach '{'"
 
 #: src/output/formatstring.cc:605 src/output/formatstring.cc:626
 #: src/output/formatstring.cc:685
-msgid "found '{' without closing '}'."
-msgstr " '{' ohne schließendes '}' gefunden."
+msgid "'{' without closing '}'"
+msgstr " '{' ohne schließendes '}'"
 
 #: src/output/formatstring.cc:620
-msgid "unexpected symbol %r found after '{'."
-msgstr "Unerwartetes Symbol %r nach '{'."
-
-#: src/output/formatstring.cc:704
-msgid "found ELSE without IF."
-msgstr "ELSE ohne IF gefunden."
-
-#: src/output/formatstring.cc:729
-msgid "found FI without IF."
-msgstr "FI ohne IF gefunden."
+msgid "unexpected symbol %r after '{'"
+msgstr "Unerwartetes Symbol %r nach '{'"
 
 #: src/output/formatstring.cc:749
 msgid "check your syntax"
@@ -7170,11 +7164,11 @@ msgstr "Interner Fehler: SetStability berechnet falschen Index"
 msgid "warning: ignoring --close without --open"
 msgstr "Warnung: --close ohne --open wird ignoriert"
 
-#: src/search/packagetest.cc:283
+#: src/search/packagetest.cc:284
 msgid "cannot find match field %r"
 msgstr "unbekanntes Suchfeld %r"
 
-#: src/search/packagetest.cc:293
+#: src/search/packagetest.cc:294
 msgid "cannot find match algorithm %r"
 msgstr "unbekannter Match-Algorithmus %r"
 

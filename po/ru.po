@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-10-26 19:41+0100\n"
+"POT-Creation-Date: 2015-10-29 17:54+0100\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -114,8 +114,9 @@ msgstr ""
 "\n"
 "Можно использовать аббревиатуру вместо АРГ, например \"nr\" вместо \"no-repo\"."
 
+# fuzzy
 #: src/eix-installed.sh:87
-#, fuzzy, sh-format
+#, sh-format
 msgid "(one version listed above)"
 msgid_plural "(${c} versions listed above)"
 msgstr[0] "(общее количество версий перечисленных выше: ${c})"
@@ -341,8 +342,9 @@ msgstr "ошибка выполнения ${prg}"
 msgid "temporary file"
 msgstr "временный файл"
 
+# fuzzy
 #: src/eix-remote.sh:50
-#, fuzzy, sh-format
+#, sh-format
 msgid ""
 "Usage: ${n} [options] command\n"
 "Get data from a remote database for ${p}.\n"
@@ -549,8 +551,9 @@ msgstr "невозможно прочесть все файлы кэша eix о�
 msgid "no file in ${a} contains an overlay"
 msgstr "No Файл in ${a} не содержит оверлей"
 
+# fuzzy
 #: src/eix-remote.sh:325
-#, fuzzy, sh-format
+#, sh-format
 msgid "${failcount} file in ${a} contains no overlay"
 msgid_plural "${failcount} files in ${a} contain no overlay"
 msgstr[0] "${failcount} Файл in ${a} не содержит оверлей"
@@ -582,8 +585,9 @@ msgstr "невозможно прочесть ${archive}"
 msgid "mkdir ${tmpsub} failed"
 msgstr "ошибка создания каталога ${tmpsub}"
 
+# fuzzy
 #: src/eix-sync.sh:26
-#, fuzzy, sh-format
+#, sh-format
 msgid ""
 "Usage: ${n} [options]\n"
 "Call layman/emerge --sync/--metadata and show updates. (${p})\n"
@@ -874,8 +878,9 @@ msgstr "Копирую старую базу данных в ${eixprevious}"
 msgid "Could not copy database to ${eixprevious}"
 msgstr "Невозможно скопировать базу данных в ${eixprevious}"
 
+# fuzzy
 #: src/eix-sync.sh:587
-#, fuzzy, sh-format
+#, sh-format
 msgid "eix-remote add${remote_num} failed"
 msgstr "ошибка eix-remote add${remote_num}"
 
@@ -1258,8 +1263,9 @@ msgstr "Установленные пакеты с версией не в баз
 msgid "Skipping check: installed but not in the database"
 msgstr "Пропускаю проверку: установлено, но не в базе данных"
 
+# fuzzy
 #: src/eix.cc:89
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
 "\n"
@@ -1332,58 +1338,59 @@ msgid ""
 "\n"
 "TEST_OPTIONS:\n"
 "  Miscellaneous:\n"
-"    -I, --installed       Next expression only matches installed packages.\n"
-"    -i, --multi-installed Match packages installed in several versions.\n"
-"    -d, --dup-packages    Match duplicated packages.\n"
-"    -D, --dup-versions    Match packages with duplicated versions.\n"
-"    -1, --slotted         Match packages with a nontrivial slot.\n"
-"    -2, --slots           Match packages with two different slots.\n"
-"    -u, --upgrade[+-]     Match packages without best slotted version.\n"
+"    -I, --installed       Next expression only matches installed packages\n"
+"    -i, --multi-installed Match packages installed in several versions\n"
+"    -d, --dup-packages    Match duplicated packages\n"
+"    -D, --dup-versions    Match packages with duplicated versions\n"
+"    -1, --slotted         Match packages with a nontrivial slot\n"
+"    -2, --slots           Match packages with two different slots\n"
+"    -u, --upgrade[+-]     Match packages without best slotted version\n"
 "                          +: settings from LOCAL_PORTAGE_CONFIG=true\n"
 "                          -: settings from LOCAL_PORTAGE_CONFIG=false\n"
 "    --stable[+-]          Match packages with a stable version\n"
-"    --testing[+-]         Match packages with a testing or stable version.\n"
-"    --non-masked[+-]      Match packages with a non-masked version.\n"
-"    --system[+-]          Match @system packages.\n"
-"    --profile[+-]         Match @profile packages.\n"
-"    --installed-unstable  Match packages with a non-stable installed version.\n"
-"    --installed-testing   Match packages with a testing    installed version.\n"
-"    --installed-masked    Match packages with a masked     installed version.\n"
-"    --world-file          Match packages of world file or @system.\n"
-"    --world-set           Match packages of a world set or @system.\n"
-"    --world               Match packages of @world (file, set or @system).\n"
-"    --selected-file       Match packages of world file.\n"
-"    --selected-set        Match packages of a world set.\n"
-"    --selected            Match packages of @selected (world file or set).\n"
-"    --binary              Match packages with *.tbz2 or *.xpak files.\n"
-"    --nonvirtual                     Match packages from nonvirtual overlays.\n"
-"    --virtual                        Match packages from virtual overlays.\n"
-"    -O, --overlay                    Match packages from overlays.\n"
-"    --in-overlay OVERLAY             Match packages from OVERLAY.\n"
-"    --only-in-overlay OVERLAY        Match packages only in OVERLAY.\n"
-"    -J, --installed-overlay Match packages installed from overlays.\n"
-"    --installed-from-overlay OVERLAY Packages installed from OVERLAY.\n"
+"    --testing[+-]         Match packages with a testing or stable version\n"
+"    --non-masked[+-]      Match packages with a non-masked version\n"
+"    --system[+-]          Match @system packages\n"
+"    --profile[+-]         Match @profile packages\n"
+"    --installed-unstable  Match packages with a non-stable installed version\n"
+"    --installed-testing   Match packages with a testing    installed version\n"
+"    --installed-masked    Match packages with a masked     installed version\n"
+"    --world-file          Match packages of world file or @system\n"
+"    --world-set           Match packages of a world set or @system\n"
+"    --world               Match packages of @world (file, set or @system)\n"
+"    --selected-file       Match packages of world file\n"
+"    --selected-set        Match packages of a world set\n"
+"    --selected            Match packages of @selected (world file or set)\n"
+"    --binary              Match packages with *.tbz2 or *.xpak files\n"
+"    --multi-binary NR     Match packages with at least NR *.tbz2 or *.xpak\n"
+"    --nonvirtual                     Match packages from nonvirtual overlays\n"
+"    --virtual                        Match packages from virtual overlays\n"
+"    -O, --overlay                    Match packages from overlays\n"
+"    --in-overlay OVERLAY             Match packages from OVERLAY\n"
+"    --only-in-overlay OVERLAY        Match packages only in OVERLAY\n"
+"    -J, --installed-overlay Match packages installed from overlays\n"
+"    --installed-from-overlay OVERLAY Packages installed from OVERLAY\n"
 "    --installed-in-some-overlay      Packages with an installed version\n"
-"                                     provided by some overlay.\n"
+"                                     provided by some overlay\n"
 "    --installed-in-overlay OVERLAY   Packages with an installed version\n"
-"                                     provided from OVERLAY.\n"
-"    --restrict-fetch          Match packages with RESTRICT=fetch.\n"
-"    --restrict-mirror         Match packages with RESTRICT=mirror.\n"
-"    --restrict-primaryuri     Match packages with RESTRICT=primaryuri.\n"
-"    --restrict-binchecks      Match packages with RESTRICT=binchecks.\n"
-"    --restrict-strip          Match packages with RESTRICT=strip.\n"
-"    --restrict-test           Match packages with RESTRICT=test.\n"
-"    --restrict-userpriv       Match packages with RESTRICT=userpriv.\n"
-"    --restrict-installsources Match packages with RESTRICT=installsources.\n"
-"    --restrict-bindist        Match packages with RESTRICT=bindist.\n"
-"    --restrict-parallel       Match packages with RESTRICT=parallel.\n"
-"    --properties-interactive  Match packages with PROPERTIES=interactive.\n"
-"    --properties-live         Match packages with PROPERTIES=live.\n"
-"    --properties-virtual      Match packages with PROPERTIES=virtual.\n"
-"    --properties-set          Match packages with PROPERTIES=set.\n"
+"                                     provided from OVERLAY\n"
+"    --restrict-fetch          Match packages with RESTRICT=fetch\n"
+"    --restrict-mirror         Match packages with RESTRICT=mirror\n"
+"    --restrict-primaryuri     Match packages with RESTRICT=primaryuri\n"
+"    --restrict-binchecks      Match packages with RESTRICT=binchecks\n"
+"    --restrict-strip          Match packages with RESTRICT=strip\n"
+"    --restrict-test           Match packages with RESTRICT=test\n"
+"    --restrict-userpriv       Match packages with RESTRICT=userpriv\n"
+"    --restrict-installsources Match packages with RESTRICT=installsources\n"
+"    --restrict-bindist        Match packages with RESTRICT=bindist\n"
+"    --restrict-parallel       Match packages with RESTRICT=parallel\n"
+"    --properties-interactive  Match packages with PROPERTIES=interactive\n"
+"    --properties-live         Match packages with PROPERTIES=live\n"
+"    --properties-virtual      Match packages with PROPERTIES=virtual\n"
+"    --properties-set          Match packages with PROPERTIES=set\n"
 "    -T, --test-obsolete   Match packages with obsolete entries in\n"
-"                          /etc/portage/package.* (see man eix).\n"
-"                          Use -t to check non-existing packages.\n"
+"                          /etc/portage/package.* (see man eix)\n"
+"                          Use -t to check non-existing packages\n"
 "    -|, --pipe            Use input from pipe of emerge -pv\n"
 "    --pipe-mask           As --pipe, but input is assumed to be masks\n"
 "\n"
@@ -1416,7 +1423,7 @@ msgid ""
 "    -b, --begin           Pattern is the beginning of the string\n"
 "        --end             Pattern is the end       of the string\n"
 "    -p, --pattern         Pattern is a wildcards-pattern\n"
-"    -f [m], --fuzzy [m]   Use fuzzy-search with a max. levenshtein-distance m.\n"
+"    -f [m], --fuzzy [m]   Use fuzzy-search with a max. levenshtein-distance m\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
 "further information.\n"
@@ -1525,6 +1532,7 @@ msgstr ""
 "    --selected-set        Найти пакеты из набора world.\n"
 "    --selected            Найти пакеты из @selected (файл или набор world).\n"
 "    --binary              Найти пакеты в формате *.tbz2 или *.xpak.\n"
+"    --multi-binary NR     Найти пакеты с не менее NR *.tbz2 или *.xpak.\n"
 "    --nonvirtual                     Найти пакеты из невиртуальных оверлеев.\n"
 "    --virtual                        Найти пакеты из виртуальных оверлеев.\n"
 "    -O, --overlay                    Найти пакеты из оверлеев.\n"
@@ -1592,16 +1600,16 @@ msgstr ""
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING\n"
 "для подробной информации.\n"
 
-#: src/eix.cc:557 src/eix-diff.cc:274
+#: src/eix.cc:559 src/eix-diff.cc:274
 #, c-format
 msgid "problems while parsing %s: %s\n"
 msgstr "Проблема при обработке %s: %s\n"
 
-#: src/eix.cc:679 src/eix-diff.cc:345 src/eix-update.cc:385
+#: src/eix.cc:681 src/eix-diff.cc:345 src/eix-update.cc:385
 msgid "cannot redirect to %r"
 msgstr "невозможно перенаправить в %r"
 
-#: src/eix.cc:762
+#: src/eix.cc:764
 msgid ""
 "%s was created with an incompatible eix-update:\n"
 "It uses database format %s (current is %s).\n"
@@ -1611,8 +1619,9 @@ msgstr ""
 "Используется формат базы данных %s (текущий ― %s).\n"
 "Запустите %r и попробуйте ещё раз."
 
-#: src/eix.cc:1046
-#, fuzzy, c-format
+# fuzzy
+#: src/eix.cc:1048
+#, c-format
 msgid "Found %s match."
 msgid_plural "Found %s matches."
 msgstr[0] "Найдено %s совпадение."
@@ -1620,11 +1629,11 @@ msgstr[1] "Найдено %s совпадение."
 msgstr[2] "Найдено %s совпадение."
 msgstr[3] "Найдено %s совпадение."
 
-#: src/eix.cc:1052
+#: src/eix.cc:1054
 msgid "No matches found."
 msgstr "Совпадений не найдено."
 
-#: src/eix.cc:1060
+#: src/eix.cc:1062
 #, c-format
 msgid "Only %s match displayed on terminal.\n"
 msgid_plural "Only %s matches displayed on terminal.\n"
@@ -1633,12 +1642,12 @@ msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 
-#: src/eix.cc:1063
+#: src/eix.cc:1065
 #, c-format
 msgid "Set %s=0 to show all matches.\n"
 msgstr ""
 
-#: src/eix.cc:1090
+#: src/eix.cc:1092
 msgid ""
 "cannot open database file %s for reading.\n"
 "Did you forget to create it with %r?"
@@ -1646,17 +1655,17 @@ msgstr ""
 "Невозможно открыть базу данных %s для чтения.\n"
 "Вы не забыли её создать с помощью %r?"
 
-#: src/eix.cc:1169
+#: src/eix.cc:1171
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Нет не совпадающих или пустых записей в %s.\n"
 
-#: src/eix.cc:1170
+#: src/eix.cc:1172
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Нет не совпадающих записей в %s.\n"
 
-#: src/eix.cc:1175
+#: src/eix.cc:1177
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1665,7 +1674,7 @@ msgstr ""
 "Не совпадающие или пустые записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1176
+#: src/eix.cc:1178
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1674,7 +1683,7 @@ msgstr ""
 "Не совпадающие записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1235
+#: src/eix.cc:1237
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1682,7 +1691,7 @@ msgstr ""
 "Имена всех установленных пакетов находятся в базе данных.\n"
 "\n"
 
-#: src/eix.cc:1238
+#: src/eix.cc:1240
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -1690,8 +1699,9 @@ msgstr ""
 "Следующие установленные пакеты отсутствуют в базе данных:\n"
 "\n"
 
+# fuzzy
 #: src/eix-diff.cc:70
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [options] old-cache [new-cache]\n"
 "\n"
@@ -1741,8 +1751,9 @@ msgstr "Запись файла базы данных %r: %s .."
 msgid "cannot open database file %r for reading (mode = 'rb')"
 msgstr "Невозможно открыть базу данных %r для чтения (режим = 'rb')"
 
+# fuzzy
 #: src/eix-diff.cc:413
-#, fuzzy, c-format
+#, c-format
 msgid "Diffing databases (%s -> %s package)\n"
 msgid_plural "Diffing databases (%s -> %s packages)\n"
 msgstr[0] "Сравнение баз данных (%s -> %s пакетов)\n"
@@ -1750,8 +1761,9 @@ msgstr[1] "Сравнение баз данных (%s -> %s пакетов)\n"
 msgstr[2] "Сравнение баз данных (%s -> %s пакетов)\n"
 msgstr[3] "Сравнение баз данных (%s -> %s пакетов)\n"
 
+# fuzzy
 #: src/eix-drop-permissions.cc:32
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [--] command [arguments]\n"
 "Executes command [arguments] with the permissions according to the eix\n"
@@ -1950,8 +1962,9 @@ msgstr "ОТМЕНЕНО!"
 msgid "     Reading category %s|%s (%s%%)"
 msgstr "     Чтение категории %s|%s (%s%%)"
 
+# fuzzy
 #: src/eix-update.cc:627
-#, fuzzy, c-format
+#, c-format
 msgid "     Reading %s category of packages .. "
 msgid_plural "     Reading up to %s categories of packages .. "
 msgstr[0] "     Чтение до %s категорий пакетов .. "
@@ -1985,8 +1998,9 @@ msgstr "Запись файла базы данных %s ..\n"
 msgid "cannot open database file %r for writing (mode = 'wb')"
 msgstr "Невозможно открыть файл базы данных %r для записи (режим = 'wb')"
 
+# fuzzy
 #: src/eix-update.cc:705
-#, fuzzy, c-format
+#, c-format
 msgid "Database contains %s packages in %s category.\n"
 msgid_plural "Database contains %s packages in %s categories.\n"
 msgstr[0] "База данных содержит %s пакетов в %s категориях.\n"
@@ -2094,13 +2108,13 @@ msgstr "Ошибка ебилда с состоянием %s"
 msgid "child aborted in a strange way"
 msgstr "Дитя прервано в странной манере"
 
+# fuzzy
 #: src/cache/common/ebuild_exec.cc:332
-#, fuzzy
 msgid "cannot setup pipe"
 msgstr "Ошибка setup pipe"
 
+# fuzzy
 #: src/cache/common/ebuild_exec.cc:364
-#, fuzzy
 msgid "portageq failed"
 msgstr "Ошибка portageq"
 
@@ -5402,9 +5416,10 @@ msgid ""
 "locally added (unused) variables so that they are printed with --dump."
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:13
 msgid "Installed versions:"
-msgstr ""
+msgstr "Установленные версии:"
 
 #: src/eixrc/def_i18n.cc:14
 msgid ""
@@ -5412,9 +5427,10 @@ msgid ""
 "It translates \"Installed versions:\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:18
 msgid "Version:"
-msgstr ""
+msgstr "Версия:"
 
 #: src/eixrc/def_i18n.cc:19
 msgid ""
@@ -5422,9 +5438,10 @@ msgid ""
 "It translates \"Version:\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:23
 msgid "Date:"
-msgstr ""
+msgstr "Дата:"
 
 #: src/eixrc/def_i18n.cc:24
 msgid ""
@@ -5444,7 +5461,7 @@ msgstr ""
 
 #: src/eixrc/def_i18n.cc:33
 msgid "IUSE \\(all versions\\):"
-msgstr ""
+msgstr "IUSE \\(все версии\\):"
 
 #: src/eixrc/def_i18n.cc:34
 msgid ""
@@ -5525,9 +5542,10 @@ msgid ""
 "It translates \"KEYWORDS*:\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:73
 msgid "Mask:"
-msgstr ""
+msgstr "Маскировать:"
 
 #: src/eixrc/def_i18n.cc:74
 msgid ""
@@ -5535,9 +5553,10 @@ msgid ""
 "It translates \"Mask:\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:78
 msgid "Marked:"
-msgstr ""
+msgstr "Меченые:"
 
 #: src/eixrc/def_i18n.cc:79
 msgid ""
@@ -5545,9 +5564,10 @@ msgid ""
 "It translates \"Marked:\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:83
 msgid "Available versions:"
-msgstr ""
+msgstr "Доступные версии:"
 
 #: src/eixrc/def_i18n.cc:84
 msgid ""
@@ -5555,9 +5575,10 @@ msgid ""
 "It translates \"Available versions:\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:88
 msgid "Best versions/slot:"
-msgstr ""
+msgstr "Лучшие варианты на слот:"
 
 #: src/eixrc/def_i18n.cc:89
 msgid ""
@@ -5565,9 +5586,10 @@ msgid ""
 "It translates \"Best versions/slot:\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:93
 msgid "Recommendation:"
-msgstr ""
+msgstr "Рекомендация:"
 
 #: src/eixrc/def_i18n.cc:94
 msgid ""
@@ -5575,9 +5597,10 @@ msgid ""
 "It translates \"Recommendation:\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:98
 msgid "Upgrade"
-msgstr ""
+msgstr "Модернизация"
 
 #: src/eixrc/def_i18n.cc:99
 msgid ""
@@ -5585,9 +5608,10 @@ msgid ""
 "It translates \"Upgrade\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:103
 msgid "Downgrade"
-msgstr ""
+msgstr "Деградация"
 
 #: src/eixrc/def_i18n.cc:104
 msgid ""
@@ -5595,9 +5619,10 @@ msgid ""
 "It translates \"Downgrade\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:108
 msgid " and "
-msgstr ""
+msgstr " и "
 
 #: src/eixrc/def_i18n.cc:109
 msgid ""
@@ -5605,9 +5630,10 @@ msgid ""
 "It translates \" and \""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:113
 msgid "None"
-msgstr ""
+msgstr "Ни"
 
 #: src/eixrc/def_i18n.cc:114
 msgid ""
@@ -5615,9 +5641,10 @@ msgid ""
 "It translates \"None\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:118
 msgid "Package sets:"
-msgstr ""
+msgstr "Количество в упаковке:"
 
 #: src/eixrc/def_i18n.cc:119
 msgid ""
@@ -5625,9 +5652,10 @@ msgid ""
 "It translates \"Package sets:\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:123
 msgid "Homepage:"
-msgstr ""
+msgstr "Домашняя страница:"
 
 #: src/eixrc/def_i18n.cc:124
 msgid ""
@@ -5635,9 +5663,10 @@ msgid ""
 "It translates \"Homepage:\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:128
 msgid "Find open bugs:"
-msgstr ""
+msgstr "Найти открытые баги:"
 
 #: src/eixrc/def_i18n.cc:129
 msgid ""
@@ -5645,9 +5674,10 @@ msgid ""
 "It translates \"Find open bugs:\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:133
 msgid "Description:"
-msgstr ""
+msgstr "Описание:"
 
 #: src/eixrc/def_i18n.cc:134
 msgid ""
@@ -5655,9 +5685,10 @@ msgid ""
 "It translates \"Description:\""
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:138
 msgid "License:"
-msgstr ""
+msgstr "Лицензия:"
 
 #: src/eixrc/def_i18n.cc:139
 msgid ""
@@ -5691,7 +5722,7 @@ msgstr ""
 
 #: src/eixrc/def_i18n.cc:160
 msgid "%{C_COLUMN_CONTENT}"
-msgstr ""
+msgstr "28"
 
 #: src/eixrc/def_i18n.cc:161
 msgid ""
@@ -5780,11 +5811,11 @@ msgstr ""
 msgid "fatal config error: %s in delayed substitution of %s"
 msgstr "смертельная ошибка конфигурации: %s в отложенной замене %s"
 
-#: src/eixrc/eixrc.cc:263
+#: src/eixrc/eixrc.cc:263 src/output/formatstring.cc:729
 msgid "FI without IF"
 msgstr "FI без IF"
 
-#: src/eixrc/eixrc.cc:267
+#: src/eixrc/eixrc.cc:267 src/output/formatstring.cc:704
 msgid "ELSE without IF"
 msgstr "ELSE без IF"
 
@@ -5868,9 +5899,10 @@ msgstr "Переменная %r вызывает себя для печати"
 msgid "DARK_TERM has illegal format: %s"
 msgstr "DARK_TERM имеет неправильный формат: %s"
 
+# fuzzy
 #: src/output/formatstring.cc:446
-msgid "internal error: bad node for parse_colors."
-msgstr "Внутренняя ошибка: плохой узел для parse_colors."
+msgid "internal error: bad node for parse_colors"
+msgstr "Внутренняя ошибка: плохой узел для parse_colors"
 
 #: src/output/formatstring.cc:505
 msgid "'(' without closing ')'"
@@ -5885,26 +5917,21 @@ msgstr "Ошибка при обработке цвета: %s"
 msgid "'<' without closing '>'"
 msgstr "'<' без закрывающего '>'"
 
+# fuzzy
 #: src/output/formatstring.cc:601
-msgid "no name of property/variable found after '{'."
-msgstr "Не найдено имя свойства/переменной после '{'."
+msgid "no name of property/variable after '{'"
+msgstr "Не найдено имя свойства/переменной после '{'"
 
+# fuzzy
 #: src/output/formatstring.cc:605 src/output/formatstring.cc:626
 #: src/output/formatstring.cc:685
-msgid "found '{' without closing '}'."
-msgstr "Найден '{' без закрывающего '}'."
+msgid "'{' without closing '}'"
+msgstr "Найден '{' без закрывающего '}'"
 
+# fuzzy
 #: src/output/formatstring.cc:620
-msgid "unexpected symbol %r found after '{'."
-msgstr "Неожиданный символ %r найден после '{'."
-
-#: src/output/formatstring.cc:704
-msgid "found ELSE without IF."
-msgstr "Найден ELSE без IF"
-
-#: src/output/formatstring.cc:729
-msgid "found FI without IF."
-msgstr "Найден FI без IF."
+msgid "unexpected symbol %r after '{'"
+msgstr "Неожиданный символ %r найден после '{'"
 
 #: src/output/formatstring.cc:749
 msgid "check your syntax"
@@ -6003,11 +6030,11 @@ msgstr "внутренняя ошибка: SetStability рассчитывает
 msgid "warning: ignoring --close without --open"
 msgstr "внимание: игнорирую --close без --open"
 
-#: src/search/packagetest.cc:283
+#: src/search/packagetest.cc:284
 msgid "cannot find match field %r"
 msgstr "невозможно сопоставить поле %r"
 
-#: src/search/packagetest.cc:293
+#: src/search/packagetest.cc:294
 msgid "cannot find match algorithm %r"
 msgstr "невозможно сопоставить алгоритм %r"
 

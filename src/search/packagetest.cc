@@ -110,8 +110,7 @@ PackageTest::PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f
 
 	field = NONE;
 	need = PackageReader::NONE;
-	overlay = obsolete = upgrade = binary =
-		installed = multi_installed =
+	overlay = obsolete = upgrade = installed = multi_installed =
 		slotted = multi_slot =
 		world = world_only_selected = world_only_file =
 		worldset = worldset_only_selected =
@@ -120,6 +119,7 @@ PackageTest::PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f
 		know_pattern = false;
 	restrictions = ExtendedVersion::RESTRICT_NONE;
 	properties = ExtendedVersion::PROPERTIES_NONE;
+	binarynum = 0;
 	test_installed = INS_NONE;
 	test_instability = test_stability_default =
 		test_stability_local = test_stability_nonlocal = STABLE_NONE;
@@ -157,7 +157,7 @@ void PackageTest::calculateNeeds() {
 	}
 	if((field & (IUSE | DEPS)) ||
 		dup_packages || dup_versions || slotted ||
-		upgrade || overlay || obsolete || binary ||
+		upgrade || overlay || obsolete ||
 		world || worldset ||
 		have_virtual || have_nonvirtual ||
 		(from_overlay_inst_list != NULLPTR) ||
@@ -167,6 +167,7 @@ void PackageTest::calculateNeeds() {
 		(marked_list != NULLPTR) ||
 		(restrictions != ExtendedVersion::RESTRICT_NONE) ||
 		(properties != ExtendedVersion::PROPERTIES_NONE) ||
+		(binarynum != 0) ||
 		(test_instability != STABLE_NONE) ||
 		(test_stability_default != STABLE_NONE) ||
 		(test_stability_local != STABLE_NONE) ||
@@ -938,12 +939,12 @@ bool PackageTest::match(PackageReader *pkg) const {
 		}
 	}
 
-	if(binary) {
-		// --binary
+	if(binarynum != 0) {
+		// --binary --multibinary
 		get_p(&p, pkg);
 		bool found(false);
 		for(Package::iterator it(p->begin()); it != p->end(); ++it) {
-			if(unlikely(it->have_bin_pkg(portagesettings, p))) {
+			if(unlikely(it->have_bin_pkg(portagesettings, p, binarynum))) {
 				found = true;
 				break;
 			}
@@ -955,7 +956,7 @@ bool PackageTest::match(PackageReader *pkg) const {
 			}
 			for(InstVec::iterator it(installed_versions->begin());
 				likely(it != installed_versions->end()); ++it) {
-				if(unlikely(it->have_bin_pkg(portagesettings, p))) {
+				if(unlikely(it->have_bin_pkg(portagesettings, p, binarynum))) {
 					found = true;
 					break;
 				}

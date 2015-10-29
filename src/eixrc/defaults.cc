@@ -1442,15 +1442,15 @@ AddOption(STRING, "COLOR_SLOTS",
 	"Color for slots. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_BINARY",
-	"blue,1;%{BG0S}|25,1;%{BG1}|blue,1;%{BG2}|25,1;%{BG3}|25,1", _(
+	"blue,1;%{BG0S}|39,1;%{BG1}|blue,1;%{BG2}|39,1;%{BG3}|39,1", _(
 	"Color for braces for binaries. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_TBZ",
-	"blue,1;%{BG0S}|27,1;%{BG1}|blue,1;%{BG2}|27,1;%{BG3}|27,1", _(
+	"%{COLOR_BINARY}", _(
 	"Color for tag for *.tbz2. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_PAK",
-	"blue,1;%{BG0S}|39,1;%{BG1}|blue,1;%{BG2}|39,1;%{BG3}|39,1", _(
+	"blue,1;%{BG0S}|59,1;%{BG1}|blue,1;%{BG2}|59,1;%{BG3}|59,1", _(
 	"Color for tag for *.xpak. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_PAKCOUNT",

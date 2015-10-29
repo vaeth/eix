@@ -185,8 +185,8 @@ class PackageTest {
 			properties |= flags;
 		}
 
-		void Binary() {
-			binary = true;
+		void Binary(ExtendedVersion::CountBinPkg num) {
+			binarynum = num;
 		}
 
 		void WorldAll() {
@@ -316,7 +316,7 @@ class PackageTest {
 		/**
 		Other flags for tests
 		**/
-		bool	overlay, obsolete, upgrade, binary,
+		bool	overlay, obsolete, upgrade,
 			installed, multi_installed,
 			slotted, multi_slot,
 			world, world_only_file, world_only_selected,
@@ -326,6 +326,7 @@ class PackageTest {
 		LocalMode upgrade_local_mode;
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;
+		ExtendedVersion::CountBinPkg binarynum;
 		ExtendedVersion::Restrict restrictions;
 		ExtendedVersion::Properties properties;
 

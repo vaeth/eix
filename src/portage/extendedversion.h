@@ -134,6 +134,7 @@ class ExtendedVersion : public BasicVersion {
 			*static_cast<BasicVersion *>(this) = b;
 		}
 
+		bool have_bin_pkg(const PortageSettings *ps, const Package *pkg, CountBinPkg minimal) const;
 		bool have_bin_pkg(const PortageSettings *ps, const Package *pkg) const;
 		bool have_tbz_pkg(const PortageSettings *ps, const Package *pkg) const;
 		CountBinPkg num_pak_pkg(const PortageSettings *ps, const Package *pkg) const;

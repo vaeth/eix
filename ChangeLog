@@ -5,13 +5,16 @@
 	- Initial implementation for FEATURES=binpkg-multi-instance
 
 	Martin Väth <martin at mvath.de>:
-	- Internationalization and German translation of eix formatstring
-	- manpage: document how to translate default formatstrings to
+	- Internationalization and German translation of default FORMATSTRING
+	- Forcing fuzzy Russian translation of default FORMATSTRING and others.
+	  Please send fixes!
+	- manpage: document how to translate default FORMATSTRING to
 	  other languages
-	- Fix --disable-nls cleanly
+	- Add --multi-binary
 	- Extend support for FEATURES=binpkg-multi-instance: Be stricter in
 	  filename syntax, add further attributes, use new colors
 	- Update documentation for FEATURES=binpkg-multi-instance
+	- Fix --disable-nls cleanly
 
 *eix-0.31.1
 	Martin Väth <martin at mvath.de>:
