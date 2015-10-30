@@ -105,7 +105,7 @@ bool CascadingProfile::addProfile(const char *profile, WordSet *sourced_files) {
 				path = repos.get_path(repo);
 			}
 			if(path == NULLPTR) {
-				cerr << eix::format(_("warning: ignoring parent %r of file %r"))
+				cerr << eix::format(_("warning: ignoring parent %s of file %s"))
 					% (*it) % currfile << endl;
 				continue;
 			}

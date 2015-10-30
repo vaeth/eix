@@ -9,20 +9,16 @@
 #ifndef SRC_EIXTK_FORMATED_H_
 #define SRC_EIXTK_FORMATED_H_ 1
 
-#ifndef NDEBUG
-#include <cstdlib>
-
-#include <iostream>
-#endif
 #include <ostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include "eixTk/assert.h"
-#ifndef NDEBUG
-#include "eixTk/i18n.h"
-#endif
+#include "eixTk/eixint.h"
+#include "eixTk/likely.h"
 
+// #include "eixTk/i18n.h" #include <iostream> make check_includes happy
 
 namespace eix {
 
@@ -32,94 +28,121 @@ string with textual representations of values.
 
 Specifier syntax is just like basic printf:
 - @b %N is the specifier of type @b N
+- @b %num$N is the specifier of type @b N for argument num
 - @b %% is a literal @b %
 
 Recognized specifiers are:
 - @b s  convert argument to string by using the <<-operator of std::ostream.
-- @b r  like %s, but if argument is a string type (std::string or char *) it
-        is enclosed in single quotes. For string::size_type, this will
-        print "<string::npos>" if the argument equals to std::string::npos.
+- @b d  like %s, but for string::size_type, this will print <string::npos>
+        if the argument equals to std::string::npos.
 
 Example usage:
 
 \code
   include "eixTk/formated.h"
   std::string file("/etc/make.conf"), message("something bad happend");
-  std::cout << eix::format(_("problems while parsing %r -- %s")) % file % message << std::endl;
-  // problems while parsing "/etc/make.conf" -- something bad happend
+  std::cout << eix::format(_("problems while parsing %s -- %s")) % file % message << std::endl;
+  // problems while parsing /etc/make.conf -- something bad happend
 
-  int line = 10, column = 20;
-  std::cout << eix::format(_("problems while parsing %r in line %r, column %r -- %s"))
-          % file % message % line % column << std::endl;
-  // problems while parsing "/etc/make.conf" in line 10, column 20 -- something bad happend
+  int line = 10;
+  std::string::size_type column = 20;
+  std::cout << eix::format(_("problems while parsing %s in line %3$s, column %2$d -- %s"))
+          % file % column % line % message << std::endl;
+  // problems while parsing /etc/make.conf in line 10, column 20 -- something bad happend
 \endcode
 **/
+
+class format;
+
+class FormatManip {
+	protected:
+		friend class format;
+		typedef std::vector<eix::SignedBool>::size_type ArgCount;
+		std::string::size_type m_index;
+		ArgCount argnum;
+		bool m_type;
+		FormatManip(std::string::size_type ind, ArgCount anum, eix::SignedBool typ) :
+			m_index(ind), argnum(anum), m_type(typ >= 0) {
+		}
+};
+
+class FormatReplace {
+	protected:
+		friend class format;
+		std::string s, d;
+};
 
 class format {
 	private:
 		/**
-		Currently processed specifier, 0 if there are no more specifiers
+		The currently parsed args
 		**/
-		char m_spec;
+		bool simple;
+		FormatManip::ArgCount current;
+		std::vector<FormatReplace> args;
+		std::vector<eix::SignedBool> wanted;
+
 		/**
-		The current state of the formated string
+		The format string or result
 		**/
-		std::ostringstream m_stream;
+		std::string m_text;
+		std::vector<FormatManip> manip;
+
 		/**
-		What is left of the format string
+		Write size_type or "<string::npos>" to stream
 		**/
-		std::string m_format;
+		static std::ostream& write_representation(std::ostream& s, const std::string::size_type& t) {  // NOLINT(runtime/references)
+			if(t == std::string::npos) {
+				return (s << "<string::npos>");
+			}
+			return (s << t);
+		}
+
+		/**
+		Write t into stream s
+		**/
+		template<typename T> static std::ostream& write_representation(std::ostream& s, const T& t) {  // NOLINT(runtime/references)
+			return s << t;
+		}
+
+		void manipulate();
 
 	public:
 		/**
 		Set the template string
 		**/
-		explicit format(const std::string& format_string) : m_spec(0), m_stream(), m_format(format_string) {
-			goto_next_spec();
+		explicit format(const std::string& format_string);
+
+		format() : simple(true) {
 		}
-
-		/**
-		Copy current state into new formater
-		**/
-		format(const format& e) : m_spec(e.m_spec), m_stream(e.m_stream.str()), m_format(e.m_format) {
-		}
-
-		/**
-		Copy current state of formater
-		**/
-		format& operator=(const format& e);
-
-		/**
-		Reset the internal state and use format_string as the new format string
-		**/
-		format& reset(const std::string& format_string);
 
 		/**
 		Insert the value for the next placeholder
 		**/
 		template<typename T> format& operator%(const T& s) {
-			switch(m_spec) {
-				case 's':
-					m_stream << s;
-					break;
-				case 'r':
-					write_representation(m_stream, s);
-					break;
-#ifndef NDEBUG
-				case 0:
-					std::cerr << _("format specifier missing")
-						<< std::endl;
-					exit(EXIT_FAILURE);
-#endif
-				default:
-#ifndef NDEBUG
-					std::cerr << format(_("unknown format specifier '%%%s'")) % m_spec
-						<< std::endl;
-					exit(EXIT_FAILURE);
-#endif
-					break;
+			if(simple) {
+				std::ostringstream os;
+				os << s;
+				m_text.append(os.str());
+				return *this;
 			}
-			goto_next_spec();
+			if(unlikely(manip.empty())) {
+				return *this;
+			}
+			eix::SignedBool c(wanted[current]);
+			if(c >= 0) {
+				std::ostringstream os;
+				os << s;
+				args[current].s = os.str();
+			}
+			if(c <= 0) {
+				std::ostringstream os;
+				write_representation(os, s);
+				args[current].d = os.str();
+			}
+			if(unlikely(++current == wanted.size())) {
+				manipulate();
+			}
 			return *this;
 		}
 
@@ -127,8 +150,8 @@ class format {
 		@return the formated string
 		**/
 		std::string str() const {
-			eix_assert_paranoic(m_spec == 0);
-			return m_stream.str();
+			eix_assert_paranoic(manip.empty());
+			return m_text;
 		}
 
 		/**
@@ -143,43 +166,6 @@ class format {
 		**/
 		friend std::ostream& operator<<(std::ostream& os, const format& formater) {
 			return os << formater.str();
-		}
-
-	protected:
-		/**
-		Find the next specifiers in the format string
-		**/
-		void goto_next_spec();
-
-		/**
-		Write string t enclosed in single quotes into stream s
-		**/
-		std::ostream& write_representation(std::ostream& s, const char *t) {  // NOLINT(runtime/references)
-			return s << "'" << t << "'";
-		}
-
-		/**
-		Write string t enclosed in single quotes into stream s
-		**/
-		std::ostream& write_representation(std::ostream& s, const std::string& t) {  // NOLINT(runtime/references)
-			return s << "'" << t << "'";
-		}
-
-		/**
-		Write size_type or "<string::npos>" to stream
-		**/
-		std::ostream& write_representation(std::ostream& s, const std::string::size_type& t) {  // NOLINT(runtime/references)
-			if(t == std::string::npos) {
-				return s << "<string::npos>";
-			}
-			return s << t;
-		}
-
-		/**
-		Write t into stream s
-		**/
-		template<typename T> std::ostream& write_representation(std::ostream& s, const T& t) {  // NOLINT(runtime/references)
-			return s << t;
 		}
 };
 

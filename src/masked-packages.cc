@@ -193,7 +193,7 @@ int run_masked_packages(int argc, char *argv[]) {
 		Mask m(Mask::maskPseudomask);
 		string errtext;
 		if(unlikely(m.parseMask(it->c_str(), &errtext) == BasicVersion::parsedError)) {
-			cerr << eix::format(_("warning: ignoring %r: %s")) % *it % errtext << endl;
+			cerr << eix::format(_("warning: ignoring \"%s\": %s")) % *it % errtext << endl;
 			continue;
 		}
 		Package p;

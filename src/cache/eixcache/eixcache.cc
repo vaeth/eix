@@ -131,7 +131,7 @@ bool EixCache::get_overlaydat(const DBHeader& header) {
 			found = header.find_overlay(&m_get_overlay, m_scheme.c_str(), portdir, 0, DBHeader::OVTEST_LABEL);
 		}
 		if(!found) {
-			thiserror(eix::format(_("cache file %s does not contain overlay %r [%s]")) %
+			thiserror(eix::format(_("cache file %s does not contain overlay \"%s\" [%s]")) %
 				m_overlay_name % m_scheme);
 			return false;
 		}

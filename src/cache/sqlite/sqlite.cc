@@ -205,7 +205,7 @@ void SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **
 	string::size_type pos(catarg.find('/'));
 	if(pos == string::npos) {
 		sqlite_callback_error = true;
-		m_error_callback(eix::format(_("%r not of the form package/category-version")) % catarg);
+		m_error_callback(eix::format(_("\"%s\" not of the form package/category-version")) % catarg);
 		return;
 	}
 	string name_ver(catarg, pos + 1);
@@ -228,7 +228,7 @@ void SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **
 	}
 	char **aux(ExplodeAtom::split(name_ver.c_str()));
 	if(unlikely(aux == NULLPTR)) {
-		m_error_callback(eix::format(_("cannot split %r into package and version")) % name_ver);
+		m_error_callback(eix::format(_("cannot split \"%s\" into package and version")) % name_ver);
 		return;
 	}
 	/* Search for existing package */

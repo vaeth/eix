@@ -281,7 +281,7 @@ PackageTest::MatchField PackageTest::name2field(const string& p) {
 	eix_assert_static(static_match_field_map != NULLPTR);
 	MatchFieldMap::const_iterator it(static_match_field_map->find(p));
 	if(unlikely(it == static_match_field_map->end())) {
-		cerr << eix::format(_("cannot find match field %r")) % p << endl;
+		cerr << eix::format(_("cannot find match field \"%s\"")) % p << endl;
 		return NAME;
 	}
 	return it->second;
@@ -291,7 +291,7 @@ PackageTest::MatchAlgorithm PackageTest::name2algorithm(const string& p) {
 	eix_assert_static(static_match_algorithm_map != NULLPTR);
 	MatchAlgorithmMap::const_iterator it(static_match_algorithm_map->find(p));
 	if(unlikely(it == static_match_algorithm_map->end())) {
-		cerr << eix::format(_("cannot find match algorithm %r")) % p << endl;
+		cerr << eix::format(_("cannot find match algorithm \"%s\"")) % p << endl;
 		return ALGO_REGEX;
 	}
 	return it->second;

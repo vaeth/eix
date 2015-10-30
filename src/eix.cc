@@ -678,7 +678,7 @@ int run_eix(int argc, char** argv) {
 	if(unlikely(rc_options.be_quiet)) {
 		rc_options.pure_packages = true;
 		if(!freopen(DEV_NULL, "w", stdout)) {
-			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
+			cerr << eix::format(_("cannot redirect to \"%s\"")) % DEV_NULL << endl;
 			return EXIT_FAILURE;
 		}
 	} {  // Print color palette if requested
@@ -763,7 +763,7 @@ int run_eix(int argc, char** argv) {
 		cerr << eix::format(_(
 			"%s was created with an incompatible eix-update:\n"
 			"It uses database format %s (current is %s).\n"
-			"Please run %r and try again."))
+			"Please run \"%s\" and try again."))
 			% cachefile % header.version % DBHeader::current
 			% tooltext << endl;
 		return EXIT_FAILURE;
@@ -1045,13 +1045,13 @@ int run_eix(int argc, char** argv) {
 				cout << "\n";
 			}
 			cout << format->color_numbertext
-				<< eix::format(N_("Found %s match.",
-				"Found %s matches.", count)) % count
+				<< eix::format(N_("Found %s match",
+				"Found %s matches", count)) % count
 				<< format->color_numbertextend << "\n";
 		} else if(unlikely(count == 0)) {
 			have_printed = true;
 			cout << format->color_numbertext
-				<< _("No matches found.")
+				<< _("No matches found")
 				<< format->color_numbertextend << "\n";
 		}
 	}
@@ -1059,11 +1059,11 @@ int run_eix(int argc, char** argv) {
 		cout << format->color_end;
 		if(unlikely(over_limit)) {
 			cout << eix::format(N_(
-			"Only %s match displayed on terminal.\n",
-			"Only %s matches displayed on terminal.\n", limit))
-				% limit
-			<< eix::format(_("Set %s=0 to show all matches.\n"))
-				% limit_var;
+			"Only %s match displayed on terminal\n"
+			"Set %s=0 to show all matches\n",
+			"Only %s matches displayed on terminal\n"
+			"Set %s=0 to show all matches\n", limit))
+				% limit % limit_var;
 		}
 	}
 
@@ -1089,8 +1089,8 @@ static bool opencache(Database *db, const char *filename, const char *tooltext) 
 		return true;
 	}
 	cerr << eix::format(_(
-		"cannot open database file %s for reading.\n"
-		"Did you forget to create it with %r?"))
+		"cannot open database file %s for reading\n"
+		"Did you forget to create it with \"%s\"?"))
 		% filename % tooltext << endl;
 	return false;
 }
@@ -1168,8 +1168,8 @@ static void print_unused(const string& filename, const string& excludefiles, con
 	}
 	if(unused.empty()) {
 		cout << eix::format(test_empty ?
-			_("No non-matching or empty entries in %s.\n") :
-			_("No non-matching entries in %s.\n") )
+			_("No non-matching or empty entries in %s\n") :
+			_("No non-matching entries in %s\n") )
 			% filename;
 		return;
 	}

@@ -101,7 +101,7 @@ bool PrintFormat::parse_variable(Node **rootnode, const string& varname, string 
 	VarParserCacheNode& v(f->second);
 	if(unlikely(v.in_use)) {
 		if(errtext != NULLPTR) {
-			*errtext = eix::format(_("variable %r calls itself for printing")) % varname;
+			*errtext = eix::format(_("variable %s calls itself for printing")) % varname;
 		}
 		return false;
 	}
@@ -142,7 +142,7 @@ void PrintFormat::overlay_keytext(OutputString *s, ExtendedVersion::Overlay over
 			}
 		}
 	}
-	string onum(eix::format("%s") % number);
+	string onum(eix::format() % number);
 	if(plain) {
 		s->assign_fast(onum);
 		return;
@@ -521,7 +521,7 @@ GCC_DIAG_ON(sign-conversion)
 }
 
 inline static const char *seek_character(const char *fmt) {
-	while(*fmt && isspace(*fmt, localeC)) {
+	while((*fmt != '\0') && my_isspace(*fmt)) {
 		++fmt;
 	}
 	return fmt;
@@ -594,7 +594,7 @@ FormatParser::ParserState FormatParser::state_IF() {
 	size_t i(0);
 	const char *name_start(band_position);
 	for(char c(*band_position);
-		c && (c != '}') && (c != '=') && !(isspace(c));
+		c && (c != '}') && (c != '=') && !(my_isspace(c));
 		c = *(++band_position))
 		++i;
 	if(!i) {
@@ -617,7 +617,7 @@ FormatParser::ParserState FormatParser::state_IF() {
 	}
 	/* This MUST be a '=' */
 	if(*band_position != '=') {
-		last_error = eix::format(_("unexpected symbol %r after '{'")) % (*band_position);
+		last_error = eix::format(_("unexpected symbol '%s' after '{'")) % (*band_position);
 		return ERROR;
 	}
 
@@ -663,7 +663,7 @@ FormatParser::ParserState FormatParser::state_IF() {
 		if(parse_modus != plain) {
 			if(c == parse_modus)
 				break;
-		} else if((c == '}') || isspace(c)) {
+		} else if((c == '}') || my_isspace(c)) {
 			break;
 		}
 		if((c == '\\') && (parse_modus != single_quote)) {

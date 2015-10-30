@@ -241,7 +241,7 @@ bool open_database(DBHeader *header, const char *name, bool verbose) {
 	} else {
 		if(likely(verbose)) {
 			cerr << eix::format(_(
-				"cannot open database file %r for reading (mode = 'rb')"))
+				"cannot open database file %s for reading (mode = 'rb')"))
 				% name << endl;
 		}
 	}

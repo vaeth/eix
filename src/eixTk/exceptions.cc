@@ -29,7 +29,7 @@ Provide a common look for error-messages for parse-errors in
 portage.{mask,keywords,..}
 **/
 void portage_parse_error(const string& file, const LineVec::size_type line_nr, const string& line, const string& errtext) {
-	cerr << eix::format(_("-- invalid line %s in %s: %r"))
+	cerr << eix::format(_("-- invalid line %s in %s: \"%s\""))
 		% line_nr % file % line << endl;
 
 	// Indent the message correctly

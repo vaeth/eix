@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-10-29 17:54+0100\n"
+"POT-Creation-Date: 2015-10-30 19:15+0100\n"
 "PO-Revision-Date: 2014-10-29 21:03+0100\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
@@ -1606,58 +1606,64 @@ msgid "problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
 #: src/eix.cc:681 src/eix-diff.cc:345 src/eix-update.cc:385
-msgid "cannot redirect to %r"
-msgstr "Fehler bei Umleitung nach %r"
+#, c-format
+msgid "cannot redirect to \"%s\""
+msgstr "Fehler bei Umleitung nach \"%s\""
 
 #: src/eix.cc:764
+#, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
 "It uses database format %s (current is %s).\n"
-"Please run %r and try again."
+"Please run \"%s\" and try again."
 msgstr ""
 "%s wurd mit inkompatiblem eix-update erzeugt:\n"
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
-"Bitte %r ausführen und erneut probieren."
+"Bitte \"%s\" ausführen und erneut probieren!"
 
 #: src/eix.cc:1048
 #, c-format
-msgid "Found %s match."
-msgid_plural "Found %s matches."
-msgstr[0] "%s Treffer."
-msgstr[1] "%s Treffer."
+msgid "Found %s match"
+msgid_plural "Found %s matches"
+msgstr[0] "%s Treffer"
+msgstr[1] "%s Treffer"
 
 #: src/eix.cc:1054
-msgid "No matches found."
-msgstr "Kein Treffer."
+msgid "No matches found"
+msgstr "Kein Treffer"
 
 #: src/eix.cc:1062
 #, c-format
-msgid "Only %s match displayed on terminal.\n"
-msgid_plural "Only %s matches displayed on terminal.\n"
-msgstr[0] "Auf dem Terminal wird nur %s Treffer angezeigt.\n"
-msgstr[1] "Auf dem Terminal werden nur %s Treffer angezeigt.\n"
-
-#: src/eix.cc:1065
-#, c-format
-msgid "Set %s=0 to show all matches.\n"
-msgstr "Setzen Sie %s=0, um alle anzuzeigen.\n"
+msgid ""
+"Only %s match displayed on terminal\n"
+"Set %s=0 to show all matches\n"
+msgid_plural ""
+"Only %s matches displayed on terminal\n"
+"Set %s=0 to show all matches\n"
+msgstr[0] ""
+"Auf dem Terminal wird nur %s Treffer angezeigt.\n"
+"Setzen Sie %s=0, um alle anzuzeigen!\n"
+msgstr[1] ""
+"Auf dem Terminal werden nur %s Treffer angezeigt.\n"
+"Setzen Sie %s=0, um alle anzuzeigen!\n"
 
 #: src/eix.cc:1092
+#, c-format
 msgid ""
-"cannot open database file %s for reading.\n"
-"Did you forget to create it with %r?"
+"cannot open database file %s for reading\n"
+"Did you forget to create it with \"%s\"?"
 msgstr ""
 "Datenbank-Datei %s kann nicht geöffnet werden.\n"
-"Wurde sie mit %r erzeugt?"
+"Wurde sie mit \"%s\" erzeugt?"
 
 #: src/eix.cc:1171
 #, c-format
-msgid "No non-matching or empty entries in %s.\n"
+msgid "No non-matching or empty entries in %s\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
 #: src/eix.cc:1172
 #, c-format
-msgid "No non-matching entries in %s.\n"
+msgid "No non-matching entries in %s\n"
 msgstr "Einträge in %s passen.\n"
 
 #: src/eix.cc:1177
@@ -1738,12 +1744,14 @@ msgstr ""
 "weitere Informationen.\n"
 
 #: src/eix-diff.cc:151
-msgid "error in database file %r: %s"
-msgstr "Fehler in Datenbank-Datei %r: %s"
+#, c-format
+msgid "error in database file %s: %s"
+msgstr "Fehler in Datenbank-Datei %s: %s"
 
 #: src/eix-diff.cc:153 src/eix-header.cc:244
-msgid "cannot open database file %r for reading (mode = 'rb')"
-msgstr "Datenbank-Datei %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
+#, c-format
+msgid "cannot open database file %s for reading (mode = 'rb')"
+msgstr "Datenbank-Datei %s kann nicht zum Lesen geöffnet werden (mode = 'rb')"
 
 #: src/eix-diff.cc:413
 #, c-format
@@ -1952,12 +1960,14 @@ msgid "Building database (%s) ..\n"
 msgstr "Erzeuge Datenbank (%s) ...\n"
 
 #: src/eix-update.cc:583
-msgid "Excluding %r %s (cache: %s)\n"
-msgstr "Ausschluss von %r %s (Cache: %s)\n"
+#, c-format
+msgid "Excluding \"%s\" %s (cache: %s)\n"
+msgstr "Ausschluss von \"%s\" %s (Cache: %s)\n"
 
 #: src/eix-update.cc:605
-msgid "[%s] %r %s (cache: %s)\n"
-msgstr "[%s] %r %s (Cache: %s)\n"
+#, c-format
+msgid "[%s] \"%s\" %s (cache: %s)\n"
+msgstr "[%s] \"%s\" %s (Cache: %s)\n"
 
 #: src/eix-update.cc:610
 #, c-format
@@ -2007,8 +2017,9 @@ msgid "Writing database file %s ..\n"
 msgstr "Schreibe Datenbank-Datei %s...\n"
 
 #: src/eix-update.cc:693
-msgid "cannot open database file %r for writing (mode = 'wb')"
-msgstr "Datenbank-Datei %r nicht beschreibbar (mode = 'wb')"
+#, c-format
+msgid "cannot open database file %s for writing (mode = 'wb')"
+msgstr "Datenbank-Datei %s nicht beschreibbar (mode = 'wb')"
 
 #: src/eix-update.cc:705
 #, c-format
@@ -2051,8 +2062,9 @@ msgstr ""
 "weitere Informationen.\n"
 
 #: src/masked-packages.cc:196
-msgid "warning: ignoring %r: %s"
-msgstr "Warnung: Ignoriere %r: %s"
+#, c-format
+msgid "warning: ignoring \"%s\": %s"
+msgstr "Warnung: Ignoriere \"%s\": %s"
 
 #: src/versionsort.cc:41
 #, c-format
@@ -2060,8 +2072,9 @@ msgid "cannot determine version of %s"
 msgstr "kann Version von '%s' nicht bestimmen"
 
 #: src/cache/cachetable.cc:46
-msgid "unknown cache %r for directory %r"
-msgstr "Unbekannter Cache %r für Ordner %r"
+#, c-format
+msgid "unknown cache %s for directory %s"
+msgstr "Unbekannter Cache %s für Ordner %s"
 
 #: src/cache/common/assign_reader.cc:84 src/cache/common/assign_reader.cc:104
 #: src/cache/common/flat_reader.cc:38 src/cache/eixcache/eixcache.cc:235
@@ -2131,8 +2144,9 @@ msgid "cannot open %s: %s"
 msgstr "%s kann nicht geöffnet werden: %s"
 
 #: src/cache/eixcache/eixcache.cc:134
-msgid "cache file %s does not contain overlay %r [%s]"
-msgstr "Cache-Datei %s enthält nicht Overlay %r [%s]"
+#, c-format
+msgid "cache file %s does not contain overlay \"%s\" [%s]"
+msgstr "Cache-Datei %s enthält nicht Overlay \"%s\" [%s]"
 
 #: src/cache/eixcache/eixcache.cc:139
 #, c-format
@@ -2146,8 +2160,9 @@ msgstr "Fehler in Datei %s: %s"
 
 #: src/cache/metadata/metadata.cc:297 src/cache/metadata/metadata.cc:343
 #: src/cache/sqlite/sqlite.cc:231
-msgid "cannot split %r into package and version"
-msgstr "%r kann nicht in Paket und Version unterteilt werden"
+#, c-format
+msgid "cannot split \"%s\" into package and version"
+msgstr "\"%s\" kann nicht in Paket und Version unterteilt werden"
 
 #: src/cache/parse/parse.cc:208
 #, c-format
@@ -2174,8 +2189,9 @@ msgid "sqlite dataset for %s is too small"
 msgstr "sqlite-Datensatz für %s ist zu klein"
 
 #: src/cache/sqlite/sqlite.cc:208
-msgid "%r not of the form package/category-version"
-msgstr "%r hat nicht die Gestalt package/category-version"
+#, c-format
+msgid "\"%s\" not of the form package/category-version"
+msgstr "\"%s\" hat nicht die Gestalt package/category-version"
 
 #: src/cache/sqlite/sqlite.cc:284
 msgid "database path incorrect"
@@ -2226,16 +2242,19 @@ msgid "cachefile uses obsolete format %s (current is %s)"
 msgstr "Cache-Datei benutzt veraltetes Format %s (aktuell ist %s)"
 
 #: src/eixTk/ansicolor.cc:147
-msgid "illegal color name %r in %r"
-msgstr "Unbekannter Farbname %r in %r"
+#, c-format
+msgid "illegal color name \"%s\" in \"%s\""
+msgstr "Unbekannter Farbname \"%s\" in \"%s\""
 
 #: src/eixTk/ansicolor.cc:174
-msgid "more than two colors specified in %r"
-msgstr "%r enthält mehr als zwei Farben"
+#, c-format
+msgid "more than two colors specified in \"%s\""
+msgstr "\"%s\" enthält mehr als zwei Farben"
 
 #: src/eixTk/ansicolor.cc:193
-msgid "invalid brightness value %r"
-msgstr "Unbekannter Helligkeitswert %r"
+#, c-format
+msgid "invalid brightness value \"%s\""
+msgstr "Unbekannter Helligkeitswert \"%s\""
 
 #: src/eixTk/ansicolor_print.cc:153
 #, c-format
@@ -2293,44 +2312,41 @@ msgid "missing second parameter to --%s"
 msgstr "Zweiter Parameter zu --%s fehlt"
 
 #: src/eixTk/exceptions.cc:32
-msgid "-- invalid line %s in %s: %r"
-msgstr "-- Unerlaubte Zeile %s in %s: %r"
-
-#: src/eixTk/formated.h:110
-msgid "format specifier missing"
-msgstr "Format-Zeichen fehlt"
-
-#: src/eixTk/formated.h:116
 #, c-format
-msgid "unknown format specifier '%%%s'"
-msgstr "Unbekannte Formatangabe '%%%s'"
+msgid "-- invalid line %s in %s: \"%s\""
+msgstr "-- Unerlaubte Zeile %s in %s: \"%s\""
 
-#: src/eixTk/stringutils.cc:411
+#: src/eixTk/formated.cc:30
+#, c-format
+msgid "bad % in eix::format; perhaps %% is meant"
+msgstr "Kaputtes % in eix::format; vielleicht war %% gemeint"
+
+#: src/eixTk/stringutils.cc:413
 #, c-format
 msgid "flags should not start with a '+': %s"
 msgstr "Flags sollten nicht mit einem '+' beginnen: %s"
 
-#: src/eixTk/stringutils.cc:450
+#: src/eixTk/stringutils.cc:452
 msgid "internal error: Storing required after finalizing"
 msgstr "Interner Fehler: Speichern nach Finalisierung benötigt"
 
-#: src/eixTk/stringutils.cc:458
+#: src/eixTk/stringutils.cc:460
 msgid "internal error: Hashing required after finalizing"
 msgstr "Interner Fehler: Hashing nach Finalisierung benötigt"
 
-#: src/eixTk/stringutils.cc:462
+#: src/eixTk/stringutils.cc:464
 msgid "internal error: Hashing required in non-hash mode"
 msgstr "Interner Fehler: Hashing in non-hash Modus benötigt"
 
-#: src/eixTk/stringutils.cc:488
+#: src/eixTk/stringutils.cc:490
 msgid "internal error: Index required before sorting."
 msgstr "Interner Fehler: Index vor der Sortierung benötigt."
 
-#: src/eixTk/stringutils.cc:493
+#: src/eixTk/stringutils.cc:495
 msgid "internal error: Trying to shortcut non-hashed string."
 msgstr "Interner Fehler: Versuch, einen nicht gehashted String zu kürzen."
 
-#: src/eixTk/stringutils.cc:501
+#: src/eixTk/stringutils.cc:503
 msgid "database corrupt: nonexistent hash required"
 msgstr "Datenbank defekt: Nichtexistierender Hash wurde angefordert"
 
@@ -2340,28 +2356,34 @@ msgid "error reading %s: %s"
 msgstr "Lesefehler in %s: %s "
 
 #: src/eixTk/utils.cc:145
-msgid "nesting level too deep in %r"
-msgstr "Zu tiefe Verschachtelung in %r"
+#, c-format
+msgid "nesting level too deep in %s"
+msgstr "Zu tiefe Verschachtelung in %s"
 
 #: src/eixTk/varsreader.cc:168
-msgid "%s: failed to source %r (%s)"
-msgstr "%s: source %r ging nicht (%s)"
+#, c-format
+msgid "%s: failed to source %s (%s)"
+msgstr "%s: source %s ging nicht (%s)"
 
 #: src/eixTk/varsreader.cc:1068
-msgid "cannot read file %r"
-msgstr "Datei %r kann nicht gelesen werden"
+#, c-format
+msgid "cannot read file %s"
+msgstr "Datei %s kann nicht gelesen werden"
 
 #: src/eixTk/varsreader.cc:1076
-msgid "cannot stat file %r"
-msgstr "Status der Datei %r kann nicht ermiitelt werden"
+#, c-format
+msgid "cannot stat file %s"
+msgstr "Status der Datei %s kann nicht ermiitelt werden"
 
 #: src/eixTk/varsreader.cc:1093
-msgid "cannot map file %r"
-msgstr "Datei %r kann nicht gemapped werden"
+#, c-format
+msgid "cannot map file %s"
+msgstr "Datei %s kann nicht gemapped werden"
 
 #: src/eixTk/varsreader.cc:1108
-msgid "recursively sourced file %r"
-msgstr "Datei %r wurde rekursiv gesourced"
+#, c-format
+msgid "recursively sourced file %s"
+msgstr "Datei %s wurde rekursiv gesourced"
 
 #: src/eixrc/defaults.cc:17
 msgid ""
@@ -6969,12 +6991,13 @@ msgid "no $HOME found in environment."
 msgstr "Kein $HOME in der Umgebung."
 
 #: src/eixrc/eixrc.cc:762
+#, c-format
 msgid ""
-"%s has unknown value %r\n"
-"\tassuming value 'all-installed' instead."
+"%s has unknown value \"%s\"\n"
+"\tassuming value \"all-installed\" instead."
 msgstr ""
-"%s hat unbekannten Wert %r\n"
-"\tAls Ersatz wird 'all-installed' benutzt."
+"%s hat unbekannten Wert \"%s\"\n"
+"\tAls Ersatz wird \"all-installed\" benutzt."
 
 #: src/eixrc/eixrc.cc:786
 msgid "was locally changed to:"
@@ -7017,16 +7040,19 @@ msgstr ""
 "Vielen Dank im Voraus für Ihre Mühe!"
 
 #: src/output/formatstring-print.cc:586
-msgid "unknown property %r"
-msgstr "Unbekannte Eigenschaft %r"
+#, c-format
+msgid "unknown property \"%s\""
+msgstr "Unbekannte Eigenschaft \"%s\""
 
 #: src/output/formatstring-print.cc:592
-msgid "property %r used outside version context"
-msgstr "Eigenschaft %r wurde außerhalb eines Versionen-Zusammenhangs benutzt"
+#, c-format
+msgid "property \"%s\" used outside version context"
+msgstr "Eigenschaft \"%s\" wurde außerhalb eines Versionen-Zusammenhangs benutzt"
 
 #: src/output/formatstring.cc:104
-msgid "variable %r calls itself for printing"
-msgstr "Die Variable %r ruft sich selbst zur Ausgabe auf"
+#, c-format
+msgid "variable %s calls itself for printing"
+msgstr "Die Variable %s ruft sich selbst zur Ausgabe auf"
 
 #: src/output/formatstring.cc:202
 #, c-format
@@ -7060,8 +7086,9 @@ msgid "'{' without closing '}'"
 msgstr " '{' ohne schließendes '}'"
 
 #: src/output/formatstring.cc:620
-msgid "unexpected symbol %r after '{'"
-msgstr "Unerwartetes Symbol %r nach '{'"
+#, c-format
+msgid "unexpected symbol '%s' after '{'"
+msgstr "Unerwartetes Symbol '%s' nach '{'"
 
 #: src/output/formatstring.cc:749
 msgid "check your syntax"
@@ -7077,32 +7104,38 @@ msgid "line %s, column %s: %s"
 msgstr "Zeile %s, Spalte %s: %s"
 
 #: src/portage/basicversion.cc:119
-msgid "internal error: unknown PartType on (%r,%r)"
-msgstr "Interner Fehler: unbekannter PartType bei (%r,%r)"
+#, c-format
+msgid "internal error: unknown PartType on (\"%s\",\"%s\")"
+msgstr "Interner Fehler: unbekannter PartType bei (\"%s\",\"%s\")"
 
 #: src/portage/basicversion.cc:164
-msgid "malformed (first primary at %r) version string %r"
-msgstr "Versionsstring unerlaubt (erster Auftritt bei %r): %r"
+#, c-format
+msgid "malformed (first primary at \"%s\") version string \"%s\""
+msgstr "Versionsstring unerlaubt (erster Auftritt bei \"%s\"): \"%s\""
 
 #: src/portage/basicversion.cc:183
-msgid "malformed (primary at %r) version string %r"
-msgstr "Versionsstring unerlaubt (Auftritt bei %r): %r"
+#, c-format
+msgid "malformed (primary at \"%s\") version string \"%s\""
+msgstr "Versionsstring unerlaubt (Auftritt bei \"%s\"): \"%s\""
 
 #: src/portage/basicversion.cc:227
-msgid "malformed (suffix at %r) version string %r"
-msgstr "Versionsstring unerlaubt (Suffix bei %r): %r"
+#, c-format
+msgid "malformed (suffix at \"%s\") version string \"%s\""
+msgstr "Versionsstring unerlaubt (Suffix bei \"%s\"): \"%s\""
 
 #: src/portage/basicversion.cc:269
+#, c-format
 msgid ""
-"garbage (%s) at end of version %r\n"
+"garbage (%s) at end of version \"%s\"\n"
 "accepting version anyway"
 msgstr ""
-"Zusatzsymbole (%s) nach Versionsnummer %r\n"
-"Akzeptiere Version dennoch"
+"Zusatzsymbole (%s) nach Versionsnummer \"%s\"\n"
+"Version wird trotzdem akzeptiert"
 
 #: src/portage/basicversion.cc:271
-msgid "garbage (%s) at end of version %r"
-msgstr "Zusatzsymbole (%s) nach Versionsnummer %r"
+#, c-format
+msgid "garbage (%s) at end of version \"%s\""
+msgstr "Zusatzsymbole (%s) nach Versionsnummer \"%s\""
 
 #: src/portage/conf/cascadingprofile.cc:74
 msgid "Recursion level for cascading profiles exceeded; stopping reading parents"
@@ -7111,8 +7144,9 @@ msgstr ""
 "weitere Eltern-Verzeichnisse werden ignoriert."
 
 #: src/portage/conf/cascadingprofile.cc:108
-msgid "warning: ignoring parent %r of file %r"
-msgstr "Warnung: Ignoriere Elternteil %r der Datei %r"
+#, c-format
+msgid "warning: ignoring parent %s of file %s"
+msgstr "Warnung: Ignoriere Elternteil %s der Datei %s"
 
 #: src/portage/conf/portagesettings.cc:713
 #, c-format
@@ -7165,12 +7199,14 @@ msgid "warning: ignoring --close without --open"
 msgstr "Warnung: --close ohne --open wird ignoriert"
 
 #: src/search/packagetest.cc:284
-msgid "cannot find match field %r"
-msgstr "unbekanntes Suchfeld %r"
+#, c-format
+msgid "cannot find match field \"%s\""
+msgstr "unbekanntes Suchfeld \"%s\""
 
 #: src/search/packagetest.cc:294
-msgid "cannot find match algorithm %r"
-msgstr "unbekannter Match-Algorithmus %r"
+#, c-format
+msgid "cannot find match algorithm \"%s\""
+msgstr "unbekannter Match-Algorithmus \"s%s\""
 
 #: src/various/drop_permissions.cc:65
 msgid "failed to drop permissions"
@@ -7179,10 +7215,3 @@ msgstr "Rechte-Änderung schlug fehl"
 #: src/various/drop_permissions.cc:68
 msgid "warning: failed to drop permissions"
 msgstr "Warnung: Rechte-Änderung schlug fehl"
-
-#~ msgid ""
-#~ "This variable is only used for delayed substitution.\n"
-#~ "It defines the first column for the title of available versions."
-#~ msgstr ""
-#~ "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-#~ "Sie legt die erste Spalte für den Titel verfügbarer Versionen fest."

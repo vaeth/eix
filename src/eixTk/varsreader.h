@@ -430,14 +430,14 @@ class VarsReader {
 		@return true if c matches [A-Za-z0-9_]
 		**/
 		static bool isValidKeyCharacter(char c) ATTRIBUTE_PURE {
-			return (isalnum(c, localeC) || (c == '_') || (c == '-'));
+			return (my_isalnum(c) || (c == '_') || (c == '-'));
 		}
 
 		/**
 		@return true if c matches [A-Za-z_]
 		**/
 		static bool isValidKeyCharacterStart(char c) ATTRIBUTE_PURE {
-			return (isalpha(c, localeC) || (c == '_'));
+			return (my_isalpha(c) || (c == '_'));
 		}
 
 		/**

@@ -40,13 +40,15 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
+using std::locale;
+
 const char *spaces(" \t\r\n");
 const char *shellspecial(" \t\r\n\"'`${}()[]<>?*~;|&#");
 const char *doublequotes("\"$\\");
 
 StringHash *StringHash::comparison_this;
 
-std::locale localeC("C");
+locale localeC("C");
 
 static void erase_escapes(string *s, const char *at) ATTRIBUTE_NONNULL_;
 template<typename S, typename T> inline static S calc_table_pos(const vector<S>& table, S pos, const T *pattern, T c) ATTRIBUTE_PURE ATTRIBUTE_NONNULL_;
@@ -78,7 +80,7 @@ Check string if it only contains digits.
 **/
 bool is_numeric(const char *str) {
 	for(char c(*str); likely(c != '\0'); c = *(++str)) {
-		if(!isdigit(c, localeC)) {
+		if(!my_isdigit(c)) {
 			return false;
 		}
 	}
@@ -208,7 +210,7 @@ const char *ExplodeAtom::get_start_of_version(const char *str, bool allow_star) 
 	const char *x(NULLPTR);
 	while(likely((*str != '\0') && (*str != ':'))) {
 		if(unlikely(*str++ == '-')) {
-			if(isdigit(*str, localeC) ||
+			if(my_isdigit(*str) ||
 				unlikely(allow_star && ((*str) == '*'))) {
 				x = str;
 			}
@@ -251,7 +253,7 @@ string to_lower(const string& str) {
 	string::size_type s(str.size());
 	string res;
 	for(string::size_type c(0); c != s; ++c) {
-		res.append(1, tolower(str[c], localeC));
+		res.append(1, my_tolower(str[c]));
 	}
 	return res;
 }
@@ -569,7 +571,7 @@ bool match_list(const char **str_list, const char *str) {
 
 const char *first_alnum(const char *s) {
 	for(char c(*s); likely(c != '\0'); c = *(++s)) {
-		if(isalnum(c, localeC)) {
+		if(my_isalnum(c)) {
 			return s;
 		}
 	}
@@ -578,7 +580,7 @@ const char *first_alnum(const char *s) {
 
 const char *first_not_alnum_or_ok(const char *s, const char *ok) {
 	for(char c(*s); likely(c != '\0'); c = *(++s)) {
-		if(unlikely((!isalnum(c, localeC)) && (strchr(ok, c) == NULLPTR))) {
+		if(unlikely((!my_isalnum(c)) && (strchr(ok, c) == NULLPTR))) {
 			return s;
 		}
 	}
@@ -590,7 +592,7 @@ Match str against a lowercase pattern case-insensitively
 **/
 bool caseequal(const char *str, const char *pattern) {
 	for(char c(*str); c != '\0'; c = *(++str)) {
-		if(tolower(c, localeC) != *pattern) {
+		if(my_tolower(c) != *pattern) {
 			return false;
 		}
 		++pattern;
@@ -625,7 +627,7 @@ bool casecontains(const char *str, const char *pattern) {
 	}
 	pos = 0;
 	for(char c(*str); likely(c != '\0'); c = *(++str)) {
-		pos = calc_table_pos(table, pos, pattern, tolower(c, localeC));
+		pos = calc_table_pos(table, pos, pattern, my_tolower(c));
 		if(pos == l) {
 			return true;
 		}

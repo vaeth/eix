@@ -382,7 +382,7 @@ int run_eix_update(int argc, char *argv[]) {
 	/* Honour a wish for silence */
 	if(unlikely(quiet)) {
 		if(!freopen(DEV_NULL, "w", stdout)) {
-			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
+			cerr << eix::format(_("cannot redirect to \"%s\"")) % DEV_NULL << endl;
 			return EXIT_FAILURE;
 		}
 	}
@@ -580,7 +580,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		override_label(&overlay, repo_names);
 		overlay.readLabel(cache->getPrefixedPath().c_str());
 		if(unlikely(find(exclude_labels.begin(), exclude_labels.end(), overlay.label) != exclude_labels.end())) {
-			INFO(eix::format(_("Excluding %r %s (cache: %s)\n"))
+			INFO(eix::format(_("Excluding \"%s\" %s (cache: %s)\n"))
 				% overlay.label
 				% cache->getPathHumanReadable()
 				% cache->getType());
@@ -602,7 +602,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 	for(CacheTable::iterator it(cache_table->begin());
 		likely(it != cache_table->end()); ++it) {
 		BasicCache *cache(*it);
-		INFO(eix::format(_("[%s] %r %s (cache: %s)\n"))
+		INFO(eix::format(_("[%s] \"%s\" %s (cache: %s)\n"))
 			% cache->getKey()
 			% cache->getOverlayName()
 			% cache->getPathHumanReadable()
@@ -660,7 +660,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		}
 		delete reading_percent_status;
 	}
-	statusline->print(eix::format(_("Analyzing")));
+	statusline->print(_("Analyzing"));
 
 	/* Now apply all masks .. */
 	INFO(_("Applying masks ..\n"));
@@ -690,7 +690,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		umask(old_umask);
 	}
 	if(unlikely(!ok)) {
-		*errtext = eix::format(_("cannot open database file %r for writing (mode = 'wb')")) % outputfile;
+		*errtext = eix::format(_("cannot open database file %s for writing (mode = 'wb')")) % outputfile;
 		return false;
 	}
 

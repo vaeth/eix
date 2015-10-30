@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-10-29 17:54+0100\n"
+"POT-Creation-Date: 2015-10-30 19:15+0100\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -1605,64 +1605,72 @@ msgstr ""
 msgid "problems while parsing %s: %s\n"
 msgstr "Проблема при обработке %s: %s\n"
 
+# fuzzy
 #: src/eix.cc:681 src/eix-diff.cc:345 src/eix-update.cc:385
-msgid "cannot redirect to %r"
-msgstr "невозможно перенаправить в %r"
+#, c-format
+msgid "cannot redirect to \"%s\""
+msgstr "невозможно перенаправить в \"%s\""
 
+# fuzzy
 #: src/eix.cc:764
+#, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
 "It uses database format %s (current is %s).\n"
-"Please run %r and try again."
+"Please run \"%s\" and try again."
 msgstr ""
 "%s был создан несовместимым eix-update:\n"
 "Используется формат базы данных %s (текущий ― %s).\n"
-"Запустите %r и попробуйте ещё раз."
+"Запустите \"%s\" и попробуйте ещё раз."
 
 # fuzzy
 #: src/eix.cc:1048
 #, c-format
-msgid "Found %s match."
-msgid_plural "Found %s matches."
+msgid "Found %s match"
+msgid_plural "Found %s matches"
 msgstr[0] "Найдено %s совпадение."
 msgstr[1] "Найдено %s совпадение."
 msgstr[2] "Найдено %s совпадение."
 msgstr[3] "Найдено %s совпадение."
 
+# fuzzy
 #: src/eix.cc:1054
-msgid "No matches found."
+msgid "No matches found"
 msgstr "Совпадений не найдено."
 
 #: src/eix.cc:1062
 #, c-format
-msgid "Only %s match displayed on terminal.\n"
-msgid_plural "Only %s matches displayed on terminal.\n"
+msgid ""
+"Only %s match displayed on terminal\n"
+"Set %s=0 to show all matches\n"
+msgid_plural ""
+"Only %s matches displayed on terminal\n"
+"Set %s=0 to show all matches\n"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 
-#: src/eix.cc:1065
-#, c-format
-msgid "Set %s=0 to show all matches.\n"
-msgstr ""
-
+# fuzzy
 #: src/eix.cc:1092
+#, c-format
 msgid ""
-"cannot open database file %s for reading.\n"
-"Did you forget to create it with %r?"
+"cannot open database file %s for reading\n"
+"Did you forget to create it with \"%s\"?"
 msgstr ""
 "Невозможно открыть базу данных %s для чтения.\n"
-"Вы не забыли её создать с помощью %r?"
+"Вы не забыли её создать с помощью \"%s\"?"
 
+# fuzzy
 #: src/eix.cc:1171
 #, c-format
-msgid "No non-matching or empty entries in %s.\n"
+msgid "No non-matching or empty entries in %s\n"
 msgstr "Нет не совпадающих или пустых записей в %s.\n"
 
+# fuzzy
 #: src/eix.cc:1172
 #, c-format
-msgid "No non-matching entries in %s.\n"
+msgid "No non-matching entries in %s\n"
 msgstr "Нет не совпадающих записей в %s.\n"
 
 #: src/eix.cc:1177
@@ -1744,12 +1752,14 @@ msgstr ""
 "для подробной информации.\n"
 
 #: src/eix-diff.cc:151
-msgid "error in database file %r: %s"
-msgstr "Запись файла базы данных %r: %s .."
+#, c-format
+msgid "error in database file %s: %s"
+msgstr "Запись файла базы данных %s: %s .."
 
 #: src/eix-diff.cc:153 src/eix-header.cc:244
-msgid "cannot open database file %r for reading (mode = 'rb')"
-msgstr "Невозможно открыть базу данных %r для чтения (режим = 'rb')"
+#, c-format
+msgid "cannot open database file %s for reading (mode = 'rb')"
+msgstr "Невозможно открыть базу данных %s для чтения (режим = 'rb')"
 
 # fuzzy
 #: src/eix-diff.cc:413
@@ -1936,13 +1946,17 @@ msgstr "Исключён оверлей %s\n"
 msgid "Building database (%s) ..\n"
 msgstr "Построение базы данных (%s) ..\n"
 
+# fuzzy
 #: src/eix-update.cc:583
-msgid "Excluding %r %s (cache: %s)\n"
-msgstr "Исключая %r %s (кэш: %s)\n"
+#, c-format
+msgid "Excluding \"%s\" %s (cache: %s)\n"
+msgstr "Исключая \"%s\" %s (кэш: %s)\n"
 
+# fuzzy
 #: src/eix-update.cc:605
-msgid "[%s] %r %s (cache: %s)\n"
-msgstr "[%s] %r %s (кэш: %s)\n"
+#, c-format
+msgid "[%s] \"%s\" %s (cache: %s)\n"
+msgstr "[%s] \"%s\" %s (кэш: %s)\n"
 
 #: src/eix-update.cc:610
 #, c-format
@@ -1995,8 +2009,9 @@ msgid "Writing database file %s ..\n"
 msgstr "Запись файла базы данных %s ..\n"
 
 #: src/eix-update.cc:693
-msgid "cannot open database file %r for writing (mode = 'wb')"
-msgstr "Невозможно открыть файл базы данных %r для записи (режим = 'wb')"
+#, c-format
+msgid "cannot open database file %s for writing (mode = 'wb')"
+msgstr "Невозможно открыть файл базы данных %s для записи (режим = 'wb')"
 
 # fuzzy
 #: src/eix-update.cc:705
@@ -2042,9 +2057,11 @@ msgstr ""
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING\n"
 "для подробной информации.\n"
 
+# fuzzy
 #: src/masked-packages.cc:196
-msgid "warning: ignoring %r: %s"
-msgstr "внимание: игнорируется %r: %s"
+#, c-format
+msgid "warning: ignoring \"%s\": %s"
+msgstr "внимание: игнорируется \"%s\": %s"
 
 #: src/versionsort.cc:41
 #, c-format
@@ -2052,8 +2069,9 @@ msgid "cannot determine version of %s"
 msgstr "Невозможно определить версию %s"
 
 #: src/cache/cachetable.cc:46
-msgid "unknown cache %r for directory %r"
-msgstr "Неизвестный кэш %r для каталога %r"
+#, c-format
+msgid "unknown cache %s for directory %s"
+msgstr "Неизвестный кэш %s для каталога %s"
 
 #: src/cache/common/assign_reader.cc:84 src/cache/common/assign_reader.cc:104
 #: src/cache/common/flat_reader.cc:38 src/cache/eixcache/eixcache.cc:235
@@ -2124,9 +2142,11 @@ msgstr "Ошибка portageq"
 msgid "cannot open %s: %s"
 msgstr "Невозможно открыть %s: %s"
 
+# fuzzy
 #: src/cache/eixcache/eixcache.cc:134
-msgid "cache file %s does not contain overlay %r [%s]"
-msgstr "Файл кэша %s не содержит оверлей %r [%s]"
+#, c-format
+msgid "cache file %s does not contain overlay \"%s\" [%s]"
+msgstr "Файл кэша %s не содержит оверлей \"%s\" [%s]"
 
 #: src/cache/eixcache/eixcache.cc:139
 #, c-format
@@ -2138,10 +2158,12 @@ msgstr "Файл кэша %s не содержит оверлей %s"
 msgid "error in file %s: %s"
 msgstr "Ошибка чтения %s: %s"
 
+# fuzzy
 #: src/cache/metadata/metadata.cc:297 src/cache/metadata/metadata.cc:343
 #: src/cache/sqlite/sqlite.cc:231
-msgid "cannot split %r into package and version"
-msgstr "Невозможно разделить %r на пакет и версию"
+#, c-format
+msgid "cannot split \"%s\" into package and version"
+msgstr "Невозможно разделить \"%s\" на пакет и версию"
 
 #: src/cache/parse/parse.cc:208
 #, c-format
@@ -2167,9 +2189,11 @@ msgstr "набор данных sqlite не содержит имя пакета
 msgid "sqlite dataset for %s is too small"
 msgstr "набор данных sqlite для %s слишком мал"
 
+# fuzzy
 #: src/cache/sqlite/sqlite.cc:208
-msgid "%r not of the form package/category-version"
-msgstr "%r не в форме пакет/категория-версия"
+#, c-format
+msgid "\"%s\" not of the form package/category-version"
+msgstr "\"%s\" не в форме пакет/категория-версия"
 
 #: src/cache/sqlite/sqlite.cc:284
 msgid "database path incorrect"
@@ -2219,17 +2243,21 @@ msgstr "Файл кэша использует более новый форма�
 msgid "cachefile uses obsolete format %s (current is %s)"
 msgstr "Файл кэша использует устаревший формат %s (текущий - %s)"
 
+# fuzzy
 #: src/eixTk/ansicolor.cc:147
-msgid "illegal color name %r in %r"
-msgstr "Неверное имя цвета %r в %r"
+#, c-format
+msgid "illegal color name \"%s\" in \"%s\""
+msgstr "Неверное имя цвета \"%s\" в \"%s\""
 
 #: src/eixTk/ansicolor.cc:174
-msgid "more than two colors specified in %r"
-msgstr "В %r указано более двух цветов"
+#, c-format
+msgid "more than two colors specified in \"%s\""
+msgstr "В \"%s\" указано более двух цветов"
 
 #: src/eixTk/ansicolor.cc:193
-msgid "invalid brightness value %r"
-msgstr "Неверное значение яркости %r"
+#, c-format
+msgid "invalid brightness value \"%s\""
+msgstr "Неверное значение яркости \"%s\""
 
 #: src/eixTk/ansicolor_print.cc:153
 #, c-format
@@ -2286,45 +2314,43 @@ msgstr "Отсутствует параметр для --%s"
 msgid "missing second parameter to --%s"
 msgstr "Отсутствует второй параметр для --%s"
 
+# fuzzy
 #: src/eixTk/exceptions.cc:32
-msgid "-- invalid line %s in %s: %r"
-msgstr "-- Неверная строка %s в %s: %r"
-
-#: src/eixTk/formated.h:110
-msgid "format specifier missing"
-msgstr "отсутствует указатель формата"
-
-#: src/eixTk/formated.h:116
 #, c-format
-msgid "unknown format specifier '%%%s'"
-msgstr "неизвестный указатель формата '%%%s'"
+msgid "-- invalid line %s in %s: \"%s\""
+msgstr "-- Неверная строка %s в %s: \"%s\""
 
-#: src/eixTk/stringutils.cc:411
+#: src/eixTk/formated.cc:30
+#, c-format
+msgid "bad % in eix::format; perhaps %% is meant"
+msgstr ""
+
+#: src/eixTk/stringutils.cc:413
 #, c-format
 msgid "flags should not start with a '+': %s"
 msgstr "флаги не должны начинаться с '+': %s"
 
-#: src/eixTk/stringutils.cc:450
+#: src/eixTk/stringutils.cc:452
 msgid "internal error: Storing required after finalizing"
 msgstr "Внутренняя ошибка: Требуется хранение после финализации"
 
-#: src/eixTk/stringutils.cc:458
+#: src/eixTk/stringutils.cc:460
 msgid "internal error: Hashing required after finalizing"
 msgstr "Внутренняя ошибка: Требуется хеширование после финализации"
 
-#: src/eixTk/stringutils.cc:462
+#: src/eixTk/stringutils.cc:464
 msgid "internal error: Hashing required in non-hash mode"
 msgstr "Внутренняя ошибка: Требуется хеширование в нехешевом режиме"
 
-#: src/eixTk/stringutils.cc:488
+#: src/eixTk/stringutils.cc:490
 msgid "internal error: Index required before sorting."
 msgstr "Внутренняя ошибка: Требуется индекс перед сортировкой."
 
-#: src/eixTk/stringutils.cc:493
+#: src/eixTk/stringutils.cc:495
 msgid "internal error: Trying to shortcut non-hashed string."
 msgstr "Внутренняя ошибка: Попытка создать ярлык на нехешированную строку."
 
-#: src/eixTk/stringutils.cc:501
+#: src/eixTk/stringutils.cc:503
 msgid "database corrupt: nonexistent hash required"
 msgstr "База данных испорчена: требуется несуществующий хеш"
 
@@ -2334,28 +2360,34 @@ msgid "error reading %s: %s"
 msgstr "Ошибка чтения %s: %s"
 
 #: src/eixTk/utils.cc:145
-msgid "nesting level too deep in %r"
-msgstr "Уровень гнездования слишком глубок в %r"
+#, c-format
+msgid "nesting level too deep in %s"
+msgstr "Уровень гнездования слишком глубок в %s"
 
 #: src/eixTk/varsreader.cc:168
-msgid "%s: failed to source %r (%s)"
-msgstr "%s: ошибка взятия %r в качестве источника (%s)"
+#, c-format
+msgid "%s: failed to source %s (%s)"
+msgstr "%s: ошибка взятия %s в качестве источника (%s)"
 
 #: src/eixTk/varsreader.cc:1068
-msgid "cannot read file %r"
-msgstr "Ошибка нанесения файла %r на карту"
+#, c-format
+msgid "cannot read file %s"
+msgstr "Ошибка нанесения файла %s на карту"
 
 #: src/eixTk/varsreader.cc:1076
-msgid "cannot stat file %r"
-msgstr "Ошибка нанесения файла %r на карту"
+#, c-format
+msgid "cannot stat file %s"
+msgstr "Ошибка нанесения файла %s на карту"
 
 #: src/eixTk/varsreader.cc:1093
-msgid "cannot map file %r"
-msgstr "Ошибка нанесения файла %r на карту"
+#, c-format
+msgid "cannot map file %s"
+msgstr "Ошибка нанесения файла %s на карту"
 
 #: src/eixTk/varsreader.cc:1108
-msgid "recursively sourced file %r"
-msgstr "рекурсивно прочтён файл %r"
+#, c-format
+msgid "recursively sourced file %s"
+msgstr "рекурсивно прочтён файл %s"
 
 #: src/eixrc/defaults.cc:17
 msgid ""
@@ -5720,6 +5752,7 @@ msgid ""
 "in the C locale."
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:160
 msgid "%{C_COLUMN_CONTENT}"
 msgstr "28"
@@ -5755,6 +5788,7 @@ msgid ""
 "installed versions in the C locale."
 msgstr ""
 
+# fuzzy
 #: src/eixrc/def_i18n.cc:183
 msgid "%{C_COLUMN_INST_CONTENT}"
 msgstr ""
@@ -5836,12 +5870,13 @@ msgid "no $HOME found in environment."
 msgstr "$HOME не найден в environment."
 
 #: src/eixrc/eixrc.cc:762
+#, c-format
 msgid ""
-"%s has unknown value %r\n"
-"\tassuming value 'all-installed' instead."
+"%s has unknown value \"%s\"\n"
+"\tassuming value \"all-installed\" instead."
 msgstr ""
-"%s имеет неизвестное значение %r\n"
-"\tвместо этого предполагаю значение 'all-installed'."
+"%s имеет неизвестное значение \"%s\"\n"
+"\tвместо этого предполагаю значение \"all-installed\"."
 
 #: src/eixrc/eixrc.cc:786
 msgid "was locally changed to:"
@@ -5882,24 +5917,28 @@ msgstr ""
 "\n"
 "Извините за неудобство и заранее спасибо!"
 
+# fuzzy
 #: src/output/formatstring-print.cc:586
-msgid "unknown property %r"
-msgstr "Неизвестное свойство %r"
+#, c-format
+msgid "unknown property \"%s\""
+msgstr "Неизвестное свойство \"%s\""
 
+# fuzzy
 #: src/output/formatstring-print.cc:592
-msgid "property %r used outside version context"
-msgstr "Свойство %r использовано вне контекста версии"
+#, c-format
+msgid "property \"%s\" used outside version context"
+msgstr "Свойство \"%s\" использовано вне контекста версии"
 
 #: src/output/formatstring.cc:104
-msgid "variable %r calls itself for printing"
-msgstr "Переменная %r вызывает себя для печати"
+#, c-format
+msgid "variable %s calls itself for printing"
+msgstr "Переменная %s вызывает себя для печати"
 
 #: src/output/formatstring.cc:202
 #, c-format
 msgid "DARK_TERM has illegal format: %s"
 msgstr "DARK_TERM имеет неправильный формат: %s"
 
-# fuzzy
 #: src/output/formatstring.cc:446
 msgid "internal error: bad node for parse_colors"
 msgstr "Внутренняя ошибка: плохой узел для parse_colors"
@@ -5930,8 +5969,9 @@ msgstr "Найден '{' без закрывающего '}'"
 
 # fuzzy
 #: src/output/formatstring.cc:620
-msgid "unexpected symbol %r after '{'"
-msgstr "Неожиданный символ %r найден после '{'"
+#, c-format
+msgid "unexpected symbol '%s' after '{'"
+msgstr "Неожиданный символ '%s' найден после '{'"
 
 #: src/output/formatstring.cc:749
 msgid "check your syntax"
@@ -5947,40 +5987,52 @@ msgid "line %s, column %s: %s"
 msgstr "Строка %s, столбец %s: %s"
 
 #: src/portage/basicversion.cc:119
-msgid "internal error: unknown PartType on (%r,%r)"
-msgstr "внутренняя ошибка: неизвестный PartType на (%r,%r)"
+#, c-format
+msgid "internal error: unknown PartType on (\"%s\",\"%s\")"
+msgstr "внутренняя ошибка: неизвестный PartType на (\"%s\",\"%s\")"
 
+# fuzzy
 #: src/portage/basicversion.cc:164
-msgid "malformed (first primary at %r) version string %r"
-msgstr "недосформированная (1 первичн. в %r) строка версии %r"
+#, c-format
+msgid "malformed (first primary at \"%s\") version string \"%s\""
+msgstr "недосформированная (1 первичн. в \"%s\") строка версии \"%s\""
 
+# fuzzy
 #: src/portage/basicversion.cc:183
-msgid "malformed (primary at %r) version string %r"
-msgstr "недосформированная (первичн. в %r) строка версии %r"
+#, c-format
+msgid "malformed (primary at \"%s\") version string \"%s\""
+msgstr "недосформированная (первичн. в \"%s\") строка версии \"%s\""
 
+# fuzzy
 #: src/portage/basicversion.cc:227
-msgid "malformed (suffix at %r) version string %r"
-msgstr "недосформированная (суффикс в %r) строка версии %r"
+#, c-format
+msgid "malformed (suffix at \"%s\") version string \"%s\""
+msgstr "недосформированная (суффикс в \"%s\") строка версии \"%s\""
 
+# fuzzy
 #: src/portage/basicversion.cc:269
+#, c-format
 msgid ""
-"garbage (%s) at end of version %r\n"
+"garbage (%s) at end of version \"%s\"\n"
 "accepting version anyway"
 msgstr ""
-"мусор (%s) в конце версии %r\n"
+"мусор (%s) в конце версии \"%s\"\n"
 "всё равно принимаю версию"
 
+# fuzzy
 #: src/portage/basicversion.cc:271
-msgid "garbage (%s) at end of version %r"
-msgstr "мусор (%s) в конце версии %r"
+#, c-format
+msgid "garbage (%s) at end of version \"%s\""
+msgstr "мусор (%s) в конце версии \"%s\""
 
 #: src/portage/conf/cascadingprofile.cc:74
 msgid "Recursion level for cascading profiles exceeded; stopping reading parents"
 msgstr "Превышен уровень рекурсии для каскадных профилей: прекращаю чтение родителей"
 
 #: src/portage/conf/cascadingprofile.cc:108
-msgid "warning: ignoring parent %r of file %r"
-msgstr "внимание: игнорирую родителя %r файла %r"
+#, c-format
+msgid "warning: ignoring parent %s of file %s"
+msgstr "внимание: игнорирую родителя %s файла %s"
 
 #: src/portage/conf/portagesettings.cc:713
 #, c-format
@@ -6030,13 +6082,17 @@ msgstr "внутренняя ошибка: SetStability рассчитывает
 msgid "warning: ignoring --close without --open"
 msgstr "внимание: игнорирую --close без --open"
 
+# fuzzy
 #: src/search/packagetest.cc:284
-msgid "cannot find match field %r"
-msgstr "невозможно сопоставить поле %r"
+#, c-format
+msgid "cannot find match field \"%s\""
+msgstr "невозможно сопоставить поле \"%s\""
 
+# fuzzy
 #: src/search/packagetest.cc:294
-msgid "cannot find match algorithm %r"
-msgstr "невозможно сопоставить алгоритм %r"
+#, c-format
+msgid "cannot find match algorithm \"%s\""
+msgstr "невозможно сопоставить алгоритм \"%s\""
 
 #: src/various/drop_permissions.cc:65
 msgid "failed to drop permissions"

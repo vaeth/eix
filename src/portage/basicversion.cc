@@ -116,7 +116,7 @@ static ostream& operator<<(ostream& s, const BasicPart& part) {
 		default:
 			break;
 	}
-	cerr << eix::format(_("internal error: unknown PartType on (%r,%r)"))
+	cerr << eix::format(_("internal error: unknown PartType on (\"%s\",\"%s\")"))
 		% static_cast<int>(part.parttype) % part.partcontent << endl;
 }
 
@@ -161,7 +161,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 		m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
 		if(errtext != NULLPTR) {
 			*errtext = eix::format(_(
-			"malformed (first primary at %r) version string %r"))
+			"malformed (first primary at \"%s\") version string \"%s\""))
 			% pos % str;
 		}
 		return parsedError;
@@ -180,7 +180,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 			m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
 			if(errtext != NULLPTR) {
 				*errtext = eix::format(_(
-				"malformed (primary at %r) version string %r"))
+				"malformed (primary at \"%s\") version string \"%s\""))
 				% pos % str;
 			}
 			return parsedError;
@@ -194,7 +194,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 		pos = len;
 	}
 
-	if(isalpha(str[pos], localeC)) {
+	if(my_isalpha(str[pos])) {
 		m_parts.push_back(BasicPart(BasicPart::character, str[pos++]));
 	}
 
@@ -224,7 +224,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 			m_parts.push_back(BasicPart(BasicPart::garbage, str, pos-1));
 			if(errtext != NULLPTR) {
 				*errtext = eix::format(_(
-				"malformed (suffix at %r) version string %r"))
+				"malformed (suffix at \"%s\") version string \"%s\""))
 				% pos % str;
 			}
 			return parsedError;
@@ -266,9 +266,9 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 	}
 	if(errtext != NULLPTR) {
 		*errtext = eix::format(accept_garbage ?
-			_("garbage (%s) at end of version %r\n"
+			_("garbage (%s) at end of version \"%s\"\n"
 				"accepting version anyway") :
-			_("garbage (%s) at end of version %r"))
+			_("garbage (%s) at end of version \"%s\""))
 				% str.substr(pos) % str;
 	}
 	return parsedGarbage;

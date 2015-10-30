@@ -629,7 +629,7 @@ EixRc::DelayedType EixRc::find_next_delayed(const string& str, string::size_type
 							break;
 					}
 				}
-				if((!isalnum(c, localeC)) && (c != '_')) {
+				if((!my_isalnum(c)) && (c != '_')) {
 					break;
 				}
 				if(i >= str.length()) {
@@ -759,8 +759,8 @@ void EixRc::getRedundantFlags(const string& key, Keywords::Redundant type, RedPa
 	}
 
 	cerr << eix::format(_(
-		"%s has unknown value %r\n"
-		"\tassuming value 'all-installed' instead."))
+		"%s has unknown value \"%s\"\n"
+		"\tassuming value \"all-installed\" instead."))
 		% key % value << endl;
 
 	getRedundantFlagAtom("all-installed", type, &(p->first));

@@ -173,7 +173,7 @@ ExtendedVersion::CountBinPkg ExtendedVersion::num_pak_pkg(const PortageSettings 
 		if((i > name.size()) || (strncmp(pkg_search.c_str(), name.c_str(), i) != 0)) {
 			continue;
 		}
-		for(; (i != name.size()) && isdigit(name[i], localeC); ++i) {
+		for(; (i != name.size()) && my_isdigit(name[i]); ++i) {
 		}
 		if((i + 5 == name.size()) && (strncasecmp(".xpak", name.c_str() + i, 5) == 0)) {
 			++count_pak_m;

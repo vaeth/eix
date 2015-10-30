@@ -148,9 +148,9 @@ static void load_db(const char *file, DBHeader *header, PackageTree *body, Porta
 				return;
 			}
 		}
-		cerr << eix::format(_("error in database file %r: %s")) % file % errtext << endl;
+		cerr << eix::format(_("error in database file %s: %s")) % file % errtext << endl;
 	} else {
-		cerr << eix::format(_("cannot open database file %r for reading (mode = 'rb')")) % file << endl;
+		cerr << eix::format(_("cannot open database file %s for reading (mode = 'rb')")) % file << endl;
 	}
 	exit(EXIT_FAILURE);
 }
@@ -342,7 +342,7 @@ int run_eix_diff(int argc, char *argv[]) {
 
 	if(unlikely(cli_quiet)) {
 		if(!freopen(DEV_NULL, "w", stdout)) {
-			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
+			cerr << eix::format(_("cannot redirect to \"%s\"")) % DEV_NULL << endl;
 			exit(EXIT_FAILURE);
 		}
 	}

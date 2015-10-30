@@ -61,8 +61,8 @@ Levenshtein get_levenshtein_distance(const char *str_a, const char *str_b) {
 	// calculate the matrix
 	for(LevArr::size_type i(1); likely(i <= n); ++i) {
 		for(LevVec::size_type j(1); likely(j <= m); ++j) {
-			char ci(tolower(str_a[i - 1], localeC));
-			char cj(tolower(str_b[j - 1], localeC));
+			char ci(my_tolower(str_a[i - 1]));
+			char cj(my_tolower(str_b[j - 1]));
 
 			Levenshtein a(matrix[i - 1][j] + 1);
 			Levenshtein b(matrix[i][j - 1] + 1);

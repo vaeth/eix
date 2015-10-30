@@ -142,7 +142,7 @@ bool pushback_lines(const char *file, LineVec *v, bool recursive, bool keep_empt
 			++depth;
 			if (depth == 100) {
 				if(errtext != NULLPTR) {
-					*errtext = eix::format(_("nesting level too deep in %r")) % dir;
+					*errtext = eix::format(_("nesting level too deep in %s")) % dir;
 				}
 				return false;
 			}

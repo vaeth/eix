@@ -35,19 +35,26 @@ char *strndup(const char *s, size_t n) ATTRIBUTE_NONNULL_;
 #include "eixTk/stringtypes.h"
 
 #ifdef HAVE_STRTOUL
-#define my_atoi(a) strtoul(a, NULLPTR, 10)
+#define my_atoi(a) strtoul((a), NULLPTR, 10)
 #else
 #ifdef HAVE_STRTOL
-#define my_atoi(a) strtol(a, NULLPTR, 10)
+#define my_atoi(a) strtol((a), NULLPTR, 10)
 #else
 #define my_atoi(a) atoi(a)
 #endif
 #endif
 #ifdef HAVE_STRTOL
-#define my_atois(a) strtol(a, NULLPTR, 10)
+#define my_atois(a) strtol((a), NULLPTR, 10)
 #else
 #define my_atois(a) atoi(a)
 #endif
+
+#define my_isalnum(a) isalnum((a), localeC)
+#define my_isalpha(a) isalpha((a), localeC)
+#define my_isdigit(a) isdigit((a), localeC)
+#define my_isspace(a) isspace((a), localeC)
+#define my_tolower(a) tolower((a), localeC)
+#define my_toupper(a) toupper((a), localeC)
 
 /**
 Spaces for split strings

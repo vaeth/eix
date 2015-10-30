@@ -316,13 +316,13 @@ bool Mask::test(const ExtendedVersion *ev) const {
 
 				if(my_start == std::string::npos) {
 					my_start = m_glob.size() - 1;
-				} else if(!isdigit(m_glob[my_start], localeC)) {
+				} else if(!my_isdigit(m_glob[my_start])) {
 					my_start -= 1;
 				}
 
 				if(version_start == std::string::npos) {
 					version_start = version_string.size() - 1;
-				} else if(!isdigit(version_string[version_start], localeC)) {
+				} else if(!my_isdigit(version_string[version_start])) {
 					version_start -= 1;
 				}
 

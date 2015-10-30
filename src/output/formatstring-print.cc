@@ -583,13 +583,13 @@ void PrintFormat::get_pkg_property(OutputString *s, Package *package, const stri
 			}
 		}
 		if(unlikely(col == string::npos)) {
-			cerr << eix::format(_("unknown property %r")) % name << endl;
+			cerr << eix::format(_("unknown property \"%s\"")) % name << endl;
 			exit(EXIT_FAILURE);
 		}
 		after_colon.assign(name, col + 1, string::npos);
 	}
 	if(unlikely((t == Scanner::VER) && (version_variables == NULLPTR))) {
-		cerr << eix::format(_("property %r used outside version context")) % name << endl;
+		cerr << eix::format(_("property \"%s\" used outside version context")) % name << endl;
 		exit(EXIT_FAILURE);
 	}
 	if(plain != NULLPTR) {
@@ -1274,7 +1274,7 @@ void PrintFormat::VER_ISMULTIPAK(OutputString *s, Package *package) const {
 void PrintFormat::VER_PAKCOUNT(OutputString *s, Package *package) const {
 	ExtendedVersion::CountBinPkg count(ver_version()->num_pak_pkg(portagesettings, package));
 	if(count != 0) {
-		s->assign_fast(eix::format("%s") % count);
+		s->assign_fast(eix::format() % count);
 	}
 }
 

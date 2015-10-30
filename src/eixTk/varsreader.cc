@@ -165,7 +165,7 @@ void VarsReader::ASSIGN_KEY_VALUE() {
 		sourcecmd = false;
 		string errtext;
 		if(unlikely(!source(value, &errtext))) {
-			m_errtext = eix::format(_("%s: failed to source %r (%s)")) % file_name % value % errtext;
+			m_errtext = eix::format(_("%s: failed to source %s (%s)")) % file_name % value % errtext;
 			ERROR;
 		}
 		if((parse_flags & ONLY_HAVE_READ) == ONLY_HAVE_READ) {
@@ -231,7 +231,7 @@ void VarsReader::JUMP_WHITESPACE() {
 		case 's': {
 				size_t i(0);
 				const char *beginning(x);
-				while(likely(isalpha(INPUT, localeC))) {
+				while(likely(my_isalpha(INPUT))) {
 					NEXT_INPUT;
 					++i;
 				}
@@ -1065,7 +1065,7 @@ bool VarsReader::read(const char *filename, string *errtext, bool noexist_ok, se
 			return true;
 		}
 		if(errtext != NULLPTR) {
-			*errtext = eix::format(_("cannot read file %r")) % filename;
+			*errtext = eix::format(_("cannot read file %s")) % filename;
 		}
 		return false;
 	}
@@ -1073,7 +1073,7 @@ bool VarsReader::read(const char *filename, string *errtext, bool noexist_ok, se
 	if(fstat(fd, &st)) {
 		close(fd);
 		if(errtext != NULLPTR) {
-			*errtext = eix::format(_("cannot stat file %r")) % filename;
+			*errtext = eix::format(_("cannot stat file %s")) % filename;
 		}
 		return false;
 	}
@@ -1090,7 +1090,7 @@ GCC_DIAG_OFF(old-style-cast)
 	if (buffer == MAP_FAILED) {
 GCC_DIAG_ON(old-style-cast)
 		if(errtext != NULLPTR) {
-			*errtext = eix::format(_("cannot map file %r")) % filename;
+			*errtext = eix::format(_("cannot map file %s")) % filename;
 		}
 		return false;
 	}
@@ -1105,7 +1105,7 @@ GCC_DIAG_ON(old-style-cast)
 		sourced_files = sourced;
 		if(sourced->find(truename) != sourced->end()) {
 			if(errtext != NULLPTR) {
-				*errtext = eix::format(_("recursively sourced file %r")) % truename;
+				*errtext = eix::format(_("recursively sourced file %s")) % truename;
 			}
 			return false;
 		}

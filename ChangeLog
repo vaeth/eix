@@ -14,6 +14,9 @@
 	- Extend support for FEATURES=binpkg-multi-instance: Be stricter in
 	  filename syntax, add further attributes, use new colors
 	- Update documentation for FEATURES=binpkg-multi-instance
+	- Rework eix::format to support positional arguments like %2$s.
+	  Also remove %v but add inferior %d (not quoting strings) instead.
+	  Both changes are needed for clean internationalization with gettext.
 	- Fix --disable-nls cleanly
 
 *eix-0.31.1
@@ -2758,6 +2761,7 @@
 	- Added --fuzzy search option to allow unsharp search queries
 	  (no regular expressions).
 	- Closed memory leaks
+
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Constructed a FSM (finite state machine) to replace the
 	  regex-massacre in varsreader.cc.
@@ -2769,10 +2773,12 @@
 	  This fixes the ppc-problem described in
 	  https://forums.gentoo.org/viewtopic.php?p=2036103#2036103
 	  Thanks meyerm for testing :)
+
 	xororand <xororand at users.sourceforge.net>:
 	- Fixed: packages with ebuilds in multiple overlays are no longer
 	  reported twice
 	- Increased loading speed of the database
+
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Various updates to autoconf-stuff including --with-cachefile=FILE for
 	  configure and update of VERSION in configure.in
