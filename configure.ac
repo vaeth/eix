@@ -1252,9 +1252,6 @@ MV_IF_EMPTY([$ZSH_COMPLETION],
 AM_CONDITIONAL([INSTALL_ZSH_COMPLETION],
 	[$install_zsh_completion])
 
-# Check endianess
-AC_C_BIGENDIAN()
-
 # Provide basic types:
 AC_TYPE_UINT8_T()
 AC_TYPE_UINT16_T()

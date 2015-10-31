@@ -6,7 +6,7 @@
 
 	Martin Väth <martin at mvath.de>:
 	- Internationalization and German translation of default FORMATSTRING
-	- Forcing fuzzy Russian translation of default FORMATSTRING and others.
+	- Force fuzzy Russian translation of default FORMATSTRING and others.
 	  Please send fixes!
 	- manpage: document how to translate default FORMATSTRING to
 	  other languages
@@ -14,10 +14,12 @@
 	- Extend support for FEATURES=binpkg-multi-instance: Be stricter in
 	  filename syntax, add further attributes, use new colors
 	- Update documentation for FEATURES=binpkg-multi-instance
-	- Rework eix::format to support positional arguments like %2$s.
+	- internal: Rework eix::format: support positional arguments like %2$s.
 	  Also remove %v but add inferior %d (not quoting strings) instead.
 	  Both changes are needed for clean internationalization with gettext.
-	- Fix --disable-nls cleanly
+	- Fix --disable-nls cleanly so that inclusion order plays no role and
+	  thus N_() can be used also in .h (although it currently isn't)
+	- Build system: remove unneeded checks for endianness
 
 *eix-0.31.1
 	Martin Väth <martin at mvath.de>:
