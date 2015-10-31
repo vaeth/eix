@@ -133,7 +133,7 @@ static void sig_handler(int sig) {
 				" * enter gdb with \"gdb --args %s your_arguments_for_%s\"\n"
 				" * type \"run\" and wait for the segfault to happen\n"
 				" * type \"bt\" to get a backtrace (this helps us a lot)\n"
-				" * post a bugreport and be sure to include the output from gdb ..\n"
+				" * post a bugreport and be sure to include the output from gdb.\n"
 				"\n"
 				"Sorry for the inconvenience and thanks in advance!")) %
 				program_name % program_name

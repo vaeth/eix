@@ -38,7 +38,7 @@ static const char *get_version(const char **name, const char *v) ATTRIBUTE_NONNU
 static void parse_version(BasicVersion *b, const char *v) ATTRIBUTE_NONNULL_;
 
 static void failparse(const char *v) {
-	cerr << eix::format(_("cannot determine version of %s")) % v << endl;
+	cerr << eix::format(_("cannot determine version of \"%s\"")) % v << endl;
 	exit(EXIT_FAILURE);
 }
 

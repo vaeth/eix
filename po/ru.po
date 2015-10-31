@@ -65,6 +65,7 @@ msgstr "невозможно создать временный каталог"
 msgid "cannot create temporary file"
 msgstr "невозможно создать временный каталог"
 
+# fuzzy (only punctation changed)
 #: src/eix-installed.sh:16
 #, sh-format
 msgid ""
@@ -91,7 +92,7 @@ msgid ""
 "\n"
 "ARG can be abbreviated, e.g. instead of \"no-repo\" you can use \"nr\"."
 msgstr ""
-"Использование: ${n} [опции] АРГ [АРГ АРГ ...]\n"
+"Использование: ${n} [опции] АРГ [АРГ АРГ …]\n"
 "Этот скрипт - часть ${p}.\n"
 "Он показывает все установленные пакеты или пакеты с/без\n"
 "информации о репозитории или сборке.\n"
@@ -108,13 +109,13 @@ msgstr ""
 "no-buildtime - вывести пакеты без сборочной информации.\n"
 "\n"
 "Доступны следующие ключи:\n"
-"-=  Вывести пакеты с \"=\" в начале\n"
+"-=  Вывести пакеты с «=» в начале\n"
 "-q  Вывести только пакеты, без подробностей\n"
-"-a  Замена для \"-q all\" (АРГ игнорируется)\n"
+"-a  Замена для «-q all» (АРГ игнорируется)\n"
 "\n"
-"Можно использовать аббревиатуру вместо АРГ, например \"nr\" вместо \"no-repo\"."
+"Можно использовать аббревиатуру вместо АРГ, например «nr» вместо «no-repo»."
 
-# fuzzy
+# fuzzy (correct plural forms required)
 #: src/eix-installed.sh:87
 #, sh-format
 msgid "(one version listed above)"
@@ -148,6 +149,7 @@ msgstr "Следующие версии пакетов установлены б
 msgid "cannot locate your database of installed packages"
 msgstr "невозможно найти базу данных установленных пакетов"
 
+# fuzzy (only punctation changed)
 #: src/eix-installed-after.sh:27
 #, sh-format
 msgid ""
@@ -203,7 +205,7 @@ msgstr ""
 "Это хорошо задокументированный демо-сценарий для eix (${p}).\n"
 "Он показывает пакеты, установленные после (до) последней (первой) установки\n"
 "данного пакета/версии; формат вывода подходит на роль аргумента для\n"
-"\"emerge -1\".\n"
+"«emerge -1».\n"
 "Не забудьте, что учитываются только пакеты в базе данных eix.\n"
 "\n"
 "Аргумент может использовать сопоставления консоли (* и ?; не забудьте\n"
@@ -221,9 +223,9 @@ msgstr ""
 "\n"
 "-i   Игнорировать все предыдущие ключи\n"
 "     (полезно при наличии if EIX_INSTALLED_AFTER).\n"
-"-e ВРЕМЯ Использовать время как дату \"установки\".\n"
-"     ВРЕМЯ - число секунд с эпохи (как \"date +%s\")\n"
-"-F ФАЙЛ Использовать время изменения ФАЙЛА как дату \"установки\".\n"
+"-e ВРЕМЯ Использовать время как дату «установки».\n"
+"     ВРЕМЯ - число секунд с эпохи (как «date +%s»)\n"
+"-F ФАЙЛ Использовать время изменения ФАЙЛА как дату «установки».\n"
 "-f   Вывести полный список всех пакетов (другие аргументы не нужны)\n"
 "-l   Использовать /var/log/emerge.log, чтобы использовать _первое_\n"
 "     (а не последнее) установочное время данного пакета.\n"
@@ -438,7 +440,7 @@ msgstr ""
 "Ключи можно указать в переменной eix (или окружения) под названием\n"
 "EIX_REMOTE_OPTS.\n"
 "Эти данные учитываются, помните про безопасность.\n"
-"Более того, \"--\" в этой переменной исключит дальнейшие ключи в командной\n"
+"Более того, «--» в этой переменной исключит дальнейшие ключи в командной\n"
 "строке.\n"
 "Доступны следующие ключи:\n"
 "\n"
@@ -448,7 +450,7 @@ msgstr ""
 "-K       То же, что и -k, но без возможности сброса с помощью -i\n"
 "-X       Exclude remote overlays which are also locally layman. See -L/-l\n"
 "-x       Exclude local layman overlays which are available remotely. See -L/-l\n"
-"-L       For -x/-X the \"storage\" path of layman is found heuristically.\n"
+"-L       For -x/-X the «storage» path of layman is found heuristically.\n"
 "         With -L the path actually used is printed (and eix-remote exits).\n"
 "         Set LOCAL_LAYMAN or use option -l to override the heuristics.\n"
 "-l ПУТЬ  Использовать ПУТЬ как LOCAL_LAYMAN\n"
@@ -551,7 +553,7 @@ msgstr "невозможно прочесть все файлы кэша eix о�
 msgid "no file in ${a} contains an overlay"
 msgstr "No Файл in ${a} не содержит оверлей"
 
-# fuzzy
+# fuzzy (correct plural forms required)
 #: src/eix-remote.sh:325
 #, sh-format
 msgid "${failcount} file in ${a} contains no overlay"
@@ -661,11 +663,11 @@ msgstr ""
 "Файл ${eixsyncconf} и переменная (окружения) eix EIX_SYNC_CONF\n"
 "(по умолчанию отложенная замена EIX_SYNC_OPTS) определяют\n"
 "для каких оверлеев вызывается layman, какие ключи по умолчанию\n"
-"используются и они могут содержать крюки - подробно в \"man eix\".\n"
+"используются и они могут содержать крюки - подробно в «man eix».\n"
 "\n"
 "Учтите, что стандартные EIX_SYNC_OPTS оцениваются так,\n"
 "чтобы правильно истолковать и не допустить риски безопасности.\n"
-"Более того, \"--\" в ключах по умолчанию запретят ключи из командной\n"
+"Более того, «--» в ключах по умолчанию запретят ключи из командной\n"
 "строки.\n"
 "Доступны следующие ключи:\n"
 "\n"
@@ -695,7 +697,7 @@ msgstr ""
 "-S   Не исполнять крюки после emerge --sync (записи @).\n"
 "-M   Запустить emerge --metadata.\n"
 "     Это может пригодиться при использовании методов кэширования\n"
-"     \"sqlite\", \"sqlite*\" или \"flat\" для PORTDIR или\n"
+"     «sqlite», «sqlite*» или «flat» для PORTDIR или\n"
 "     для синхронизированного оверлея.\n"
 "     По умолчанию если PORTDIR_CACHE_METHOD - один из этих трёх.\n"
 "-N   Не запускать emerge --metadata. Обычно по умолчанию, см. -M.\n"
@@ -912,6 +914,7 @@ msgstr ""
 msgid "Running @-hooks"
 msgstr "Выполняются @-хуки"
 
+# fuzzy (only punctation changed)
 #: src/eix-test-obsolete.sh:17
 #, sh-format
 msgid ""
@@ -962,7 +965,7 @@ msgstr ""
 "показать отсутствующие пакеты или пакеты с устаревшими записями в\n"
 "/etc/portage/package.* более организованно чем eix -tTc.\n"
 "Скорость и показанные детали зависят от того, используете ли Вы аргумент\n"
-"\"detail\", \"brief\", или \"quick\".\n"
+"«detail», «brief», или «quick».\n"
 "Помните, что результат зависит от ваших настроек переменных TEST_FOR_*,\n"
 "REDUNDANT_IF_* и NONEXISTENT_IF_*. В частности, переменные\n"
 "REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} и REDUNDANT_IF_MIXED по умолчанию\n"
@@ -973,9 +976,9 @@ msgstr ""
 "Доступны следующие ключи:\n"
 "\t-c  использовать CHECK_INSTALLED_OVERLAYS=true\n"
 "\t-C  использовать CHECK_INSTALLED_OVERLAYS=repository\n"
-"\t-d  Можно использовать вместо аргумента \"detail\"\n"
-"\t-b  Можно использовать вместо аргумента \"brief\"\n"
-"\t-q  Можно использовать вместо аргумента \"quick\"\n"
+"\t-d  Можно использовать вместо аргумента «detail»\n"
+"\t-b  Можно использовать вместо аргумента «brief»\n"
+"\t-q  Можно использовать вместо аргумента «quick»\n"
 "\t-H  Подавить обновления строки состояния\n"
 "\t-h  Показать этот текст помощи\n"
 "\n"
@@ -983,18 +986,19 @@ msgstr ""
 "для указания поведения по умолчанию.\n"
 "\n"
 "Если не используются ни -c, ни -C, то CHECK_INSTALLED_OVERLAYS не меняется.\n"
-"Рекомендуемое умолчание для CHECK_INSTALLED_OVERLAYS - \"repository\", которое\n"
+"Рекомендуемое умолчание для CHECK_INSTALLED_OVERLAYS - «repository», которое\n"
 "намного быстрее чем CHECK_INSTALLED_OVERLAYS=true, но надёжно работает только\n"
 " для пакетов, установленных с информацией о репозитории (что имеет место быть\n"
 "со всеми последними версиями portage).\n"
 "\n"
-"Вместо аргумента можно использовать аббревиатуру, например, \"brief\"\n"
-"можно заменить на \"b\"."
+"Вместо аргумента можно использовать аббревиатуру, например, «brief»\n"
+"можно заменить на «b»."
 
+# fuzzy (only punctation changed)
 #: src/eix-test-obsolete.sh:149
 #, sh-format
 msgid "... considered as ${z}"
-msgstr "... считается как ${z} "
+msgstr "… считается как ${z} "
 
 #: src/eix-test-obsolete.sh:217
 #, sh-format
@@ -1566,9 +1570,9 @@ msgstr ""
 "\n"
 "  Поля поиска:\n"
 "    -y, --any               любое поле поиска может совпасть (то же самое,\n"
-"                            что -SACsHL...)\n"
+"                            что -SACsHL…)\n"
 "    -S, --description       описание\n"
-"    -A, --category-name     \"категория/имя\"\n"
+"    -A, --category-name     «категория/имя»\n"
 "    -C, --category          категория\n"
 "    -s, --name              имя (по умолчанию)\n"
 "    -H, --homepage          домашняя страница\n"
@@ -1605,13 +1609,13 @@ msgstr ""
 msgid "problems while parsing %s: %s\n"
 msgstr "Проблема при обработке %s: %s\n"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/eix.cc:681 src/eix-diff.cc:345 src/eix-update.cc:385
 #, c-format
 msgid "cannot redirect to \"%s\""
-msgstr "невозможно перенаправить в \"%s\""
+msgstr "невозможно перенаправить в «%s»"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/eix.cc:764
 #, c-format
 msgid ""
@@ -1621,9 +1625,9 @@ msgid ""
 msgstr ""
 "%s был создан несовместимым eix-update:\n"
 "Используется формат базы данных %s (текущий ― %s).\n"
-"Запустите \"%s\" и попробуйте ещё раз."
+"Запустите «%s» и попробуйте ещё раз."
 
-# fuzzy
+# fuzzy (punctation changed; correct plural forms required)
 #: src/eix.cc:1048
 #, c-format
 msgid "Found %s match"
@@ -1633,7 +1637,7 @@ msgstr[1] "Найдено %s совпадение."
 msgstr[2] "Найдено %s совпадение."
 msgstr[3] "Найдено %s совпадение."
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/eix.cc:1054
 msgid "No matches found"
 msgstr "Совпадений не найдено."
@@ -1651,7 +1655,7 @@ msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/eix.cc:1092
 #, c-format
 msgid ""
@@ -1659,15 +1663,15 @@ msgid ""
 "Did you forget to create it with \"%s\"?"
 msgstr ""
 "Невозможно открыть базу данных %s для чтения.\n"
-"Вы не забыли её создать с помощью \"%s\"?"
+"Вы не забыли её создать с помощью «%s»?"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/eix.cc:1171
 #, c-format
 msgid "No non-matching or empty entries in %s\n"
 msgstr "Нет не совпадающих или пустых записей в %s.\n"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/eix.cc:1172
 #, c-format
 msgid "No non-matching entries in %s\n"
@@ -1751,17 +1755,19 @@ msgstr ""
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING\n"
 "для подробной информации.\n"
 
+# fuzzy (only punctation changed)
 #: src/eix-diff.cc:151
 #, c-format
 msgid "error in database file %s: %s"
-msgstr "Запись файла базы данных %s: %s .."
+msgstr "Запись файла базы данных %s: %s"
 
+# fuzzy (only punctation changed)
 #: src/eix-diff.cc:153 src/eix-header.cc:244
 #, c-format
 msgid "cannot open database file %s for reading (mode = 'rb')"
-msgstr "Невозможно открыть базу данных %s для чтения (режим = 'rb')"
+msgstr "Невозможно открыть базу данных %s для чтения (режим = «rb»)"
 
-# fuzzy
+# fuzzy (correct plural forms required)
 #: src/eix-diff.cc:413
 #, c-format
 msgid "Diffing databases (%s -> %s package)\n"
@@ -1776,7 +1782,7 @@ msgstr[3] "Сравнение баз данных (%s -> %s пакетов)\n"
 #, c-format
 msgid ""
 "Usage: %s [--] command [arguments]\n"
-"Executes command [arguments] with the permissions according to the eix\n"
+"Executes \"command [arguments]\" with the permissions according to the eix\n"
 "variables EIX_USER, EIX_GROUP, EIX_UID, and EIX_GID,\n"
 "honouring REQUIRE_DROP and NODROP_FATAL.\n"
 "\n"
@@ -1784,7 +1790,7 @@ msgid ""
 "further information.\n"
 msgstr ""
 "Использование: %s [--] команда [arguments]\n"
-"Выполняет 'команда [arguments]' с разрешениями согласно переменным eix\n"
+"Выполняет «команда [arguments]» с разрешениями согласно переменным eix\n"
 "EIX_USER, EIX_GROUP, EIX_UID, и EIX_GID,\n"
 "honouring REQUIRE_DROP и NODROP_FATAL.\n"
 "\n"
@@ -1837,6 +1843,7 @@ msgstr ""
 msgid "cannot find overlay %s in %s"
 msgstr ""
 
+# fuzzy (only punctation changed)
 #: src/eix-update.cc:119
 #, c-format
 msgid ""
@@ -1880,9 +1887,9 @@ msgstr ""
 "     --print             напечатать расширенное значение переменной\n"
 "     --known-vars        напечатать имена всех переменных, известных --print\n"
 " -H, --nostatus          не обновлять строку состояния\n"
-" -n, --nocolor           не использовать \"цвета\" (процент) в выводе\n"
+" -n, --nocolor           не использовать «цвета» (процент) в выводе\n"
 "     --force-status      всегда выводить строку состояния\n"
-" -F, --force-color       \"цвет\" даже если вывод - не терминал\n"
+" -F, --force-color       «цвет» даже если вывод - не терминал\n"
 " -v, --verbose           выводить использованный метод кэширования для\n"
 "                         каждого ebuild\n"
 "\n"
@@ -1918,18 +1925,20 @@ msgstr "%s должен быть списком формы ДИР-ШАБЛОН �
 msgid "KEEP_VIRTUALS is ignored: there is no previous %s\n"
 msgstr "KEEP_VIRTUALS игнорируется: нет предыдущего %s\n"
 
+# fuzzy (only punctation changed)
 #: src/eix-update.cc:257
 #, c-format
-msgid "Adding virtual overlays from %s ..\n"
-msgstr "Добавление виртуальных оверлеев из %s ..\n"
+msgid "Adding virtual overlays from %s...\n"
+msgstr "Добавление виртуальных оверлеев из %s…\n"
 
 #: src/eix-update.cc:261
 msgid "warning: KEEP_VIRTUALS ignored because database format has changed"
 msgstr "Внимание: KEEP_VIRTUALS игнорируется ибо формат базы данных изменился"
 
+# fuzzy (only punctation changed)
 #: src/eix-update.cc:403
-msgid "Reading Portage settings ..\n"
-msgstr "Чтение настроек Portage ..\n"
+msgid "Reading Portage settings...\n"
+msgstr "Чтение настроек Portage…\n"
 
 #: src/eix-update.cc:517
 #, c-format
@@ -1941,31 +1950,33 @@ msgstr "Исключён PORTDIR: %s\n"
 msgid "Excluded overlay %s\n"
 msgstr "Исключён оверлей %s\n"
 
+# fuzzy (only punctation changed)
 #: src/eix-update.cc:542
 #, c-format
-msgid "Building database (%s) ..\n"
-msgstr "Построение базы данных (%s) ..\n"
+msgid "Building database (%s)...\n"
+msgstr "Построение базы данных (%s)…\n"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/eix-update.cc:583
 #, c-format
 msgid "Excluding \"%s\" %s (cache: %s)\n"
-msgstr "Исключая \"%s\" %s (кэш: %s)\n"
+msgstr "Исключая «%s» %s (кэш: %s)\n"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/eix-update.cc:605
 #, c-format
 msgid "[%s] \"%s\" %s (cache: %s)\n"
-msgstr "[%s] \"%s\" %s (кэш: %s)\n"
+msgstr "[%s] «%s» %s (кэш: %s)\n"
 
 #: src/eix-update.cc:610
 #, c-format
 msgid "[%s] %s"
 msgstr "[%s] %s"
 
+# fuzzy (only punctation changed)
 #: src/eix-update.cc:615
-msgid "     Reading Packages .. "
-msgstr "     Чтение Пакетов .. "
+msgid "     Reading Packages..."
+msgstr "     Чтение Пакетов…"
 
 #: src/eix-update.cc:619 src/eix-update.cc:654
 msgid "ABORTED!"
@@ -1976,44 +1987,45 @@ msgstr "ОТМЕНЕНО!"
 msgid "     Reading category %s|%s (%s%%)"
 msgstr "     Чтение категории %s|%s (%s%%)"
 
-# fuzzy
+# fuzzy (punctation changed; correct plural forms required)
 #: src/eix-update.cc:627
 #, c-format
-msgid "     Reading %s category of packages .. "
-msgid_plural "     Reading up to %s categories of packages .. "
-msgstr[0] "     Чтение до %s категорий пакетов .. "
-msgstr[1] "     Чтение до %s категорий пакетов .. "
-msgstr[2] "     Чтение до %s категорий пакетов .. "
-msgstr[3] "     Чтение до %s категорий пакетов .. "
+msgid "     Reading %s category of packages..."
+msgid_plural "     Reading up to %s categories of packages..."
+msgstr[0] "     Чтение до %s категорий пакетов…"
+msgstr[1] "     Чтение до %s категорий пакетов…"
+msgstr[2] "     Чтение до %s категорий пакетов…"
+msgstr[3] "     Чтение до %s категорий пакетов…"
 
 #: src/eix-update.cc:644
 #, c-format
-msgid ": %s .."
-msgstr ": %s .."
+msgid ": %s..."
+msgstr ": %s…"
 
 #: src/eix-update.cc:653
 msgid "EMPTY!"
 msgstr "ПУСТО!"
 
 #: src/eix-update.cc:666
-msgid "Applying masks ..\n"
-msgstr "Применение масок ..\n"
+msgid "Applying masks...\n"
+msgstr "Применение масок…\n"
 
 #: src/eix-update.cc:677
-msgid "Calculating hash tables ..\n"
-msgstr "Расчёт хеш-таблиц ..\n"
+msgid "Calculating hash tables...\n"
+msgstr "Расчёт хеш-таблиц…\n"
 
 #: src/eix-update.cc:682
 #, c-format
-msgid "Writing database file %s ..\n"
-msgstr "Запись файла базы данных %s ..\n"
+msgid "Writing database file %s...\n"
+msgstr "Запись файла базы данных %s…\n"
 
+# fuzzy (only punctation changed)
 #: src/eix-update.cc:693
 #, c-format
 msgid "cannot open database file %s for writing (mode = 'wb')"
-msgstr "Невозможно открыть файл базы данных %s для записи (режим = 'wb')"
+msgstr "Невозможно открыть файл базы данных %s для записи (режим = «wb»)"
 
-# fuzzy
+# fuzzy (correct plural forms required)
 #: src/eix-update.cc:705
 #, c-format
 msgid "Database contains %s packages in %s category.\n"
@@ -2041,7 +2053,7 @@ msgid ""
 "This program is covered by the GNU General Public License. See COPYING for\n"
 "further information.\n"
 msgstr ""
-"Использование: %s [ключи] категория/имя-версия[:слот][::репозиторий] ...\n"
+"Использование: %s [ключи] категория/имя-версия[:слот][::репозиторий]…\n"
 "Вывести все аргументы совпадающие со списком маски\n"
 "Ключи:\n"
 " -h, --help              показать короткую справку\n"
@@ -2057,16 +2069,17 @@ msgstr ""
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING\n"
 "для подробной информации.\n"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/masked-packages.cc:196
 #, c-format
 msgid "warning: ignoring \"%s\": %s"
-msgstr "внимание: игнорируется \"%s\": %s"
+msgstr "внимание: игнорируется «%s»: %s"
 
+# fuzzy (only punctation changed)
 #: src/versionsort.cc:41
 #, c-format
-msgid "cannot determine version of %s"
-msgstr "Невозможно определить версию %s"
+msgid "cannot determine version of \"%s\""
+msgstr "Невозможно определить версию «%s»"
 
 #: src/cache/cachetable.cc:46
 #, c-format
@@ -2142,11 +2155,11 @@ msgstr "Ошибка portageq"
 msgid "cannot open %s: %s"
 msgstr "Невозможно открыть %s: %s"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/cache/eixcache/eixcache.cc:134
 #, c-format
 msgid "cache file %s does not contain overlay \"%s\" [%s]"
-msgstr "Файл кэша %s не содержит оверлей \"%s\" [%s]"
+msgstr "Файл кэша %s не содержит оверлей «%s» [%s]"
 
 #: src/cache/eixcache/eixcache.cc:139
 #, c-format
@@ -2158,12 +2171,12 @@ msgstr "Файл кэша %s не содержит оверлей %s"
 msgid "error in file %s: %s"
 msgstr "Ошибка чтения %s: %s"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/cache/metadata/metadata.cc:297 src/cache/metadata/metadata.cc:343
 #: src/cache/sqlite/sqlite.cc:231
 #, c-format
 msgid "cannot split \"%s\" into package and version"
-msgstr "Невозможно разделить \"%s\" на пакет и версию"
+msgstr "Невозможно разделить «%s» на пакет и версию"
 
 #: src/cache/parse/parse.cc:208
 #, c-format
@@ -2189,11 +2202,11 @@ msgstr "набор данных sqlite не содержит имя пакета
 msgid "sqlite dataset for %s is too small"
 msgstr "набор данных sqlite для %s слишком мал"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/cache/sqlite/sqlite.cc:208
 #, c-format
 msgid "\"%s\" not of the form package/category-version"
-msgstr "\"%s\" не в форме пакет/категория-версия"
+msgstr "«%s» не в форме пакет/категория-версия"
 
 #: src/cache/sqlite/sqlite.cc:284
 msgid "database path incorrect"
@@ -2243,21 +2256,23 @@ msgstr "Файл кэша использует более новый форма�
 msgid "cachefile uses obsolete format %s (current is %s)"
 msgstr "Файл кэша использует устаревший формат %s (текущий - %s)"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/eixTk/ansicolor.cc:147
 #, c-format
 msgid "illegal color name \"%s\" in \"%s\""
-msgstr "Неверное имя цвета \"%s\" в \"%s\""
+msgstr "Неверное имя цвета «%s» в «%s»"
 
+# fuzzy (only punctation changed)
 #: src/eixTk/ansicolor.cc:174
 #, c-format
 msgid "more than two colors specified in \"%s\""
-msgstr "В \"%s\" указано более двух цветов"
+msgstr "В «%s» указано более двух цветов"
 
+# fuzzy (only punctation changed)
 #: src/eixTk/ansicolor.cc:193
 #, c-format
 msgid "invalid brightness value \"%s\""
-msgstr "Неверное значение яркости \"%s\""
+msgstr "Неверное значение яркости «%s»"
 
 #: src/eixTk/ansicolor_print.cc:153
 #, c-format
@@ -2314,21 +2329,22 @@ msgstr "Отсутствует параметр для --%s"
 msgid "missing second parameter to --%s"
 msgstr "Отсутствует второй параметр для --%s"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/eixTk/exceptions.cc:32
 #, c-format
 msgid "-- invalid line %s in %s: \"%s\""
-msgstr "-- Неверная строка %s в %s: \"%s\""
+msgstr "-- Неверная строка %s в %s: «%s»"
 
 #: src/eixTk/formated.cc:30
 #, c-format
 msgid "bad % in eix::format; perhaps %% is meant"
 msgstr ""
 
+# fuzzy (only punctation changed)
 #: src/eixTk/stringutils.cc:413
 #, c-format
 msgid "flags should not start with a '+': %s"
-msgstr "флаги не должны начинаться с '+': %s"
+msgstr "флаги не должны начинаться с «+»: %s"
 
 #: src/eixTk/stringutils.cc:452
 msgid "internal error: Storing required after finalizing"
@@ -2397,6 +2413,7 @@ msgstr ""
 "Файл, используемый вместо /etc/eixrc и ~/.eixrc.\n"
 "Эту переменную можно только установить в environment."
 
+# fuzzy (only punctation changed)
 #: src/eixrc/defaults.cc:22
 msgid ""
 "This variable is only used for delayed substitution.\n"
@@ -2405,15 +2422,16 @@ msgid ""
 msgstr ""
 "Эта переменная используется исключительно для отложенной замены.\n"
 "Она определяет наличие у Вас большого терминала (>80 столбцов).\n"
-"Значение \"auto\" или отсутствие такового означает подсчёт COLUMNS."
+"Значение «auto» или отсутствие такового означает подсчёт COLUMNS."
 
+# fuzzy (only punctation changed)
 #: src/eixrc/defaults.cc:28
 msgid ""
 "Set the terminal width to define the WIDETERM expansion.\n"
 "An empty value or \"auto\" means that a heuristic is used instead."
 msgstr ""
 "Установить ширину терминала для определения расширения WIDETERM.\n"
-"Значение \"auto\" или отсутствие такового означает использование эвристики."
+"Значение «auto» или отсутствие такового означает использование эвристики."
 
 #: src/eixrc/defaults.cc:33
 msgid ""
@@ -5520,9 +5538,6 @@ msgid ""
 "This variable is only used for delayed substitution.\n"
 "It translates \"DEPEND:\""
 msgstr ""
-"Эта переменная используется исключительно для отложенной замены.\n"
-"Она определяет наличие у Вас большого терминала (>80 столбцов).\n"
-"Значение \"auto\" или отсутствие такового означает подсчёт COLUMNS."
 
 #: src/eixrc/def_i18n.cc:48
 msgid "RDEPEND:"
@@ -5752,7 +5767,7 @@ msgid ""
 "in the C locale."
 msgstr ""
 
-# fuzzy
+# fuzzy (change might be needed if length of other fuzzy changed; man eix)
 #: src/eixrc/def_i18n.cc:160
 msgid "%{C_COLUMN_CONTENT}"
 msgstr "28"
@@ -5788,11 +5803,12 @@ msgid ""
 "installed versions in the C locale."
 msgstr ""
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/eixrc/def_i18n.cc:183
 msgid "%{C_COLUMN_INST_CONTENT}"
 msgstr ""
 
+# fuzzy (only punctation changed)
 #: src/eixrc/def_i18n.cc:184
 msgid ""
 "This variable is only used for delayed substitution.\n"
@@ -5801,7 +5817,7 @@ msgid ""
 msgstr ""
 "Эта переменная используется исключительно для отложенной замены.\n"
 "Она определяет наличие у Вас большого терминала (>80 столбцов).\n"
-"Значение \"auto\" или отсутствие такового означает подсчёт COLUMNS."
+"Значение «auto» или отсутствие такового означает подсчёт COLUMNS."
 
 #: src/eixrc/def_i18n.cc:190
 msgid ""
@@ -5869,14 +5885,15 @@ msgstr "IF без FI"
 msgid "no $HOME found in environment."
 msgstr "$HOME не найден в environment."
 
+# fuzzy (only punctation changed)
 #: src/eixrc/eixrc.cc:762
 #, c-format
 msgid ""
 "%s has unknown value \"%s\"\n"
 "\tassuming value \"all-installed\" instead."
 msgstr ""
-"%s имеет неизвестное значение \"%s\"\n"
-"\tвместо этого предполагаю значение \"all-installed\"."
+"%s имеет неизвестное значение «%s»\n"
+"\tвместо этого предполагаю значение «all-installed»."
 
 #: src/eixrc/eixrc.cc:786
 msgid "was locally changed to:"
@@ -5890,6 +5907,7 @@ msgstr "местно изменено, по умолчанию было:"
 msgid "locally added:"
 msgstr "местно добавлено:"
 
+# fuzzy (only punctation changed)
 #: src/main/main.cc:128
 #, c-format
 msgid ""
@@ -5901,7 +5919,7 @@ msgid ""
 " * enter gdb with \"gdb --args %s your_arguments_for_%s\"\n"
 " * type \"run\" and wait for the segfault to happen\n"
 " * type \"bt\" to get a backtrace (this helps us a lot)\n"
-" * post a bugreport and be sure to include the output from gdb ..\n"
+" * post a bugreport and be sure to include the output from gdb.\n"
 "\n"
 "Sorry for the inconvenience and thanks in advance!"
 msgstr ""
@@ -5910,24 +5928,24 @@ msgstr ""
 " * установите gdb (sys-devel/gdb)\n"
 " * установите eix с FEATURES=\"nostrip\" USE=\"debug\"\n"
 "   или с FEATURES=\"nostrip\" CXXFLAGS=\"-g -ggdb3\" LDFLAGS=\"\"\n"
-" * войдите в gdb с \"gdb --args %s ваши_аргументы_для_%s\"\n"
-" * наберите \"run\" и ждите segfault\n"
-" * наберите \"bt\", чтобы получить бэктрэйс (нам очень поможет)\n"
-" * создайте отчёт об ошибке и не забудьте приложить вывод gdb ..\n"
+" * войдите в gdb с «gdb --args %s ваши_аргументы_для_%s»\n"
+" * наберите «run» и ждите segfault\n"
+" * наберите «bt», чтобы получить бэктрэйс (нам очень поможет)\n"
+" * создайте отчёт об ошибке и не забудьте приложить вывод gdb.\n"
 "\n"
 "Извините за неудобство и заранее спасибо!"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/output/formatstring-print.cc:586
 #, c-format
 msgid "unknown property \"%s\""
-msgstr "Неизвестное свойство \"%s\""
+msgstr "Неизвестное свойство «%s»"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/output/formatstring-print.cc:592
 #, c-format
 msgid "property \"%s\" used outside version context"
-msgstr "Свойство \"%s\" использовано вне контекста версии"
+msgstr "Свойство «%s» использовано вне контекста версии"
 
 #: src/output/formatstring.cc:104
 #, c-format
@@ -5943,35 +5961,37 @@ msgstr "DARK_TERM имеет неправильный формат: %s"
 msgid "internal error: bad node for parse_colors"
 msgstr "Внутренняя ошибка: плохой узел для parse_colors"
 
+# fuzzy (only punctation changed)
 #: src/output/formatstring.cc:505
 msgid "'(' without closing ')'"
-msgstr "'(' без закрывающего ')'"
+msgstr "«(» без закрывающего «)»"
 
 #: src/output/formatstring.cc:514
 #, c-format
 msgid "error while parsing color: %s"
 msgstr "Ошибка при обработке цвета: %s"
 
+# fuzzy (only punctation changed)
 #: src/output/formatstring.cc:533
 msgid "'<' without closing '>'"
-msgstr "'<' без закрывающего '>'"
+msgstr "«<» без закрывающего «>»"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/output/formatstring.cc:601
 msgid "no name of property/variable after '{'"
-msgstr "Не найдено имя свойства/переменной после '{'"
+msgstr "Не найдено имя свойства/переменной после «{»"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/output/formatstring.cc:605 src/output/formatstring.cc:626
 #: src/output/formatstring.cc:685
 msgid "'{' without closing '}'"
-msgstr "Найден '{' без закрывающего '}'"
+msgstr "Найден «{» без закрывающего «}»"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/output/formatstring.cc:620
 #, c-format
 msgid "unexpected symbol '%s' after '{'"
-msgstr "Неожиданный символ '%s' найден после '{'"
+msgstr "Неожиданный символ «%s» найден после «{»"
 
 #: src/output/formatstring.cc:749
 msgid "check your syntax"
@@ -5986,44 +6006,45 @@ msgstr "Плохое состояние: не определено"
 msgid "line %s, column %s: %s"
 msgstr "Строка %s, столбец %s: %s"
 
+# fuzzy (only punctation changed)
 #: src/portage/basicversion.cc:119
 #, c-format
 msgid "internal error: unknown PartType on (\"%s\",\"%s\")"
-msgstr "внутренняя ошибка: неизвестный PartType на (\"%s\",\"%s\")"
+msgstr "внутренняя ошибка: неизвестный PartType на («%s»,«%s»)"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/portage/basicversion.cc:164
 #, c-format
 msgid "malformed (first primary at \"%s\") version string \"%s\""
-msgstr "недосформированная (1 первичн. в \"%s\") строка версии \"%s\""
+msgstr "недосформированная (1 первичн. в «%s») строка версии «%s»"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/portage/basicversion.cc:183
 #, c-format
 msgid "malformed (primary at \"%s\") version string \"%s\""
-msgstr "недосформированная (первичн. в \"%s\") строка версии \"%s\""
+msgstr "недосформированная (первичн. в «%s») строка версии «%s»"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/portage/basicversion.cc:227
 #, c-format
 msgid "malformed (suffix at \"%s\") version string \"%s\""
-msgstr "недосформированная (суффикс в \"%s\") строка версии \"%s\""
+msgstr "недосформированная (суффикс в «%s») строка версии «%s»"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/portage/basicversion.cc:269
 #, c-format
 msgid ""
 "garbage (%s) at end of version \"%s\"\n"
 "accepting version anyway"
 msgstr ""
-"мусор (%s) в конце версии \"%s\"\n"
+"мусор (%s) в конце версии «%s»\n"
 "всё равно принимаю версию"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/portage/basicversion.cc:271
 #, c-format
 msgid "garbage (%s) at end of version \"%s\""
-msgstr "мусор (%s) в конце версии \"%s\""
+msgstr "мусор (%s) в конце версии «%s»"
 
 #: src/portage/conf/cascadingprofile.cc:74
 msgid "Recursion level for cascading profiles exceeded; stopping reading parents"
@@ -6048,9 +6069,10 @@ msgstr "внутренняя ошибка: Попытка восстановит
 msgid "cannot read category"
 msgstr "Невозможно прочесть категорию"
 
+# fuzzy (only punctation changed)
 #: src/portage/mask.cc:134
-msgid "repository name must be separated with :: (one : is missing)"
-msgstr "Имя репозитория должно быть отделено с помощью :: (одно : отсутствует)"
+msgid "repository name must be separated with \"::\" (one \":\" is missing)"
+msgstr "Имя репозитория должно быть отделено с помощью «::» (одно «:» отсутствует)"
 
 #: src/portage/mask.cc:189
 msgid "operator without a version part"
@@ -6082,17 +6104,17 @@ msgstr "внутренняя ошибка: SetStability рассчитывает
 msgid "warning: ignoring --close without --open"
 msgstr "внимание: игнорирую --close без --open"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/search/packagetest.cc:284
 #, c-format
 msgid "cannot find match field \"%s\""
-msgstr "невозможно сопоставить поле \"%s\""
+msgstr "невозможно сопоставить поле «%s»"
 
-# fuzzy
+# fuzzy (only punctation changed)
 #: src/search/packagetest.cc:294
 #, c-format
 msgid "cannot find match algorithm \"%s\""
-msgstr "невозможно сопоставить алгоритм \"%s\""
+msgstr "невозможно сопоставить алгоритм «%s»"
 
 #: src/various/drop_permissions.cc:65
 msgid "failed to drop permissions"

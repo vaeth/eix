@@ -30,7 +30,7 @@ using std::cout;
 
 static void print_help() {
 	cout << eix::format(_("Usage: %s [--] command [arguments]\n"
-"Executes command [arguments] with the permissions according to the eix\n"
+"Executes \"command [arguments]\" with the permissions according to the eix\n"
 "variables EIX_USER, EIX_GROUP, EIX_UID, and EIX_GID,\n"
 "honouring REQUIRE_DROP and NODROP_FATAL.\n"
 "\n"

@@ -131,7 +131,7 @@ GCC_DIAG_OFF(sign-conversion)
 				m_slotname.assign(source, slot_end - source);
 GCC_DIAG_ON(sign-conversion)
 				if(unlikely(slot_end[1] != ':')) {
-					*errtext = _("repository name must be separated with :: (one : is missing)");
+					*errtext = _("repository name must be separated with \"::\" (one \":\" is missing)");
 					return parsedError;
 				}
 				source = slot_end + 2;

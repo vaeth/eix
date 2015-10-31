@@ -7,10 +7,11 @@
 	Martin Väth <martin at mvath.de>:
 	- Internationalization and German translation of default FORMATSTRING
 	- Force fuzzy Russian translation of default FORMATSTRING and others.
-	  Please send fixes!
+	  Linguistic fixes are probably needed and welcome.
+	- Add --multi-binary
 	- manpage: document how to translate default FORMATSTRING to
 	  other languages
-	- Add --multi-binary
+	- Use UTF8 quotes in German and Russian translation
 	- Extend support for FEATURES=binpkg-multi-instance: Be stricter in
 	  filename syntax, add further attributes, use new colors
 	- Update documentation for FEATURES=binpkg-multi-instance

@@ -254,7 +254,7 @@ static void add_virtuals(Overrides *override_list, PathVec *add, RepoNames *repo
 		return;
 	}
 
-	INFO(eix::format(_("Adding virtual overlays from %s ..\n")) % cachefile);
+	INFO(eix::format(_("Adding virtual overlays from %s...\n")) % cachefile);
 	DBHeader header;
 	bool is_current(db.read_header(&header, NULLPTR));
 	if(unlikely(!is_current)) {
@@ -400,7 +400,7 @@ int run_eix_update(int argc, char *argv[]) {
 			split_string(eixrc["TERM_SOFTSTATUSLINE"]))),
 		program_name, eixrc["EXIT_STATUSLINE"]);
 
-	INFO(_("Reading Portage settings ..\n"));
+	INFO(_("Reading Portage settings...\n"));
 	PortageSettings portage_settings(&eixrc, false, true);
 
 	/* Build default (overlay/method/...) lists, using environment vars */
@@ -539,7 +539,7 @@ int run_eix_update(int argc, char *argv[]) {
 		}
 	}
 
-	INFO(eix::format(_("Building database (%s) ..\n")) % outputfile);
+	INFO(eix::format(_("Building database (%s)...\n")) % outputfile);
 
 	/* Update the database from scratch */
 	string errtext;
@@ -612,7 +612,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 				% cache->getOverlayName());
 		reading_percent_status = new PercentStatus;
 		if(cache->can_read_multiple_categories()) {
-			reading_percent_status->init(_("     Reading Packages .. "));
+			reading_percent_status->init(_("     Reading Packages..."));
 			cache->setErrorCallback(error_callback);
 			reading_percent_status->finish(
 				likely(cache->readCategories(&package_tree)) ?
@@ -624,8 +624,8 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 					package_tree.size());
 			} else {
 				reading_percent_status->init(eix::format(N_(
-					"     Reading %s category of packages .. ",
-					"     Reading up to %s categories of packages .. ",
+					"     Reading %s category of packages...",
+					"     Reading up to %s categories of packages...",
 					package_tree.size()))
 					% package_tree.size());
 			}
@@ -641,7 +641,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 					}
 				} else {
 					if(use_percentage) {
-						reading_percent_status->next(eix::format(_(": %s ..")) % ci->first);
+						reading_percent_status->next(eix::format(_(": %s...")) % ci->first);
 					}
 					is_empty = false;
 					if(!cache->readCategory(ci->second)) {
@@ -662,8 +662,8 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 	}
 	statusline->print(_("Analyzing"));
 
-	/* Now apply all masks .. */
-	INFO(_("Applying masks ..\n"));
+	/* Now apply all masks... */
+	INFO(_("Applying masks...\n"));
 	for(PackageTree::iterator c(package_tree.begin());
 		likely(c != package_tree.end()); ++c) {
 		Category *ci = c->second;
@@ -674,12 +674,12 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		}
 	}
 
-	INFO(_("Calculating hash tables ..\n"));
+	INFO(_("Calculating hash tables...\n"));
 	Database::prep_header_hashs(&dbheader, package_tree);
 
-	/* And write database back to disk .. */
+	/* And write database back to disk... */
 	statusline->print(eix::format("Creating %s") % outputfile);
-	INFO(eix::format(_("Writing database file %s ..\n")) % outputfile);
+	INFO(eix::format(_("Writing database file %s...\n")) % outputfile);
 	mode_t old_umask;
 	if(override_umask) {
 		old_umask = umask(2);
