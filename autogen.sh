@@ -15,6 +15,7 @@ Run() {
 }
 
 Run mkdir -p -m 755 config
+Run cp -p /usr/share/gettext/gettext.h .
 Run autopoint
 Run aclocal -I m4 -I martinm4
 Run autoconf

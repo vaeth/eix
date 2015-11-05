@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.31.3
+	Martin Väth <martin at mvath.de>:
+	- Use context for internationalization of variable defaults
+
 *eix-0.31.2
 	Daniel M. Weeks <dan at danweeks.net>:
 	- Initial implementation for FEATURES=binpkg-multi-instance

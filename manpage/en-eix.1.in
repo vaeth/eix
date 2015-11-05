@@ -3054,7 +3054,7 @@ The possible values for I<match_field> are B<name>, B<category>, B<category/name
 (or B<category-name>), B<description>, B<license>, B<homepage>, B<set>,
 B<slot>, B<installed-slot>, B<use> (or B<iuse>), B<with-use> (or B<installed-with-use>),
 B<without-use> (or B<installed-without-use>),
-B<deps>, B<depend>, B<rdepend>, B<pdepend>,, B<hdepend>,
+B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<hdepend>,
 corresponding to the analogous command line option for the match field.
 .TP
 .BR DEFAULT_MATCH_ALGORITHM " " "(string list)"
