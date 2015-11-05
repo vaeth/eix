@@ -3,6 +3,7 @@
 *eix-0.31.3
 	Martin Väth <martin at mvath.de>:
 	- Use context for internationalization of variable defaults
+	- internal: remove line numbers from .po
 
 *eix-0.31.2
 	Daniel M. Weeks <dan at danweeks.net>:
