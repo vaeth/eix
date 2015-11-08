@@ -2,7 +2,14 @@
 
 *eix-0.31.3
 	Martin Väth <martin at mvath.de>:
-	- Use context for internationalization of variable defaults
+	- Use context for internationalization of variable defaults,
+	  statusline, and others
+	- No utf8 in statusline https://bugs.gentoo.org/show_bug.cgi?id=518800
+	- eix-functions.sh: StatusInfo(): argument must now be one string;
+	  optionally an alternative statusline can be added
+	- eix-functions.sh: RunCommand() has Statusline as a new 1st argument;
+	  the special value "=" as 1st arg means the 2nd argument is used
+	- eix-functions.sh: provide {eval_,}{n,}pgettext
 	- internal: remove line numbers from .po
 
 *eix-0.31.2

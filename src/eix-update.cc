@@ -607,23 +607,25 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 			% cache->getOverlayName()
 			% cache->getPathHumanReadable()
 			% cache->getType());
-		statusline->print(eix::format(_("[%s] %s"))
+		statusline->print(eix::format(P_("Statusline eix-update", "[%s] %s"))
 				% cache->getKey()
 				% cache->getOverlayName());
 		reading_percent_status = new PercentStatus;
 		if(cache->can_read_multiple_categories()) {
-			reading_percent_status->init(_("     Reading Packages..."));
+			reading_percent_status->init(P_("Percent",
+				"     Reading Packages..."));
 			cache->setErrorCallback(error_callback);
 			reading_percent_status->finish(
 				likely(cache->readCategories(&package_tree)) ?
-				_("Finished") : _("ABORTED!"));
+				P_("Percent", "Finished") :
+				P_("Percent", "ABORTED!"));
 		} else {
 			if(use_percentage) {
-				reading_percent_status->init(
-					_("     Reading category %s|%s (%s%%)"),
+				reading_percent_status->init(P_("Percent",
+					"     Reading category %s|%s (%s%%)"),
 					package_tree.size());
 			} else {
-				reading_percent_status->init(eix::format(N_(
+				reading_percent_status->init(eix::format(NP_("Percent",
 					"     Reading %s category of packages...",
 					"     Reading up to %s categories of packages...",
 					package_tree.size()))
@@ -641,7 +643,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 					}
 				} else {
 					if(use_percentage) {
-						reading_percent_status->next(eix::format(_(": %s...")) % ci->first);
+						reading_percent_status->next(eix::format(P_("Percent", ": %s...")) % ci->first);
 					}
 					is_empty = false;
 					if(!cache->readCategory(ci->second)) {
@@ -650,9 +652,9 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 				}
 				cache->readCategoryFinalize();
 			}
-			string msg(unlikely(is_empty) ? _("EMPTY!") :
-				(unlikely(aborted) ? _("ABORTED!") :
-					_("Finished")));
+			string msg(unlikely(is_empty) ? P_("Percent", "EMPTY!") :
+				(unlikely(aborted) ? P_("Percent", "ABORTED!") :
+					P_("Percent", "Finished")));
 			if(use_percentage) {
 				msg.insert(string::size_type(0), 1, ' ');
 			}
@@ -660,7 +662,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		}
 		delete reading_percent_status;
 	}
-	statusline->print(_("Analyzing"));
+	statusline->print(P_("Statusline eix-update", "Analyzing"));
 
 	/* Now apply all masks... */
 	INFO(_("Applying masks...\n"));
@@ -678,7 +680,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 	Database::prep_header_hashs(&dbheader, package_tree);
 
 	/* And write database back to disk... */
-	statusline->print(eix::format("Creating %s") % outputfile);
+	statusline->print(eix::format(P_("Statusline eix-update", "Creating %s")) % outputfile);
 	INFO(eix::format(_("Writing database file %s...\n")) % outputfile);
 	mode_t old_umask;
 	if(override_umask) {

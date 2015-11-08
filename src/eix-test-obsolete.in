@@ -94,7 +94,7 @@ DEFAULT_FORMAT=normal
 FORMAT='%{FORMAT_TEST_OBSOLETE}'
 export DEFAULT_FORMAT FORMAT
 
-Statusline 'eix -t'
+Statusline "`pgettext 'Statusline eix-test-obsolete' 'eix -t'`"
 eix '-t*!'
 
 # sets is the list of all "*" for which there are set_* variables
@@ -146,7 +146,7 @@ Output() {
 			for j
 			do	[ "$z" = "$j" ] || eval export $j=false
 			done
-			Output '' "`eval_gettext '... considered as ${z}'`"
+			Output '' "`eval_pgettext 'Obsolete-Table' '... considered as ${z}'`"
 		)
 	done
 }
@@ -213,93 +213,125 @@ DefineSet in_cflags \
 	REDUNDANT_IF_IN_CFLAGS
 
 if AllFalse TEST_FOR_REDUNDANCY
-then	Echo \
-	"`eval_gettext 'Skipping check of entries in ${rump}*'`"
+then	Echo "`eval_pgettext 'Obsolete-Table' \
+		'Skipping check of entries in ${rump}*'`"
 elif $quickmode
-then	Statusline 'package.*'
-	OutputExcept nonexistent \
-	"`eval_gettext 'No redundant entries in any ${rump}*'`" \
-	"`eval_gettext 'Redundant in some ${rump}*:'`"
+then	Statusline "`pgettext 'Statusline eix-test-obsolete' 'package.*'`"
+	OutputExcept nonexistent "`eval_pgettext 'Obsolete-Table' \
+		'No redundant entries in any ${rump}*'`" \
+	"`eval_pgettext 'Obsolete-Table' \
+		'Redundant in some ${rump}*:'`"
 else
-Statusline 'accept_keywords'
-Check keywords "`eval_gettext \
+Statusline "`pgettext 'Statusline eix-test-obsolete' 'accept_keywords'`"
+Check keywords "`eval_pgettext 'Obsolete-Table' \
 	'No  redundant  entries in ${rump}{,accept_}keywords'`" \
-	"`eval_gettext 'Redundant in ${rump}{,accept_}keywords:'`" \
-	"`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Redundant in ${rump}{,accept_}keywords:'`" \
+"`eval_pgettext 'Obsolete-Table' \
 	'Skipping check:  redundant  entries in ${rump}{,accept_}keywords'`"
-Check in_keywords "`eval_gettext \
+Check in_keywords "`eval_pgettext 'Obsolete-Table' \
 	'No uninstalled entries in ${rump}{,accept_}keywords'`" \
-	"`eval_gettext 'Not installed but in ${rump}{,accept_}keywords:'`" \
-	"`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Not installed but in ${rump}{,accept_}keywords:'`" \
+"`eval_pgettext 'Obsolete-Table' \
 	'Skipping check: uninstalled entries in ${rump}{,accept_}keywords'`"
-Statusline 'mask'
-Check mask "`eval_gettext \
+Statusline "`pgettext 'Statusline eix-test-obsolete' 'mask'`"
+Check mask "`eval_pgettext 'Obsolete-Table' \
 	'No  redundant  entries in ${rump}mask'`" \
-	"`eval_gettext 'Redundant in ${rump}mask:'`" \
-	"`eval_gettext 'Skipping check:  redundant  entries in ${rump}mask'`"
-Check in_mask "`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Redundant in ${rump}mask:'`" \
+"`eval_pgettext 'Obsolete-Table' \
+	'Skipping check:  redundant  entries in ${rump}mask'`"
+Check in_mask "`eval_pgettext 'Obsolete-Table' \
 	'No uninstalled entries in ${rump}mask'`" \
-	"`eval_gettext 'Not installed but in ${rump}mask:'`" \
-	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}mask'`"
-Statusline 'unmask'
-Check unmask "`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Not installed but in ${rump}mask:'`" \
+"`eval_pgettext 'Obsolete-Table' \
+	'Skipping check: uninstalled entries in ${rump}mask'`"
+Statusline "`pgettext 'Statusline eix-test-obsolete' 'unmask'`"
+Check unmask "`eval_pgettext 'Obsolete-Table' \
 	'No  redundant  entries in ${rump}unmask'`" \
-	"`eval_gettext 'Redundant in ${rump}unmask:'`" \
-	"`eval_gettext 'Skipping check:  redundant  entries in ${rump}unmask'`"
-Check in_unmask "`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Redundant in ${rump}unmask:'`" \
+"`eval_pgettext 'Obsolete-Table' \
+	'Skipping check:  redundant  entries in ${rump}unmask'`"
+Check in_unmask "`eval_pgettext 'Obsolete-Table' \
 	'No uninstalled entries in ${rump}unmask'`" \
-	"`eval_gettext 'Not installed but in ${rump}unmask:'`" \
-	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}unmask'`"
-Statusline 'use'
-Check use "`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Not installed but in ${rump}unmask:'`" \
+"`eval_pgettext 'Obsolete-Table' \
+	'Skipping check: uninstalled entries in ${rump}unmask'`"
+Statusline "`pgettext 'Statusline eix-test-obsolete' 'use'`"
+Check use "`eval_pgettext 'Obsolete-Table' \
 	'No  redundant  entries in ${rump}use'`" \
-	"`eval_gettext 'Redundant in ${rump}use:'`" \
-	"`eval_gettext 'Skipping check:  redundant  entries in ${rump}use'`"
-Check in_use "`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Redundant in ${rump}use:'`" \
+"`eval_pgettext 'Obsolete-Table' \
+	'Skipping check:  redundant  entries in ${rump}use'`"
+Check in_use "`eval_pgettext 'Obsolete-Table' \
 	'No uninstalled entries in ${rump}use'`" \
-	"`eval_gettext 'Not installed but in ${rump}use:'`" \
-	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}use'`"
-Statusline 'env'
-Check env "`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Not installed but in ${rump}use:'`" \
+"`eval_pgettext 'Obsolete-Table' \
+	'Skipping check: uninstalled entries in ${rump}use'`"
+Statusline "`pgettext 'Statusline eix-test-obsolete' 'env'`"
+Check env "`eval_pgettext 'Obsolete-Table' \
 	'No  redundant  entries in ${rump}env'`" \
-	"`eval_gettext 'Redundant in ${rump}env:'`" \
-	"`eval_gettext 'Skipping check:  redundant  entries in ${rump}env'`"
-Check in_env "`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Redundant in ${rump}env:'`" \
+"`eval_pgettext 'Obsolete-Table' \
+	'Skipping check:  redundant  entries in ${rump}env'`"
+Check in_env "`eval_pgettext 'Obsolete-Table' \
 	'No uninstalled entries in ${rump}env'`" \
-	"`eval_gettext 'Not installed but in ${rump}env:'`" \
-	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}env'`"
-Statusline 'license'
-Check license "`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Not installed but in ${rump}env:'`" \
+"`eval_pgettext 'Obsolete-Table' \
+	'Skipping check: uninstalled entries in ${rump}env'`"
+Statusline "`pgettext 'Statusline eix-test-obsolete' 'license'`"
+Check license "`eval_pgettext 'Obsolete-Table' \
 	'No  redundant  entries in ${rump}license'`" \
-	"`eval_gettext 'Redundant in ${rump}license:'`" \
-	"`eval_gettext 'Skipping check:  redundant  entries in ${rump}license'`"
-Check in_license "`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Redundant in ${rump}license:'`" \
+"`eval_pgettext 'Obsolete-Table' \
+	'Skipping check:  redundant  entries in ${rump}license'`"
+Check in_license "`eval_pgettext 'Obsolete-Table' \
 	'No uninstalled entries in ${rump}license'`" \
-	"`eval_gettext 'Not installed but in ${rump}license:'`" \
-	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}license'`"
-Statusline 'accept_restrict'
-Check restrict "`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Not installed but in ${rump}license:'`" \
+"`eval_pgettext 'Obsolete-Table' \
+	'Skipping check: uninstalled entries in ${rump}license'`"
+Statusline "`pgettext 'Statusline eix-test-obsolete' 'accept_restrict'`"
+Check restrict "`eval_pgettext 'Obsolete-Table' \
 	'No  redundant  entries in ${rump}accept_restrict'`" \
-	"`eval_gettext 'Redundant in ${rump}accept_restrict:'`" \
-	"`eval_gettext 'Skipping check:  redundant  entries in ${rump}accept_restrict'`"
-Check in_restrict "`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Redundant in ${rump}accept_restrict:'`" \
+"`eval_pgettext 'Obsolete-Table' \
+	'Skipping check:  redundant  entries in ${rump}accept_restrict'`"
+Check in_restrict "`eval_pgettext 'Obsolete-Table' \
 	'No uninstalled entries in ${rump}accept_restrict'`" \
-	"`eval_gettext 'Not installed but in ${rump}accept_restrict:'`" \
-	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}accept_restrict'`"
-Statusline 'cflags'
-Check cflags "`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Not installed but in ${rump}accept_restrict:'`" \
+"`eval_pgettext 'Obsolete-Table' \
+	'Skipping check: uninstalled entries in ${rump}accept_restrict'`"
+Statusline "`pgettext 'Statusline eix-test-obsolete' 'cflags'`"
+Check cflags "`eval_pgettext 'Obsolete-Table' \
 	'No  redundant  entries in ${rump}cflags'`" \
-	"`eval_gettext 'Redundant in ${rump}cflags:'`" \
-	"`eval_gettext 'Skipping check:  redundant  entries in ${rump}cflags'`"
-Check in_cflags "`eval_gettext \
+"`eval_pgettext 'Obsolete-Table' \
+	'Redundant in ${rump}cflags:'`" \
+"`eval_pgettext 'Obsolete-Table' \
+	'Skipping check:  redundant  entries in ${rump}cflags'`"
+Check in_cflags "`eval_pgettext 'Obsolete-Table' \
 	'No uninstalled entries in ${rump}cflags'`" \
-	"`eval_gettext 'Not installed but in ${rump}cflags:'`" \
-	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}cflags'`"
+"`eval_pgettext 'Obsolete-Table' \
+	'Not installed but in ${rump}cflags:'`" \
+"`eval_pgettext 'Obsolete-Table' \
+	'Skipping check: uninstalled entries in ${rump}cflags'`"
 fi
-Statusline 'installed'
-Check nonexistent "`gettext \
+Statusline "`pgettext 'Statusline eix-test-obsolete' 'installed'`"
+Check nonexistent "`pgettext 'Obsolete-Table' \
 	'All installed versions of packages are in the database.'`" \
-	"`gettext \
+"`pgettext 'Obsolete-Table' \
 	'Installed packages with a version not in the database (or masked):'`" \
-	"`gettext 'Skipping check: installed but not in the database'`"
+"`pgettext 'Obsolete-Table' \
+	'Skipping check: installed but not in the database'`"
 Exit 0

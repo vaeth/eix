@@ -89,8 +89,11 @@ Statusline() {
 
 verbose=:
 StatusInfo() {
-	Statusline "$*"
-	! $verbose || einfo "$*"
+	if [ $# -ge 2 ]
+	then	Statusline "$2"
+	else	Statusline "$1"
+	fi
+	! $verbose || einfo "$1"
 }
 
 Exit() {
@@ -100,8 +103,8 @@ Exit() {
 	if [ -n "${EXIT_STATUSLINE:++}" ]
 	then	StatuslinePlain "${EXIT_STATUSLINE# }"
 	elif [ $eixf_exit -eq 0 ]
-	then	Statusline "`gettext 'Finished'`"
-	else	Statusline "`gettext 'Failure'`"
+	then	Statusline "`pgettext 'Statusline eix-functions' 'Finished'`"
+	else	Statusline "`pgettext 'Statusline eix-functions' 'Failure'`"
 	fi
 	exit $eixf_exit
 }
@@ -173,7 +176,11 @@ GetPortdir() {
 
 verbose=:
 RunCommand() {
-	Statusline "$1"
+	if [ "$1" = '=' ]
+	then	Statusline "$2"
+	else	Statusline "$1"
+	fi
+	shift
 	if $verbose
 	then	einfo "$1"
 		shift
@@ -316,7 +323,8 @@ CallUpdate() {
 		eval "set -- $update_args"
 		set +f;;
 	esac
-	RunCommand "`gettext 'Calling eix-update'`" eix-update "$@" && return
+	RunCommand "`pgettext 'Statusline eix-functions' 'Calling eix-update'`" \
+		 "`gettext 'Calling eix-update'`" eix-update "$@" && return
 	$die_on_update_failure && die "`gettext 'eix-update failed'`"
 }
 
@@ -365,7 +373,7 @@ Chomp() {
 Pathify() {
 	for eixf_pathc
 	do	eval eixf_patha=\$$eixf_pathc
-		eixf_pathb=`command -v "$eixf_patha"; printf A` && \
+		eixf_pathb=`command -v "$eixf_patha" && printf A` && \
 			eixf_pathb=${eixf_pathb%A} && Chomp eixf_pathb && \
 			[ -n "${eixf_pathb:++}" ] && test -x "$eixf_pathb" \
 			|| die "`eval_gettext \
@@ -430,10 +438,45 @@ ReadGettext() {
 	case ${USE_NLS-@USE_NLS@} in
 	''|[nNfF0]*)
 		false;;
-	esac && command -v gettext.sh >/dev/null 2>&1 && {
-		. gettext.sh
+	esac && \
+	command -v envsubst >/dev/null 2>&1 && \
+	command -v gettext >/dev/null 2>&1 && {
 		export TEXTDOMAIN='@TEXTDOMAIN@'
 		export TEXTDOMAINDIR='@TEXTDOMAINDIR@'
+		eixf_pgtglue=`printf '\004'`
+pgettext() {
+	eixf_pgti="$1$eixf_pgtglue$2"
+	if eixf_pgtt=`gettext "$eixf_pgti" && printf A` && \
+		eixf_pgtt=${eixf_pgtt%A} && \
+		[ "$eixf_pgtt" != "$eixf_pgti" ]
+	then	printf '%s' "$eixf_pgtt"
+	else	printf '%s' "$2"
+	fi
+}
+npgettext() {
+	eixf_pgti="$1$eixf_pgtglue$2"
+	if eixf_pgtt=`ngettext "$eixf_pgti" "$3" "$4" && printf A` && \
+		eixf_pgtt=${eixf_pgtt%A} && \
+		[ "$eixf_pgtt" != "$eixf_pgti" ] && \
+		[ "$eixf_pgtt" != "$3" ]
+	then	printf '%s' "$eixf_pgtt"
+	elif [ "$4" -eq 1 ]
+	then	printf '%s' "$2"
+	else	printf '%s' "$3"
+	fi
+}
+eval_gettext() {
+	gettext "$1" | (export PATH `envsubst --variables "$1"`; envsubst "$1")
+}
+eval_pgettext() {
+	pgettext "$@" | (export PATH `envsubst --variables "$2"`; envsubst "$2")
+}
+eval_ngettext() {
+	ngettext "$@" | (export PATH `envsubst --variables "$1 $2"`; envsubst "$1 $2")
+}
+eval_npgettext() {
+	npgettext "$@" | (export PATH `envsubst --variables "$2 $3"`; envsubst "$2 $3")
+}
 ReadGettext() {
 	:
 }
@@ -463,6 +506,13 @@ eval_gettext() {
 	printf '%s' "$eixf_gettextb"
 	unset eixf_gettexta eixf_gettextb eixf_gettextc
 }
+pgettext() {
+	gettext "$2"
+}
+eval_pgettext() {
+	shift
+	eval_gettext "$2"
+}
 ngettext() {
 	if [ "$3" -gt 1 ]
 	then	gettext "$2"
@@ -474,6 +524,12 @@ eval_ngettext() {
 	then	eval_gettext "$2"
 	else	eval_gettext "$1"
 	fi
+}
+npgettext() {
+	ngettext "$2" "$3" "$4"
+}
+eval_npgettext() {
+	eval_ngettext "$2" "$3" "$4"
 }
 ReadGettext() {
 	return 1

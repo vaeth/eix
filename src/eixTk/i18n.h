@@ -29,7 +29,7 @@
 #define EIX_GETTEXT_CONTEXT_GLUE "\004"
 
 #define eix_pgettext(p, a) eix::pgettext_aux(p EIX_GETTEXT_CONTEXT_GLUE a, a)
-#define eix_npgettext(p, a, b, n) eix::pgettext_aux(p EIX_GETTEXT_CONTEXT_GLUE a, a, b, n)
+#define eix_npgettext(p, a, b, n) eix::npgettext_aux(p EIX_GETTEXT_CONTEXT_GLUE a, a, b, n)
 
 namespace eix {
 

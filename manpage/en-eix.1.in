@@ -1661,7 +1661,7 @@ B<FEATURES=metadata-transfer> is inactive or disabled
 Depending on your needs you might want to use also B<-r> or B<-M> alone or
 replace B<-M> by the line
 .TP
-.BI @StatusInfo ...
+.BI @StatusInfo ... [ statusline ]
 Announce that the next command will be I<...>
 (sets hardstatus line and output info for user.)
 .TP

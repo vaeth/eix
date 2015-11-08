@@ -72,7 +72,7 @@ fetch1 (=fetch) or fetch2:
         Only do the first task (fetch eix-caches to EIX_REMOTEARCHIVE).
         If you want to download the most current remote data at every call of
         eix-sync put e.g. the following lines to your /etc/eix-sync.conf:
-        @StatusInfo Downloading remote1
+        @StatusInfo "Downloading remote1"
         @eix-remote fetch1
 remove: Remove all temporarily added virtual overlays from the eix database.
         This makes only sense if EIX_REMOTE? is empty.
@@ -221,7 +221,7 @@ The default should have been set with ./configure --remote-file'`"
 	tmpfile=$tmpdir/$eixcachesname
 	[ -n "${archive:++}" ] && test -e "$archive" \
 		&& cp -p -- "$archive" "$tmpfile" >/dev/null 2>&1
-	Statusline "`gettext 'Downloading remote data'`"
+	Statusline "`pgettext 'Statusline eix-remote' 'Downloading remote data'`"
 	(
 		CdDir "$tmpdir" || die "`gettext 'cannot cd to tempdir'`"
 		umask 002
@@ -265,7 +265,8 @@ to use eix-remote: This inconvenience cannot be avoided and is not a bug!'
 AddArchive() {
 	a=$1
 	CdDir "$2"
-	RunCommand "`gettext 'Unpacking data'`" tar xjf "$a" || {
+	RunCommand "`pgettext 'Statusline eix-remote' 'Unpacking data'`" \
+		"`gettext 'Unpacking data'`" tar xjf "$a" || {
 		msg=`eval_gettext 'cannot unpack ${a}'`
 		msg=$msg`BugReport`
 		die "$msg"
@@ -274,7 +275,7 @@ AddArchive() {
 	AddLocalMethods
 	Push -c eixoverlay
 	Push -c method
-	Statusline "`gettext 'Analyzing'`"
+	Statusline "`pgettext 'Statusline eix-remote' 'Analyzing'`"
 	set +f
 	chmod a+r *
 	for i in *

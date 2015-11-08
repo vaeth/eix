@@ -130,7 +130,7 @@ GetOverlays() {
 }
 
 Init() {
-	Statusline "`gettext 'Analyzing'`"
+	Statusline "`pgettext 'Statusline eix-layman' 'Analyzing'`"
 	ClearUpdateArgs
 	GetOverlays
 	AddLocalMethods

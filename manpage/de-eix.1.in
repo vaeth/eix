@@ -1680,7 +1680,7 @@ B<FEATURES=metadata-transfer> inaktiv oder ausgeschaltet ist
 Je nach Bedarf kann auch B<-r> oder B<-M> alleine angegeben werden.
 Oder man kann -M durch die Zeile
 .TP
-.BI @StatusInfo ...
+.BI @StatusInfo ... [ Statuszeile ]
 Ankündigung, dass das nächste Kommando I<...> ist
 (Setzt die Statuszeile und gibt die Information für den Benutzer aus).
 .TP

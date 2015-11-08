@@ -23,7 +23,7 @@ eixsyncconf=$local_portage_configroot/etc/eix-sync.conf
 Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	eval_gettext 'Usage: ${n} [options]
+	eval_pgettext 'eix-sync' 'Usage: ${n} [options]
 Call layman/emerge --sync/--metadata and show updates. (${p})
 
 Unless the -t option is used, the old database will be saved to
@@ -103,20 +103,23 @@ DoExecute() {
 	for curr_cmd
 	do	set +f
 		! $printcmd || PrintCmd "$curr_cmd"
-		$dryrun || eval "$curr_cmd" || WarnOrDie "`eval_gettext \
-			'Something went wrong with ${curr_cmd}'`"
+		$dryrun || eval "$curr_cmd" || WarnOrDie
+			"`eval_pgettext 'eix-sync' \
+				'Something went wrong with ${curr_cmd}'`"
 	done
 }
 
 ConfigHooksInfo() {
-	StatusInfo "`gettext 'Running !!-hooks'`"
+	StatusInfo "`pgettext 'eix-sync' 'Running !!-hooks'`" \
+		"`pgettext 'Statusline eix-sync' 'Running !!-hooks'`"
 	ConfigHooksInfo() {
 :
 }
 }
 
 LaymanHooksInfo() {
-	StatusInfo "`gettext 'Running !-hooks'`"
+	StatusInfo "`pgettext 'eix-sync' 'Running !-hooks'`" \
+		 "`pgettext 'Statusline eix-sync' 'Running !-hooks'`"
 	LaymanHooksInfo() {
 :
 }
@@ -126,7 +129,7 @@ CheckAdd() {
 	$remoteadd || return 0
 	case $1 in
 	'eix-remote'*'add'*|'eix-remote'*'update'*)
-		PerLineArg "`gettext \
+		PerLineArg "`pgettext 'eix-sync' \
 'Your eix-sync configuration contains an obsolete hook
 \"eix-remote*add*\" or \"eix-remote*update*\"
 Since eix-0.29.0, \"eix-remote add*\" is called automatically by eix-sync
@@ -211,14 +214,22 @@ ParseConfigLine() {
 		set +f;;
 	esac
 	if [ "$j" = '*' ]
-	then	MyRunCommand "`gettext 'Syncing all portage overlays'`" \
-			"$mycmd" -S "$@" \
-			|| WarnOrDie "`eval_gettext '${mycmd} -S failed'`"
+	then	StatusInfo "`pgettext 'eix-sync' \
+				'Syncing all portage overlays'`" \
+			"`pgettext 'Statusline eix-sync' \
+				'Syncing all portage overlays'`"
+		MyRun "$mycmd" -S "$@" \
+			|| WarnOrDie "`eval_pgettext 'eix-sync' \
+				'${mycmd} -S failed'`"
 		return
 	fi
-	MyRunCommand "`eval_gettext 'Syncing portage overlay ${j}'`" \
-		"$mycmd" -s "$j" "$@" \
-		|| WarnOrDie "`eval_gettext '${mycmd} -s ${j} failed'`"
+	StatusInfo "`eval_pgettext 'eix-sync' \
+			'Syncing portage overlay ${j}'`" \
+		"`eval_pgettext 'Statusline eix-sync' \
+			'Syncing portage overlay ${j}'`"
+	MyRun "$mycmd" -s "$j" "$@" \
+		|| WarnOrDie "`eval_pgettext 'eix-sync' \
+			'${mycmd} -s ${j} failed'`"
 }
 
 test -r "$eixsyncconf" && haveconf=: || haveconf=false
@@ -384,7 +395,11 @@ MyRunCommand() {
 
 DoHook() {
 	$nohooks || [ -z "${1:++}" ] && return
-	[ -z "${2:++}" ] || StatusInfo "$2"
+	if [ $# -ge 3 ]
+	then	StatusInfo "$2" "$3"
+	elif [ $# -eq 2 ]
+	then	StatusInfo "$2"
+	fi
 	case $- in
 	*f*)
 		eval "set -- $1";;
@@ -409,9 +424,10 @@ MyVarCommand() {
 		set +f;;
 	esac
 	myvarcmd=$*
-	MyRunCommand "`eval_gettext 'Running ${myvarcmd}'`" \
-		$myvarcmdargs "$@" \
-		|| die "`eval_gettext '${myvarcmd} failed'`"
+	StatusInfo "`eval_pgettext 'eix-sync' 'Running ${myvarcmd}'`" \
+		 "`eval_pgettext 'Statusline eix-sync' 'Running ${myvarcmd}'`"
+	MyRun $myvarcmdargs "$@" \
+		|| die "`eval_pgettext 'eix-sync' '${myvarcmd} failed'`"
 }
 
 time_iupdate=
@@ -422,21 +438,29 @@ time_update=
 time_diff=
 PrintingTimes() {
 	[ -n "${1:++}" ] && [ "$1" -gt 0 ] && \
-		printf "`gettext '%6d seconds for %s\n'`" "$1" "$2"
+		printf "`pgettext 'eix-sync times' \
+			'%6d seconds for %s\n'`" "$1" "$2"
 }
 PrintTimes() {
 	$measure_time || return 0
 	measure_time=false
-	einfo "`gettext 'Time statistics:'`"
-	PrintingTimes "$time_iupdate"  "`gettext 'initial eix-update'`"
-	PrintingTimes "$time_sync"     "`gettext 'syncing'`"
-	PrintingTimes "$time_client"   "`gettext 'client syncing'`"
-	PrintingTimes "$time_metadata" "`gettext 'metadata update'`"
-	PrintingTimes "$time_update"   "`gettext 'eix-update'`"
-	PrintingTimes "$time_diff"     "`gettext 'eix-diff'`"
+	einfo "`pgettext 'eix-sync times' 'Time statistics:'`"
+	PrintingTimes "$time_iupdate" \
+		"`pgettext 'eix-sync times' 'initial eix-update'`"
+	PrintingTimes "$time_sync" \
+		"`pgettext 'eix-sync times' 'syncing'`"
+	PrintingTimes "$time_client" \
+		"`pgettext 'eix-sync times' 'client syncing'`"
+	PrintingTimes "$time_metadata" \
+		"`pgettext 'eix-sync times' 'metadata update'`"
+	PrintingTimes "$time_update" \
+		"`pgettext 'eix-sync times' 'eix-update'`"
+	PrintingTimes "$time_diff" \
+		"`pgettext 'eix-sync times' 'eix-diff'`"
 	ftime=`date '+%s' 2>/dev/null` || return
 	ftime=`Expr "$ftime" - "$time_begin" 2>/dev/null` && \
-		printf "`gettext '%6d seconds total\n'`" "$ftime"
+		printf "`pgettext 'eix-sync times' \
+		'%6d seconds total\n'`" "$ftime"
 }
 
 tmpfile=
@@ -477,14 +501,16 @@ PrepRsync() {
 		eval "set -- $before_rsync"
 		set +f;;
 	esac
-	[ $# -eq 0 ] || StatusInfo "`gettext 'Running ~-hooks'`"
+	[ $# -eq 0 ] || StatusInfo "`pgettext 'eix-sync' 'Running ~-hooks'`" \
+		"`pgettext 'Statusline eix-sync' 'Running ~-hooks'`"
 	for curr_cmd
 	do	! $printcmd || PrintCmd 'eval "$(eval "'"$curr_cmd"'")"'
 		$dryrun && continue
 		if c=`eval "$curr_cmd"`
-		then	eval "$c" || WarnOrDie "`eval_gettext \
+		then	eval "$c" || WarnOrDie "`eval_pgettext 'eix-sync' \
 				'${c} (output of ${curr_cmd}) failed'`"
-		else	WarnOrDie "`eval_gettext '${curr_cmd} failed'`"
+		else	WarnOrDie "`eval_pgettext 'eix-sync' \
+				'${curr_cmd} failed'`"
 		fi
 	done
 	rsync_opts="$portage_rsync_opts $portage_rsync_extra_opts --exclude=/.unionfs"
@@ -503,18 +529,25 @@ ClearCache() {
 	*)
 		set -- "$local_varcache"/var/cache/edb/dep/*;;
 	esac
-	MyRunCommand "`eval_gettext \
+	StatusInfo "`eval_pgettext 'eix-sync' \
 	'Removing old portage-cache in ${local_varcache}/var/cache/edb/dep'`" \
-		rm -rf -- "$@" || WarnOrDie "`eval_gettext \
+	"`eval_pgettext 'Statusline eix-sync' \
+	'Removing old portage-cache in ${local_varcache}/var/cache/edb/dep'`" \
+	MyRun rm -rf -- "$@" || WarnOrDie "`eval_pgettext 'eix-sync' \
 		'rm -rf ${local_varcache}/var/cache/edb/dep/* failed'`"
 }
 
 CallEmergeSync() {
 	if [ -n "${server:++}" ]
 	then	PrepRsync "$server"
-		MyRunCommand "rsyncing from $hostdir" -t sync \
-		rsync $rsync_opts -- "$hostdir" "$local_portdir" || \
-			die "`eval_gettext 'Could not rsync from ${hostdir}'`"
+		StatusInfo "`eval_pgettext 'eix-sync' \
+				'rsyncing from ${hostdir}'`" \
+			"`eval_pgettext 'Statusline eix-sync' \
+				'rsyncing from ${hostdir}'`"
+		MyRun -t sync \
+			rsync $rsync_opts -- "$hostdir" "$local_portdir" || \
+			die "`eval_pgettext 'eix-sync' \
+				'Could not rsync from ${hostdir}'`"
 		return
 	fi
 	$skip_sync && return
@@ -524,9 +557,12 @@ CallEmergeSync() {
 CallSyncClient() {
 	[ -z "${client:++}" ] && return
 	PrepRsync "$client"
-	MyRunCommand "`eval_gettext 'rsyncing to ${hostdir}'`" -t client \
-		rsync $rsync_opts -- "$local_portdir" "$hostdir" || \
-			die "`eval_gettext 'Could not rsync to ${hostdir}'`"
+	StatusInfo "`eval_pgettext 'eix-sync' 'rsyncing to ${hostdir}'`" \
+		 "`eval_pgettext 'Statusline eix-sync' \
+			'rsyncing to ${hostdir}'`"
+	MyRun -t client rsync $rsync_opts -- "$local_portdir" "$hostdir" || \
+			die "`eval_pgettext 'eix-sync' \
+				'Could not rsync to ${hostdir}'`"
 }
 
 CallEmergeMetadata() {
@@ -536,26 +572,33 @@ CallEmergeMetadata() {
 
 CondUpdate() {
 	if test ! -f "$eixcache"
-	then	einfo "`gettext 'eix-cache does not exist.'`"
+	then	einfo "`pgettext 'eix-sync' 'eix-cache does not exist'`"
 	else	eix-header -f "$eixcache" -qc && return
-		einfo "`gettext 'eix-cache format has changed.'`"
+		einfo "`pgettext 'eix-sync' 'eix-cache format has changed'`"
 	fi
 	MyVarCommand "$updatecmd" -t iupdate
 }
 
 CopyToTemp() {
-	StatusInfo "`eval_gettext \
+	StatusInfo "`eval_pgettext 'eix-sync' \
+		'Copying old ${eixcache} cache to temporary file'`" \
+		"`eval_pgettext 'Statusline eix-sync' \
 		'Copying old ${eixcache} cache to temporary file'`"
 	MakeTempFile
 	chmod a+r -- "$tmpfile"
-	MyRun cp -p -- "$eixcache" "$tmpfile" || die "`eval_gettext \
+	MyRun cp -p -- "$eixcache" "$tmpfile" || die \
+		"`eval_pgettext 'eix-sync' \
 		'Could not copy database to temporary file ${tmpfile}'`"
 }
 
 CopyToPrevious() {
-	StatusInfo "`eval_gettext 'Copying old database to ${eixprevious}'`"
-	MyRun cp -p -- "$eixcache" "$eixprevious" || die "`eval_gettext \
-		'Could not copy database to ${eixprevious}'`"
+	StatusInfo "`eval_pgettext 'eix-sync' \
+			'Copying old database to ${eixprevious}'`" \
+		"`eval_pgettext 'Statusline eix-sync' \
+		'Copying old database to ${eixprevious}'`"
+	MyRun cp -p -- "$eixcache" "$eixprevious" || \
+		die "`eval_pgettext 'eix-sync' \
+			'Could not copy database to ${eixprevious}'`"
 }
 
 CopyPrevious() {
@@ -582,9 +625,13 @@ RemoteAdd() {
 			test "$eixremote" -nt "$eixcache" && \
 			test "$eixremote" -nt "$archive"
 		} >/dev/null 2>&1 && continue
-		StatusInfo eix-remote add$remote_num
-		MyRun eix-remote add$remote_num || WarnOrDie "`eval_gettext \
-			'eix-remote add${remote_num} failed'`"
+		StatusInfo "`eval_pgettext 'eix-sync' \
+				'eix-remote add${remote_num}'`" \
+			 "`eval_pgettext 'Statusline eix-sync' \
+				 'eix-remote add${remote_num}'`"
+		MyRun eix-remote add$remote_num || WarnOrDie
+			"`eval_pgettext 'eix-sync' \
+				'eix-remote add${remote_num} failed'`"
 	done
 	return 0
 }
@@ -596,15 +643,18 @@ UpdateDiff() {
 	else	d=$eixprevious
 	fi
 	if ! $dryrun && test "$eixcache" -nt "$d" >/dev/null 2>&1
-	then	einfo "`gettext \
+	then	einfo "`pgettext 'eix-sync' \
 			'eix-update was apparently already called in a hook'`"
 	else	MyVarCommand "$updatecmd" -t update
 	fi
-	DoHook "$after_update" "`gettext 'Running @@-hooks'`"
+	DoHook "$after_update" "`pgettext 'eix-sync' 'Running @@-hooks'`" \
+		"`pgettext 'Statusline eix-sync' 'Running @@-hooks'`"
 	RemoteAdd
-	MyRunCommand "`gettext 'Calling eix-diff'`" \
-		-t diff eix-diff -- "$d" || \
-		die "`gettext 'failed to diff against current cache'`"
+	StatusInfo "`pgettext 'eix-sync' 'Calling eix-diff'`" \
+		"`pgettext 'Statusline eix-sync' 'Calling eix-diff'`"
+	MyRun -t diff eix-diff -- "$d" || \
+		die "`pgettext 'eix-sync' \
+			'failed to diff against current cache'`"
 	PrintTimes
 }
 
@@ -618,7 +668,7 @@ ReadTimeStamp() {
 }
 
 NotChanged() {
-	PerLineArg "`gettext \
+	PerLineArg "`pgettext 'eix-sync' \
 'Main gentoo tree does not appear to have changed: exiting
 Use -a or set have_changed=: in a ! hook to override this check'`" eerror
 	Exit 3
@@ -633,7 +683,9 @@ MainSync() {
 	ReadTimeStamp current_timestamp
 	[ "$previous_timestamp" != "$current_timestamp" ] && have_changed=:
 	$have_changed || NotChanged
-	$synchooks && DoHook "$after_sync" "`gettext 'Running @-hooks'`"
+	$synchooks && DoHook "$after_sync" \
+		"`pgettext 'eix-sync' 'Running @-hooks'`" \
+		"`pgettext 'Statusline eix-sync' 'Running @-hooks'`"
 	CallSyncClient
 	CallEmergeMetadata
 	CopyPrevious

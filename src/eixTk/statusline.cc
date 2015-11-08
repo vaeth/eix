@@ -49,7 +49,7 @@ void Statusline::success() {
 		return;
 	}
 	if(m_exit.empty()) {
-		print_force(_("Finished"));
+		print_force(P_("Statusline eix-update", "Finished"));
 	} else {
 		user_statusline();
 	}
@@ -60,7 +60,7 @@ void Statusline::failure() {
 		return;
 	}
 	if(m_exit.empty()) {
-		print_force(_("Failure"));
+		print_force(P_("Statusline eix-update", "Failure"));
 	} else {
 		user_statusline();
 	}
