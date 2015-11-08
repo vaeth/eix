@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.31.4
+	Martin Väth <martin at mvath.de>:
+	- Fix typo in eix-sync (regression from eix-0.31.3)
+
 *eix-0.31.3
 	Martin Väth <martin at mvath.de>:
 	- Use context for internationalization of variable defaults,

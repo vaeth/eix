@@ -629,7 +629,7 @@ RemoteAdd() {
 				'eix-remote add${remote_num}'`" \
 			 "`eval_pgettext 'Statusline eix-sync' \
 				 'eix-remote add${remote_num}'`"
-		MyRun eix-remote add$remote_num || WarnOrDie
+		MyRun eix-remote add$remote_num || WarnOrDie \
 			"`eval_pgettext 'eix-sync' \
 				'eix-remote add${remote_num} failed'`"
 	done
