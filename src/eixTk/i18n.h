@@ -12,21 +12,39 @@
 
 #ifdef ENABLE_NLS
 
-#include "eixTk/diagnostics.h"
+// We do not use gettext.h:
+// The latter uses currently incompatible code which produces warnings.
 
-GCC_DIAG_OFF(vla-extension)
-GCC_DIAG_OFF(vla)
-#include <gettext.h>  // NOLINT(build/include_order)
-GCC_DIAG_ON(vla)
-GCC_DIAG_ON(vla-extension)
+#include <libintl.h>
 
 #define _ gettext
 #define N_ ngettext
-#define P_ pgettext
-#define NP_ npgettext
+#define P_ eix_pgettext
+#define NP_ eix_npgettext
 
-// const char *pgettext(const char *p, const char *a);
-// const char *nppgettext(const char *p, const char *a, const char *b, unsigned long int n);
+// We only use the static versions of pgettext and npgettext.
+// For these, variants of the inline versions from gettext.h
+// produce perhaps the shortest code
+
+#define EIX_GETTEXT_CONTEXT_GLUE "\004"
+
+#define eix_pgettext(p, a) eix::pgettext_aux(p EIX_GETTEXT_CONTEXT_GLUE a, a)
+#define eix_npgettext(p, a, b, n) eix::pgettext_aux(p EIX_GETTEXT_CONTEXT_GLUE a, a, b, n)
+
+namespace eix {
+
+inline static const char *pgettext_aux(const char *msg_ctxt_id, const char *msgid) {
+	const char *translation(gettext(msg_ctxt_id));
+	return ((translation == msg_ctxt_id) ? msgid : translation);
+}
+
+inline static const char *npgettext_aux(const char *msg_ctxt_id, const char *msgid, const char *msgid_plural, unsigned long int n) {  // NOLINT(runtime/int)
+	const char *translation(ngettext(msg_ctxt_id, msgid_plural, n));
+	return (((translation == msg_ctxt_id) || (translation == msgid_plural)) ?
+		(n == 1 ? msgid : msgid_plural) : translation);
+}
+
+}/* namespace eix */
 
 #else /* !defined(ENABLE_NLS) */
 #define _(a) (a)
