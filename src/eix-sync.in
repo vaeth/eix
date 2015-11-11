@@ -103,7 +103,7 @@ DoExecute() {
 	for curr_cmd
 	do	set +f
 		! $printcmd || PrintCmd "$curr_cmd"
-		$dryrun || eval "$curr_cmd" || WarnOrDie
+		$dryrun || eval "$curr_cmd" || WarnOrDie \
 			"`eval_pgettext 'eix-sync' \
 				'Something went wrong with ${curr_cmd}'`"
 	done
