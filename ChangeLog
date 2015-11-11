@@ -1,6 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.31.4
+	Thomas D. <whissi at whissi.de>:
+	- Fix forgotten slash in eix-sync breaking hooks support (regression
+	  from eix-0.31.3), see
+	  https://bugs.gentoo.org/show_bug.cgi?id=565504
+
 	Martin Väth <martin at mvath.de>:
 	- Fix typo in eix-sync (regression from eix-0.31.3)
 
