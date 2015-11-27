@@ -21,6 +21,7 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "portage/depend.h"
 #include "portage/package.h"
 

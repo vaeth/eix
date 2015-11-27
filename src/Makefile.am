@@ -139,6 +139,7 @@ portage/packagetree.cc \
 portage/packagetree.h \
 portage/keywords.cc \
 portage/keywords.h \
+portage/overlay_bin.cc \
 $(overlay_src) \
 portage/set_stability.cc \
 portage/set_stability.h \

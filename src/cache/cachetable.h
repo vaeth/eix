@@ -14,6 +14,7 @@
 
 #include "cache/base.h"
 #include "eixTk/ptr_list.h"
+#include "eixTk/stringtypes.h"
 
 typedef eix::ptr_list<BasicCache> CacheTableList;
 

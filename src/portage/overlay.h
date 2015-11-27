@@ -14,11 +14,12 @@
 #include <vector>
 
 #include "eixTk/inttypes.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/null.h"
 
 class OverlayIdent {
 	private:
-		void readLabel_internal(const char *Path);
+		void readLabel_internal(const char *patharg);
 
 	public:
 		bool know_path, know_label;
@@ -27,31 +28,31 @@ class OverlayIdent {
 		Priority priority;
 		bool is_main;
 
-		void init(const char *Path, const char *Label);
+		void init(const char *patharg, const char *labelarg);
 
-		OverlayIdent(const char *Path, const char *Label, Priority prio, bool ismain) : priority(prio), is_main(ismain) {
-			init(Path, Label);
+		OverlayIdent(const char *patharg, const char *labelarg, Priority prio, bool ismain) : priority(prio), is_main(ismain) {
+			init(patharg, labelarg);
 		}
 
-		OverlayIdent(const char *Path, const char *Label) : priority(0), is_main(false) {
-			init(Path, Label);
+		OverlayIdent(const char *patharg, const char *labelarg) : priority(0), is_main(false) {
+			init(patharg, labelarg);
 		}
 
-		explicit OverlayIdent(const char *Path) : priority(0), is_main(false) {
-			init(Path, NULLPTR);
+		explicit OverlayIdent(const char *patharg) : priority(0), is_main(false) {
+			init(patharg, NULLPTR);
 		}
 
-		void readLabel(const char *Path) {
+		void readLabel(const char *patharg) {
 			if(!know_label) {
-				readLabel_internal(Path);
+				readLabel_internal(patharg);
 			}
 		}
 		void readLabel() {
 			readLabel(NULLPTR);
 		}
 
-		void setLabel(const std::string& Label) {
-			label = Label;
+		void setLabel(const std::string& labelarg) {
+			label = labelarg;
 			know_label = true;
 		}
 

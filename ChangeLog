@@ -7,6 +7,7 @@
 	  https://bugs.gentoo.org/show_bug.cgi?id=565504
 
 	Martin Väth <martin at mvath.de>:
+	- Support repo-name from metadata/layout.conf
 	- Fix typo in eix-sync (regression from eix-0.31.3)
 
 *eix-0.31.3

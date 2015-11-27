@@ -15,6 +15,7 @@
 #include <string>
 
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/sysutils.h"
 #include "eixTk/unused.h"
 #include "portage/extendedversion.h"

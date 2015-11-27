@@ -14,11 +14,12 @@
 #include "cache/base.h"
 #include "cache/cache_map.h"
 #include "cache/cachetable.h"
-#include "eixTk/formated.h"
 #include "eixTk/filenames.h"
+#include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 
 using std::string;
 

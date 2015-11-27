@@ -16,6 +16,7 @@
 #include "cache/base.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "portage/conf/portagesettings.h"
 #include "portage/package.h"
 #include "portage/packagetree.h"

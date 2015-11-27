@@ -145,6 +145,7 @@ src/portage/mask_list.cc
 src/portage/mask_list.h
 src/portage/overlay.cc
 src/portage/overlay.h
+src/portage/overlay_bin.cc
 src/portage/package.cc
 src/portage/package.h
 src/portage/package_best.cc
