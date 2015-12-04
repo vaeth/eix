@@ -18,7 +18,6 @@
 
 #include "database/header.h"
 #include "database/io.h"
-#include "eixTk/auto_list.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/i18n.h"
@@ -155,10 +154,9 @@ bool Database::read_string(string *s, string *errtext) {
 	if(unlikely(!read_num(&len, errtext))) {
 		return false;
 	}
-	eix::auto_list<char> buf(new char[len + 1]);
-	buf.get()[len] = 0;
-	if(likely(read_string_plain(buf.get(), len, errtext))) {
-		*s = buf.get();
+	char buf[len];
+	if(likely(read_string_plain(buf, len, errtext))) {
+		s->assign(buf, len);
 		return true;
 	}
 	return false;
