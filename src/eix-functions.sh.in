@@ -507,11 +507,12 @@ eval_gettext() {
 	unset eixf_gettexta eixf_gettextb eixf_gettextc
 }
 pgettext() {
-	gettext "$2"
+	shift
+	gettext "$@"
 }
 eval_pgettext() {
 	shift
-	eval_gettext "$2"
+	eval_gettext "$@"
 }
 ngettext() {
 	if [ "$3" -gt 1 ]
@@ -526,10 +527,12 @@ eval_ngettext() {
 	fi
 }
 npgettext() {
-	ngettext "$2" "$3" "$4"
+	shift
+	ngettext "$@"
 }
 eval_npgettext() {
-	eval_ngettext "$2" "$3" "$4"
+	shift
+	eval_ngettext "$@"
 }
 ReadGettext() {
 	return 1

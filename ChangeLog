@@ -3,12 +3,13 @@
 *eix-0.31.4
 	Thomas D. <whissi at whissi.de>:
 	- Fix forgotten slash in eix-sync breaking hooks support (regression
-	  from eix-0.31.3), see
-	  https://bugs.gentoo.org/show_bug.cgi?id=565504
+	  from eix-0.31.3), see https://bugs.gentoo.org/show_bug.cgi?id=565504
 
 	Martin Väth <martin at mvath.de>:
 	- Support repo-name from metadata/layout.conf
-	- Fix typo in eix-sync (regression from eix-0.31.3)
+	- Fix --without-nls output of eval_pgettext (regression from
+	  eix-0.31.3), see https://forums.gentoo.org/viewtopic-t-1034606.html
+	- Fix forgotten slash in eix-sync (regression from eix-0.31.3)
 
 *eix-0.31.3
 	Martin Väth <martin at mvath.de>:
@@ -57,7 +58,7 @@
 	  encounter them. The hope is that in the long run, this step will help
 	  to eliminate hidden errors, although in the moment it can cause pain.
 	- Restore sh bracing for eval_gettext to fix poor man's implementation,
-	  see https://forums.gentoo.org/viewtopic-t-1029872-highlight-.html
+	  see https://forums.gentoo.org/viewtopic-t-1029872.html
 	- Add tmux to TERM_{SOFT,}STATUSLINE
 	- Lock EIX_CACHEFILE (currently implemented without any timeout), see
 	  https://bugs.gentoo.org/show_bug.cgi?id=553574
@@ -94,7 +95,7 @@
 	- Remove some redundant NULL tests
 	- Work around a gcc-5 regression when comparing empty vectors
 	- eix-remote: Support combination of -x and -X,
-	  see https://forums.gentoo.org/viewtopic.php?p=7744098
+	  see https://forums.gentoo.org/viewtopic-t-1016652.html
 
 *eix-0.30.8
 	Martin Väth <martin at mvath.de>:
@@ -404,7 +405,7 @@
 	- Extend COLORFGBG_DARK default for rxvt-unicode with XPM support.
 	- Treat (none;black) correctly
 	- eix-remote -q: Pass --no-verbose to wget and redirect its output,
-	  see https://forums.gentoo.org/viewtopic.php?p=7208430
+	  see https://forums.gentoo.org/viewtopic-p-7208430.html
 	- eix-functions.sh: Introduce Echo
 	- Support AC_CONFIG_MACRO_DIR[S] of automake-1.13, keep ACLOCAL_AMFLAGS
 	- Remove support for <automake-1.11.2
@@ -476,7 +477,7 @@
 *eix-0.27.4
 	Martin Väth <martin at mvath.de>:
 	- Change COLOR_INST_VERSION to work with solarized. Thanks to khayyam:
-	  https://forums.gentoo.org/viewtopic.php?p=7167646
+	  https://forums.gentoo.org/viewtopic-p-7167646.html
 	- Cosmetical fixes in the manpages
 	- Add unused default variables {UPDATE_,DROP_}PRINT_IUSE
 	  to formally complete *PRINT_IUSE references.
@@ -1459,7 +1460,7 @@
 	Martin Väth <martin at mvath.de>:
 	- Make regex-matches in DEFAULT_MATCH_{FIELD,ALGORITHM}
 	  case-sensitive to make LICENSE defaults reasonable, see
-	  https://forums.gentoo.org/viewtopic.php?p=5285010
+	  https://forums.gentoo.org/viewtopic-p-5285010.html
 	  or https://bugs.gentoo.org/show_bug.cgi?id=248677
 	- Change EPREFIX_SOURCE default to %{EIX_PREFIX}, see
 	  https://bugs.gentoo.org/show_bug.cgi?id=247227
@@ -1837,7 +1838,7 @@
 	- Introduce /etc/portage/package.*.nowarn
 	- Introduce --print-all-* options
 	- Introduce "detail" option for eix-test-obsolete, see
-	  https://forums.gentoo.org/viewtopic-t-666071-highlight-.html
+	  https://forums.gentoo.org/viewtopic-t-666071.html
 	- Shrink database file by hashing common words.
 	- Fix REDUNDANT_IF_DOUBLE_LINE, REDUNDANT_IF_MINUS_ASTERISK and also
 	  fix corresponding parts in eix-test-obsolete.
@@ -2238,8 +2239,7 @@
 	  Introduce delayed PRINT_ALWAYS, DIFF_PRINT_INSTALLED.
 	  In particular, PRINT_ALWAYS finally is a way to have a "short"
 	  configuration for cyberpatrols wish to print lines even if unused:
-	  https://forums.gentoo.org/
-	  viewtopic-t-278819-postdays-0-postorder-asc-start-292.html
+	  https://forums.gentoo.org/viewtopic-t-278819-start-292.html
 	- Let eix-sync print the time emerge --sync needed.
 	- Bugfix: Let "%%{" work as documented in the treatment of
 	  delayed variables.
@@ -2772,7 +2772,7 @@
 	  Christian Heim <christian.th.heim at gmx.de>
 	- Big cleanups in readoverlay to fix 2 major bugs
 	  https://bugs.gentoo.org/show_bug.cgi?id=80241 and
-	  https://forums.gentoo.org/viewtopic.php?p=2005152#2005152
+	  https://forums.gentoo.org/viewtopic-p-2005152.html
 	- Added -I to search only installed packages. If no search pattern is
 	  given it prints all installed packages.
 	- Changed version.cc, added a test for version.cc, added 'keys' for
@@ -2796,7 +2796,7 @@
 	  and ppc64, x86 and x86-obsd .. and so on
 	- Converted the db-read/write code to use c-style FILE*, fread, fwrite.
 	  This fixes the ppc-problem described in
-	  https://forums.gentoo.org/viewtopic.php?p=2036103#2036103
+	  https://forums.gentoo.org/viewtopic-p-2036103.html
 	  Thanks meyerm for testing :)
 
 	xororand <xororand at users.sourceforge.net>:
