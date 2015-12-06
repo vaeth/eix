@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.31.5
+	Martin Väth <martin at mvath.de>:
+	- Switch back to .tar.xz releases as default (github supports it now)
+
 *eix-0.31.4
 	Thomas D. <whissi at whissi.de>:
 	- Fix forgotten slash in eix-sync breaking hooks support (regression
