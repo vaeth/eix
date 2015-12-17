@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-11-08 11:48+0100\n"
+"POT-Creation-Date: 2015-12-17 11:13+0100\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -7121,14 +7121,9 @@ msgid "a wildcard is only valid with the = operator"
 msgstr "Шаблон поиска имеет смысл только с оператором ="
 
 #: src/portage/mask.cc
-msgid ""
-"a wildcard is only valid with the = operator.\n"
-"Portage would also accept something like ~app-shells/bash-3*,\n"
-"but behave just like ~app-shells/bash-3."
-msgstr ""
-"Шаблон поиска имеет смысл только с оператором =.\n"
-"Portage также бы принял что-то типа ~app-shells/bash-3*,\n"
-"но повёл себя как ~app-shells/bash-3."
+#, fuzzy
+msgid "a wildcard is only valid as the last symbol"
+msgstr "Шаблон поиска имеет смысл только as the last symbol"
 
 #: src/portage/set_stability.cc
 msgid "internal error: SetStability calculates wrong index"

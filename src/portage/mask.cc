@@ -210,35 +210,17 @@ GCC_DIAG_ON(sign-conversion)
 			} else if(m_operator == maskOpEqual) {
 				priority -= 16;
 			}
-			// Only the = operator can have a wildcard-version
 			if(unlikely(m_operator != maskOpEqual)) {
-				// A finer error-reporting
-				if(m_operator != maskOpRevisions) {
-					*errtext = _("a wildcard is only valid with the = operator");
-					return parsedError;
-				} else {
-					*errtext = _(
-						"a wildcard is only valid with the = operator.\n"
-						"Portage would also accept something like ~app-shells/bash-3*,\n"
-						"but behave just like ~app-shells/bash-3.");
-					return parsedError;
-				}
+				*errtext = _("a wildcard is only valid with the = operator");
+				return parsedError;
 			}
-			if(unlikely((wildcard[1] != '\0') &&
-				// The following is also valid if end=NULLPTR
-				(wildcard + 1 != end))) {
-				// Wildcard is not the last symbol:
-				m_operator = maskOpGlobExt;
-				if(end != NULLPTR) {
-					m_glob.assign(p, end);
-				} else {
-					m_glob.assign(p);
-				}
-			} else {
-				m_operator = maskOpGlob;
-				m_glob.assign(p, wildcard);
+			if(unlikely((wildcard + 1 != end) &&
+				((end != NULLPTR) || (wildcard[1] != '\0')))) {
+				*errtext = _("a wildcard is only valid as the last symbol");
+				return parsedError;
 			}
-			return parsedOK;
+			m_operator = maskOpGlob;
+			end = wildcard;
 		}
 GCC_DIAG_OFF(sign-conversion)
 		BasicVersion::ParseResult r(parseVersion(((end != NULLPTR) ? string(p, end - p) : p), errtext, accept_garbage));
@@ -294,41 +276,8 @@ bool Mask::test(const ExtendedVersion *ev) const {
 		case maskOpAll:
 			return true;
 
-		case maskOpGlobExt:
-			return (fnmatch(m_glob.c_str(), ev->getFull().c_str(), 0) == 0);
-
 		case maskOpGlob:
-			if(m_glob.empty()) {
-				return true;
-			} {
-				// '=*' operator has to remove leading zeros
-				// see match_from_list in portage_dep.py
-				const std::string version_string(ev->getFull());
-
-				std::string::size_type my_start(m_glob.find_first_not_of('0'));
-				std::string::size_type version_start(version_string.find_first_not_of('0'));
-
-				/* Otherwise, if a component has a leading zero, any trailing
-				 * zeroes in that component are stripped (if this makes the
-				 * component empty, proceed as if it were 0 instead), and the
-				 * components are compared using a stringwise comparison.
-				 */
-
-				if(my_start == std::string::npos) {
-					my_start = m_glob.size() - 1;
-				} else if(!my_isdigit(m_glob[my_start])) {
-					my_start -= 1;
-				}
-
-				if(version_start == std::string::npos) {
-					version_start = version_string.size() - 1;
-				} else if(!my_isdigit(version_string[version_start])) {
-					version_start -= 1;
-				}
-
-				const std::string::size_type total(m_glob.size() - my_start);
-				return (version_string.compare(version_start, total, m_glob, my_start, total) == 0);
-			}
+			return (BasicVersion::compare_right_maybe_shorter(*ev, *this) == 0);
 
 		case maskOpLess:
 			return (BasicVersion::compare(*this, *ev) > 0);

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-11-08 11:48+0100\n"
+"POT-Creation-Date: 2015-12-17 11:13+0100\n"
 "PO-Revision-Date: 2014-10-29 21:03+0100\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
@@ -8206,17 +8206,11 @@ msgstr "Versionsangabe fehlt"
 
 #: src/portage/mask.cc
 msgid "a wildcard is only valid with the = operator"
-msgstr "Ein Wildcard ist nur mit dem =-Operator zulässig."
+msgstr "Ein Wildcard ist nur mit dem =-Operator zulässig"
 
 #: src/portage/mask.cc
-msgid ""
-"a wildcard is only valid with the = operator.\n"
-"Portage would also accept something like ~app-shells/bash-3*,\n"
-"but behave just like ~app-shells/bash-3."
-msgstr ""
-"Ein Wildcard ist nur mit dem =-Operator zulässig.\n"
-"Portage würde auch so etwas wie ~app-shells/bash-3* akzeptieren,\n"
-"es aber als ~app-shells/bash-3 interpretieren."
+msgid "a wildcard is only valid as the last symbol"
+msgstr "Ein Wildcard ist nur als letztes Zeichen zulässig"
 
 #: src/portage/set_stability.cc
 msgid "internal error: SetStability calculates wrong index"

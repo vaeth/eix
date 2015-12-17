@@ -274,25 +274,22 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 	return parsedGarbage;
 }
 
-eix::SignedBool BasicVersion::compare(const BasicVersion& left, const BasicVersion& right) {
-	PartsType::const_iterator
-		it_left(left.m_parts.begin()),
-		it_right(right.m_parts.begin());
-
-	for(eix::SignedBool ret(0); ; ++it_left, ++it_right) {
+eix::SignedBool BasicVersion::compare(const BasicVersion& left, const BasicVersion& right, bool right_maybe_shorter) {
+	for(PartsType::const_iterator it_left(left.m_parts.begin()),
+		it_right(right.m_parts.begin()); ; ++it_left, ++it_right) {
 		if(it_left == left.m_parts.end()) {
 			if(it_right == right.m_parts.end()) {
-				return 0;
-			} else if(it_right->parttype < BasicPart::revision) {
-				return 1;
+				break;
 			}
-			return -1;
+			return ((it_right->parttype < BasicPart::revision) ? 1 : -1);
 		} else if(it_right == right.m_parts.end()) {
-			if(it_left->parttype < BasicPart::revision) {
-				return -1;
+			if(unlikely(right_maybe_shorter)) {
+				break;
 			}
-			return 1;
-		} else if((ret = BasicPart::compare(*it_left, *it_right))) {
+			return ((it_left->parttype < BasicPart::revision) ? -1 : 1);
+		}
+		eix::SignedBool ret(BasicPart::compare(*it_left, *it_right));
+		if(ret != 0) {
 			return ret;
 		}
 	}

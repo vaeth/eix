@@ -27,11 +27,6 @@ class Package;
 // A category which may not occur (i.e. which is reserved for maskIsSet)
 #define SET_CATEGORY "@/"
 
-//  >app-shells/bash-3*      <- NOT ALLOWED
-//  ~app-shells/bash-3*      <- OK, BUT DOESN'T SELECT bash-3.0-r12; SELECT
-//                              ONLY ~app-shells/bash-3
-//  =app-shells/bash-3*      <- OK
-
 /**
 A class for parsing masking definitions like those in the profile and
 /etc/portage/package.(un)mask
@@ -58,7 +53,7 @@ class Mask : public BasicVersion {
 			maskOpAll, maskOpEqual,
 			maskOpLess, maskOpLessEqual,
 			maskOpGreaterEqual, maskOpGreater,
-			maskOpRevisions, maskOpGlob, maskOpGlobExt,
+			maskOpRevisions, maskOpGlob,
 			maskIsSet
 		} Operator;
 
@@ -74,7 +69,6 @@ class Mask : public BasicVersion {
 		std::string m_slotname;
 		std::string m_subslotname;
 		std::string m_reponame;
-		std::string m_glob;      ///< the glob string for MaskOpGlob
 		bool m_test_slot;        ///< must we match a slot?
 		bool m_test_subslot;     ///< must we match a subslot?
 		bool m_test_reponame;    ///< must we match a reponame?

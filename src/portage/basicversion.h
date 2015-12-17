@@ -73,6 +73,13 @@ Parse and represent a portage version-string.
 **/
 class BasicVersion {
 		friend class Database;
+
+	private:
+		/**
+		Compare the version
+		**/
+		static eix::SignedBool compare(const BasicVersion& right, const BasicVersion& left, bool right_maybe_shorter) ATTRIBUTE_PURE;
+
 	public:
 		enum ParseResult {
 			parsedOK,
@@ -93,12 +100,25 @@ class BasicVersion {
 		/**
 		Compare all except gentoo revisions
 		**/
-		static eix::SignedBool compareTilde(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
+		static eix::SignedBool compareTilde(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
 
 		/**
 		Compare the version
 		**/
-		static eix::SignedBool compare(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
+		static eix::SignedBool compare(const BasicVersion& left, const BasicVersion& right) {
+			return BasicVersion::compare(left, right, false);
+		}
+
+		/**
+		Compare the version, but return equality if right is shorter
+		**/
+		static eix::SignedBool compare_right_maybe_shorter(const BasicVersion& left, const BasicVersion& right) {
+			return BasicVersion::compare(left, right, true);
+		}
+
+		/**
+		Compare the version
+		**/
 
 		std::string getFull() const;
 

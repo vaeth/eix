@@ -3,6 +3,7 @@
 *eix-0.31.5
 	Martin Väth <martin at mvath.de>:
 	- Switch back to .tar.xz releases as default (github supports it now)
+	- Adapt version wildcard matching to pms and portage implementation
 
 *eix-0.31.4
 	Thomas D. <whissi at whissi.de>:
