@@ -7120,8 +7120,8 @@ msgstr "Отсутствует указание версии"
 msgid "a wildcard is only valid with the = operator"
 msgstr "Шаблон поиска имеет смысл только с оператором ="
 
+# fuzzy
 #: src/portage/mask.cc
-#, fuzzy
 msgid "a wildcard is only valid as the last symbol"
 msgstr "Шаблон поиска имеет смысл только as the last symbol"
 

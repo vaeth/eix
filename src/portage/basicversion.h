@@ -65,6 +65,8 @@ class BasicPart {
 		}
 
 		static eix::SignedBool compare(const BasicPart& left, const BasicPart& right) ATTRIBUTE_PURE;
+
+		static bool equal_but_right_is_cut(const BasicPart& left, const BasicPart& right);
 };
 
 

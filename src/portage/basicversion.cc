@@ -34,6 +34,10 @@ using std::stringstream;
 
 const string::size_type BasicPart::max_type;
 
+bool BasicPart::equal_but_right_is_cut(const BasicPart& left, const BasicPart& right) {
+	return ((left.parttype == right.parttype) && right.partcontent.empty());
+}
+
 eix::SignedBool BasicPart::compare(const BasicPart& left, const BasicPart& right) {
 	/*
 	There is some documentation online at http://dev.gentoo.org/~spb/pms.pdf,
@@ -60,7 +64,7 @@ eix::SignedBool BasicPart::compare(const BasicPart& left, const BasicPart& right
 		stringwise comparison."
 		*/
 
-		if((left.partcontent)[0] == '0' || (right.partcontent)[0] == '0') {
+		if(((left.partcontent)[0] == '0') || ((right.partcontent)[0] == '0')) {
 			string l1(left.partcontent);
 			string l2(right.partcontent);
 
@@ -156,8 +160,8 @@ string BasicVersion::getRevision() const {
 BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *errtext, eix::SignedBool accept_garbage) {
 	m_parts.clear();
 	string::size_type pos(0);
-	string::size_type len(str.find_first_not_of("0123456789", pos));
-	if(unlikely(len == pos || pos == str.size())) {
+	string::size_type endpos(str.find_first_not_of("0123456789", pos));
+	if(unlikely((endpos == pos) || (pos == str.size()))) {
 		m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
 		if(errtext != NULLPTR) {
 			*errtext = eix::format(_(
@@ -166,17 +170,17 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 		}
 		return parsedError;
 	}
-	m_parts.push_back(BasicPart(BasicPart::first, str, pos, len - pos));
+	m_parts.push_back(BasicPart(BasicPart::first, str, pos, endpos - pos));
 
-	if(len == string::npos) {
+	if(endpos == string::npos) {
 		return parsedOK;
 	}
 
-	pos += len;
+	pos += endpos;
 
 	while(str[pos] == '.') {
-		len = str.find_first_not_of("0123456789", ++pos);
-		if(unlikely(len == pos || pos == str.size())) {
+		endpos = str.find_first_not_of("0123456789", ++pos);
+		if(unlikely((endpos == pos) || (pos == str.size()))) {
 			m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
 			if(errtext != NULLPTR) {
 				*errtext = eix::format(_(
@@ -185,13 +189,13 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 			}
 			return parsedError;
 		}
-		m_parts.push_back(BasicPart(BasicPart::primary, str, pos, len - pos));
+		m_parts.push_back(BasicPart(BasicPart::primary, str, pos, endpos - pos));
 
-		if(len == string::npos) {
+		if(endpos == string::npos) {
 			return parsedOK;
 		}
 
-		pos = len;
+		pos = endpos;
 	}
 
 	if(my_isalpha(str[pos])) {
@@ -230,34 +234,34 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 			return parsedError;
 		}
 
-		len = str.find_first_not_of("0123456789", pos);
-		m_parts.push_back(BasicPart(suffix, str, pos, len - pos));
+		endpos = str.find_first_not_of("0123456789", pos);
+		m_parts.push_back(BasicPart(suffix, str, pos, endpos - pos));
 
-		if(len == string::npos) {
+		if(endpos == string::npos) {
 			return parsedOK;
 		}
 
-		pos = len;
+		pos = endpos;
 	}
 
 	// get optional gentoo revision
 	if(str.compare(pos, 2, "-r") == 0) {
-		len = str.find_first_not_of("0123456789", pos+=2);
-		m_parts.push_back(BasicPart(BasicPart::revision, str, pos, len-pos));
+		endpos = str.find_first_not_of("0123456789", pos+=2);
+		m_parts.push_back(BasicPart(BasicPart::revision, str, pos, endpos - pos));
 
-		if(len == string::npos) {
+		if(endpos == string::npos) {
 			return parsedOK;
 		}
-		pos = len;
+		pos = endpos;
 
 		if(str[pos] == '.') {
 			// inter-revision used by prefixed portage.
 			// for example foo-1.2-r02.2
-			len = str.find_first_not_of("0123456789", ++pos);
-			m_parts.push_back(BasicPart(BasicPart::inter_rev, str, pos, len-pos));
-			if(len == string::npos)
+			endpos = str.find_first_not_of("0123456789", ++pos);
+			m_parts.push_back(BasicPart(BasicPart::inter_rev, str, pos, endpos - pos));
+			if(endpos == string::npos)
 				return parsedOK;
-			pos = len;
+			pos = endpos;
 		}
 	}
 
@@ -276,7 +280,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 
 eix::SignedBool BasicVersion::compare(const BasicVersion& left, const BasicVersion& right, bool right_maybe_shorter) {
 	for(PartsType::const_iterator it_left(left.m_parts.begin()),
-		it_right(right.m_parts.begin()); ; ++it_left, ++it_right) {
+		it_right(right.m_parts.begin()); ; ++it_left) {
 		if(it_left == left.m_parts.end()) {
 			if(it_right == right.m_parts.end()) {
 				break;
@@ -290,7 +294,17 @@ eix::SignedBool BasicVersion::compare(const BasicVersion& left, const BasicVersi
 		}
 		eix::SignedBool ret(BasicPart::compare(*it_left, *it_right));
 		if(ret != 0) {
+			// alpha2 must match alpha if right_maybe_shorter
+			if(unlikely(right_maybe_shorter)) {
+				if(unlikely(++it_right == right.m_parts.end())) {
+					if(BasicPart::equal_but_right_is_cut(*it_left, right.m_parts.back())) {
+						return 0;
+					}
+				}
+			}
 			return ret;
+		} else {
+			++it_right;
 		}
 	}
 	return 0;
