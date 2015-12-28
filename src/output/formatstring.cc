@@ -333,37 +333,38 @@ void PrintFormat::setupColors() {
 	parse_color(&maskreasonss_sep, use_color);
 }
 
+bool PrintFormat::printString(OutputString *result, const OutputString& output) const {
+	if(output.empty()) {
+		return false;
+	}
+	if(result != NULLPTR) {
+		result->append(output);
+	} else {
+		output.print(&currcolumn);
+	}
+	return true;
+}
+
 bool PrintFormat::recPrint(OutputString *result, void *entity, GetProperty get_property, Node *root) const {
 	bool printed(false);
 	for(; likely(root != NULLPTR); root = root->next) {
 		switch(root->type) {
-			case Node::TEXT: {  /* text!! */
-					const OutputString& t(static_cast<Text*>(root)->text);
-					if(!t.empty()) {
-						printed = true;
-						if(result != NULLPTR) {
-							result->append(t);
-						} else {
-							t.print(&currcolumn);
-						}
-					}
+			case Node::TEXT:  /* text!! */
+				if(printString(result, static_cast<Text*>(root)->text)) {
+					printed = true;
 				}
 				break;
 			case Node::OUTPUT: {
 					Property *p(static_cast<Property*>(root));
-					OutputString *s;
 					if(p->user_variable) {
-						s = &user_variables[p->name];
+						if(printString(result, user_variables[p->name])) {
+							printed = true;
+						}
 					} else {
-						s = new OutputString();
-						get_property(s, this, entity, p->name);
-					}
-					if(!s->empty()) {
-						printed = true;
-						if(result != NULLPTR) {
-							result->append(*s);
-						} else {
-							s->print(&currcolumn);
+						OutputString s;
+						get_property(&s, this, entity, p->name);
+						if(printString(result, s)) {
+							printed = true;
 						}
 					}
 				}
@@ -400,14 +401,14 @@ bool PrintFormat::recPrint(OutputString *result, void *entity, GetProperty get_p
 						break;
 					}
 					// Node::IF:
-					OutputString *r;
+					bool ok;
 					if(ief->user_variable) {
-						r = &(user_variables[ief->variable.name]);
+						ok = rhs->is_equal(user_variables[ief->variable.name]);
 					} else {
-						r = new OutputString();
-						get_property(r, this, entity, ief->variable.name);
+						OutputString r;
+						get_property(&r, this, entity, ief->variable.name);
+						ok = rhs->is_equal(r);
 					}
-					bool ok(rhs->is_equal(*r));
 					if(ief->negation) {
 						ok = !ok;
 					}
@@ -690,6 +691,14 @@ FormatParser::ParserState FormatParser::state_IF() {
 	return START;
 }
 
+FormatParser::~FormatParser() {
+	while(!keller.empty()) {
+		delete keller.top();
+		keller.pop();
+	}
+	delete root_node;
+}
+
 FormatParser::ParserState FormatParser::state_ELSE() {
 	Node *p(NULLPTR), *q(NULLPTR);
 	if(keller.empty()) {
@@ -743,6 +752,9 @@ FormatParser::ParserState FormatParser::state_FI() {
 }
 
 bool FormatParser::start(const char *fmt, bool colors, bool parse_only_colors, string *errtext) {
+	/* Free possibly old content */
+	delete root_node;
+	/* root_note = NULLPTR;  Make sure this is called in error case */
 	/* Initialize machine */
 	enable_colors = colors;
 	only_colors = parse_only_colors;
@@ -751,7 +763,7 @@ bool FormatParser::start(const char *fmt, bool colors, bool parse_only_colors, s
 	band = fmt;
 	band_position = fmt;
 	/* Run machine */
-	while(state != STOP && state != ERROR) {
+	while((state != STOP) && (state != ERROR)) {
 		switch(state) {
 			case START:    state = state_START();
 			               break;
@@ -775,6 +787,7 @@ bool FormatParser::start(const char *fmt, bool colors, bool parse_only_colors, s
 	}
 	/* Check if the machine went into ERROR-state. */
 	if(state == ERROR) {
+		root_node = NULLPTR;
 		/* Clean stacks. */
 		while(!keller.empty()) {
 			delete keller.top();

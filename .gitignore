@@ -13,6 +13,7 @@
 /confdefs.h
 /config.h
 /config.log
+/config.rpath
 /config.status
 /configure
 /conftest*

@@ -31,7 +31,7 @@ Available options are
   -c OPT Add OPT to ./configure
   -d  As -c --enable-debugging
   -O  As -c --enable-strong-optimization -c --enable-security
-  -o  Do not pass --enable-strong-security
+  -o  Do not pass --enable-nopie-security
   -r  Change also directory permissions to root (for fakeroot-ng)"
 	exit ${1:-1}
 }
@@ -109,7 +109,7 @@ clear_ccache=false
 debugging=false
 command -v clang++ >/dev/null 2>&1 && clang=: || clang=false
 dialect='enable'
-strong_security=:
+nopie_security=:
 OPTIND=1
 while getopts 'q1234gGdnewWsSrOoCxXyYdc:j:hH?' opt
 do	case $opt in
@@ -132,7 +132,7 @@ do	case $opt in
 	S)	configure_extra=$configure_extra' --without-sqlite';;
 	r)	use_chown=:;;
 	O)	optimization=:;;
-	o)	strong_security=false;;
+	o)	nopie_security=false;;
 	C)	use_ccache=false;;
 	x)	recache=:;;
 	X)	clear_ccache=:;;
@@ -154,7 +154,7 @@ SetCcache
 $dep_default && configure_extra=$configure_extra' --with-dep-default'
 $separate_all && configure_extra=$configure_extra' --enable-separate-binaries --enable-separate-tools'
 $optimization && configure_extra=$configure_extra' --enable-strong-optimization --enable-security'
-$strong_security && configure_extra=$configure_extra' --enable-strong-security'
+$nopie_security && configure_extra=$configure_extra' --enable-nopie-security'
 $debugging && configure_extra=$configure_extra' --enable-debugging'
 
 $quiet && quietredirect='>/dev/null' || quietredirect=

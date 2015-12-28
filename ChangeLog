@@ -2,8 +2,12 @@
 
 *eix-0.31.5
 	Martin Väth <martin at mvath.de>:
-	- Switch back to .tar.xz releases as default (github supports it now)
 	- Adapt version wildcard matching to pms and portage implementation
+	- Fix memory leaks in PrintFormat. Thanks to
+	  Agostino Sarubbo <ago at gentoo.org> for reporting and for
+	  pointing out that PAX kernel blocks --fsanitize=address
+	- Add --enable-nopie-security to make --fsanitize=address work better
+	- Switch back to .tar.xz releases as default (github supports it now)
 
 *eix-0.31.4
 	Thomas D. <whissi at whissi.de>:

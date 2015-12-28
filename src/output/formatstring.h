@@ -43,7 +43,10 @@ class Node {
 		explicit Node(Type t) : type(t), next(NULLPTR) {
 		}
 
-		~Node() {
+		/**
+		Virtual deconstructor
+		**/
+		virtual ~Node() {
 			delete next;
 		}
 };
@@ -93,10 +96,8 @@ class ConditionBlock : public Node {
 		}
 
 		~ConditionBlock() {
-			if(if_true)
-				delete if_true;
-			if(if_false)
-				delete if_false;
+			delete if_true;
+			delete if_false;
 		}
 };
 
@@ -129,6 +130,11 @@ class FormatParser {
 		ParserState state_FI();
 
 	public:
+		FormatParser() : root_node(NULLPTR) {
+		}
+
+		~FormatParser();
+
 		bool start(const char *fmt, bool colors, bool parse_only_colors, std::string *errtext) ATTRIBUTE_NONNULL((2));
 
 		Node *rootnode() {
@@ -203,6 +209,9 @@ class PrintFormat {
 
 		/* return true if something was actually printed */
 		bool recPrint(OutputString *result, void *entity, GetProperty get_property, Node *root) const ATTRIBUTE_NONNULL((3));
+
+		/* return true if something was actually printed */
+		bool printString(OutputString *result, const OutputString& output) const;
 
 		bool parse_variable(Node **rootnode, const std::string& varname, std::string *errtext) const ATTRIBUTE_NONNULL((2));
 		Node *parse_variable(const std::string& varname) const;

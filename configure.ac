@@ -111,6 +111,14 @@ AC_ARG_ENABLE([strong-security],
 	[AS_VAR_SET([strong_security], [false])
 	AS_VAR_SET([cmt_strong_security], ["default"])])
 
+AC_ARG_ENABLE([nopie-security],
+	[AS_HELP_STRING([--enable-nopie-security],
+		[as --enable-strong-security but avoid pie to make sanitizer work])],
+	[MV_ENABLE([nopie-security])
+	AS_VAR_SET([cmt_nopie_security], ["on request"])],
+	[AS_VAR_SET([nopie_security], [false])
+	AS_VAR_SET([cmt_nopie_security], ["default"])])
+
 AC_ARG_ENABLE([optimization],
 	[AS_HELP_STRING([--enable-optimization],
 		[append optimization flags])],
@@ -176,7 +184,13 @@ AS_IF([$strong_warnings],
 	AS_VAR_SET([cmt_warnings], ["forced by strong warnings"])])
 MV_MSG_RESULT_BIN([$warnings], [$cmt_warnings])
 
+AC_MSG_CHECKING([whether nopie security options should be used])
+MV_MSG_RESULT_BIN([$nopie_security], [$cmt_nopie_security])
+
 AC_MSG_CHECKING([whether strong security options should be used])
+AS_IF([$nopie_security],
+	[AS_VAR_SET([strong_security], [:])
+	AS_VAR_SET([cmt_strong_security], ["forced by nopie security"])])
 MV_MSG_RESULT_BIN([$strong_security], [$cmt_strong_security])
 
 AC_MSG_CHECKING([whether security options should be used])
@@ -488,17 +502,20 @@ AS_IF([$strong_security],
 AS_IF([$security],
 	# We try to add -fstack-protector to LDFLAGS before adding to CXXFLAGS
 	# since on some systems it requires also linking with a library.
-	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
-			-fPIE \
-		], [$my_cxxfatal], [$CPPFLAGS], [:])
+	[AS_IF([$nopie_security], [],
+		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
+				-fPIE \
+			], [$my_cxxfatal], [$CPPFLAGS], [:])
+		MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
+				-fPIE \
+			], [$my_ldfatal], [], [:])
+		MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
+				-pie \
+			], [$my_cxxfatal], [$CPPFLAGS], [:])
+		MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
+				-pie \
+				], [$my_ldfatal], [], [:])])
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
-			-fPIE \
-		], [$my_ldfatal], [], [:])
-	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
-			-pie \
-		], [$my_cxxfatal], [$CPPFLAGS], [:])
-	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
-			-pie \
 			-Wl,-z,now \
 			-Wl,-z,relro \
 			-Wl,-z,noexecstack \
