@@ -524,8 +524,8 @@ Dies bedeutet normalerweise, dass ein Upgrade/Downgrade des Pakets notwendig ist
 
 Dieser Test berücksichtigt auch B<UPGRADE_TO_HIGHEST_SLOT> (siehe unten).
 
-Für <--upgrade+> oder B<--upgrade-> verhält sich der Test, als wenn B<LOCAL_PORTAGE_CONFIG> B<true> bzw. B<false> ist.
-Undernfalls wird diese Entscheidung von B<UPGRADE_LOCAL_MODE> gefällt.
+Für B<--upgrade+> oder B<--upgrade-> verhält sich der Test, als wenn B<LOCAL_PORTAGE_CONFIG> B<true> bzw. B<false> ist.
+Andernfalls wird diese Entscheidung von B<UPGRADE_LOCAL_MODE> gefällt.
 
 Falls Sie nur Pakete mit Downgrade-Empfehlung sehen wollen, können Sie
 die später beschriebenen B<FORMATSTRING>-Features benutzen.
