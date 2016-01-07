@@ -65,12 +65,14 @@ LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg) :
 	fmt->StabilityNonlocal(pkg);
 }
 
-bool VarParserCacheNode::init(Node **rootnode, const char *fmt, bool colors, bool use, string *errtext) {
+bool VarParserCacheNode::init(const char *fmt, bool colors, bool use, string *errtext) {
 	in_use = use;
-	if(likely(m_parser.start(fmt, colors, false, errtext))) {
-		*rootnode = m_parser.rootnode();
+	FormatParser parser;
+	if(likely(parser.start(fmt, colors, false, errtext))) {
+		root_node = parser.rootnode();
 		return true;
 	}
+	root_node = NULLPTR;
 	return false;
 }
 
@@ -91,12 +93,16 @@ void PrintFormat::init(GetProperty get_callback) {
 	vardb = NULLPTR;
 	portagesettings = NULLPTR;
 	stability = NULLPTR;
+	root_node = NULLPTR;
 }
 
 bool PrintFormat::parse_variable(Node **rootnode, const string& varname, string *errtext) const {
 	VarParserCache::iterator f(varcache.find(varname));
 	if(f == varcache.end()) {
-		return varcache[varname].init(rootnode, (*eix_rc)[varname].c_str(), !no_color, true, errtext);
+		VarParserCacheNode& cache(varcache[varname]);
+		bool ok(cache.init((*eix_rc)[varname].c_str(), !no_color, true, errtext));
+		*rootnode = cache.rootnode();
+		return ok;
 	}
 	VarParserCacheNode& v(f->second);
 	if(unlikely(v.in_use)) {
@@ -106,7 +112,7 @@ bool PrintFormat::parse_variable(Node **rootnode, const string& varname, string 
 		return false;
 	}
 	v.in_use = true;
-	*rootnode = v.m_parser.rootnode();
+	*rootnode = v.rootnode();
 	return true;
 }
 
@@ -373,13 +379,14 @@ bool PrintFormat::recPrint(OutputString *result, void *entity, GetProperty get_p
 			// case Node::SET:
 			default: {
 					ConditionBlock *ief(static_cast<ConditionBlock*>(root));
+					OutputString  rhsvalue;
 					OutputString *rhs;
 					switch(ief->rhs) {
 						case ConditionBlock::RHS_VAR:
 							rhs = &(user_variables[ief->text.text.as_string()]);
 							break;
 						case ConditionBlock::RHS_PROPERTY:
-							rhs = new OutputString();
+							rhs = &rhsvalue;
 							get_property(rhs, this, entity, ief->text.text.as_string());
 							break;
 						default:
@@ -416,7 +423,7 @@ bool PrintFormat::recPrint(OutputString *result, void *entity, GetProperty get_p
 						if(recPrint(result, entity, get_property, ief->if_true)) {
 							printed = true;
 						}
-					} else if(!ok && ief->if_false) {
+					} else if((!ok) && ief->if_false) {
 						if(recPrint(result, entity, get_property, ief->if_false)) {
 							printed = true;
 						}
@@ -441,9 +448,11 @@ static bool parse_colors(OutputString *ret, const string& colorstring, bool colo
 	while(likely(root->type == Node::TEXT)) {
 		ret->append((static_cast<Text*>(root))->text);
 		if((root = root->next) == NULLPTR) {
+			delete parser.rootnode();
 			return true;
 		}
 	}
+	delete parser.rootnode();
 	*errtext = _("internal error: bad node for parse_colors");
 	return false;
 }
@@ -691,14 +700,6 @@ FormatParser::ParserState FormatParser::state_IF() {
 	return START;
 }
 
-FormatParser::~FormatParser() {
-	while(!keller.empty()) {
-		delete keller.top();
-		keller.pop();
-	}
-	delete root_node;
-}
-
 FormatParser::ParserState FormatParser::state_ELSE() {
 	Node *p(NULLPTR), *q(NULLPTR);
 	if(keller.empty()) {
@@ -839,9 +840,11 @@ bool PrintFormat::print(void *entity, GetProperty get_property, Node *root, cons
 }
 
 bool PrintFormat::parseFormat(Node **rootnode, const char *fmt, string *errtext) {
-	if(likely(m_parser.start(fmt, !no_color, false, errtext))) {
-		*rootnode = m_parser.rootnode();
+	FormatParser parser;
+	if(likely(parser.start(fmt, !no_color, false, errtext))) {
+		*rootnode = parser.rootnode();
 		return true;
 	}
+	*rootnode = NULLPTR;
 	return false;
 }

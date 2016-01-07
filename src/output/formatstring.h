@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/assert.h"
 #include "eixTk/null.h"
 #include "eixTk/outputstring.h"
 #include "portage/extendedversion.h"
@@ -90,9 +91,7 @@ class ConditionBlock : public Node {
 		Node     *if_true, *if_false;
 		bool user_variable, negation;
 
-		ConditionBlock() : Node(IF) {
-			final = false;
-			if_true = if_false = NULLPTR;
+		ConditionBlock() : Node(IF), final(false), if_true(NULLPTR), if_false(NULLPTR) {
 		}
 
 		~ConditionBlock() {
@@ -133,7 +132,12 @@ class FormatParser {
 		FormatParser() : root_node(NULLPTR) {
 		}
 
-		~FormatParser();
+		/* There is no destructor: root_node will not be deleted! */
+#if defined(EIX_PARANOIC_ASSERT)
+		~FormatParser() {
+			eix_assert_paranoic(keller.empty());
+		}
+#endif
 
 		bool start(const char *fmt, bool colors, bool parse_only_colors, std::string *errtext) ATTRIBUTE_NONNULL((2));
 
@@ -148,11 +152,22 @@ class FormatParser {
 };
 
 class VarParserCacheNode {
+	private:
+		Node *root_node;
+
 	public:
-		FormatParser m_parser;
 		bool in_use;
 
-		bool init(Node **rootnode, const char *fmt, bool colors, bool use, std::string *errtext) ATTRIBUTE_NONNULL((3));
+		VarParserCacheNode() : root_node(NULLPTR) {
+		}
+
+		~VarParserCacheNode() {
+			delete root_node;
+		}
+		bool init(const char *fmt, bool colors, bool use, std::string *errtext) ATTRIBUTE_NONNULL((2));
+		Node *rootnode() {
+			return root_node;
+		}
 };
 
 typedef std::map<std::string, VarParserCacheNode> VarParserCacheMap;
@@ -188,7 +203,7 @@ class PrintFormat {
 		   over the variable to avoid recursion. */
 		mutable VarParserCache varcache;
 		mutable VersionVariables *version_variables;
-		FormatParser   m_parser;
+		Node          *root_node;
 		GetProperty    m_get_property;
 		typedef std::vector<bool> Virtuals;
 		Virtuals *virtuals;
@@ -418,6 +433,10 @@ class PrintFormat {
 			init(get_callback);
 		}
 
+		~PrintFormat() {
+			delete root_node;
+		}
+
 		// Initialize those variables common to eix and eix-diff:
 		void setupResources(EixRc *eixrc) ATTRIBUTE_NONNULL_;
 
@@ -472,19 +491,20 @@ class PrintFormat {
 
 		/* return true if something was actually printed */
 		bool print(void *entity, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s, bool check_only) ATTRIBUTE_NONNULL_ {
-			return print(entity, m_parser.rootnode(), dbheader, vardbpkg, ps, s, check_only);
+			return print(entity, root_node, dbheader, vardbpkg, ps, s, check_only);
 		}
 
 		/* return true if something was actually printed */
 		bool print(void *entity, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL_ {
-			return print(entity, m_parser.rootnode(), dbheader, vardbpkg, ps, s);
-		}
-
-		bool parseFormat(const char *fmt, std::string *errtext) ATTRIBUTE_NONNULL((2)) {
-			return m_parser.start(fmt, !no_color, false, errtext);
+			return print(entity, root_node, dbheader, vardbpkg, ps, s);
 		}
 
 		bool parseFormat(Node **rootnode, const char *fmt, std::string *errtext) ATTRIBUTE_NONNULL((2, 3));
+
+		bool parseFormat(const char *fmt, std::string *errtext) ATTRIBUTE_NONNULL((2)) {
+			delete root_node;
+			return parseFormat(&root_node, fmt, errtext);
+		}
 
 		void StabilityLocal(Package *p) const ATTRIBUTE_NONNULL_ {
 			stability->set_stability(true, p);
