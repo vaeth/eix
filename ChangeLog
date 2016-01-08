@@ -1,9 +1,13 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.31.7
+	Martin Väth <martin at mvath.de>:
+	- Fix memory leak of eix -t (delete all_packages)
+
 *eix-0.31.6
 	Martin Väth <martin at mvath.de>:
-	- Fix new memory leaks
-	- Manually destroy root_node; do not do this in FormatParser.
+	- Fix further memory leak in PrintFormat
+	- Bugfix: Manually destroy root_node; do not do this in FormatParser.
 	  This hopefully fixes the segfault of bug 571108
 
 *eix-0.31.5

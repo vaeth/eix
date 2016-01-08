@@ -517,17 +517,18 @@ static void setup_defaults(EixRc *rc, bool is_tty) {
 	format->recommend_mode      = rc->getLocalMode("RECOMMEND_LOCAL_MODE");
 
 	string overlay((*rc)["OVERLAYS_LIST"]);
-	if(overlay.find("if") != string::npos)
+	if(overlay.find("if") != string::npos) {
 		overlay_mode = mode_list_all_if_any;
-	else if(likely(overlay.find("number") != string::npos))
+	} else if(likely(overlay.find("number") != string::npos)) {
 		overlay_mode = mode_list_used_renumbered;
-	else if(likely(overlay.find("used") != string::npos))
+	} else if(likely(overlay.find("used") != string::npos)) {
 		overlay_mode = mode_list_used;
-	else if(unlikely(overlay.find("no") != string::npos) ||
-		unlikely(overlay.find("false") != string::npos))
+	} else if(unlikely(overlay.find("no") != string::npos) ||
+		unlikely(overlay.find("false") != string::npos)) {
 		overlay_mode = mode_list_none;
-	else
+	} else {
 		overlay_mode = mode_list_all;
+	}
 }
 
 static bool print_overlay_table(PrintFormat *fmt, DBHeader *header, PrintFormat::OverlayUsed *overlay_used) {
@@ -1067,8 +1068,13 @@ int run_eix(int argc, char** argv) {
 		}
 	}
 
-	// Delete matches
-	matches.delete_and_clear();
+	// Delete matches (or all_packages, respectively)
+	if(unlikely(rc_options.test_unused)) {
+		all_packages.delete_and_clear();
+		matches.clear();
+	} else {
+		matches.delete_and_clear();
+	}
 	delete marked_list;
 
 	if(unlikely(!count)) {
