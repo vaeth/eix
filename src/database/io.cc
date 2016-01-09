@@ -10,7 +10,6 @@
 #include <cstdio>
 
 #include <string>
-#include <vector>
 
 #ifdef HAVE_SYS_FILE_H
 #include <sys/file.h>
@@ -28,7 +27,6 @@
 #include "eixTk/stringutils.h"
 
 using std::string;
-using std::vector;
 
 bool File::openread(const char *name) {
 	if((fp = fopen(name, "rb")) == NULLPTR) {
@@ -68,7 +66,7 @@ File::~File() {
 	fclose(fp);
 }
 
-bool File::seek(eix::OffsetType offset, int whence, std::string *errtext) {
+bool File::seek(eix::OffsetType offset, int whence, string *errtext) {
 #ifdef HAVE_FSEEKO
 	if(likely(fseeko(fp, offset, whence) == 0))
 #else
