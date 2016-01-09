@@ -107,7 +107,7 @@ static void dump_help() {
 "     --dump-defaults       dump default values of variables\n"
 "     --print               print the expanded value of a variable\n"
 "     --known-vars          print all variable names known to --print\n"
-"     --print-all-useflags  print all IUSE words used in some version\n"
+"     --print-all-useflags  print all IUSE/REQUIRED_USE used in some version\n"
 "     --print-all-keywords  print all KEYWORDS used in some version\n"
 "     --print-all-slots     print all SLOT strings used in some version\n"
 "     --print-all-licenses  print all LICENSE strings used in some package\n"
@@ -489,6 +489,7 @@ static void setup_defaults(EixRc *rc, bool is_tty) {
 	memset(&rc_options, 0, sizeof(rc_options));
 
 	Depend::use_depend         = rc->getBool("DEP");
+	Version::use_required_use  = rc->getBool("REQUIRED_USE");
 
 	rc_options.quick           = rc->getBool("QUICKMODE");
 	rc_options.be_quiet        = rc->getBool("QUIETMODE");

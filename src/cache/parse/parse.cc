@@ -187,7 +187,7 @@ void ParseCache::set_checking(string *str, const char *item, const VarsReader& e
 
 void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool read_onetime_info, bool *have_onetime_info, Package *pkg, Version *version) {
 	version->overlay_key = m_overlay_key;
-	string keywords, restr, props, iuse, slot, eapi;
+	string keywords, restr, props, iuse, required_use, slot, eapi;
 	bool ok(try_parse);
 	if(ok || ebuild_sh) {
 		VarsReader::Flags flags(VarsReader::NONE);
@@ -219,6 +219,9 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 			set_checking(&restr, "RESTRICT", ebuild);
 			set_checking(&props, "PROPERTIES", ebuild);
 			set_checking(&iuse, "IUSE", ebuild, &ok);
+			if(Version::use_required_use) {
+				set_checking(&required_use, "REQUIRED_USE", ebuild);
+			}
 			if(Depend::use_depend) {
 				string depend, rdepend, pdepend, hdepend;
 				set_checking(&depend, "DEPEND", ebuild);
@@ -258,7 +261,7 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 	if(!ok) {
 		string *cachefile(ebuild_exec->make_cachefile(fullpath, dirpath, *pkg, *version, eapi));
 		if(likely(cachefile != NULLPTR)) {
-			flat_get_keywords_slot_iuse_restrict(*cachefile, &keywords, &slot, &iuse, &restr, &props, &(version->depend), m_error_callback);
+			flat_get_keywords_slot_iuse_restrict(*cachefile, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend), m_error_callback);
 			flat_read_file(cachefile->c_str(), pkg, m_error_callback);
 			ebuild_exec->delete_cachefile();
 		} else {
@@ -270,6 +273,7 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 	version->set_restrict(restr);
 	version->set_properties(props);
 	version->set_iuse(iuse);
+	version->set_required_use(required_use);
 	pkg->addVersionFinalize(version);
 }
 

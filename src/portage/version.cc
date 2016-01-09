@@ -156,6 +156,8 @@ const Version::EffectiveState
 	Version::EFFECTIVE_USED,
 	Version::EFFECTIVE_UNUSED;
 
+bool Version::use_required_use;
+
 void Version::modify_effective_keywords(const string& modify_keys) {
 	if(effective_state == EFFECTIVE_UNUSED) {
 		if(!modify_keywords(&effective_keywords, full_keywords, modify_keys)) {

@@ -101,11 +101,12 @@ GCC_DIAG_ON(sign-conversion)
 		hdr->world_sets.push_back(s);
 	}
 
-	eix::UNumber use_dep_num;
-	if(unlikely(!read_num(&use_dep_num, errtext))) {
+	DBHeader::SaveBitmask save_bitmask;
+	if(unlikely(!read_num(&save_bitmask, errtext))) {
 		return false;
 	}
-	if((hdr->use_depend = (use_dep_num != 0))) {
+	hdr->use_required_use = ((save_bitmask & DBHeader::SAVE_BITMASK_REQUIRED_USE) != 0);
+	if((hdr->use_depend = ((save_bitmask & DBHeader::SAVE_BITMASK_DEP) != 0))) {
 		eix::OffsetType len;
 		if(unlikely(!read_num(&len, errtext))) {
 			return false;

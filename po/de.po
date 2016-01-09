@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2015-12-17 11:13+0100\n"
+"POT-Creation-Date: 2016-01-09 13:27+0100\n"
 "PO-Revision-Date: 2014-10-29 21:03+0100\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
@@ -1595,7 +1595,7 @@ msgid ""
 "     --dump-defaults       dump default values of variables\n"
 "     --print               print the expanded value of a variable\n"
 "     --known-vars          print all variable names known to --print\n"
-"     --print-all-useflags  print all IUSE words used in some version\n"
+"     --print-all-useflags  print all IUSE/REQUIRED_USE used in some version\n"
 "     --print-all-keywords  print all KEYWORDS used in some version\n"
 "     --print-all-slots     print all SLOT strings used in some version\n"
 "     --print-all-licenses  print all LICENSE strings used in some package\n"
@@ -1756,10 +1756,10 @@ msgstr ""
 "     --dump-defaults       Ausgabe der Vorgabewerte der internen Variablen\n"
 "     --print               Ausgabe eines expandierten Variablenwerts\n"
 "     --known-vars          Ausgabe aller --print bekannten Variablennamen\n"
-"     --print-all-useflags  Ausgabe aller irgendwo benutzten IUSE-Werte\n"
-"     --print-all-keywords  Ausgabe aller irgendwo benutzten KEYWORDS-Werte\n"
-"     --print-all-slots     Ausgabe aller irgendwo benutzten SLOT-Werte\n"
-"     --print-all-licenses  Ausgabe aller irgendwo benutzten LICENSE-Werte\n"
+"     --print-all-useflags  Ausgabe aller irgendwo benutzten IUSE/REQUIRED_USE\n"
+"     --print-all-keywords  Ausgabe aller irgendwo benutzten KEYWORDS\n"
+"     --print-all-slots     Ausgabe aller irgendwo benutzten SLOT\n"
+"     --print-all-licenses  Ausgabe aller irgendwo benutzten LICENSE\n"
 "     --print-all-depends   Ausgabe aller Wortd in {,R,P}DEPEND (bei DEP=true)\n"
 "     --print-world-sets    Ausgabe aller Sets in world\n"
 "     --print-profile-paths Ausgabe aller Pfade des aktuellen Profils\n"
@@ -3278,9 +3278,16 @@ msgid ""
 "If true, store/use {R,P,H,}DEPEND (e.g. shown with eix -lv).\n"
 "Usage of DEP roughly doubles disk resp. memory requirements."
 msgstr ""
-"Definiert ob {R,P,H,}DEPEND gespeichert/benutzt wird.\n"
+"Definiert, ob {R,P,H,}DEPEND gespeichert/benutzt wird.\n"
 "Diese Daten sieht man beispielsweise mit eix -lv.\n"
 "Benutzung von DEP verdoppelt ungefähr den benötigten Festplatten-/Speicherplatz."
+
+#: src/eixrc/defaults.cc
+msgctxt "REQUIRED_USE"
+msgid "If true, store/use REQUIRED_USE. Usage increases disk/memory requirements."
+msgstr ""
+"Definiert, ob REQUIRED_USE gespeichert/benutzt wird.\n"
+"Die Benutzung erhöht den benötigten Festplatten-/Speicherplatz."
 
 #: src/eixrc/defaults.cc
 msgctxt "DEFAULT_FORMAT"
@@ -5007,6 +5014,15 @@ msgstr ""
 "Sie definiert die Farbe für die gesammelten IUSE verfügbarer Pakete."
 
 #: src/eixrc/defaults.cc
+msgctxt "COLOR_REQUIRED_USE"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It defines the color used for printing REQUIRED_USE."
+msgstr ""
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
+"Sie definiert die Farbe für die Ausgabe von REQUIRED_USE."
+
+#: src/eixrc/defaults.cc
 msgctxt "COLOR_USE_EXPAND_START"
 msgid ""
 "This variable is only used for delayed substitution.\n"
@@ -5933,6 +5949,15 @@ msgstr ""
 "Die Farbe wird nicht zurückgesetzt."
 
 #: src/eixrc/defaults.cc
+msgctxt "FORMAT_VERSION_REQUIRED_USE"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It defines the format for REQUIRED_USE for an available version."
+msgstr ""
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
+"Sie definiert das Format für REQUIRED_USE verfügbarer Versionen."
+
+#: src/eixrc/defaults.cc
 msgctxt "FORMAT_KEYWORDS"
 msgid ""
 "This variable is only used for delayed substitution.\n"
@@ -6459,6 +6484,15 @@ msgstr ""
 "Sie definiert das normale Format für IUSE verfügbarer Versionen."
 
 #: src/eixrc/defaults.cc
+msgctxt "FORMAT_REQUIRED_USE_NORMAL"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It defines the normal format for REQUIRED_USE for an available version."
+msgstr ""
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
+"Sie definiert das normale Format für REQUIRED_USE verfügbarer Versionen."
+
+#: src/eixrc/defaults.cc
 msgctxt "FORMAT_DEPS_NORMAL"
 msgid ""
 "This variable is only used for delayed substitution.\n"
@@ -6493,6 +6527,15 @@ msgid ""
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie definiert das ausführliche Format für IUSE einer verfügbaren Version."
+
+#: src/eixrc/defaults.cc
+msgctxt "FORMAT_REQUIRED_USE_VERBOSE"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It defines the verbose format for REQUIRED_USE for an available version."
+msgstr ""
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
+"Sie definiert das ausführliche Format für REQUIRED_USE verfügbarer Versionen."
 
 #: src/eixrc/defaults.cc
 msgctxt "FORMAT_DEPS_VERBOSE"
@@ -7358,6 +7401,28 @@ msgstr ""
 "(Normalerweise wird dies nur benutzt, wenn --versionlines aktiv ist)."
 
 #: src/eixrc/defaults.cc
+msgctxt "FORMAT_BEFORE_REQUIRED_USE"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"This string is printed before REQUIRED_USE for a version is output.\n"
+"(Normally, this is only used when --versionlines is active)"
+msgstr ""
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
+"Dieser String wird vor dem REQUIRED_USE einer Version ausgegeben.\n"
+"(Normalerweise wird dies nur benutzt, wenn --versionlines aktiv ist)."
+
+#: src/eixrc/defaults.cc
+msgctxt "FORMAT_AFTER_REQUIRED_USE"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"This string is printed after REQUIRED_USE for a version is output.\n"
+"(Normally, this is only used when --versionlines is active)"
+msgstr ""
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
+"Dieser String wird nach dem REQUIRED_USE einer Version ausgegeben.\n"
+"(Normalerweise wird dies nur benutzt, wenn --versionlines aktiv ist)."
+
+#: src/eixrc/defaults.cc
 msgctxt "FORMAT_BEFORE_COLL"
 msgid ""
 "This variable is only used for delayed substitution.\n"
@@ -7534,6 +7599,20 @@ msgid ""
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie übersetzt „IUSE \\(all versions\\):“"
+
+#: src/eixrc/def_i18n.cc
+msgctxt "I18N_REQUIRED_USE"
+msgid "REQUIRED_USE:"
+msgstr "REQUIRED_USE:"
+
+#: src/eixrc/def_i18n.cc
+msgctxt "I18N_IUSE"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It translates \"REQUIRED_USE:\""
+msgstr ""
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
+"Sie übersetzt „REQUIRED_USE:“"
 
 #: src/eixrc/def_i18n.cc
 msgctxt "I18N_USE"
@@ -7948,7 +8027,7 @@ msgstr ""
 #: src/eixrc/def_i18n.cc
 msgctxt "I18N_COLUMN_AVAILABLE_TITLE"
 msgid "%{C_COLUMN_AVAILABLE_TITLE}"
-msgstr "%{C_COLUMN_AVAILABLE_TITLE}"
+msgstr "15"
 
 #: src/eixrc/def_i18n.cc
 msgctxt "I18N_COLUMN_AVAILABLE_TITLE"

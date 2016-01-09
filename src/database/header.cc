@@ -22,6 +22,11 @@
 using std::set;
 using std::string;
 
+const DBHeader::SaveBitmask
+	DBHeader::SAVE_BITMASK_NONE,
+	DBHeader::SAVE_BITMASK_DEP,
+	DBHeader::SAVE_BITMASK_REQUIRED_USE;
+
 const DBHeader::OverlayTest
 	DBHeader::OVTEST_NONE,
 	DBHeader::OVTEST_SAVED_PORTDIR,
@@ -38,7 +43,7 @@ const DBHeader::DBVersion DBHeader::current;
 Which version we do accept. The list must end with 0
 **/
 const DBHeader::DBVersion DBHeader::accept[] = {
-	DBHeader::current, 33, 32, 31,
+	DBHeader::current, 34, 33, 32, 31,
 	0
 };
 

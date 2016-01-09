@@ -458,6 +458,8 @@ class Scanner {
 			prop_ver("use0", &PrintFormat::VER_USE0);
 			prop_ver("use*", &PrintFormat::VER_USES);
 			prop_ver("use", &PrintFormat::VER_USE);
+			prop_ver("requireduse", &PrintFormat::VER_REQUIREDUSE);
+			prop_ver("haverequireduse", &PrintFormat::VER_HAVEREQUIREDUSE);
 			prop_ver("virtual", &PrintFormat::VER_VIRTUAL);
 			prop_ver("isbinary", &PrintFormat::VER_ISBINARY);
 			prop_ver("istbz", &PrintFormat::VER_ISTBZ);
@@ -1227,6 +1229,26 @@ void PrintFormat::VER_USE0(OutputString *s, Package *package) const {
 		get_inst_use(s, *package, version_variables->instver(), EXPAND_OMIT);
 	} else {
 		iuse_expand(s, version_variables->version()->iuse, false, EXPAND_OMIT);
+	}
+}
+
+void PrintFormat::VER_REQUIREDUSE(OutputString *s, Package *package ATTRIBUTE_UNUSED) const {
+	UNUSED(package);
+	if(version_variables->isinst) {
+		return;
+	}
+	if(Version::use_required_use) {
+		s->assign_smart(version_variables->version()->required_use);
+	}
+}
+
+void PrintFormat::VER_HAVEREQUIREDUSE(OutputString *s, Package *package ATTRIBUTE_UNUSED) const {
+	UNUSED(package);
+	if(version_variables->isinst) {
+		return;
+	}
+	if(Version::use_required_use && !version_variables->version()->required_use.empty()) {
+			s->set_one();
 	}
 }
 

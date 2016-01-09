@@ -267,7 +267,7 @@ Mit B<--256d>/B<--256l> (B<--256d0>/B<--256l0>, B<--256d1>/B<--256l1>) werden nu
 Mit B<--256b> wird nur die Hintergrundfarbpalette ausgegeben.
 .TP
 .B --print-all-useflags
-Gibt alle IUSE-Worte aus, die in irgendeiner Version benutzt werden.
+Gibt alle IUSE- oder REQUIRED_USE-Worte aus, die in irgendeiner Version benutzt werden.
 .TP
 .B --print-all-keywords
 Gibt alle KEYWORDS aus, die in irgendeiner Version benutzt werden.
@@ -1345,6 +1345,11 @@ entsprechenden Stellen aus.
 Die B<use0>-Variante unterdrückt die Ausgabe der B<USE_EXPAND>-Variablen.
 B<haveuse> kann benutzt werden, um zu testen, ob die Ausgabe nichtleer ist (in diesem Fall ist die Ausgabe 1, sonst leer).
 .TP
+.BR requireduse ", " haverequireduse
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Für verfügbare Versionen gibt es die B<REQUIRED_USE>-Variable aus, bzw. B<1> falls diese Variable nicht leer ist.
+Die Expansion ist leer, falls B<REQUIRED_USE=true> nicht gesetzt ist (oder bei der Erzeugung der Datenbank nicht gesetzt war).
+.TP
 .BR "date:I<VAR>"
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 Es gibt die Installationszeit aus; das strftime()-Format für die Zeit wird aus der Variablen I<VAR> genommen.
@@ -2361,6 +2366,12 @@ Dieser Wert entscheidet, ob die Werte der Variablen
 B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<HDEPEND> (die z.B. mit eix -lv gezeigt werden könnten)
 tatsächlich benutzt und gespeichert werden sollen.
 Im positiven Fall verdoppelt sich ungefähr der Disk- und Speicherbedarf von eix.
+
+.TP
+.BR REQUIRED_USE " " (true / false)
+Dieser Wert entscheidet, ob die Variable B<REQUIRED_USE> (die z.B. mit eix -l gezeigt werden könnte)
+tatsächlich benutzt und gespeichert werden sollen.
+Im positiven Fall erhöht dich der Disk- und Speicherbedarf von eix.
 
 .TP
 .BR FORMAT ", " FORMAT_COMPACT ", " FORMAT_VERBOSE " " (string)

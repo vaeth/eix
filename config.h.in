@@ -328,6 +328,9 @@
 /* Default PORTDIR_CACHE_METHOD */
 #undef PORTDIR_CACHE_METHOD
 
+/* Default REQUIRED_USE */
+#undef REQUIRED_USE_DEFAULT
+
 /* Default ROOT */
 #undef ROOT_DEFAULT
 

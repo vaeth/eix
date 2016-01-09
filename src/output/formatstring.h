@@ -332,6 +332,8 @@ class PrintFormat {
 		void VER_USE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_USES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_USE0(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_REQUIREDUSE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_HAVEREQUIREDUSE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_VIRTUAL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_ISBINARY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_ISTBZ(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;

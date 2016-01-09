@@ -2,7 +2,9 @@
 
 *eix-0.31.7
 	Martin Väth <martin at mvath.de>:
-	- Fix memory leak of eix -t (delete all_packages)
+	- Support REQUIRED_USE (optionally)
+	- Fix memory leak of eix -t (delete all_packages) and sqlite
+	- Fix xml output with illegal use flags
 
 *eix-0.31.6
 	Martin Väth <martin at mvath.de>:

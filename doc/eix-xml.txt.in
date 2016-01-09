@@ -170,6 +170,10 @@ depending on the configuration and the version data.
   This is like **<iuse>** [..] **</iuse>** but lists only those IUSE flags
   which are disabled by default (i.e. prefixed with "-") in the ebuild.
 
+- **<required_use>** [..] **</required_use>**
+
+  The REQUIRED_USE data of the ebuild.
+
 - **<use enabled="0">** [..] **</use>**
 
   For installed versions, this is the list of all USE flags which are

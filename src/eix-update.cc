@@ -313,6 +313,7 @@ int run_eix_update(int argc, char *argv[]) {
 		}
 	}
 	Depend::use_depend = eixrc.getBool("DEP");
+	Version::use_required_use = eixrc.getBool("REQUIRED_USE");
 	string eix_cachefile(eixrc["EIX_CACHEFILE"]); {
 	/* calculate defaults for use_{percentage,status} */
 		bool percentage_tty(false);

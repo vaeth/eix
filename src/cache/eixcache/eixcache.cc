@@ -28,6 +28,7 @@
 #include "portage/conf/portagesettings.h"
 #include "portage/package.h"
 #include "portage/packagetree.h"
+#include "portage/version.h"
 
 using std::string;
 
@@ -182,6 +183,7 @@ void EixCache::get_package(Package *p) {
 		version->restrictFlags = it->restrictFlags;
 		version->propertiesFlags = it->propertiesFlags;
 		version->iuse = it->iuse;
+		version->required_use = it->required_use;
 		version->depend = it->depend;
 		if(pkg == NULLPTR) {
 			pkg = dest_cat->findPackage(p->name);

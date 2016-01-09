@@ -145,6 +145,10 @@ class Version : public ExtendedVersion, public Keywords {
 
 		IUseSet iuse;
 
+		static bool use_required_use;
+
+		std::string required_use;
+
 		Version() :
 			saved_keywords(SAVEKEY_SIZE, KeywordsFlags()),
 			have_saved_keywords(SAVEKEY_SIZE, false),
@@ -192,6 +196,18 @@ class Version : public ExtendedVersion, public Keywords {
 		void set_iuse(const std::string& s) {
 			iuse.clear();
 			iuse.insert(s);
+		}
+
+		void set_required_use(const char *s) {
+			if(use_required_use) {
+				required_use.assign(s);
+			}
+		}
+
+		void set_required_use(const std::string& s) {
+			if(use_required_use) {
+				required_use.assign(s);
+			}
 		}
 
 		bool restore_accepted_effective(SavedEffectiveIndex i) {

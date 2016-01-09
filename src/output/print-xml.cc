@@ -105,7 +105,7 @@ static void print_iuse(const IUseSet::IUseStd& s, IUse::Flags wanted, const char
 			continue;
 		}
 		if(likely(have_found)) {
-			cout << " " << it->name();
+			cout << " " << PrintXml::escape_xmlstring(it->name());
 			continue;
 		}
 		have_found = true;
@@ -114,7 +114,7 @@ static void print_iuse(const IUseSet::IUseStd& s, IUse::Flags wanted, const char
 		} else {
 			cout << "\t\t\t\t<iuse>";
 		}
-		cout << it->name();
+		cout << PrintXml::escape_xmlstring(it->name());
 	}
 	if(have_found) {
 		cout << "</iuse>\n";
@@ -295,11 +295,18 @@ void PrintXml::package(Package *pkg) {
 		}
 
 		if(!(ver->iuse.empty())) {
-			// cout << "\t\t\t\t<iuse>" << ver->iuse.asString() << "</iuse>\n";
 			const IUseSet::IUseStd& s(ver->iuse.asStd());
 			print_iuse(s, IUse::USEFLAGS_NORMAL, NULLPTR);
 			print_iuse(s, IUse::USEFLAGS_PLUS, "1");
 			print_iuse(s, IUse::USEFLAGS_MINUS, "-1");
+		}
+		if(Version::use_required_use) {
+			string &required_use(ver->required_use);
+			if(!(required_use.empty())) {
+				cout << "\t\t\t\t<required_use>"
+					<< escape_xmlstring(required_use)
+					<< "</required_use>\n";
+			}
 		}
 		if(versionInstalled) {
 			string iuse_disabled, iuse_enabled;
@@ -320,10 +327,10 @@ void PrintXml::package(Package *pkg) {
 				}
 			}
 			if(!iuse_disabled.empty()) {
-				cout << "\t\t\t\t<use enabled=\"0\">" << iuse_disabled << "</use>\n";
+				cout << "\t\t\t\t<use enabled=\"0\">" << escape_xmlstring(iuse_disabled) << "</use>\n";
 			}
 			if(!iuse_enabled.empty()) {
-				cout << "\t\t\t\t<use enabled=\"1\">" << iuse_enabled << "</use>\n";
+				cout << "\t\t\t\t<use enabled=\"1\">" << escape_xmlstring(iuse_enabled) << "</use>\n";
 			}
 		}
 

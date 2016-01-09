@@ -42,7 +42,13 @@ class DBHeader {
 			slot_hash,
 			depend_hash;
 
-		bool use_depend;
+		typedef  eix::UNumber SaveBitmask;
+		static CONSTEXPR SaveBitmask
+			SAVE_BITMASK_NONE         = 0x00U,
+			SAVE_BITMASK_DEP          = 0x01U,
+			SAVE_BITMASK_REQUIRED_USE = 0x02U;
+
+		bool use_depend, use_required_use;
 
 		WordVec world_sets;
 
@@ -64,7 +70,7 @@ class DBHeader {
 		/**
 		Current version of database-format and what we accept
 		**/
-		static CONSTEXPR DBVersion current = 34;
+		static CONSTEXPR DBVersion current = 35;
 		static const DBVersion accept[];
 
 		/**

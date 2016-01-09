@@ -15,7 +15,7 @@ Available options are
   -1/2/3 Generate 1/2/3 binaries for eix-{,diff,update} but no separate tools
       (unless combined with -4)
   -4  Enable separate tools but no separate binaries (unless combined with 2/3)
-  -d  Do not use dep-default
+  -d  Do not use dep-default, required-use-default
   -w  Use -werror
   -W  Do not use --enable-strong-warnings
   -g  Use clang++, setting CXX, filtering some flags (default if available)
@@ -151,7 +151,7 @@ fi
 
 SetCcache
 [ -n "${dialect:++}" ] && configure_extra=$configure_extra" --$dialect-new-dialect"
-$dep_default && configure_extra=$configure_extra' --with-dep-default'
+$dep_default && configure_extra=$configure_extra' --with-dep-default --with-required-use-default'
 $separate_all && configure_extra=$configure_extra' --enable-separate-binaries --enable-separate-tools'
 $optimization && configure_extra=$configure_extra' --enable-strong-optimization --enable-security'
 $nopie_security && configure_extra=$configure_extra' --enable-nopie-security'

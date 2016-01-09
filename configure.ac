@@ -1253,6 +1253,20 @@ AC_DEFINE_UNQUOTED([DEP_DEFAULT],
 	[Default DEP])
 AC_SUBST([DEP_DEFAULT])
 
+AC_MSG_CHECKING([REQUIRED_USE default])
+AC_ARG_WITH([dep-default],
+	[AS_HELP_STRING([--with-required-use-default],
+		[default to REQUIRED_USE_DEFAULT=true])],
+	[AS_CASE(["$withval"],
+		[no], [AS_VAR_SET([REQUIRED_USE_DEFAULT], ["false"])],
+		[AS_VAR_SET([REQUIRED_USE_DEFAULT], ["true"])])],
+	[AS_VAR_SET([REQUIRED_USE_DEFAULT], ["false"])])
+MV_MSG_RESULT_VAR([REQUIRED_USE_DEFAULT])
+AC_DEFINE_UNQUOTED([REQUIRED_USE_DEFAULT],
+	["$REQUIRED_USE_DEFAULT"],
+	[Default REQUIRED_USE])
+AC_SUBST([REQUIRED_USE_DEFAULT])
+
 AC_MSG_CHECKING([zsh completion])
 AS_VAR_SET([ZSH_COMPLETION], [$datadir/zsh/site-functions])
 AC_ARG_WITH([zsh-completion],

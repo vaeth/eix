@@ -352,6 +352,10 @@ AddOption(BOOLEAN, "DEP",
 	"If true, store/use {R,P,H,}DEPEND (e.g. shown with eix -lv).\n"
 	"Usage of DEP roughly doubles disk resp. memory requirements."));
 
+AddOption(BOOLEAN, "REQUIRED_USE",
+	REQUIRED_USE_DEFAULT, P_("REQUIRED_USE",
+	"If true, store/use REQUIRED_USE. Usage increases disk/memory requirements."));
+
 AddOption(STRING, "DEFAULT_FORMAT",
 	"normal", P_("DEFAULT_FORMAT",
 	"Defines whether --compact or --verbose is on by default."));
@@ -1359,6 +1363,11 @@ AddOption(STRING, "COLOR_COLL_IUSE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing collected IUSE for packages."));
 
+AddOption(STRING, "COLOR_REQUIRED_USE",
+	";%{BG0S}|165;%{BG1}|,1;%{BG2}|165,1;%{BG3}|yellow,1|yellow,1", P_("COLOR_REQUIRED_USE",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing REQUIRED_USE."));
+
 AddOption(STRING, "COLOR_USE_EXPAND_START",
 	";%{BG0S}|115;%{BG1}|;%{BG2}|95,1;%{BG3}", P_("COLOR_USE_EXPAND_START",
 	"This variable is only used for delayed substitution.\n"
@@ -1906,6 +1915,11 @@ AddOption(STRING, "FORMAT_COLLIUSE",
 	"This variable is only used for delayed substitution.\n"
 	"It is used for colored <colliuse>; color is not reset."));
 
+AddOption(STRING, "FORMAT_VERSION_REQUIRED_USE",
+	"(%{COLOR_REQUIRED_USE})<requireduse>", P_("FORMAT_VERSION_REQUIRED_USE",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for REQUIRED_USE for an available version."));
+
 AddOption(STRING, "FORMAT_KEYWORDS",
 	"(%{COLOR_KEYWORDS})<versionkeywords>(%{COLOR_RESET})", P_("FORMAT_KEYWORDS",
 	"This variable is only used for delayed substitution.\n"
@@ -2347,6 +2361,19 @@ AddOption(STRING, "FORMAT_IUSE_NORMAL",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the normal format for IUSE for an available version."));
 
+AddOption(STRING, "FORMAT_REQUIRED_USE_NORMAL",
+	"%{?PRINT_IUSE}"
+		"%{?VERSION_IUSE_NORMAL}"
+			"{haverequireduse}"
+				"%{FORMAT_BEFORE_REQUIRED_USE}"
+				"%{FORMAT_VERSION_REQUIRED_USE}"
+				"%{FORMAT_AFTER_REQUIRED_USE}"
+			"{}"
+		"%{}"
+	"%{}", P_("FORMAT_REQUIRED_USE_NORMAL",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the normal format for REQUIRED_USE for an available version."));
+
 AddOption(STRING, "FORMAT_DEPS_NORMAL",
 	"%{?DEP}"
 		"%{?VERSION_DEPS_NORMAL}"
@@ -2433,6 +2460,21 @@ AddOption(STRING, "FORMAT_IUSE_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the verbose format for IUSE for an available version."));
 
+AddOption(STRING, "FORMAT_REQUIRED_USE_VERBOSE",
+	"%{?PRINT_IUSE}"
+		"%{?VERSION_IUSE_VERBOSE}"
+			"%{!PRINT_ALWAYS}{haverequireduse}%{}"
+				"%{FORMAT_VER_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})%{I18N_REQUIRED_USE}(%{COLOR_RESET})"
+				"%{?PRINT_ALWAYS}{haverequireduse}%{}"
+				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
+				"%{FORMAT_VERSION_REQUIRED_USE}(%{COLOR_RESET})"
+			"{}"
+		"%{}"
+	"%{}", P_("FORMAT_REQUIRED_USE_VERBOSE",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the verbose format for REQUIRED_USE for an available version."));
+
 AddOption(STRING, "FORMAT_DEPS_VERBOSE",
 	"%{?DEP}"
 		"%{?VERSION_DEPS_VERBOSE}"
@@ -2491,6 +2533,7 @@ AddOption(STRING, "FORMAT_MASKREASONS_VERBOSE",
 AddOption(STRING, "FORMAT_VERSION_APPENDIX_NORMAL",
 	"%{FORMAT_VERSION_KEYWORDS_NORMAL}"
 	"%{FORMAT_IUSE_NORMAL}"
+	"%{FORMAT_REQUIRED_USE_NORMAL}"
 	"%{FORMAT_DEPS_NORMAL}"
 	"%{FORMAT_MASKREASONS_NORMAL}", P_("FORMAT_VERSION_APPENDIX_NORMAL",
 	"This variable is only used for delayed substitution.\n"
@@ -2499,6 +2542,7 @@ AddOption(STRING, "FORMAT_VERSION_APPENDIX_NORMAL",
 AddOption(STRING, "FORMAT_VERSION_APPENDIX_VERBOSE",
 	"%{FORMAT_VERSION_KEYWORDS_VERBOSE}"
 	"%{FORMAT_IUSE_VERBOSE}"
+	"%{FORMAT_REQUIRED_USE_VERBOSE}"
 	"%{FORMAT_DEPS_VERBOSE}"
 	"%{FORMAT_MASKREASONS_VERBOSE}", P_("FORMAT_VERSION_APPENDIX_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
@@ -3335,6 +3379,18 @@ AddOption(STRING, "FORMAT_AFTER_IUSE",
 	"(%{COLOR_NORMAL})](%{COLOR_NORMAL_END})", P_("FORMAT_AFTER_IUSE",
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed after IUSE data for a version is output.\n"
+	"(Normally, this is only used when --versionlines is active)"));
+
+AddOption(STRING, "FORMAT_BEFORE_REQUIRED_USE",
+	"\\t(%{COLOR_NORMAL})[\"(%{COLOR_NORMAL_END})", P_("FORMAT_BEFORE_REQUIRED_USE",
+	"This variable is only used for delayed substitution.\n"
+	"This string is printed before REQUIRED_USE for a version is output.\n"
+	"(Normally, this is only used when --versionlines is active)"));
+
+AddOption(STRING, "FORMAT_AFTER_REQUIRED_USE",
+	"(%{COLOR_NORMAL})\"](%{COLOR_NORMAL_END})", P_("FORMAT_AFTER_REQUIRED_USE",
+	"This variable is only used for delayed substitution.\n"
+	"This string is printed after REQUIRED_USE for a version is output.\n"
 	"(Normally, this is only used when --versionlines is active)"));
 
 AddOption(STRING, "FORMAT_BEFORE_COLL",

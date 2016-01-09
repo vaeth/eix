@@ -24,6 +24,7 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 
 using std::string;
@@ -169,11 +170,11 @@ bool Database::write_string(const string& str, string *errtext) {
 		likely(write_string_plain(str, errtext)));
 }
 
-bool Database::write_hash_words(const StringHash& hash, const vector<string>& words, string *errtext) {
+bool Database::write_hash_words(const StringHash& hash, const WordVec& words, string *errtext) {
 	if(unlikely(!write_num(words.size(), errtext))) {
 		return false;
 	}
-	for(vector<string>::const_iterator i(words.begin()); likely(i != words.end()); ++i) {
+	for(WordVec::const_iterator i(words.begin()); likely(i != words.end()); ++i) {
 		if(unlikely(!write_hash_string(hash, *i, errtext))) {
 			return false;
 		}
@@ -181,13 +182,13 @@ bool Database::write_hash_words(const StringHash& hash, const vector<string>& wo
 	return true;
 }
 
-bool Database::read_hash_words(const StringHash& hash, vector<string> *s, string *errtext) {
-	vector<string>::size_type e;
+bool Database::read_hash_words(const StringHash& hash, WordVec *s, string *errtext) {
+	WordVec::size_type e;
 	if(unlikely(!read_num(&e, errtext))) {
 		return false;
 	}
 	s->resize(e);
-	for(vector<string>::size_type i(0); likely(i != e); ++i) {
+	for(WordVec::size_type i(0); likely(i != e); ++i) {
 		if(unlikely(!read_hash_string(hash, &((*s)[i]), errtext))) {
 			return false;
 		}
@@ -197,7 +198,7 @@ bool Database::read_hash_words(const StringHash& hash, vector<string> *s, string
 
 bool Database::read_hash_words(const StringHash& hash, string *s, string *errtext) {
 	s->clear();
-	vector<string>::size_type e;
+	WordVec::size_type e;
 	if(unlikely(!read_num(&e, errtext))) {
 		return false;
 	}
@@ -210,6 +211,20 @@ bool Database::read_hash_words(const StringHash& hash, string *s, string *errtex
 			s->append(1, ' ');
 		}
 		s->append(r);
+	}
+	return true;
+}
+
+bool Database::read_hash_words(string *errtext) {
+	WordVec::size_type e;
+	if(unlikely(!read_num(&e, errtext))) {
+		return false;
+	}
+	for(; likely(e != 0); --e) {
+		StringHash::size_type dummy;
+		if(unlikely(!read_num(&dummy, errtext))) {
+			return false;
+		}
 	}
 	return true;
 }

@@ -39,7 +39,7 @@ class MetadataCache : public BasicCache {
 		std::string m_catpath;
 		WordVec names;
 
-		typedef void (*x_get_keywords_slot_iuse_restrict_t)(const std::string& filename, std::string *keywords, std::string *slotname, std::string *iuse, std::string *restr, std::string *props, Depend *dep, BasicCache::ErrorCallback error_callback) ATTRIBUTE_NONNULL_;
+		typedef void (*x_get_keywords_slot_iuse_restrict_t)(const std::string& filename, std::string *keywords, std::string *slotname, std::string *iuse, std::string *require_use, std::string *restr, std::string *props, Depend *dep, BasicCache::ErrorCallback error_callback) ATTRIBUTE_NONNULL_;
 		typedef void (*x_read_file_t)(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback) ATTRIBUTE_NONNULL_;
 		x_get_keywords_slot_iuse_restrict_t x_get_keywords_slot_iuse_restrict;
 		x_read_file_t x_read_file;

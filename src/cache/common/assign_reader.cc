@@ -24,6 +24,7 @@
 #include "eixTk/stringtypes.h"
 #include "portage/depend.h"
 #include "portage/package.h"
+#include "portage/version.h"
 
 using std::string;
 
@@ -78,8 +79,9 @@ const char *assign_get_md5sum(const string& filename) {
 /**
 Read stability and other data from an "assign type" cache file
 **/
-void assign_get_keywords_slot_iuse_restrict(const string& filename, string *keywords, string *slotname, string *iuse, string *restr, string *props,
-	Depend *dep, BasicCache::ErrorCallback error_callback) {
+void assign_get_keywords_slot_iuse_restrict(const string& filename, string *keywords,
+	string *slotname, string *iuse, string *required_use, string *restr,
+	string *props, Depend *dep, BasicCache::ErrorCallback error_callback) {
 	WordMap *cf(get_map_from_cache(filename.c_str()));
 	if(unlikely(cf == NULLPTR)) {
 		error_callback(eix::format(_("cannot read cache file %s: %s"))
@@ -91,6 +93,9 @@ void assign_get_keywords_slot_iuse_restrict(const string& filename, string *keyw
 	(*iuse)     = (*cf)["IUSE"];
 	(*restr)    = (*cf)["RESTRICT"];
 	(*props)    = (*cf)["PROPERTIES"];
+	if(Version::use_required_use) {
+		(*required_use) = (*cf)["REQUIRED_USE"];
+	}
 	if(Depend::use_depend) {
 		dep->set((*cf)["DEPEND"], (*cf)["RDEPEND"], (*cf)["PDEPEND"], (*cf)["HDEPEND"], false);
 	}

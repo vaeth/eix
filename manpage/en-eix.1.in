@@ -256,7 +256,7 @@ With B<--256d>/B<--256l> (B<--256d0>/B<--256l0>, B<--256d1>/B<--256l1>) only the
 With B<--256b> only the background palette is printed.
 .TP
 .B --print-all-useflags
-print all IUSE words used in some version.
+print all IUSE or REQUIRED_USE words used in some version.
 .TP
 .B --print-all-keywords
 print all KEYWORDS used in some version.
@@ -1291,7 +1291,7 @@ It returns 1 or empty depending on whether some or the corresponding B<PROPERTIE
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns the respective B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<HDEPEND> string of an available package
 (the string is shortened if possible if the variant with B<*> is used).
-This is empty unless B<DEP=true> is set (now and if the cachefile was created).
+This is empty unless B<DEP=true> is set (and was set when the cachefile was created).
 .TP
 .BR havedepend ", " haverdepend ", " havepdepend ", " havehdepend ", " havedeps
 This is like the above with the difference that only 1 is returned if the
@@ -1317,6 +1317,12 @@ at the appropriate places.
 The B<use0> variant suppresses the output of B<USE_EXPAND> variables.
 B<haveuse> can be used to test whether an output would be nonempty
 (in this case it is 1, otherwise empty).
+.TP
+.BR requireduse ", " haverequireduse
+This must occur only in I<VARIABLE> in the context of version printing.
+For available versions, it outputs the B<REQUIRED_USE> variable, or
+B<1> if that variable is not empty, respectively.
+This is empty unless B<REQUIRED_USE> is set (and was set when the cachefile was created).
 .TP
 .BR "date:I<VAR>"
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -2328,6 +2334,11 @@ The option B<--deps-installed> does the same.
 .BR DEP " " (true / false)
 If true, store/use B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<HDEPEND> (e.g. shown with eix -lv).
 Usage of B<DEP> roughly doubles disk resp. memory requirements.
+
+.TP
+.BR REQUIRED_USE " " (true / false)
+If true, store/use B<REQUIRED_USE> (e.g. shown with eix -l).
+Usage of B<REQUIRED_USE> increases disk and memory requirements.
 
 .TP
 .BR FORMAT ", " FORMAT_COMPACT ", " FORMAT_VERBOSE " " (string)
@@ -3897,10 +3908,10 @@ Some of the last ones are those starting with I18N_.... you are looking for.
 The variables starting with I18N_COLUMN_.... are special and can be used to
 adopt the columns to a new layout which might be necessary due to different
 lengths of the translations. (Note that the column counting will be garbled
-if you do not use UTF8 encoding for your language.)
+if you do not use UTF8 encoding for your language).
 You can see the default values of that variables in the corresponding
 variables C_COLUMN_.... which appear nearby (but which should not be modified
-for the purpose of translation.)
+for the purpose of translation).
 Normally, it should be sufficient to redefine B<I18N_COLUMN_CONTENT> and
 B<I18N_INST_COLUMN_CONTENT> to appropriate numbers.
 To make sure that all columns are correct, you should finally consider the

@@ -24,6 +24,7 @@
 #include "eixTk/likely.h"
 #include "portage/depend.h"
 #include "portage/package.h"
+#include "portage/version.h"
 
 using std::string;
 
@@ -46,7 +47,7 @@ static bool skip_lines(const eix::TinyUnsigned nr, ifstream *is, const string& f
 /**
 Read the keywords and slot from a flat cache file
 **/
-void flat_get_keywords_slot_iuse_restrict(const string& filename, string *keywords, string *slotname, string *iuse, string *restr, string *props, Depend *dep, BasicCache::ErrorCallback error_callback) {
+void flat_get_keywords_slot_iuse_restrict(const string& filename, string *keywords, string *slotname, string *iuse, string *required_use, string *restr, string *props, Depend *dep, BasicCache::ErrorCallback error_callback) {
 	ifstream is(filename.c_str());
 	if(!is.is_open()) {
 		error_callback(eix::format(_("cannot open %s: %s"))
@@ -67,12 +68,18 @@ void flat_get_keywords_slot_iuse_restrict(const string& filename, string *keywor
 	getline(is, *keywords);
 	skip_lines(1, &is, filename, error_callback);
 	getline(is, *iuse);
+	bool use_required_use(Version::use_required_use);
+	if(use_required_use) {
+		getline(is, *required_use);
+	}
 	if(use_dep) {
-		skip_lines(1, &is, filename, error_callback);
+		if(!use_required_use) {
+			skip_lines(1, &is, filename, error_callback);
+		}
 		getline(is, pdepend);
 		skip_lines(2, &is, filename, error_callback);
 	} else {
-		skip_lines(4, &is, filename, error_callback);
+		skip_lines((use_required_use ? 3 : 4), &is, filename, error_callback);
 	}
 	getline(is, *props);
 	if(use_dep) {

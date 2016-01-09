@@ -129,6 +129,7 @@ class Database : public File {
 
 		bool read_hash_words(const StringHash& hash, WordVec *s, std::string *errtext) ATTRIBUTE_NONNULL((3));
 		bool read_hash_words(const StringHash& hash, std::string *s, std::string *errtext) ATTRIBUTE_NONNULL((3));
+		bool read_hash_words(std::string *errtext);
 
 		bool read_iuse(const StringHash& hash, IUseSet *iuse, std::string *errtext) ATTRIBUTE_NONNULL((3));
 

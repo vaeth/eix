@@ -125,7 +125,17 @@ bool Database::read_version(Version *v, const DBHeader& hdr, string *errtext) {
 	if(unlikely(!read_iuse(hdr.iuse_hash, &(v->iuse), errtext))) {
 		return false;
 	}
-
+	if(hdr.use_required_use) {
+		if(Version::use_required_use) {
+			if(unlikely(!read_hash_words(hdr.iuse_hash, &(v->required_use), errtext))) {
+				return false;
+			}
+		} else if(unlikely(!read_hash_words(errtext))) {
+			return false;
+		}
+	} else {
+		v->required_use.clear();
+	}
 	if(hdr.use_depend) {
 		if(unlikely(!read_depend(&(v->depend), hdr, errtext))) {
 			return false;
@@ -186,6 +196,11 @@ bool Database::write_version(const Version *v, const DBHeader& hdr, string *errt
 	}
 	if(unlikely(!write_hash_words(hdr.iuse_hash, v->iuse.asVector(), errtext))) {
 		return false;
+	}
+	if(hdr.use_required_use) {
+		if(unlikely(!write_hash_words(hdr.iuse_hash, v->required_use, errtext))) {
+			return false;
+		}
 	}
 	if(hdr.use_depend) {
 		WRITE_COUNTER(write_depend(v->depend, hdr, NULLPTR));
@@ -300,6 +315,8 @@ void Database::prep_header_hashs(DBHeader *hdr, const PackageTree& tree) {
 	if(use_dep) {
 		hdr->depend_hash.init(true);
 	}
+	bool use_required_use(Version::use_required_use);
+	hdr->use_required_use = use_required_use;
 	for(PackageTree::const_iterator c(tree.begin()); likely(c != tree.end()); ++c) {
 		Category *ci(c->second);
 		for(Category::iterator p(ci->begin()); likely(p != ci->end()); ++p) {
@@ -307,6 +324,9 @@ void Database::prep_header_hashs(DBHeader *hdr, const PackageTree& tree) {
 			for(Package::iterator v(p->begin()); likely(v != p->end()); ++v) {
 				hdr->keywords_hash.hash_words(v->get_full_keywords());
 				hdr->iuse_hash.hash_words(v->iuse.asVector());
+				if(use_required_use) {
+					hdr->iuse_hash.hash_words(v->required_use);
+				}
 				hdr->slot_hash.hash_string(v->get_shortfullslot());
 				if(use_dep) {
 					const Depend& dep(v->depend);
@@ -373,15 +393,21 @@ bool Database::write_header(const DBHeader& hdr, string *errtext) {
 		}
 	}
 
+	DBHeader::SaveBitmask save_bitmask(DBHeader::SAVE_BITMASK_NONE);
 	if(hdr.use_depend) {
-		if(unlikely(!write_num(1, errtext))) {
-			return false;
-		}
-		WRITE_COUNTER(write_hash(hdr.depend_hash, NULLPTR));
-		return write_hash(hdr.depend_hash, errtext);
-	} else {
-		return write_num(0, errtext);
+		save_bitmask |= DBHeader::SAVE_BITMASK_DEP;
 	}
+	if(hdr.use_required_use) {
+		save_bitmask |= DBHeader::SAVE_BITMASK_REQUIRED_USE;
+	}
+	if(unlikely(!write_num(save_bitmask, errtext))) {
+		return false;
+	}
+	if(!hdr.use_depend) {
+		return true;
+	}
+	WRITE_COUNTER(write_hash(hdr.depend_hash, NULLPTR));
+	return write_hash(hdr.depend_hash, errtext);
 }
 
 bool Database::write_packagetree(const PackageTree& tree, const DBHeader& hdr, string *errtext) {

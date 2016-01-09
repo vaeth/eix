@@ -108,6 +108,7 @@ class TrueIndex : public TrueIndexMapper {
 			DESCRIPTION,
 			KEYWORDS,
 			IUSE,
+			REQUIRED_USE,
 			PROPERTIES,
 			DEPEND,
 			RDEPEND,
@@ -125,19 +126,28 @@ class TrueIndex : public TrueIndexMapper {
 
 	public:
 		TrueIndex() : default_trueindex(LAST, -1) {
-			mapinit( 1, NAME,        "portage_package_key");
-			mapinit( 3, DEPEND,      "DEPEND");
-			mapinit( 4, DESCRIPTION, "DESCRIPTION");
-			mapinit( 6, HDEPEND,     "HDEPEND");
-			mapinit( 7, HOMEPAGE,    "HOMEPAGE");
-			mapinit( 9, IUSE,        "IUSE");
-			mapinit(10, KEYWORDS,    "KEYWORDS");
-			mapinit(11, LICENSE,     "LICENSE");
-			mapinit(12, PDEPEND,     "PDEPEND");
-			mapinit(13, PROPERTIES,  "PROPERTIES");
-			mapinit(15, RDEPEND,     "RDEPEND");
-			mapinit(17, RESTRICT,    "RESTRICT");
-			mapinit(18, SLOT,        "SLOT");
+			//  0 "internal_db_package_id"
+			mapinit( 1, NAME,         "portage_package_key");
+			//  2 "DEFINED_PHASES"
+			mapinit( 3, DEPEND,       "DEPEND");
+			mapinit( 4, DESCRIPTION,  "DESCRIPTION");
+			//  5 "EAPI"
+			mapinit( 6, HDEPEND,      "HDEPEND");
+			mapinit( 7, HOMEPAGE,     "HOMEPAGE");
+			//  8 "INHERITED"
+			mapinit( 9, IUSE,         "IUSE");
+			mapinit(10, KEYWORDS,     "KEYWORDS");
+			mapinit(11, LICENSE,      "LICENSE");
+			mapinit(12, PDEPEND,      "PDEPEND");
+			mapinit(13, PROPERTIES,   "PROPERTIES");
+			// 14 "PROVIDE"
+			mapinit(15, RDEPEND,      "RDEPEND");
+			mapinit(16, REQUIRED_USE, "REQUIRED_USE");
+			mapinit(17, RESTRICT,     "RESTRICT");
+			mapinit(18, SLOT,         "SLOT");
+			// 19 "SRC_URI"
+			// 20 "_eclasses_"
+			// 21 "_mtime_"
 		}
 
 		int calc(int argc, const char **azColName, SqliteCache::TrueIndexMap *trueindex) const ATTRIBUTE_NONNULL_ {
@@ -255,6 +265,7 @@ void SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **
 		version->set_properties(TrueIndex::c_str(argv, &trueindex, TrueIndex::PROPERTIES));
 		version->set_full_keywords(TrueIndex::c_str(argv, &trueindex, TrueIndex::KEYWORDS));
 		version->set_iuse(TrueIndex::c_str(argv, &trueindex, TrueIndex::IUSE));
+		version->set_required_use(TrueIndex::c_str(argv, &trueindex, TrueIndex::REQUIRED_USE));
 		version->depend.set(TrueIndex::c_str(argv, &trueindex, TrueIndex::DEPEND),
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::RDEPEND),
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::PDEPEND),
@@ -287,7 +298,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Cate
 	sqlitefile.resize(pos + 1);
 	sqlitefile.append(".sqlite");
 
-	sqlite3 *db;
+	sqlite3 *db(NULLPTR);
 	int rc(sqlite3_open(sqlitefile.c_str(), &db));
 	if(rc) {
 		sqlite3_close(db);

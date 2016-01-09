@@ -34,6 +34,11 @@ AddOption(STRING, "I18N_IUSEALLVERSIONS", P_("I18N_IUSEALLVERSIONS",
 	"This variable is only used for delayed substitution.\n"
 	"It translates \"IUSE \\(all versions\\):\""));
 
+AddOption(STRING, "I18N_REQUIRED_USE", P_("I18N_REQUIRED_USE",
+	"REQUIRED_USE:"), P_("I18N_IUSE",
+	"This variable is only used for delayed substitution.\n"
+	"It translates \"REQUIRED_USE:\""));
+
 AddOption(STRING, "I18N_USE", P_("I18N_USE",
 	"USE:"), P_("I18N_USE",
 	"This variable is only used for delayed substitution.\n"
@@ -186,7 +191,7 @@ AddOption(STRING, "I18N_COLUMN_INST_CONTENT", P_("I18N_COLUMN_INST_CONTENT",
 	"in the current locale."));
 
 AddOption(STRING, "C_COLUMN_AVAILABLE_TITLE",
-	"15", P_("C_COLUMN_AVAILABLE_TITLE",
+	"12", P_("C_COLUMN_AVAILABLE_TITLE",
 	"This variable is only possibly used for delayed substitution in\n"
 	"I18N_COLUMN_AVAILABLE_TITLE. It defines the first column for the title of\n"
 	"available versions in the C locale."));
