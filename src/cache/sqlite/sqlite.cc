@@ -299,8 +299,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Cate
 	sqlitefile.append(".sqlite");
 
 	sqlite3 *db(NULLPTR);
-	int rc(sqlite3_open(sqlitefile.c_str(), &db));
-	if(rc) {
+	if(sqlite3_open(sqlitefile.c_str(), &db) != SQLITE_OK) {
 		sqlite3_close(db);
 		m_error_callback(eix::format(_("cannot open cache file %s")) % sqlitefile);
 		return false;
@@ -311,7 +310,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Cate
 	packagetree = pkgtree;
 	category = cat;
 	cat_name = catname;
-	rc = sqlite3_exec(db, "select * from portage_packages", sqlite_callback, NULLPTR, &errormessage);
+	int rc(sqlite3_exec(db, "select * from portage_packages", sqlite_callback, NULLPTR, &errormessage));
 	sqlite3_close(db);
 	trueindex.clear();
 	if(rc != SQLITE_OK) {
