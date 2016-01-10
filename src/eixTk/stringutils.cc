@@ -208,7 +208,7 @@ const char *ExplodeAtom::get_start_of_version(const char *str, bool allow_star) 
 	if(unlikely(*(str++) == '\0'))
 		return NULLPTR;
 	const char *x(NULLPTR);
-	while(likely((*str != '\0') && (*str != ':'))) {
+	while(likely((*str != '\0') && (*str != ':') && (*str != '['))) {
 		if(unlikely(*str++ == '-')) {
 			if(my_isdigit(*str) ||
 				unlikely(allow_star && ((*str) == '*'))) {
