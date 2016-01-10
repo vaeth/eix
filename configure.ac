@@ -1254,7 +1254,7 @@ AC_DEFINE_UNQUOTED([DEP_DEFAULT],
 AC_SUBST([DEP_DEFAULT])
 
 AC_MSG_CHECKING([REQUIRED_USE default])
-AC_ARG_WITH([dep-default],
+AC_ARG_WITH([required-use-default],
 	[AS_HELP_STRING([--with-required-use-default],
 		[default to REQUIRED_USE_DEFAULT=true])],
 	[AS_CASE(["$withval"],
