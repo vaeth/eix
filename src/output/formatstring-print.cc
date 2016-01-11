@@ -440,6 +440,7 @@ class Scanner {
 			prop_ver("isslot", &PrintFormat::VER_ISSLOT);
 			prop_ver("subslot", &PrintFormat::VER_SUBSLOT);
 			prop_ver("issubslot", &PrintFormat::VER_ISSUBSLOT);
+			prop_ver("eapi", &PrintFormat::VER_EAPI);
 			prop_ver("version", &PrintFormat::VER_VERSION);
 			prop_ver("plainversion", &PrintFormat::VER_PLAINVERSION);
 			prop_ver("revision", &PrintFormat::VER_REVISION);
@@ -1057,6 +1058,17 @@ void PrintFormat::VER_SUBSLOT(OutputString *s, Package *package) const {
 void PrintFormat::VER_ISSUBSLOT(OutputString *s, Package *package) const {
 	if(!(ver_versionslot(package)->subslotname.empty())) {
 		s->set_one();
+	}
+}
+
+void PrintFormat::VER_EAPI(OutputString *s, Package *package ATTRIBUTE_UNUSED) const {
+	UNUSED(package);
+	if(version_variables->isinst) {
+		InstVersion *i(version_variables->instver());
+		vardb->readEapi(*package, i);
+		s->assign_smart(i->eapi.get());
+	} else {
+		s->assign_smart(version_variables->version()->eapi.get());
 	}
 }
 

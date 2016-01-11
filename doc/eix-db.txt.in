@@ -161,6 +161,7 @@ Magic  The first four bytes are 0x65 0x69 0x78 0x0A ("eix" + newline)
 Number File format version
 Number Number of Category_ blocks
 Vector Overlay_\s
+Hash   Hash for "EAPI"
 Hash   Hash for "Licenses"
 Hash   Hash for "Keywords"
 Hash   Hash for "Useflags" and "REQUIRED_USE"
@@ -218,6 +219,7 @@ Version
 ============ ========================================================
 Type         Content
 ============ ========================================================
+HashedString EAPI
 char         Mask bitset for the current $ARCH:
 
                :0x00: none of the following

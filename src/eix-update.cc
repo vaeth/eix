@@ -294,6 +294,7 @@ static bool stringstart_in_wordlist(const string& to_check, const WordVec& wordl
 
 int run_eix_update(int argc, char *argv[]) {
 	// Initialize static classes
+	Eapi::init_static();
 	ExtendedVersion::init_static();
 	PortageSettings::init_static();
 	exclude_args = new ExcludeArgs;

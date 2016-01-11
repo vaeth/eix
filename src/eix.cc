@@ -107,6 +107,7 @@ static void dump_help() {
 "     --dump-defaults       dump default values of variables\n"
 "     --print               print the expanded value of a variable\n"
 "     --known-vars          print all variable names known to --print\n"
+"     --print-all-eapis     print all EAPI used in some version\n"
 "     --print-all-useflags  print all IUSE/REQUIRED_USE used in some version\n"
 "     --print-all-keywords  print all KEYWORDS used in some version\n"
 "     --print-all-slots     print all SLOT strings used in some version\n"
@@ -227,6 +228,8 @@ static void dump_help() {
 "    --pdepend               pdepend (needs DEP=true)\n"
 "    --hdepend               hdepend (needs DEP=true)\n"
 "    --set                   local package set name\n"
+"    --eapi                  EAPI\n"
+"    --installed-eapi        EAPI of installed version\n"
 "    --slot                  slot\n"
 "    --fullslot              slot with subslot\n"
 "    --installed-slot        slot of installed version\n"
@@ -307,6 +310,7 @@ static struct LocalOptions {
 		is_current,
 		remote,
 		remote2,
+		hash_eapi,
 		hash_iuse,
 		hash_keywords,
 		hash_slot,
@@ -361,6 +365,7 @@ EixOptionList::EixOptionList() {
 	push_back(Option("test-non-matching", 't', Option::BOOLEAN_T,     &rc_options.test_unused));
 	push_back(Option("debug",         O_DEBUG, Option::BOOLEAN_T,     &rc_options.do_debug));
 
+	push_back(Option("print-all-eapis",     O_HASH_EAPI,     Option::BOOLEAN_T, &rc_options.hash_eapi));
 	push_back(Option("print-all-useflags",  O_HASH_IUSE,     Option::BOOLEAN_T, &rc_options.hash_iuse));
 	push_back(Option("print-all-keywords",  O_HASH_KEYWORDS, Option::BOOLEAN_T, &rc_options.hash_keywords));
 	push_back(Option("print-all-slots",     O_HASH_SLOT,     Option::BOOLEAN_T, &rc_options.hash_slot));
@@ -454,6 +459,8 @@ EixOptionList::EixOptionList() {
 	// What to match in this criterion
 	push_back(Option("any",           'y'));
 	push_back(Option("name",          's'));
+	push_back(Option("eapi",          O_SEARCH_EAPI));
+	push_back(Option("installed-eapi", O_SEARCH_INST_EAPI));
 	push_back(Option("slot",          O_SEARCH_SLOT));
 	push_back(Option("fullslot",      O_SEARCH_FULLSLOT));
 	push_back(Option("installed-slot", O_SEARCH_INST_SLOT));
@@ -594,6 +601,7 @@ static void set_format(EixRc *rc) {
 
 int run_eix(int argc, char** argv) {
 	// Initialize static classes
+	Eapi::init_static();
 	ExtendedVersion::init_static();
 	PackageTest::init_static();
 	PortageSettings::init_static();
@@ -771,6 +779,10 @@ int run_eix(int argc, char** argv) {
 		return EXIT_FAILURE;
 	}
 
+	if(unlikely(rc_options.hash_eapi)) {
+		header.eapi_hash.output();
+		return EXIT_SUCCESS;
+	}
 	if(unlikely(rc_options.hash_iuse)) {
 		header.iuse_hash.output();
 		return EXIT_SUCCESS;

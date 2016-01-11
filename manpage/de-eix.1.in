@@ -266,6 +266,9 @@ Mit B<--256d>/B<--256l> (B<--256d0>/B<--256l0>, B<--256d1>/B<--256l1>) werden nu
 (bzw. nur die normale oder fette Vordergrund-Farbpalette mit dunklem/hellen Hintergrund).
 Mit B<--256b> wird nur die Hintergrundfarbpalette ausgegeben.
 .TP
+.B --print-all-eapis
+Gibt alle IUSE- oder EAPIs aus, die in irgendeiner Version benutzt werden.
+.TP
 .B --print-all-useflags
 Gibt alle IUSE- oder REQUIRED_USE-Worte aus, die in irgendeiner Version benutzt werden.
 .TP
@@ -833,6 +836,12 @@ oder eines anderen Verzeichnisses ausB<EIX_LOCAL_SETS_ADD>; siehe die Kommentare
 Die "profile", "system" und "world" sets sind hier bewusst ausgenommen, da diese mit
 B<--profile[+-]>, B<--system[+-]>, B<--world>, B<--world-all> oder B<--world-sets> getestet werden sollten.
 .TP
+.B --eapi
+EAPI of a version in the database, e.g. "6"
+.TP
+.B --installed-eapi
+EAPI of an installed version
+.TP
 .B --slot
 Slotname einer Version in der Datenbank, z.B. "kde-4"
 .TP
@@ -1252,6 +1261,10 @@ Um die Wiederbenutzung von Code zu erleichtern gilt:
 Wenn die Durckausgabe nicht Slot-sortiert ist, dann sind
 B<slotfirst>/B<slotlast> äquivalent zu B<first>/B<last>, und B<oneslot> ist 1.
 .TP
+.BR eapi
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Sie gibt die B<EAPI> einer verfügbaren oder installierten Version aus.
+.TP
 .BR slot ", " isslot ", " fullslot ", " isfullslot ", " subslot ", " issubslot ", "overlayver ", " overlaynum ", "  virtual
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 Es wird der aktuelle Slot bzw. der Overlay der aktuellen Version ausgegeben.
@@ -1268,7 +1281,7 @@ Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden
 Die vollen Keywords der aktuellen Version werden ausgegeben.
 Falls die Daten durch das Profile modifiziert wurden, werden die
 modifizierten Daten mit B<versionkeywords*> ausgegeben.
-Die spezielle Form B<versionekeywords> gibt Letzteres aus falls es sich von
+Die spezielle Form B<versionekeywords> gibt letzteres aus, falls es sich von
 B<versionkeywords> unterscheidet; andernfalls ist es leer.
 .TP
 .BR isbestupgrade ", " isbestupgrade* ", " isbestupgradeslot ", " isbestupgradeslot*
@@ -3130,7 +3143,7 @@ Für die Angaben von I<regulärer_Ausdruck> kann die verspätete Ersetzung vom T
 praktisch sein, da man sich so das händische Escapen spart.
 
 Die möglichen Werte für I<Operandenfeld> sind: B<name>, B<category>, B<category/name>
-(oder B<category-name>), B<description>, B<license>, B<homepage>, B<set>,
+(oder B<category-name>), B<description>, B<license>, B<homepage>, B<set>, B<eapi>, B<installed-eapi>,
 B<slot>, B<installed-slot>, B<use> (oder B<iuse>), B<with-use> (oder B<installed-with-use>),
 B<without-use> (oder B<installed-without-use>),
 B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<hdepend>.

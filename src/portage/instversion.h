@@ -40,6 +40,10 @@ class InstVersion : public ExtendedVersion, public Keywords {
 		and for deps
 		**/
 		bool know_deps;
+		/**
+		and for eapi
+		**/
+		bool know_eapi;
 
 		time_t instDate;    ///< Installation date according to vardbpkg
 		WordVec inst_iuse;  ///< Useflags in iuse according to vardbpkg

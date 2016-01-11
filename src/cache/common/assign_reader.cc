@@ -79,7 +79,7 @@ const char *assign_get_md5sum(const string& filename) {
 /**
 Read stability and other data from an "assign type" cache file
 **/
-void assign_get_keywords_slot_iuse_restrict(const string& filename, string *keywords,
+void assign_get_keywords_slot_iuse_restrict(const string& filename, string *eapi, string *keywords,
 	string *slotname, string *iuse, string *required_use, string *restr,
 	string *props, Depend *dep, BasicCache::ErrorCallback error_callback) {
 	WordMap *cf(get_map_from_cache(filename.c_str()));
@@ -88,6 +88,7 @@ void assign_get_keywords_slot_iuse_restrict(const string& filename, string *keyw
 			% filename % strerror(errno));
 		return;
 	}
+	(*eapi)     = (*cf)["EAPI"];
 	(*keywords) = (*cf)["KEYWORDS"];
 	(*slotname) = (*cf)["SLOT"];
 	(*iuse)     = (*cf)["IUSE"];

@@ -140,6 +140,8 @@ case $service in
 '*--pdepend[match PDEPEND]'
 '*--hdepend[match HDEPEND]'
 '*--set[match setname]'
+'*--eapi[match EAPI]'
+'*--installed-eapi[match installed EAPI]'
 '*--slot[match slotname]'
 '*--installed-slot[match installed slotname]'
 '*--installed-with-use[match installed enabled USE]'
@@ -191,6 +193,11 @@ case $service in
 				field='deps';;
 			(--set)
 				field='set';;
+			(--eapi)
+				field='eapi';;
+			(--installed-eapi)
+				installed='installed'
+				field='eapi';;
 			(--slot)
 				field='slot';;
 			(--installed-slot)
@@ -316,10 +323,16 @@ case $state in
 			_description licenses expl 'license'
 			compadd "${expl[@]}" - ${$(_call_program licenses 'eix --print-all-licenses 2>/dev/null')//([\(\)\|]|[![:space:]]#\?)/}
 		};;
+	(eapi)
+		_tags slots
+		_tags && {
+			_description slots expl 'eapi'
+			compadd "${expl[@]}" - $(_call_program slots 'eix --print-all-eapis 2>/dev/null')
+		};;
 	(slot)
 		_tags slots
 		_tags && {
-			_description slots expl 'slots'
+			_description slots expl 'slot'
 			compadd "${expl[@]}" - $(_call_program slots 'eix --print-all-slots 2>/dev/null')
 		};;
 	(homepage)

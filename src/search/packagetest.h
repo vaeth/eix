@@ -55,17 +55,19 @@ class PackageTest {
 			IUSE          = 0x00040U,  ///< Search in iuse
 			USE_ENABLED   = 0x00080U,  ///< Search in enabled  useflags of installed packages
 			USE_DISABLED  = 0x00100U,  ///< Search in disabled useflags of installed packages
-			SLOT          = 0x00200U,  ///< Search in slots
-			FULLSLOT      = 0x00400U,  ///< Search in full slots
-			INST_SLOT     = 0x00800U,  ///< Search in installed slots
-			INST_FULLSLOT = 0x01000U,  ///< Search in installed full slots
-			SET           = 0x02000U,  ///< Search in sets
-			DEPEND        = 0x04000U,  ///< Search in DEPEND
-			RDEPEND       = 0x08000U,  ///< Search in RDEPEND
-			PDEPEND       = 0x10000U,  ///< Search in PDEPEND
-			HDEPEND       = 0x20000U,  ///< Search in HDEPEND
+			EAPI          = 0x00200U,  ///< Search in EAPI
+			INST_EAPI     = 0x00400U,  ///< Search in installed EAPI
+			SLOT          = 0x00800U,  ///< Search in slots
+			FULLSLOT      = 0x01000U,  ///< Search in full slots
+			INST_SLOT     = 0x02000U,  ///< Search in installed slots
+			INST_FULLSLOT = 0x04000U,  ///< Search in installed full slots
+			SET           = 0x08000U,  ///< Search in sets
+			DEPEND        = 0x10000U,  ///< Search in DEPEND
+			RDEPEND       = 0x20000U,  ///< Search in RDEPEND
+			PDEPEND       = 0x40000U,  ///< Search in PDEPEND
+			HDEPEND       = 0x80000U,  ///< Search in HDEPEND
 			DEPS          = (DEPEND|RDEPEND|PDEPEND|HDEPEND),
-			ANY           = (NAME|DESCRIPTION|LICENSE|CATEGORY|CATEGORY_NAME|HOMEPAGE|IUSE|USE_ENABLED|USE_DISABLED|SLOT|FULLSLOT|INST_SLOT|INST_FULLSLOT|SET|DEPS);
+			ANY           = (NAME|DESCRIPTION|LICENSE|CATEGORY|CATEGORY_NAME|HOMEPAGE|IUSE|USE_ENABLED|USE_DISABLED|EAPI|INST_EAPI|SLOT|FULLSLOT|INST_SLOT|INST_FULLSLOT|SET|DEPS);
 
 		enum MatchAlgorithm {
 			ALGO_REGEX,

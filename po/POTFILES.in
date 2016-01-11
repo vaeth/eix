@@ -132,6 +132,8 @@ src/portage/conf/portagesettings.cc
 src/portage/conf/portagesettings.h
 src/portage/depend.cc
 src/portage/depend.h
+src/portage/eapi.cc
+src/portage/eapi.h
 src/portage/extendedversion.cc
 src/portage/extendedversion.h
 src/portage/extendedversion_bin.cc

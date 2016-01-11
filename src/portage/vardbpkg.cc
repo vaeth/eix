@@ -188,12 +188,15 @@ string VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
 }
 
 bool VarDbPkg::readSlot(const Package& p, InstVersion *v) const {
-	if(v->know_slot)
+	if(v->know_slot) {
 		return true;
-	if(!get_slots)
+	}
+	if(!get_slots) {
 		return false;
-	if(v->read_failed)
+	}
+	if(v->read_failed) {
 		return false;
+	}
 	LineVec lines;
 	if(unlikely(!pushback_lines(
 		(m_directory + p.category + "/" + p.name + "-" + v->getFull() + "/SLOT").c_str(),
@@ -208,9 +211,29 @@ bool VarDbPkg::readSlot(const Package& p, InstVersion *v) const {
 	return (v->know_slot = true);
 }
 
+void VarDbPkg::readEapi(const Package& p, InstVersion *v) const {
+	if(v->know_eapi) {
+		return;
+	}
+	v->know_eapi = true;
+	LineVec lines;
+	if(unlikely(!pushback_lines(
+		(m_directory + p.category + "/" + p.name + "-" + v->getFull() + "/EAPI").c_str(),
+		&lines, false, false, 1))) {
+		v->eapi.assign("0");
+		return;
+	}
+	if(unlikely((lines.empty()) || (lines[0] == ""))) {
+		v->eapi.assign("0");
+	} else {
+		v->eapi.assign(lines[0]);
+	}
+}
+
 bool VarDbPkg::readUse(const Package& p, InstVersion *v) const {
-	if(likely(v->know_use))
+	if(likely(v->know_use)) {
 		return true;
+	}
 	v->know_use = true;
 	v->inst_iuse.clear();
 	v->usedUse.clear();

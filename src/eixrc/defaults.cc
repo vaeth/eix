@@ -617,6 +617,11 @@ AddOption(BOOLEAN, "VERSION_KEYWORDS_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
 	"If true, eix --versionlines --verbose outputs KEYWORDS."));
 
+AddOption(BOOLEAN, "PRINT_EAPI",
+	"true", P_("PRINT_EAPI",
+	"This variable is only used for delayed substitution.\n"
+	"If false, EAPI is never output."));
+
 AddOption(BOOLEAN, "PRINT_MASKREASONS",
 	"true", P_("PRINT_MASKREASONS",
 	"This variable is only used for delayed substitution.\n"
@@ -853,6 +858,11 @@ AddOption(STRING, "MATCH_FIELD_DEPS",
 	"This variable is only used for delayed substitution.\n"
 	"It is a regular expression used in DEFAULT_MATCH_FIELD for deps."));
 
+AddOption(STRING, "MATCH_FIELD_EAPI",
+	"^[0-9]+$", P_("MATCH_FIELD_EAPI",
+	"This variable is only used for delayed substitution.\n"
+	"It is a regular expression used in DEFAULT_MATCH_FIELD for eapi."));
+
 AddOption(STRING, "DEFAULT_MATCH_FIELD",
 	"%{\\MATCH_FIELD_DESCRIPTION} description "
 	"%{\\MATCH_FIELD_SET} set "
@@ -860,6 +870,7 @@ AddOption(STRING, "DEFAULT_MATCH_FIELD",
 	"%{\\MATCH_FIELD_CATEGORY_NAME} category/name "
 	"%{\\MATCH_FIELD_LICENSE} license "
 	"%{\\MATCH_FIELD_DEPS} deps "
+	"%{\\MATCH_FIELD_EAPI} eapi "
 	"name", P_("DEFAULT_MATCH_FIELD",
 	"This is a list of strings of the form regexp[ ]match_field.\n"
 	"If regexp matches the search pattern, use match_field as the default.\n"
@@ -884,7 +895,7 @@ AddOption(STRING, "MATCH_ALGORITHM_SUBSTRING",
 	"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for substring."));
 
 AddOption(STRING, "MATCH_ALGORITHM_EXACT",
-	"^[@]", P_("MATCH_ALGORITHM_EXACT",
+	"^[@]|^[0-9]+$", P_("MATCH_ALGORITHM_EXACT",
 	"This variable is only used for delayed substitution.\n"
 	"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for exact."));
 
@@ -1317,6 +1328,11 @@ AddOption(STRING, "COLOR_DATE",
 	"purple,1;%{BG0S}|166;%{BG1}|purple,1;%{BG2}|130,1;%{BG3}", P_("COLOR_DATE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the date."));
+
+AddOption(STRING, "COLOR_EAPI",
+	"green,1;%{BG0S}|80;%{BG1}|green;%{BG2}|80;%{BG3}", P_("COLOR_EAPI",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color of the EAPI output."));
 
 AddOption(STRING, "COLOR_DEPEND",
 	"none|248;%{BG1}|none|241,1;%{BG3}", P_("COLOR_DEPEND",
@@ -1854,6 +1870,11 @@ AddOption(STRING, "DATESORT",
 	"This variable is used as a version formatter.\n"
 	"It is an example for usage as <installedversions:DATESORT>. Typical usage:\n"
 	"eix -'*I' --format '<installedversions:DATESORT>' | sort | cut -f2-3"));
+
+AddOption(STRING, "FORMAT_EAPI",
+	"(%{COLOR_EAPI})<eapi>(%{COLOR_RESET})", P_("FORMAT_EAPI",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the EAPI output."));
 
 AddOption(STRING, "FORMAT_DEPEND",
 	"(%{COLOR_DEPEND})<depend*>(%{COLOR_DEPEND_END})", P_("FORMAT_DEPEND",
@@ -2511,6 +2532,16 @@ AddOption(STRING, "FORMAT_DEPS_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the verbose format for DEPs for an available version."));
 
+AddOption(STRING, "FORMAT_EAPI_VERBOSE",
+	"%{?PRINT_EAPI}"
+		"%{FORMAT_VER_LINESKIP}"
+		"(%{COLOR_AVAILABLE_TITLE})%{I18N_EAPI}(%{COLOR_RESET})"
+		"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
+		"%{FORMAT_EAPI}"
+	"%{}", P_("FORMAT_EAPI_VERBOSE",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the verbose format for the EAPI of an available version."));
+
 AddOption(STRING, "FORMAT_MASKREASONS_VERBOSE",
 	"%{?PRINT_MASKREASONS}"
 		"%{?MASKREASONS_VERBOSE}"
@@ -2544,6 +2575,7 @@ AddOption(STRING, "FORMAT_VERSION_APPENDIX_VERBOSE",
 	"%{FORMAT_IUSE_VERBOSE}"
 	"%{FORMAT_REQUIRED_USE_VERBOSE}"
 	"%{FORMAT_DEPS_VERBOSE}"
+	"%{FORMAT_EAPI_VERBOSE}"
 	"%{FORMAT_MASKREASONS_VERBOSE}", P_("FORMAT_VERSION_APPENDIX_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines verbose data appended to available versions with --versionlines"));
@@ -2724,6 +2756,12 @@ AddOption(STRING, "IVERBOSE",
 			"\\C<%{I18N_COLUMN_INST_CONTENT}>"
 			"%{FORMAT_HDEPEND_VERBOSE}"
 		"{}"
+	"%{}"
+	"%{?PRINT_EAPI}"
+		"%{FORMAT_INST_LINESKIP}"
+		"(%{COLOR_INST_TITLE})%{I18N_EAPI}(%{COLOR_RESET})"
+		"\\C<%{I18N_COLUMN_INST_CONTENT}>"
+		"%{FORMAT_EAPI}"
 	"%{}"
 	"{!last}%{FORMAT_INST_LINESKIP}{}", P_("IVERBOSE",
 	"This variable is used as a version formatter.\n"

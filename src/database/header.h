@@ -36,6 +36,7 @@ class DBHeader {
 
 	public:
 		StringHash
+			eapi_hash,
 			license_hash,
 			keywords_hash,
 			iuse_hash,
@@ -70,7 +71,7 @@ class DBHeader {
 		/**
 		Current version of database-format and what we accept
 		**/
-		static CONSTEXPR DBVersion current = 35;
+		static CONSTEXPR DBVersion current = 36;
 		static const DBVersion accept[];
 
 		/**

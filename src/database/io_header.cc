@@ -76,6 +76,11 @@ GCC_DIAG_ON(sign-conversion)
 		hdr->addOverlay(OverlayIdent(path.c_str(), ov.c_str()));
 	}
 
+	if(likely(hdr->version >= 36)) {
+		if(unlikely(!read_hash(&(hdr->eapi_hash), errtext))) {
+			return false;
+		}
+	}
 	if(unlikely(!read_hash(&(hdr->license_hash), errtext))) {
 		return false;
 	}

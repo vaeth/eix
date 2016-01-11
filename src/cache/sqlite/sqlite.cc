@@ -106,6 +106,7 @@ class TrueIndex : public TrueIndexMapper {
 			HOMEPAGE,
 			LICENSE,
 			DESCRIPTION,
+			EAPI,
 			KEYWORDS,
 			IUSE,
 			REQUIRED_USE,
@@ -131,7 +132,7 @@ class TrueIndex : public TrueIndexMapper {
 			//  2 "DEFINED_PHASES"
 			mapinit( 3, DEPEND,       "DEPEND");
 			mapinit( 4, DESCRIPTION,  "DESCRIPTION");
-			//  5 "EAPI"
+			mapinit( 5, EAPI,         "EAPI");
 			mapinit( 6, HDEPEND,      "HDEPEND");
 			mapinit( 7, HOMEPAGE,     "HOMEPAGE");
 			//  8 "INHERITED"
@@ -266,6 +267,7 @@ void SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **
 		version->set_full_keywords(TrueIndex::c_str(argv, &trueindex, TrueIndex::KEYWORDS));
 		version->set_iuse(TrueIndex::c_str(argv, &trueindex, TrueIndex::IUSE));
 		version->set_required_use(TrueIndex::c_str(argv, &trueindex, TrueIndex::REQUIRED_USE));
+		version->eapi.assign(TrueIndex::c_str(argv, &trueindex, TrueIndex::EAPI));
 		version->depend.set(TrueIndex::c_str(argv, &trueindex, TrueIndex::DEPEND),
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::RDEPEND),
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::PDEPEND),

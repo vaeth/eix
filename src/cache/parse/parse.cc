@@ -208,7 +208,6 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 			m_error_callback(eix::format(_("cannot properly parse %s: %s")) % fullpath % errtext);
 		}
 
-		bool set_eapi(ebuild_sh);
 		if(ok) {
 			set_checking(&keywords, "KEYWORDS", ebuild, &ok);
 			set_checking(&slot, "SLOT", ebuild, &ok);
@@ -236,15 +235,12 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 				set_checking(&(pkg->desc),     "DESCRIPTION", ebuild, &ok);
 				*have_onetime_info = true;
 			}
-			set_eapi = !ok;
 		}
-		if(set_eapi) {
-			const string *s(ebuild.find("EAPI"));
-			if(likely(s != NULLPTR)) {
-				eapi = *s;
-			} else {
-				eapi.assign("0");
-			}
+		const string *s(ebuild.find("EAPI"));
+		if(likely(s != NULLPTR)) {
+			eapi = *s;
+		} else {
+			eapi.assign("0");
 		}
 	}
 	if(verbose) {
@@ -261,13 +257,14 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 	if(!ok) {
 		string *cachefile(ebuild_exec->make_cachefile(fullpath, dirpath, *pkg, *version, eapi));
 		if(likely(cachefile != NULLPTR)) {
-			flat_get_keywords_slot_iuse_restrict(*cachefile, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend), m_error_callback);
+			flat_get_keywords_slot_iuse_restrict(*cachefile, &eapi, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend), m_error_callback);
 			flat_read_file(cachefile->c_str(), pkg, m_error_callback);
 			ebuild_exec->delete_cachefile();
 		} else {
 			m_error_callback(eix::format(_("cannot properly execute %s")) % fullpath);
 		}
 	}
+	version->eapi.assign(eapi);
 	version->set_slotname(slot);
 	version->set_full_keywords(keywords);
 	version->set_restrict(restr);

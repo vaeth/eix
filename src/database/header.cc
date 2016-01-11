@@ -43,7 +43,7 @@ const DBHeader::DBVersion DBHeader::current;
 Which version we do accept. The list must end with 0
 **/
 const DBHeader::DBVersion DBHeader::accept[] = {
-	DBHeader::current, 34, 33, 32, 31,
+	DBHeader::current, 35, 34, 33, 32, 31,
 	0
 };
 

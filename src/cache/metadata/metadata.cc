@@ -264,13 +264,14 @@ void MetadataCache::readCategoryFinalize() {
 }
 
 void MetadataCache::get_version_info(const char *pkg_name, const char *ver_name, Version *version) const {
-	string keywords, iuse, required_use, restr, props, slot;
+	string eapi, keywords, iuse, required_use, restr, props, slot;
 	string path(m_catpath);
 	path.append(1, '/');
 	path.append(pkg_name);
 	path.append(1, '-');
 	path.append(ver_name);
-	(*x_get_keywords_slot_iuse_restrict)(path, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend), m_error_callback);
+	(*x_get_keywords_slot_iuse_restrict)(path, &eapi, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend), m_error_callback);
+	version->eapi.assign(eapi);
 	version->set_slotname(slot);
 	version->set_full_keywords(keywords);
 	version->set_iuse(iuse);

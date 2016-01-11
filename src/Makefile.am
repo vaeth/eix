@@ -123,6 +123,8 @@ $(masklist_src) \
 $(depend_src) \
 portage/basicversion.cc \
 portage/basicversion.h \
+portage/eapi.cc \
+portage/eapi.h \
 portage/extendedversion.cc \
 portage/extendedversion_bin.cc \
 portage/extendedversion.h \

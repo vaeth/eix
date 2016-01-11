@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2016-01-09 13:27+0100\n"
+"POT-Creation-Date: 2016-01-11 19:53+0100\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -1615,6 +1615,7 @@ msgid ""
 "     --dump-defaults       dump default values of variables\n"
 "     --print               print the expanded value of a variable\n"
 "     --known-vars          print all variable names known to --print\n"
+"     --print-all-eapis     print all EAPI used in some version\n"
 "     --print-all-useflags  print all IUSE/REQUIRED_USE used in some version\n"
 "     --print-all-keywords  print all KEYWORDS used in some version\n"
 "     --print-all-slots     print all SLOT strings used in some version\n"
@@ -1735,6 +1736,8 @@ msgid ""
 "    --pdepend               pdepend (needs DEP=true)\n"
 "    --hdepend               hdepend (needs DEP=true)\n"
 "    --set                   local package set name\n"
+"    --eapi                  EAPI\n"
+"    --installed-eapi        EAPI of installed version\n"
 "    --slot                  slot\n"
 "    --fullslot              slot with subslot\n"
 "    --installed-slot        slot of installed version\n"
@@ -1776,6 +1779,7 @@ msgstr ""
 "     --dump-defaults       сбросить стандартные значения\n"
 "     --print               показать расширенное значение переменной\n"
 "     --known-vars          показать все переменные, известные --print\n"
+"     --print-all-eapis     показать все EAPI, используемые в какой-то версии\n"
 "     --print-all-useflags  показать все IUSE/REQUIRED_USE-слова, используемые\n"
 "                           в какой-то версии\n"
 "     --print-all-keywords  показать все KEYWORDS, используемые в какой-то\n"
@@ -1907,6 +1911,8 @@ msgstr ""
 "    --pdepend               pdepend (требует DEP=true)\n"
 "    --hdepend               hdepend (требует DEP=true)\n"
 "    --set                   имя местного набора пакетов\n"
+"    --eapi                  EAPI\n"
+"    --installed-eapi        EAPI установленной версии\n"
 "    --slot                  слот\n"
 "    --fullslot              слод с подслотом\n"
 "    --installed-slot        слот установленной версии\n"
@@ -3587,6 +3593,13 @@ msgid ""
 msgstr ""
 
 #: src/eixrc/defaults.cc
+msgctxt "PRINT_EAPI"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"If false, EAPI is never output."
+msgstr ""
+
+#: src/eixrc/defaults.cc
 msgctxt "PRINT_MASKREASONS"
 msgid ""
 "This variable is only used for delayed substitution.\n"
@@ -3901,6 +3914,13 @@ msgctxt "MATCH_FIELD_DEPS"
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_FIELD for deps."
+msgstr ""
+
+#: src/eixrc/defaults.cc
+msgctxt "MATCH_FIELD_EAPI"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It is a regular expression used in DEFAULT_MATCH_FIELD for eapi."
 msgstr ""
 
 #: src/eixrc/defaults.cc
@@ -4481,6 +4501,13 @@ msgctxt "COLOR_DATE"
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing the date."
+msgstr ""
+
+#: src/eixrc/defaults.cc
+msgctxt "COLOR_EAPI"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It defines the color of the EAPI output."
 msgstr ""
 
 #: src/eixrc/defaults.cc
@@ -5211,6 +5238,13 @@ msgid ""
 msgstr ""
 
 #: src/eixrc/defaults.cc
+msgctxt "FORMAT_EAPI"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It defines the format of the EAPI output."
+msgstr ""
+
+#: src/eixrc/defaults.cc
 msgctxt "FORMAT_DEPEND"
 msgid ""
 "This variable is only used for delayed substitution.\n"
@@ -5725,6 +5759,13 @@ msgctxt "FORMAT_DEPS_VERBOSE"
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the verbose format for DEPs for an available version."
+msgstr ""
+
+#: src/eixrc/defaults.cc
+msgctxt "FORMAT_EAPI_VERBOSE"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It defines the verbose format for the EAPI of an available version."
 msgstr ""
 
 #: src/eixrc/defaults.cc
@@ -6522,6 +6563,18 @@ msgctxt "I18N_DATE"
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It translates \"Date:\""
+msgstr ""
+
+#: src/eixrc/def_i18n.cc
+msgctxt "I18N_EAPI"
+msgid "EAPI:"
+msgstr ""
+
+#: src/eixrc/def_i18n.cc
+msgctxt "I18N_EAPI"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It translates \"EAPI:\""
 msgstr ""
 
 #: src/eixrc/def_i18n.cc

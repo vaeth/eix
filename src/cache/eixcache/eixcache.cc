@@ -184,6 +184,7 @@ void EixCache::get_package(Package *p) {
 		version->propertiesFlags = it->propertiesFlags;
 		version->iuse = it->iuse;
 		version->required_use = it->required_use;
+		version->eapi = it->eapi;
 		version->depend = it->depend;
 		if(pkg == NULLPTR) {
 			pkg = dest_cat->findPackage(p->name);

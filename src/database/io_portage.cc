@@ -81,6 +81,16 @@ bool Database::read_iuse(const StringHash& hash, IUseSet *iuse, string *errtext)
 }
 
 bool Database::read_version(Version *v, const DBHeader& hdr, string *errtext) {
+	// read EAPI
+	if(likely(hdr.version >= 36)) {
+		string eapi;
+		if(likely(read_hash_string(hdr.eapi_hash, &eapi, errtext))) {
+			v->eapi.assign(eapi);
+		} else {
+			return false;
+		}
+	}
+
 	// read masking
 	MaskFlags::MaskType mask;
 	if(unlikely(!read_num(&mask, errtext))) {
@@ -160,6 +170,11 @@ bool Database::write_Part(const BasicPart& n, string *errtext) {
 }
 
 bool Database::write_version(const Version *v, const DBHeader& hdr, string *errtext) {
+	// write EAPI
+	if(unlikely(!write_hash_string(hdr.eapi_hash, v->eapi.get(), errtext))) {
+		return false;
+	}
+
 	// write masking
 	if(unlikely(!writeUChar(v->maskflags.get(), errtext))) {
 		return false;
@@ -306,6 +321,7 @@ bool Database::write_hash(const StringHash& hash, string *errtext) {
 }
 
 void Database::prep_header_hashs(DBHeader *hdr, const PackageTree& tree) {
+	hdr->eapi_hash.init(true);
 	hdr->license_hash.init(true);
 	hdr->keywords_hash.init(true);
 	hdr->slot_hash.init(true);
@@ -322,6 +338,7 @@ void Database::prep_header_hashs(DBHeader *hdr, const PackageTree& tree) {
 		for(Category::iterator p(ci->begin()); likely(p != ci->end()); ++p) {
 			hdr->license_hash.hash_string(p->licenses);
 			for(Package::iterator v(p->begin()); likely(v != p->end()); ++v) {
+				hdr->eapi_hash.hash_string(v->eapi.get());
 				hdr->keywords_hash.hash_words(v->get_full_keywords());
 				hdr->iuse_hash.hash_words(v->iuse.asVector());
 				if(use_required_use) {
@@ -338,6 +355,7 @@ void Database::prep_header_hashs(DBHeader *hdr, const PackageTree& tree) {
 			}
 		}
 	}
+	hdr->eapi_hash.finalize();
 	hdr->license_hash.finalize();
 	hdr->keywords_hash.finalize();
 	hdr->slot_hash.finalize();
@@ -369,6 +387,9 @@ bool Database::write_header(const DBHeader& hdr, string *errtext) {
 		if(unlikely(!write_string(overlay.label, errtext))) {
 			return false;
 		}
+	}
+	if(unlikely(!write_hash(hdr.eapi_hash, errtext))) {
+		return false;
 	}
 	if(unlikely(!write_hash(hdr.license_hash, errtext))) {
 		return false;

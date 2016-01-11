@@ -24,6 +24,11 @@ AddOption(STRING, "I18N_DATE", P_("I18N_DATE",
 	"This variable is only used for delayed substitution.\n"
 	"It translates \"Date:\""));
 
+AddOption(STRING, "I18N_EAPI", P_("I18N_EAPI",
+	"EAPI:"), P_("I18N_EAPI",
+	"This variable is only used for delayed substitution.\n"
+	"It translates \"EAPI:\""));
+
 AddOption(STRING, "I18N_IUSE", P_("I18N_IUSE",
 	"IUSE:"), P_("I18N_IUSE",
 	"This variable is only used for delayed substitution.\n"

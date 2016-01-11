@@ -2,8 +2,10 @@
 
 *eix-0.31.7
 	Martin Väth <martin at mvath.de>:
-	- Support REQUIRED_USE (optionally)
-	- Let version parsing omit [] https://github.com/vaeth/eix/issues/20
+	- Support EAPI and (optionally) REQUIRED_USE
+	- Extend MATCH_ALGORITHM_EXACT default to let a pure number match
+	  exactly by default (useful for EAPI matching)
+	- Let version parsing omit [], https://github.com/vaeth/eix/issues/20
 	- Fix memory leak of eix -t (delete all_packages) and sqlite
 	- Fix xml output with illegal use flags
 

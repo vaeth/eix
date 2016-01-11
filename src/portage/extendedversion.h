@@ -18,6 +18,7 @@
 #include "eixTk/stringutils.h"
 #include "portage/basicversion.h"
 #include "portage/depend.h"
+#include "portage/eapi.h"
 #include "portage/overlay.h"
 
 class Package;
@@ -65,6 +66,7 @@ class ExtendedVersion : public BasicVersion {
 
 		Restrict restrictFlags;
 		Properties propertiesFlags;
+		Eapi eapi;
 
 		/**
 		The slot, the version represents.

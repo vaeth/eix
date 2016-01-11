@@ -62,6 +62,7 @@ const PackageTest::MatchField
 		PackageTest::IUSE,
 		PackageTest::USE_ENABLED,
 		PackageTest::USE_DISABLED,
+		PackageTest::EAPI,
 		PackageTest::SLOT,
 		PackageTest::FULLSLOT,
 		PackageTest::INST_SLOT,
@@ -136,26 +137,34 @@ PackageTest::~PackageTest() {
 
 void PackageTest::calculateNeeds() {
 	need = PackageReader::NONE;
-	if(field & (SLOT | FULLSLOT | SET))
+	if((field & (EAPI | SLOT | FULLSLOT | SET)) != NONE) {
 		setNeeds(PackageReader::VERSIONS);
-	if(field & HOMEPAGE)
+	}
+	if((field & HOMEPAGE) != NONE) {
 		setNeeds(PackageReader::HOMEPAGE);
-	if(field & LICENSE)
+	}
+	if((field & LICENSE) != NONE) {
 		setNeeds(PackageReader::LICENSE);
-	if(field & DESCRIPTION)
+	}
+	if((field & DESCRIPTION) != NONE) {
 		setNeeds(PackageReader::DESCRIPTION);
-	if(field & CATEGORY)
+	}
+	if((field & CATEGORY) != NONE) {
 		setNeeds(PackageReader::NONE);
-	if(field & (NAME | CATEGORY_NAME))
+	}
+	if((field & (NAME | CATEGORY_NAME)) != NONE) {
 		setNeeds(PackageReader::NAME);
-	if(field & (USE_ENABLED | USE_DISABLED | INST_SLOT | INST_FULLSLOT))
+	}
+	if((field & (USE_ENABLED | USE_DISABLED | INST_EAPI | INST_SLOT | INST_FULLSLOT)) != NONE) {
 		setNeeds(PackageReader::NAME);
-	if(installed)
+	}
+	if(installed) {
 		setNeeds(PackageReader::NAME);
+	}
 	if(!Depend::use_depend) {
 		field &= ~DEPS;
 	}
-	if((field & (IUSE | DEPS)) ||
+	if(((field & (IUSE | DEPS)) != NONE)  ||
 		dup_packages || dup_versions || slotted ||
 		upgrade || overlay || obsolete ||
 		world || worldset ||
@@ -220,6 +229,14 @@ static void init_match_field_map() {
 	match_field_map["installed-without-use"] = PackageTest::USE_DISABLED;
 	match_field_map["SET"]            = PackageTest::SET;
 	match_field_map["set"]            = PackageTest::SET;
+	match_field_map["EAPI"]           = PackageTest::EAPI;
+	match_field_map["eapi"]           = PackageTest::EAPI;
+	match_field_map["INSTALLED_EAPI"] = PackageTest::INST_EAPI;
+	match_field_map["INSTALLED-EAPI"] = PackageTest::INST_EAPI;
+	match_field_map["INSTALLEDEAPI"]  = PackageTest::INST_EAPI;
+	match_field_map["installed_eapi"] = PackageTest::INST_EAPI;
+	match_field_map["installed-eapi"] = PackageTest::INST_EAPI;
+	match_field_map["instelledeapi"]  = PackageTest::INST_EAPI;
 	match_field_map["SLOT"]           = PackageTest::SLOT;
 	match_field_map["slot"]           = PackageTest::SLOT;
 	match_field_map["FULLSLOT"]       = PackageTest::FULLSLOT;
@@ -433,6 +450,14 @@ bool PackageTest::stringMatch(Package *pkg) const {
 		return true;
 	}
 
+	if((field & EAPI) != NONE) {
+		for(Package::iterator it(pkg->begin());
+			likely(it != pkg->end()); ++it) {
+			if((*algorithm)(it->eapi.get().c_str(), pkg))
+				return true;
+		}
+	}
+
 	if((field & SLOT) != NONE) {
 		for(Package::iterator it(pkg->begin());
 			likely(it != pkg->end()); ++it) {
@@ -475,7 +500,7 @@ bool PackageTest::stringMatch(Package *pkg) const {
 		}
 	}
 
-	if(field & SET) {
+	if((field & SET) != NONE) {
 		WordSet setnames;
 		portagesettings->get_setnames(&setnames, pkg);
 		for(WordSet::const_iterator it(setnames.begin());
@@ -487,13 +512,23 @@ bool PackageTest::stringMatch(Package *pkg) const {
 		}
 	}
 
-	if((field & (USE_ENABLED | USE_DISABLED | INST_SLOT | INST_FULLSLOT | DEPS)) == NONE) {
+	if((field & (USE_ENABLED | USE_DISABLED | INST_EAPI | INST_SLOT | INST_FULLSLOT | DEPS)) == NONE) {
 		return false;
 	}
 
 	InstVec *installed_versions(vardbpkg->getInstalledVector(*pkg));
 	if(installed_versions == NULLPTR) {
 		return false;
+	}
+
+	if((field & INST_EAPI) != NONE) {
+		for(InstVec::iterator it(installed_versions->begin());
+			likely(it != installed_versions->end()); ++it) {
+			vardbpkg->readEapi(*pkg, &(*it));
+			if((*algorithm)(it->eapi.get().c_str(), pkg)) {
+				return true;
+			}
+		}
 	}
 
 	if((field & (INST_SLOT | INST_FULLSLOT)) != NONE) {
@@ -598,8 +633,9 @@ bool PackageTest::have_redundant(const Package& p, Keywords::Redundant r, const 
 				rvalue = true;
 			} else {
 			// and no failure:
-				if(test_unrestricted)
+				if(test_unrestricted) {
 					return false;
+				}
 				eix::SignedBool is_installed(vardbpkg->isInstalledVersion(p, *pi, *header));
 				// If in doubt about the overlay only consider as installed
 				// if the current version was not treated yet, i.e. (since we use reverse_iterator)
@@ -608,8 +644,9 @@ bool PackageTest::have_redundant(const Package& p, Keywords::Redundant r, const 
 					if(prev_ver && (**pi == *prev_ver))
 						is_installed = 0;
 				}
-				if(test_uninstalled == !is_installed)
+				if(test_uninstalled == !is_installed) {
 					return false;
+				}
 			}
 		}
 		return rvalue;
@@ -618,13 +655,15 @@ bool PackageTest::have_redundant(const Package& p, Keywords::Redundant r, const 
 		for(Package::const_iterator pi(p.begin());
 			likely(pi != p.end()); ++pi) {
 			if((pi->get_redundant()) & r) {
-				if(test_unrestricted)
+				if(test_unrestricted) {
 					return true;
+				}
 				// in contrast to the above loop, we now in doubt
 				// do not distinguish overlays.
 				if(test_uninstalled ==
-					!(vardbpkg->isInstalledVersion(p, *pi, *header)))
+					!(vardbpkg->isInstalledVersion(p, *pi, *header))) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -789,7 +828,7 @@ bool PackageTest::match(PackageReader *pkg) const {
 		}
 		if(!have) {
 			return false;
-	}
+		}
 	}
 
 	if(unlikely(overlay_only_list != NULLPTR)) {

@@ -253,6 +253,9 @@ With B<--256d>/B<--256l> (B<--256d0>/B<--256l0>, B<--256d1>/B<--256l1>) only the
 (or only the normal or bright dark/light foreground palette, respectively) is printed.
 With B<--256b> only the background palette is printed.
 .TP
+.B --print-all-eapis
+print all EAPIs used in some version.
+.TP
 .B --print-all-useflags
 print all IUSE or REQUIRED_USE words used in some version.
 .TP
@@ -811,6 +814,12 @@ see the comments to B<EIX_LOCAL_SETS>).
 The "profile", "system" and "world" sets are intentionally excluded here, since these
 should be tested with B<--profile[+-]>, B<--system[+-]>, B<--world>, B<--world-all>, or B<--world-sets>.
 .TP
+.B --eapi
+EAPI of a version in the database, e.g. "6"
+.TP
+.B --installed-eapi
+EAPI of an installed version
+.TP
 .B --slot
 Slotname of a version in the database, e.g. "kde-4"
 .TP
@@ -1222,6 +1231,10 @@ only one slot at all.
 All these properties are empty if the condition is not satisfied, otherwise 1.
 To ease reusing code, when printing is not sorted according to slots, then
 B<slotfirst>/B<slotlast> is equivalent to B<first>/B<last> and B<oneslot> is 1.
+.TP
+.BR eapi
+This must occur only in I<VARIABLE> in the context of version printing.
+It outputs the B<EAPI> of an available or installed version.
 .TP
 .BR slot ", " isslot ", " fullslot ", " isfullslot ", " subslot ", " issubslot ", "overlayver ", " overlaynum ", " virtual
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -3060,7 +3073,7 @@ It may be convenient to use delayed substitution ${\\VAR} for I<regular_expressi
 to avoid manually inserting additional escapes.
 
 The possible values for I<match_field> are B<name>, B<category>, B<category/name>
-(or B<category-name>), B<description>, B<license>, B<homepage>, B<set>,
+(or B<category-name>), B<description>, B<license>, B<homepage>, B<set>, B<eapi>, B<installed-eapi>,
 B<slot>, B<installed-slot>, B<use> (or B<iuse>), B<with-use> (or B<installed-with-use>),
 B<without-use> (or B<installed-without-use>),
 B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<hdepend>,
