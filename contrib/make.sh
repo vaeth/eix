@@ -208,7 +208,8 @@ FilterClang() {
 }
 
 if ! $keepenv
-then	CFLAGS=`portageq envvar CFLAGS`
+then	unset CFLAGS CXXFLAGS LDFLAGS CPPFLAGS CXX
+	CFLAGS=`portageq envvar CFLAGS`
 	CXXFLAGS=`portageq envvar CXXFLAGS`
 	LDFLAGS=`portageq envvar LDFLAGS`
 	CPPFLAGS=`portageq envvar CPPFLAGS`

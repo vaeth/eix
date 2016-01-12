@@ -37,7 +37,7 @@ the **eixdump** element.
 
        .. container:: layout-block version-block
 
-         **<version id="** 1st version of 1st package **"** [possibly further `version attributes`_ (see below), separated by spaces] **>**
+         **<version id="** 1st version of 1st package **"EAPI="** ... **"** [possibly further `version attributes`_ (see below), separated by spaces] **>**
 
            [possibly `version elements`_ (see below), separated by newlines and tabs]
 
@@ -117,6 +117,13 @@ Except for id, all of them are optional.
 
   The format of the date is determined by XML_DATE.
   The installDate attribute is output if and only if the installed attribute
+  is output, i.e. if and only if the version is installed.
+
+- **installEAPI="** [..] **"**
+
+  The EAPI of the installed version.
+  In contrast, the **EAPI** attribute refers to the available version.
+  The installEAPI attribute is output if and only if the installed attribute
   is output, i.e. if and only if the version is installed.
 
 

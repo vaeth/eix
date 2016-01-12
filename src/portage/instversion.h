@@ -54,19 +54,9 @@ class InstVersion : public ExtendedVersion, public Keywords {
 		**/
 		bool know_overlay, overlay_failed;
 
-		void init() {
-			know_slot = false;
-			read_failed = false;
-			know_use = false;
-			know_restricted = false;
-			know_deps = false;
-			instDate = 0;
-			know_overlay = false;
-			overlay_failed = false;
-		}
-
-		InstVersion() {
-			init();
+		InstVersion() : know_slot(false), read_failed(false), know_use(false),
+			know_restricted(false), know_deps(false), know_eapi(false),
+			instDate(0), know_overlay(false), overlay_failed(false) {
 		}
 
 		static eix::SignedBool compare(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;

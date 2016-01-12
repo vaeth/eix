@@ -45,7 +45,7 @@ class PrintXml {
 
 	public:
 		typedef eix::UNumber XmlVersion;
-		static CONSTEXPR XmlVersion current = 12;
+		static CONSTEXPR XmlVersion current = 13;
 
 		void init(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string& port_dir) ATTRIBUTE_NONNULL_ {
 			hdr = header;

@@ -231,6 +231,13 @@
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:attribute>
+	<xsd:attribute name="EAPI" type="xsd:string" use="required">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+				The EAPI of the (available) version.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:attribute>
 	<xsd:attribute name="virtual" type="xsd:string" fixed="1">
 		<xsd:annotation>
 			<xsd:documentation xml:lang="en">
@@ -274,6 +281,15 @@
 			<xsd:documentation xml:lang="en">
 				The format of the date is determined by XML_DATE.
 				The installDate attribute is output if and only if the installed attribute
+				is output, i.e. if and only if the version is installed.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:attribute>
+	<xsd:attribute name="installEAPI" type="xsd:string">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+				The EAPI of the installed version.
+				The installEAPI attribute is output if and only if the installed attribute
 				is output, i.e. if and only if the version is installed.
 			</xsd:documentation>
 		</xsd:annotation>

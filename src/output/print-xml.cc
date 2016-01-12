@@ -171,10 +171,12 @@ void PrintXml::package(Package *pkg) {
 			if(var_db_pkg->isInstalled(*pkg, *ver, &installedVersion)) {
 				versionInstalled = true;
 				var_db_pkg->readInstDate(*pkg, installedVersion);
+				var_db_pkg->readEapi(*pkg, installedVersion);
 			}
 		}
 
-		cout << "\t\t\t<version id=\"" << escape_xmlstring(ver->getFull()) << "\"";
+		cout << "\t\t\t<version id=\"" << escape_xmlstring(ver->getFull()) <<
+			"\" EAPI=\"" << escape_xmlstring(ver->eapi.get()) << '"';
 		ExtendedVersion::Overlay overlay_key(ver->overlay_key);
 		if(unlikely(overlay_key != 0)) {
 			if(print_format->is_virtual(overlay_key)) {
@@ -182,18 +184,19 @@ void PrintXml::package(Package *pkg) {
 			}
 			const OverlayIdent& overlay(hdr->getOverlay(overlay_key));
 			if((print_overlay || overlay.label.empty()) && !(overlay.path.empty())) {
-				cout << " overlay=\"" << escape_xmlstring(overlay.path) << "\"";
+				cout << " overlay=\"" << escape_xmlstring(overlay.path) << '"';
 			}
 			if(!overlay.label.empty()) {
-				cout << " repository=\"" << escape_xmlstring(overlay.label) << "\"";
+				cout << " repository=\"" << escape_xmlstring(overlay.label) << '"';
 			}
 		}
 		if(!ver->get_shortfullslot().empty()) {
-			cout << " slot=\"" << escape_xmlstring(ver->get_longfullslot()) << "\"";
+			cout << " slot=\"" << escape_xmlstring(ver->get_longfullslot()) << '"';
 		}
 		if(versionInstalled) {
 			cout << " installed=\"1\" installDate=\"" <<
-				escape_xmlstring(date_conv(dateformat.c_str(), installedVersion->instDate)) << "\"";
+				escape_xmlstring(date_conv(dateformat.c_str(), installedVersion->instDate)) <<
+				"\" installEAPI=\"" << escape_xmlstring(installedVersion->eapi.get()) << '"';
 		}
 		cout << ">\n";
 
