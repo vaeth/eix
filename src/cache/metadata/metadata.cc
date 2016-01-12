@@ -89,8 +89,8 @@ bool MetadataCache::initialize(const string& name) {
 				setType(PATH_METADATAMD5, false);
 			}
 		} else {
-			setType(PATH_METADATA, s_assign ||
-				(pure_name.find('*') != string::npos));
+			setType(PATH_METADATA, !(s_assign ||
+				(pure_name.find('*') != string::npos)));
 		}
 		return true;
 	}
