@@ -53,7 +53,7 @@ class Mask : public BasicVersion {
 			maskOpAll, maskOpEqual,
 			maskOpLess, maskOpLessEqual,
 			maskOpGreaterEqual, maskOpGreater,
-			maskOpRevisions, maskOpGlob,
+			maskOpRevisions, maskOpGlob, maskOpGlobExt,
 			maskIsSet
 		} Operator;
 
@@ -69,6 +69,7 @@ class Mask : public BasicVersion {
 		std::string m_slotname;
 		std::string m_subslotname;
 		std::string m_reponame;
+		std::string m_glob;      ///< the glob string for MaskOpGlobExt
 		bool m_test_slot;        ///< must we match a slot?
 		bool m_test_subslot;     ///< must we match a subslot?
 		bool m_test_reponame;    ///< must we match a reponame?

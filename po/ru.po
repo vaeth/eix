@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2016-01-11 19:53+0100\n"
+"POT-Creation-Date: 2016-02-06 12:56+0100\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -7233,11 +7233,6 @@ msgstr "Отсутствует указание версии"
 #: src/portage/mask.cc
 msgid "a wildcard is only valid with the = operator"
 msgstr "Шаблон поиска имеет смысл только с оператором ="
-
-# fuzzy
-#: src/portage/mask.cc
-msgid "a wildcard is only valid as the last symbol"
-msgstr "Шаблон поиска имеет смысл только as the last symbol"
 
 #: src/portage/set_stability.cc
 msgid "internal error: SetStability calculates wrong index"

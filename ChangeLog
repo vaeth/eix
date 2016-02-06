@@ -3,8 +3,11 @@
 *eix-0.31.7
 	Martin Väth <martin at mvath.de>:
 	- Support EAPI and (optionally) REQUIRED_USE
-	- Extend MATCH_ALGORITHM_EXACT default to let a pure number match
+	- Extend MATCH_ALGORITHM_EXACT default value to let a pure number match
 	  exactly by default (useful for EAPI matching)
+	- Reintroduce extended version globbing to match portage:
+	  https://github.com/vaeth/eix/issues/21
+	  https://bugs.gentoo.org/show_bug.cgi?id=572178
 	- Fix metadata-{flat,assign} confusion
 	- Fix: version parsing must omit [
 	  https://github.com/vaeth/eix/issues/20

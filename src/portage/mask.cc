@@ -214,12 +214,20 @@ GCC_DIAG_ON(sign-conversion)
 				*errtext = _("a wildcard is only valid with the = operator");
 				return parsedError;
 			}
-			if(unlikely((wildcard + 1 != end) &&
+			if(unlikely(((wildcard + 1 != end)
+					|| (end == NULLPTR)) &&
 				((end != NULLPTR) || (wildcard[1] != '\0')))) {
-				*errtext = _("a wildcard is only valid as the last symbol");
-				return parsedError;
+				// Wildcard is not the last symbol:
+				m_operator = maskOpGlobExt;
+				if(end != NULLPTR) {
+					m_glob.assign(p, end);
+				} else {
+					m_glob.assign(p);
+				}
+				return parsedOK;
+			} else {
+				m_operator = maskOpGlob;
 			}
-			m_operator = maskOpGlob;
 			end = wildcard;
 		}
 GCC_DIAG_OFF(sign-conversion)
@@ -278,6 +286,9 @@ bool Mask::test(const ExtendedVersion *ev) const {
 
 		case maskOpGlob:
 			return (BasicVersion::compare_right_maybe_shorter(*ev, *this) == 0);
+
+		case maskOpGlobExt:
+			return (fnmatch(m_glob.c_str(), ev->getFull().c_str(), 0) == 0);
 
 		case maskOpLess:
 			return (BasicVersion::compare(*this, *ev) > 0);
