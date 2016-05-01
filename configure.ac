@@ -41,7 +41,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.31.7], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
+AC_INIT([eix], [0.31.8], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
 AC_PREREQ([2.64])
 
 m4_ifdef([AC_CONFIG_MACRO_DIR],
@@ -232,10 +232,13 @@ MV_ADDFLAGS([my_ldfatal], [LDFLAGS], [AC_LINK_IFELSE], [ \
 AS_VAR_SET([my_cxxadd], [])
 AS_VAR_SET([my_ldadd], [])
 
+# Prefer the newest available most fancy C++ dialect to detect problems early
 AS_IF([$new_dialect],
 	[AS_CASE([" $CXXFLAGS $my_cxxadd"],
 		[*" -std="*], [],
 		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+				-std=gnu++17 \
+				-std=c++17 \
 				-std=gnu++1z \
 				-std=c++1z \
 				-std=gnu++14 \
@@ -302,6 +305,7 @@ AS_IF([$optimization],
 			-ftree-loop-distribute-patterns \
 			-ftree-loop-im \
 			-fivopts \
+			-fdelete-null-pointer-checks \
 		], [$my_cxxfatal], [], [:])
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_FALSE], [ \
 			-Wl,-O1 \
@@ -393,6 +397,7 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-funsigned-char \
 			-fdirectives-only \
 			-ftracer \
+			-fconcepts \
 		], [$my_cxxfatal], [$CPPFLAGS], [:])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
 			-Wpedantic \
@@ -453,6 +458,12 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wlogical-not-parantheses \
 			-Wsizeof-array-argument \
 			-Wbool-compare \
+			-Wodr-type-mismatch \
+			-Wshift-negative-value \
+			-Wshift-overflow \
+			-Wshift-overflow=2 \
+			-Wnull-dereference \
+			-Wduplicated-cond \
 		], [$my_cxxfatal], [], [:])
 dnl We do not use:
 dnl Not needed anymore with current clang:
@@ -467,6 +478,10 @@ dnl			-Wold-style-definition \
 dnl			-Wmissing-prototypes \
 dnl			-Wnested-externs \
 dnl			-Wpointer-sign \
+dnl Included in -Wall (in gcc-6; not available earlier, anyway)
+dnl			-Wtautological-compare \
+dnl			-Wmisleading-indentation \
+dnl
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_FALSE], [ \
 			-Wl,-z,defs \
 			-Wl,--no-undefined \
@@ -547,6 +562,7 @@ AS_IF([$strong_security],
 			-fsanitize=float-divide-by-zero
 			-fsanitize=float-cast-overflow
 			-fsanitize=bounds
+			-fsanitize=bounds-strict
 			-fsanitize=alignment
 			-fsanitize=object-size
 			-fsanitize=vptr

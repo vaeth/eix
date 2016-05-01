@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.31.8
+	Martin Väth <martin at mvath.de>:
+	- Add gcc-6 options
+
 *eix-0.31.7
 	Martin Väth <martin at mvath.de>:
 	- Support EAPI and (optionally) REQUIRED_USE
