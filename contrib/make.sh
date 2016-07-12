@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -u
 
 export LC_ALL=C
 
@@ -251,6 +252,6 @@ $earlystop && {
 InfoVerbose 'make' $jarg $*
 command -v make >/dev/null 2>&1 || Die 'cannot find make'
 if $quiet
-then	exec make $jarg "$@" >/dev/null
-else	exec make $jarg "$@"
+then	exec make $jarg ${1+"$@"} >/dev/null
+else	exec make $jarg ${1+"$@"}
 fi

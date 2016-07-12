@@ -2,6 +2,9 @@
 
 *eix-0.31.8
 	Martin Väth <martin at mvath.de>:
+	- Important Change: Add -u for all shell scripts
+	  (see entry of eix-0.31.0; somehow this change was was lost)
+	- Some Bourne shell compatibility
 	- Add gcc-6 options
 
 *eix-0.31.7

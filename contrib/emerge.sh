@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -u
 
 category='app-portage'
 project='eix'

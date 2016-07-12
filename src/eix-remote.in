@@ -7,6 +7,7 @@
 #
 # It can be used to fetch the "standard" overlay data and add it to the
 # eix database. (@PACKAGE_STRING@).
+set -u
 
 . ./eix-functions.sh.in
 ReadFunctions
@@ -14,8 +15,9 @@ my_getopts='KvqxXLl:a:kiHh?'
 
 set -f
 eval "Push -c opt `eix-update --print EIX_REMOTE_OPTS`"
-Push opt "$@"
-eval "set -- $opt"
+Push opt ${1+"$@"}
+eval "set -- a $opt"
+shift
 
 drop_permissions=:
 OPTIND=1
@@ -31,7 +33,7 @@ done
 if $drop_permissions
 then	prg=./eix-drop-permissions
 	me=./eix-remote.in
-	exec "$prg" -- "$me" -K "$@"
+	exec "$prg" -- "$me" -K ${1+"$@"}
 	die "`eval_gettext 'failed to execute ${prg}'`"
 fi
 
@@ -146,12 +148,12 @@ SanitizeLocalLayman() {
 PrintLaymanStorage() {
 	printf '%s\n%s\n' 'from layman.config import BareConfig' \
 	"print(BareConfig(read_configfile=True)['storage'])" \
-		| python -- "$@" 2>/dev/null
+		| python -- ${1+"$@"} 2>/dev/null
 }
 
 PrintLaymanStorageOld() {
 	printf '%s\n%s\n' 'from layman.config import Config' \
-	"print(Config()['storage'])" | python -- "$@" 2>/dev/null
+	"print(Config()['storage'])" | python -- ${1+"$@"} 2>/dev/null
 }
 
 InitLocalLayman() {
@@ -225,9 +227,14 @@ The default should have been set with ./configure --remote-file'`"
 	(
 		CdDir "$tmpdir" || die "`gettext 'cannot cd to tempdir'`"
 		umask 002
-		set -- wget -N
-		$verbose || set -- "$@" --no-verbose
-		set -- "$@" -- "$addr"
+		set -- a wget -N
+		shift
+		$verbose || {
+			set -- a ${1+"$@"} --no-verbose
+			shift
+		}
+		set -- a ${1+"$@"} -- "$addr"
+		shift
 		if $verbose
 		then	"$@"
 		else	a=`"$@" 2>&1` || {
@@ -287,11 +294,13 @@ AddArchive() {
 	done
 	set -f
 	sep=mAgIcsEp
-	eval "set -- $eixoverlay"
-	eixoverlay=`eix-header -s"$sep" "$@"` || exitcode=1
+	eval "set -- a $eixoverlay"
+	shift
+	eixoverlay=`eix-header -s"$sep" ${1+"$@"}` || exitcode=1
 	failcount=0
 	success=false
-	eval "set -- $method"
+	eval "set -- a $method"
+	shift
 	for i
 	do	l=${eixoverlay%%$sep*}
 		eixoverlay=${eixoverlay#*$sep}

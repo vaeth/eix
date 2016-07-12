@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -u
 
 export LC_ALL=C
 umask 022
@@ -36,7 +37,7 @@ mode=$1
 case $mode in
 commit)
 	ExecDie git add --all .
-	ExecDie git commit -a "$@";;
+	ExecDie git commit -a ${1+"$@"};;
 gc)
 	ExecWarn git prune
 	ExecWarn git repack -a -d
@@ -44,7 +45,7 @@ gc)
 	ExecWarn git repack -a -d
 	ExecWarn git prune;;
 l|log)
-	ExecDie git log --decorate --graph --all --full-history "$@";;
+	ExecDie git log --decorate --graph --all --full-history ${1+"$@"};;
 h|help)
 	Usage 0;;
 *)

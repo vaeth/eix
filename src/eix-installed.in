@@ -4,6 +4,7 @@
 #
 # Author and Copyright (c):
 #   Martin V\"ath <martin@mvath.de>
+set -u
 
 read_var_prg=eix
 . ./eix-functions.sh.in
@@ -144,12 +145,12 @@ ParseArgs() {
 
 [ $# -ge 1 ] || Usage
 emulatemode=:
-ParseArgs "$@"
+ParseArgs ${1+"$@"}
 
 ReadVar vardb EPREFIX_INSTALLED
 vardb=${vardb%/}/var/db/pkg
-cd "$vardb" >/dev/null 2>&1 \
+cd -- "$vardb" >/dev/null 2>&1 \
 	|| die "`gettext 'cannot locate your database of installed packages'`"
 emulatemode=false
-ParseArgs "$@"
+ParseArgs ${1+"$@"}
 Exit 0

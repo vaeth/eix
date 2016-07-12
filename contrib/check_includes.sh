@@ -9,6 +9,7 @@
 #
 # Copyright (c)
 #	Martin V\"ath <martin@mvath.de>
+set -u
 
 export LC_ALL='C'
 unset GREP_COLORS GREP_COLOR GREP_OPTIONS
@@ -53,34 +54,34 @@ fi
 
 EchoResult() {
 	if [ -n "$result" ]
-	then	EchoResultPositive "$@"
-	else	EchoResultNegative "$@"
+	then	EchoResultPositive ${1+"$@"}
+	else	EchoResultNegative ${1+"$@"}
 	fi
 }
 
 GrepAllSub() {
 	find . '(' -name "generate*.sh" -o -name "*.cc" -o -name "*.h" ')' \
-		'-!' -name "config.h" -exec $grep_cmd -l "$@" -- '{}' '+'
+		'-!' -name "config.h" -exec $grep_cmd -l ${1+"$@"} -- '{}' '+'
 }
 
 GrepAllSubQ() (
 	grep_cmd=$grep_plain
-	GrepAllSub "$@"
+	GrepAllSub ${1+"$@"}
 )
 
 GrepAllWith() {
-	result=`GrepAllSub "$@"`
+	result=`GrepAllSub ${1+"$@"}`
 	EchoResult "Files with $*:"
 }
 
 GrepHWith() {
-	result=`find . -name "*.h" -exec $grep_cmd -l -e "$@" -- '{}' '+'`
+	result=`find . -name "*.h" -exec $grep_cmd -l -e ${1+"$@"} -- '{}' '+'`
 	EchoResult "*.h files with $*:"
 }
 
 GrepCCWithout() {
 	result=`find . '(' -name "generate*.sh" -o -name "*.cc" ')' \
-		-exec $grep_cmd -L -e "$@" -- '{}' '+'`
+		-exec $grep_cmd -L -e ${1+"$@"} -- '{}' '+'`
 	EchoResult "*.cc files without $*:"
 }
 
@@ -95,20 +96,20 @@ $colon'
 CheckWithout() {
 	local g
 	eval "$SetG" || return 0
-	result=`GrepAllSubQ "$@" | xargs -- $grep_cmd -L -e "$g" --`
+	result=`GrepAllSubQ ${1+"$@"} | xargs -- $grep_cmd -L -e "$g" --`
 	EchoResult "Files with $* but not $g:"
 }
 
 CheckWith() {
 	local g
 	eval "$SetG"
-	result=`GrepAllSubQ -e "$g" | xargs -- $grep_cmd -L "$@" --`
+	result=`GrepAllSubQ -e "$g" | xargs -- $grep_cmd -L ${1+"$@"} --`
 	EchoResult "Files with $g but not $*:"
 }
 
 Check() {
-	CheckWithout "$@"
-	CheckWith "$@"
+	CheckWithout ${1+"$@"}
+	CheckWith ${1+"$@"}
 }
 
 GrepAllWith -e 'ATTRIBUTE_NONNULL_(' -e 'ATTRIBUTE_NONNULL\([^(_]\|$\)' -e 'ATTRIBUTE_NONNULL(\([^(]\|$\)'

@@ -7,7 +7,7 @@
 #
 # This script lists all packages installed after/before a certain package
 # See the eix manpage for details. (@PACKAGE_STRING@).
-
+set -u
 
 # We make use of the functions provided by eix-functions.sh:
 
@@ -17,7 +17,8 @@ ReadFunctions
 # Prepend content of eix variable EIX_INSTALLED_AFTER to the arguments
 
 ReadVar EIX_INSTALLED_AFTER EIX_INSTALLED_AFTER
-eval "set -- $EIX_INSTALLED_AFTER \"\$@\""
+eval "set -- a $EIX_INSTALLED_AFTER \${1+\"\$@\"}"
+shift
 
 # The following function outputs the usage of the script and then dies.
 

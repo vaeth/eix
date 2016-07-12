@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -u
 
 project='eix'
 mkclean='contrib/clean.sh'

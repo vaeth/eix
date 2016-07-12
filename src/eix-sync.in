@@ -8,6 +8,7 @@
 #
 # This script calls emerge --sync and shows the differences.
 # See the eix manpage for details. (@PACKAGE_STRING@).
+set -u
 
 time_begin=`date '+%s' 2>/dev/null` || time_begin=
 
@@ -158,7 +159,7 @@ ParseConfigLine() {
 	case $j in
 	'!!'*)
 		j=${j#??}
-		if [ "$1" = 'opts' ]
+		if [ x"$1" = x'opts' ]
 		then	ConfigHooksInfo
 			CheckAdd "$j"
 			DoExecute "$j"
@@ -186,7 +187,7 @@ ParseConfigLine() {
 	*)
 		mycmd='layman';;
 	esac
-	[ "$1" = 'opts' ] && return
+	[ x"$1" = x'opts' ] && return
 	case $mycmd in
 	'@@')
 		Push after_update "$j"
@@ -207,18 +208,19 @@ ParseConfigLine() {
 	$nolayman && return
 	case $- in
 	*f*)
-		eval "set -- $layman_opt";;
+		eval "set -- a $layman_opt";;
 	*)
 		set -f
-		eval "set -- $layman_opt"
+		eval "set -- a $layman_opt"
 		set +f;;
 	esac
-	if [ "$j" = '*' ]
+	shift
+	if [ x"$j" = x'*' ]
 	then	StatusInfo "`pgettext 'eix-sync' \
 				'Syncing all portage overlays'`" \
 			"`pgettext 'Statusline eix-sync' \
 				'Syncing all portage overlays'`"
-		MyRun "$mycmd" -S "$@" \
+		MyRun "$mycmd" -S ${1+"$@"} \
 			|| WarnOrDie "`eval_pgettext 'eix-sync' \
 				'${mycmd} -S failed'`"
 		return
@@ -227,7 +229,7 @@ ParseConfigLine() {
 			'Syncing portage overlay ${j}'`" \
 		"`eval_pgettext 'Statusline eix-sync' \
 			'Syncing portage overlay ${j}'`"
-	MyRun "$mycmd" -s "$j" "$@" \
+	MyRun "$mycmd" -s "$j" ${1+"$@"} \
 		|| WarnOrDie "`eval_pgettext 'eix-sync' \
 			'${mycmd} -s ${j} failed'`"
 }
@@ -282,8 +284,9 @@ DefaultOpts
 ExecuteConfig 'opts'
 set -f
 eval "Push -c opt $config_opts"
-Push opt "$@"
-eval "set -- $opt"
+Push opt ${1+"$@"}
+eval "set -- a $opt"
+shift
 set +f
 OPTIND=1
 while getopts 'ias:02:UuFlA@SMNtTqwWL:c:C:o:rRHvnh?' opt
@@ -369,7 +372,7 @@ MyRunning() {
 }
 
 MyRun() {
-	if [ "$1" = '-t' ]
+	if [ x"$1" = x'-t' ]
 	then	if $measure_time
 		then	timevar=time_$2
 			shift 2
@@ -402,12 +405,13 @@ DoHook() {
 	fi
 	case $- in
 	*f*)
-		eval "set -- $1";;
+		eval "set -- a $1";;
 	*)
 		set -f
-		eval "set -- $1"
+		eval "set -- a $1"
 		set +f;;
 	esac
+	shift
 	DoExecute "$@"
 }
 
@@ -417,16 +421,17 @@ MyVarCommand() {
 	myvarcmdargs=$*
 	case $- in
 	*f*)
-		eval "set -- $myvarcmdvar";;
+		eval "set -- a $myvarcmdvar";;
 	*)
 		set -f
-		eval "set -- $myvarcmdvar"
+		eval "set -- a $myvarcmdvar"
 		set +f;;
 	esac
+	shift
 	myvarcmd=$*
 	StatusInfo "`eval_pgettext 'eix-sync' 'Running ${myvarcmd}'`" \
 		 "`eval_pgettext 'Statusline eix-sync' 'Running ${myvarcmd}'`"
-	MyRun $myvarcmdargs "$@" \
+	MyRun $myvarcmdargs ${1+"$@"} \
 		|| die "`eval_pgettext 'eix-sync' '${myvarcmd} failed'`"
 }
 
@@ -484,7 +489,7 @@ preprsync=false
 PrepRsync() {
 	GetPortdir
 	hostdir=${1#*:}
-	if [ -n "${hostdir:++}" ] && [ "$hostdir" != "$1" ]
+	if [ -n "${hostdir:++}" ] && [ x"$hostdir" != x"$1" ]
 	then	hostdir=$1
 	else	hostdir=${1%%:*}:$local_portdir
 	fi
@@ -495,12 +500,13 @@ PrepRsync() {
 	ReadVar portage_rsync_extra_opts PORTAGE_RSYNC_EXTRA_OPTS
 	case $- in
 	*f*)
-		eval "set -- $before_rsync";;
+		eval "set -- a $before_rsync";;
 	*)
 		set -f
-		eval "set -- $before_rsync"
+		eval "set -- a $before_rsync"
 		set +f;;
 	esac
+	shift
 	[ $# -eq 0 ] || StatusInfo "`pgettext 'eix-sync' 'Running ~-hooks'`" \
 		"`pgettext 'Statusline eix-sync' 'Running ~-hooks'`"
 	for curr_cmd
@@ -524,11 +530,12 @@ ClearCache() {
 	case $- in
 	*f*)
 		set +f
-		set -- "$local_varcache"/var/cache/edb/dep/*
+		set -- a "$local_varcache"/var/cache/edb/dep/*
 		set -f;;
 	*)
-		set -- "$local_varcache"/var/cache/edb/dep/*;;
+		set -- a "$local_varcache"/var/cache/edb/dep/*;;
 	esac
+	shift
 	StatusInfo "`eval_pgettext 'eix-sync' \
 	'Removing old portage-cache in ${local_varcache}/var/cache/edb/dep'`" \
 	"`eval_pgettext 'Statusline eix-sync' \
@@ -619,7 +626,7 @@ RemoteAdd() {
 		ReadVar eixremote$remote_num EIX_REMOTE$remote_num
 		eval eixremote=\${eixremote$remote_num}
 		[ -z "$eixremote" ] && continue
-		[ "$eixremote" = "$eixcache" ] && continue
+		[ x"$eixremote" = x"$eixcache" ] && continue
 		test -r "$eixremote" || continue
 		! $dryrun && {
 			test "$eixremote" -nt "$eixcache" && \
@@ -681,7 +688,7 @@ MainSync() {
 	ReadTimeStamp previous_timestamp
 	CallEmergeSync
 	ReadTimeStamp current_timestamp
-	[ "$previous_timestamp" != "$current_timestamp" ] && have_changed=:
+	[ x"$previous_timestamp" != x"$current_timestamp" ] && have_changed=:
 	$have_changed || NotChanged
 	$synchooks && DoHook "$after_sync" \
 		"`pgettext 'eix-sync' 'Running @-hooks'`" \

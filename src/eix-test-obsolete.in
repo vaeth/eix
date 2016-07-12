@@ -6,6 +6,7 @@
 #   Martin V\"ath <martin@mvath.de>
 #
 # This script gives a structured output of eix -tTc (@PACKAGE_STRING@).
+set -u
 
 read_var_prg=eix
 . ./eix-functions.sh.in
@@ -64,7 +65,8 @@ myarg=
 Push -c opt `eix --print EIX_TEST_OBSOLETE_OPTS`
 Push opt "$@"
 set -f
-eval "set -- $opt"
+eval "set -- a $opt"
+shift
 OPTIND=1
 while getopts 'cCdbqHh?' opt
 do	case $opt in
@@ -125,7 +127,7 @@ SetFalse() {
 # Set all variables listed in set_* to "false" except for those in set_$1
 FalseExcept() {
 	for s in $sets
-	do	[ "$s" = "$1" ] || SetFalse $s
+	do	[ x"$s" = x"$1" ] || SetFalse $s
 	done
 }
 
@@ -144,7 +146,7 @@ Output() {
 	for z
 	do	(
 			for j
-			do	[ "$z" = "$j" ] || eval export $j=false
+			do	[ x"$z" = x"$j" ] || eval export $j=false
 			done
 			Output '' "`eval_pgettext 'Obsolete-Table' '... considered as ${z}'`"
 		)

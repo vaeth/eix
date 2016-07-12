@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -u
 
 export LC_ALL=C
 umask 022
@@ -113,7 +114,7 @@ TagTarball() {
 
 	Echo "Replacing content by unpacked tarball"
 	for i in *
-	do	[ "$i" = "$proj-$ver" ] || rm -rf "./$i"
+	do	[ x"$i" = x"$proj-$ver" ] || rm -rf "./$i"
 	done
 	Eecho "mv $proj-$ver/* ."
 	mv "$proj-$ver"/* . || Die "mv $proj-$ver/* . failed"

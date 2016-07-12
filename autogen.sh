@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -u
 
 Echo() {
 	printf '%s\n' "$*" >&2
@@ -19,4 +20,4 @@ Run autopoint
 Run aclocal -I m4 -I martinm4
 Run autoconf
 Run autoheader
-Run automake -a --copy "$@"
+Run automake -a --copy ${1+"$@"}

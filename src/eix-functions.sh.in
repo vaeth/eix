@@ -176,7 +176,7 @@ GetPortdir() {
 
 verbose=:
 RunCommand() {
-	if [ "$1" = '=' ]
+	if [ x"$1" = x'=' ]
 	then	Statusline "$2"
 	else	Statusline "$1"
 	fi
@@ -221,7 +221,7 @@ Replace() {
 	eval replace_tail=\$$1
 	while {
 		eixf_replb=${replace_tail%%"$2"*}
-		[ "$eixf_replb" != "$replace_tail" ]
+		[ x"$eixf_replb" != x"$replace_tail" ]
 	}
 	do	eixf_repla=$eixf_repla$eixf_replb$3
 		replace_tail=${replace_tail#*"$2"}
@@ -254,7 +254,7 @@ PushEscaped() {
 	eixf_pew=
 	while [ -n "${eixf_pea:++}" ]
 	do	eval "eixf_pex=\${eixf_pea%%[\$$eixf_pes]*}"
-		if [ "$eixf_pex" != "$eixf_pea" ]
+		if [ x"$eixf_pex" != x"$eixf_pea" ]
 		then	eixf_pec=${eixf_pea#"$eixf_pex"}
 			eixf_pea=${eixf_pec#?}
 			eixf_pec=${eixf_pec%"$eixf_pea"}
@@ -274,7 +274,7 @@ PushEscaped() {
 }
 
 AddUpdateArgs() {
-	Push update_args "$@"
+	Push update_args ${1+"$@"}
 }
 
 AddUpdateQuoting() {
@@ -284,7 +284,7 @@ AddUpdateQuoting() {
 	Replace -g eixf_aq '?' '\?'
 	Replace -g eixf_aq '*' '\*'
 	Replace -g eixf_aq '[' '\['
-	AddUpdateArgs "$eixf_aq" "$@"
+	AddUpdateArgs "$eixf_aq" ${1+"$@"}
 }
 
 AddMethod() {
@@ -317,14 +317,15 @@ ClearUpdateArgs() {
 CallUpdate() {
 	case $- in
 	*f*)
-		eval "set -- $update_args";;
+		eval "set -- a $update_args";;
 	*)
 		set -f
-		eval "set -- $update_args"
+		eval "set -- a $update_args"
 		set +f;;
 	esac
+	shift
 	RunCommand "`pgettext 'Statusline eix-functions' 'Calling eix-update'`" \
-		 "`gettext 'Calling eix-update'`" eix-update "$@" && return
+		 "`gettext 'Calling eix-update'`" eix-update ${1+"$@"} && return
 	$die_on_update_failure && die "`gettext 'eix-update failed'`"
 }
 
@@ -340,11 +341,12 @@ AddLocalMethods() {
 	ReadVar eixf_al ADD_OVERLAY
 	PushEscaped eixf_alm "$eixf_al"
 	case $- in
-	*f*)	eval "set -- $eixf_alm";;
+	*f*)	eval "set -- a $eixf_alm";;
 	*)	set -f
-		eval "set -- $eixf_alm"
+		eval "set -- a $eixf_alm"
 		set +f;;
 	esac
+	shift
 	for eixf_alm
 	do	eixf_al=$eixf_alm
 		Replace -g eixf_al '\' '\\'
@@ -428,7 +430,7 @@ NormalizeNames() {
 		while Replace -g "$eixf_normc" '//' '/'
 		do	:
 		done
-		eval "[ \"\$$eixf_normc\" = '/' ] || \
+		eval "[ x\"\$$eixf_normc\" = x'/' ] || \
 			$eixf_normc=\${$eixf_normc%/}"
 	done
 	return $eixf_normd
@@ -448,7 +450,7 @@ pgettext() {
 	eixf_pgti="$1$eixf_pgtglue$2"
 	if eixf_pgtt=`gettext "$eixf_pgti" && printf A` && \
 		eixf_pgtt=${eixf_pgtt%A} && \
-		[ "$eixf_pgtt" != "$eixf_pgti" ]
+		[ x"$eixf_pgtt" != x"$eixf_pgti" ]
 	then	printf '%s' "$eixf_pgtt"
 	else	printf '%s' "$2"
 	fi
@@ -457,8 +459,8 @@ npgettext() {
 	eixf_pgti="$1$eixf_pgtglue$2"
 	if eixf_pgtt=`ngettext "$eixf_pgti" "$3" "$4" && printf A` && \
 		eixf_pgtt=${eixf_pgtt%A} && \
-		[ "$eixf_pgtt" != "$eixf_pgti" ] && \
-		[ "$eixf_pgtt" != "$3" ]
+		[ x"$eixf_pgtt" != x"$eixf_pgti" ] && \
+		[ x"$eixf_pgtt" != x"$3" ]
 	then	printf '%s' "$eixf_pgtt"
 	elif [ "$4" -eq 1 ]
 	then	printf '%s' "$2"
@@ -492,7 +494,7 @@ eval_gettext() {
 	eixf_gettextb=
 	while eixf_gettextc=${eixf_gettexta%%"$eixf_varopen"*}
 	do	eixf_gettextb=$eixf_gettextb$eixf_gettextc
-		[ "$eixf_gettextc" = "$eixf_gettexta" ] && break
+		[ x"$eixf_gettextc" = x"$eixf_gettexta" ] && break
 		eixf_gettexta=${eixf_gettexta#*"$eixf_varopen"}
 		eixf_gettextc=${eixf_gettexta%%"$eixf_varclose"*}
 		case $eixf_gettextc in
@@ -544,8 +546,8 @@ unset have_random
 AssignTempEmulate() {
 	if [ -z "${have_random++}" ]
 	then	eixf_assb=$RANDOM
-		if [ "$eixf_assb" = "$RANDOM" ] && \
-			[ "$eixf_assb" = "$RANDOM" ]
+		if [ x"$eixf_assb" = x"$RANDOM" ] && \
+			[ x"$eixf_assb" = x"$RANDOM" ]
 		then	have_random=false
 			eixf_assb=`od -d -N2 /dev/random 2>/dev/null` \
 				|| eixf_assb=
@@ -569,7 +571,7 @@ AssignTempEmulate() {
 			fi
 		fi
 		eixf_assc=/tmp/${0##*/}.$$$eixf_assa$eixf_assb
-		if [ "$2" = '-d' ]
+		if [ x"${2-}" = x'-d' ]
 		then	mkdir -m 700 -- "$eixf_assc"
 		else	(
 			set -C
@@ -590,9 +592,9 @@ AssignTemp() {
 	fi
 	if $have_mktemp
 	then	eval $1'=`mktemp $2 "/tmp/${0##*/}.XXXXXXXX"`'
-	else	AssignTempEmulate "$@"
+	else	AssignTempEmulate ${1+"$@"}
 	fi && return
-	[ "$2" = '-d' ] && \
+	[ x"${2-}" = x'-d' ] && \
 		die "`gettext 'cannot create temporary directory'`"
 	die "`gettext 'cannot create temporary file'`"
 }
