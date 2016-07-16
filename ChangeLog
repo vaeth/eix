@@ -8,7 +8,7 @@
 	  encounter them. The hope is that in the long run, this step will help
 	  to eliminate hidden errors, although in the moment it can cause pain.
 	- Thanks already for some such reports to:
-	  Michał Bartoszkiewic <mbartoszkiewicz at gmail.com>
+	  Michał Bartoszkiewicz <mbartoszkiewicz at gmail.com>
 	- Some Bourne shell compatibility
 	- Add gcc-6 options
 
