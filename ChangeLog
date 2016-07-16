@@ -2,8 +2,13 @@
 
 *eix-0.31.8
 	Martin Väth <martin at mvath.de>:
-	- Important Change: Add -u for all shell scripts
-	  (see entry of eix-0.31.0; somehow this change was was lost)
+	- Important change: Add -u for all shell scripts.
+	  This can trigger currently hidden errors ("unbound variable" or
+	  "parameter not set" indicate such errors); please report them if you
+	  encounter them. The hope is that in the long run, this step will help
+	  to eliminate hidden errors, although in the moment it can cause pain.
+	- Thanks already for some such reports to:
+	  Michał Bartoszkiewic <mbartoszkiewicz at gmail.com>
 	- Some Bourne shell compatibility
 	- Add gcc-6 options
 
@@ -88,11 +93,6 @@
 
 *eix-0.31.0
 	Martin Väth <martin at mvath.de>:
-	- Important change: Default to set -u in shell scripts.
-	  This can trigger currently hidden errors ("unbound variable" or
-	  "parameter not set" indicate such errors); please report them if you
-	  encounter them. The hope is that in the long run, this step will help
-	  to eliminate hidden errors, although in the moment it can cause pain.
 	- Restore sh bracing for eval_gettext to fix poor man's implementation,
 	  see https://forums.gentoo.org/viewtopic-t-1029872.html
 	- Add tmux to TERM_{SOFT,}STATUSLINE

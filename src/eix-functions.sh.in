@@ -10,7 +10,6 @@
 # It contains helper functions for eix-remote, eix-layman,
 # and perhaps similar local scripts. (@PACKAGE_STRING@).
 
-# This must happen in a function to enforce an empty argument list.
 ReadFunctions() {
 	ReadGettext
 ReadFunctions() {
@@ -33,16 +32,22 @@ ReadBoolean() {
 	return 0
 }
 
-eixf_know_colors=false
+eixf_good=
+eixf_warn=
+eixf_bad=
+eixf_normal=
 SetColors() {
-	$eixf_know_colors && return
-	eixf_know_colors=:
-	ReadBoolean NOCOLORS && return
-	! test -t 1 && ! ReadBoolean FORCE_USECOLORS && return
-	eixf_good='\033[32;01m'
-	eixf_warn='\033[33;01m'
-	eixf_bad='\033[31;01m'
-	eixf_normal='\033[0m'
+	if ! ReadBoolean NOCOLORS && {
+		test -t 1 || ReadBoolean FORCE_USECOLORS
+	}
+	then	eixf_good='\033[32;01m'
+		eixf_warn='\033[33;01m'
+		eixf_bad='\033[31;01m'
+		eixf_normal='\033[0m'
+	fi
+SetColors() {
+	:
+}
 }
 
 StartInList() (
