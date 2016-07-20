@@ -575,10 +575,11 @@ AssignTempEmulate() {
 				eixf_assb=`Expr "$eixf_assb" '%' '32768'`
 			fi
 		fi
-		eixf_assc=/tmp/${0##*/}.$$$eixf_assa$eixf_assb
+		eixf_assc=${TMPDIR:-/tmp}/${0##*/}.$$$eixf_assa$eixf_assb
 		if [ x"${2-}" = x'-d' ]
 		then	mkdir -m 700 -- "$eixf_assc"
 		else	(
+			umask 077
 			set -C
 			: >"$eixf_assc"
 		)
@@ -596,7 +597,7 @@ AssignTemp() {
 			&& have_mktemp=: || have_mktemp=false
 	fi
 	if $have_mktemp
-	then	eval $1'=`mktemp $2 "/tmp/${0##*/}.XXXXXXXX"`'
+	then	eval $1'=`umask 077 && mktemp $2 -- "${TMPDIR:-/tmp}/${0##*/}.XXXXXXXX"`'
 	else	AssignTempEmulate ${1+"$@"}
 	fi && return
 	[ x"${2-}" = x'-d' ] && \
