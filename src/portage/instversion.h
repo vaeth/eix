@@ -44,6 +44,10 @@ class InstVersion : public ExtendedVersion, public Keywords {
 		and for eapi
 		**/
 		bool know_eapi;
+		/**
+		and for instDate
+		**/
+		bool know_instDate;
 
 		time_t instDate;    ///< Installation date according to vardbpkg
 		WordVec inst_iuse;  ///< Useflags in iuse according to vardbpkg
@@ -56,7 +60,7 @@ class InstVersion : public ExtendedVersion, public Keywords {
 
 		InstVersion() : know_slot(false), read_failed(false), know_use(false),
 			know_restricted(false), know_deps(false), know_eapi(false),
-			instDate(0), know_overlay(false), overlay_failed(false) {
+			know_instDate(false), know_overlay(false), overlay_failed(false) {
 		}
 
 		static eix::SignedBool compare(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;

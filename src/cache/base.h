@@ -30,7 +30,10 @@ class Version;
 Parent class of every cache that eix can use
 **/
 class BasicCache {
+		friend class AssignReader;
+		friend class FlatReader;
 		friend class EbuildExec;
+
 	public:
 		typedef void (*ErrorCallback)(const std::string& str);
 
@@ -171,7 +174,8 @@ class BasicCache {
 			m_catname.clear();
 		}
 
-		virtual time_t get_time(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_ {
+		virtual bool get_time(time_t *t ATTRIBUTE_UNUSED, const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_ {
+			UNUSED(t);
 			UNUSED(pkg_name);
 			UNUSED(ver_name);
 			return 0;

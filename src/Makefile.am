@@ -155,10 +155,11 @@ cache/cachetable.cc \
 cache/cachetable.h \
 cache/common/assign_reader.cc \
 cache/common/assign_reader.h \
-cache/common/flat_reader.cc \
-cache/common/flat_reader.h \
 cache/common/ebuild_exec.cc \
 cache/common/ebuild_exec.h \
+cache/common/flat_reader.cc \
+cache/common/flat_reader.h \
+cache/common/reader.h \
 cache/common/selectors.cc \
 cache/common/selectors.h \
 cache/base.cc \

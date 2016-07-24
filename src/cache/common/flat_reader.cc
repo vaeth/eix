@@ -30,13 +30,11 @@ using std::string;
 
 using std::ifstream;
 
-static bool skip_lines(const eix::TinyUnsigned nr, ifstream *is, const string& filename, BasicCache::ErrorCallback error_callback) ATTRIBUTE_NONNULL_;
-
-static bool skip_lines(const eix::TinyUnsigned nr, ifstream *is, const string& filename, BasicCache::ErrorCallback error_callback) {
+bool FlatReader::skip_lines(const eix::TinyUnsigned nr, ifstream *is, const string& filename) const {
 	for(eix::TinyUnsigned i(nr); likely(i != 0); --i) {
 		is->ignore(std::numeric_limits<int>::max(), '\n');
 		if(is->fail()) {
-			error_callback(eix::format(_("cannot read cache file %s: %s"))
+			m_cache->m_error_callback(eix::format(_("cannot read cache file %s: %s"))
 				% filename % strerror(errno));
 			return false;
 		}
@@ -47,10 +45,10 @@ static bool skip_lines(const eix::TinyUnsigned nr, ifstream *is, const string& f
 /**
 Read the keywords and slot from a flat cache file
 **/
-void flat_get_keywords_slot_iuse_restrict(const string& filename, string *eapi, string *keywords, string *slotname, string *iuse, string *required_use, string *restr, string *props, Depend *dep, BasicCache::ErrorCallback error_callback) {
+void FlatReader::get_keywords_slot_iuse_restrict(const string& filename, string *eapi, string *keywords, string *slotname, string *iuse, string *required_use, string *restr, string *props, Depend *dep) {
 	ifstream is(filename.c_str());
 	if(!is.is_open()) {
-		error_callback(eix::format(_("cannot open %s: %s"))
+		m_cache->m_error_callback(eix::format(_("cannot open %s: %s"))
 			% filename % strerror(errno));
 	}
 	string depend, rdepend, pdepend;
@@ -59,14 +57,14 @@ void flat_get_keywords_slot_iuse_restrict(const string& filename, string *eapi, 
 		getline(is, depend);
 		getline(is, rdepend);
 	} else {
-		skip_lines(2, &is, filename, error_callback);
+		skip_lines(2, &is, filename);
 	}
 	getline(is, *slotname);
-	skip_lines(1, &is, filename, error_callback);
+	skip_lines(1, &is, filename);
 	getline(is, *restr);
-	skip_lines(3, &is, filename, error_callback);
+	skip_lines(3, &is, filename);
 	getline(is, *keywords);
-	skip_lines(1, &is, filename, error_callback);
+	skip_lines(1, &is, filename);
 	getline(is, *iuse);
 	bool use_required_use(Version::use_required_use);
 	if(use_required_use) {
@@ -74,18 +72,18 @@ void flat_get_keywords_slot_iuse_restrict(const string& filename, string *eapi, 
 	}
 	if(use_dep) {
 		if(!use_required_use) {
-			skip_lines(1, &is, filename, error_callback);
+			skip_lines(1, &is, filename);
 		}
 		getline(is, pdepend);
-		skip_lines(1, &is, filename, error_callback);
+		skip_lines(1, &is, filename);
 	} else {
-		skip_lines((use_required_use ? 2 : 3), &is, filename, error_callback);
+		skip_lines((use_required_use ? 2 : 3), &is, filename);
 	}
 	getline(is, *eapi);
 	getline(is, *props);
 	if(use_dep) {
 		string hdepend;
-		skip_lines(1, &is, filename, error_callback);
+		skip_lines(1, &is, filename);
 		getline(is, hdepend);
 		dep->set(depend, rdepend, pdepend, hdepend, false);
 	}
@@ -95,13 +93,13 @@ void flat_get_keywords_slot_iuse_restrict(const string& filename, string *eapi, 
 /**
 Read a flat cache file
 **/
-void flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback) {
+void FlatReader::read_file(const char *filename, Package *pkg) {
 	ifstream is(filename);
 	if(!is.is_open()) {
-		error_callback(eix::format(_("cannot open %s: %s"))
+		m_cache->m_error_callback(eix::format(_("cannot open %s: %s"))
 			% filename % strerror(errno));
 	}
-	skip_lines(5, &is, filename, error_callback);
+	skip_lines(5, &is, filename);
 	string linebuf;
 	// Read the rest
 	for(eix::TinyUnsigned linenr(5); is.good(); ++linenr) {

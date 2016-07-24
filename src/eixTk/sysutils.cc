@@ -118,11 +118,13 @@ bool is_pure_file(const char *file) {
 /**
 @return mtime of file.
 **/
-time_t get_mtime(const char *file) {
+bool get_mtime(time_t *t, const char *file) {
 	struct stat stat_b;
-	if(unlikely(stat(file, &stat_b)))
-		return 0;
-	return stat_b.st_mtime;
+	if(unlikely(stat(file, &stat_b))) {
+		return false;
+	}
+	*t = stat_b.st_mtime;
+	return true;
 }
 
 /**

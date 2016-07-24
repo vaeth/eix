@@ -10,7 +10,7 @@
 #define SRC_EIXTK_INTTYPES_H_ 1
 
 #ifdef HAVE_TR1_CSTDINT
-#include <tr1/cstdint>
+#include <tr1/cstdint>  // NOLINT(build/c++tr1)
 #else
 #ifndef HAVE_CSTDINT
 #ifdef HAVE_STDINT_H

@@ -26,6 +26,7 @@ src/cache/common/ebuild_exec.cc
 src/cache/common/ebuild_exec.h
 src/cache/common/flat_reader.cc
 src/cache/common/flat_reader.h
+src/cache/common/reader.h
 src/cache/common/selectors.cc
 src/cache/common/selectors.h
 src/cache/eixcache/eixcache.cc

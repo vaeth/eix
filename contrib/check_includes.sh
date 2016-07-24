@@ -86,22 +86,19 @@ GrepCCWithout() {
 }
 
 SetG='case $1 in
-':')	shift
+":")	shift
 	g="using std::$1[^<]";;
 *)	g="include $1";;
 esac
-shift
-$colon'
+shift'
 
 CheckWithout() {
-	local g
-	eval "$SetG" || return 0
+	eval "$SetG"
 	result=`GrepAllSubQ ${1+"$@"} | xargs -- $grep_cmd -L -e "$g" --`
 	EchoResult "Files with $* but not $g:"
 }
 
 CheckWith() {
-	local g
 	eval "$SetG"
 	result=`GrepAllSubQ -e "$g" | xargs -- $grep_cmd -L ${1+"$@"} --`
 	EchoResult "Files with $g but not $*:"
@@ -128,7 +125,7 @@ Check '"eixTk/inttypes\.h"' -e int8 -e int16 -e int32 -e int64
 Check '"eixTk/likely\.h"' -e 'likely('
 Check '"eixTk/null\.h"' -e 'NULLPTR'
 Check '"eixTk/ptr_list\.h"' -e 'eix::ptr'
-Check '"eixTk/stringutils\.h"' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e isdigit -e isalpha -e isalnum -e is_numeric -e tolower -e toupper -e to_lower -e trim -e StringHash -e escape_string -e localeC -e match_list -e slot_subslot -e casecontains -e caseequal
+Check '"eixTk/stringutils\.h"' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e isdigit -e isalpha -e isalnum -e is_numeric -e tolower -e toupper -e to_lower -e trim -e StringHash -e escape_string -e localeC -e match_list -e slot_subslot -e casecontains -e caseequal -e my_atoi
 Check '"eixTk/unused\.h"' -e '[^_]UNUSED' -e 'ATTRIBUTE_UNUSED'
 Check '"portage/basicversion\.h"' -e 'BasicVersion' -e 'BasicPart'
 CheckWithout '"search/packagetest\.h"' -e 'PackageTest::'

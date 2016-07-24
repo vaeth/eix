@@ -11,6 +11,7 @@
 
 #include <cerrno>
 #include <cstring>
+#include <ctime>
 
 #include <fstream>
 #include <string>
@@ -22,6 +23,7 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
+#include "eixTk/stringutils.h"
 #include "portage/depend.h"
 #include "portage/package.h"
 #include "portage/version.h"
@@ -30,25 +32,21 @@ using std::string;
 
 using std::ifstream;
 
-static WordMap *get_map_from_cache(const char *file) ATTRIBUTE_NONNULL_;
-
-static WordMap *get_map_from_cache(const char *file) {
-	static string *oldfile = NULLPTR;
-	static WordMap *cf;
-	if(unlikely(oldfile == NULLPTR)) {
-		oldfile = new string(file);
+bool AssignReader::get_map(const char *file) {
+	if(currfile == NULLPTR) {
+		currfile = new string(file);
 		cf = new WordMap;
 	} else {
-		if(*oldfile == file) {
-			return cf;
+		if(*currfile == file) {
+			return currstate;
 		}
-		oldfile->assign(file);
+		currfile->assign(file);
 		cf->clear();
 	}
 
 	ifstream is(file);
 	if(unlikely(!is.is_open())) {
-		return NULLPTR;
+		return (currstate = false);
 	}
 
 	while(likely(is.good())) {
@@ -61,12 +59,11 @@ static WordMap *get_map_from_cache(const char *file) {
 		(*cf)[lbuf.substr(0, p)].assign(lbuf, p + 1, string::npos);
 	}
 	is.close();
-	return cf;
+	return (currstate = true);
 }
 
-const char *assign_get_md5sum(const string& filename) {
-	WordMap *cf(get_map_from_cache(filename.c_str()));
-	if(unlikely(cf == NULLPTR)) {
+const char *AssignReader::get_md5sum(const char *filename) {
+	if(unlikely(!get_map(filename))) {
 		return NULLPTR;
 	}
 	WordMap::const_iterator md5(cf->find("_md5_"));
@@ -76,15 +73,25 @@ const char *assign_get_md5sum(const string& filename) {
 	return md5->second.c_str();
 }
 
+bool AssignReader::get_mtime(time_t *t, const char *filename) {
+	if(unlikely(!get_map(filename))) {
+		return false;
+	}
+	WordMap::const_iterator mt(cf->find("_mtime_"));
+	if(mt == cf->end()) {
+		return false;
+	}
+	return likely(((*t) = my_atois(mt->second.c_str())) != 0);
+}
+
 /**
 Read stability and other data from an "assign type" cache file
 **/
-void assign_get_keywords_slot_iuse_restrict(const string& filename, string *eapi, string *keywords,
+void AssignReader::get_keywords_slot_iuse_restrict(const string& filename, string *eapi, string *keywords,
 	string *slotname, string *iuse, string *required_use, string *restr,
-	string *props, Depend *dep, BasicCache::ErrorCallback error_callback) {
-	WordMap *cf(get_map_from_cache(filename.c_str()));
-	if(unlikely(cf == NULLPTR)) {
-		error_callback(eix::format(_("cannot read cache file %s: %s"))
+	string *props, Depend *dep) {
+	if(unlikely(!get_map(filename.c_str()))) {
+		m_cache->m_error_callback(eix::format(_("cannot read cache file %s: %s"))
 			% filename % strerror(errno));
 		return;
 	}
@@ -105,10 +112,9 @@ void assign_get_keywords_slot_iuse_restrict(const string& filename, string *eapi
 /**
 Read an "assign type" cache file
 **/
-void assign_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback) {
-	WordMap *cf(get_map_from_cache(filename));
-	if(unlikely(cf == NULLPTR)) {
-		error_callback(eix::format(_("cannot read cache file %s: %s"))
+void AssignReader::read_file(const char *filename, Package *pkg) {
+	if(unlikely(!get_map(filename))) {
+		m_cache->m_error_callback(eix::format(_("cannot read cache file %s: %s"))
 			% filename % strerror(errno));
 		return;
 	}

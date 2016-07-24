@@ -46,9 +46,9 @@ bool is_file(const char *file) ATTRIBUTE_NONNULL_;
 bool is_pure_file(const char *file) ATTRIBUTE_NONNULL_;
 
 /**
-@return mtime of file.
+@return true if mtime of file can be read
 **/
-time_t get_mtime(const char *file) ATTRIBUTE_NONNULL_;
+bool get_mtime(time_t *t, const char *file) ATTRIBUTE_NONNULL_;
 
 /**
 @return mydate formatted according to locales and dateFormat

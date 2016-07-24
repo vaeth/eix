@@ -18,7 +18,6 @@
 #include <string>
 
 #include "database/header.h"
-#include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -312,9 +311,10 @@ void VarDbPkg::readRestricted(const Package& p, InstVersion *v, const DBHeader& 
 }
 
 void VarDbPkg::readInstDate(const Package& p, InstVersion *v) const {
-	if(v->instDate != 0) {
+	if(v->know_instDate) {
 		return;
 	}
+	v->know_instDate = true;
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
 	LineVec datelines;
 	if(use_build_time &&
@@ -322,14 +322,14 @@ void VarDbPkg::readInstDate(const Package& p, InstVersion *v) const {
 			&datelines, false, false, 1)) {
 		for(LineVec::const_iterator it(datelines.begin());
 			it != datelines.end(); ++it) {
-GCC_DIAG_OFF(sign-conversion)
-			if((v->instDate = my_atoi(it->c_str())) != 0) {
-GCC_DIAG_ON(sign-conversion)
+			if(likely((v->instDate = my_atois(it->c_str())) != 0)) {
 				return;
 			}
 		}
 	}
-	v->instDate = get_mtime(dirname.c_str());
+	if(unlikely(!get_mtime(&(v->instDate), dirname.c_str()))) {
+		v->instDate = 0;
+	}
 }
 
 void VarDbPkg::readDepend(const Package& p, InstVersion *v, const DBHeader& header) const {

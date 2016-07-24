@@ -13,11 +13,13 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 
 #include <string>
 
 #include "cache/common/assign_reader.h"
 #include "cache/common/flat_reader.h"
+#include "cache/common/reader.h"
 #include "cache/metadata/metadata.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -67,7 +69,6 @@ bool MetadataCache::initialize(const string& name) {
 	} else {
 		have_override_path = false;
 	}
-	checkmd5 = false;
 	if(casecontains(pure_name, "metadata")) {
 		bool s_flat(casecontains(pure_name, "flat"));
 		bool s_assign((!s_flat) && casecontains(pure_name, "assign"));
@@ -85,7 +86,6 @@ bool MetadataCache::initialize(const string& name) {
 					setType(PATH_METADATAMD5OR, false);
 				}
 			} else {
-				checkmd5 = true;
 				setType(PATH_METADATAMD5, false);
 			}
 		} else {
@@ -151,12 +151,11 @@ void MetadataCache::setType(PathType set_path_type, bool set_flat) {
 }
 
 void MetadataCache::setFlat(bool set_flat) {
+	delete reader;
 	if(set_flat) {
-		x_get_keywords_slot_iuse_restrict = flat_get_keywords_slot_iuse_restrict;
-		x_read_file = flat_read_file;
+		reader = new FlatReader(this);
 	} else {
-		x_get_keywords_slot_iuse_restrict = assign_get_keywords_slot_iuse_restrict;
-		x_read_file = assign_read_file;
+		reader = new AssignReader(this);
 	}
 }
 
@@ -262,6 +261,13 @@ void MetadataCache::readCategoryFinalize() {
 	m_catpath.clear();
 	names.clear();
 }
+const char *MetadataCache::get_md5sum(const char *pkg_name, const char *ver_name) const {
+	return (reader->get_md5sum)((m_catpath + "/" + pkg_name + "-" + ver_name).c_str());
+}
+
+bool MetadataCache::get_time(time_t *t, const char *pkg_name, const char *ver_name) const {
+	return (reader->get_mtime)(t, (m_catpath + "/" + pkg_name + "-" + ver_name).c_str());
+}
 
 void MetadataCache::get_version_info(const char *pkg_name, const char *ver_name, Version *version) const {
 	string eapi, keywords, iuse, required_use, restr, props, slot;
@@ -270,7 +276,7 @@ void MetadataCache::get_version_info(const char *pkg_name, const char *ver_name,
 	path.append(pkg_name);
 	path.append(1, '-');
 	path.append(ver_name);
-	(*x_get_keywords_slot_iuse_restrict)(path, &eapi, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend), m_error_callback);
+	(reader->get_keywords_slot_iuse_restrict)(path, &eapi, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend));
 	version->eapi.assign(eapi);
 	version->set_slotname(slot);
 	version->set_full_keywords(keywords);
@@ -281,11 +287,8 @@ void MetadataCache::get_version_info(const char *pkg_name, const char *ver_name,
 	version->overlay_key = m_overlay_key;
 }
 
-const char *MetadataCache::get_md5sum(const char *pkg_name, const char *ver_name) const {
-	if(!checkmd5) {
-		return NULLPTR;
-	}
-	return assign_get_md5sum(m_catpath + "/" + pkg_name + "-" + ver_name);
+void MetadataCache::get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const {
+	(reader->read_file)((m_catpath + "/" + pkg_name + "-" + ver_name).c_str(), pkg);
 }
 
 bool MetadataCache::readCategory(Category *cat) {

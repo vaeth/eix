@@ -257,8 +257,9 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 	if(!ok) {
 		string *cachefile(ebuild_exec->make_cachefile(fullpath, dirpath, *pkg, *version, eapi));
 		if(likely(cachefile != NULLPTR)) {
-			flat_get_keywords_slot_iuse_restrict(*cachefile, &eapi, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend), m_error_callback);
-			flat_read_file(cachefile->c_str(), pkg, m_error_callback);
+			FlatReader reader(this);
+			reader.get_keywords_slot_iuse_restrict(*cachefile, &eapi, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend));
+			reader.read_file(cachefile->c_str(), pkg);
 			ebuild_exec->delete_cachefile();
 		} else {
 			m_error_callback(eix::format(_("cannot properly execute %s")) % fullpath);
@@ -323,7 +324,8 @@ void ParseCache::readPackage(Category *cat, const string& pkg_name, const string
 			}
 		}
 
-		time_t ebuild_time(0);
+		bool know_ebuild_time(false), have_ebuild_time(false);
+		time_t ebuild_time;
 		FurtherCaches::const_iterator it(further.begin());
 		for(; likely(it != further.end()); ++it) {
 			const char *s((*it)->get_md5sum(pkg_name.c_str(), ver));
@@ -333,10 +335,14 @@ void ParseCache::readPackage(Category *cat, const string& pkg_name, const string
 				}
 				continue;
 			}
-			time_t t((*it)->get_time(pkg_name.c_str(), ver));
-			if(t != 0) {
-				if(!ebuild_time) {
-					ebuild_time = get_mtime(full_path.c_str());
+			time_t t;
+			if((*it)->get_time(&t, pkg_name.c_str(), ver)) {
+				if(!know_ebuild_time) {
+					know_ebuild_time = true;
+					have_ebuild_time = get_mtime(&ebuild_time, full_path.c_str());
+				}
+				if(unlikely(!have_ebuild_time)) {
+					break;
 				}
 				if(t >= ebuild_time) {
 					break;

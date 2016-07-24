@@ -10,15 +10,43 @@
 #ifndef SRC_CACHE_COMMON_ASSIGN_READER_H_
 #define SRC_CACHE_COMMON_ASSIGN_READER_H_ 1
 
+#include <ctime>
+
 #include <string>
 
-#include "cache/base.h"
+#include "cache/common/reader.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 
-class Package;
+class BasicCache;
 class Depend;
+class Package;
 
-const char *assign_get_md5sum(const std::string& filename);
-void assign_get_keywords_slot_iuse_restrict(const std::string& filename, std::string *eapi, std::string *keywords, std::string *slotname, std::string *iuse, std::string *required_use, std::string *restr, std::string *props, Depend *dep, BasicCache::ErrorCallback error_callback) ATTRIBUTE_NONNULL_;
-void assign_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback) ATTRIBUTE_NONNULL_;
+class AssignReader : public BasicReader {
+	public:
+		explicit AssignReader(BasicCache *cache) :
+			BasicReader(cache), currfile(NULLPTR) {
+		}
+
+		~AssignReader() {
+			if(likely(currfile != NULLPTR)) {
+				delete currfile;
+				delete cf;
+			}
+		}
+
+		const char *get_md5sum(const char *filename) ATTRIBUTE_NONNULL_;
+		bool get_mtime(time_t *t, const char *filename) ATTRIBUTE_NONNULL_;
+		void get_keywords_slot_iuse_restrict(const std::string& filename, std::string *eapi, std::string *keywords, std::string *slotname, std::string *iuse, std::string *required_use, std::string *restr, std::string *props, Depend *dep) ATTRIBUTE_NONNULL_;
+		void read_file(const char *filename, Package *pkg) ATTRIBUTE_NONNULL_;
+
+	private:
+		bool get_map(const char *file) ATTRIBUTE_NONNULL_;
+
+		std::string *currfile;
+		WordMap *cf;
+		bool currstate;
+};
 
 #endif  // SRC_CACHE_COMMON_ASSIGN_READER_H_
