@@ -247,11 +247,14 @@ ExecuteConfig() {
 	do	ParseConfigLine "$1" "$confline"
 	done <"$eixsyncconf"
 	[ -z "${confline:++}" ] || ParseConfigLine "$1" "$confline"
-	while read -r confline
-	do	ParseConfigLine "$1" "$confline"
-	done <<END_EIX_SYNC_CONF
-$eix_sync_conf
-END_EIX_SYNC_CONF
+	IFSori=$IFS
+	IFS='
+'
+	for confline in $eix_sync_conf
+	do	IFS=$IFSori
+		ParseConfigLine "$1" "$confline"
+	done
+	IFS=$IFSori
 }
 
 
