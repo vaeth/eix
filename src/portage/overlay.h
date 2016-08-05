@@ -58,6 +58,8 @@ class OverlayIdent {
 
 		std::string human_readable() const;
 
+		std::string name() const;
+
 		static void init_static();
 };
 

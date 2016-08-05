@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2016-02-06 12:56+0100\n"
+"POT-Creation-Date: 2016-08-05 12:34+0200\n"
 "PO-Revision-Date: 2013-05-20 00:30+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -6221,6 +6221,16 @@ msgctxt "FORMAT_ALL_VERBOSE"
 msgid ""
 "This format is only used for delayed substitution in FORMAT_VERBOSE.\n"
 "It defines the format of the verbose output of eix (option -v)."
+msgstr ""
+
+#: src/eixrc/defaults.cc
+msgctxt "VERSION_ETCAT"
+msgid "This format outputs a version in the style of the etcat script."
+msgstr ""
+
+#: src/eixrc/defaults.cc
+msgctxt "FORMAT_ETCAT"
+msgid "This format outputs a package in the style of the etcat script."
 msgstr ""
 
 #: src/eixrc/defaults.cc

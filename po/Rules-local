@@ -20,3 +20,6 @@ $(MYSRC)/eix-installed.sh:
 $(MYSRC)/eix-installed-after.sh:
 	( cd $(MYBUILD) && $(MAKE) eix-installed-after.sh )
 
+$(MYSRC)/eix-etcat.sh:
+	( cd $(MYBUILD) && $(MAKE) eix-etcat.sh )
+

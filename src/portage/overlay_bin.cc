@@ -76,6 +76,13 @@ string OverlayIdent::human_readable() const {
 	return string("\"") + label + "\" " + path;
 }
 
+string OverlayIdent::name() const {
+	if(label.empty()) {
+		return path;
+	}
+	return label;
+}
+
 const char *RepoList::get_path(const string& label) {
 	WordMap::iterator f(cache.find(label));
 	if(likely(f != cache.end())) {

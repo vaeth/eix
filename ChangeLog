@@ -9,6 +9,11 @@
 	  to eliminate hidden bugs, although in the moment it can cause pain.
 	- Thanks already for some such reports to:
 	  Michał Bartoszkiewicz <mbartoszkiewicz at gmail.com>
+	- Add etcat script to resemble somewhat etcat -v behaviour
+	- New FORMAT_ETCAT and FORMAT_VERSION_ETCAT default variables
+	  for etcat type output
+	- Support colors in unquoted runtime variables
+	- New attributes overlay{,ver}name
 	- Honour ebuild md5 whenever provided (e.g. by >=portage-2.3.1)
 	- Make timestamp optional for assign method (e.g. for >=portage-2.3.1)
 	- Honour TMPDIR as requested by POSIX

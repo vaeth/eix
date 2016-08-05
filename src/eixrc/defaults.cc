@@ -3244,6 +3244,32 @@ AddOption(STRING, "FORMAT_ALL_VERBOSE",
 	"This format is only used for delayed substitution in FORMAT_VERBOSE.\n"
 	"It defines the format of the verbose output of eix (option -v)."));
 
+AddOption(STRING, "FORMAT_VERSION_ETCAT",
+	"\\C<8>["
+	"{!*mask}{*color=(green,1)}"
+	"{ismasked}"
+		"{*mask}"
+	"{else}"
+		"{!isstable}{!isunstable}{*mask}{}{}"
+	"{}"
+	"{$mask}{*color=(red,1)}<$color>M(){else} {}"
+	"{isunstable}"
+		"{!$mask}{*color=(yellow,1)}{}"
+		"(yellow,1)~()"
+	"{else}"
+		" "
+	"{}"
+	"{installedversion}{*color=(cyan,1)}<$color>I(){else} {}"
+	"] <$color><version>()"
+	" \\(<$color><fullslot>()\\)"
+	"{overlayver} [<$color><overlayvername>()]{}\\n", P_("VERSION_ETCAT",
+	"This format outputs a version in the style of the etcat script."));
+
+AddOption(STRING, "FORMAT_ETCAT",
+	"(green,1)*()  (white,1)<category>/<name>() :\n"
+	"<availableversions:FORMAT_VERSION_ETCAT>\n", P_("FORMAT_ETCAT",
+	"This format outputs a package in the style of the etcat script."));
+
 AddOption(STRING, "FORMAT",
 	"%{FORMAT_ALL}", P_("FORMAT",
 	"The format of the normal output of eix.\n"

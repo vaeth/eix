@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 
+#include "database/header.h"
 #include "eixTk/assert.h"
 #include "eixTk/null.h"
 #include "eixTk/outputstring.h"
@@ -270,6 +271,7 @@ class PrintFormat {
 		void PKG_BINARY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_MAINREPO(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_OVERLAYKEY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void PKG_OVERLAYNAME(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_SYSTEM(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_PROFILE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void PKG_WORLD(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
@@ -319,6 +321,7 @@ class PrintFormat {
 		void ver_overlay(OutputString *s, Package *package, bool getnum) const ATTRIBUTE_NONNULL_;
 		void VER_OVERLAYNUM(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_OVERLAYVER(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_OVERLAYVERNAME(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_VERSIONKEYWORDSS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_VERSIONKEYWORDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_VERSIONEKEYWORDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;

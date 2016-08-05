@@ -681,6 +681,29 @@ FormatParser::ParserState FormatParser::state_IF() {
 			if(!*band_position) {
 				break;
 			}
+		} else if((c == '(') && (parse_modus != single_quote) && (parse_modus != double_quote)) {
+			const char *q(++band_position);
+			while(isalnum(*q) || (strchr("|,;:", *q) != NULLPTR)) {
+				++q;
+			}
+			bool is_color(false);
+			if(likely(*q == ')')) {
+				AnsiColor ac;
+GCC_DIAG_OFF(sign-conversion)
+				if(likely(ac.initcolor(string(band_position, q - band_position), NULLPTR))) {
+GCC_DIAG_ON(sign-conversion)
+					is_color = true;
+					if(enable_colors) {
+						textbuffer.append(ac.asString(), 0);
+					}
+				}
+			}
+			if(likely(is_color)) {
+				band_position = q;
+			} else {
+				--band_position;
+				textbuffer.append_fast('(');
+			}
 		} else {
 			textbuffer.append_smart(c);
 		}

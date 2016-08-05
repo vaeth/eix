@@ -306,7 +306,7 @@ extra_update_only_src =
 nodist_extra_update_only_src =
 
 # Additional binaries (scripts) we will install
-nodist_bin_SCRIPTS  = \
+nodist_bin_SCRIPTS = \
 eix-functions.sh \
 eix-installed \
 eix-installed-after \
@@ -314,6 +314,9 @@ eix-layman \
 eix-remote \
 eix-sync \
 eix-test-obsolete
+
+bin_SCRIPTS = \
+eix-etcat
 
 # Remove files we don't want ..
 CLEANFILES = \
@@ -343,6 +346,7 @@ $(srcdir)/eix-installed-after.sh \
 $(srcdir)/eix-layman.sh \
 $(srcdir)/eix-remote.sh \
 $(srcdir)/eix-sync.sh \
+$(srcdir)/eix-etcat.sh \
 $(srcdir)/eix-test-obsolete.sh
 
 # Files we need for generation in the tarball which are not canonical
@@ -353,6 +357,7 @@ eix-installed-after.in \
 eix-layman.in \
 eix-remote.in \
 eix-sync.in \
+eix-etcat \
 eix-test-obsolete.in \
 eixrc/00-eixrc.in \
 cache/generate_cachemap.sh
@@ -631,6 +636,9 @@ eix-installed-after.sh:
 
 eix-remote.sh:
 	$(AM_V_GEN)$(LN_S) eix-remote.in "$(srcdir)/$@"
+
+eix-etcat.sh:
+	$(AM_V_GEN)$(LN_S) eix-etcat "$(srcdir)/$@"
 
 SUFFIXES = .in
 .in:
