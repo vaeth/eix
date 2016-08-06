@@ -13,7 +13,7 @@
 	- New FORMAT_ETCAT and FORMAT_VERSION_ETCAT default variables
 	  for etcat type output
 	- Support colors in unquoted runtime variables
-	- New attributes overlay{,ver}name
+	- New attributes overlayname, overlay{plain,ver}name{,*}
 	- Honour ebuild md5 whenever provided (e.g. by >=portage-2.3.1)
 	- Make timestamp optional for assign method (e.g. for >=portage-2.3.1)
 	- Honour TMPDIR as requested by POSIX

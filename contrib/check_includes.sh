@@ -44,10 +44,10 @@ EchoResultNegative() {
 	Echo "$*" 'none'
 }
 
-if [ $# -eq 0 ]
-then	Echo "$name: no parameters given: non-verbose"
-	echo
-	EchoResultNegative() {
+if [ $# -ne 0 ]
+then	Echo "$name: Parameter specified: verbose output follows
+"
+else	EchoResultNegative() {
 	:
 }
 fi

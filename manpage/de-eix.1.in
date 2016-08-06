@@ -108,15 +108,16 @@ ausgibt, und das prüfen kann, welche Pakete mit/ohne Repository- oder Buildtime
 (vgl. die Beschreibung zu B<CHECK_INSTALLED_OVERLAYS> und B<USE_BUILD_TIME>).
 Mehr zu B<eix-installed> erfahren Sie durch den Aufruf B<eix-installed -h>.
 
-B<eix-etcat> ist ein Wrapper, der eix mit einer Konfiguaration aufruft,
+B<eix-etcat> ist ein Wrapper-Skripts, das eix mit einer Konfiguaration aufruft,
 so dass das Verhalten ähnlich dem von B<etcat -v> aus alten
 app-portage/gentoolkit Versionen oder dessen aktuelle Version von
-https://github.com/proteusx/etcat/ (z.B. app-portage/etcat aus dem mv overlay)
-ist.
-Die Ausgabe ist analog (durch Aufruf von B<eix --print FORMAT_ETCAT> bzw.
-B<eix --print FORMAT_VERSION_ETCAT> kann man die benutzten Format-Strings
-anschauen), und die voreingestellte Eingabe akzeptiert eine Folge von
-Paketnamen (die Angabe der Kategorie ist optional).
+https://github.com/proteusx/etcat/ (z.B. app-portage/etcat aus dem mv overlay) ist.
+Die Ausgabe ist analog, und die voreingestellte Eingabe akzeptiert eine Folge
+von Paketnamen (die Angabe der Kategorie ist optional).
+Es kann lehrreich sein, sich das einfache Wrapper-Skript anzusehen, wenn man
+ein eigenes Eingabe-/Ausgabeformat schreiben will: Das Ausgabeformat erhält
+man durch den Aufruf von B<eix --print FORMAT_ETCAT> und
+B<eix --print FORMAT_VERSION_ETCAT>.
 
 B<masked-packages> ist ein Hilfsprogramm für Skripte, das die Argumente gegen
 eine Maskenliste testet.
@@ -1277,17 +1278,25 @@ B<slotfirst>/B<slotlast> äquivalent zu B<first>/B<last>, und B<oneslot> ist 1.
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 Sie gibt die B<EAPI> einer verfügbaren oder installierten Version aus.
 .TP
-.BR slot ", " isslot ", " fullslot ", " isfullslot ", " subslot ", " issubslot ", "overlayver ", " overlaynum ", " overlayvername ", " virtual
+.BR slot ", " isslot ", " fullslot ", " isfullslot ", " subslot ", " issubslot
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
-Es wird der aktuelle Slot bzw. der Overlay der aktuellen Version ausgegeben.
-B<overlayver> ist leer, falls das gesamte Paket aus nur einem Overlay stammt;
-für diesen Fall sollte B<overlaykey> zur Ausgabe des Overlays benutzt werden.
-Im Gegensatz dazu enthält B<overlaynum> stets die Nummer des Overlays
-(als Text ohne Farben) oder ist leer, falls die Version keinem Overlay entstammt.
-B<overlayvername> ist das Label (Name) (oder Pfad für unbekanntes oder leeres Label) des Overlays.
-B<virtual> ist genau dann nichtleer, wenn die Version aus einem virtuellen Overlay kommt.
+Es wird der Slot/Subslot/beides der aktuellen Version ausgegeben.
 B<isslot>, B<isfullslot> und B<issubslot> testen nur of Slot, voller Slot bzw. Subslot
 trivial sind und geben in diesem Fall 1 aus (sonst nichts).
+.TP
+.BR overlayver ", " overlaynum ", " overlayvername ", " virtual
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Es wird der Overlay der aktuellen Version ausgegeben.
+B<overlayver> ist der farbige Index des Overlays und leer, falls das gesamte Paket
+von nur einem Overlay stammt;
+in so einem Fall sollte B<overlaykey> zur Ausgabe des Overlays benutzt werden.
+Im Gegensatz dazu enthält B<overlaynum> stets die Nummer des Overlays
+(ohne Farben) oder ist leer, falls die Version keinem Overlay entstammt.
+B<overlayplainname> ist das Label (Name) (oder Pfad für unbekanntes oder leeres Label) des Overlays;
+B<overlayplainame*> betrachtet dabei auch den Hauptbaum als Overlay.
+B<overlayvername> und B<overlayvername*> sind analogous, kehren aber mit einem
+leeren String zurück, falls das Paket vom selben Overlay stammt.
+B<virtual> ist genau dann nichtleer, wenn die Version aus einem virtuellen Overlay kommt.
 .TP
 .BR versionkeywords ", " versionkeywords* ", " versionekeywords
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.

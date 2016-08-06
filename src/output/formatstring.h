@@ -318,9 +318,12 @@ class PrintFormat {
 		void VER_VERSION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_PLAINVERSION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_REVISION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void ver_overlay(OutputString *s, Package *package, bool getnum) const ATTRIBUTE_NONNULL_;
+		void ver_overlay(OutputString *s, Package *package, bool numeric, bool only_noncommon, bool only_nonzero) const ATTRIBUTE_NONNULL_;
 		void VER_OVERLAYNUM(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_OVERLAYVER(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_OVERLAYPLAINNAMES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_OVERLAYPLAINNAME(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		void VER_OVERLAYVERNAMES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_OVERLAYVERNAME(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_VERSIONKEYWORDSS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
 		void VER_VERSIONKEYWORDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;

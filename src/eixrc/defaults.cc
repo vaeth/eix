@@ -3262,12 +3262,13 @@ AddOption(STRING, "FORMAT_VERSION_ETCAT",
 	"{installedversion}{*color=(cyan,1)}<$color>I(){else} {}"
 	"] <$color><version>()"
 	" \\(<$color><fullslot>()\\)"
-	"{overlayver} [<$color><overlayvername>()]{}\\n", P_("VERSION_ETCAT",
+	"{overlayplainname} [<$color><overlayplainname>()]{}"
+	"\\n", P_("VERSION_ETCAT",
 	"This format outputs a version in the style of the etcat script."));
 
 AddOption(STRING, "FORMAT_ETCAT",
-	"(green,1)*()  (white,1)<category>/<name>() :\n"
-	"<availableversions:FORMAT_VERSION_ETCAT>\n", P_("FORMAT_ETCAT",
+	"(green,1)*()  (white,1)<category>/<name>() :\\n"
+	"<availableversions:FORMAT_VERSION_ETCAT>\\n", P_("FORMAT_ETCAT",
 	"This format outputs a package in the style of the etcat script."));
 
 AddOption(STRING, "FORMAT",

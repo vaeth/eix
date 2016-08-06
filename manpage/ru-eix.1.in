@@ -28,6 +28,8 @@
 
 .B eix-installed
 
+.B eix-etcat
+
 .B eix-functions.sh
 
 .B eix-header
@@ -103,6 +105,16 @@ B<eix-installed> is a simple script which outputs all installed packages
 repository or buildtime information
 (cf. the description of B<CHECK_INSTALLED_OVERLAYS> and B<USE_BUILD_TIME>).
 To get more help on B<eix-installed> call B<eix-installed -h>.
+
+B<eix-etcat> is a wrapper script which calls eix with a configuration such
+that it resembles the behaviour of B<etcat -v> from old app-portage/gentoolkit
+versions or its updated version from https://github.com/proteusx/etcat/ (e.g.
+app-portage/etcat from the mv overlay).
+The output is analogousand the default input accepts a sequence of
+(exact) package names (the specification of the category is optional).
+It might be instructive to look at the simple wrapper script if you want to
+write your own input/output format: The output format can be seen by calling
+B<eix --print FORMAT_ETCAT> and B<eix --print FORMAT_VERSION_ETCAT>.
 
 B<masked-packages> is a helper tool which matches the arguments against a list of masks.
 Details can be found near the end of the manpage.
@@ -1236,16 +1248,24 @@ B<slotfirst>/B<slotlast> is equivalent to B<first>/B<last> and B<oneslot> is 1.
 This must occur only in I<VARIABLE> in the context of version printing.
 It outputs the B<EAPI> of an available or installed version.
 .TP
-.BR slot ", " isslot ", " fullslot ", " isfullslot ", " subslot ", " issubslot ", "overlayver ", " overlaynum ", " virtual
+.BR slot ", " isslot ", " fullslot ", " isfullslot ", " subslot ", " issubslot
 This must occur only in I<VARIABLE> in the context of version printing.
-It outputs the current slot or the overlay of the current version.
-B<overlayver> is empty if the whole package is from only one overlay;
-you should use B<overlaykey> to print the overlay in such a case.
-B<overlaynum>, in contrast, contains the number of the overlay
-without colors unconditionally (or is empty if the version is not from an overlay).
-B<virtual> is nonempty if and only if the version is from a virtual overlay.
+It outputs the slot/subslot/both of the current version.
 B<isslot>, B<isfullslot>, B<issubslot> just test whether the slot, fullslot, or subslot are trivial and outputs 1 in this case,
 otherwise nothing.
+.TP
+.BR overlayver ", " overlaynum ", " overlayvername ", " virtual
+This must occur only in I<VARIABLE> in the context of version printing.
+It outputs the overlay of the current version.
+B<overlayver> is the colored index of the overlay and empty if the whole package is from only one overlay;
+you should use B<overlaykey> to print the overlay in such a case.
+B<overlaynum>, in contrast, contains the number of the overlay
+without colors unconditionally (and is empty only if the version is not from an overlay).
+B<overlayplainname> is the label (name) (or path if the label is unknown or empty) of the overlay;
+B<overlayplainname*> considers also the main repository as an overlay, here.
+B<overlayvername> and B<overlayvername*> are analogous, but return an empty string
+if the whole package is from the same respository.
+B<virtual> is nonempty if and only if the version is from a virtual overlay.
 .TP
 .BR versionkeywords ", " versionkeywords* ", " versionekeywords
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -1373,8 +1393,8 @@ See the remarks for B<--binary>.
 .B mainrepo
 Is 1 or empty, depending on whether at least one available version belongs to the main repository 0 (typically: gentoo).
 .TP
-.B overlaykey
-If all versions are in the same overlay, "[overlaykey]" is output with corresponding colors.
+.BR overlaykey ", " overlayname
+If all versions are in the same overlay, "[overlaykey]" (in corresponding colors) or "overlaylabel" is output.
 .TP
 .BR havevirtual ", " havenonvirtual
 Is 1 or empty, depending on whether at least one available version is from a (non)virtual overlay.

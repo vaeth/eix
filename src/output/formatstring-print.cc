@@ -447,6 +447,9 @@ class Scanner {
 			prop_ver("revision", &PrintFormat::VER_REVISION);
 			prop_ver("overlaynum", &PrintFormat::VER_OVERLAYNUM);
 			prop_ver("overlayver", &PrintFormat::VER_OVERLAYVER);
+			prop_ver("overlayplainname*", &PrintFormat::VER_OVERLAYPLAINNAMES);
+			prop_ver("overlayplainname", &PrintFormat::VER_OVERLAYPLAINNAME);
+			prop_ver("overlayvername*", &PrintFormat::VER_OVERLAYVERNAMES);
 			prop_ver("overlayvername", &PrintFormat::VER_OVERLAYVERNAME);
 			prop_ver("versionkeywords*", &PrintFormat::VER_VERSIONKEYWORDSS);
 			prop_ver("versionkeywords", &PrintFormat::VER_VERSIONKEYWORDS);
@@ -812,14 +815,14 @@ void PrintFormat::PKG_BINARY(OutputString *s, Package *package) const {
 
 void PrintFormat::PKG_OVERLAYKEY(OutputString *s, Package *package) const {
 	ExtendedVersion::Overlay ov_key(package->largest_overlay);
-	if(ov_key && package->have_same_overlay_key()) {
+	if((ov_key != 0) && package->have_same_overlay_key()) {
 		overlay_keytext(s, ov_key, false);
 	}
 }
 
 void PrintFormat::PKG_OVERLAYNAME(OutputString *s, Package *package) const {
 	ExtendedVersion::Overlay ov_key(package->largest_overlay);
-	if(ov_key && package->have_same_overlay_key()) {
+	if((ov_key != 0) && package->have_same_overlay_key()) {
 		s->assign_smart(header->getOverlay(ov_key).name());
 	}
 }
@@ -1108,54 +1111,71 @@ void PrintFormat::VER_REVISION(OutputString *s, Package *package ATTRIBUTE_UNUSE
 	}
 }
 
-void PrintFormat::ver_overlay(OutputString *s, Package *package, bool getnum) const {
+void PrintFormat::ver_overlay(OutputString *s, Package *package, bool numeric, bool only_noncommon, bool only_nonzero) const {
+	eix_assert_paranoic(!numeric || only_nonzero);
+	ExtendedVersion::Overlay ov_key;
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
 		eix_assert_paranoic(header != NULLPTR);
 		if(unlikely(!(vardb->readOverlay(*package, i, *header)))) {
-			if(getnum || no_color) {
-				s->assign_fast("[?]");
-			} else {
-				s->assign(color_overlaykey, 0);
-				s->append_fast("[?]");
-				s->append(color_keyend, 0);
+			if(unlikely(!numeric)) {
+				s->assign_fast("?");
+				return;
 			}
+			if(no_color || !only_noncommon) {
+				s->assign_fast("[?]");
+				return;
+			}
+			s->assign(color_overlaykey, 0);
+			s->append_fast("[?]");
+			s->append(color_keyend, 0);
 			return;
 		}
-		if(i->overlay_key > 0) {
-			if(getnum || (!package->have_same_overlay_key()) || (package->largest_overlay != i->overlay_key)) {
-				overlay_keytext(s, i->overlay_key, getnum);
-			}
+		ov_key = i->overlay_key;
+		if(likely(only_noncommon) &&
+			likely(package->have_same_overlay_key()) &&
+			likely(ov_key == package->largest_overlay)) {
+			return;
 		}
-	} else if(getnum || (!package->have_same_overlay_key())) {
-		if(version_variables->version()->overlay_key > 0) {
-			overlay_keytext(s, version_variables->version()->overlay_key, getnum);
-		}
+	} else if(likely(only_noncommon) &&
+		likely(package->have_same_overlay_key())) {
+		return;
+	} else {
+		ov_key = version_variables->version()->overlay_key;
+	}
+	if(likely(only_nonzero) && likely(ov_key == 0)) {
+		return;
+	}
+	if(likely(numeric)) {
+		overlay_keytext(s, ov_key, !only_noncommon);
+	} else {
+		eix_assert_paranoic(header != NULLPTR);
+		s->assign_smart(header->getOverlay(ov_key).name());
 	}
 }
 
 void PrintFormat::VER_OVERLAYNUM(OutputString *s, Package *package) const {
-	ver_overlay(s, package, true);
+	ver_overlay(s, package, true, false, true);
 }
 
 void PrintFormat::VER_OVERLAYVER(OutputString *s, Package *package) const {
-	ver_overlay(s, package, false);
+	ver_overlay(s, package, true, true, true);
+}
+
+void PrintFormat::VER_OVERLAYPLAINNAMES(OutputString *s, Package *package) const {
+	ver_overlay(s, package, false, false, false);
+}
+
+void PrintFormat::VER_OVERLAYPLAINNAME(OutputString *s, Package *package) const {
+	ver_overlay(s, package, false, false, true);
+}
+
+void PrintFormat::VER_OVERLAYVERNAMES(OutputString *s, Package *package) const {
+	ver_overlay(s, package, false, true, false);
 }
 
 void PrintFormat::VER_OVERLAYVERNAME(OutputString *s, Package *package) const {
-	ExtendedVersion::Overlay key;
-	eix_assert_paranoic(header != NULLPTR);
-	if(version_variables->isinst) {
-		InstVersion *i(version_variables->instver());
-		if(unlikely(!(vardb->readOverlay(*package, i, *header)))) {
-			s->assign_fast("?");
-			return;
-		}
-		key = i->overlay_key;
-	} else {
-		key = version_variables->version()->overlay_key;
-	}
-	s->assign_smart(header->getOverlay(key).name());
+	ver_overlay(s, package, false, true, true);
 }
 
 void PrintFormat::VER_VERSIONKEYWORDSS(OutputString *s, Package *package) const {
