@@ -1,0 +1,14 @@
+#!/bin/sh
+# This script is part of the eix project and distributed under the
+# terms of the GNU General Public License v2.
+#
+# Author and Copyright (c):
+#   Martin V\"ath <martin@mvath.de>
+#
+# This script calls eix with options appropriate for etcat emulation
+export DEFAULT_IS_OR=true
+export DEFAULT_MATCH_ALGORITHM='exact'
+export DEFAULT_MATCH_FIELD='/ category/name name'
+export DEFAULT_FORMAT=normal
+export FORMAT='%{FORMAT_ETCAT}'
+exec eix --pure-packages "$@"
