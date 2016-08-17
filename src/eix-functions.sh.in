@@ -165,13 +165,23 @@ PerLine() {
 PerLineArg() {
 	eixf_perline=$1
 	shift
+	case $- in
+	*f*)
+		eixf_setf=:;;
+	*)
+		set -f
+		eixf_setf='set +f';;
+	esac
 	eixf_ifs=$IFS
 	IFS='
 '
 	for eixf_line in $eixf_perline
-	do	"$@" "$eixf_line"
+	do	IFS=$eixf_ifs
+		$eixf_setf
+		"$@" "$eixf_line"
 	done
 	IFS=$eixf_ifs
+	$eixf_setf
 }
 
 unset local_portdir

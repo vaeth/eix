@@ -244,14 +244,23 @@ ExecuteConfig() {
 	rsync_opts=
 	$haveconf && eix_sync_conf=`cat -- "$eixsyncconf"`'
 '${eix_sync_conf-}
+	case $- in
+	*f*)
+		setfori=:;;
+	*)
+		set -f
+		setfori='set +f';;
+	esac
 	IFSori=$IFS
 	IFS='
 '
 	for confline in ${eix_sync_conf-}
 	do	IFS=$IFSori
+		$setfori
 		ParseConfigLine "$1" "$confline"
 	done
 	IFS=$IFSori
+	$setfori
 }
 
 
