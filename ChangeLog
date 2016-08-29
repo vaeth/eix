@@ -4,6 +4,7 @@
 	Martin Väth <martin at mvath.de>:
 	- scripts: set -f in loops over lines:
 	  https://bugs.gentoo.org/show_bug.cgi?id=591422
+	- Improve yesno detection (0 or - is false)
 
 *eix-0.31.8
 	Martin Väth <martin at mvath.de>:

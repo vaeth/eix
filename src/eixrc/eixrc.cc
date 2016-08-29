@@ -708,6 +708,7 @@ bool EixRc::istrue(const char *s) {
 		case 'f':
 		case 'F':
 		case '0':
+		case '-':
 			return false;
 		case 'o':
 		case 'O':

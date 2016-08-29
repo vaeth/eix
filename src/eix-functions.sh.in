@@ -25,11 +25,17 @@ ReadVar() {
 	eval $1=\${eixf_read%X}
 }
 
-ReadBoolean() {
-	case `PRINT_APPEND=n "${2:-$read_var_prg}" --print "$1"` in
-	[nNfF]*|[oO][fF]*)	return 1;;
+yesno() {
+	case ${1:-n} in
+	[nNfF0-]*|[oO][fF]*)
+		return 1;;
 	esac
-	return 0
+	:
+}
+
+ReadBoolean() {
+	eixf_read=`PRINT_APPEND=n "${2:-$read_var_prg}" --print "$1"`
+	yesno "$eixf_read"
 }
 
 eixf_good=
@@ -54,7 +60,8 @@ StartInList() (
 	ReadVar startlist $2 || return
 	for start in $startlist
 	do	case $1 in
-		"$start"*)	return 0;;
+		"$start"*)
+			return 0;;
 		esac
 	done
 	return 1
@@ -229,7 +236,8 @@ Replace() {
 	eixf_repla=
 	eixf_replc='break'
 	case $1 in
-	-*)	eixf_replc=
+	-*)
+		eixf_replc=
 		shift;;
 	esac
 	replace_count=
@@ -258,7 +266,8 @@ Push() {
 # The name IFS can be changed if a third (resp. fourth) argument is given.
 PushEscaped() {
 	case $1 in
-	-*)	shift
+	-*)
+		shift
 		eval $1=;;
 	esac
 	if [ $# -lt 3 ] || [ -z "${3:++}" ]
@@ -278,7 +287,8 @@ PushEscaped() {
 		fi
 		Replace -g eixf_pex '\\' '\'
 		[ -n "${replace_tail:++}" ] && case $eixf_pex in
-		*\\)	eixf_pew=$eixf_pew${eixf_pex%?}$eixf_pec
+		*\\)
+			eixf_pew=$eixf_pew${eixf_pex%?}$eixf_pec
 			continue;;
 		esac
 		eixf_pew=$eixf_pew$eixf_pex
@@ -356,8 +366,10 @@ AddLocalMethods() {
 	ReadVar eixf_al ADD_OVERLAY
 	PushEscaped eixf_alm "$eixf_al"
 	case $- in
-	*f*)	eval "set -- a $eixf_alm";;
-	*)	set -f
+	*f*)
+		eval "set -- a $eixf_alm";;
+	*)
+		set -f
 		eval "set -- a $eixf_alm"
 		set +f;;
 	esac
@@ -424,8 +436,10 @@ NormalizeNames() {
 			continue
 		fi
 		case $eixf_norma in
-		/*)	:;;
-		*)	relative="$relative $eixf_normc";;
+		/*)
+			:;;
+		*)
+			relative="$relative $eixf_normc";;
 		esac
 		$normalize_resolve && if CheckReadlink
 		then	# Append A to avoid loss of trailing space in `...`
@@ -434,8 +448,10 @@ NormalizeNames() {
 				&& Chomp eixf_normb
 		elif test -d "$eixf_norma"
 		then	eixf_normb=`case $eixf_norma in
-				/*)	cd -P "$eixf_norma";;
-				*)	cd -P "./$eixf_norma";;
+				/*)
+					cd -P "$eixf_norma";;
+				*)
+					cd -P "./$eixf_norma";;
 				esac >/dev/null 2>&1 \
 				&& printf '%sA' "$PWD"` \
 				&& eixf_normb=${eixf_normb%A}
@@ -452,13 +468,10 @@ NormalizeNames() {
 }
 
 ReadGettext() {
-	case ${USE_NLS-@USE_NLS@} in
-	''|[nNfF0]*)
-		false;;
-	esac && \
-	command -v envsubst >/dev/null 2>&1 && \
-	command -v gettext >/dev/null 2>&1 && {
-		export TEXTDOMAIN='@TEXTDOMAIN@'
+	if yesno "${USE_NLS-@USE_NLS@}" && \
+		command -v envsubst >/dev/null 2>&1 && \
+		command -v gettext >/dev/null 2>&1
+	then	export TEXTDOMAIN='@TEXTDOMAIN@'
 		export TEXTDOMAINDIR='@TEXTDOMAINDIR@'
 		eixf_pgtglue=`printf '\004'`
 pgettext() {
@@ -498,7 +511,7 @@ ReadGettext() {
 	:
 }
 		return 0
-	}
+	fi
 gettext() {
 	printf '%s' "$*"
 }
