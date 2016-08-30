@@ -19,7 +19,6 @@ ReadFunctions() {
 
 : ${read_var_prg:=eix-update}
 ReadVar() {
-	eval "[ -n \"\${$2++}\" ] && $1=\$$2" && return
 	eval unset $1
 	eixf_read=`PRINT_APPEND=X "${3:-$read_var_prg}" --print "$2"` || return
 	eval $1=\${eixf_read%X}
@@ -34,7 +33,8 @@ yesno() {
 }
 
 ReadBoolean() {
-	eixf_read=`PRINT_APPEND=n "${2:-$read_var_prg}" --print "$1"`
+	eval "[ -n \"\${$1++}\" ] && eifx_read=\$$1" || \
+		eixf_read=`PRINT_APPEND=n "${2:-$read_var_prg}" --print "$1"`
 	yesno "$eixf_read"
 }
 

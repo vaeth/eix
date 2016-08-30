@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.31.10
+	Martin Väth <martin at mvath.de>:
+	- scripts: speed up ReadBoolean
+
 *eix-0.31.9
 	Martin Väth <martin at mvath.de>:
 	- scripts: set -f in loops over lines:
