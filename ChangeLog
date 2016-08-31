@@ -2,6 +2,8 @@
 
 *eix-0.31.10
 	Martin Väth <martin at mvath.de>:
+	- eix-sync: Prepend /etc/eix-sync.conf only once, see
+	  https://github.com/vaeth/eix/issues/30
 	- scripts: speed up ReadBoolean
 
 *eix-0.31.9

@@ -234,16 +234,22 @@ ParseConfigLine() {
 			'${mycmd} -s ${j} failed'`"
 }
 
-test -r "$eixsyncconf" && haveconf=: || haveconf=false
-ReadVar eix_sync_conf EIX_SYNC_CONF
+Calc_eixsyncconf() {
+	ReadVar eix_sync_conf EIX_SYNC_CONF
+	! test -r "$eixsyncconf" || eix_sync_conf=`cat -- "$eixsyncconf"`'
+'${eix_sync_conf-}
+Calc_eixsyncconf() {
+	:
+}
+}
+
 ExecuteConfig() {
 	after_sync=
 	after_update=
 	before_rsync=
 	config_opts=
 	rsync_opts=
-	$haveconf && eix_sync_conf=`cat -- "$eixsyncconf"`'
-'${eix_sync_conf-}
+	Calc_eixsyncconf
 	case $- in
 	*f*)
 		setfori=:;;
