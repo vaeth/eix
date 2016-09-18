@@ -112,13 +112,11 @@ Check() {
 GrepAllWith -e 'ATTRIBUTE_NONNULL_(' -e 'ATTRIBUTE_NONNULL\([^(_]\|$\)' -e 'ATTRIBUTE_NONNULL(\([^(]\|$\)'
 GrepHWith 'include .config'
 GrepCCWithout '#include <config\.h>'
-#Check '<config\.h>' -e '^#if.*HAVE' -e '^#if.*USE' -e '^#if.*WITH' -e '^#if.*[^E]TEST'  -e '^#if.*DEBUG' -e '#if.*ENABLE' -e '[^\"_]EIX_CACHEFILE' -e '#if.*BIGENDIAN' -e '#if.*[^_]TARGET' -e '#if.*CASEFOLD' -e SYSCONFDIR -e ALWAYS_RECALCULATE -e 'ATTRIBUTE_NORETURN' -e 'ATTRIBUTE_SIGNAL' -e 'ATTRIBUTE_CONST' -e 'ATTRIBUTE_PURE' -e '[^a-e_g-z_.]open(' -e '[^a-e_g-z_.]close(' -e 'seek(' -e 'stat(' -e "sys/stat" -e "sys/type" -e "sys/mman" -e "size_t[^y]" -e "off_t" -e "fcntl" -e 'FULL_GCC_DIAG_PRAGMA'
 Check '"eixTk/assert\.h"' -e 'eix_assert'
 Check '"eixTk/stringtypes\.h"' -e 'WordVec' -e 'WordSet' -e 'WordMap' -e 'WordList' -e 'LineVec' -e 'WordSize'
 Check '"eixTk/constexpr\.h"' -e 'CONSTEXPR'
 Check '"eixTk/diagnostics\.h"' -e DIAG_OFF -e DIAG_ON
 Check '"eixTk/eixint\.h"' -e OffsetType -e UChar -e UNumber -e Treesize -e Catsize -e Versize -e SignedBool -e TinySigned -e TinyUnsigned
-Check '"eixTk/exceptions\.h"' -e portage_parse_error
 Check '"eixTk/formated\.h"' -e '::format'
 Check '"eixTk/i18n\.h"' -e '_('
 Check '"eixTk/inttypes\.h"' -e int8 -e int16 -e int32 -e int64

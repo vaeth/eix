@@ -31,6 +31,8 @@
 #include "search/packagetest.h"
 #include "various/cli.h"
 
+class ParseError;
+
 using std::string;
 
 static bool optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
@@ -67,7 +69,7 @@ static bool optional_numeric_increase(ArgumentReader::const_iterator *arg, const
 } while(0)
 
 #define NEW_TEST do { \
-	test = new PackageTest(varpkg_db, portagesettings, print_format, stability, header); \
+	test = new PackageTest(varpkg_db, portagesettings, print_format, stability, header, parse_error); \
 } while(0)
 
 #define USE_TEST do { \
@@ -77,7 +79,7 @@ static bool optional_numeric_increase(ArgumentReader::const_iterator *arg, const
 	} \
 } while(0)
 
-void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, MaskList<Mask> **marked_list, const ArgumentReader& ar) {
+void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, const ParseError *parse_error, MaskList<Mask> **marked_list, const ArgumentReader& ar) {
 	bool	use_pipe(false),      // A pipe is used somewhere
 		force_test(false),    // There is a current test or a pipe
 		curr_pipe(false),     // There is a current pipe

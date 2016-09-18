@@ -24,6 +24,7 @@
 
 class CascadingProfile;
 class EixRc;
+class ParseError;
 class Version;
 
 // Files for categories the user defined and categories from the official tree
@@ -71,7 +72,7 @@ class PortageUserConfig {
 
 		bool CheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const ATTRIBUTE_NONNULL_;
 		bool CheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const ATTRIBUTE_NONNULL_;
-		static void ReadVersionFile(const char *file, MaskList<KeywordMask> *list) ATTRIBUTE_NONNULL_;
+		void ReadVersionFile(const char *file, MaskList<KeywordMask> *list) const ATTRIBUTE_NONNULL_;
 
 		void pushback_set_accepted_keywords(WordVec *result, const Version *v) const ATTRIBUTE_NONNULL_;
 
@@ -160,6 +161,7 @@ class PortageSettings : public std::map<std::string, std::string> {
 		typedef WordMap my_map;
 
 		EixRc *settings_rc;
+		const ParseError *parse_error;
 		/**
 		Vector of all allowed categories
 		**/
@@ -208,6 +210,11 @@ class PortageSettings : public std::map<std::string, std::string> {
 
 		void update_world_setslist();
 
+		bool grab_setmasks(const char *file, SetsIndex i, WordVec *contains_set, bool recursive);
+		bool grab_setmasks(const char *file, SetsIndex i, WordVec *contains_set) {
+			return grab_setmasks(file, i, contains_set, false);
+		}
+
 		const MaskList<SetMask> *getPackageSets() const {
 			return &m_package_sets;
 		}
@@ -242,14 +249,14 @@ class PortageSettings : public std::map<std::string, std::string> {
 		/**
 		Read make.globals and make.conf
 		**/
-		void init(EixRc *eixrc, bool getlocal, bool init_world, bool print_profile_paths);
+		void init(EixRc *eixrc, const ParseError *e, bool getlocal, bool init_world, bool print_profile_paths) ATTRIBUTE_NONNULL_;
 
-		PortageSettings(EixRc *eixrc, bool getlocal, bool init_world, bool print_profile_paths) {
-			init(eixrc, getlocal, init_world, print_profile_paths);
+		PortageSettings(EixRc *eixrc, const ParseError *e, bool getlocal, bool init_world, bool print_profile_paths) ATTRIBUTE_NONNULL_ {
+			init(eixrc, e, getlocal, init_world, print_profile_paths);
 		}
 
-		PortageSettings(EixRc *eixrc, bool getlocal, bool init_world) {
-			init(eixrc, getlocal, init_world, false);
+		PortageSettings(EixRc *eixrc, const ParseError *e, bool getlocal, bool init_world) ATTRIBUTE_NONNULL_ {
+			init(eixrc, e, getlocal, init_world, false);
 		}
 
 		/**

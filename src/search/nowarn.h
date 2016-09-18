@@ -19,6 +19,7 @@
 
 class NowarnKeywords;
 class Package;
+class ParseError;
 class PortageSettings;
 
 class NowarnFlags {
@@ -95,7 +96,7 @@ class NowarnPreList : public PreList {
 			: super(lines, filename, NULLPTR, only_add, false) {
 		}
 
-		void initialize(NowarnMaskList *l);
+		void initialize(NowarnMaskList *l, const ParseError *parse_error) ATTRIBUTE_NONNULL_;
 };
 
 #endif  // SRC_SEARCH_NOWARN_H_

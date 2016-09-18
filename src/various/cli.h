@@ -17,12 +17,13 @@ class EixRc;
 class Mask;
 class MatchTree;
 class PackageTest;
+class ParseError;
 class PortageSettings;
 class SetStability;
 class VarDbPkg;
 template<typename m_Type> class MaskList;
 
-void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, MaskList<Mask> **marked_list, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
+void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, const ParseError *parse_error, MaskList<Mask> **marked_list, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
 
 /*
 	If you want to add a new parameter to eix just insert a line into
@@ -48,6 +49,7 @@ enum cli_options {
 	O_DUMP,
 	O_DUMP_DEFAULTS,
 	O_KNOWN_VARS,
+	O_NOWARN,
 	O_CARE,
 	O_DEPS_INSTALLED,
 	O_IGNORE_ETC_PORTAGE,

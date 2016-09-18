@@ -97,12 +97,13 @@ static void init_match_algorithm_map();
 static bool stabilitytest(const Package *p, PackageTest::TestStability what) ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
 inline static void get_p(Package **p, PackageReader *pkg) ATTRIBUTE_NONNULL_;
 
-PackageTest::PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f, const SetStability *set_stability, const DBHeader *dbheader) {
+PackageTest::PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f, const SetStability *set_stability, const DBHeader *dbheader, const ParseError *e) {
 	vardbpkg = vdb;
 	portagesettings = p;
 	print_format = f;
 	stability = set_stability;
 	header = dbheader;
+	parse_error = e;
 	overlay_list = overlay_only_list = in_overlay_inst_list = NULLPTR;
 	algorithm = NULLPTR;
 	from_overlay_inst_list = NULLPTR;
@@ -1220,7 +1221,7 @@ bool PackageTest::match(PackageReader *pkg) const {
 	return true;
 }  // NOLINT(readability/fn_size)
 
-void PackageTest::get_nowarn_list() {
+void PackageTest::get_nowarn_list() const {
 	NowarnPreList prelist;
 	WordVec name;
 	EixRc& rc(get_eixrc());
@@ -1231,7 +1232,7 @@ void PackageTest::get_nowarn_list() {
 		prelist.handle_file(lines, *it, NULLPTR, true, false, false);
 	}
 	nowarn_list = new NowarnMaskList;
-	prelist.initialize(nowarn_list);
+	prelist.initialize(nowarn_list, parse_error);
 }
 
 void PackageTest::init_static() {

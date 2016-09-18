@@ -43,6 +43,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
+class ParseError;
 
 /**
 Exclude this files from listing of files in profile
@@ -271,12 +272,13 @@ void CascadingProfile::finalize() {
 		return;
 	}
 	finalized = true;
-	p_system.initialize(&m_system, Mask::maskInSystem);
-	p_profile.initialize(&m_profile, Mask::maskInProfile);
-	p_package_masks.initialize(&m_package_masks, Mask::maskMask, true);
-	p_package_unmasks.initialize(&m_package_unmasks, Mask::maskUnmask);
-	p_package_keywords.initialize(&m_package_keywords);
-	p_package_accept_keywords.initialize(&m_package_accept_keywords, m_portagesettings->m_raised_arch);
+	const ParseError *parse_error(m_portagesettings->parse_error);
+	p_system.initialize(&m_system, Mask::maskInSystem, parse_error);
+	p_profile.initialize(&m_profile, Mask::maskInProfile, parse_error);
+	p_package_masks.initialize(&m_package_masks, Mask::maskMask, true, parse_error);
+	p_package_unmasks.initialize(&m_package_unmasks, Mask::maskUnmask, parse_error);
+	p_package_keywords.initialize(&m_package_keywords, parse_error);
+	p_package_accept_keywords.initialize(&m_package_accept_keywords, m_portagesettings->m_raised_arch, parse_error);
 }
 
 /**

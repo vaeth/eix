@@ -24,6 +24,7 @@
 #include "database/header.h"
 #include "database/io.h"
 #include "eixTk/argsreader.h"
+#include "eixTk/exceptions.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -175,6 +176,7 @@ typedef list <ArgPair> MethodArgs;
 typedef MethodArgs RepoArgs;
 static MethodArgs *method_args;
 static RepoArgs *repo_args;
+static const ParseError *parse_error;
 
 static const char *outputname = NULLPTR;
 static const char *var_to_print = NULLPTR;
@@ -358,14 +360,15 @@ int run_eix_update(int argc, char *argv[]) {
 		return EXIT_FAILURE;
 	}
 
+	parse_error = new ParseError;
 	if(unlikely(var_to_print != NULLPTR)) {
-		if(eixrc.print_var(var_to_print)) {
+		if(eixrc.print_var(var_to_print, parse_error)) {
 			return EXIT_SUCCESS;
 		}
 		return EXIT_FAILURE;
 	}
 	if(unlikely(known_vars)) {
-		eixrc.known_vars();
+		eixrc.known_vars(parse_error);
 		return EXIT_SUCCESS;
 	}
 	if(unlikely(show_help)) {
@@ -403,7 +406,7 @@ int run_eix_update(int argc, char *argv[]) {
 		program_name, eixrc["EXIT_STATUSLINE"]);
 
 	INFO(_("Reading Portage settings...\n"));
-	PortageSettings portage_settings(&eixrc, false, true);
+	PortageSettings portage_settings(&eixrc, parse_error, false, true);
 
 	/* Build default (overlay/method/...) lists, using environment vars */
 	Overrides override_list;

@@ -17,6 +17,7 @@
 #include <string>
 
 #include "eixTk/argsreader.h"
+#include "eixTk/exceptions.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -42,8 +43,9 @@ static void print_help() {
 "Output all arguments matching a list of mask\n"
 "Options:\n"
 " -h, --help              show a short help screen\n"
-" -q, --quiet             Do not output matching arguments, but exit with\n"
+" -q, --quiet (toggle)    do not output matching arguments, but exit with\n"
 "                         success only if at least one argument matches.\n"
+" -Q, --nowarn (toggle)   suppress some warnings for bad syntax.\n"
 " -m, --mask MASK         add MASK to the list of masks\n"
 " -f, --file FILE         add masks from FILE.\n"
 " -F, --read-file FILE    read args as words from FILE.\n"
@@ -60,6 +62,7 @@ Local options for argument reading
 static struct LocalOptions {
 	bool
 		be_quiet,
+		no_warn,
 		help;
 } rc_options;
 
@@ -74,6 +77,7 @@ class MaskedOptionList : public OptionList {
 MaskedOptionList::MaskedOptionList() {
 	push_back(Option("help",      'h', Option::BOOLEAN, &rc_options.help));
 	push_back(Option("quiet",     'q', Option::BOOLEAN, &rc_options.be_quiet));
+	push_back(Option("nowarn",    'Q', Option::BOOLEAN, &rc_options.no_warn));
 	push_back(Option("file",      'f', Option::KEEP_STRING_OPTIONAL));
 	push_back(Option("read-file", 'F', Option::KEEP_STRING_OPTIONAL));
 	push_back(Option("mask",      'm', Option::KEEP_STRING));
@@ -89,7 +93,7 @@ inline static void add_file(LineVec *lines, const string& name) {
 
 static void add_file(PreList *pre_list, const string& name) ATTRIBUTE_NONNULL_;
 static void add_words(LineVec *lines, const string& name) ATTRIBUTE_NONNULL_;
-static void read_args(MaskList<Mask> *mask_list, WordVec *args, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
+static void read_args(MaskList<Mask> *mask_list, WordVec *args, const ArgumentReader& ar, const ParseError *parse_error) ATTRIBUTE_NONNULL_;
 static const char *opt_arg(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
 
 static void read_stdin(LineVec *lines, string *name) {
@@ -146,7 +150,7 @@ static const char *opt_arg(ArgumentReader::const_iterator *arg, const ArgumentRe
 	return (*arg)->m_argument;
 }
 
-static void read_args(MaskList<Mask> *mask_list, WordVec *args, const ArgumentReader& ar) {
+static void read_args(MaskList<Mask> *mask_list, WordVec *args, const ArgumentReader& ar, const ParseError *parse_error) {
 	PreList::LineNumber linenr(0);
 	PreList pre_list;
 	PreListEntry::FilenameIndex argindex;
@@ -172,7 +176,7 @@ static void read_args(MaskList<Mask> *mask_list, WordVec *args, const ArgumentRe
 				break;
 		}
 	}
-	pre_list.initialize(mask_list, Mask::maskMask);
+	pre_list.initialize(mask_list, Mask::maskMask, parse_error);
 }
 
 int run_masked_packages(int argc, char *argv[]) {
@@ -186,7 +190,8 @@ int run_masked_packages(int argc, char *argv[]) {
 
 	MaskList<Mask> mask_list;
 	WordVec args;
-	read_args(&mask_list, &args, argreader);
+	const ParseError *parse_error = new ParseError(!rc_options.no_warn);
+	read_args(&mask_list, &args, argreader, parse_error);
 
 	for(WordVec::const_iterator it(args.begin());
 		likely(it != args.end()); ++it) {

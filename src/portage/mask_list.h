@@ -27,6 +27,7 @@
 #include "portage/package.h"
 
 class Package;
+class ParseError;
 class Version;
 
 template<typename m_Type> class Masks : public std::list<m_Type> {
@@ -143,9 +144,9 @@ template<typename m_Type> class MaskList {
 		/**
 		@return true if something was added
 		**/
-		bool add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines) ATTRIBUTE_NONNULL_;
-		bool add_file(const char *file, Mask::Type mask_type, bool recursive) ATTRIBUTE_NONNULL_ {
-			return add_file(file, mask_type, recursive, false);
+		bool add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines, const ParseError *parse_error) ATTRIBUTE_NONNULL_;
+		bool add_file(const char *file, Mask::Type mask_type, bool recursive, const ParseError *parse_error) ATTRIBUTE_NONNULL_ {
+			return add_file(file, mask_type, recursive, false, parse_error);
 		}
 
 		/**
@@ -359,14 +360,14 @@ class PreList : public std::vector<PreListEntry> {
 
 		void finalize();
 
-		void initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines) ATTRIBUTE_NONNULL_;
-		void initialize(MaskList<Mask> *l, Mask::Type t) ATTRIBUTE_NONNULL_ {
-			initialize(l, t, false);
+		void initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines, const ParseError *parse_error) ATTRIBUTE_NONNULL_;
+		void initialize(MaskList<Mask> *l, Mask::Type t, const ParseError *parse_error) ATTRIBUTE_NONNULL_ {
+			initialize(l, t, false, parse_error);
 		}
 
-		void initialize(MaskList<KeywordMask> *l, std::string raised_arch) ATTRIBUTE_NONNULL_;
+		void initialize(MaskList<KeywordMask> *l, std::string raised_arch, const ParseError *parse_error) ATTRIBUTE_NONNULL_;
 
-		void initialize(MaskList<PKeywordMask> *l) ATTRIBUTE_NONNULL_;
+		void initialize(MaskList<PKeywordMask> *l, const ParseError *parse_error) ATTRIBUTE_NONNULL_;
 };
 
 #endif  // SRC_PORTAGE_MASK_LIST_H_

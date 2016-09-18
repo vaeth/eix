@@ -139,6 +139,7 @@ static void dump_help() {
 "\n"
 "   Output:\n"
 "     -q, --quiet (toggle)   no output. Typically combined with -0\n"
+"         --nowarn (toggle)  suppress warnings about wrong portage config\n"
 "         --ansi             reset the ansi 256 color palette\n"
 "     -n, --nocolor          do not use ANSI color codes\n"
 "     -F, --force-color      force colorful output\n"
@@ -273,6 +274,8 @@ static PrintFormat *format;
 
 static eix::TinyUnsigned remote_default;
 
+static const ParseError *parse_error;
+
 /**
 Local options for argument reading
 **/
@@ -288,6 +291,7 @@ static struct LocalOptions {
 		palette256l0,
 		palette256l1,
 		be_quiet,
+		no_warn,
 		quick,
 		care,
 		deps_installed,
@@ -340,6 +344,7 @@ EixOptionList::EixOptionList() {
 	push_back(Option("256l1",         O_P256L1, Option::BOOLEAN_T,    &rc_options.palette256l1));
 	push_back(Option("256b",          O_P256B, Option::BOOLEAN_T,     &rc_options.palette256b));
 	push_back(Option("quiet",         'q',     Option::BOOLEAN,       &rc_options.be_quiet));
+	push_back(Option("nowarn",        O_NOWARN, Option::BOOLEAN,      &rc_options.no_warn));
 	push_back(Option("quick",         'Q',     Option::BOOLEAN,       &rc_options.quick));
 	push_back(Option("care",          O_CARE,  Option::BOOLEAN_T,     &rc_options.care));
 	push_back(Option("deps-installed", O_DEPS_INSTALLED, Option::BOOLEAN_T, &rc_options.deps_installed));
@@ -630,15 +635,16 @@ int run_eix(int argc, char** argv) {
 		AnsiColor::AnsiPalette();
 	}
 
+	parse_error = new ParseError(!rc_options.no_warn);
 	if(unlikely(var_to_print != NULLPTR)) {
-		if(eixrc.print_var(var_to_print)) {
+		if(eixrc.print_var(var_to_print, parse_error)) {
 			return EXIT_SUCCESS;
 		}
 		return EXIT_FAILURE;
 	}
 
 	if(unlikely(rc_options.known_vars)) {
-		eixrc.known_vars();
+		eixrc.known_vars(parse_error);
 		return EXIT_SUCCESS;
 	}
 
@@ -747,7 +753,7 @@ int run_eix(int argc, char** argv) {
 		overlay_mode = mode_list_none;
 	}
 
-	PortageSettings portagesettings(&eixrc, true, false, rc_options.print_profile_paths);
+	PortageSettings portagesettings(&eixrc, parse_error, true, false, rc_options.print_profile_paths);
 	if(unlikely(rc_options.print_profile_paths)) {
 		return EXIT_SUCCESS;
 	}
@@ -835,7 +841,7 @@ int run_eix(int argc, char** argv) {
 	SetStability stability(&portagesettings, !rc_options.ignore_etc_portage, false, eixrc.getBool("ALWAYS_ACCEPT_KEYWORDS"));
 
 	MatchTree *matchtree = new MatchTree(eixrc.getBool("DEFAULT_IS_OR"));
-	parse_cli(matchtree, &eixrc, &varpkg_db, &portagesettings, format, &stability, &header, &marked_list, argreader);
+	parse_cli(matchtree, &eixrc, &varpkg_db, &portagesettings, format, &stability, &header, parse_error, &marked_list, argreader);
 
 	eix::ptr_list<Package> matches;
 	eix::ptr_list<Package> all_packages; {
@@ -1114,7 +1120,8 @@ static bool opencache(Database *db, const char *filename, const char *tooltext) 
 	return false;
 }
 
-static bool is_current_dbversion(const char *filename, const char *tooltext) { 	Database db;
+static bool is_current_dbversion(const char *filename, const char *tooltext) {
+	Database db;
 	if(unlikely(!opencache(&db, filename, tooltext))) {
 		return false;
 	}
@@ -1171,7 +1178,7 @@ static void print_unused(const string& filename, const string& excludefiles, con
 			r = m.parseMask(it.c_str(), &errtext, false);
 		}
 		if(r != BasicVersion::parsedOK) {
-			portage_parse_error(filename, lines.begin(), i, errtext);
+			parse_error->output(filename, lines.begin(), i, errtext);
 			continue;
 		}
 		eix::ptr_list<Package>::const_iterator pi(packagelist.begin());

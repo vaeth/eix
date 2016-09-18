@@ -62,7 +62,7 @@ myarg=
 # Once an option with paths as arguments is introduced, it is probably
 # necessary to turn the next command into eval "Push -c ..."
 # In the moment this seems not necessary, so we avoid that security risk:
-Push -c opt `eix --print EIX_TEST_OBSOLETE_OPTS`
+Push -c opt `eix --nowarn --print EIX_TEST_OBSOLETE_OPTS`
 Push opt "$@"
 set -f
 eval "set -- a $opt"
@@ -132,13 +132,13 @@ FalseExcept() {
 }
 
 Output() {
-	if ! NOFOUND_STATUS=1 COUNT_ONLY_PRINTED=false eix -Tq0
+	if ! NOFOUND_STATUS=1 COUNT_ONLY_PRINTED=false eix --nowarn -Tq0
 	then	[ -z "${1:++}" ] || Echo "$1"
 		return
 	fi
 	printf '\n%s\n' "$2"
 	if [ $# -le 3 ] || $nodetails
-	then	eix -T
+	then	eix --nowarn -T
 		echo
 		return
 	fi

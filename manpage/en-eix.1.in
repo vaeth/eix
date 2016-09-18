@@ -298,6 +298,9 @@ If B<PRINT_APPEND> is empty, the null character is appended.
 .\" {{{ -------- Output options
 .SS Output options
 .TP
+.BR --nowarn "   (toggle)"
+Suppress some warnings concerning the portage configuration.
+.TP
 .BR -x ", " --versionsort "    (toggle)"
 Prints available versions sorted by versions (slots).
 If sorted by slots, each new slot starts in a new line.
@@ -3479,6 +3482,9 @@ Print a help screen and exit.
 Do not print the arguments matching a mask, but instead show by the exit status
 whether an argument was matching.
 More precisely, the exit status is only successful if at least one argument is matching.
+.TP
+.BR -Q ", " --nowarn "   (toggle)"
+Do not print warnings concerning bad syntax.
 .TP
 .BR -m ", " --mask " " I<MASK>
 Add I<MASK> to the list of masks.

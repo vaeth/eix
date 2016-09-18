@@ -24,13 +24,15 @@ using std::string;
 
 using std::cout;
 
-void EixRc::known_vars() {
+class ParseError;
+
+void EixRc::known_vars(const ParseError *parse_error) {
 	set<string> vars;
 	for(map<string, string>::const_iterator it(main_map.begin());
 		it != main_map.end(); ++it) {
 		vars.insert(it->first);
 	}
-	PortageSettings ps(this, false, true);
+	PortageSettings ps(this, parse_error, false, true);
 	for(map<string, string>::const_iterator it(ps.begin());
 		it != ps.end(); ++it) {
 		vars.insert(it->first);
@@ -41,7 +43,7 @@ void EixRc::known_vars() {
 	}
 }
 
-bool EixRc::print_var(const string& key) {
+bool EixRc::print_var(const string& key, const ParseError *parse_error) {
 	string print_append((*this)["PRINT_APPEND"]);
 	unescape_string(&print_append);
 	const char *s;
@@ -52,7 +54,7 @@ bool EixRc::print_var(const string& key) {
 			return true;
 		}
 	}
-	PortageSettings ps(this, false, true);
+	PortageSettings ps(this, parse_error, false, true);
 	s = ps.cstr(key);
 	if(likely(s != NULLPTR)) {
 		cout << s << print_append;

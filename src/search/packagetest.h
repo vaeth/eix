@@ -30,6 +30,7 @@ class Mask;
 class MatcherAlgorithm;
 class MatcherField;
 class NowarnMaskList;
+class ParseError;
 class PortageSettings;
 class PrintFormat;
 class VarDbPkg;
@@ -100,7 +101,7 @@ class PackageTest {
 		/**
 		Set default values.
 		**/
-		PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f, const SetStability *stability, const DBHeader *dbheader) ATTRIBUTE_NONNULL_;
+		PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f, const SetStability *stability, const DBHeader *dbheader, const ParseError *e) ATTRIBUTE_NONNULL_;
 
 		~PackageTest();
 
@@ -287,7 +288,7 @@ class PackageTest {
 
 	private:
 		static NowarnMaskList *nowarn_list;
-		static void get_nowarn_list();
+		void get_nowarn_list() const;
 
 		/**
 		What to match
@@ -305,6 +306,8 @@ class PackageTest {
 		When reading overlay information use this
 		**/
 		const DBHeader *header;
+
+		const ParseError *parse_error;
 
 		/**
 		What we need to read so we can do our testing

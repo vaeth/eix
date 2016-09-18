@@ -59,12 +59,6 @@ typedef char ArchUsed;
 static ArchUsed apply_keyword(const string& key, const WordSet& keywords_set, KeywordsFlags kf, const WordSet *arch_set, Keywords::Redundant *redundant, Keywords::Redundant check, bool shortcut) ATTRIBUTE_NONNULL_;
 inline static void increase(char *s) ATTRIBUTE_NONNULL_;
 
-static bool grab_setmasks(const char *file, MaskList<SetMask> *masklist, SetsIndex i, WordVec *contains_set, bool recursive);
-inline static bool grab_setmasks(const char *file, MaskList<SetMask> *masklist, SetsIndex i, WordVec *contains_set);
-inline static bool grab_setmasks(const char *file, MaskList<SetMask> *masklist, SetsIndex i, WordVec *contains_set) {
-	return grab_setmasks(file, masklist, i, contains_set, false);
-}
-
 const string& PortageSettings::operator[](const string& var) const {
 	const_iterator it(find(var));
 	if(it == end()) {
@@ -81,7 +75,7 @@ const char *PortageSettings::cstr(const string& var) const {
 	return it->second.c_str();
 }
 
-static bool grab_setmasks(const char *file, MaskList<SetMask> *masklist, SetsIndex i, WordVec *contains_set, bool recursive) {
+bool PortageSettings::grab_setmasks(const char *file, SetsIndex i, WordVec *contains_set, bool recursive) {
 	LineVec lines;
 	if(!pushback_lines(file, &lines, recursive, true)) {
 		return false;
@@ -94,13 +88,13 @@ static bool grab_setmasks(const char *file, MaskList<SetMask> *masklist, SetsInd
 		SetMask m(i);
 		BasicVersion::ParseResult r(m.parseMask(it->c_str(), &errtext));
 		if(unlikely(r != BasicVersion::parsedOK)) {
-			portage_parse_error(file, lines.begin(), it, errtext);
+			parse_error->output(file, lines.begin(), it, errtext);
 		}
 		if(likely(r != BasicVersion::parsedError)) {
 			if(m.is_set()) {
 				contains_set->push_back(m.getName());
 			} else {
-				masklist->add(m);
+				m_package_sets.add(m);
 			}
 		}
 	}
@@ -198,8 +192,9 @@ void PortageSettings::add_repo_vector(const WordVec& v, bool resolve) {
 /**
 Read make.globals and make.conf
 **/
-void PortageSettings::init(EixRc *eixrc, bool getlocal, bool init_world, bool print_profile_paths) {
+void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, bool init_world, bool print_profile_paths) {
 	settings_rc = eixrc;
+	parse_error = e;
 #ifndef HAVE_SETENV
 	export_portdir_overlay = false;
 #endif
@@ -329,7 +324,7 @@ void PortageSettings::init(EixRc *eixrc, bool getlocal, bool init_world, bool pr
 			read_world = true;
 	}
 	if(read_world) {
-		if(profile->m_world.add_file((*eixrc)["EIX_WORLD"].c_str(), Mask::maskInWorld, false)) {
+		if(profile->m_world.add_file((*eixrc)["EIX_WORLD"].c_str(), Mask::maskInWorld, false, parse_error)) {
 			profile->use_world = true;
 		}
 		profile->m_world.finalize();
@@ -617,7 +612,7 @@ void PortageSettings::read_local_sets(const WordVec& dir_list) {
 		string dir_slash(dir_list[i]);
 		optional_append(&dir_slash, '/');
 		for(WordVec::size_type j(0); likely(j != dir_size[i]); ++j) {
-			grab_setmasks((dir_slash + set_names[c]).c_str(), &m_package_sets, c, &(child_names[c]));
+			grab_setmasks((dir_slash + set_names[c]).c_str(), c, &(child_names[c]));
 			++c;
 		}
 	}
@@ -677,7 +672,7 @@ bool PortageSettings::calc_allow_upgrade_slots(const Package *p) const {
 				"SLOT_UPGRADE_FORBID" : "SLOT_UPGRADE_ALLOW"]), true);
 		for(WordVec::const_iterator it(exceptions.begin());
 			likely(it != exceptions.end()); ++it) {
-			upgrade_policy_exceptions.add_file(it->c_str(), Mask::maskTypeNone, true);
+			upgrade_policy_exceptions.add_file(it->c_str(), Mask::maskTypeNone, true, parse_error);
 		}
 		upgrade_policy_exceptions.finalize();
 	}
@@ -778,8 +773,9 @@ PortageUserConfig::~PortageUserConfig() {
 }
 
 bool PortageUserConfig::readMasks() {
-	bool added(m_localmasks.add_file(((m_settings->m_eprefixconf) + USER_MASK_FILE).c_str(), Mask::maskMask, true, true));
-	if(m_localmasks.add_file(((m_settings->m_eprefixconf) + USER_UNMASK_FILE).c_str(), Mask::maskUnmask, true)) {
+	const ParseError *parse_error(m_settings->parse_error);
+	bool added(m_localmasks.add_file(((m_settings->m_eprefixconf) + USER_MASK_FILE).c_str(), Mask::maskMask, true, true, parse_error));
+	if(m_localmasks.add_file(((m_settings->m_eprefixconf) + USER_UNMASK_FILE).c_str(), Mask::maskUnmask, true, parse_error)) {
 		added = true;
 	}
 	m_localmasks.finalize();
@@ -803,11 +799,11 @@ bool PortageUserConfig::readKeywords() {
 	if(!added) {
 		return false;
 	}
-	pre_list.initialize(&m_accept_keywords, m_settings->m_raised_arch);
+	pre_list.initialize(&m_accept_keywords, m_settings->m_raised_arch, m_settings->parse_error);
 	return true;
 }
 
-void PortageUserConfig::ReadVersionFile(const char *file, MaskList<KeywordMask> *list) {
+void PortageUserConfig::ReadVersionFile(const char *file, MaskList<KeywordMask> *list) const {
 	LineVec lines;
 	pushback_lines(file, &lines, true, true);
 	for(LineVec::iterator i(lines.begin());
@@ -819,7 +815,7 @@ void PortageUserConfig::ReadVersionFile(const char *file, MaskList<KeywordMask> 
 		string errtext;
 		BasicVersion::ParseResult r(m.parseMask(((n == string::npos) ? i->c_str() : i->substr(0, n).c_str()), &errtext));
 		if(unlikely(r != BasicVersion::parsedOK)) {
-			portage_parse_error(file, lines.begin(), i, errtext);
+			m_settings->parse_error->output(file, lines.begin(), i, errtext);
 		}
 		if(likely(r != BasicVersion::parsedError)) {
 			if(n != string::npos) {

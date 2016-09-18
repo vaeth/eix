@@ -310,6 +310,9 @@ Falls B<PRINT_APPEND> leer ist, wird das Nullzeichen angehängt.
 .\" {{{ -------- Ausgabe-Optionen
 .SS Ausgabe-Optionen
 .TP
+.BR --nowarn "   (toggle)"
+Unterdrückt einige Warnungen bzgl. der Portage-Konfiguration
+.TP
 .BR -x ", " --versionsort "    (toggle)"
 Gibt die vorhandenen Versionen sortiert nach Versionen (oder Slots) aus.
 Bei Slot-sortierter Ausgabe wird jeder Slot in einer neuen Zeile ausgegeben.
@@ -3563,6 +3566,9 @@ Ausgabe eines Hilfstextes und Ende.
 Anstelle der Ausgabe der Argument wird nur anhand des Rückgabewerts gezeigt,
 ob ein Argument gepasst hat.
 Genauer ist der Rückgabewert nur dann erfolgreich, wenn mindestens ein Argument passt.
+.TP
+.BR -Q ", " --nowarn "   (toggle)"
+Keine Ausgabe von Warnungen bzgl. falscher Syntax.
 .TP
 .BR -m ", " --mask " " I<MASKE>
 Fügt I<MASKE> der Maskenliste hinzu.

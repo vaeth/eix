@@ -159,14 +159,14 @@ void NowarnMaskList::apply(Package *p, Keywords::Redundant *r, PackageTest::Test
 	set_flags.apply_ins(i);
 }
 
-void NowarnPreList::initialize(NowarnMaskList *l) {
+void NowarnPreList::initialize(NowarnMaskList *l, const ParseError *parse_error) {
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		string errtext;
 		NowarnMask m;
 		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(), &errtext));
 		if(unlikely(r != BasicVersion::parsedOK)) {
-			portage_parse_error(file_name(it->filename_index),
+			parse_error->output(file_name(it->filename_index),
 				it->linenumber, it->name + " ...", errtext);
 		}
 		if(likely(r != BasicVersion::parsedError)) {

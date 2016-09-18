@@ -28,7 +28,10 @@ using std::endl;
 Provide a common look for error-messages for parse-errors in
 portage.{mask,keywords,..}
 **/
-void portage_parse_error(const string& file, const LineVec::size_type line_nr, const string& line, const string& errtext) {
+void ParseError::output(const string& file, const LineVec::size_type line_nr, const string& line, const string& errtext) const {
+	if(!m_output) {
+		return;
+	}
 	cerr << eix::format(_("-- invalid line %s in %s: \"%s\""))
 		% line_nr % file % line << endl;
 
