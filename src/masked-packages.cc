@@ -17,11 +17,11 @@
 #include <string>
 
 #include "eixTk/argsreader.h"
-#include "eixTk/exceptions.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/parseerror.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/utils.h"
@@ -101,10 +101,12 @@ static void read_stdin(LineVec *lines, string *name) {
 	while(likely(!std::cin.eof())) {
 		string line;
 		getline(std::cin, line);
-		trim(&line);
-		if((!line.empty()) && (line[0] != '#')) {
-			lines->push_back(line);
+		string::size_type x(line.find('#'));
+		if(unlikely(x != string::npos)) {
+			line.erase(x);
 		}
+		trim(&line);
+		lines->push_back(line);
 	}
 	if(stdin_count++ == 0) {
 		if(name != NULLPTR) {
@@ -190,7 +192,7 @@ int run_masked_packages(int argc, char *argv[]) {
 
 	MaskList<Mask> mask_list;
 	WordVec args;
-	const ParseError *parse_error = new ParseError(!rc_options.no_warn);
+	const ParseError *parse_error = new ParseError(rc_options.no_warn);
 	read_args(&mask_list, &args, argreader, parse_error);
 
 	for(WordVec::const_iterator it(args.begin());

@@ -79,9 +79,9 @@ eixTk/ansicolor.h \
 eixTk/argsreader.cc \
 eixTk/argsreader.h \
 eixTk/auto_list.h \
-eixTk/exceptions.cc \
-eixTk/exceptions.h \
 eixTk/inttypes.h \
+eixTk/parseerror.cc \
+eixTk/parseerror.h \
 eixTk/ptr_list.h \
 eixTk/regexp.cc \
 eixTk/regexp.h \
@@ -494,8 +494,8 @@ if SEPARATE_TOOLS
 
 masked_packages_LDADD = $(common_tools_ldadd)
 masked_packages_SOURCES = \
-eixTk/exceptions.cc \
-eixTk/exceptions.h \
+eixTk/parseerror.cc \
+eixTk/parseerror.h \
 $(stringutils_src) \
 eixTk/utils.cc \
 portage/basicversion.cc \

@@ -1228,7 +1228,7 @@ void PackageTest::get_nowarn_list() const {
 	split_string(&name, rc["PACKAGE_NOWARN"], true);
 	for(WordVec::const_iterator it(name.begin()); it != name.end(); ++it) {
 		LineVec lines;
-		pushback_lines(it->c_str(), &lines, true, true);
+		pushback_lines(it->c_str(), &lines, true);
 		prelist.handle_file(lines, *it, NULLPTR, true, false, false);
 	}
 	nowarn_list = new NowarnMaskList;

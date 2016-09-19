@@ -7,10 +7,9 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
-#ifndef SRC_EIXTK_EXCEPTIONS_H_
-#define SRC_EIXTK_EXCEPTIONS_H_ 1
+#ifndef SRC_EIXTK_PARSEERROR_H_
+#define SRC_EIXTK_PARSEERROR_H_ 1
 
-// include "eixTk/exceptions.h" This comment satisfies check_include script
 #include <string>
 
 #include "eixTk/diagnostics.h"
@@ -22,17 +21,17 @@ portage.{mask,keywords,..}
 **/
 class ParseError {
 	private:
-		bool m_output;
+		bool tacit;
 
 	public:
-		ParseError() : m_output(true) {
+		ParseError() : tacit(false) {
 		}
 
-		explicit ParseError(bool output) : m_output(output) {
+		explicit ParseError(bool no_warn) : tacit(no_warn) {
 		}
 
-		void init(bool output) {
-			m_output = output;
+		void init(bool no_warn) {
+			tacit = no_warn;
 		}
 
 		void output(const std::string& file, LineVec::size_type line_nr, const std::string& line, const std::string& errtext) const;
@@ -44,4 +43,4 @@ GCC_DIAG_ON(sign-conversion)
 		}
 };
 
-#endif  // SRC_EIXTK_EXCEPTIONS_H_
+#endif  // SRC_EIXTK_PARSEERROR_H_

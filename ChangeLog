@@ -2,9 +2,12 @@
 
 *eix-0.31.10
 	Martin Väth <martin at mvath.de>:
+	- Avoid redundant newlines in eix -t
 	- Add --nowarn to eix and masked-packages
-	- Use --nowarn eix-test-obsolete to print warnings only once:
+	- Print portage warnings only once, in particular in eix-test-obsolete:
 	  https://bugs.gentoo.org/show_bug.cgi?id=593774
+	- Always count empty lines for line numbers in errors/warnings
+	- Print line numbers for warnings with bad category names
 	- eix-sync: Prepend /etc/eix-sync.conf only once, see
 	  https://github.com/vaeth/eix/issues/30
 	- scripts: speed up ReadBoolean

@@ -59,8 +59,6 @@ src/eixTk/compare.h
 src/eixTk/constexpr.h
 src/eixTk/diagnostics.h
 src/eixTk/eixint.h
-src/eixTk/exceptions.cc
-src/eixTk/exceptions.h
 src/eixTk/filenames.cc
 src/eixTk/filenames.h
 src/eixTk/formated.cc
@@ -73,6 +71,8 @@ src/eixTk/md5.h
 src/eixTk/null.h
 src/eixTk/outputstring.cc
 src/eixTk/outputstring.h
+src/eixTk/parseerror.cc
+src/eixTk/parseerror.h
 src/eixTk/percentage.cc
 src/eixTk/percentage.h
 src/eixTk/ptr_list.h

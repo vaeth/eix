@@ -46,7 +46,7 @@ inline static bool pushback_lines(const char *file, LineVec *v, bool recursive, 
 }
 inline static bool pushback_lines(const char *file, LineVec *v, bool recursive) ATTRIBUTE_NONNULL_;
 inline static bool pushback_lines(const char *file, LineVec *v, bool recursive) {
-	return pushback_lines(file, v, recursive, false);
+	return pushback_lines(file, v, recursive, true);
 }
 inline static bool pushback_lines(const char *file, LineVec *v) ATTRIBUTE_NONNULL_;
 inline static bool pushback_lines(const char *file, LineVec *v) {

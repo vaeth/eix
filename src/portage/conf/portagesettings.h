@@ -219,6 +219,8 @@ class PortageSettings : public std::map<std::string, std::string> {
 			return &m_package_sets;
 		}
 
+		WordVec::size_type verify_categories(const std::string &name, WordVec *vec, WordVec::size_type index) const;
+
 	public:
 		bool m_recurse_sets;
 		std::string m_eprefix;

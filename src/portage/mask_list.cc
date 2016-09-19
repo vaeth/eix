@@ -12,9 +12,9 @@
 #include <map>
 #include <string>
 
-#include "eixTk/exceptions.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/parseerror.h"
 #include "eixTk/stringlist.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"

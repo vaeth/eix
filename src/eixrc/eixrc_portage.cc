@@ -14,6 +14,7 @@
 
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/parseerror.h"
 #include "eixTk/stringutils.h"
 #include "eixrc/eixrc.h"
 #include "portage/conf/portagesettings.h"
@@ -24,15 +25,14 @@ using std::string;
 
 using std::cout;
 
-class ParseError;
-
-void EixRc::known_vars(const ParseError *parse_error) {
+void EixRc::known_vars() {
 	set<string> vars;
 	for(map<string, string>::const_iterator it(main_map.begin());
 		it != main_map.end(); ++it) {
 		vars.insert(it->first);
 	}
-	PortageSettings ps(this, parse_error, false, true);
+	ParseError parse_error(true);
+	PortageSettings ps(this, &parse_error, false, true);
 	for(map<string, string>::const_iterator it(ps.begin());
 		it != ps.end(); ++it) {
 		vars.insert(it->first);
@@ -43,7 +43,7 @@ void EixRc::known_vars(const ParseError *parse_error) {
 	}
 }
 
-bool EixRc::print_var(const string& key, const ParseError *parse_error) {
+bool EixRc::print_var(const string& key) {
 	string print_append((*this)["PRINT_APPEND"]);
 	unescape_string(&print_append);
 	const char *s;
@@ -54,7 +54,8 @@ bool EixRc::print_var(const string& key, const ParseError *parse_error) {
 			return true;
 		}
 	}
-	PortageSettings ps(this, parse_error, false, true);
+	ParseError parse_error(true);
+	PortageSettings ps(this, &parse_error, false, true);
 	s = ps.cstr(key);
 	if(likely(s != NULLPTR)) {
 		cout << s << print_append;

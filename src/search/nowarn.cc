@@ -13,9 +13,9 @@
 #include <utility>
 
 #include "eixTk/assert.h"
-#include "eixTk/exceptions.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/parseerror.h"
 #include "eixTk/stringtypes.h"
 #include "portage/basicversion.h"
 #include "portage/conf/portagesettings.h"

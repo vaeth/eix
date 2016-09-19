@@ -29,8 +29,6 @@
 #define UPDATE_VARS_PREFIX "UPDATE_"
 #define DROP_VARS_PREFIX "DROP_"
 
-class ParseError;
-
 class EixRcOption {
 	public:
 		typedef enum { STRING, PREFIXSTRING, INTEGER, BOOLEAN, LOCAL } OptionType;
@@ -78,8 +76,8 @@ class EixRc {
 
 		const char *prefix_cstr(const std::string& key) const ATTRIBUTE_PURE;
 
-		void known_vars(const ParseError *parse_error) ATTRIBUTE_NONNULL_;
-		bool print_var(const std::string& key, const ParseError *parse_error) ATTRIBUTE_NONNULL_;
+		void known_vars();
+		bool print_var(const std::string& key);
 
 		const std::string& operator[](const std::string& key);
 

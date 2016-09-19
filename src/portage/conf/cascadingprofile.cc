@@ -80,7 +80,7 @@ bool CascadingProfile::addProfile(const char *profile, WordSet *sourced_files) {
 	string currfile(truename);
 	currfile.append("parent");
 	// Use pushback_lines to avoid keeping file descriptor open:
-	// Who know what's our limit of open file descriptors.
+	// Who knows what's our limit of open file descriptors.
 	if(pushback_lines(currfile.c_str(), &parents)) {
 		for(WordVec::const_iterator it(parents.begin());
 			likely(it != parents.end()); ++it) {
@@ -195,7 +195,7 @@ bool CascadingProfile::readremoveFiles() {
 
 bool CascadingProfile::readPackages(const string& filename, const char *repo, bool only_repo) {
 	LineVec lines;
-	pushback_lines(filename.c_str(), &lines, true, true);
+	pushback_lines(filename.c_str(), &lines, true);
 	bool ret(false);
 	PreList::FilenameIndex file_system(p_system.push_name(filename, repo, only_repo));
 	PreList::FilenameIndex file_profile(p_profile.push_name(filename, repo, only_repo));
@@ -235,19 +235,19 @@ bool CascadingProfile::readPackageMasks(const string& filename, const char *repo
 
 bool CascadingProfile::readPackageUnmasks(const string& filename, const char *repo, bool only_repo) {
 	LineVec lines;
-	pushback_lines(filename.c_str(), &lines, true, true);
+	pushback_lines(filename.c_str(), &lines, true);
 	return p_package_unmasks.handle_file(lines, filename, repo, false, false, only_repo);
 }
 
 bool CascadingProfile::readPackageKeywords(const string& filename, const char *repo, bool only_repo) {
 	LineVec lines;
-	pushback_lines(filename.c_str(), &lines, true, true);
+	pushback_lines(filename.c_str(), &lines, true);
 	return p_package_keywords.handle_file(lines, filename, repo, false, false, only_repo);
 }
 
 bool CascadingProfile::readPackageAcceptKeywords(const string& filename, const char *repo, bool only_repo) {
 	LineVec lines;
-	pushback_lines(filename.c_str(), &lines, true, true);
+	pushback_lines(filename.c_str(), &lines, true);
 	return p_package_accept_keywords.handle_file(lines, filename, repo, true, false, only_repo);
 }
 

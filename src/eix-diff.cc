@@ -23,12 +23,12 @@
 #include "database/io.h"
 #include "eixTk/ansicolor.h"
 #include "eixTk/argsreader.h"
-#include "eixTk/exceptions.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/parseerror.h"
 #include "eixTk/utils.h"
 #include "eixrc/eixrc.h"
 #include "eixrc/global.h"
@@ -61,7 +61,6 @@ static void print_lost_package(Package *p) ATTRIBUTE_NONNULL_;
 static void parseFormat(Node **format, const char *varname, EixRc *rc) ATTRIBUTE_NONNULL_;
 
 static PortageSettings *portagesettings;
-static const ParseError *parse_error;
 static SetStability   *set_stability_old, *set_stability_new;
 static PrintFormat    *format_for_new, *format_for_old;
 static VarDbPkg       *varpkg_db;
@@ -318,9 +317,8 @@ int run_eix_diff(int argc, char *argv[]) {
 		AnsiColor::AnsiPalette();
 	}
 
-	parse_error = new ParseError;
 	if(unlikely(var_to_print != NULLPTR)) {
-		if(rc.print_var(var_to_print, parse_error)) {
+		if(rc.print_var(var_to_print)) {
 			return EXIT_SUCCESS;
 		}
 		return EXIT_FAILURE;
@@ -336,7 +334,7 @@ int run_eix_diff(int argc, char *argv[]) {
 	}
 
 	if(unlikely(cli_known_vars)) {
-		rc.known_vars(parse_error);
+		rc.known_vars();
 		return EXIT_SUCCESS;
 	}
 
@@ -376,7 +374,8 @@ int run_eix_diff(int argc, char *argv[]) {
 	parseFormat(&format_delete, "DIFF_FORMAT_DELETE", &rc);
 	parseFormat(&format_changed, "DIFF_FORMAT_CHANGED", &rc);
 
-	portagesettings = new PortageSettings(&rc, parse_error, true, false);
+	ParseError parse_error;
+	portagesettings = new PortageSettings(&rc, &parse_error, true, false);
 
 	varpkg_db = new VarDbPkg(rc["EPREFIX_INSTALLED"] + VAR_DB_PKG,
 		!cli_quick, cli_care, cli_deps_installed,

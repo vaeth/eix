@@ -19,31 +19,31 @@
 #include <string>
 
 #include "database/header.h"
+#include "database/io.h"
 #include "database/package_reader.h"
 #include "eixTk/ansicolor.h"
 #include "eixTk/argsreader.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
-#include "eixTk/exceptions.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/outputstring.h"
+#include "eixTk/parseerror.h"
 #include "eixTk/ptr_list.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/utils.h"
 #include "eixrc/eixrc.h"
 #include "eixrc/global.h"
-#include "database/io.h"
 #include "main/main.h"
 #include "output/formatstring-print.h"
 #include "output/formatstring.h"
 #include "output/print-xml.h"
-#include "portage/conf/portagesettings.h"
 #include "portage/basicversion.h"
+#include "portage/conf/portagesettings.h"
 #include "portage/extendedversion.h"
 #include "portage/keywords.h"
 #include "portage/mask.h"
@@ -51,10 +51,10 @@
 #include "portage/set_stability.h"
 #include "portage/vardbpkg.h"
 #include "search/algorithms.h"
-#include "search/packagetest.h"
 #include "search/matchtree.h"
-#include "various/drop_permissions.h"
+#include "search/packagetest.h"
 #include "various/cli.h"
+#include "various/drop_permissions.h"
 
 #define VAR_DB_PKG "/var/db/pkg/"
 
@@ -635,16 +635,15 @@ int run_eix(int argc, char** argv) {
 		AnsiColor::AnsiPalette();
 	}
 
-	parse_error = new ParseError(!rc_options.no_warn);
 	if(unlikely(var_to_print != NULLPTR)) {
-		if(eixrc.print_var(var_to_print, parse_error)) {
+		if(eixrc.print_var(var_to_print)) {
 			return EXIT_SUCCESS;
 		}
 		return EXIT_FAILURE;
 	}
 
 	if(unlikely(rc_options.known_vars)) {
-		eixrc.known_vars(parse_error);
+		eixrc.known_vars();
 		return EXIT_SUCCESS;
 	}
 
@@ -753,6 +752,7 @@ int run_eix(int argc, char** argv) {
 		overlay_mode = mode_list_none;
 	}
 
+	parse_error = new ParseError(rc_options.no_warn);
 	PortageSettings portagesettings(&eixrc, parse_error, true, false, rc_options.print_profile_paths);
 	if(unlikely(rc_options.print_profile_paths)) {
 		return EXIT_SUCCESS;
@@ -892,7 +892,6 @@ int run_eix(int argc, char** argv) {
 
 	if(unlikely(rc_options.test_unused)) {
 		bool empty(eixrc.getBool("TEST_FOR_EMPTY"));
-		cout << "\n";
 		if(likely(eixrc.getBool("TEST_KEYWORDS"))) {
 			print_unused(eixrc.m_eprefixconf + USER_KEYWORDS_FILE1,
 				eixrc["KEYWORDS_NONEXISTENT"],
@@ -1134,7 +1133,7 @@ static void print_wordvec(const WordVec& vec) {
 		likely(it != vec.end()); ++it) {
 		cout << *it << "\n";
 	}
-	cout << "--\n\n";
+	cout << "--\n";
 }
 
 static void print_unused(const string& filename, const string& excludefiles, const eix::ptr_list<Package>& packagelist, bool test_empty) {
@@ -1145,6 +1144,9 @@ static void print_unused(const string& filename, const string& excludefiles, con
 	pushback_lines(filename.c_str(), &lines, true);
 	for(WordVec::iterator i(lines.begin());
 		likely(i != lines.end()); ++i) {
+		if(i->empty()) {
+			continue;
+		}
 		if(unlikely(!know_excludes)) {
 			know_excludes = true;
 			WordVec excludelist;
@@ -1152,7 +1154,7 @@ static void print_unused(const string& filename, const string& excludefiles, con
 			for(WordVec::const_iterator it(excludelist.begin());
 				likely(it != excludelist.end()); ++it) {
 				LineVec excl;
-				pushback_lines(it->c_str(), &excl, true);
+				pushback_lines(it->c_str(), &excl, true, false);
 				join_and_split(&excludes, excl);
 			}
 		}
@@ -1200,8 +1202,8 @@ static void print_unused(const string& filename, const string& excludefiles, con
 		return;
 	}
 	cout << eix::format(test_empty ?
-		_("Non-matching or empty entries in %s:\n\n") :
-		_("Non-matching entries in %s:\n\n"))
+		_("Non-matching or empty entries in %s:\n") :
+		_("Non-matching entries in %s:\n"))
 		% filename;
 	print_wordvec(unused);
 }
@@ -1245,7 +1247,7 @@ static void print_removed(const string& dirname, const string& excludefiles, con
 					for(WordVec::const_iterator it(excludelist.begin());
 						likely(it != excludelist.end()); ++it) {
 						LineVec excl;
-						pushback_lines(it->c_str(), &excl, true);
+						pushback_lines(it->c_str(), &excl, true, false);
 						join_and_split(&excludes, excl);
 					}
 				}
@@ -1260,10 +1262,10 @@ static void print_removed(const string& dirname, const string& excludefiles, con
 		}
 	}
 	if(likely(failure.empty())) {
-		cout << _("The names of all installed packages are in the database.\n\n");
+		cout << _("The names of all installed packages are in the database.\n");
 		return;
 	}
-	cout << _("The following installed packages are not in the database:\n\n");
+	cout << _("The following installed packages are not in the database:\n");
 	print_wordvec(failure);
 	return;
 }

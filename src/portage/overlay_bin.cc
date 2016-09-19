@@ -57,11 +57,8 @@ void OverlayIdent::readLabel_internal(const char *patharg) {
 		}
 	}
 	if(label.empty()) {
-		pushback_lines((my_path + "/profiles/repo_name").c_str(), &lines);
+		pushback_lines((my_path + "/profiles/repo_name").c_str(), &lines, false, false);
 		for(LineVec::const_iterator i(lines.begin()); likely(i != lines.end()); ++i) {
-			if(i->empty()) {
-				continue;
-			}
 			label = *i;
 			break;
 		}

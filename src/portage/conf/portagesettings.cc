@@ -22,12 +22,11 @@
 #include "eixTk/constexpr.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
-#include "eixTk/exceptions.h"
 #include "eixTk/filenames.h"
-#include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/parseerror.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/sysutils.h"
@@ -77,7 +76,7 @@ const char *PortageSettings::cstr(const string& var) const {
 
 bool PortageSettings::grab_setmasks(const char *file, SetsIndex i, WordVec *contains_set, bool recursive) {
 	LineVec lines;
-	if(!pushback_lines(file, &lines, recursive, true)) {
+	if(!pushback_lines(file, &lines, recursive)) {
 		return false;
 	}
 	for(LineVec::iterator it(lines.begin()); likely(it < lines.end()); ++it) {
@@ -465,7 +464,7 @@ PortageSettings::~PortageSettings() {
 
 void PortageSettings::read_world_sets(const char *file) {
 	LineVec lines;
-	if(!pushback_lines(file, &lines)) {
+	if(!pushback_lines(file, &lines, false, false)) {
 		return;
 	}
 	WordVec the_sets;
@@ -493,15 +492,17 @@ void PortageSettings::store_world_sets(const WordVec *s_world_sets, bool overrid
 		world_sets.clear();
 		return;
 	}
-	if((!override) && know_world_sets)
+	if((!override) && know_world_sets) {
 		return;
+	}
 	know_world_sets = true;
 	world_setslist_up_to_date = false;
 	world_sets.clear();
 	for(WordVec::const_iterator it(s_world_sets->begin());
 		likely(it != s_world_sets->end()); ++it) {
-		if(it->empty())
+		if(it->empty()) {
 			continue;
+		}
 		world_sets.push_back(*it);
 	}
 }
@@ -686,8 +687,10 @@ Verify whether categories in vec, starting at index for file name are ok.
 Give an error if not and throw out inappropriate ones.
 @return index for next push_back
 **/
-static WordVec::size_type verify_categories(const string &name, WordVec *vec, WordVec::size_type index) {
+WordVec::size_type PortageSettings::verify_categories(const string &name, WordVec *vec, WordVec::size_type index) const {
+	LineVec::size_type line(0);
 	while(index < vec->size()) {
+		++line;
 		string &s = (*vec)[index];
 		// Remove trailing and leading /, see https://github.com/vaeth/eix/issues/8
 		while(likely(!s.empty())) {
@@ -705,8 +708,7 @@ static WordVec::size_type verify_categories(const string &name, WordVec *vec, Wo
 				++index;
 				continue;
 			} else {
-				cerr << eix::format(_("category name %s in %s is ignored"))
-					% s % name << endl;
+				parse_error->output(name, line, s, (_("bad category name")));
 			}
 		}
 GCC_DIAG_OFF(sign-conversion)
@@ -736,7 +738,7 @@ void PortageSettings::pushback_categories(WordVec *vec) {
 			continue;
 		}
 		filename.assign(m_eprefixaccessoverlays + (i->path) + "/" + PORTDIR_CATEGORIES_FILE);
-		if(!pushback_lines(filename.c_str(), vec, false, false, 0, &errtext)) {
+		if(!pushback_lines(filename.c_str(), vec, false, true, 0, &errtext)) {
 			if(i == repos.begin()) {
 				cerr << errtext << endl;
 			}
@@ -788,12 +790,12 @@ bool PortageUserConfig::readKeywords() {
 	LineVec lines;
 	const string& path(m_settings->m_eprefixconf);
 	string file(path + USER_KEYWORDS_FILE1);
-	if(pushback_lines(file.c_str(), &lines, true, true)) {
+	if(pushback_lines(file.c_str(), &lines, true)) {
 		added = pre_list.handle_file(lines, file, NULLPTR, true, false, false);
 		lines.clear();
 	}
 	file = (path + USER_KEYWORDS_FILE2);
-	if(pushback_lines(file.c_str(), &lines, true, true)) {
+	if(pushback_lines(file.c_str(), &lines, true)) {
 		added |= pre_list.handle_file(lines, file, NULLPTR, true, false, false);
 	}
 	if(!added) {
@@ -805,7 +807,7 @@ bool PortageUserConfig::readKeywords() {
 
 void PortageUserConfig::ReadVersionFile(const char *file, MaskList<KeywordMask> *list) const {
 	LineVec lines;
-	pushback_lines(file, &lines, true, true);
+	pushback_lines(file, &lines, true);
 	for(LineVec::iterator i(lines.begin());
 		likely(i != lines.end()); ++i) {
 		if(i->empty())
