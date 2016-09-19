@@ -69,12 +69,12 @@ KeyCheck() {
 		a=`dd count=1 bs=1 2>/dev/null` || a=
 		stty $t
 		case $a in
-		[nN]*)	Echo 'No'
-			return 1
-			;;
-		[yY]*)	Echo 'Yes'
-			return
-			;;
+		[nN]*)
+			Echo 'No'
+			return 1;;
+		[yY]*)
+			Echo 'Yes'
+			return;;
 		esac
 	done
 }
@@ -84,10 +84,10 @@ if KeyCheck "Are you sure you want to tag v$ver of $proj"
 then	Eecho "git tag -a v$ver -m ..."
 #svnroot=https://svn.gentooexperimental.org/$proj
 #svn copy "$svnroot/trunk" "$svnroot/tags/v$ver"
-	git tag -a "v$ver" \
-		-m "Tagging the $ver release" || \
-		KeyCheck "git tagging failed. Continue anyway" || exit 2
+	git tag -s "v$ver" -m "Tagging v$ver" || Die 'git tagging failed'
+#		KeyCheck "git tagging failed. Continue anyway" || exit 2
 fi
+exit 0
 
 KeyCheck '
 Optionally, you can keep a tarball branch with the current tarball content.
