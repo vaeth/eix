@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
 set -u
 
-export LC_ALL=C
+LC_ALL=C
+export LC_ALL
 
 Echo() {
 	printf '%s\n' "$*"
@@ -62,7 +63,8 @@ SetCcache() {
 	fi
 	if $recache
 	then	Info "export CCACHE_RECACHE=true"
-		export CCACHE_RECACHE=true
+		CCACHE_RECACHE=true
+		export CCACHE_RECACHE
 	fi
 	CCACHE_SLOPPINESS='file_macro,time_macros,include_file_mtime'
 	Info "export CCACHE_SLOPPINESS='$CCACHE_SLOPPINESS'"
@@ -84,8 +86,8 @@ SetCcache() {
 	then	Info "export CCACHE_DIR=$testcc"
 		Info 'export CCACHE_COMPRESS=true'
 		CCACHE_DIR=$testcc
-		export CCACHE_DIR
-		export CCACHE_COMPRESS=true
+		CCACHE_COMPRESS=true
+		export CCACHE_DIR CCACHE_COMPRESS
 	fi
 	$clear_ccache || return 0
 	Info 'ccache -C'
@@ -112,7 +114,7 @@ command -v clang++ >/dev/null 2>&1 && clang=: || clang=false
 dialect='enable'
 nopie_security=:
 OPTIND=1
-while getopts 'q1234gGdnewWsSrOoCxXyYdc:j:hH?' opt
+while getopts 'q1234gGdnewWsSrOoCxXyYdc:j:hH' opt
 do	case $opt in
 	q)	quiet=:;;
 	1)	separate_all=false;;
@@ -142,6 +144,7 @@ do	case $opt in
 	d)	debugging=:;;
 	c)	configure_extra=$configure_extra" $OPTARG";;
 	j)	[ -n "${OPTARG:++}" ] && jarg='-j'$OPTARG || jarg=;;
+	'?')	exit 1;;
 	*)	Usage 0;;
 	esac
 done

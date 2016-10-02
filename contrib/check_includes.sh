@@ -11,7 +11,8 @@
 #	Martin V\"ath <martin@mvath.de>
 set -u
 
-export LC_ALL='C'
+LC_ALL=C
+export LC_ALL
 unset GREP_COLORS GREP_COLOR GREP_OPTIONS
 grep_plain=grep
 grep_cmd="$grep_plain --color=always"

@@ -44,12 +44,13 @@ forced=false
 equal=
 quiet=false
 OPTIND=1
-while getopts 'aq=h?' opt
+while getopts 'aq=h' opt
 do	case $opt in
 	a)	quiet=:
 		forced=:;;
 	q)	quiet=:;;
 	'=')	equal='=';;
+	'?')	Exit 1;;
 	*)	Usage 0;;
 	esac
 done

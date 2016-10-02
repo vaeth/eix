@@ -471,8 +471,9 @@ ReadGettext() {
 	if yesno "${USE_NLS-@USE_NLS@}" && \
 		command -v envsubst >/dev/null 2>&1 && \
 		command -v gettext >/dev/null 2>&1
-	then	export TEXTDOMAIN='@TEXTDOMAIN@'
-		export TEXTDOMAINDIR='@TEXTDOMAINDIR@'
+	then	TEXTDOMAIN='@TEXTDOMAIN@'
+		TEXTDOMAINDIR='@TEXTDOMAINDIR@'
+		export TEXTDOMAIN TEXTDOMAINDIR
 		eixf_pgtglue=`printf '\004'`
 pgettext() {
 	eixf_pgti="$1$eixf_pgtglue$2"

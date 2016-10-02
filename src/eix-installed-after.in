@@ -95,7 +95,7 @@ DefaultOpts() {
 }
 DefaultOpts
 OPTIND=1
-while getopts 'fF:lL:e:a:A:bdsv=SViItTh?' opt
+while getopts 'fF:lL:e:a:A:bdsv=SViItTh' opt
 do	case $opt in
 	f)	full=:;;
 	F)	timefile=$OPTARG;;
@@ -113,8 +113,9 @@ do	case $opt in
 	V)	input='NAMEVERSION';;
 	i)	DefaultOpts;;
 	I)	including=:;;
-	t)	export USE_BUILD_TIME=true;;
-	T)	export USE_BUILD_TIME=false;;
+	t)	USE_BUILD_TIME=true; export USE_BUILD_TIME;;
+	T)	USE_BUILD_TIME=false; export USE_BUILD_TIME;;
+	'?')	exitcode=1; Exit 1;;
 	*)	Usage 0;;
 	esac
 done

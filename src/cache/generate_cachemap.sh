@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
 set -u
 
-export LC_ALL=C
+LC_ALL=C
+export LC_ALL
 
 to_classname() {
 	j=${1#?}

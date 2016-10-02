@@ -11,7 +11,7 @@ set -u
 
 . ./eix-functions.sh.in
 ReadFunctions
-my_getopts='KvqxXLl:a:kiHh?'
+my_getopts='KvqxXLl:a:kiHh'
 
 set -f
 eval "Push -c opt `eix-update --print EIX_REMOTE_OPTS`"
@@ -27,6 +27,7 @@ do	case $opt in
 		break;;
 	k)	drop_permissions=false;;
 	i)	drop_permissions=:;;
+	'?')	Exit 1;;
 	*)	:;;
 	esac
 done
@@ -132,11 +133,15 @@ do	case $opt in
 	l)	local_layman=$OPTARG;;
 	a)	addr=$OPTARG;;
 	H)	statusline=false;;
+	'?')	Exit 1;;
 	*)	Usage 0;;
 	esac
 done
 [ $OPTIND -le 1 ] || shift `Expr $OPTIND - 1`
-$statusline || export NOSTATUSLINE=true
+$statusline || {
+	NOSTATUSLINE=true
+	export NOSTATUSLINE
+}
 
 SanitizeLocalLayman() {
 	normalize_resolve=false NormalizeNames local_layman \
@@ -392,7 +397,8 @@ Add() {
 Remove() {
 	ClearUpdateArgs
 	AddLocalMethods
-	export KEEP_VIRTUALS=false
+	KEEP_VIRTUALS=false
+	export KEEP_VIRTUALS
 	CallUpdate
 }
 

@@ -304,7 +304,7 @@ eval "set -- a $opt"
 shift
 set +f
 OPTIND=1
-while getopts 'ias:02:UuFlA@SMNtTqwWL:c:C:o:rRHvnh?' opt
+while getopts 'ias:02:UuFlA@SMNtTqwWL:c:C:o:rRHvnh' opt
 do	case $opt in
 	i)	DefaultOpts;;
 	a)	have_changed=:;;
@@ -338,6 +338,7 @@ do	case $opt in
 	H)	statusline=false;;
 	v)	printcmd=:;;
 	n)	dryrun=:;;
+	'?')	exitcode=1; Exit 1;;
 	*)	Usage 0;;
 	esac
 done
@@ -350,7 +351,10 @@ then	have_changed=:
 fi
 [ -z "${server:++}" ] || skip_sync=:
 $skip_sync && have_changed=:
-$statusline || export NOSTATUSLINE=true
+$statusline || {
+	NOSTATUSLINE=true
+	export NOSTATUSLINE
+}
 
 if [ -z "${metadata:++}" ]
 then	metadata=false

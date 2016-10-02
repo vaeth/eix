@@ -107,7 +107,7 @@ Push opt ${1+"$@"}
 eval "set -- a $opt"
 shift
 OPTIND=1
-while getopts 'vqa:A:c:CHh?' opt
+while getopts 'vqa:A:c:CHh' opt
 do	case $opt in
 	v)	verbose=:;;
 	q)	verbose=false;;
@@ -116,11 +116,15 @@ do	case $opt in
 	A)	PushLaymanMake "$OPTARG";;
 	C)	ClearLaymanMake;;
 	H)	statusline=false;;
+	'?')	Exit 1;;
 	*)	Usage 0;;
 	esac
 done
 [ $OPTIND -le 1 ] || shift `Expr $OPTIND - 1`
-$statusline || export NOSTATUSLINE=true
+$statusline || {
+	NOSTATUSLINE=true
+	export NOSTATUSLINE
+}
 
 GetOverlays() {
 	set -f

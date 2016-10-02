@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 set -u
-export LC_ALL=C
+LC_ALL=C
+export LC_ALL
 command -v cpplint.py >/dev/null 2>&1 || {
 	echo 'Cannot find cpplint.py.  Please download it from
 https://google-styleguide.googlecode.com/svn/trunk/cpplint/cpplint.py

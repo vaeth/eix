@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.31.11
+	Martin Väth <martin at mvath.de>:
+	- scripts: Fix getopts usage.
+	- scripts: handle export Bourne shell compatible
+	- remove git helpers; rely on https://github.com/vaeth/git-wrappers-mv
+
 *eix-0.31.10
 	Martin Väth <martin at mvath.de>:
 	- Avoid redundant newlines in eix -t

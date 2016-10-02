@@ -6,9 +6,11 @@
 #   Martin V\"ath <martin@mvath.de>
 #
 # This script calls eix with options appropriate for etcat emulation
-export DEFAULT_IS_OR=true
-export DEFAULT_MATCH_ALGORITHM='exact'
-export DEFAULT_MATCH_FIELD='/ category/name name'
-export DEFAULT_FORMAT=normal
-export FORMAT='%{FORMAT_ETCAT}'
-exec eix --pure-packages "$@"
+DEFAULT_IS_OR=true
+DEFAULT_MATCH_ALGORITHM='exact'
+DEFAULT_MATCH_FIELD='/ category/name name'
+DEFAULT_FORMAT=normal
+FORMAT='%{FORMAT_ETCAT}'
+export DEFAULT_IS_OR DEFAULT_MATCH_ALGORITHM DEFAULT_MATCH_FIELD \
+	DEFAULT_FORMAT FORMAT
+exec eix --pure-packages ${1+"$@"}

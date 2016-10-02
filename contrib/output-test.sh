@@ -36,7 +36,7 @@ echo '>> running installed eix-update'
 EIX_CACHEFILE=$installed_cache eix-update || die
 
 echo '>> running installed eix-update'
-EIX_CACHEFILE=$testing_cache "$eix_prefix"/eix-update || did
+EIX_CACHEFILE=$testing_cache "$eix_prefix"/eix-update || die
 
 EIX_CACHEFILE=$installed_cache eix > "$installed_output" || die
 EIX_CACHEFILE=$testing_cache "$eix_prefix"/eix > "$testing_output" || die

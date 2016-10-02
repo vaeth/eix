@@ -4,7 +4,8 @@ set -u
 category='app-portage'
 project='eix'
 
-export LC_ALL=C
+LC_ALL=C
+export LC_ALL
 
 Echo() {
 	printf '%s\n' "$*"

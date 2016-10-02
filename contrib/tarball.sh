@@ -9,7 +9,9 @@ mkmake='contrib/make.sh'
 mkmakeextra='UPDATEPOFILES='
 make_opts='-1oGeq'
 
-export LC_ALL=C XZ_OPT=--extreme
+LC_ALL=C
+XZ_OPT=--extreme
+export LC_ALL XZ_OPT
 umask 022
 
 Echo() {
