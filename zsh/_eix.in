@@ -16,8 +16,8 @@ case $service in
 (*update*)
 	excl_opt='(-)'
 	service_opts=(
-'(--forcestatus '{'--nostatus)-H','-H)--nostatus'}'[do not update status line]'
-'(--nostatus -H)--forcestatus[force status line on non-terminal]'
+'(--force-status '{'--nostatus)-H','-H)--nostatus'}'[do not update status line]'
+'(--nostatus -H)--force-status[force status line on non-terminal]'
 {'(--output)-o+','(-o)--output'}'[output to FILE]:output_file:_files'
 {'*--exclude-overlay','*-x+'}'[OVERLAY (exclude)]:exclude overlay:->overlay'
 {'*--add-overlay','*-a+'}'[OVERLAY (add)]:add overlay:_files -/'
@@ -250,8 +250,8 @@ _arguments -C -s -S : \
 "$excl_opt"'--dump[dump variables]' \
 "$excl_opt"'--dump-defaults[dump default values of variables]' \
 {'(--quiet)-q','(-q)--quiet'}'[no output]' \
-'(--forcecolor -F '{'--nocolor)-n','-n)--nocolor'}'[do not use colors in output]' \
-'(--nocolor -n '{'--forcecolor)-F','-F)--forcecolor'}'[force color on non-terminal]' \
+'(--force-color -F '{'--nocolor)-n','-n)--nocolor'}'[do not use colors in output]' \
+'(--nocolor -n '{'--force-color)-F','-F)--force-color'}'[force color on non-terminal]' \
 $service_opts
 ret=$?
 case $state in
