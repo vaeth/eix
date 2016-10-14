@@ -42,7 +42,23 @@ class File {
 		File() : fp(NULLPTR) {
 		}
 
-		~File();
+		~File() {
+			destroy();
+		}
+
+#ifdef HAVE_MOVE
+		File(File&& s) NOEXCEPT : fp(s.fp) {
+			s.fp = NULLPTR;
+		}
+
+		File& operator=(File&& s) NOEXCEPT {
+			destroy();
+			fp = s.fp;
+			s.fp = NULLPTR;
+			return *this;
+		}
+#endif
+		void destroy();
 
 		bool openread(const char *name) ATTRIBUTE_NONNULL_;
 		bool openwrite(const char *name) ATTRIBUTE_NONNULL_;

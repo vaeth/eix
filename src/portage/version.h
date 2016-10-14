@@ -59,7 +59,7 @@ class IUse : public std::string {
 
 		std::string asString() const;
 
-		bool operator=(const IUse& c) const {
+		bool operator==(const IUse& c) const {
 			return (name() == c.name());
 		}
 };

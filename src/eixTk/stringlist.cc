@@ -41,10 +41,24 @@ void StringListContent::finalize() {
 }
 
 #ifdef STRINGLIST_FREE
-StringList& StringList::operator=(const StringList& s) {
+StringList::StringList(const StringList& s) {
 	ptr = s.ptr;
 	if(ptr != NULLPTR) {
 		++(ptr->usage);
+	}
+}
+
+StringList& StringList::operator=(const StringList& s) {
+	if(ptr != s.ptr) {
+		if(s.ptr != NULLPTR) {
+			++(s.ptr->usage);
+		}
+		if(ptr != NULLPTR) {
+			if(--(ptr->usage) == 0) {
+				delete ptr;
+			}
+		}
+		ptr = s.ptr;
 	}
 	return *this;
 }

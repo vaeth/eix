@@ -165,6 +165,7 @@ class VarParserCacheNode {
 		~VarParserCacheNode() {
 			delete root_node;
 		}
+
 		bool init(const char *fmt, bool colors, bool use, std::string *errtext) ATTRIBUTE_NONNULL((2));
 		Node *rootnode() {
 			return root_node;

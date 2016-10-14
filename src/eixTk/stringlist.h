@@ -110,13 +110,20 @@ class StringList {
 		}
 
 #ifdef STRINGLIST_FREE
+		StringList(const StringList& s);
 		StringList& operator=(const StringList& s);
-
-		StringList(const StringList& s) {
-			*this = s;
+		~StringList();
+#ifdef HAVE_MOVE
+		StringList(StringList&& s) NOEXCEPT : ptr(s.ptr) {
+			s.ptr = NULLPTR;
 		}
 
-		~StringList();
+		StringList& operator=(StringList&& s) NOEXCEPT {
+			ptr = s.ptr;
+			s.ptr = NULLPTR;
+			return *this;
+		}
+#endif
 #endif
 		void finalize();
 

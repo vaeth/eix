@@ -1074,6 +1074,73 @@ return (T::a != 5)
 			[Define if C++ dialect has constexpr modifier])],
 		[MV_MSG_RESULT([no])])
 
+# Check if noexcept can be used
+AC_MSG_CHECKING([whether noexcept can be used])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+class T {
+public:
+	int s;
+	T() noexcept : s(0) {
+	}
+};
+		]], [[
+return T().s
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([noexcept], ["noexcept"])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([noexcept], [])])
+AC_DEFINE_UNQUOTED([NOEXCEPT],
+	[$noexcept],
+	[Define to noexcept if it can be used])
+
+
+# Check if move constructor can be used
+AC_MSG_CHECKING([whether noexcept move constructor can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+#include <utility>
+class T {
+public:
+	T() { }
+	~T() { }
+	T(T&&) { }
+	T& operator=(T&&) { return *this; }
+	int ret() { return 0; }
+};
+	]], [[
+T a, b;
+T c = std::move(a);
+b = std::move(c);
+return b.ret();
+		]])],
+		[MV_MSG_RESULT([yes])
+		AC_DEFINE([HAVE_MOVE], [1],
+			[Define if C++ dialect supports assigning default move constructor])],
+		[MV_MSG_RESULT([no])])
+
+dnl # Check if default move constructor can be asssigned
+dnl AC_MSG_CHECKING([whether default move constructor can be assigned])
+dnl MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+dnl #include <utility>
+dnl class T {
+dnl public:
+dnl	T() { }
+dnl	~T() { }
+dnl	T(T&&) = default;
+dnl	T& operator=(T&&) = default;
+dnl	int ret() { return 0; }
+dnl };
+dnl	]], [[
+dnl T a, b;
+dnl T c = std::move(a);
+dnl b = std::move(c);
+dnl return b.ret();
+dnl		]])],
+dnl		[MV_MSG_RESULT([yes])
+dnl		AC_DEFINE([ASSIGN_MOVE_DEFAULT], [1],
+dnl			[Define if C++ dialect supports assigning default move constructor])],
+dnl		[MV_MSG_RESULT([no])])
+
 # What about sqlite?
 AC_MSG_CHECKING([whether sqlite should be used])
 AS_VAR_SET([support_sqlite], [false])

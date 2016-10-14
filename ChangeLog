@@ -4,6 +4,9 @@
 	Martin Väth <martin at mvath.de>:
 	- scripts: Fix getopts usage.
 	- scripts: handle export Bourne shell compatible
+	- fix typos in zsh completion. Thanks to longlene
+	- fix various operator overloads
+	- define some move operations not provided by defaults
 	- remove git helpers; rely on https://github.com/vaeth/git-wrappers-mv
 
 *eix-0.31.10

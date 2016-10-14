@@ -276,11 +276,11 @@ class PackageTest {
 			test_installed     = test_ins;
 		}
 
-		MatchField operator |= (const MatchField m) {
+		MatchField operator|=(const MatchField m) {
 			return field |= m;
 		}
 
-		MatchField operator = (const MatchField m) {
+		MatchField operator=(const MatchField m) {
 			return field = m;
 		}
 

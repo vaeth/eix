@@ -52,7 +52,7 @@ bool File::openwrite(const char *name) {
 	return true;
 }
 
-File::~File() {
+void File::destroy() {
 	if(unlikely(fp == NULLPTR)) {
 		return;
 	}
