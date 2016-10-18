@@ -454,7 +454,7 @@ bool Database::read_packagetree(PackageTree *tree, const DBHeader& hdr, PortageS
 	while(reader.nextCategory()) {
 		Category& cat((*tree)[reader.category()]);
 		while(reader.nextPackage()) {
-			cat.push_back(reader.release());
+			cat.addPackage(reader.release());
 		}
 	}
 	const char *c(reader.get_errtext());

@@ -24,6 +24,8 @@ which may in turn contain other other blocks. [#vector-vs-blocks]_
 The first block is a special header.
 The remaining blocks are the categories which in turn contain the package blocks
 which contain the version blocks, ...
+Since version 37 of the database (eix-0.32) the category and package blocks
+are guaranteed to occur sorted alphabetically.
 
   .. container:: layout-block  header-block
 

@@ -75,7 +75,9 @@ src/eixTk/parseerror.cc
 src/eixTk/parseerror.h
 src/eixTk/percentage.cc
 src/eixTk/percentage.h
+src/eixTk/ptr_iterator.h
 src/eixTk/ptr_list.h
+src/eixTk/ptr_set.h
 src/eixTk/regexp.cc
 src/eixTk/regexp.h
 src/eixTk/statusline.cc

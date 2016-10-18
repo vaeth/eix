@@ -82,7 +82,9 @@ eixTk/auto_list.h \
 eixTk/inttypes.h \
 eixTk/parseerror.cc \
 eixTk/parseerror.h \
+eixTk/ptr_iterator.h \
 eixTk/ptr_list.h \
+eixTk/ptr_set.h \
 eixTk/regexp.cc \
 eixTk/regexp.h \
 $(sysutils_src) \

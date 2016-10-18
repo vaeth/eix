@@ -508,6 +508,26 @@ class Package : public eix::ptr_list<Version> {
 		}
 };
 
+inline static bool operator<(const Package& a, const Package& b) {
+	return (a.name < b.name);
+}
+
+inline static bool operator<=(const Package& a, const Package& b) {
+	return (a.name <= b.name);
+}
+
+inline static bool operator==(const Package& a, const Package& b) {
+	return (a.name == b.name);
+}
+
+inline static bool operator>(const Package& a, const Package& b) {
+	return (b < a);
+}
+
+inline static bool operator>=(const Package& a, const Package& b) {
+	return (b <= a);
+}
+
 class PackageSave {
 		typedef std::map<const Version*, KeywordSave> DataType;
 		DataType data;
@@ -522,5 +542,53 @@ class PackageSave {
 		void restore(Package *p) const ATTRIBUTE_NONNULL_;
 };
 
+class PackagePtr {
+private:
+	Package *ptr;
+
+public:
+	PackagePtr() : ptr(NULLPTR) {
+	}
+
+	explicit PackagePtr(Package *p) : ptr(p) {
+	}
+
+	operator Package *() const {
+		return ptr;
+	}
+
+	Package& operator*() const {
+		return *ptr;
+	}
+
+	Package *operator->() const {
+		return ptr;
+	}
+
+	PackagePtr& operator=(Package *p) {
+		ptr = p;
+		return *this;
+	}
+};
+
+inline static bool operator<(const PackagePtr& a, const PackagePtr& b) {
+	return (*a < *b);
+}
+
+inline static bool operator==(const PackagePtr& a, const PackagePtr& b) {
+	return (*a == *b);
+}
+
+inline static bool operator>(const PackagePtr& a, const PackagePtr& b) {
+	return (*a > *b);
+}
+
+inline static bool operator<=(const PackagePtr& a, const PackagePtr& b) {
+	return (*a <= *b);
+}
+
+inline static bool operator>=(const PackagePtr& a, const PackagePtr& b) {
+	return (*a >= *b);
+}
 
 #endif  // SRC_PORTAGE_PACKAGE_H_

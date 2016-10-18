@@ -15,12 +15,11 @@
 
 #include "eixTk/eixint.h"
 #include "eixTk/null.h"
-#include "eixTk/ptr_list.h"
+#include "eixTk/ptr_set.h"
 #include "eixTk/stringtypes.h"
+#include "portage/package.h"
 
-class Package;
-
-class Category : public eix::ptr_list<Package> {
+class Category : public eix::ptr_set<PackagePtr> {
 	public:
 		Category() {
 		}
@@ -38,7 +37,7 @@ class Category : public eix::ptr_list<Package> {
 		}
 
 		void addPackage(Package *pkg) ATTRIBUTE_NONNULL_ {
-			push_back(pkg);
+			insert(PackagePtr(pkg));
 		}
 
 		Package *addPackage(const std::string cat_name, const std::string& pkg_name);
