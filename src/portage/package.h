@@ -508,16 +508,26 @@ class Package : public eix::ptr_list<Version> {
 		}
 };
 
+// These tests are most efficient if the compare "close" elements:
+// They are supposed to be used in eix-diff to compare sorted lists
 inline static bool operator<(const Package& a, const Package& b) {
-	return (a.name < b.name);
+	int i(a.category.compare(b.category));
+	if(likely(i == 0)) {
+		return (a.name < b.name);
+	}
+	return (i < 0);
 }
 
 inline static bool operator<=(const Package& a, const Package& b) {
-	return (a.name <= b.name);
+	int i(a.category.compare(b.category));
+	if(likely(i == 0)) {
+		return (a.name <= b.name);
+	}
+	return (i < 0);
 }
 
 inline static bool operator==(const Package& a, const Package& b) {
-	return (a.name == b.name);
+	return (likely(a.category == b.category) && (a.name == b.name));
 }
 
 inline static bool operator>(const Package& a, const Package& b) {
@@ -571,24 +581,26 @@ public:
 	}
 };
 
+// Comparison is assumed to happen only in PackageTree where we know
+// that categories do match
 inline static bool operator<(const PackagePtr& a, const PackagePtr& b) {
-	return (*a < *b);
+	return (a->name < b->name);
 }
 
 inline static bool operator==(const PackagePtr& a, const PackagePtr& b) {
-	return (*a == *b);
+	return (a->name == b->name);
 }
 
 inline static bool operator>(const PackagePtr& a, const PackagePtr& b) {
-	return (*a > *b);
+	return (a->name > b->name);
 }
 
 inline static bool operator<=(const PackagePtr& a, const PackagePtr& b) {
-	return (*a <= *b);
+	return (a->name <= b->name);
 }
 
 inline static bool operator>=(const PackagePtr& a, const PackagePtr& b) {
-	return (*a >= *b);
+	return (a->name >= b->name);
 }
 
 #endif  // SRC_PORTAGE_PACKAGE_H_

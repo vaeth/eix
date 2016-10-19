@@ -21,6 +21,10 @@
 
 class Category : public eix::ptr_set<PackagePtr> {
 	public:
+		typedef eix::ptr_set<PackagePtr> super;
+
+		static void init_static();
+
 		Category() {
 		}
 
@@ -28,8 +32,8 @@ class Category : public eix::ptr_set<PackagePtr> {
 			delete_and_clear();
 		}
 
-		iterator find(const std::string& pkg_name) ATTRIBUTE_PURE;
-		const_iterator find(const std::string& pkg_name) const ATTRIBUTE_PURE;
+		iterator find(const std::string& pkg_name);
+		const_iterator find(const std::string& pkg_name) const;
 
 		Package *findPackage(const std::string& pkg_name) const {
 			const_iterator i(find(pkg_name));

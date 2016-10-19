@@ -280,6 +280,7 @@ static void parseFormat(Node **format, const char *varname, EixRc *rc) {
 int run_eix_diff(int argc, char *argv[]) {
 	// Initialize static classes
 	Eapi::init_static();
+	Category::init_static();
 	ExtendedVersion::init_static();
 	PortageSettings::init_static();
 	PrintFormat::init_static();

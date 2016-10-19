@@ -84,8 +84,7 @@ class PropertiesMap : public map<string, ExtendedVersion::Properties> {
 static PropertiesMap *properties_map = NULLPTR;
 
 void ExtendedVersion::init_static() {
-	if(unlikely(restrict_map != NULLPTR))
-		return;
+	eix_assert_static(restrict_map == NULLPTR);
 	restrict_map = new RestrictMap;
 	properties_map = new PropertiesMap;
 }

@@ -48,6 +48,7 @@
 #include "portage/keywords.h"
 #include "portage/mask.h"
 #include "portage/package.h"
+#include "portage/packagetree.h"
 #include "portage/set_stability.h"
 #include "portage/vardbpkg.h"
 #include "search/algorithms.h"
@@ -607,6 +608,7 @@ static void set_format(EixRc *rc) {
 int run_eix(int argc, char** argv) {
 	// Initialize static classes
 	Eapi::init_static();
+	Category::init_static();
 	ExtendedVersion::init_static();
 	PackageTest::init_static();
 	PortageSettings::init_static();

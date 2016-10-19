@@ -12,6 +12,7 @@
 #include <string>
 #include <utility>
 
+#include "eixTk/assert.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -22,24 +23,23 @@
 using std::pair;
 using std::string;
 
+PackagePtr *comparer = NULLPTR;
+
+void Category::init_static() {
+	eix_assert_static(comparer == NULLPTR);
+	comparer = new PackagePtr(new Package);
+}
+
 Category::iterator Category::find(const std::string& pkg_name) {
-	iterator i(begin());
-	for(; likely(i != end()); ++i) {
-		if(unlikely(i->name == pkg_name)) {
-			return i;
-		}
-	}
-	return i;
+	eix_assert_static(comparer != NULLPTR);
+	(*comparer)->name = pkg_name;
+	return static_cast<const_iterator>(super::find(*comparer));
 }
 
 Category::const_iterator Category::find(const std::string& pkg_name) const {
-	const_iterator i(begin());
-	for(; likely(i != end()); ++i) {
-		if(unlikely(i->name == pkg_name)) {
-			return i;
-		}
-	}
-	return i;
+	eix_assert_static(comparer != NULLPTR);
+	(*comparer)->name = pkg_name;
+	return static_cast<const_iterator>(super::find(*comparer));
 }
 
 #if 0
