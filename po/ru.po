@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2016-09-19 08:45+0200\n"
+"POT-Creation-Date: 2016-10-19 17:57+0200\n"
 "PO-Revision-Date: 2016-09-19 08:57+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -2010,29 +2010,21 @@ msgstr "Нет не совпадающих записей в %s.\n"
 
 #: src/eix.cc
 #, c-format
-msgid ""
-"Non-matching or empty entries in %s:\n"
-msgstr ""
-"Не совпадающие или пустые записи в %s:\n"
+msgid "Non-matching or empty entries in %s:\n"
+msgstr "Не совпадающие или пустые записи в %s:\n"
 
 #: src/eix.cc
 #, c-format
-msgid ""
-"Non-matching entries in %s:\n"
-msgstr ""
-"Не совпадающие записи в %s:\n"
+msgid "Non-matching entries in %s:\n"
+msgstr "Не совпадающие записи в %s:\n"
 
 #: src/eix.cc
-msgid ""
-"The names of all installed packages are in the database.\n"
-msgstr ""
-"Имена всех установленных пакетов находятся в базе данных.\n"
+msgid "The names of all installed packages are in the database.\n"
+msgstr "Имена всех установленных пакетов находятся в базе данных.\n"
 
 #: src/eix.cc
-msgid ""
-"The following installed packages are not in the database:\n"
-msgstr ""
-"Следующие установленные пакеты отсутствуют в базе данных:\n"
+msgid "The following installed packages are not in the database:\n"
+msgstr "Следующие установленные пакеты отсутствуют в базе данных:\n"
 
 # fuzzy
 #: src/eix-diff.cc
@@ -2128,7 +2120,7 @@ msgstr "ошибка выполнения %s\n"
 #: src/eix-header.cc
 #, c-format
 msgid ""
-"Usage: %s [-q] [-f FILE] [-s SEP] [-c] [-l OV] [-p OV] [-o OV] ...\n"
+"Usage: %s [-q] [-f FILE] [-s SEP] [-c|-C] [-l OV] [-p OV] [-o OV] ...\n"
 "Check whether eix database FILE has current format, and print label, path,\n"
 "or both of specified overlay OV in FILE, appending SEP to each data.\n"
 "All options can be used repeatedly: FILE and SEP are active until modified.\n"
@@ -2143,8 +2135,8 @@ msgid ""
 "For the case the OV is the empty string, the main overlay is printed (as if OV\n"
 "is 0), but if there is no overlay in file, no error (but empty data) is output.\n"
 "-c can be used to check only whether FILE has current format without producing\n"
-"any output.\n"
-"After option -q no further output is made, usually.\n"
+"any output. -C outputs the actual format number.\n"
+"After option -q no further output is made, usually; -C is exceptional here.\n"
 "So specify -q first if you want no output at all.\n"
 "The special option -h outputs this help text and quits.\n"
 "\n"

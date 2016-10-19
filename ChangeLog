@@ -3,6 +3,7 @@
 *eix-0.32.0
 	Martin Väth <martin at mvath.de>:
 	- new database is guaranteed to be alphabetically sorted
+	- add eix-header -C
 	- scripts: Fix getopts usage
 	- scripts: handle export Bourne shell compatible
 	- fix typos in zsh completion. Thanks to longlene

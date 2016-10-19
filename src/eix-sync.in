@@ -599,7 +599,9 @@ CallEmergeMetadata() {
 CondUpdate() {
 	if test ! -f "$eixcache"
 	then	einfo "`pgettext 'eix-sync' 'eix-cache does not exist'`"
-	else	eix-header -f "$eixcache" -qc && return
+	else	headerver=`eix-header -s '' -f "$eixcache" -qC` && \
+			IsNumber "${headerver:-x}" && [ $headerver -ge 37 ] \
+			&& return
 		einfo "`pgettext 'eix-sync' 'eix-cache format has changed'`"
 	fi
 	MyVarCommand "$updatecmd" -t iupdate

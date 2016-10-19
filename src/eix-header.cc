@@ -42,6 +42,7 @@ static CONSTEXPR PrintOverlayMode
 	PRINT_OVERLAY_NONE  = 0x00,
 	PRINT_OVERLAY_LABEL = 0x01,
 	PRINT_OVERLAY_PATH  = 0x02,
+	PRINT_OVERLAY_FORMAT = 0x04,
 	PRINT_OVERLAY_LABEL_PATH = (PRINT_OVERLAY_LABEL | PRINT_OVERLAY_PATH);
 
 static void print_help();
@@ -52,7 +53,7 @@ bool print_overlay_data(string *result, const DBHeader *header, const char *over
 static void print_help() {
 	cout << eix::format(
 	/* xgettext: no-space-ellipsis-check */
-_("Usage: %s [-q] [-f FILE] [-s SEP] [-c] [-l OV] [-p OV] [-o OV] ...\n"
+_("Usage: %s [-q] [-f FILE] [-s SEP] [-c|-C] [-l OV] [-p OV] [-o OV] ...\n"
 "Check whether eix database FILE has current format, and print label, path,\n"
 "or both of specified overlay OV in FILE, appending SEP to each data.\n"
 "All options can be used repeatedly: FILE and SEP are active until modified.\n"
@@ -67,8 +68,8 @@ _("Usage: %s [-q] [-f FILE] [-s SEP] [-c] [-l OV] [-p OV] [-o OV] ...\n"
 "For the case the OV is the empty string, the main overlay is printed (as if OV\n"
 "is 0), but if there is no overlay in file, no error (but empty data) is output.\n"
 "-c can be used to check only whether FILE has current format without producing\n"
-"any output.\n"
-"After option -q no further output is made, usually.\n"
+"any output. -C outputs the actual format number.\n"
+"After option -q no further output is made, usually; -C is exceptional here.\n"
 "So specify -q first if you want no output at all.\n"
 "The special option -h outputs this help text and quits.\n"
 "\n"
@@ -111,7 +112,7 @@ int run_eix_header(int argc, char *argv[]) {
 		}
 		size_t curr(1);
 		char opt(argv[0][curr++]);
-		while(unlikely(strchr("cqhH?", opt) != NULLPTR)) {
+		while(unlikely(strchr("CcqhH?", opt) != NULLPTR)) {
 			switch(opt) {
 				case '?':
 				case 'H':
@@ -194,6 +195,9 @@ int overlay_loop(string *result, const OverlayOptionList& options) {
 			case 'p':
 				mode = PRINT_OVERLAY_PATH;
 				break;
+			case 'C':
+				mode = PRINT_OVERLAY_FORMAT;
+				break;
 			default:
 			// case 'c':
 				mode = PRINT_OVERLAY_NONE;
@@ -208,7 +212,13 @@ int overlay_loop(string *result, const OverlayOptionList& options) {
 				ret = EXIT_FAILURE;
 			}
 		}
-		if(unlikely(mode == PRINT_OVERLAY_NONE)) {
+		if(unlikely((mode & PRINT_OVERLAY_FORMAT) != PRINT_OVERLAY_NONE)) {
+			if(likely(name != NULLPTR)) {
+				result->append(eix::format("%s") % header->version);
+			}
+			result->append(separator);
+		}
+		if(unlikely((mode & PRINT_OVERLAY_LABEL_PATH) == PRINT_OVERLAY_NONE)) {
 			continue;
 		}
 		if(unlikely((name == NULLPTR) || !print_overlay_data(result, header, it->arg, separator, name, mode, verbose))) {
