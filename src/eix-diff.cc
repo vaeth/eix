@@ -195,7 +195,7 @@ class DiffReaders {
 		bool diff() {
 			PackageList lost_list, found_list;
 			bool old_read(true), new_read(true);
-			eix::SignedBool leading(0); // <0: old is leading, >0: new is leading
+			eix::SignedBool leading(0);  // <0: old is leading, >0: new is leading
 			Package *old_pkg, *new_pkg;
 			while(likely(old_read || new_read)) {
 				if(likely(leading >= 0) && likely(old_read)) {

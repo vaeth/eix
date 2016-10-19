@@ -561,32 +561,32 @@ class PackageSave {
 };
 
 class PackagePtr {
-private:
-	Package *ptr;
+	private:
+		Package *ptr;
 
-public:
-	PackagePtr() : ptr(NULLPTR) {
-	}
+	public:
+		PackagePtr() : ptr(NULLPTR) {
+		}
 
-	explicit PackagePtr(Package *p) : ptr(p) {
-	}
+		explicit PackagePtr(Package *p) : ptr(p) {
+		}
 
-	operator Package *() const {
-		return ptr;
-	}
+		operator Package *() const {
+			return ptr;
+		}
 
-	Package& operator*() const {
-		return *ptr;
-	}
+		Package& operator*() const {
+			return *ptr;
+		}
 
-	Package *operator->() const {
-		return ptr;
-	}
+		Package *operator->() const {
+			return ptr;
+		}
 
-	PackagePtr& operator=(Package *p) {
-		ptr = p;
-		return *this;
-	}
+		PackagePtr& operator=(Package *p) {
+			ptr = p;
+			return *this;
+		}
 };
 
 // Comparison is assumed to happen only in PackageTree where we know

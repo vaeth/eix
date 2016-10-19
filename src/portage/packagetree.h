@@ -37,7 +37,7 @@ class Category : public eix::ptr_set<PackagePtr> {
 
 		Package *findPackage(const std::string& pkg_name) const {
 			const_iterator i(find(pkg_name));
-			return ((i == end()) ? NULLPTR : (*i));
+			return ((i == end()) ? NULLPTR : static_cast<Package *>(*i));
 		}
 
 		void addPackage(Package *pkg) ATTRIBUTE_NONNULL_ {
