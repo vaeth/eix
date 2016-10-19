@@ -244,7 +244,7 @@ bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Ca
 	DBHeader header;
 
 	string errtext;
-	if(unlikely(!db.read_header(&header, &errtext))) {
+	if(unlikely(!db.read_header(&header, &errtext, 0))) {
 		allerrors(slaves, eix::format(_("error in file %s: %s")) % m_full % errtext);
 		m_error_callback(err_msg);
 		return false;

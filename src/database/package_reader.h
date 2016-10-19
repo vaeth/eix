@@ -84,6 +84,7 @@ class PackageReader {
 		**/
 		bool next();
 
+#if 0
 		/**
 		Go into the next (or first) category part.
 		@return false if there are none more.
@@ -95,6 +96,7 @@ class PackageReader {
 		return false if there are none more.
 		**/
 		bool nextPackage();
+#endif
 
 		/**
 		@return name of current category

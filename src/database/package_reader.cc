@@ -136,6 +136,7 @@ bool PackageReader::next() {
 	return true;
 }
 
+#if 0
 bool PackageReader::nextCategory() {
 	if(unlikely(m_frames-- == 0)) {
 		return false;
@@ -167,3 +168,4 @@ bool PackageReader::nextPackage() {
 	m_pkg->category = m_cat_name;
 	return read(ALL);
 }
+#endif

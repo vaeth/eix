@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "database/header.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
@@ -22,7 +23,6 @@
 // include "portage/basicversion.h" This comment satisfies check_include script
 
 class BasicPart;
-class DBHeader;
 class IUseSet;
 class Package;
 class PackageReader;
@@ -171,10 +171,12 @@ class Database : public File {
 		static void prep_header_hashs(DBHeader *hdr, const PackageTree& tree) ATTRIBUTE_NONNULL_;
 
 		bool write_header(const DBHeader& hdr, std::string *errtext);
-		bool read_header(DBHeader *hdr, std::string *errtext) ATTRIBUTE_NONNULL((2));
+		bool read_header(DBHeader *hdr, std::string *errtext, DBHeader::DBVersion minver) ATTRIBUTE_NONNULL((2));
 
 		bool write_packagetree(const PackageTree& pkg, const DBHeader& hdr, std::string *errtext);
+#if 0
 		bool read_packagetree(PackageTree *tree, const DBHeader& hdr, PortageSettings *ps, std::string *errtext) ATTRIBUTE_NONNULL((2, 4));
+#endif
 };
 
 template<typename m_Tp> bool Database::read_num(m_Tp *ret, std::string *errtext) {

@@ -309,10 +309,6 @@ AddOption(BOOLEAN, "DIFF_SEPARATE_DELETED",
 	"true", P_("DIFF_SEPARATE_DELETED",
 	"If false, eix-diff will mix deleted and changed packages"));
 
-AddOption(BOOLEAN, "DIFF_PRINT_HEADER",
-	"true", P_("DIFF_PRINT_HEADER",
-	"Should eix-diff print a header info line?"));
-
 AddOption(BOOLEAN, "NO_RESTRICTIONS",
 	"false", P_("NO_RESTRICTIONS",
 	"This variable is only used for delayed substitution.\n"

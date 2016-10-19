@@ -257,7 +257,7 @@ static void add_virtuals(Overrides *override_list, PathVec *add, RepoNames *repo
 
 	INFO(eix::format(_("Adding virtual overlays from %s...\n")) % cachefile);
 	DBHeader header;
-	bool is_current(db.read_header(&header, NULLPTR));
+	bool is_current(db.read_header(&header, NULLPTR, 0));
 	if(unlikely(!is_current)) {
 		cerr << _("warning: KEEP_VIRTUALS ignored because database format has changed");
 		return;

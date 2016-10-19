@@ -466,6 +466,14 @@ class Package : public eix::ptr_list<Version> {
 			return *rbegin();
 		}
 
+		eix::SignedBool compare(const Package& c) const {
+			int i(category.compare(c.category));
+			if(likely(i == 0)) {
+				return name.compare(c.name);
+			}
+			return i;
+		}
+
 	protected:
 		/**
 		\c slotlist is always sorted with respect to the first version.

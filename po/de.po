@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2016-10-19 17:12+0200\n"
-"PO-Revision-Date: 2016-10-19 17:55+0200\n"
+"POT-Creation-Date: 2016-10-19 21:52+0200\n"
+"PO-Revision-Date: 2016-10-19 18:50+0200\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -2042,13 +2042,6 @@ msgstr "Fehler in Datenbank-Datei %s: %s"
 msgid "cannot open database file %s for reading (mode = 'rb')"
 msgstr "Datenbank-Datei %s kann nicht zum Lesen geöffnet werden (mode = „rb“)"
 
-#: src/eix-diff.cc
-#, c-format
-msgid "Diffing databases (%s -> %s package)\n"
-msgid_plural "Diffing databases (%s -> %s packages)\n"
-msgstr[0] "Vergleiche Datenbanken (%s -> %s Paket)\n"
-msgstr[1] "Vergleiche Datenbanken (%s -> %s Pakete)\n"
-
 #: src/eix-drop-permissions.cc
 #, c-format
 msgid ""
@@ -2556,6 +2549,11 @@ msgstr "Cache-Datei benutzt neueres Format %s (aktuell ist %s)"
 #, c-format
 msgid "cachefile uses obsolete format %s (current is %s)"
 msgstr "Cache-Datei benutzt veraltetes Format %s (aktuell ist %s)"
+
+#: src/database/io_header.cc
+#, c-format
+msgid "cachefile uses too old format %s (required: %s)"
+msgstr "Cache-Datei benutzt zu altes Format %s (benötigt wird %s)"
 
 #: src/eixTk/ansicolor.cc
 #, c-format
@@ -3199,11 +3197,6 @@ msgstr "Soll eix-diff Slots bei Versionsänderungen ignorieren?"
 msgctxt "DIFF_SEPARATE_DELETED"
 msgid "If false, eix-diff will mix deleted and changed packages"
 msgstr "Falls false, wird eix-diff gelöschte und geänderte Pakete mischen"
-
-#: src/eixrc/defaults.cc
-msgctxt "DIFF_PRINT_HEADER"
-msgid "Should eix-diff print a header info line?"
-msgstr "Soll eix-diff am Info-Kopfzeile ausgeben?"
 
 #: src/eixrc/defaults.cc
 msgctxt "NO_RESTRICTIONS"
@@ -8376,3 +8369,8 @@ msgstr "Rechte-Änderung schlug fehl"
 #: src/various/drop_permissions.cc
 msgid "warning: failed to drop permissions"
 msgstr "Warnung: Rechte-Änderung schlug fehl"
+
+#~ msgid "Diffing databases (%s -> %s package)\n"
+#~ msgid_plural "Diffing databases (%s -> %s packages)\n"
+#~ msgstr[0] "Vergleiche Datenbanken (%s -> %s Paket)\n"
+#~ msgstr[1] "Vergleiche Datenbanken (%s -> %s Pakete)\n"

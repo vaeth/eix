@@ -15,20 +15,22 @@
 
 #include <cstdlib>
 
-#include <algorithm>
 #include <iostream>
 #include <string>
 
 #include "database/header.h"
 #include "database/io.h"
+#include "database/package_reader.h"
 #include "eixTk/ansicolor.h"
 #include "eixTk/argsreader.h"
+#include "eixTk/eixint.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/parseerror.h"
+#include "eixTk/ptr_list.h"
 #include "eixTk/utils.h"
 #include "eixrc/eixrc.h"
 #include "eixrc/global.h"
@@ -53,7 +55,7 @@ using std::cout;
 using std::endl;
 
 static void print_help();
-static void load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps) ATTRIBUTE_NONNULL_;
+static void init_db(const char *file, Database *db, DBHeader *header, PackageReader **reader, PortageSettings *ps) ATTRIBUTE_NONNULL_;
 static void set_virtual(PrintFormat *fmt, const DBHeader& header, const string& eprefix_virtual) ATTRIBUTE_NONNULL_;
 static void print_changed_package(Package *op, Package *np) ATTRIBUTE_NONNULL_;
 static void print_found_package(Package *p) ATTRIBUTE_NONNULL_;
@@ -65,6 +67,7 @@ static SetStability   *set_stability_old, *set_stability_new;
 static PrintFormat    *format_for_new, *format_for_old;
 static VarDbPkg       *varpkg_db;
 static DBHeader       *old_header, *new_header;
+static PackageReader  *old_reader, *new_reader;
 static Node           *format_new, *format_delete, *format_changed;
 
 static void print_help() {
@@ -138,16 +141,14 @@ EixDiffOptionList::EixDiffOptionList() {
 	push_back(Option("ansi",         O_ANSI, Option::BOOLEAN_T, &cli_ansi));
 }
 
-static void load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps) {
-	Database db;
-	if(likely(db.openread(file))) {
+static void init_db(const char *file, Database *db, DBHeader *header, PackageReader **reader, PortageSettings *ps) {
+	if(likely(db->openread(file))) {
 		string errtext;
-		if(likely(db.read_header(header, &errtext))) {
+		if(likely(db->read_header(header, &errtext, 37))) {
+			*reader = new PackageReader(db, *header, ps);
 			header->set_priorities(ps);
 			ps->store_world_sets(&(header->world_sets));
-			if(likely(db.read_packagetree(body, *header, ps, &errtext))) {
-				return;
-			}
+			return;
 		}
 		cerr << eix::format(_("error in database file %s: %s")) % file % errtext << endl;
 	} else {
@@ -165,7 +166,15 @@ static void set_virtual(PrintFormat *fmt, const DBHeader& header, const string& 
 		fmt->set_as_virtual(i, is_virtual((eprefix_virtual + header.getOverlay(i).path).c_str()));
 }
 
-class DiffTrees {
+class PackageList : public eix::ptr_list<Package> {
+	public:
+		typedef eix::ptr_list<Package> super;
+		~PackageList() {
+			super::delete_and_clear();
+		}
+};
+
+class DiffReaders {
 	public:
 		typedef void (*lost_func) (Package *p) ATTRIBUTE_NONNULL_;
 		typedef void (*found_func) (Package *p) ATTRIBUTE_NONNULL_;
@@ -175,7 +184,7 @@ class DiffTrees {
 		found_func found_package;
 		changed_func changed_package;
 
-		DiffTrees(VarDbPkg *vardbpkg, PortageSettings *portage_settings, bool only_installed, bool compare_slots, bool separate_deleted) ATTRIBUTE_NONNULL_ :
+		DiffReaders(VarDbPkg *vardbpkg, PortageSettings *portage_settings, bool only_installed, bool compare_slots, bool separate_deleted) ATTRIBUTE_NONNULL_ :
 			m_vardbpkg(vardbpkg), m_portage_settings(portage_settings), m_only_installed(only_installed),
 			m_slots(compare_slots), m_separate_deleted(separate_deleted) {
 		}
@@ -183,26 +192,99 @@ class DiffTrees {
 		/**
 		Diff the trees and run callbacks
 		**/
-		void diff(PackageTree *old_tree, PackageTree *new_tree) ATTRIBUTE_NONNULL_ {
-			// Diff every category from the old tree with the category from the new tree
-			for(PackageTree::iterator old_cat(old_tree->begin());
-				likely(old_cat != old_tree->end()); ++old_cat) {
-				diff_category(old_cat->second, &(*new_tree)[old_cat->first]);
-			}
-
-			// Now we've only new package in the new_tree
-			// and lost packages in the old_tree
-
-			if(m_separate_deleted) {
-				for(PackageTree::iterator old_cat(old_tree->begin());
-					likely(old_cat != old_tree->end()); ++old_cat) {
-					for_each(old_cat->second->begin(), old_cat->second->end(), lost_package);
+		bool diff() {
+			PackageList lost_list, found_list;
+			bool old_read(true), new_read(true);
+			eix::SignedBool leading(0); // <0: old is leading, >0: new is leading
+			Package *old_pkg, *new_pkg;
+			while(likely(old_read || new_read)) {
+				if(likely(leading >= 0) && likely(old_read)) {
+					old_read = (old_reader->next() && ((old_pkg = old_reader->release()) != NULLPTR));
+					if(likely(old_read)) {
+						set_stability_old->set_stability(old_pkg);
+						if(unlikely(leading > 0)) {
+							if(likely(*old_pkg == *new_pkg)) {
+								leading = 0;
+								output_equal_names(new_pkg, old_pkg);
+								continue;
+							}
+							if(*old_pkg < *new_pkg) {
+								output_lost_package(&lost_list, old_pkg);
+								continue;
+							}
+							leading = -1;
+							// continue;
+						}
+					}
+				}
+				if(likely(leading <= 0) && likely(new_read)) {
+					new_read = (new_reader->next() && ((new_pkg = new_reader->release()) != NULLPTR));
+					if(likely(new_read)) {
+						set_stability_new->set_stability(new_pkg);
+						if(unlikely(leading < 0)) {
+							if(likely(*new_pkg == *old_pkg)) {
+								leading = 0;
+								output_equal_names(new_pkg, old_pkg);
+								continue;
+							}
+							if(*new_pkg < *old_pkg) {
+								if(m_separate_deleted) {
+									found_list.push_back(new_pkg);
+									continue;
+								} else {
+									output_found_package(&found_list, new_pkg);
+								}
+							}
+							leading = 1;
+							continue;
+						}
+					}
+				}
+				if(likely(leading == 0)) {
+					if(likely(old_read && new_read)) {
+						leading = new_pkg->compare(*old_pkg);
+						if(leading == 0) {
+							output_equal_names(new_pkg, old_pkg);
+						} else if(leading > 0) {
+							output_lost_package(&lost_list, old_pkg);
+						} else {
+							output_found_package(&found_list, new_pkg);
+						}
+					} else {
+						leading = (old_read ? -1 : 1);
+					}
+					continue;
+				}
+				if(leading < 0) {
+					output_lost_package(&lost_list, old_pkg);
+				} else {
+					output_found_package(&found_list, new_pkg);
 				}
 			}
-			for(PackageTree::iterator new_cat(new_tree->begin());
-				likely(new_cat != new_tree->end()); ++new_cat) {
-				for_each(new_cat->second->begin(), new_cat->second->end(), found_package);
+			const char *err_cstr(old_reader->get_errtext());
+			if(unlikely(err_cstr != NULLPTR)) {
+				cerr << err_cstr << endl;
+				delete old_reader;
+				delete new_reader;
+				return false;
 			}
+			delete old_reader;
+			err_cstr = new_reader->get_errtext();
+			if(unlikely(err_cstr != NULLPTR)) {
+				cerr << err_cstr << endl;
+				delete new_reader;
+				return false;
+			}
+			delete new_reader;
+			for(PackageList::iterator it(lost_list.begin());
+				likely(it != lost_list.end()); ++it) {
+				lost_package(*it);
+			}
+			for(PackageList::iterator it(lost_list.begin());
+				likely(it != lost_list.end()); ++it) {
+				found_package(*it);
+			}
+			return true;
 		}
 
 	private:
@@ -214,36 +296,29 @@ class DiffTrees {
 			return new_pkg->differ(*old_pkg, m_vardbpkg, m_portage_settings, true, m_only_installed, m_slots);
 		}
 
-		/**
-		Diff two categories and run callbacks.
-		Remove already diffed packages from both categories.
-		**/
-		void diff_category(Category *old_cat, Category *new_cat) ATTRIBUTE_NONNULL_ {
-			Category::iterator old_pkg(old_cat->begin());
+		void output_equal_names(Package *new_pkg, Package *old_pkg) ATTRIBUTE_NONNULL_ {
+			if(unlikely(best_differs(new_pkg, old_pkg))) {
+				changed_package(old_pkg, new_pkg);
+			}
+			delete old_pkg;
+			delete new_pkg;
+		}
 
-			while(likely(old_pkg != old_cat->end())) {
-				Category::iterator new_pkg(new_cat->find(old_pkg->name));
+		void output_lost_package(PackageList *collect, Package *pkg) {
+			if(m_separate_deleted) {
+				collect->push_back(pkg);
+			} else {
+				lost_package(pkg);
+				delete pkg;
+			}
+		}
 
-				if(unlikely(new_pkg == new_cat->end())) {
-					// Lost a package
-					if(m_separate_deleted) {
-						++old_pkg;
-						continue;
-					}
-					lost_package(*old_pkg);
-				} else {
-					// Best version differs
-					if(unlikely(best_differs(*new_pkg, *old_pkg)))
-						changed_package(*old_pkg, *new_pkg);
-
-					// Remove the new package
-					delete *new_pkg;
-					new_cat->erase(new_pkg);
-				}
-
-				// Remove the old packages
-				delete *old_pkg;
-				old_pkg = old_cat->erase(old_pkg);
+		void output_found_package(PackageList *collect, Package *pkg) {
+			if(m_separate_deleted) {
+				collect->push_back(pkg);
+			} else {
+				found_package(pkg);
+				delete pkg;
 			}
 		}
 };
@@ -390,15 +465,13 @@ int run_eix_diff(int argc, char *argv[]) {
 	set_stability_new = new SetStability(portagesettings, local_settings, false, always_accept_keywords);
 	format_for_new->recommend_mode = rc.getLocalMode("RECOMMEND_LOCAL_MODE");
 
-	PackageTree new_tree;
+	Database new_db;
 	new_header = new DBHeader;
-	load_db(new_file.c_str(), new_header, &new_tree, portagesettings);
-	set_stability_new->set_stability(&new_tree);
+	init_db(new_file.c_str(), &new_db, new_header, &new_reader, portagesettings);
 
-	PackageTree old_tree;
+	Database old_db;
 	old_header = new DBHeader;
-	load_db(old_file.c_str(), old_header, &old_tree, portagesettings);
-	set_stability_old->set_stability(&old_tree);
+	init_db(old_file.c_str(), &old_db, old_header, &old_reader, portagesettings);
 
 	format_for_new->set_overlay_translations(NULLPTR);
 
@@ -408,28 +481,19 @@ int run_eix_diff(int argc, char *argv[]) {
 	set_virtual(format_for_old, *old_header, eprefix_virtual);
 	set_virtual(format_for_new, *new_header, eprefix_virtual);
 
-	DiffTrees differ(varpkg_db, portagesettings,
+	DiffReaders differ(varpkg_db, portagesettings,
 		rc.getBool("DIFF_ONLY_INSTALLED"),
 		!rc.getBool("DIFF_NO_SLOTS"),
 		rc.getBool("DIFF_SEPARATE_DELETED"));
-
-	if(likely(rc.getBool("DIFF_PRINT_HEADER"))) {
-		cout << eix::format(N_(
-			"Diffing databases (%s -> %s package)\n",
-			"Diffing databases (%s -> %s packages)\n",
-			new_tree.countPackages()))
-			% old_tree.countPackages()
-			% new_tree.countPackages();
-	}
 
 	differ.lost_package    = print_lost_package;
 	differ.found_package   = print_found_package;
 	differ.changed_package = print_changed_package;
 
-	differ.diff(&old_tree, &new_tree);
+	bool success(differ.diff());
 	cout << format_for_new->color_end;
 
 	delete varpkg_db;
 	delete portagesettings;
-	return EXIT_SUCCESS;
+	return (success ? EXIT_SUCCESS : EXIT_FAILURE);
 }

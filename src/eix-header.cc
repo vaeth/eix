@@ -238,7 +238,7 @@ int overlay_loop(string *result, const OverlayOptionList& options) {
 bool open_database(DBHeader *header, const char *name, bool verbose) {
 	Database db;
 	if(likely((name[0] != '\0') && db.openread(name))) {
-		if(likely(db.read_header(header, NULLPTR))) {
+		if(likely(db.read_header(header, NULLPTR, 0))) {
 			return true;
 		}
 		if(likely(verbose)) {

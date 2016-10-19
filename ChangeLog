@@ -2,14 +2,17 @@
 
 *eix-0.32.0
 	Martin Väth <martin at mvath.de>:
-	- new database is guaranteed to be alphabetically sorted
-	- add eix-header -C
-	- scripts: Fix getopts usage
+	- eix-diff now requires much less memory:
+	  https://bugs.gentoo.org/show_bug.cgi?id=597380
+	- Remove DIFF_PRINT_HEADER (package count can no longer be predicted)
+	- New database format 37 is guaranteed to be alphabetically sorted
+	- Add eix-header -C
+	- scripts: fix getopts usage
 	- scripts: handle export Bourne shell compatible
-	- fix typos in zsh completion. Thanks to longlene
-	- fix various operator overloads
-	- define some move operations not provided by defaults
-	- remove git helpers; rely on https://github.com/vaeth/git-wrappers-mv
+	- Fix typos in zsh completion. Thanks to longlene
+	- Fix various operator overloads
+	- Define some move operations not provided by defaults
+	- Remove git helpers; rely on https://github.com/vaeth/git-wrappers-mv
 
 *eix-0.31.10
 	Martin Väth <martin at mvath.de>:

@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2016-10-19 17:57+0200\n"
-"PO-Revision-Date: 2016-09-19 08:57+0200\n"
+"POT-Creation-Date: 2016-10-19 21:52+0200\n"
+"PO-Revision-Date: 2016-10-19 18:52+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: ru\n"
@@ -2082,16 +2082,6 @@ msgstr "Запись файла базы данных %s: %s"
 msgid "cannot open database file %s for reading (mode = 'rb')"
 msgstr "Невозможно открыть базу данных %s для чтения (режим = «rb»)"
 
-# fuzzy (correct plural forms required)
-#: src/eix-diff.cc
-#, c-format
-msgid "Diffing databases (%s -> %s package)\n"
-msgid_plural "Diffing databases (%s -> %s packages)\n"
-msgstr[0] "Сравнение баз данных (%s -> %s пакетов)\n"
-msgstr[1] "Сравнение баз данных (%s -> %s пакетов)\n"
-msgstr[2] "Сравнение баз данных (%s -> %s пакетов)\n"
-msgstr[3] "Сравнение баз данных (%s -> %s пакетов)\n"
-
 # fuzzy
 #: src/eix-drop-permissions.cc
 #, c-format
@@ -2597,6 +2587,12 @@ msgstr "Файл кэша использует более новый форма�
 #: src/database/io_header.cc
 #, c-format
 msgid "cachefile uses obsolete format %s (current is %s)"
+msgstr "Файл кэша использует устаревший формат %s (текущий - %s)"
+
+# fuzzy
+#: src/database/io_header.cc
+#, c-format
+msgid "cachefile uses too old format %s (required: %s)"
 msgstr "Файл кэша использует устаревший формат %s (текущий - %s)"
 
 # fuzzy (only punctation changed)
@@ -3169,11 +3165,6 @@ msgstr ""
 #: src/eixrc/defaults.cc
 msgctxt "DIFF_SEPARATE_DELETED"
 msgid "If false, eix-diff will mix deleted and changed packages"
-msgstr ""
-
-#: src/eixrc/defaults.cc
-msgctxt "DIFF_PRINT_HEADER"
-msgid "Should eix-diff print a header info line?"
 msgstr ""
 
 #: src/eixrc/defaults.cc
@@ -7259,3 +7250,11 @@ msgstr ""
 #: src/various/drop_permissions.cc
 msgid "warning: failed to drop permissions"
 msgstr ""
+
+# fuzzy (correct plural forms required)
+#~ msgid "Diffing databases (%s -> %s package)\n"
+#~ msgid_plural "Diffing databases (%s -> %s packages)\n"
+#~ msgstr[0] "Сравнение баз данных (%s -> %s пакетов)\n"
+#~ msgstr[1] "Сравнение баз данных (%s -> %s пакетов)\n"
+#~ msgstr[2] "Сравнение баз данных (%s -> %s пакетов)\n"
+#~ msgstr[3] "Сравнение баз данных (%s -> %s пакетов)\n"

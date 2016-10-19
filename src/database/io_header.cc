@@ -30,7 +30,7 @@
 using std::string;
 using std::vector;
 
-bool Database::read_header(DBHeader *hdr, string *errtext) {
+bool Database::read_header(DBHeader *hdr, string *errtext, DBHeader::DBVersion minver) {
 	size_t magic_len(strlen(DBHeader::magic));
 	eix::auto_list<char> buf(new char[magic_len + 1]);
 	buf.get()[magic_len] = 0;
@@ -52,6 +52,14 @@ GCC_DIAG_ON(sign-conversion)
 			_("cachefile uses newer format %s (current is %s)") :
 			_("cachefile uses obsolete format %s (current is %s)"))
 			% hdr->version % DBHeader::current;
+		}
+		return false;
+	}
+	if(unlikely(hdr->version < minver)) {
+		if(errtext != NULLPTR) {
+			*errtext = eix::format(
+			_("cachefile uses too old format %s (required: %s)"))
+			% hdr->version % minver;
 		}
 		return false;
 	}

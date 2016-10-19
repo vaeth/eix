@@ -2343,10 +2343,6 @@ If true, eix-diff will print deleted packages in a section on their own.
 Otherwise, eix-diff will mix deleted and changed packages "alphabetically".
 
 .TP
-.BR DIFF_PRINT_HEADER " " (true / false)
-If true, eix-diff will print a header info line.
-
-.TP
 .BR NO_RESTRICTIONS " " (true / false)
 If false, RESTRICTION and PROPERTIES data is output.
 

@@ -777,7 +777,7 @@ int run_eix(int argc, char** argv) {
 	}
 	DBHeader header;
 
-	if(unlikely(!db.read_header(&header, NULLPTR))) {
+	if(unlikely(!db.read_header(&header, NULLPTR, 0))) {
 		cerr << eix::format(_(
 			"%s was created with an incompatible eix-update:\n"
 			"It uses database format %s (current is %s).\n"
@@ -1127,7 +1127,7 @@ static bool is_current_dbversion(const char *filename, const char *tooltext) {
 		return false;
 	}
 	DBHeader header;
-	return db.read_header(&header, NULLPTR);
+	return db.read_header(&header, NULLPTR, 0);
 }
 
 static void print_wordvec(const WordVec& vec) {

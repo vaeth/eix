@@ -2371,10 +2371,6 @@ Andernfalls wird eix-diff gelöschte und geänderte Pakete "alphabetisch"
 auflisten.
 
 .TP
-.BR DIFF_PRINT_HEADER " " (true / false)
-Legt fest, ob eix-diff eine Info-Kopfzeile ausgibt.
-
-.TP
 .BR NO_RESTRICTIONS " " (true / false)
 Falls nicht gesetzt, werden keine RESTRICTION- und PROPERTIES-Daten ausgegeben.
 

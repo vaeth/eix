@@ -449,6 +449,7 @@ bool Database::write_packagetree(const PackageTree& tree, const DBHeader& hdr, s
 	return true;
 }
 
+#if 0
 bool Database::read_packagetree(PackageTree *tree, const DBHeader& hdr, PortageSettings *ps, string *errtext) {
 	PackageReader reader(this, hdr, ps);
 	while(reader.nextCategory()) {
@@ -466,3 +467,4 @@ bool Database::read_packagetree(PackageTree *tree, const DBHeader& hdr, PortageS
 	}
 	return false;
 }
+#endif
