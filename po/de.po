@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
 "POT-Creation-Date: 2016-10-19 21:52+0200\n"
-"PO-Revision-Date: 2016-10-19 18:50+0200\n"
+"PO-Revision-Date: 2016-10-20 23:18+0200\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -8249,7 +8249,7 @@ msgstr "Kein Name einer Eigenschaft/Variablen nach „{“"
 
 #: src/output/formatstring.cc
 msgid "'{' without closing '}'"
-msgstr " „{“ ohne schließendes „}“"
+msgstr "„{“ ohne schließendes „}“"
 
 #: src/output/formatstring.cc
 #, c-format
@@ -8369,8 +8369,3 @@ msgstr "Rechte-Änderung schlug fehl"
 #: src/various/drop_permissions.cc
 msgid "warning: failed to drop permissions"
 msgstr "Warnung: Rechte-Änderung schlug fehl"
-
-#~ msgid "Diffing databases (%s -> %s package)\n"
-#~ msgid_plural "Diffing databases (%s -> %s packages)\n"
-#~ msgstr[0] "Vergleiche Datenbanken (%s -> %s Paket)\n"
-#~ msgstr[1] "Vergleiche Datenbanken (%s -> %s Pakete)\n"
