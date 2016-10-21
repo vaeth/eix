@@ -67,9 +67,11 @@ class SetStability {
 
 		void calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsFlags *keyflags, const Version *v, Package *p) const ATTRIBUTE_NONNULL((5, 6));
 
+#if 0
 		void set_stability(Category *category) const ATTRIBUTE_NONNULL_;
 
 		void set_stability(PackageTree *tree) const ATTRIBUTE_NONNULL_;
+#endif
 };
 
 #endif  // SRC_PORTAGE_SET_STABILITY_H_

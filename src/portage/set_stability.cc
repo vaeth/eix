@@ -119,6 +119,7 @@ void SetStability::calc_version_flags(bool get_local, MaskFlags *maskflags, Keyw
 #endif
 }
 
+#if 0
 void SetStability::set_stability(Category *category) const {
 	for(Category::iterator it(category->begin());
 		likely(it != category->end()); ++it) {
@@ -132,3 +133,4 @@ void SetStability::set_stability(PackageTree *tree) const {
 		set_stability(it->second);
 	}
 }
+#endif

@@ -466,7 +466,11 @@ class Package : public eix::ptr_list<Version> {
 			return *rbegin();
 		}
 
-		eix::SignedBool compare(const Package& c) const {
+		/**
+		Compare only category/name. Optimized for comparing "close" elements.
+		@return is negative/0/positive if package is before/equal/after arg c
+		**/
+		int compare_catname(const Package& c) const {
 			int i(category.compare(c.category));
 			if(likely(i == 0)) {
 				return name.compare(c.name);
@@ -515,36 +519,6 @@ class Package : public eix::ptr_list<Version> {
 			local_collects.set(MaskFlags::MASK_NONE);
 		}
 };
-
-// These tests are most efficient if the compare "close" elements:
-// They are supposed to be used in eix-diff to compare sorted lists
-inline static bool operator<(const Package& a, const Package& b) {
-	int i(a.category.compare(b.category));
-	if(likely(i == 0)) {
-		return (a.name < b.name);
-	}
-	return (i < 0);
-}
-
-inline static bool operator<=(const Package& a, const Package& b) {
-	int i(a.category.compare(b.category));
-	if(likely(i == 0)) {
-		return (a.name <= b.name);
-	}
-	return (i < 0);
-}
-
-inline static bool operator==(const Package& a, const Package& b) {
-	return (likely(a.category == b.category) && (a.name == b.name));
-}
-
-inline static bool operator>(const Package& a, const Package& b) {
-	return (b < a);
-}
-
-inline static bool operator>=(const Package& a, const Package& b) {
-	return (b <= a);
-}
 
 class PackageSave {
 		typedef std::map<const Version*, KeywordSave> DataType;

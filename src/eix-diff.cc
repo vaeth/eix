@@ -16,6 +16,7 @@
 #include <cstdlib>
 
 #include <iostream>
+#include <list>
 #include <string>
 
 #include "database/header.h"
@@ -30,7 +31,6 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/parseerror.h"
-#include "eixTk/ptr_list.h"
 #include "eixTk/utils.h"
 #include "eixrc/eixrc.h"
 #include "eixrc/global.h"
@@ -48,6 +48,7 @@
 
 #define VAR_DB_PKG "/var/db/pkg/"
 
+using std::list;
 using std::string;
 
 using std::cerr;
@@ -166,14 +167,6 @@ static void set_virtual(PrintFormat *fmt, const DBHeader& header, const string& 
 		fmt->set_as_virtual(i, is_virtual((eprefix_virtual + header.getOverlay(i).path).c_str()));
 }
 
-class PackageList : public eix::ptr_list<Package> {
-	public:
-		typedef eix::ptr_list<Package> super;
-		~PackageList() {
-			super::delete_and_clear();
-		}
-};
-
 class DiffReaders {
 	public:
 		typedef void (*lost_func) (Package *p) ATTRIBUTE_NONNULL_;
@@ -192,99 +185,73 @@ class DiffReaders {
 		/**
 		Diff the trees and run callbacks
 		**/
-		bool diff() {
-			PackageList lost_list, found_list;
-			bool old_read(true), new_read(true);
-			eix::SignedBool leading(0);  // <0: old is leading, >0: new is leading
-			Package *old_pkg, *new_pkg;
-			while(likely(old_read || new_read)) {
-				if(likely(leading >= 0) && likely(old_read)) {
-					old_read = (old_reader->next() && ((old_pkg = old_reader->release()) != NULLPTR));
-					if(likely(old_read)) {
-						set_stability_old->set_stability(old_pkg);
-						if(unlikely(leading > 0)) {
-							if(likely(*old_pkg == *new_pkg)) {
-								leading = 0;
-								output_equal_names(new_pkg, old_pkg);
-								continue;
-							}
-							if(*old_pkg < *new_pkg) {
-								output_lost_package(&lost_list, old_pkg);
-								continue;
-							}
-							leading = -1;
-							// continue;
-						}
+		int diff() {
+			old_read = new_read = true;
+			int prev_compare(0);
+			for(;;) {
+				if(likely(prev_compare <= 0)) {
+					if(unlikely(!doread_old())) {
+						break;
 					}
 				}
-				if(likely(leading <= 0) && likely(new_read)) {
-					new_read = (new_reader->next() && ((new_pkg = new_reader->release()) != NULLPTR));
-					if(likely(new_read)) {
-						set_stability_new->set_stability(new_pkg);
-						if(unlikely(leading < 0)) {
-							if(likely(*new_pkg == *old_pkg)) {
-								leading = 0;
-								output_equal_names(new_pkg, old_pkg);
-								continue;
-							}
-							if(*new_pkg < *old_pkg) {
-								if(m_separate_deleted) {
-									found_list.push_back(new_pkg);
-									continue;
-								} else {
-									output_found_package(&found_list, new_pkg);
-								}
-							}
-							leading = 1;
-							continue;
-						}
+				if(likely(prev_compare >= 0)) {
+					if(unlikely(!doread_new())) {
+						prev_compare = 1;
+						break;
 					}
 				}
-				if(likely(leading == 0)) {
-					if(likely(old_read && new_read)) {
-						leading = new_pkg->compare(*old_pkg);
-						if(leading == 0) {
-							output_equal_names(new_pkg, old_pkg);
-						} else if(leading > 0) {
-							output_lost_package(&lost_list, old_pkg);
-						} else {
-							output_found_package(&found_list, new_pkg);
-						}
-					} else {
-						leading = (old_read ? -1 : 1);
-					}
-					continue;
-				}
-				if(leading < 0) {
-					output_lost_package(&lost_list, old_pkg);
+				prev_compare = old_pkg->compare_catname(*new_pkg);
+				if(likely(prev_compare == 0)) {
+					handle_equal_packages();
+				} else if(prev_compare < 0) {
+					handle_old_package();
 				} else {
-					output_found_package(&found_list, new_pkg);
+					handle_new_package();
 				}
+			}
+			if(unlikely(prev_compare != 0)) {
+				if(prev_compare < 0) {
+					handle_new_package();
+				} else {
+					handle_old_package();
+				}
+			}
+			if(m_separate_deleted) {
+				for(list<Package *>::iterator it(lost_list.begin());
+					likely(it != lost_list.end()); ++it) {
+					lost_package(*it);
+					delete(*it);
+				}
+				lost_list.clear();
+			}
+			while(doread_old()) {
+				lost_package(old_pkg);
+				delete(old_pkg);
+			}
+			if(m_separate_deleted) {
+				for(list<Package *>::iterator it(found_list.begin());
+					likely(it != found_list.end()); ++it) {
+					found_package(*it);
+					delete(*it);
+				}
+				found_list.clear();
+			}
+			while(doread_new()) {
+				found_package(new_pkg);
+				delete(new_pkg);
 			}
 			const char *err_cstr(old_reader->get_errtext());
+			if(likely(err_cstr == NULLPTR)) {
+				err_cstr = new_reader->get_errtext();
+			}
+			bool ret(EXIT_SUCCESS);
 			if(unlikely(err_cstr != NULLPTR)) {
 				cerr << err_cstr << endl;
-				delete old_reader;
-				delete new_reader;
-				return false;
+				ret = EXIT_FAILURE;
 			}
 			delete old_reader;
-			err_cstr = new_reader->get_errtext();
-			if(unlikely(err_cstr != NULLPTR)) {
-				cerr << err_cstr << endl;
-				delete new_reader;
-				return false;
-			}
 			delete new_reader;
-			for(PackageList::iterator it(lost_list.begin());
-				likely(it != lost_list.end()); ++it) {
-				lost_package(*it);
-			}
-			for(PackageList::iterator it(lost_list.begin());
-				likely(it != lost_list.end()); ++it) {
-				found_package(*it);
-			}
-			return true;
+			return ret;
 		}
 
 	private:
@@ -292,33 +259,64 @@ class DiffReaders {
 		PortageSettings *m_portage_settings;
 		bool m_only_installed, m_slots, m_separate_deleted;
 
-		bool best_differs(const Package *new_pkg, const Package *old_pkg) ATTRIBUTE_NONNULL_ {
+		// These are actually local variables to diff() but used for the subsequent functions
+		bool old_read, new_read;
+		list<Package *> lost_list, found_list;
+		Package *old_pkg, *new_pkg;
+
+		bool doread_old() {
+			if(likely(old_read)) {
+				if(likely(old_reader->next())) {
+					if(likely((old_pkg = old_reader->release()) != NULLPTR)) {
+						set_stability_old->set_stability(old_pkg);
+						return true;
+					}
+				}
+				old_read = false;
+			}
+			return false;
+		}
+
+		bool doread_new() {
+			if(likely(new_read)) {
+				if(likely(new_reader->next())) {
+					if(likely((new_pkg = new_reader->release()) != NULLPTR)) {
+						set_stability_new->set_stability(new_pkg);
+						return true;
+					}
+				}
+				new_read = false;
+			}
+			return false;
+		}
+
+		bool best_differs() {
 			return new_pkg->differ(*old_pkg, m_vardbpkg, m_portage_settings, true, m_only_installed, m_slots);
 		}
 
-		void output_equal_names(Package *new_pkg, Package *old_pkg) ATTRIBUTE_NONNULL_ {
-			if(unlikely(best_differs(new_pkg, old_pkg))) {
+		void handle_equal_packages() {
+			if(unlikely(best_differs())) {
 				changed_package(old_pkg, new_pkg);
 			}
 			delete old_pkg;
 			delete new_pkg;
 		}
 
-		void output_lost_package(PackageList *collect, Package *pkg) {
+		void handle_old_package() {
 			if(m_separate_deleted) {
-				collect->push_back(pkg);
+				lost_list.push_back(old_pkg);
 			} else {
-				lost_package(pkg);
-				delete pkg;
+				lost_package(old_pkg);
+				delete old_pkg;
 			}
 		}
 
-		void output_found_package(PackageList *collect, Package *pkg) {
+		void handle_new_package() {
 			if(m_separate_deleted) {
-				collect->push_back(pkg);
+				found_list.push_back(new_pkg);
 			} else {
-				found_package(pkg);
-				delete pkg;
+				found_package(new_pkg);
+				delete new_pkg;
 			}
 		}
 };
@@ -490,10 +488,10 @@ int run_eix_diff(int argc, char *argv[]) {
 	differ.found_package   = print_found_package;
 	differ.changed_package = print_changed_package;
 
-	bool success(differ.diff());
+	int ret(differ.diff());
 	cout << format_for_new->color_end;
 
 	delete varpkg_db;
 	delete portagesettings;
-	return (success ? EXIT_SUCCESS : EXIT_FAILURE);
+	return ret;
 }
