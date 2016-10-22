@@ -24,7 +24,6 @@
 #include "database/package_reader.h"
 #include "eixTk/ansicolor.h"
 #include "eixTk/argsreader.h"
-#include "eixTk/eixint.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
