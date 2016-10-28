@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2016-10-19 21:52+0200\n"
-"PO-Revision-Date: 2016-10-20 23:18+0200\n"
+"POT-Creation-Date: 2016-10-28 11:24+0200\n"
+"PO-Revision-Date: 2016-10-28 11:52+0200\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -36,6 +36,18 @@ msgstr "Fehlschlag"
 #, sh-format
 msgid "Problems running ${eixf_cmd}"
 msgstr "Probleme mit ${eixf_cmd}"
+
+#: src/eix-functions.sh.in
+msgid "push.sh from https://github.com/vaeth/push/ is needed"
+msgstr "push.sh aus https://github.com/vaeth/push/ wird benötigt"
+
+#: src/eix-functions.sh.in
+msgid "Installation of https://github.com/vaeth/quoter/ is needed"
+msgstr "Installation von https://github.com/vaeth/quoter/ wird benötigt"
+
+#: src/eix-functions.sh.in
+msgid "quoter_pipe.sh from https://github.com/vaeth/quoter/ is needed"
+msgstr "quoter_pipe.sh aus https://github.com/vaeth/quoter/ wird benötigt"
 
 # Statusline should not contain utf8
 #: src/eix-functions.sh.in

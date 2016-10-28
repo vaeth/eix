@@ -255,10 +255,31 @@ Replace() {
 	[ -n "${replace_count:++}" ]
 }
 
-Push() {
-# Rely on the existence of push.sh from https://github.com/vaeth/push/
+SourcePush() {
+	( . push.sh ) >/dev/null 2>&1 || die \
+"`gettext 'push.sh from https://github.com/vaeth/push/ is needed'`"
 	. push.sh
+}
+
+Push() {
+	SourcePush
 	Push "$@"
+}
+
+CheckQuoter() {
+	command -v quoter >/dev/null 2>&1 || die \
+"`gettext 'Installation of https://github.com/vaeth/quoter/ is needed'`"
+}
+
+SourceQuoterPiper() {
+	( . quoter_pipe.sh ) >/dev/null 2>&1 || die \
+"`gettext 'quoter_pipe.sh from https://github.com/vaeth/quoter/ is needed'`"
+	. quoter_pipe.sh
+}
+
+quoter_pipe() {
+	SourceQuoterPiper
+	quoter_pipe ${1+"$@"}
 }
 
 # PushEscaped [-c] VAR Arg [name of IFS type variable]

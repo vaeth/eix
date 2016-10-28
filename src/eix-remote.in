@@ -11,6 +11,7 @@ set -u
 
 . ./eix-functions.sh.in
 ReadFunctions
+
 my_getopts='KvqxXLl:a:kiHh'
 
 set -f
@@ -167,6 +168,7 @@ InitLocalLayman() {
 	if [ -z "${local_layman:++}" ]
 	then	local_layman=`PrintLaymanStorageOld` || local_layman=
 	fi
+	GetPortdir
 	for i in \
 		"$local_layman" \
 		'/usr/local/portage/layman' \
@@ -298,19 +300,22 @@ AddArchive() {
 		Push method "eix*:$p:0"
 	done
 	set -f
-	sep=mAgIcsEp
 	eval "set -- a $eixoverlay"
 	shift
-	eixoverlay=`eix-header -s"$sep" ${1+"$@"}` || exitcode=1
+	quoter_pipe -- eix-header ${1+"$@"} || exitcode=1
 	failcount=0
 	success=false
 	eval "set -- a $method"
 	shift
-	for i
-	do	l=${eixoverlay%%$sep*}
-		eixoverlay=${eixoverlay#*$sep}
-		name=${eixoverlay%%$sep*}
-		eixoverlay=${eixoverlay#*$sep}
+	currnum=$#
+	eval "set -- a $method $quoter_pipe"
+	shift
+	while [ $# -gt $currnum ]
+	do	i=$1
+		shift
+		eval l=\${$currnum}
+		currnum=`Expr $currnum + 1`
+		eval name=\${$currnum}
 		[ -n "$l$name" ] || {
 			p=${i##*/}
 			p=${p%:*}
@@ -387,6 +392,7 @@ Fetch() {
 }
 
 Add() {
+	CheckQuoter
 	CheckTemp
 	test -r "$archive" || \
 		die "`eval_gettext 'cannot read ${archive}'`"
@@ -403,6 +409,7 @@ Remove() {
 }
 
 Update() {
+	CheckQuoter
 	FetchFile
 	if [ -z "${tmpdir:++}" ]
 	then	MakeTempDir
@@ -415,7 +422,7 @@ Update() {
 }
 
 number=1
-case $1 in
+case ${1-} in
 *2)
 	number=2;;
 esac

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2016-10-19 21:52+0200\n"
+"POT-Creation-Date: 2016-10-28 11:24+0200\n"
 "PO-Revision-Date: 2016-10-20 23:11+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -44,6 +44,18 @@ msgstr ""
 #, sh-format
 msgid "Problems running ${eixf_cmd}"
 msgstr "Проблема при запуске ${eixf_cmd}"
+
+#: src/eix-functions.sh.in
+msgid "push.sh from https://github.com/vaeth/push/ is needed"
+msgstr ""
+
+#: src/eix-functions.sh.in
+msgid "Installation of https://github.com/vaeth/quoter/ is needed"
+msgstr ""
+
+#: src/eix-functions.sh.in
+msgid "quoter_pipe.sh from https://github.com/vaeth/quoter/ is needed"
+msgstr ""
 
 # Statusline should not contain utf8
 # msgstr "Запускаю eix-update"

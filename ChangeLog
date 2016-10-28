@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.32.1
+	Martin Väth <martin at mvath.de>:
+	- eix-remote: Use https://github.com/vaeth/quoter/ instead of hacks
+
 *eix-0.32.0
 	Martin Väth <martin at mvath.de>:
 	- eix-diff now requires much less memory:
