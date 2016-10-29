@@ -3,6 +3,7 @@
 *eix-0.32.1
 	Martin Väth <martin at mvath.de>:
 	- eix-remote: Use https://github.com/vaeth/quoter/ instead of hacks
+	- contrib: reintroduce contrib/mkrelease.sh as a wrapper to git-tag
 
 *eix-0.32.0
 	Martin Väth <martin at mvath.de>:
