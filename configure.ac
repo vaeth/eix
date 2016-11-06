@@ -88,11 +88,11 @@ AS_IF([$debugging],
 	[AS_VAR_SET([paranoicasserts], [true])])
 
 AC_ARG_ENABLE([new_dialect],
-	[AS_HELP_STRING([--disable-new-dialect],
-		[do not try to enable most current C++ dialect])],
+	[AS_HELP_STRING([--enable-new-dialect],
+		[enable most current C++ dialect; provides optimitations])],
 	[MV_ENABLE([new_dialect])
 	AS_VAR_SET([cmt_new_dialect], ["on request"])],
-	[AS_VAR_SET([new_dialect], [:])
+	[AS_VAR_SET([new_dialect], [false])
 	AS_VAR_SET([cmt_new_dialect], ["default"])])
 
 AC_ARG_ENABLE([security],
@@ -157,9 +157,6 @@ AC_ARG_ENABLE([strong_warnings],
 AC_MSG_CHECKING([whether debugging asserts/flags should be used])
 MV_MSG_RESULT_BIN([$debugging], [$cmt_debugging])
 
-AC_MSG_CHECKING([whether most current C++ dialect should be used])
-MV_MSG_RESULT_BIN([$new_dialect], [$cmt_new_dialect])
-
 AC_MSG_CHECKING([whether strong optimization options should be used])
 AS_IF([$paranoicasserts],
 	[AS_VAR_SET([strong_optimization], [false])
@@ -174,6 +171,12 @@ AS_IF([$debugging],
 	[AS_VAR_SET([optimization], [false])
 	AS_VAR_SET([cmt_optimization], ["disabled by debugging"])])
 MV_MSG_RESULT_BIN([$optimization], [$cmt_optimization])
+
+AC_MSG_CHECKING([whether most current C++ dialect options should be used])
+AS_IF([$optimization],
+	[AS_VAR_SET([new_dialect], [:])
+	AS_VAR_SET([cmt_new_dialect], ["forced by optimization"])])
+MV_MSG_RESULT_BIN([$new_dialect], [$cmt_new_dialect])
 
 AC_MSG_CHECKING([whether strong warning options should be used])
 MV_MSG_RESULT_BIN([$strong_warnings], [$cmt_strong_warnings])

@@ -7,6 +7,7 @@
 	- In particular, explain how to install with CXXFLAGS/LDFLAGS which are
 	  recommended by the eix maintainer for optimization and security
 	- Modify instructions in segfault message to match USE-flags crippling
+	- --enable-new-dialact only in case of optimizations
 
 *eix-0.32.2
 	Martin Väth <martin at mvath.de>:
