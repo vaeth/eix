@@ -130,6 +130,16 @@ Portage-Regeln sortiert.
 Details stehen nahe am Ende dieser Manpage.
 .\" }}}
 
+.\" {{{ OPTIMIERUNG, SPEICHER, SICHERHEIT
+.SH "OPTIMIERUNG, SPEICHER, SICHERHEIT"
+Wenn Sie eix vom gentoo repository installiert haben, dann wird das eix ebuild
+sehr wahrscheinlich B<nicht> die B<CXXFLAGS> und B<LDFLAGS> benutzt haben,
+die der Maintainer von eix zur Optimierung und Sicherheit empfiehlt.
+Zudem kann eix bei Bedarf so konfiguriert werden, dass es weniger Speicher benötigt.
+Lesen Sie daher bitte den Abschnitt B<INSTALLATION>, um zu erfahren, wie der
+Maintainer von eix die Installation empfiehlt.
+.\" }}}
+
 .\" {{{ BEISPIELE
 .SH "BEISPIELE"
 
@@ -186,7 +196,6 @@ die in eix vordefiniert wurden (B<eix --dump> listet sie auf).
 Genausogut können natürlich auch eigene Variablen definiert und benutzt werden.
 Genaueres dazu steht später in der Manpage, insbesonder die Beschreibung des B<FORMAT> Strings.
 .\" }}}
-
 
 .\" {{{ OPTIONEN
 .SH "OPTIONEN"
@@ -3896,6 +3905,68 @@ Unterverzeichnis metadata (und sein Inhalt) von git/layman bei obigem
 Aufruf ignoriert (insbesondere nicht verändert) werden.
 .\" }}}
 
+.\" {{{ INSTALLATION
+.SH "INSTALLATION"
+Es ist Gentoo-Politik, die B<CXXFLAGS> und B<LDFLAGS> des Benutzers nicht zu modifizieren.
+Es ist ebenfalls Gentoo-Politik Voreinstellungen nicht zu ändern, wenn sie auf
+andere Weise weise konfiguriert werden können.
+
+Aus diesem Grund wurden viele ehemalige USE-Flags aus dem Gentoo Ebuild entfernt.
+Daher ist es B<sehr wahrscheinlich>, dass Ihre B<./configure>-Optionen nicht
+für eix passen. Der Maintainer von eix B<empfiehlt sehr> den Export von
+
+.B EXTRA_ECONF="--enable-security --enable-new-dialect --enable-strong-optimization"
+
+(Am Ende des Abschnitts steht, wie man das am besten macht).
+Der Zweck ist es, B<CXXFLAGS> und B<LDFLAGS> auf eine Art zu modifizieren,
+die eix stark optimiert (und für gewöhnlich die Größe des Binärprogramms
+und entsprechende Speichernutzung enorm reduziert) und zudem so verändert, dass
+es einigermaßen sicher ist (bzgl. *FLAGS), die Programme als Benutzer B<root> zu verwenden.
+Natürlich sind die damit gewählten *FLAGS etwas experimentell, aber eix ist
+so geschrieben, dass sie unterstützt werden sollten.
+Wem das zu experimentall erscheint, der kann natürlich B<--enable-strong-optimization>
+durch B<--enable-optimization> ersetzen. Man kann auch B<--enable-new-dialect> weglassen.
+Beide Änderungen werden für gewöhnlich in schlechter optimiertem Code resultieren.
+Umgekehrt kann man auch B<--enable-security> durch B<--enable-strong-security>
+ersetzen, das einige (experimentelle) *FLAGS (falls vorhanden) auswählt, die die
+Sicherheit erhöhen, allerdings auf merkliche Kosten der Ausführungsgeschwindigkeit.
+
+Wenn Sie für Systeme mit wenig Speicher kompilieren, kann es auch ratsam sein,
+
+.B --without-dep-default
+
+und/oder
+
+.B --without-required-use-default
+
+zu dem obigen B<EXTRA_ECONF> hinzuzufügen. Letzteres ist ähnlich, wie wenn Sie
+B<DEP=false> und/oder B<REQUIRED_USE=false> einer Datei in B</etc/eixrc/>
+setzen: Es reduziert den von eix benötigten Speicher, indem es das Speichern
+der entsprechenden Daten vermeidet.
+
+Einige speziellere Optionen, die Sie zu B<EXTRA_ECONF> hinzufügen können, sind
+
+.B --enable-warnings --enable-strong-warnings --debugging
+
+mit Ihrer offensichtlichen Bedeutung bzgl. *FLAGS.
+Weitere B<EXTRA_ECONF>-Argumente, die früher die USE-Flags zugänglich waren, sind:
+
+.BR --enable-swap-remote " (Vertauschen der Rollen der beiden Remote-Adressen von " eix-remote ")"
+
+.BR --enable-separate-tools " (build separate small binaries for the tools instead of linking them into the eix binaries)"
+
+Der eix Maintainer empfiehlt die Konfiguration des Paketmanagers, um die
+gewünschte B<EXTRA_ECONF> automatisch beim Emerge von eix zu setzen.
+Für portage kann das wie folgt geschehen: Fügen Sie die Zeile
+
+.B app-portage/eix eix-extra-econf
+
+der Datei I</etc/portage/package.env> (oder einer Datei in diesem Verzeichnis) hinzu.
+(Erzeugen Sie dabei diese Datei bzw. Verzeichnis falls es noch nicht existiert).
+Erzeugen Sie dann die Datei I</etc/portage/env/eix-extra-econf.conf> mit der
+gewünschten Zeile B<EXTRA_ECONF=">I<...>B<">.
+.\" }}}
+
 .\" {{{ GESCHICHTE
 .SH "GESCHICHTE"
 .LP
@@ -4031,6 +4102,9 @@ zum Ausschalten gibt es die neue Option B<--normal>.
 
 B<eix-functions.sh> konnte früher nur ge-sourced werden; erst sei eix-0.32.2 ist
 B<eix-functions.sh> auch ein Programm, dessen Ausgabe für die Benutzung mit "eval" gedacht ist.
+
+Das Ebuild hat viele frühere USE-Flags entfernt, um einer allgemeinen Gentoo-Politik zu folgen.
+Der Maintainer empfiehlt daher stark die Benutzung von B<EXTRA_ECONF> zur Installation.
 .\" }}}
 
 .\" {{{ ÜBERSETZUNG

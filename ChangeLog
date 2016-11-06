@@ -1,5 +1,13 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.32.3
+	Martin Väth <martin at mvath.de>:
+	- Explain on manpage how to retain functionality of previous USE-flags
+	  which were removed from the ebuild for political reasons
+	- In particular, explain how to install with CXXFLAGS/LDFLAGS which are
+	  recommended by the eix maintainer for optimization and security
+	- Modify instructions in segfault message to match USE-flags crippling
+
 *eix-0.32.2
 	Martin Väth <martin at mvath.de>:
 	- Make eix-functions.sh a program to be used with "eval"

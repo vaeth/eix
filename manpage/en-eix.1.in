@@ -127,6 +127,17 @@ and outputs them sorted according to the portage rules of version sorting.
 Details can be found near the end of the manpage.
 .\" }}}
 
+.\" {{{ OPTIMIZATION, MEMORY, SECURITY
+.SH "OPTIMIZATION, MEMORY, SECURITY"
+If you installed eix from the gentoo repository, then very likely
+the eix ebuild B<will not> have installed eix with the B<CXXFLAGS>
+and B<LDFLAGS> which are recommended for optimization and security of eix by
+the eix maintainer.
+Also, eix can be configured to use less memory if required.
+See the section B<INSTALLATION> for how to install eix in the way the
+maintainer recommends.
+.\" }}}
+
 .\" {{{ EXAMPLES
 .SH "EXAMPLES"
 
@@ -3801,6 +3812,65 @@ subdirectory metadata (and its content) are ignored (and thus not updated)
 by git/layman but only by your above call.
 .\" }}}
 
+.\" {{{ INSTALLATION
+.SH "INSTALLATION"
+It is Gentoo policy to not modify user's B<CXXFLAGS> and B<LDFLAGS>.
+It is also Gentoo policy to not change default configs if this can be configured
+in another way.
+
+For this reason, many USE-flags have been removed in recent gentoo ebuilds.
+For this reason, very likely your B<./configure> settings for eix are
+B<not appropriate> for eix. The maintainer of eix B<strongly> recommends to export
+
+.B EXTRA_ECONF="--enable-security --enable-new-dialect --enable-strong-optimization"
+
+(At the end of this section it is explained how to do this most conveniently.)
+The purpose of this is to modify B<CXXFLAGS> and B<LDFLAGS> in a way which highly optimizes eix
+(and usually essentially decreases the binary size and corresponding memory usage) and
+which sets them such that it is reasonably safe (concerning *FLAGS) to run most code as root.
+Of course, some of the chosen *FLAGS are somewhat experimental, but the eix code
+tries hard to support all of them.
+Anyway, if this is too experimental for you, you can replace B<--enable-strong-optimization>
+by B<--enable-optimization>. You can also remove B<--enable-new-dialect>.
+Both of these modifications will usually result in less optimized code.
+Conversely, you can replace B<--enable-security> by B<--enable-strong-security>
+which will choose some (experimental) *FLAGS (if available) which will increase
+the security at the cost of a considerable loss of speed.
+
+If you compile for a low-memory system, it might also be advisable to add
+
+.B --without-dep-default
+
+and/or
+
+.B --without-required-use-default
+
+to the above B<EXTRA_ECONF>. The latter is similar to setting B<DEP=false> and/or B<REQUIRED_USE=false>
+in some file in B</etc/eixrc/> and thus decreases memory usage of eix by
+disabling storing of the corresponding data. Some more specialized options you might want to add to
+B<EXTRA_ECONF> are
+
+.B --enable-warnings --enable-strong-warnings --debugging
+
+with their obvious meaning concerning *FLAGS.
+Further B<EXTRA_ECONF> arguments which had previously been accessible through USE-flags are
+
+.BR --enable-swap-remote " (exchange the role of the two remote adresses used for " eix-remote ")"
+
+.BR --enable-separate-tools " (build separate small binaries for the tools instead of linking them into the eix binaries)"
+
+The eix maintainer recommends to configure your package manager to export the
+desired B<EXTRA_ECONF> automatically when emerging eix.
+For portage, this can be done as follows. Put the line
+
+.B app-portage/eix eix-extra-econf
+
+into the file I</etc/portage/package.env> or into some file of that directory
+(creating this file/directory if it did not exist yet), and then create the
+file I</etc/portage/env/eix-extra-econf.conf> with the corresponding line
+B<EXTRA_ECONF=">I<...>B<">.
+.\" }}}
+
 .\" {{{ HISTORY
 .SH "HISTORY"
 .LP
@@ -3984,6 +4054,10 @@ People might acknowledge even partial translations of the most important message
 
 You can send your new po/*.po file to the eix maintainer or, even better:
 You can put your changes to github and make a pull request.
+
+The ebuild has removed many previous USE-flags to follow gentoo policy.
+Therefore, the maintainer strongly recommends the usage of B<EXTRA_ECONF> for installation,
+see Section B<INSTALLATION>.
 .\" }}}
 
 .\" {{{ AUTHORS
