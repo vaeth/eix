@@ -1,14 +1,12 @@
-#!/usr/bin/env sh
+#!/usr/bin/env cat
 # This script is part of the eix project and distributed under the
 # terms of the GNU General Public License v2.
 #
 # Author and Copyright (c):
 #   Martin V\"ath <martin@mvath.de>
 #
-# This file must be "source"d by POSIX scripts.
-#
-# It contains helper functions for eix-remote, eix-layman,
-# and perhaps similar local scripts. (@PACKAGE_STRING@).
+# Evaluating the output of this script defines helper functions for eix-remote,
+# eix-layman, and perhaps similar local scripts. (@PACKAGE_STRING@).
 
 ReadFunctions() {
 	ReadGettext
@@ -256,9 +254,9 @@ Replace() {
 }
 
 SourcePush() {
-	( . push.sh ) >/dev/null 2>&1 || die \
+	eixf_source=`push.sh 2>/dev/null` || die \
 "`gettext 'push.sh from https://github.com/vaeth/push/ is needed'`"
-	. push.sh
+	eval "$eixf_source"
 }
 
 Push() {
@@ -272,9 +270,9 @@ CheckQuoter() {
 }
 
 SourceQuoterPiper() {
-	( . quoter_pipe.sh ) >/dev/null 2>&1 || die \
+	eixf_source=`quoter_pipe.sh 2>/dev/null` || die \
 "`gettext 'quoter_pipe.sh from https://github.com/vaeth/quoter/ is needed'`"
-	. quoter_pipe.sh
+	eval "$eixf_source"
 }
 
 quoter_pipe() {

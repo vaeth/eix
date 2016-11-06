@@ -85,10 +85,11 @@ Mehr zu B<eix-lamyan> erfahren Sie durch den Aufruf B<eix-layman -h>.
 B<eix-layman> versteht sich auch als Beispielskript, wie B<eix-functions.sh>
 genutzt werden kann:
 
-B<eix-functions.sh> sind Hilfsfunktionen, die von B<eix-sync>, B<eix-remote>, und B<eix-layman>
+B<eix-functions.sh> gibt Hilfsfunktionen aus, die von B<eix-sync>, B<eix-remote>, und B<eix-layman>
 benutzt werden und die in ähnlichen Skripten benutzt werden können.
-Beachten Sie, dass unmittelbar nach dem Sourcen von B<eix-functions.sh> normalerweise
-zur Initialisierung B<ReadFunctions> aufgerufen werden muss.
+Man kann entweder die Ausgabe des Programms mit "eval" verarbeiten oder das Programm sourcen.
+Beachten Sie, dass unmittelbar danach normalerweise zur Initialisierung
+B<ReadFunctions> aufgerufen werden muss.
 
 B<eix-header> ist ein Hilfsprogramm für B<eix-remote> (und möglicherweise eigene Skripte).
 Es kann Datenbankdatei-Köpfe überprüfen und Overlay-Pfade oder -Labels aus diesen Dateien
@@ -4027,6 +4028,9 @@ Statt dessen überschreibt die Option B<--format> jetzt den B<FORMATSTRING> unab
 
 Sei eix-0.29.6 haben die Optionen B<--verbose> und B<--compact> nur noch Einschalt-Funktion;
 zum Ausschalten gibt es die neue Option B<--normal>.
+
+B<eix-functions.sh> konnte früher nur ge-sourced werden; erst sei eix-0.32.2 ist
+B<eix-functions.sh> auch ein Programm, dessen Ausgabe für die Benutzung mit "eval" gedacht ist.
 .\" }}}
 
 .\" {{{ ÜBERSETZUNG

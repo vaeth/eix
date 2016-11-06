@@ -9,7 +9,11 @@
 # eix database. (@PACKAGE_STRING@).
 set -u
 
-. ./eix-functions.sh.in
+if eix_funcs=`./eix-functions.sh.in 2>/dev/null`
+then	eval "$eix_funcs"
+else	echo "${0##*/}: cannot find eix-functions.sh" >&2
+	exit 1
+fi
 ReadFunctions
 
 my_getopts='KvqxXLl:a:kiHh'

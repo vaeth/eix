@@ -82,15 +82,15 @@ B<eix-layman> может добавлять или убирать местные
 Для полученья дополнительной информации по B<eix-layman> вызовите B<eix-layman -h>.
 B<eix-layman> также является примером использованья B<eix-functions.sh>:
 
-B<eix-functions.sh> are helper functions used by B<eix-sync>, B<eix-remote>, and B<eix-layman>.
+B<eix-functions.sh> outputs helper functions used by B<eix-sync>, B<eix-remote>, and B<eix-layman>.
 You might want to use them for your own similar scripts.
-Note that immediately after sourcing B<eix-functions.sh> you will normally
-have to call B<ReadFunctions> for initialisation.
+You can either "eval" the output of this program or source it.
+Note that after this, you should usually call B<ReadFunctions> for
+initialisation.
 
 B<eix-header> is a helper program for B<eix-remote> (and possibly your own scripts).
 It can check database file headers and can find/output overlay paths or labels stored in these files.
 For details how to use it, call B<eix-header -h>.
-
 
 B<eix-drop-permissions> is a helper program for B<eix-remote> (and possibly your own scripts).
 It executes the command given as argument with permissions dropped according to
@@ -3928,6 +3928,9 @@ of the chosen format.
 
 Since eix-0.29.6 the options B<--verbose> and B<--compact> are no longer toggling;
 for switching off, there is the new option B<--normal>.
+
+B<eix-functions.sh> could previously only be sourced; only since eix-0.32.2,
+B<eix-functions.sh> is also a program whose output is meant to be used with "eval".
 .\" }}}
 
 .\" {{{ TRANSLATION
