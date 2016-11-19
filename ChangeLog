@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.32.4
+	Wim Muskee:
+	- Manpage typo fix
+
 *eix-0.32.3
 	Martin Väth <martin at mvath.de>:
 	- Explain on manpage how to retain functionality of previous USE-flags
