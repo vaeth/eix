@@ -249,7 +249,7 @@ If you use it in scripts you might want to specify B<PRINT_APPEND> to
 get trailing spaces (see description of B<PRINT_APPEND>).
 A special I<VAR> which can be accessed only in this way is B<USE.profile> which contains the profile's USE string.
 .TP
-.B --know-vars
+.B --known-vars
 Print an alphabetical list of variables known to eix with B<--print>.
 After each variable name a newline is output.
 .TP
