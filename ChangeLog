@@ -1,6 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.32.4
+	Martin Väth <martin at mvath.de>:
+	- Introduce EIX_TMPDIR to allow overriding of TMPDIR, see
+	  https://bugs.gentoo.org/show_bug.cgi?id=600648
+
 	Wim Muskee:
 	- Manpage typo fix
 

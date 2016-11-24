@@ -351,7 +351,7 @@ AddArchive() {
 			${failcount}`"
 	fi
 	die_on_update_failure=false
-	ReadVar $eix_remote_var $eix_remote_var
+	ReadVar $eix_remote_var
 	eval eix_remote=\$$eix_remote_var
 	(
 		if [ -n "${eix_remote:++}" ]

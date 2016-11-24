@@ -2033,6 +2033,18 @@ subsequent variables (if their default is not changed);
 see B<eix --dump> to see in detail in which other variables it occurs.
 In the current default, it influences all paths with the following exceptions:
 
+.TP
+.BR TMPDIR " " (string)
+This is used for delayed substitution in B<EIX_TMPDIR>.
+Usually it is set by the environment variable.
+eix exports this variable initialized with the value of B<EIX_TMPDIR>.
+
+.TP
+.BR EIX_TMPDIR " " (string)
+If this variable is nonempty, this directory is used instead of I</tmp>
+for temporary files. eix exports this variable as B<TMPDIR>.
+The default is via delayed substitution to B<TMPDIR>.
+
 .RS
 .RS
 

@@ -160,6 +160,17 @@ AddOption(PREFIXSTRING, "EPREFIX_VIRTUAL",
 	"%{EPREFIX_TREE}", P_("EPREFIX_VIRTUAL",
 	"This is prepended to overlays in eix database to test whether they exist."));
 
+AddOption(STRING, "TMPDIR",
+	"", P_("TMPDIR",
+	"This variable is used for delayed substitution in EIX_TMPDIR.\n"
+	"Usually this is set by the environment variable.\n"
+	"eix exports this variable initialized to EIX_TMPDIR.\n"));
+
+AddOption(STRING, "EIX_TMPDIR",
+	"%{TMPDIR}", P_("EIX_TMPDIR",
+	"If this variable is nonempty, this directory is used instead of /tmp for\n"
+	"temporary files. eix exports this variable as TMPDIR."));
+
 AddOption(STRING, "EIX_CACHEFILE",
 	"%{EPREFIX}" EIX_CACHEFILE, P_("EIX_CACHEFILE",
 	"This file is the default eix cache."));

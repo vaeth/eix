@@ -9,6 +9,7 @@
 # eix-layman, and perhaps similar local scripts. (@PACKAGE_STRING@).
 
 ReadFunctions() {
+	InitTmpdir
 	ReadGettext
 ReadFunctions() {
 	:
@@ -17,8 +18,11 @@ ReadFunctions() {
 
 : ${read_var_prg:=eix-update}
 ReadVar() {
-	eval unset $1
-	eixf_read=`PRINT_APPEND=X "${3:-$read_var_prg}" --print "$2"` || return
+	if [ $# -lt 2 ] || [ x"$1" = x"$2" ]
+	then	eval "[ -z \"\${$1++}\" ]" || return 0
+	else	eval unset $1
+	fi
+	eixf_read=`PRINT_APPEND=X "${3:-$read_var_prg}" --print "${2:-$1}"` || return
 	eval $1=\${eixf_read%X}
 }
 
@@ -72,13 +76,13 @@ eixf_statusmode=EixfStatusmode
 EixfStatusmode() {
 	if [ -z "${statusline:++}" ]
 	then	! ReadBoolean NOSTATUSLINE && {
-			test -t 1 && ReadVar TERM TERM && \
+			test -t 1 && ReadVar TERM && \
 				StartInList "$TERM" TERM_STATUSLINE \
 			|| ReadBoolean FORCE_STATUSLINE
 		}
 	else	$statusline
 	fi && eixf_statusline=: \
-	&& if ReadVar TERM TERM && \
+	&& if ReadVar TERM && \
 		StartInList "$TERM" TERM_SOFTSTATUSLINE
 	then	eixf_softstatus=:
 	else	eixf_softstatus=false
@@ -109,7 +113,7 @@ StatusInfo() {
 Exit() {
 	eixf_exit=${1:-$?}
 	$eixf_statusline || exit $eixf_exit
-	ReadVar EXIT_STATUSLINE EXIT_STATUSLINE
+	ReadVar EXIT_STATUSLINE
 	if [ -n "${EXIT_STATUSLINE:++}" ]
 	then	StatuslinePlain "${EXIT_STATUSLINE# }"
 	elif [ $eixf_exit -eq 0 ]
@@ -374,7 +378,7 @@ CallUpdate() {
 }
 
 InitPortdirOverlay() {
-	ReadVar PORTDIR_OVERLAY PORTDIR_OVERLAY
+	ReadVar PORTDIR_OVERLAY
 }
 
 AddLocalMethods() {
@@ -632,12 +636,22 @@ AssignTempEmulate() {
 	die "`gettext 'found no free temporary name after 10000 attempts'`"
 }
 
+InitTmpdir() {
+	ReadVar EIX_TMPDIR
+	if [ -n "${EIX_TMPDIR:++}" ]
+	then	TMPDIR=$EIX_TMPDIR
+		export TMPDIR
+	else	unset TMPDIR
+	fi
+}
+
 unset have_mktemp
 AssignTemp() {
 	eval $1=
 	if [ -z "${have_mktemp++}" ]
 	then	command -v mktemp >/dev/null 2>&1 \
 			&& have_mktemp=: || have_mktemp=false
+		InitTmpdir
 	fi
 	if $have_mktemp
 	then	eval $1'=`umask 077 && mktemp $2 -- "${TMPDIR:-/tmp}/${0##*/}.XXXXXXXX"`'

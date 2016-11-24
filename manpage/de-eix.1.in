@@ -758,7 +758,7 @@ Letzteres wird mit der Option B<-t> bedient.
 Daher wird diese Option am Besten mit -t kombiniert, wenn auch andere Arten obsoleter Einträge gefunden werden sollen.
 
 Falls es einen Grund gibt, bestimmte Pakete von diesem Test auszuschließen,
-so können diese Einträge in die Datei (oder Verzechnis) /etc/portage/package.nowarn geschrieben werden.
+so können diese Einträge in die Datei (oder Verzeichnis) /etc/portage/package.nowarn geschrieben werden.
 Diese Datei (und wie alternative/zusätzliche Dateien angegeben werden können) wird später beschrieben.
 .TP
 .BR -| ", " --pipe
@@ -2053,6 +2053,18 @@ mit verzögerte Ersetzung benutzt, um den Präfix einer Reihe von Pfaden
 in den folgen Variablen festzulegen (wenn ihr Vorgabewert nicht geändert wird);
 mit B<eix --dump> erfährt man im Detail, in welchen anderen Variablen sie vorkommt.
 In den derzeitigen Vorgabewerten beeinflusst sie alle Pfade mit den folgenden Ausnahmen:
+
+.TP
+.BR TMPDIR " " (string)
+Dies wird zur verzögerten Ersetzung in B<EIX_TMPDIR> benutzt.
+eix exportiert diese Variable und initialisiert sie dabei auf den Wert von
+B<EIX_TMPDIR>. Der Wert ist typischerweise durch die Environment gesetzt.
+
+.TP
+.BR EIX_TMPDIR " " (string)
+Wenn diese Variable nicht leer ist, wird dieses Verzeichnis statt I</tmp>
+für Temporärdateien benutzt. eix exportiert diese Variable als B<TMPDIR>.
+Der voreingestellte Wert ist verzögerte Ersetzung durch B<TMPDIR>.
 
 .RS
 .RS

@@ -20,7 +20,7 @@ ReadFunctions
 
 # Prepend content of eix variable EIX_INSTALLED_AFTER to the arguments
 
-ReadVar EIX_INSTALLED_AFTER EIX_INSTALLED_AFTER
+ReadVar EIX_INSTALLED_AFTER
 eval "set -- a $EIX_INSTALLED_AFTER \${1+\"\$@\"}"
 shift
 

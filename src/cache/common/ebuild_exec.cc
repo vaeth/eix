@@ -47,7 +47,7 @@ class EbuildExecSettings {
 #ifndef HAVE_SETENV
 		string exec_ebuild;
 #endif
-		string ebuild_depend_temp;
+		string ebuild_depend_temp, tmpdir;
 		string portage_rootpath;
 		string portage_bin_path, portage_pym_path, exec_ebuild_sh;
 		bool read_portage_paths, know_portage_paths;
@@ -136,27 +136,38 @@ void EbuildExec::remove_handler() {
 
 // You should have called add_handler() in advance
 bool EbuildExec::make_tempfile() {
-	char temp[256];
-	strcpy(temp, "/tmp/ebuild-cache.XXXXXXXX");  // NOLINT(runtime/printf)
+	const string &tmpdir = settings->tmpdir;
+	string::size_type l(tmpdir.size());
+	char *temp = new char[256 + l];
+	if(l == 0) {
+		strcpy(temp, "/tmp/ebuild-cache.XXXXXXXX");  // NOLINT(runtime/printf)
+	} else {
+		strcpy(temp, tmpdir.c_str());  // NOLINT(runtime/printf)
+		strcpy(temp + l, "/ebuild-cache.XXXXXXXX");  // NOLINT(runtime/printf)
+	}
 	int fd(mkstemp(temp));
 	if(fd == -1) {
+		delete[] temp;
 		return false;
 	}
 	cachefile.assign(temp);
 	cache_defined = true;
 	close(fd);
+	delete[] temp;
 	return true;
 }
 
 void EbuildExec::delete_cachefile() {
-	if(unlikely(!cache_defined))
+	if(unlikely(!cache_defined)) {
 		return;
+	}
 	const char *c(cachefile.c_str());
 	if(is_pure_file(c)) {
-		if(unlink(c) < 0)
+		if(unlink(c) < 0) {
 			base->m_error_callback(eix::format(_("cannot unlink tempfile %s")) % c);
-		else if(is_file(c))
+		} else if(is_file(c)) {
 			base->m_error_callback(eix::format(_("tempfile %s still there after unlink")) % c);
+		}
 	} else {
 		base->m_error_callback(eix::format(_("tempfile %s is not a file")) % c);
 	}
@@ -221,6 +232,14 @@ void EbuildExec::calc_environment(const char *name, const string& dir, const Pac
 		join_to_string(&env["PORTAGE_ECLASS_LOCATIONS"], eclasses);
 	}
 	env["PORTDIR_OVERLAY"] = (*(base->portagesettings))["PORTDIR_OVERLAY"].c_str();
+	if(settings->tmpdir.empty()) {
+		WordMap::iterator i(env.find("TMPDIR"));
+		if(i != env.end()) {
+			env.erase(i);
+		}
+	} else {
+		env["TMPDIR"] = settings->tmpdir;
+	}
 
 	// transform env into c_env (pointing to envstrings[i].c_str())
 	c_env = new const char *[env.size() + 1];
@@ -371,6 +390,7 @@ GCC_DIAG_ON(sign-conversion)
 void EbuildExecSettings::init() {
 	EixRc& eix(get_eixrc());
 	ebuild_depend_temp = eix["EBUILD_DEPEND_TEMP"];
+	tmpdir = eix["EIX_TMPDIR"];
 #ifndef HAVE_SETENV
 	exec_ebuild = eix["EPREFIX_PORTAGE_EXEC"];
 	exec_ebuild.append("/usr/bin/ebuild");

@@ -2030,6 +2030,18 @@ subsequent variables (if their default is not changed);
 see B<eix --dump> to see in detail in which other variables it occurs.
 In the current default, it influences all paths with the following exceptions:
 
+.TP
+.BR TMPDIR " " (string)
+This is used for delayed substitution in B<EIX_TMPDIR>.
+Usually it is set by the environment variable.
+eix exports this variable initialized with the value of B<EIX_TMPDIR>.
+
+.TP
+.BR EIX_TMPDIR " " (string)
+If this variable is nonempty, this directory is used instead of I</tmp>
+for temporary files. eix exports this variable as B<TMPDIR>.
+The default is via delayed substitution to B<TMPDIR>.
+
 .RS
 .RS
 
@@ -2520,6 +2532,11 @@ Never display a list of overlays.
 anything else
 List all overlays for every query (even if not even one is needed).
 .RE
+
+.TP
+.BR TERM_STATUSLINE " " (string)
+This is a list of (space-separated) words; if one of these words matches
+the beginning of TERM, it is assumed that the terminal supports a status line.
 
 .TP
 .BR TERM " " (string)
