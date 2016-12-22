@@ -2,6 +2,16 @@
 
 *eix-0.32.4
 	Martin Väth <martin at mvath.de>:
+	- Fix --disable-swap-remote (which falsely was equivalent to
+	  --enable-swap-remote; only omitting the argument could switch it off)
+	  Be aware of the following simultaneous change.
+	- Interchange the two remote paths (i.e. invert in a sense the meaning
+	  --{en,dis}able-swap-remote or of not specifying it, respectively):
+	  http://dev.gentooexperimental.org is dead since quite a while;
+	  so it makes sense to choose it only as the alternative update2/fetch2
+	  by default. To revert to the previous defaults, use
+	  --enable-swap-remote (or omit now using --{en,dis}able-swap remote,
+	  respectively; note that --disable-swap-remote was faulty, see above).
 	- Introduce EIX_TMPDIR to allow overriding of TMPDIR, see
 	  https://bugs.gentoo.org/show_bug.cgi?id=600648
 

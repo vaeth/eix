@@ -1284,7 +1284,7 @@ AC_MSG_CHECKING([swap remote paths])
 AC_ARG_ENABLE([swap-remote],
 	[AS_HELP_STRING([--enable-swap-remote],
 		[swap the remote paths])],
-	[AS_VAR_SET([swap_remote], [:])],
+	[MV_ENABLE([swap_remote])],
 	[AS_VAR_SET([swap_remote], [false])])
 MV_MSG_RESULT_BIN([$swap_remote])
 
@@ -1294,13 +1294,13 @@ AC_ARG_WITH([remote-file1],
 		[default remote path 1 for eix-remote])],
 	[AS_VAR_COPY([DEFAULT_REMOTE_PATH1], [withval])],
 	[AS_VAR_SET([DEFAULT_REMOTE_PATH1],
-		[http://dev.gentooexperimental.org/eix_cache/eix-caches.tbz2])])
+		[http://gpo.zugaina.org/eix_cache/eix-cache.tbz2])])
 AC_ARG_WITH([remote-file2],
 	[AS_HELP_STRING([--with-remote-path2=STR],
 		[default remote path 2 for eix-remote])],
 	[AS_VAR_COPY([DEFAULT_REMOTE_PATH2], [withval])],
 	[AS_VAR_SET([DEFAULT_REMOTE_PATH2],
-		[http://gpo.zugaina.org/eix_cache/eix-cache.tbz2])])
+		[http://dev.gentooexperimental.org/eix_cache/eix-caches.tbz2])])
 AS_IF([$swap_remote],
 	[AS_VAR_COPY([swap_remote], [DEFAULT_REMOTE_PATH1])
 	AS_VAR_COPY([DEFAULT_REMOTE_PATH1], [DEFAULT_REMOTE_PATH2])
