@@ -775,7 +775,7 @@ unsigned int EixRc::getInteger(const string& key) {
 string EixRc::as_comment(const string& s) {
 	string ret(s);
 	string::size_type pos(0);
-	while(pos = ret.find("\n", pos), likely(pos != string::npos)) {
+	while(pos = ret.find('\n', pos), likely(pos != string::npos)) {
 		ret.insert(pos + 1, "# ");
 		pos += 2;
 	}

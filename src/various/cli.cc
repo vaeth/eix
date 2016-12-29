@@ -517,12 +517,25 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 		split_string(&wordlist, line);
 		for(WordVec::const_iterator word(wordlist.begin());
 			likely(word != wordlist.end()); ++word) {
-			string::size_type i(word->find("/"));
+			string::size_type i(word->find('/'));
 			if((i == string::npos) || (i == 0) || (i == word->size() - 1)) {
 				continue;
 			}
-			if(word->find("/", i + 1) != string::npos) {
-				continue;
+			string::size_type j(word->find('/', ++i));
+			if(j != string::npos) {
+				// Words with 3 '/' are ignored
+				if(unlikely(word->find('/', j + 1) != string::npos)) {
+					continue;
+				}
+				i = word->find(':', i);
+				// Words with 2nd '/' are ignored except if in slot
+				if((i == string::npos) || (i >= j)) {
+					continue;
+				}
+				i = word->find(':', i + 1);
+				if((i != string::npos) && (i <= j)) {
+					continue;
+				}
 			}
 			Mask m(pipe_mode ? Mask::maskMark : Mask::maskMarkOptional);
 			string errtext;
