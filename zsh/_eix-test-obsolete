@@ -19,7 +19,6 @@ case $state in
 	'brief:normal output of redundant packages'
 	'quick:quick and rather silent output of redundant packages'
 	)
-	_describe -t mode 'mode' mode
-	ret=$?;;
+	_describe -t mode 'mode' mode && ret=0;;
 esac
 return ret

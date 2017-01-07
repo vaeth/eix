@@ -28,7 +28,6 @@ case $state in
 	'fetch2:Fetch eix-caches2'
 	'remove:remove temporarily added virtual overlays from eix database'
 	)
-	_describe -t commands 'command' cmds
-	ret=$?;;
+	_describe -t commands 'command' cmds && ret=0;;
 esac
 return ret

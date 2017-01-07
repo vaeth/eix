@@ -40,7 +40,6 @@ case $state in
 		fi
 		I='<category>/<name>'"$I"'\n'
 		compadd "$expl[@]" - $(_call_program packages-installed 'eix --pure-packages -I 2>/dev/null')
-	}
-	ret=$?;;
+	} && ret=0;;
 esac
 return ret

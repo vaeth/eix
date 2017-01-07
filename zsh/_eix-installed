@@ -18,7 +18,6 @@ case $state in
 	'buildtime:output packages installed with buildtime information'
 	'no-buildtime:output packages installed without buildtime information'
 	)
-	_describe -t packages 'packages' packages
-	ret=$?;;
+	_describe -t packages 'packages' packages && ret=0;;
 esac
 return ret

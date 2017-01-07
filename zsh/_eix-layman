@@ -19,7 +19,6 @@ case $state in
 	'add:Add the local layman overlays to the eix database'
 	'remove:Remove the local layman overlays from the eix database'
 	)
-	_describe -t commands 'command' cmds
-	ret=$?;;
+	_describe -t commands 'command' cmds && ret=0;;
 esac
 return ret

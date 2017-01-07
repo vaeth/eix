@@ -260,8 +260,7 @@ case $state in
 	_tags && {
 		_description variables expl 'eix variable name'
 		compadd "$expl[@]" - ${(f)"$(_call_program $service-known-vars '$service --known-vars 2>/dev/null')"}
-		ret=$?
-	};;
+	} && ret=0;;
 (overlay)
 	_tags overlays
 	_tags && {
@@ -271,8 +270,7 @@ case $state in
 		o+=({0..$#o})
 		_description overlays expl 'overlay'
 		compadd "$expl[@]" - $o
-		ret=$?
-	};;
+	} && ret=0;;
 (args)
 	local -a eixopt
 	eixopt=('--pure-packages')
@@ -285,19 +283,19 @@ case $state in
 		_tags && {
 			_description categories expl 'package category'
 			compadd "$expl[@]" - $(FORMAT='<category>\n' _call_program packages${installed:+-installed} 'eix $eixopt 2>/dev/null')
-		};;
+		} && ret=0;;
 	(name)
 		_tags packages
 		_tags && {
 			_description packages expl 'package name'
 			compadd "$expl[@]" - $(FORMAT='<name>\n' _call_program packages${installed:+-installed} 'eix $eixopt 2>/dev/null')
-		};;
+		} && ret=0;;
 	(category/name)
 		_tags packages
 		_tags && {
 			_description packages expl 'category/name'
 			compadd "$expl[@]" - $(FORMAT='<category>/<name>\n' _call_program packages${installed:+-installed} 'eix $eixopt 2>/dev/null')
-		};;
+		} && ret=0;;
 	(package)
 		_tags packages
 		_tags && case $PREFIX in
@@ -316,31 +314,31 @@ case $state in
 		_tags && {
 			_description useflags expl 'useflag'
 			compadd "${expl[@]}" - ${$(_call_program useflags 'eix --print-all-useflags 2>/dev/null')##[()+-]#}
-		};;
+		} && ret=0;;
 	(license)
 		_tags licenses
 		_tags && {
 			_description licenses expl 'license'
 			compadd "${expl[@]}" - ${$(_call_program licenses 'eix --print-all-licenses 2>/dev/null')//([\(\)\|]|[![:space:]]#\?)/}
-		};;
+		} && ret=0;;
 	(eapi)
 		_tags slots
 		_tags && {
 			_description slots expl 'eapi'
 			compadd "${expl[@]}" - $(_call_program slots 'eix --print-all-eapis 2>/dev/null')
-		};;
+		} && ret=0;;
 	(slot)
 		_tags slots
 		_tags && {
 			_description slots expl 'slot'
 			compadd "${expl[@]}" - $(_call_program slots 'eix --print-all-slots 2>/dev/null')
-		};;
+		} && ret=0;;
 	(homepage)
 		_tags homepages
 		_tags && {
 			_description homepages expl 'homepage'
 			compadd "${expl[@]}" - $(FORMAT='<homepage>\n' _call_program homepages 'eix $eixopt 2>/dev/null')
-		};;
+		} && ret=0;;
 	(set)
 		_tags sets
 		_tags && () {
@@ -366,8 +364,7 @@ case $state in
 			then	_description sets expl 'set'
 				compadd "${expl[@]}" - ${${(f)"$(_call_program sets 'find -L $sets -type f -name "[!.]*" -print 2>/dev/null')"}:t}
 			fi
-		};;
-	esac
-	ret=$?;;
+		} && ret=0;;
+	esac;;
 esac
 return ret
