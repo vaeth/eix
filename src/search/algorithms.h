@@ -25,19 +25,27 @@ That's how every algorithm will look like.
 **/
 class BaseAlgorithm {
 		friend class matchtree;
+
 	protected:
 		std::string search_string;
+		bool have_simplified;
+
+		virtual bool can_simplify() {
+			return true;
+		}
 
 	public:
 		virtual void setString(const std::string& s) {
 			search_string = s;
+			have_simplified = false;
 		}
 
 		virtual ~BaseAlgorithm() {
-			// Nothin' to see here, please move along
 		}
 
-		virtual bool operator()(const char *s, Package *p) ATTRIBUTE_NONNULL((2)) = 0;
+		virtual bool operator()(const char *s, Package *p) const ATTRIBUTE_NONNULL((2)) = 0;
+
+		bool operator()(const char *s, Package *p, bool simplify) ATTRIBUTE_NONNULL((2));
 };
 
 /**
@@ -47,20 +55,17 @@ class RegexAlgorithm : public BaseAlgorithm {
 	protected:
 		Regex re;
 
+		bool can_simplify() {
+			return false;
+		}
+
 	public:
-		RegexAlgorithm() {
-		}
-
-		~RegexAlgorithm() {
-			re.free();
-		}
-
 		void setString(const std::string& s) {
 			search_string = s;
 			re.compile(search_string.c_str(), REG_ICASE);
 		}
 
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2)) {
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL((2)) {
 			UNUSED(p);
 			return re.match(s);
 		}
@@ -71,7 +76,7 @@ exact string matching
 **/
 class ExactAlgorithm : public BaseAlgorithm {
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
 };
 
 /**
@@ -79,7 +84,7 @@ substring matching
 **/
 class SubstringAlgorithm : public BaseAlgorithm {
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2)) {
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL((2)) {
 			UNUSED(p);
 			return (std::string(s).find(search_string) != std::string::npos);
 		}
@@ -90,7 +95,7 @@ begin-of-string matching
 **/
 class BeginAlgorithm : public BaseAlgorithm {
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
 };
 
 /**
@@ -98,7 +103,7 @@ end-of-string matching
 **/
 class EndAlgorithm : public BaseAlgorithm {
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
 };
 
 /**
@@ -116,11 +121,15 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 		**/
 		static std::map<std::string, Levenshtein> *levenshtein_map;
 
+		bool can_simplify() {
+			return false;
+		}
+
 	public:
 		explicit FuzzyAlgorithm(Levenshtein max) : max_levenshteindistance(max) {
 		}
 
-		bool operator()(const char *s, Package *p);
+		bool operator()(const char *s, Package *p) const ATTRIBUTE_NONNULL((2));
 
 		static bool compare(Package *p1, Package *p2) ATTRIBUTE_NONNULL_;
 
@@ -135,8 +144,13 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 Use fnmatch to test if the package matches.
 **/
 class PatternAlgorithm : public BaseAlgorithm {
+	protected:
+		bool can_simplify() {
+			return false;
+		}
+
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2));
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL((2));
 };
 
 #endif  // SRC_SEARCH_ALGORITHMS_H_

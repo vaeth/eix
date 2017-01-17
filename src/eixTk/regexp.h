@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/delete.h"
 
 /**
 Handle regular expressions.
@@ -25,6 +26,13 @@ have to be compiled with every instance of a class using it.
 **/
 
 class Regex {
+	private:
+		/**
+		Forbid copy and assignment operations
+		**/
+		Regex(const Regex& s) ASSIGN_DELETE;
+		Regex& operator=(const Regex& s) ASSIGN_DELETE;
+
 	public:
 		/**
 		Initalize class

@@ -1121,6 +1121,26 @@ return b.ret();
 			[Define if C++ dialect supports assigning default move constructor])],
 		[MV_MSG_RESULT([no])])
 
+# Check if delete can be assigned
+AC_MSG_CHECKING([whether delete can be assigned])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+#include <utility>
+class T {
+private:
+	T(const T& s) = delete;
+	T& operator=(const T& s) = delete;
+public:
+	T() { }
+};
+	]], [[
+T a;
+return 0;
+		]])],
+		[MV_MSG_RESULT([yes])
+		AC_DEFINE([HAVE_DELETE], [1],
+			[Define if C++ dialect supports assigning delete])],
+		[MV_MSG_RESULT([no])])
+
 dnl # Check if default move constructor can be asssigned
 dnl AC_MSG_CHECKING([whether default move constructor can be assigned])
 dnl MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[

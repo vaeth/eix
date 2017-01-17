@@ -79,6 +79,7 @@ eixTk/ansicolor.h \
 eixTk/argsreader.cc \
 eixTk/argsreader.h \
 eixTk/auto_list.h \
+eixTk/delete.h \
 eixTk/inttypes.h \
 eixTk/parseerror.cc \
 eixTk/parseerror.h \

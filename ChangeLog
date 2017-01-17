@@ -3,8 +3,12 @@
 *eix-0.32.5
 	Martin Väth <martin at mvath.de>:
 	- Fix completion with >=zsh-5.3
+	- Find first valid substring for some algorithms when matching package
+	  paths, see https://bugs.gentoo.org/show_bug.cgi?id=605978
+	- Modify heuristics for default choice of match algorithm
 	- Treat category/package:slot/subslot[::repo] as valid for --pipe
 	  Previously, words with more than one / had been tacitly ignored
+	- internal: delete copy constructors of some auxiliary classes
 
 *eix-0.32.4
 	Martin Väth <martin at mvath.de>:

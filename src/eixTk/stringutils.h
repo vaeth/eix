@@ -100,6 +100,11 @@ Check string if it only contains digits.
 bool is_numeric(const char *str) ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
 
 /**
+Check if char is character valid in "category/name" (including /)
+**/
+bool is_valid_pkgpath(char c);
+
+/**
 @return pointer to first alphanumeric or to 0 symbol
 **/
 const char *first_alnum(const char *s);

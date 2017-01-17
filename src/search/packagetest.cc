@@ -442,11 +442,11 @@ void PackageTest::finalize() {
 @return true if pkg matches test
 **/
 bool PackageTest::stringMatch(Package *pkg) const {
-	if((((field & NAME) != NONE) && (*algorithm)(pkg->name.c_str(), pkg))
+	if((((field & NAME) != NONE) && (*algorithm)(pkg->name.c_str(), pkg, true))
 	|| (((field & DESCRIPTION) != NONE)  && (*algorithm)(pkg->desc.c_str(), pkg))
 	|| (((field & LICENSE) != NONE) && (*algorithm)(pkg->licenses.c_str(), pkg))
-	|| (((field & CATEGORY) != NONE) && (*algorithm)(pkg->category.c_str(), pkg))
-	|| (((field & CATEGORY_NAME) != NONE) && (*algorithm)((pkg->category + "/" + pkg->name).c_str(), pkg))
+	|| (((field & CATEGORY) != NONE) && (*algorithm)(pkg->category.c_str(), pkg, true))
+	|| (((field & CATEGORY_NAME) != NONE) && (*algorithm)((pkg->category + "/" + pkg->name).c_str(), pkg, true))
 	|| (((field & HOMEPAGE) != NONE) && (*algorithm)(pkg->homepage.c_str(), pkg))) {
 		return true;
 	}
@@ -763,7 +763,7 @@ bool PackageTest::match(PackageReader *pkg) const {
 
 	/* Test the local options.
 	Each test must start with get_p(&p, pkg) to get p; remember to modify
-	need" in CalculateNeeds() to ensure that you will have all
+	"need" in CalculateNeeds() to ensure that you will have all
 	required data in the (possibly only partly filled) package "p".
 	If a test fails, "return false";
 	if a test succeeds, pass to the next test,

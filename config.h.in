@@ -124,6 +124,9 @@
    */
 #undef HAVE_DCGETTEXT
 
+/* Define if C++ dialect supports assigning delete */
+#undef HAVE_DELETE
+
 /* Define to 1 if you have the `fileno' function. */
 #undef HAVE_FILENO
 

@@ -569,6 +569,21 @@ bool match_list(const char **str_list, const char *str) {
 	return false;
 }
 
+bool is_valid_pkgpath(char c) {
+	if(likely(my_isalnum(c))) {
+		return true;
+	}
+	switch(c) {
+		case '_':
+		case '+':
+		case '-':
+		case '/':
+			return true;
+		default:
+			return false;
+	}
+}
+
 const char *first_alnum(const char *s) {
 	for(char c(*s); likely(c != '\0'); c = *(++s)) {
 		if(my_isalnum(c)) {
