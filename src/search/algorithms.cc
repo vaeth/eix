@@ -17,6 +17,7 @@
 #include <string>
 
 #include "eixTk/assert.h"
+#include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/unused.h"
 #include "portage/package.h"

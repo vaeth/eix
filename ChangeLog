@@ -8,7 +8,7 @@
 	- Modify heuristics for default choice of match algorithm
 	- Treat category/package:slot/subslot[::repo] as valid for --pipe
 	  Previously, words with more than one / had been tacitly ignored
-	- internal: delete copy constructors of some auxiliary classes
+	- internal: Use C++11 if available: delete copy constructors, override
 
 *eix-0.32.4
 	Martin Väth <martin at mvath.de>:

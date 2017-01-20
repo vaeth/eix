@@ -1077,48 +1077,25 @@ return (T::a != 5)
 			[Define if C++ dialect has constexpr modifier])],
 		[MV_MSG_RESULT([no])])
 
-# Check if noexcept can be used
-AC_MSG_CHECKING([whether noexcept can be used])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-class T {
-public:
-	int s;
-	T() noexcept : s(0) {
-	}
-};
-		]], [[
-return T().s
-		]])],
-		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([noexcept], ["noexcept"])],
-		[MV_MSG_RESULT([no])
-		AS_VAR_SET([noexcept], [])])
-AC_DEFINE_UNQUOTED([NOEXCEPT],
-	[$noexcept],
-	[Define to noexcept if it can be used])
-
-
-# Check if move constructor can be used
-AC_MSG_CHECKING([whether noexcept move constructor can be used])
+# Check if overrride can be used
+AC_MSG_CHECKING([whether override can be used])
 MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
-#include <utility>
 class T {
 public:
-	T() { }
-	~T() { }
-	T(T&&) { }
-	T& operator=(T&&) { return *this; }
-	int ret() { return 0; }
+	virtual int foo() {return 1;}
+};
+class S : public T {
+public:
+	int foo() override {return 0;}
 };
 	]], [[
-T a, b;
-T c = std::move(a);
-b = std::move(c);
-return b.ret();
+S a;
+T *b(&a);
+return b->foo();
 		]])],
 		[MV_MSG_RESULT([yes])
-		AC_DEFINE([HAVE_MOVE], [1],
-			[Define if C++ dialect supports assigning default move constructor])],
+		AC_DEFINE([HAVE_OVERRIDE], [1],
+			[Define if C++ dialect has override modifier])],
 		[MV_MSG_RESULT([no])])
 
 # Check if delete can be assigned
@@ -1139,6 +1116,46 @@ return 0;
 		[MV_MSG_RESULT([yes])
 		AC_DEFINE([HAVE_DELETE], [1],
 			[Define if C++ dialect supports assigning delete])],
+		[MV_MSG_RESULT([no])])
+
+# Check if noexcept can be used
+AC_MSG_CHECKING([whether noexcept can be used])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+class T {
+public:
+	int s;
+	T() noexcept : s(0) {
+	}
+};
+		]], [[
+return T().s
+		]])],
+		[MV_MSG_RESULT([yes])
+		AC_DEFINE([HAVE_NOEXCEPT], [1],
+			[Define if C++ dialect supports noexcept])],
+		[MV_MSG_RESULT([no])])
+
+# Check if move constructor can be used
+AC_MSG_CHECKING([whether move constructor can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+#include <utility>
+class T {
+public:
+	T() { }
+	~T() { }
+	T(T&&) { }
+	T& operator=(T&&) { return *this; }
+	int ret() { return 0; }
+};
+	]], [[
+T a, b;
+T c = std::move(a);
+b = std::move(c);
+return b.ret();
+		]])],
+		[MV_MSG_RESULT([yes])
+		AC_DEFINE([HAVE_MOVE], [1],
+			[Define if C++ dialect supports assigning default move constructor])],
 		[MV_MSG_RESULT([no])])
 
 dnl # Check if default move constructor can be asssigned

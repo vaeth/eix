@@ -897,17 +897,17 @@ AddOption(STRING, "MATCH_ALGORITHM_PATTERN1",
 	"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for pattern."));
 
 AddOption(STRING, "MATCH_ALGORITHM_SUBSTRING",
-	"[^][().][+?]", P_("MATCH_ALGORITHM_SUBSTRING",
+	"^$", P_("MATCH_ALGORITHM_SUBSTRING",
 	"This variable is only used for delayed substitution.\n"
 	"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for substring."));
 
 AddOption(STRING, "MATCH_ALGORITHM_EXACT",
-	":|^[@=]|^[0-9]+$", P_("MATCH_ALGORITHM_EXACT",
+	"[:/]|^[@=]|^[0-9]+$", P_("MATCH_ALGORITHM_EXACT",
 	"This variable is only used for delayed substitution.\n"
 	"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for exact."));
 
 AddOption(STRING, "MATCH_ALGORITHM_PATTERN2",
-	":", P_("MATCH_ALGORITHM_PATTERN2",
+	"[][?]", P_("MATCH_ALGORITHM_PATTERN2",
 	"This variable is only used for delayed substitution.\n"
 	"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for pattern."));
 

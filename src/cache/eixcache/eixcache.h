@@ -34,7 +34,7 @@ class EixCache : public BasicCache {
 		bool never_add_categories;
 		Category *dest_cat;
 
-		void setSchemeFinish();
+		void setSchemeFinish() OVERRIDE;
 		void allerrors(const Slaves& slaves, const std::string& msg);
 		void thiserror(const std::string& msg);
 		bool get_overlaydat(const DBHeader& header);

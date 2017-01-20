@@ -115,7 +115,7 @@ GrepHWith 'include .config'
 GrepCCWithout '#include <config\.h>'
 Check '"eixTk/assert\.h"' -e 'eix_assert'
 Check '"eixTk/stringtypes\.h"' -e 'WordVec' -e 'WordSet' -e 'WordMap' -e 'WordList' -e 'LineVec' -e 'WordSize'
-Check '"eixTk/constexpr\.h"' -e 'CONSTEXPR'
+Check '"eixTk/dialect\.h"' -e 'CONSTEXPR' -e 'ASSIGN_DELETE' -e 'OVERRIDE[^_A-Z]' -e 'NOEXCEPT'
 Check '"eixTk/diagnostics\.h"' -e DIAG_OFF -e DIAG_ON
 Check '"eixTk/eixint\.h"' -e OffsetType -e UChar -e UNumber -e Treesize -e Catsize -e Versize -e SignedBool -e TinySigned -e TinyUnsigned
 Check '"eixTk/formated\.h"' -e '::format'
@@ -127,7 +127,6 @@ Check '"eixTk/ptr_list\.h"' -e 'eix::ptr_list'
 Check '"eixTk/ptr_set\.h"' -e 'eix::ptr_set'
 Check '"eixTk/stringutils\.h"' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e isdigit -e isalpha -e isalnum -e is_numeric -e tolower -e toupper -e to_lower -e trim -e StringHash -e escape_string -e localeC -e match_list -e slot_subslot -e casecontains -e caseequal -e my_atoi
 Check '"eixTk/unused\.h"' -e '[^_]UNUSED' -e 'ATTRIBUTE_UNUSED'
-Check '"eixTk/delete\.h"' -e 'ASSIGN_DELETE'
 Check '"portage/basicversion\.h"' -e 'BasicVersion' -e 'BasicPart'
 CheckWithout '"search/packagetest\.h"' -e 'PackageTest::'
 

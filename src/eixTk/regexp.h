@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-#include "eixTk/delete.h"
+#include "eixTk/dialect.h"
 
 /**
 Handle regular expressions.

@@ -169,8 +169,14 @@
 /* Define if C++ dialect supports assigning default move constructor */
 #undef HAVE_MOVE
 
+/* Define if C++ dialect supports noexcept */
+#undef HAVE_NOEXCEPT
+
 /* Define if C++ dialect has nullptr type */
 #undef HAVE_NULLPTR
+
+/* Define if C++ dialect has override modifier */
+#undef HAVE_OVERRIDE
 
 /* Define to 1 if you have the `realpath' function. */
 #undef HAVE_REALPATH
@@ -306,9 +312,6 @@
 
 /* Define to 1 if setuid needs a prototype */
 #undef NEED_SETUID_PROTO
-
-/* Define to noexcept if it can be used */
-#undef NOEXCEPT
 
 /* Name of package */
 #undef PACKAGE

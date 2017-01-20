@@ -56,9 +56,8 @@ src/eixTk/assert.h
 src/eixTk/auto_list.h
 src/eixTk/compare.cc
 src/eixTk/compare.h
-src/eixTk/constexpr.h
-src/eixTk/delete.h
 src/eixTk/diagnostics.h
+src/eixTk/dialect.h
 src/eixTk/eixint.h
 src/eixTk/filenames.cc
 src/eixTk/filenames.h
