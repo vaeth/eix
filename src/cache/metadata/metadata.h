@@ -16,6 +16,7 @@
 
 #include "cache/base.h"
 #include "cache/common/reader.h"
+#include "eixTk/dialect.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/sysutils.h"
@@ -56,19 +57,19 @@ class MetadataCache : public BasicCache {
 
 		bool initialize(const std::string& name);
 
-		bool readCategoryPrepare(const char *cat_name) ATTRIBUTE_NONNULL_;
-		bool readCategory(Category *cat) ATTRIBUTE_NONNULL_;
-		void readCategoryFinalize();
+		bool readCategoryPrepare(const char *cat_name) OVERRIDE ATTRIBUTE_NONNULL_;
+		bool readCategory(Category *cat) OVERRIDE ATTRIBUTE_NONNULL_;
+		void readCategoryFinalize() OVERRIDE;
 
-		const char *get_md5sum(const char *pkg_name, const char *ver_name) const ATTRIBUTE_NONNULL_;
-		bool get_time(time_t *t, const char *pkg_name, const char *ver_name) const ATTRIBUTE_NONNULL_;
+		const char *get_md5sum(const char *pkg_name, const char *ver_name) const OVERRIDE ATTRIBUTE_NONNULL_;
+		bool get_time(time_t *t, const char *pkg_name, const char *ver_name) const OVERRIDE ATTRIBUTE_NONNULL_;
 
-		void get_version_info(const char *pkg_name, const char *ver_name, Version *version) const ATTRIBUTE_NONNULL_;
-		void get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const ATTRIBUTE_NONNULL_;
+		void get_version_info(const char *pkg_name, const char *ver_name, Version *version) const OVERRIDE ATTRIBUTE_NONNULL_;
+		void get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const OVERRIDE ATTRIBUTE_NONNULL_;
 
-		bool use_prefixport() const ATTRIBUTE_PURE;
+		bool use_prefixport() const OVERRIDE ATTRIBUTE_PURE;
 
-		const char *getType() const {
+		const char *getType() const OVERRIDE {
 			return m_type.c_str();
 		}
 };

@@ -16,6 +16,9 @@
 
 #ifdef STRINGLIST_FREE
 #include "eixTk/inttypes.h"
+#ifdef HAVE_MOVE
+#include "eixTk/dialect.h"
+#endif
 #endif
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"

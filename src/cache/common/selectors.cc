@@ -16,7 +16,7 @@
 #include <string>
 
 #include "cache/common/selectors.h"
-#include "eixTk/constexpr.h"
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/regexp.h"

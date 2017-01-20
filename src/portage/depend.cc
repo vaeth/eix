@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include "eixTk/constexpr.h"
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/stringutils.h"
 #include "portage/depend.h"

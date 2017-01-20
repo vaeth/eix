@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "cache/base.h"
+#include "eixTk/dialect.h"
 #include "eixTk/ptr_list.h"
 #include "portage/extendedversion.h"
 
@@ -24,6 +25,7 @@ class EixCache : public BasicCache {
 	private:
 		typedef std::vector<EixCache*> Slaves;
 		static eix::ptr_list<EixCache> *all_eixcaches;
+
 		bool slavemode;
 		std::string err_msg;
 		std::string m_name, m_file, m_overlay, m_full;
@@ -45,13 +47,13 @@ class EixCache : public BasicCache {
 		// @return true if successful
 		bool initialize(const std::string& name);
 
-		bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL {
+		bool can_read_multiple_categories() const OVERRIDE ATTRIBUTE_CONST_VIRTUAL {
 			return true;
 		}
 
-		bool readCategories(PackageTree *packagetree, const char *name, Category *category);
+		bool readCategories(PackageTree *packagetree, const char *name, Category *category) OVERRIDE;
 
-		const char *getType() const {
+		const char *getType() const OVERRIDE {
 			return m_name.c_str();
 		}
 };

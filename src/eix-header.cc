@@ -19,7 +19,7 @@
 
 #include "database/header.h"
 #include "database/io.h"
-#include "eixTk/constexpr.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"

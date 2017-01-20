@@ -23,8 +23,8 @@
 #include <utility>
 #include <vector>
 
-#include "eixTk/constexpr.h"
 #include "eixTk/diagnostics.h"
+#include "eixTk/dialect.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"

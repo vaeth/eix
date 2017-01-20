@@ -23,7 +23,7 @@
 
 #include "cache/base.h"
 #include "cache/common/ebuild_exec.h"
-#include "eixTk/constexpr.h"
+#include "eixTk/dialect.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"

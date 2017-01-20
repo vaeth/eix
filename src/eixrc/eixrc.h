@@ -18,7 +18,7 @@
 #include <utility>
 #include <vector>
 
-#include "eixTk/constexpr.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/inttypes.h"
 #include "portage/keywords.h"

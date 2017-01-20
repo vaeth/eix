@@ -16,7 +16,7 @@
 
 #include "eixTk/ansicolor.h"
 #include "eixTk/assert.h"
-#include "eixTk/constexpr.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"

@@ -19,8 +19,8 @@
 #include <vector>
 
 #include "eixTk/assert.h"
-#include "eixTk/constexpr.h"
 #include "eixTk/diagnostics.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/filenames.h"
 #include "eixTk/i18n.h"

@@ -15,7 +15,7 @@
 #include <map>
 #include <string>
 
-#include "eixTk/constexpr.h"
+#include "eixTk/dialect.h"
 #include "eixTk/inttypes.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"

@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "database/package_reader.h"
-#include "eixTk/constexpr.h"
+#include "eixTk/dialect.h"
 #include "eixTk/inttypes.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"

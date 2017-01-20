@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "cache/base.h"
+#include "eixTk/dialect.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "portage/extendedversion.h"
@@ -51,23 +52,24 @@ class ParseCache : public BasicCache {
 
 		~ParseCache();
 
-		void setScheme(const char *prefix, const char *prefixport, const std::string& scheme);
-		void setKey(ExtendedVersion::Overlay key);
-		void setOverlayName(const std::string& name);
-		void setErrorCallback(ErrorCallback error_callback);
-		void setVerbose() {
+		void setScheme(const char *prefix, const char *prefixport, const std::string& scheme) OVERRIDE;
+		void setKey(ExtendedVersion::Overlay key) OVERRIDE;
+		void setOverlayName(const std::string& name) OVERRIDE;
+		void setErrorCallback(ErrorCallback error_callback) OVERRIDE;
+
+		void setVerbose() OVERRIDE {
 			verbose = true;
 		}
 
-		bool readCategoryPrepare(const char *cat_name) ATTRIBUTE_NONNULL_;
-		bool readCategory(Category *cat) ATTRIBUTE_NONNULL_;
-		void readCategoryFinalize();
+		bool readCategoryPrepare(const char *cat_name) OVERRIDE ATTRIBUTE_NONNULL_;
+		bool readCategory(Category *cat) OVERRIDE ATTRIBUTE_NONNULL_;
+		void readCategoryFinalize() OVERRIDE;
 
-		bool use_prefixport() const ATTRIBUTE_CONST_VIRTUAL {
+		bool use_prefixport() const OVERRIDE ATTRIBUTE_CONST_VIRTUAL {
 			return true;
 		}
 
-		const char *getType() const;
+		const char *getType() const OVERRIDE;
 };
 
 #endif  // SRC_CACHE_PARSE_PARSE_H_

@@ -13,7 +13,7 @@
 #include <set>
 #include <string>
 
-#include "eixTk/constexpr.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"

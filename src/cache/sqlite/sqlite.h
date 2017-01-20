@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "cache/base.h"
+#include "eixTk/dialect.h"
 
 class Category;
 class PackageTree;
@@ -54,13 +55,13 @@ class SqliteCache : public BasicCache {
 		explicit SqliteCache(bool add_categories) : BasicCache(), never_add_categories(!add_categories) {
 		}
 
-		bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL {
+		bool can_read_multiple_categories() const OVERRIDE ATTRIBUTE_CONST_VIRTUAL {
 			return true;
 		}
 
-		bool readCategories(PackageTree *packagetree, const char *catname, Category *cat);
+		bool readCategories(PackageTree *packagetree, const char *catname, Category *cat) OVERRIDE;
 
-		const char *getType() const {
+		const char *getType() const OVERRIDE {
 			return (never_add_categories ? "sqlite" : "sqlite*");
 		}
 };

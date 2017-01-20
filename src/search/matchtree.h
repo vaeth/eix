@@ -10,6 +10,7 @@
 
 #include <stack>
 
+#include "eixTk/dialect.h"
 #include "eixTk/null.h"
 
 class MatchAtomOperator;
@@ -66,9 +67,9 @@ class MatchAtomOperator : public MatchAtom {
 
 		~MatchAtomOperator();
 
-		bool match(PackageReader *p);
+		bool match(PackageReader *p) OVERRIDE;
 
-		MatchAtomOperator *as_operator() {
+		MatchAtomOperator *as_operator() OVERRIDE {
 			return this;
 		}
 };
@@ -85,11 +86,11 @@ class MatchAtomTest : public MatchAtom {
 
 		~MatchAtomTest();
 
-		bool match(PackageReader *p);
+		bool match(PackageReader *p) OVERRIDE;
 
 		void set_test(PackageTest *gtest);
 
-		MatchAtomTest *as_test() {
+		MatchAtomTest *as_test() OVERRIDE {
 			return this;
 		}
 };

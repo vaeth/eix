@@ -14,6 +14,9 @@
 
 #include "database/header.h"
 #include "eixTk/diagnostics.h"
+#ifdef HAVE_MOVE
+#include "eixTk/dialect.h"
+#endif
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"

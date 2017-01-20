@@ -14,6 +14,7 @@
 #include <string>
 
 #include "cache/common/reader.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 
 class BasicCache;
@@ -25,8 +26,8 @@ class FlatReader : public BasicReader {
 		explicit FlatReader(BasicCache *cache) : BasicReader(cache) {
 		}
 
-		void get_keywords_slot_iuse_restrict(const std::string& filename, std::string *eapi, std::string *keywords, std::string *slotname, std::string *iuse, std::string *required_use, std::string *restr, std::string *props, Depend *dep) ATTRIBUTE_NONNULL_;
-		void read_file(const char *filename, Package *pkg) ATTRIBUTE_NONNULL_;
+		void get_keywords_slot_iuse_restrict(const std::string& filename, std::string *eapi, std::string *keywords, std::string *slotname, std::string *iuse, std::string *required_use, std::string *restr, std::string *props, Depend *dep) OVERRIDE ATTRIBUTE_NONNULL_;
+		void read_file(const char *filename, Package *pkg) OVERRIDE ATTRIBUTE_NONNULL_;
 
 	private:
 		bool skip_lines(const eix::TinyUnsigned nr, std::ifstream *is, const std::string& filename) const ATTRIBUTE_NONNULL_;

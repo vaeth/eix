@@ -45,7 +45,7 @@
 
 #include <string>
 
-#include "eixTk/constexpr.h"
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/sysutils.h"

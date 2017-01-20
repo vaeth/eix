@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include "eixTk/constexpr.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/inttypes.h"
 #include "eixTk/null.h"

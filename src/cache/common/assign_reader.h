@@ -15,6 +15,7 @@
 #include <string>
 
 #include "cache/common/reader.h"
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
@@ -36,10 +37,10 @@ class AssignReader : public BasicReader {
 			}
 		}
 
-		const char *get_md5sum(const char *filename) ATTRIBUTE_NONNULL_;
-		bool get_mtime(time_t *t, const char *filename) ATTRIBUTE_NONNULL_;
-		void get_keywords_slot_iuse_restrict(const std::string& filename, std::string *eapi, std::string *keywords, std::string *slotname, std::string *iuse, std::string *required_use, std::string *restr, std::string *props, Depend *dep) ATTRIBUTE_NONNULL_;
-		void read_file(const char *filename, Package *pkg) ATTRIBUTE_NONNULL_;
+		const char *get_md5sum(const char *filename) OVERRIDE ATTRIBUTE_NONNULL_;
+		bool get_mtime(time_t *t, const char *filename) OVERRIDE ATTRIBUTE_NONNULL_;
+		void get_keywords_slot_iuse_restrict(const std::string& filename, std::string *eapi, std::string *keywords, std::string *slotname, std::string *iuse, std::string *required_use, std::string *restr, std::string *props, Depend *dep) OVERRIDE ATTRIBUTE_NONNULL_;
+		void read_file(const char *filename, Package *pkg) OVERRIDE ATTRIBUTE_NONNULL_;
 
 	private:
 		bool get_map(const char *file) ATTRIBUTE_NONNULL_;
