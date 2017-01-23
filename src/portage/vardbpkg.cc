@@ -11,8 +11,6 @@
 
 #include <dirent.h>
 
-#include <cstdlib>
-
 #include <algorithm>
 #include <iostream>
 #include <string>
@@ -401,19 +399,19 @@ void VarDbPkg::readCategory(const char *category) {
 		if(package_entry->d_name[0] == '.') {
 			continue;  /* Don't want dot-stuff */
 		}
-		if(unlikely(!ExplodeAtom::split(package_entry->d_name))) {
+		string curr_name, curr_version;
+		if(unlikely(!ExplodeAtom::split(&curr_name, &curr_version, package_entry->d_name))) {
 			continue;
 		}
 		string errtext;
 		InstVersion instver;
-		BasicVersion::ParseResult r(instver.parseVersion(ExplodeAtom::version, &errtext));
+		BasicVersion::ParseResult r(instver.parseVersion(curr_version, &errtext));
 		if(unlikely(r != BasicVersion::parsedOK)) {
 			cerr << errtext << endl;
 		}
 		if(likely(r != BasicVersion::parsedError)) {
-			(*category_installed)[ExplodeAtom::name].push_back(instver);
+			(*category_installed)[curr_name].push_back(instver);
 		}
-		ExplodeAtom::free_split();
 	}
 	closedir(dir_category);
 	sort_installed(installed[category]);

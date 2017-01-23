@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2016-11-24 21:12+0100\n"
-"PO-Revision-Date: 2016-11-24 21:28+0100\n"
+"POT-Creation-Date: 2017-01-23 23:20+0100\n"
+"PO-Revision-Date: 2017-01-23 23:24+0100\n"
 "Last-Translator: Andre Jaenisch <ryunoki@openmailbox.org>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -8306,18 +8306,18 @@ msgstr "Interner Fehler: unbekannter PartType bei („%s“,„%s“)"
 
 #: src/portage/basicversion.cc
 #, c-format
-msgid "malformed (first primary at \"%s\") version string \"%s\""
-msgstr "Versionsstring unerlaubt (erster Auftritt bei „%s“): „%s“"
+msgid "malformed (first primary at position %s) version string \"%s\""
+msgstr "Versionsstring unerlaubt (Führende Nummer an Position %s): „%s“"
 
 #: src/portage/basicversion.cc
 #, c-format
-msgid "malformed (primary at \"%s\") version string \"%s\""
-msgstr "Versionsstring unerlaubt (Auftritt bei „%s“): „%s“"
+msgid "malformed (primary at position %s) version string \"%s\""
+msgstr "Versionsstring unerlaubt (Nummer an Position %s): „%s“"
 
 #: src/portage/basicversion.cc
 #, c-format
-msgid "malformed (suffix at \"%s\") version string \"%s\""
-msgstr "Versionsstring unerlaubt (Suffix bei „%s“): „%s“"
+msgid "malformed (suffix at position %s) version string \"%s\""
+msgstr "Versionsstring unerlaubt (Anhang an Position %s): „%s“"
 
 #: src/portage/basicversion.cc
 #, c-format

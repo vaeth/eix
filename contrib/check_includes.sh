@@ -153,7 +153,7 @@ Check '<cassert>' -e 'assert('
 Check '<cstddef>' -e '[^_N]NULL\([^P]\|$\)'
 Check '<cstdio>' -e fopen -e fclose -e fflush -e '[^A-Z_]FILE[^A-Z_]' -e 'printf(' -e fseek -e 'puts(' -e 'putc('
 Check '<cstdlib>' -e '[^_a-z]exit[^_]' -e '[^.>]free[^a-z]' -e malloc -e getenv -e strtol -e EXIT_SUCCESS -e EXIT_FAILURE
-Check '<cstring>' -e strdup -e strlen -e strndup -e strcmp -e strncmp -e strncpy -e strchr -e strrchr -e strerror -e memset -e memcpy
+Check '<cstring>' -e strlen -e strcmp -e strncmp -e strchr -e strrchr -e strerror -e memset
 Check '<csignal>' -e signal -e sigaction
 Check '<cerrno>' -e '[^c]errno'
 Check '<ctime>' -e time_t

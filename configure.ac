@@ -655,7 +655,7 @@ AM_CONDITIONAL([SEPARATE_TOOLS],
 # Look for basic functions:
 AC_SYS_LARGEFILE()
 AC_FUNC_FSEEKO()
-AC_CHECK_FUNCS([regcomp strchr strdup strerror strrchr fnmatch memset],
+AC_CHECK_FUNCS([regcomp strchr strerror strrchr fnmatch memset],
 	[],
 	[AC_MSG_ERROR([We really need this function ..])])
 
@@ -679,9 +679,8 @@ AC_CHECK_HEADERS([sys/param.h \
 	])
 
 # We use these optionally:
-# Concerning strndup, we have a home-brewed replacement,
-# for the others some less convenient workarounds.
-AC_CHECK_FUNCS([strndup \
+# Workarounds are used if they are not available
+AC_CHECK_FUNCS([ \
 	fileno \
 	flock \
 	sigaction \

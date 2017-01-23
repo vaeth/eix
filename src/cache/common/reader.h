@@ -34,12 +34,12 @@ class BasicReader {
 		virtual ~BasicReader() {
 		}
 
-		virtual const char *get_md5sum(const char *filename ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL_ {
+		virtual const char *get_md5sum(const std::string& filename ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL_ {
 			UNUSED(filename);
 			return NULLPTR;
 		}
 
-		virtual bool get_mtime(time_t *t ATTRIBUTE_UNUSED, const char *filename ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL_ {
+		virtual bool get_mtime(time_t *t ATTRIBUTE_UNUSED, const std::string& filename ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL_ {
 			UNUSED(t);
 			UNUSED(filename);
 			return false;
@@ -47,7 +47,7 @@ class BasicReader {
 
 		virtual void get_keywords_slot_iuse_restrict(const std::string& filename, std::string *eapi, std::string *keywords, std::string *slotname, std::string *iuse, std::string *required_use, std::string *restr, std::string *props, Depend *dep) ATTRIBUTE_NONNULL_ = 0;
 
-		virtual void read_file(const char *filename, Package *pkg) ATTRIBUTE_NONNULL_ = 0;
+		virtual void read_file(const std::string& filename, Package *pkg) ATTRIBUTE_NONNULL_ = 0;
 
 	public:
 		BasicCache *m_cache;

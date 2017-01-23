@@ -165,7 +165,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 		m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
 		if(errtext != NULLPTR) {
 			*errtext = eix::format(_(
-			"malformed (first primary at \"%s\") version string \"%s\""))
+			"malformed (first primary at position %s) version string \"%s\""))
 			% pos % str;
 		}
 		return parsedError;
@@ -184,7 +184,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 			m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
 			if(errtext != NULLPTR) {
 				*errtext = eix::format(_(
-				"malformed (primary at \"%s\") version string \"%s\""))
+				"malformed (primary at position %s) version string \"%s\""))
 				% pos % str;
 			}
 			return parsedError;
@@ -228,7 +228,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 			m_parts.push_back(BasicPart(BasicPart::garbage, str, pos-1));
 			if(errtext != NULLPTR) {
 				*errtext = eix::format(_(
-				"malformed (suffix at \"%s\") version string \"%s\""))
+				"malformed (suffix at position %s) version string \"%s\""))
 				% pos % str;
 			}
 			return parsedError;

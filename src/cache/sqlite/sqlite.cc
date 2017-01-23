@@ -14,8 +14,6 @@
 #ifdef WITH_SQLITE
 #include <sqlite3.h>
 
-#include <cstdlib>
-
 #ifdef SQLITE_ONLY_DEBUG
 #include <iostream>
 #endif
@@ -238,22 +236,23 @@ void SqliteCache::sqlite_callback_cpp(int argc, const char *const *argv, const c
 	} else {
 		dest_cat = &((*packagetree)[catarg]);
 	}
-	if(unlikely(!ExplodeAtom::split(name_ver.c_str()))) {
+	string curr_name, curr_version;
+	if(unlikely(!ExplodeAtom::split(&curr_name, &curr_version, name_ver.c_str()))) {
 		m_error_callback(eix::format(_("cannot split \"%s\" into package and version")) % name_ver);
 		return;
 	}
 	/* Search for existing package */
-	Package *pkg(dest_cat->findPackage(ExplodeAtom::name));
+	Package *pkg(dest_cat->findPackage(curr_name));
 
 	/* If none was found create one */
 	if(pkg == NULLPTR) {
-		pkg = dest_cat->addPackage(catarg, ExplodeAtom::name);
+		pkg = dest_cat->addPackage(catarg, curr_name);
 	}
 
 	/* Create a new version and add it to package */
 	Version *version(new Version);
 	string errtext;
-	BasicVersion::ParseResult r(version->parseVersion(ExplodeAtom::version, &errtext));
+	BasicVersion::ParseResult r(version->parseVersion(curr_version, &errtext));
 	if(unlikely(r != BasicVersion::parsedOK)) {
 		m_error_callback(errtext);
 	}
@@ -283,8 +282,6 @@ void SqliteCache::sqlite_callback_cpp(int argc, const char *const *argv, const c
 			pkg->desc     = TrueIndex::c_str(argv, &trueindex, TrueIndex::DESCRIPTION);
 		}
 	}
-	/* Free old split */
-	ExplodeAtom::free_split();
 }
 
 bool SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category *cat) {

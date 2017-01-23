@@ -9,10 +9,6 @@
 
 #include <config.h>
 
-#ifndef HAVE_STRNDUP
-#include <sys/types.h>
-#endif
-
 #include <fnmatch.h>
 
 #include <locale>
@@ -25,7 +21,6 @@
 #include <string>
 #include <vector>
 
-#include "eixTk/assert.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -49,9 +44,6 @@ const char *doublequotes("\"$\\");
 
 StringHash *StringHash::comparison_this;
 
-const char *ExplodeAtom::name = NULLPTR;
-const char *ExplodeAtom::version = NULLPTR;
-
 locale localeC("C");
 
 static void erase_escapes(string *s, const char *at) ATTRIBUTE_NONNULL_;
@@ -59,28 +51,8 @@ template<typename S, typename T> inline static S calc_table_pos(const vector<S>&
 template<typename T> inline static void split_string_template(T *vec, const string& str, bool handle_escape, const char *at, bool ignore_empty) ATTRIBUTE_NONNULL_;
 template<typename T> inline static void join_to_string_template(string *s, const T& vec, const string& glue) ATTRIBUTE_NONNULL_;
 
-#ifndef HAVE_STRNDUP
 /**
-If we don't have strndup, we use our own ..
-darwin (macos) doesn't have strndup, it's a GNU extension
-See http://bugs.gentoo.org/show_bug.cgi?id=111912
-**/
-char *strndup(const char *s, size_t n) {
-	const char *p(s);
-	while(likely(*p++ && n--)) {
-	}
-	n = p - s - 1;
-	char *r(static_cast<char *>(malloc(n + 1)));
-	if(r != NULLPTR) {
-		memcpy(r, s, n);
-		r[n] = 0;
-	}
-	return r;
-}
-#endif /* HAVE_STRNDUP */
-
-/**
-Check string if it only contains digits.
+Check whether str contains only digits
 **/
 bool is_numeric(const char *str) {
 	for(char c(*str); likely(c != '\0'); c = *(++str)) {
@@ -224,37 +196,35 @@ const char *ExplodeAtom::get_start_of_version(const char *str, bool allow_star) 
 	return x;
 }
 
-bool ExplodeAtom::split_version(const char *str) {
+bool ExplodeAtom::split_version(string *version, const char *str) {
 	const char *x(get_start_of_version(str, false));
 	if(unlikely(x == NULLPTR)) {
 		return false;
 	}
-	eix_assert_paranoic(version == NULLPTR);
-	version = strdup(x);
+	version->assign(x);
 	return true;
 }
 
-bool ExplodeAtom::split_name(const char *str) {
-	const char *x(get_start_of_version(str, false));
-	if(unlikely(x == NULLPTR)) {
-		return false;
-	}
-	eix_assert_paranoic(name == NULLPTR);
-GCC_DIAG_OFF(sign-conversion)
-	name = strndup(str, ((x - 1) - str));
-GCC_DIAG_ON(sign-conversion)
-	return true;
-}
-
-bool ExplodeAtom::split(const char *str) {
+bool ExplodeAtom::split_name(string *name, const char *str) {
 	const char *x(get_start_of_version(str, false));
 	if(unlikely(x == NULLPTR)) {
 		return false;
 	}
 GCC_DIAG_OFF(sign-conversion)
-	name = strndup(str, ((x - 1) - str));
+	name->assign(str, ((x - 1) - str));
 GCC_DIAG_ON(sign-conversion)
-	version = strdup(x);
+	return true;
+}
+
+bool ExplodeAtom::split(string *name, string *version, const char *str) {
+	const char *x(get_start_of_version(str, false));
+	if(unlikely(x == NULLPTR)) {
+		return false;
+	}
+	version->assign(x);
+GCC_DIAG_OFF(sign-conversion)
+	name->assign(str, ((x - 1) - str));
+GCC_DIAG_ON(sign-conversion)
 	return true;
 }
 

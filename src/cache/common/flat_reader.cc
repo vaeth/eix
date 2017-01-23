@@ -93,7 +93,7 @@ void FlatReader::get_keywords_slot_iuse_restrict(const string& filename, string 
 /**
 Read a flat cache file
 **/
-void FlatReader::read_file(const char *filename, Package *pkg) {
+void FlatReader::read_file(const string& filename, Package *pkg) {
 	ifstream is(filename);
 	if(!is.is_open()) {
 		m_cache->m_error_callback(eix::format(_("cannot open %s: %s"))

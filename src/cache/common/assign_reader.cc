@@ -32,7 +32,7 @@ using std::string;
 
 using std::ifstream;
 
-bool AssignReader::get_map(const char *file) {
+bool AssignReader::get_map(const string &file) {
 	if(currfile == NULLPTR) {
 		currfile = new string(file);
 		cf = new WordMap;
@@ -62,7 +62,7 @@ bool AssignReader::get_map(const char *file) {
 	return (currstate = true);
 }
 
-const char *AssignReader::get_md5sum(const char *filename) {
+const char *AssignReader::get_md5sum(const string &filename) {
 	if(unlikely(!get_map(filename))) {
 		return NULLPTR;
 	}
@@ -73,7 +73,7 @@ const char *AssignReader::get_md5sum(const char *filename) {
 	return md5->second.c_str();
 }
 
-bool AssignReader::get_mtime(time_t *t, const char *filename) {
+bool AssignReader::get_mtime(time_t *t, const string &filename) {
 	if(unlikely(!get_map(filename))) {
 		return false;
 	}
@@ -90,7 +90,7 @@ Read stability and other data from an "assign type" cache file
 void AssignReader::get_keywords_slot_iuse_restrict(const string& filename, string *eapi, string *keywords,
 	string *slotname, string *iuse, string *required_use, string *restr,
 	string *props, Depend *dep) {
-	if(unlikely(!get_map(filename.c_str()))) {
+	if(unlikely(!get_map(filename))) {
 		m_cache->m_error_callback(eix::format(_("cannot read cache file %s: %s"))
 			% filename % strerror(errno));
 		return;
@@ -112,7 +112,7 @@ void AssignReader::get_keywords_slot_iuse_restrict(const string& filename, strin
 /**
 Read an "assign type" cache file
 **/
-void AssignReader::read_file(const char *filename, Package *pkg) {
+void AssignReader::read_file(const string& filename, Package *pkg) {
 	if(unlikely(!get_map(filename))) {
 		m_cache->m_error_callback(eix::format(_("cannot read cache file %s: %s"))
 			% filename % strerror(errno));

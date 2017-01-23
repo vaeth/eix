@@ -1237,10 +1237,11 @@ static void print_removed(const string& dirname, const string& excludefiles, con
 		const WordSet *ns((cat == cat_name.end()) ? NULLPTR : &(cat->second));
 		for(WordVec::const_iterator nit(names.begin());
 			likely(nit != names.end()); ++nit) {
-			if(unlikely(!ExplodeAtom::split_name(nit->c_str()))) {
+			string curr_name;
+			if(unlikely(!ExplodeAtom::split_name(&curr_name, nit->c_str()))) {
 				continue;
 			}
-			if(unlikely((ns == NULLPTR) || (ns->find(ExplodeAtom::name) == ns->end()))) {
+			if(unlikely((ns == NULLPTR) || (ns->find(curr_name) == ns->end()))) {
 				if(unlikely(!know_excludes)) {
 					know_excludes = true;
 					WordVec excludelist;
@@ -1252,14 +1253,13 @@ static void print_removed(const string& dirname, const string& excludefiles, con
 						join_and_split(&excludes, excl);
 					}
 				}
-				if(likely(excludes.find(ExplodeAtom::name) == excludes.end())) {
-					string fullname(cat_slash + ExplodeAtom::name);
+				if(likely(excludes.find(curr_name) == excludes.end())) {
+					string fullname(cat_slash + curr_name);
 					if(excludes.find(fullname) == excludes.end()) {
-						failure.push_back(cat_slash + ExplodeAtom::name);
+						failure.push_back(cat_slash + curr_name);
 					}
 				}
 			}
-			ExplodeAtom::free_name();
 		}
 	}
 	if(likely(failure.empty())) {

@@ -32,49 +32,34 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-static void failparse(const char *v) ATTRIBUTE_NONNULL_ ATTRIBUTE_NORETURN;
-static const char *get_version(const char *v) ATTRIBUTE_NONNULL_;
-static const char *get_version(const char **name, const char *v) ATTRIBUTE_NONNULL_;
-static void parse_version(BasicVersion *b, const char *v) ATTRIBUTE_NONNULL_;
+static void failparse(const string& v) ATTRIBUTE_NONNULL_ ATTRIBUTE_NORETURN;
+static void get_version(string *version, const char *str) ATTRIBUTE_NONNULL_;
+static void get_name_version(string *name, string *version, const char *str) ATTRIBUTE_NONNULL_;
+static void parse_version(BasicVersion *b, const string& v) ATTRIBUTE_NONNULL_;
 
-static void failparse(const char *v) {
+static void failparse(const string& v) {
 	cerr << eix::format(_("cannot determine version of \"%s\"")) % v << endl;
 	exit(EXIT_FAILURE);
 }
 
-static const char *get_version(const char *v) {
-	static string *r = NULLPTR;
-	delete r;
+static void get_version(string *version, const char *str) {
 	BasicVersion b;
-	if(b.parseVersion(v, NULLPTR, false) == BasicVersion::parsedOK) {
-		r = new string(v);
-		return r->c_str();
+	if(b.parseVersion(str, NULLPTR, false) == BasicVersion::parsedOK) {
+		version->assign(str);
+		return;
 	}
-	if(unlikely(!ExplodeAtom::split_version(v))) {
-		failparse(v);
+	if(unlikely(!ExplodeAtom::split_version(version, str))) {
+		failparse(str);
 	}
-	r = new string(ExplodeAtom::version);
-	ExplodeAtom::free_version();
-	return r->c_str();
 }
 
-static const char *get_version(const char **name, const char *v) {
-	static string *r = NULLPTR;
-	static string *n = NULLPTR;
-	delete r;
-	delete n;
-	if(unlikely(!ExplodeAtom::split(v))) {
-		failparse(v);
+static void get_name_version(string *name, string *version, const char *str) {
+	if(unlikely(!ExplodeAtom::split(name, version, str))) {
+		failparse(str);
 	}
-	n = new string(first_alnum(ExplodeAtom::name));
-	ExplodeAtom::free_name();
-	*name = n->c_str();
-	r = new string(ExplodeAtom::version);
-	ExplodeAtom::free_version();
-	return r->c_str();
 }
 
-static void parse_version(BasicVersion *b, const char *v) {
+static void parse_version(BasicVersion *b, const string& v) {
 	string errtext;
 	BasicVersion::ParseResult r(b->parseVersion(v, &errtext, true));
 	if(unlikely(r != BasicVersion::parsedOK)) {
@@ -89,7 +74,9 @@ int run_versionsort(int argc, char *argv[]) {
 	if(unlikely(argc <= 1))
 		return EXIT_SUCCESS;
 	if(likely(argc == 2)) {
-		cout << get_version(argv[1]);
+		string ver;
+		get_version(&ver, argv[1]);
+		cout << ver;
 		return EXIT_SUCCESS;
 	}
 	if((argc >= 2) && (argv[1][0] == '-') && (argv[1][1] != '\0') && (argv[1][2] == '\0')) {
@@ -119,21 +106,22 @@ int run_versionsort(int argc, char *argv[]) {
 				return EXIT_SUCCESS;
 			}
 			for(int curr(2); ;) {
-				const char *s(argv[curr]);
+				const char *str(argv[curr]);
 				if(mode > 0) {
-					const char *n;
-					const char *v(get_version(&n, s));
-					string r(n);
+					string result, curr_version;
+					get_name_version(&result, &curr_version, str);
 					if(full) {
-						r.append("-");
+						result.append(1, '-');
 						BasicVersion b;
-						parse_version(&b, v);
-						r.append(revision ? b.getFull() : b.getPlain());
+						parse_version(&b, curr_version);
+						result.append(revision ? b.getFull() : b.getPlain());
 					}
-					cout << r;
+					cout << result;
 				} else {
+					string curr_version;
+					get_version(&curr_version, str);
 					BasicVersion b;
-					parse_version(&b, get_version(s));
+					parse_version(&b, curr_version);
 					cout << (full ? b.getFull() : (revision ? b.getRevision() : b.getPlain()));
 				}
 				if(argc != 3) {
@@ -148,8 +136,10 @@ int run_versionsort(int argc, char *argv[]) {
 	typedef vector<BasicVersion> Versions;
 	Versions versions;
 	for(int i(1); likely(i < argc); ++i) {
+		string curr_version;
+		get_version(&curr_version, argv[i]);
 		BasicVersion b;
-		parse_version(&b, get_version(argv[i]));
+		parse_version(&b, curr_version);
 		versions.push_back(b);
 	}
 	sort(versions.begin(), versions.end());

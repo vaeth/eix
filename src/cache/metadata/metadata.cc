@@ -11,7 +11,6 @@
 
 #include <dirent.h>
 
-#include <cstdlib>
 #include <cstring>
 #include <ctime>
 
@@ -261,15 +260,15 @@ void MetadataCache::readCategoryFinalize() {
 	m_catpath.clear();
 	names.clear();
 }
-const char *MetadataCache::get_md5sum(const char *pkg_name, const char *ver_name) const {
-	return (reader->get_md5sum)((m_catpath + "/" + pkg_name + "-" + ver_name).c_str());
+const char *MetadataCache::get_md5sum(const string &pkg_name, const string &ver_name) const {
+	return (reader->get_md5sum)(m_catpath + "/" + pkg_name + "-" + ver_name);
 }
 
-bool MetadataCache::get_time(time_t *t, const char *pkg_name, const char *ver_name) const {
-	return (reader->get_mtime)(t, (m_catpath + "/" + pkg_name + "-" + ver_name).c_str());
+bool MetadataCache::get_time(time_t *t, const string &pkg_name, const string &ver_name) const {
+	return (reader->get_mtime)(t, m_catpath + "/" + pkg_name + "-" + ver_name);
 }
 
-void MetadataCache::get_version_info(const char *pkg_name, const char *ver_name, Version *version) const {
+void MetadataCache::get_version_info(const string &pkg_name, const string &ver_name, Version *version) const {
 	string eapi, keywords, iuse, required_use, restr, props, slot;
 	string path(m_catpath);
 	path.append(1, '/');
@@ -287,8 +286,8 @@ void MetadataCache::get_version_info(const char *pkg_name, const char *ver_name,
 	version->overlay_key = m_overlay_key;
 }
 
-void MetadataCache::get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const {
-	(reader->read_file)((m_catpath + "/" + pkg_name + "-" + ver_name).c_str(), pkg);
+void MetadataCache::get_common_info(const string &pkg_name, const string &ver_name, Package *pkg) const {
+	(reader->read_file)(m_catpath + "/" + pkg_name + "-" + ver_name, pkg);
 }
 
 bool MetadataCache::readCategory(Category *cat) {
@@ -298,42 +297,40 @@ bool MetadataCache::readCategory(Category *cat) {
 		string neweststring;
 
 		/* Split string into package and version, and catch any errors. */
-		if(unlikely(!ExplodeAtom::split(it->c_str()))) {
+		string curr_name, curr_version;
+		if(unlikely(!ExplodeAtom::split(&curr_name, &curr_version, it->c_str()))) {
 			m_error_callback(eix::format(_("cannot split \"%s\" into package and version")) % (*it));
 			++it;
 			continue;
 		}
 
 		/* Search for existing package */
-		Package *pkg(cat->findPackage(ExplodeAtom::name));
+		Package *pkg(cat->findPackage(curr_name));
 
 		/* If none was found create one */
 		if(pkg == NULLPTR) {
-			pkg = cat->addPackage(m_catname, ExplodeAtom::name);
+			pkg = cat->addPackage(m_catname, curr_name);
 		}
 
 		for(;;) {
 			/* Make version and add it to package. */
 			Version *version(new Version);
 			string errtext;
-			BasicVersion::ParseResult r(version->parseVersion(ExplodeAtom::version, &errtext));
+			BasicVersion::ParseResult r(version->parseVersion(curr_version, &errtext));
 			if(unlikely(r != BasicVersion::parsedOK)) {
 				m_error_callback(errtext);
 			}
 			if(unlikely(r == BasicVersion::parsedError)) {
 				delete version;
 			} else {
-				get_version_info(ExplodeAtom::name, ExplodeAtom::version, version);
+				get_version_info(curr_name, curr_version, version);
 
 				pkg->addVersion(version);
 				if(*(pkg->latest()) == *version) {
 					newest = version;
-					neweststring = ExplodeAtom::version;
+					neweststring = curr_version;
 				}
 			}
-
-			/* Free old split */
-			ExplodeAtom::free_split();
 
 			/* If this is the last file we break so we can get the full
 			 * information after this while-loop. If we still have more files
@@ -343,20 +340,20 @@ bool MetadataCache::readCategory(Category *cat) {
 			}
 
 			/* Split new filename into package and version, and catch any errors. */
-			if(unlikely(!ExplodeAtom::split(it->c_str()))) {
+			if(unlikely(!ExplodeAtom::split_name(&curr_name, it->c_str()))) {
 				m_error_callback(eix::format(_("cannot split \"%s\" into package and version")) % (*it));
 				++it;
 				break;
 			}
-			if(strcmp(ExplodeAtom::name, pkg->name.c_str())) {
-				ExplodeAtom::free_split();
+			if(curr_name != pkg->name) {
 				break;
 			}
 		}
 
 		/* Read the cache file of the last version completely */
-		if(newest)  // provided we have read the "last" version
-			get_common_info((pkg->name).c_str(), neweststring.c_str(), pkg);
+		if(newest) {  // provided we have read the "last" version
+			get_common_info(pkg->name, neweststring, pkg);
+		}
 	}
 	return true;
 }

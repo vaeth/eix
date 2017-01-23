@@ -11,7 +11,7 @@
 	- internal: Use C++11 if available: delete copy constructors, override
 	- internal: Use constexpr for const arrays; gcc might otherwise produce
 	  unexpected copies: https://forums.gentoo.org/viewtopic-t-1057674.html
-	- internal: Rework ExplodeAtom
+	- internal: Finally implement ExplodeAtom in a sane manner
 
 *eix-0.32.4
 	Martin Väth <martin at mvath.de>:

@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2016-11-24 21:12+0100\n"
-"PO-Revision-Date: 2016-11-24 20:52+0100\n"
+"POT-Creation-Date: 2017-01-23 23:20+0100\n"
+"PO-Revision-Date: 2017-01-23 23:21+0100\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: ru\n"
@@ -7176,23 +7176,23 @@ msgstr "Строка %s, столбец %s: %s"
 msgid "internal error: unknown PartType on (\"%s\",\"%s\")"
 msgstr "внутренняя ошибка: неизвестный PartType на («%s»,«%s»)"
 
-# fuzzy (only punctation changed)
+# fuzzy
 #: src/portage/basicversion.cc
 #, c-format
-msgid "malformed (first primary at \"%s\") version string \"%s\""
-msgstr "недосформированная (1 первичн. в «%s») строка версии «%s»"
+msgid "malformed (first primary at position %s) version string \"%s\""
+msgstr "недосформированная (1 первичн. в %s) строка версии «%s»"
 
-# fuzzy (only punctation changed)
+# fuzzy
 #: src/portage/basicversion.cc
 #, c-format
-msgid "malformed (primary at \"%s\") version string \"%s\""
-msgstr "недосформированная (первичн. в «%s») строка версии «%s»"
+msgid "malformed (primary at position %s) version string \"%s\""
+msgstr "недосформированная (первичн. в %s) строка версии «%s»"
 
-# fuzzy (only punctation changed)
+# fuzzy
 #: src/portage/basicversion.cc
 #, c-format
-msgid "malformed (suffix at \"%s\") version string \"%s\""
-msgstr "недосформированная (суффикс в «%s») строка версии «%s»"
+msgid "malformed (suffix at position %s) version string \"%s\""
+msgstr "недосформированная (суффикс в %s) строка версии «%s»"
 
 # fuzzy (only punctation changed)
 #: src/portage/basicversion.cc

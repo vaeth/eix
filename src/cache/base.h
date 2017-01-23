@@ -174,26 +174,26 @@ class BasicCache {
 			m_catname.clear();
 		}
 
-		virtual bool get_time(time_t *t ATTRIBUTE_UNUSED, const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_ {
+		virtual bool get_time(time_t *t ATTRIBUTE_UNUSED, const std::string &pkg_name ATTRIBUTE_UNUSED, const std::string &ver_name ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_ {
 			UNUSED(t);
 			UNUSED(pkg_name);
 			UNUSED(ver_name);
 			return 0;
 		}
 
-		virtual const char *get_md5sum(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_ {
+		virtual const char *get_md5sum(const std::string &pkg_name ATTRIBUTE_UNUSED, const std::string &ver_name ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_ {
 			UNUSED(pkg_name);
 			UNUSED(ver_name);
 			return NULLPTR;
 		}
 
-		virtual void get_version_info(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED, Version *version ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_ {
+		virtual void get_version_info(const std::string &pkg_name ATTRIBUTE_UNUSED, const std::string &ver_name ATTRIBUTE_UNUSED, Version *version ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_ {
 			UNUSED(pkg_name);
 			UNUSED(ver_name);
 			UNUSED(version);
 		}
 
-		virtual void get_common_info(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED, Package *pkg ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_ {
+		virtual void get_common_info(const std::string &pkg_name ATTRIBUTE_UNUSED, const std::string &ver_name ATTRIBUTE_UNUSED, Package *pkg ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_ {
 			UNUSED(pkg_name);
 			UNUSED(ver_name);
 			UNUSED(pkg);

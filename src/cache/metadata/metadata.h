@@ -61,11 +61,11 @@ class MetadataCache : public BasicCache {
 		bool readCategory(Category *cat) OVERRIDE ATTRIBUTE_NONNULL_;
 		void readCategoryFinalize() OVERRIDE;
 
-		const char *get_md5sum(const char *pkg_name, const char *ver_name) const OVERRIDE ATTRIBUTE_NONNULL_;
-		bool get_time(time_t *t, const char *pkg_name, const char *ver_name) const OVERRIDE ATTRIBUTE_NONNULL_;
+		const char *get_md5sum(const std::string &pkg_name, const std::string &ver_name) const OVERRIDE ATTRIBUTE_NONNULL_;
+		bool get_time(time_t *t, const std::string &pkg_name, const std::string &ver_name) const OVERRIDE ATTRIBUTE_NONNULL_;
 
-		void get_version_info(const char *pkg_name, const char *ver_name, Version *version) const OVERRIDE ATTRIBUTE_NONNULL_;
-		void get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const OVERRIDE ATTRIBUTE_NONNULL_;
+		void get_version_info(const std::string &pkg_name, const std::string &ver_name, Version *version) const OVERRIDE ATTRIBUTE_NONNULL_;
+		void get_common_info(const std::string &pkg_name, const std::string &ver_name, Package *pkg) const OVERRIDE ATTRIBUTE_NONNULL_;
 
 		bool use_prefixport() const OVERRIDE ATTRIBUTE_PURE;
 
