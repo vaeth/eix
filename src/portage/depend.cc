@@ -18,8 +18,8 @@ using std::string;
 
 bool Depend::use_depend;
 
-const char Depend::c_depend[];
-const char Depend::c_rdepend[];
+const char Depend::c_depend[] = "${DEPEND}";
+const char Depend::c_rdepend[] = "${RDEPEND}";
 
 static CONSTEXPR const char the_same = '"';
 
