@@ -637,7 +637,7 @@ FormatParser::ParserState FormatParser::state_IF() {
 		return ERROR;
 	}
 
-	static CONSTEXPR char single_quote = '\'', double_quote = '"', plain = ' ', property = '>';
+	static CONSTEXPR const char single_quote = '\'', double_quote = '"', plain = ' ', property = '>';
 	char parse_modus;
 	switch(*band_position) {
 		case '<':

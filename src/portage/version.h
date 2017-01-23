@@ -31,7 +31,7 @@ class OutputString;
 class IUse : public std::string {
 	public:
 		typedef eix::UChar Flags;
-		static CONSTEXPR Flags
+		static CONSTEXPR const Flags
 			USEFLAGS_NIL    = 0,
 			USEFLAGS_NORMAL = 1,
 			USEFLAGS_PLUS   = 2,
@@ -125,7 +125,7 @@ class Version : public ExtendedVersion, public Keywords {
 		} SavedEffectiveIndex;
 
 		typedef eix::UChar EffectiveState;
-		static CONSTEXPR EffectiveState
+		static CONSTEXPR const EffectiveState
 			EFFECTIVE_UNSAVED = 0,
 			EFFECTIVE_USED    = 1,
 			EFFECTIVE_UNUSED  = 2;

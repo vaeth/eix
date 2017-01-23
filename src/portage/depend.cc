@@ -18,10 +18,10 @@ using std::string;
 
 bool Depend::use_depend;
 
-const char Depend::c_depend[] = "${DEPEND}";
-const char Depend::c_rdepend[] = "${RDEPEND}";
+const char Depend::c_depend[];
+const char Depend::c_rdepend[];
 
-static CONSTEXPR char the_same = '"';
+static CONSTEXPR const char the_same = '"';
 
 static bool subst_the_same(string *in, const string& from);
 

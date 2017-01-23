@@ -35,7 +35,17 @@ class EixRcOption {
 		OptionType type;
 		std::string key, value, local_value, description;
 
-		EixRcOption(OptionType t, std::string name, std::string val, std::string desc);
+		EixRcOption(OptionType t, const char *name, const char *val, const char *desc) :
+			type(t), key(name), value(val), description(desc) {
+		}
+
+		EixRcOption(const OptionType t, const std::string name, const std::string val, const std::string desc) :
+			type(t), key(name), value(val), description(desc) {
+		}
+
+		EixRcOption(const std::string name, const std::string val) :
+			type(LOCAL), key(name), local_value(val) {
+		}
 };
 
 class EixRc {
@@ -60,7 +70,7 @@ class EixRc {
 
 		eix::SignedBool getBoolText(const std::string& key, const char *text) ATTRIBUTE_NONNULL_;
 
-		eix::TinySigned getTinyTextlist(const std::string& key, const char **text) ATTRIBUTE_NONNULL_;
+		eix::TinySigned getTinyTextlist(const std::string& key, const char *const *text) ATTRIBUTE_NONNULL_;
 
 		LocalMode getLocalMode(const std::string& key);
 
@@ -123,7 +133,7 @@ class EixRc {
 		void join_key_if_new(const std::string& key, std::set<std::string> *has_delayed, const std::set<std::string> *exclude_defaults) ATTRIBUTE_NONNULL((3));
 
 		typedef uint8_t DelayvarFlags;
-		static CONSTEXPR DelayvarFlags
+		static CONSTEXPR const DelayvarFlags
 			DELAYVAR_NONE   = 0x00,
 			DELAYVAR_STAR   = 0x01,
 			DELAYVAR_ESCAPE = 0x02,

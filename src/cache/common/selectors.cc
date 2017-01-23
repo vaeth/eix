@@ -37,7 +37,7 @@ int ebuild_selector(SCANDIR_ARG3 dent) {
 
 string::size_type ebuild_pos(const std::string& str) {
 	string::size_type pos(str.length());
-	static CONSTEXPR string::size_type append_size = 7;
+	static CONSTEXPR const string::size_type append_size = 7;
 	if(pos <= append_size) {
 		return string::npos;
 	}

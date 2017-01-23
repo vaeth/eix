@@ -24,7 +24,7 @@
 using std::cerr;
 using std::endl;
 
-ArgumentReader::ArgumentReader(int argc, char **argv, const OptionList& opt_table) {
+ArgumentReader::ArgumentReader(int argc, const char *const *argv, const OptionList& opt_table) {
 	bool seen_escape(false);
 	name = argv[0];
 	eix::TinyUnsigned paramarg_remain(0);
@@ -37,7 +37,7 @@ ArgumentReader::ArgumentReader(int argc, char **argv, const OptionList& opt_tabl
 			continue;
 		}
 
-		char *ptr(argv[i]);
+		const char *ptr(argv[i]);
 		if(*ptr != '-') {
 			push_back(Parameter(ptr));
 			continue;

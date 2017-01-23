@@ -37,7 +37,7 @@ class BasicPart {
 		};
 
 		// This must be larger than PartType elements and should be a power of 2.
-		static CONSTEXPR std::string::size_type max_type = 32;
+		static CONSTEXPR const std::string::size_type max_type = 32;
 		PartType parttype;
 		std::string partcontent;
 

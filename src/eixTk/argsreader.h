@@ -53,12 +53,12 @@ class Option {
 		u.boolean = b;
 	}
 
-	Option(const char *l, int s, enum Type t, const char **c) ATTRIBUTE_NONNULL((2, 5))
+	Option(const char *l, int s, enum Type t, const char *c[]) ATTRIBUTE_NONNULL((2, 5))
 		: type(t), longopt(l), shortopt(s) {
 		u.str = c;
 	}
 
-	Option(const char *l, int s, enum Type t, const char **c1, const char **c2) ATTRIBUTE_NONNULL((2, 5, 6))
+	Option(const char *l, int s, enum Type t, const char *c1[], const char *c2[]) ATTRIBUTE_NONNULL((2, 5, 6))
 		: type(t), longopt(l), shortopt(s) {
 		u.pr.first = c1;
 		u.pr.second = c2;
@@ -141,12 +141,12 @@ class ArgumentReader : public std::list<Parameter> {
 		/**
 		Name of called program
 		**/
-		char *name;
+		const char *name;
 
 		/**
 		Read arguments into std::list of TParameters
 		**/
-		ArgumentReader(int argc, char **argv, const OptionList& opt_table) ATTRIBUTE_NONNULL_;
+		ArgumentReader(int argc, const char *const *argv, const OptionList& opt_table) ATTRIBUTE_NONNULL_;
 
 	private:
 		/**

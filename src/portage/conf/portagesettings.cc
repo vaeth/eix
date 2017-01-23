@@ -104,7 +104,7 @@ bool PortageSettings::grab_setmasks(const char *file, SetsIndex i, WordVec *cont
 /**
 Keys that should accumulate their content rathern then replace
 **/
-static const char *default_accumulating_keys[] = {
+static CONSTEXPR const char *default_accumulating_keys[] = {
 	"USE",
 	"USE_EXPAND*",
 	"CONFIG_*",
@@ -116,7 +116,7 @@ static const char *default_accumulating_keys[] = {
 /**
 Environment variables which should take effect before reading profiles
 **/
-static const char *test_in_env_early[] = {
+static CONSTEXPR const char *test_in_env_early[] = {
 	"PORTAGE_PROFILE",
 	"PORTAGE_REPOSITORIES",
 	"PORTDIR",
@@ -127,7 +127,7 @@ static const char *test_in_env_early[] = {
 /**
 Environment variables which should add/override all other settings
 **/
-static const char *test_in_env_late[] = {
+static CONSTEXPR const char *test_in_env_late[] = {
 	"USE",
 	"USE_EXPAND",
 	"USE_EXPAND_HIDDEN",
@@ -139,7 +139,7 @@ static const char *test_in_env_late[] = {
 	NULLPTR
 };
 
-void PortageSettings::override_by_env(const char **vars) {
+void PortageSettings::override_by_env(const char *const *vars) {
 	for(const char *var(*vars); likely(var != NULLPTR); var = *(++vars)) {
 		const char *e(getenv(var));
 		if(e == NULLPTR)
@@ -581,7 +581,7 @@ string PortageSettings::get_setnames(const Package *p, bool also_nonlocal) const
 }
 
 
-static const char *sets_exclude[] = { "..", "." , "system", "world", NULLPTR };
+static CONSTEXPR const char *sets_exclude[] = { "..", "." , "system", "world", NULLPTR };
 
 void PortageSettings::read_local_sets(const WordVec& dir_list) {
 	world_setslist_up_to_date = false;
@@ -906,7 +906,7 @@ bool PortageUserConfig::CheckFile(Package *p, const char *file, MaskList<Keyword
 	return CheckList(p, list, flag_double, flag_in);
 }
 
-static CONSTEXPR ArchUsed
+static CONSTEXPR const ArchUsed
 	ARCH_NOTHING        = 0,
 	ARCH_STABLE         = 1,
 	ARCH_UNSTABLE       = 2,

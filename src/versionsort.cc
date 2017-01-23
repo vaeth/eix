@@ -50,12 +50,11 @@ static const char *get_version(const char *v) {
 		r = new string(v);
 		return r->c_str();
 	}
-	char *s(ExplodeAtom::split_version(v));
-	if(unlikely(s == NULLPTR)) {
+	if(unlikely(!ExplodeAtom::split_version(v))) {
 		failparse(v);
 	}
-	r = new string(s);
-	free(s);
+	r = new string(ExplodeAtom::version);
+	ExplodeAtom::free_version();
 	return r->c_str();
 }
 
@@ -64,15 +63,14 @@ static const char *get_version(const char **name, const char *v) {
 	static string *n = NULLPTR;
 	delete r;
 	delete n;
-	char **s(ExplodeAtom::split(v));
-	if(unlikely(s == NULLPTR)) {
+	if(unlikely(!ExplodeAtom::split(v))) {
 		failparse(v);
 	}
-	n = new string(first_alnum(s[0]));
-	free(s[0]);
+	n = new string(first_alnum(ExplodeAtom::name));
+	ExplodeAtom::free_name();
 	*name = n->c_str();
-	r = new string(s[1]);
-	free(s[1]);
+	r = new string(ExplodeAtom::version);
+	ExplodeAtom::free_version();
 	return r->c_str();
 }
 

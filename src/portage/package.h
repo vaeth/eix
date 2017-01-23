@@ -90,7 +90,7 @@ class Package : public eix::ptr_list<Version> {
 		That means e.g. that version 0.2 is found in two overlays.
 		**/
 		typedef uint8_t Duplicates;
-		static CONSTEXPR Duplicates
+		static CONSTEXPR const Duplicates
 			DUP_NONE     = 0x00U,
 			DUP_SOME     = 0x01U,  ///< Duplicate versions are somewhere
 			DUP_OVERLAYS = 0x03U;  ///< Duplicate versions are both in overlays
@@ -103,7 +103,7 @@ class Package : public eix::ptr_list<Version> {
 		ExtendedVersion::Overlay largest_overlay;
 
 		typedef uint8_t Versioncollects;
-		static CONSTEXPR Versioncollects
+		static CONSTEXPR const Versioncollects
 			COLLECT_NONE                  = 0x00U,
 			COLLECT_HAVE_NONTRIVIAL_SLOTS = 0x01U,
 			COLLECT_HAVE_SAME_OVERLAY_KEY = 0x02U,

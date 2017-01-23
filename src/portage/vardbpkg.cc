@@ -18,6 +18,7 @@
 #include <string>
 
 #include "database/header.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -355,7 +356,7 @@ void VarDbPkg::readDepend(const Package& p, InstVersion *v, const DBHeader& head
 	depend[1] = v->depend.get_rdepend();
 	depend[2] = v->depend.get_pdepend();
 	depend[3] = v->depend.get_hdepend();
-	static const char *filenames[4] = {
+	static CONSTEXPR const char *filenames[4] = {
 		"/DEPEND",
 		"/RDEPEND",
 		"/PDEPEND",
@@ -397,22 +398,22 @@ void VarDbPkg::readCategory(const char *category) {
 	struct dirent *package_entry;  /* current package dirent */
 	/* Cycle through this category */
 	while(likely((package_entry = readdir(dir_category)) != NULLPTR)) {  // NOLINT(runtime/threadsafe_fn)
-		if(package_entry->d_name[0] == '.')
+		if(package_entry->d_name[0] == '.') {
 			continue;  /* Don't want dot-stuff */
-		char **aux(ExplodeAtom::split( package_entry->d_name));
-		if(aux == NULLPTR)
+		}
+		if(unlikely(!ExplodeAtom::split(package_entry->d_name))) {
 			continue;
+		}
 		string errtext;
 		InstVersion instver;
-		BasicVersion::ParseResult r(instver.parseVersion(aux[1], &errtext));
+		BasicVersion::ParseResult r(instver.parseVersion(ExplodeAtom::version, &errtext));
 		if(unlikely(r != BasicVersion::parsedOK)) {
 			cerr << errtext << endl;
 		}
 		if(likely(r != BasicVersion::parsedError)) {
-			(*category_installed)[aux[0]].push_back(instver);
+			(*category_installed)[ExplodeAtom::name].push_back(instver);
 		}
-		free(aux[0]);
-		free(aux[1]);
+		ExplodeAtom::free_split();
 	}
 	closedir(dir_category);
 	sort_installed(installed[category]);

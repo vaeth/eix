@@ -30,6 +30,7 @@ char *strndup(const char *s, size_t n) ATTRIBUTE_NONNULL_;
 #include <string>
 #include <vector>
 
+#include "eixTk/assert.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
@@ -75,23 +76,51 @@ Split names of Atoms in different ways.
 **/
 class ExplodeAtom {
 	public:
+		static const char *name;
+		static const char *version;
+
 		static const char *get_start_of_version(const char* str, bool allow_star) ATTRIBUTE_NONNULL_;
 
 		/**
 		Get the version-string of a Atom (e.g. get 1.2.3 from foobar-1.2.3).
+		@warn If successfull, the result is stored in ExplodeAtom::version and
+		must be freed with ExplodeAtom::free_version() before later calls.
 		**/
-		static char *split_version(const char* str) ATTRIBUTE_NONNULL_;
+		static bool split_version(const char* str) ATTRIBUTE_NONNULL_;
 
 		/**
 		Get the name-string of a Atom (e.g. get foobar from foobar-1.2.3).
+		@warn If successfull, the result is stored in ExplodeAtom::name and
+		must be freed with ExplodeAtom::free_name() before later calls.
 		**/
-		static char *split_name(const char* str) ATTRIBUTE_NONNULL_;
+		static bool split_name(const char* str) ATTRIBUTE_NONNULL_;
 
 		/**
 		Get name and version from a Atom (e.g. foobar and 1.2.3 from foobar-1.2.3).
-		@warn You'll get a pointer to a static array of 2 pointer to char.
+		@warn If successfull, the result is stored in ExplodeAtom::split_name and
+		must be freed with ExplodeAtom::free_split() before later calls.
 		**/
-		static char **split(const char* str) ATTRIBUTE_NONNULL_;
+		static bool split(const char* str) ATTRIBUTE_NONNULL_;
+
+		static void free_name() {
+			eix_assert_paranoic(name != NULLPTR);
+			free(const_cast<char *>(name));
+			eix_assert_paranoic((name = NULLPTR) == NULLPTR);
+		}
+
+		static void free_version() {
+			eix_assert_paranoic(version != NULLPTR);
+			free(const_cast<char *>(version));
+			eix_assert_paranoic((version = NULLPTR) == NULLPTR);
+		}
+
+		/**
+		A shortcut for calling free_name() and free_version()
+		**/
+		static void free_split() {
+			free_name();
+			free_version();
+		}
 };
 
 /**
@@ -368,7 +397,7 @@ template<typename T> inline static void make_vector(std::vector<T> *the_list, co
 /**
 Match str against a null-terminated list of patterns
 **/
-bool match_list(const char **str_list, const char *str);
+bool match_list(const char *const *str_list, const char *str);
 
 /**
 Match str against a lowercase pattern case-insensitively

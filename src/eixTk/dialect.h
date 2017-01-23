@@ -14,9 +14,9 @@
 // make the check_includes script happy: include "eixTk/dialect.h"
 
 #ifdef HAVE_CONSTEXPR
-#define CONSTEXPR constexpr const
+#define CONSTEXPR constexpr
 #else
-#define CONSTEXPR const
+#define CONSTEXPR
 #endif
 
 #ifdef HAVE_OVERRIDE

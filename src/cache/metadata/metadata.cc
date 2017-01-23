@@ -298,61 +298,58 @@ bool MetadataCache::readCategory(Category *cat) {
 		string neweststring;
 
 		/* Split string into package and version, and catch any errors. */
-		char **aux(ExplodeAtom::split(it->c_str()));
-		if(unlikely(aux == NULLPTR)) {
+		if(unlikely(!ExplodeAtom::split(it->c_str()))) {
 			m_error_callback(eix::format(_("cannot split \"%s\" into package and version")) % (*it));
 			++it;
 			continue;
 		}
 
 		/* Search for existing package */
-		Package *pkg(cat->findPackage(aux[0]));
+		Package *pkg(cat->findPackage(ExplodeAtom::name));
 
 		/* If none was found create one */
 		if(pkg == NULLPTR) {
-			pkg = cat->addPackage(m_catname, aux[0]);
+			pkg = cat->addPackage(m_catname, ExplodeAtom::name);
 		}
 
 		for(;;) {
 			/* Make version and add it to package. */
 			Version *version(new Version);
 			string errtext;
-			BasicVersion::ParseResult r(version->parseVersion(aux[1], &errtext));
+			BasicVersion::ParseResult r(version->parseVersion(ExplodeAtom::version, &errtext));
 			if(unlikely(r != BasicVersion::parsedOK)) {
 				m_error_callback(errtext);
 			}
 			if(unlikely(r == BasicVersion::parsedError)) {
 				delete version;
 			} else {
-				get_version_info(aux[0], aux[1], version);
+				get_version_info(ExplodeAtom::name, ExplodeAtom::version, version);
 
 				pkg->addVersion(version);
 				if(*(pkg->latest()) == *version) {
 					newest = version;
-					neweststring = aux[1];
+					neweststring = ExplodeAtom::version;
 				}
 			}
 
 			/* Free old split */
-			free(aux[0]);
-			free(aux[1]);
+			ExplodeAtom::free_split();
 
 			/* If this is the last file we break so we can get the full
 			 * information after this while-loop. If we still have more files
 			 * ahead we can just read the next file. */
-			if(++it == names.end())
+			if(++it == names.end()) {
 				break;
+			}
 
 			/* Split new filename into package and version, and catch any errors. */
-			aux = ExplodeAtom::split(it->c_str());
-			if(unlikely(aux == NULLPTR)) {
+			if(unlikely(!ExplodeAtom::split(it->c_str()))) {
 				m_error_callback(eix::format(_("cannot split \"%s\" into package and version")) % (*it));
 				++it;
 				break;
 			}
-			if(strcmp(aux[0], pkg->name.c_str())) {
-				free(aux[0]);
-				free(aux[1]);
+			if(strcmp(ExplodeAtom::name, pkg->name.c_str())) {
+				ExplodeAtom::free_split();
 				break;
 			}
 		}

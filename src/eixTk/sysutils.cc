@@ -131,7 +131,7 @@ bool get_mtime(time_t *t, const char *file) {
 @return mydate formatted according to locales and dateFormat
 **/
 const char *date_conv(const char *dateFormat, time_t mydate) {
-	static CONSTEXPR int max_datelen = 256;
+	static CONSTEXPR const int max_datelen = 256;
 	static char buffer[max_datelen];
 	string old_lcall = setlocale(LC_ALL, NULLPTR);
 	setlocale(LC_ALL, "");

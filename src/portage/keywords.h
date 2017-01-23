@@ -21,7 +21,7 @@
 class MaskFlags {
 	public:
 		typedef eix::UChar MaskType;
-		static CONSTEXPR MaskType
+		static CONSTEXPR const MaskType
 			MASK_NONE               = 0x00U,
 			MASK_PACKAGE            = 0x01U,
 			MASK_PROFILE            = 0x02U,
@@ -134,7 +134,7 @@ inline static bool operator!=(MaskFlags const& left, MaskFlags const& right) {
 class KeywordsFlags {
 	public:
 		typedef eix::UChar KeyType;
-		static CONSTEXPR KeyType
+		static CONSTEXPR const KeyType
 			KEY_EMPTY          = 0x00U,
 			KEY_STABLE         = 0x01U,  ///< stabilized
 			KEY_ARCHSTABLE     = 0x02U,  ///<  ARCH
@@ -255,7 +255,7 @@ inline static bool operator!=(const KeywordsFlags& left, const KeywordsFlags& ri
 class Keywords {
 	public:
 		typedef uint32_t Redundant;
-		static CONSTEXPR Redundant
+		static CONSTEXPR const Redundant
 			RED_NOTHING         = 0x000000U,  ///< None of the following
 			RED_DOUBLE          = 0x000001U,  ///< Same keyword twice
 			RED_DOUBLE_LINE     = 0x000002U,  ///< Same keyword line twice

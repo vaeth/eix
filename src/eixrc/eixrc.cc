@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -53,17 +54,6 @@ const EixRc::DelayvarFlags
 
 static void override_by_env(map<string, string> *m) ATTRIBUTE_NONNULL_;
 
-EixRcOption::EixRcOption(OptionType t, string name, string val, string desc) {
-	type = t;
-	key = name;
-	if(type == LOCAL) {
-		local_value = val;
-	} else {
-		value = val;
-		description = desc;
-	}
-}
-
 eix::SignedBool EixRc::getBoolText(const string& key, const char *text) {
 	const string& s((*this)[key]);
 	if(casecontains(s, text)) {
@@ -72,7 +62,7 @@ eix::SignedBool EixRc::getBoolText(const string& key, const char *text) {
 	return (istrue(s.c_str()) ? 1 : 0);
 }
 
-eix::TinySigned EixRc::getTinyTextlist(const string& key, const char **text) {
+eix::TinySigned EixRc::getTinyTextlist(const string& key, const char *const *text) {
 	const string& s((*this)[key]);
 	for(eix::TinySigned i(-1); likely(*text != NULLPTR); ++text, --i) {
 		if(casecontains(s, *text)) {
@@ -512,7 +502,7 @@ void EixRc::join_key(const string& key, set<string> *has_delayed, bool add_top_t
 
 	if(unlikely(add_top_to_defaults)) {
 		if(unlikely((exclude_defaults == NULLPTR) || (exclude_defaults->find(key) == exclude_defaults->end())))
-			defaults.push_back(EixRcOption(EixRcOption::LOCAL, key, *val, ""));
+			defaults.push_back(EixRcOption(key, *val));
 	}
 	join_key_rec(key, *val, has_delayed, exclude_defaults);
 }
@@ -536,17 +526,17 @@ void EixRc::join_key_rec(const string& key, const string& val, set<string> *has_
 		}
 		has_delayed->insert(key);
 		if(unlikely((varflags & DELAYVAR_STAR) != DELAYVAR_NONE)) {
-			static const char *prefixlist[] = {
+			static CONSTEXPR const char *prefixlist[] = {
 				EIX_VARS_PREFIX,
 				DIFF_VARS_PREFIX,
 				UPDATE_VARS_PREFIX,
 				DROP_VARS_PREFIX,
 				NULLPTR
 			};
-			for(const char **prefix(prefixlist);
+			for(const char *const *prefix = prefixlist;
 				*prefix != NULLPTR; ++prefix) {
 				join_key_if_new(string(*prefix) + varname,
-				has_delayed, exclude_defaults);
+					has_delayed, exclude_defaults);
 			}
 		} else {
 			join_key_if_new(varname, has_delayed, exclude_defaults);
@@ -555,19 +545,22 @@ void EixRc::join_key_rec(const string& key, const string& val, set<string> *has_
 }
 
 void EixRc::join_key_if_new(const string& key, set<string> *has_delayed, const set<string> *exclude_defaults) {
-	if(unlikely(main_map.find(key) == main_map.end()))
+	if(unlikely(main_map.find(key) == main_map.end())) {
 		join_key(key, has_delayed, true, exclude_defaults);
+	}
 }
 
 EixRc::DelayedType EixRc::find_next_delayed(const string& str, string::size_type *posref, string::size_type *length, string *varname, DelayvarFlags *varflags, string *append) {
 	string::size_type pos(*posref);
 	for(;; pos += 2) {
 		pos = str.find("%{", pos);
-		if(pos == string::npos)
+		if(pos == string::npos) {
 			return DelayedNotFound;
+		}
 		string::size_type i(pos + 2);
-		if(i >= str.length())
+		if(i >= str.length()) {
 			return DelayedNotFound;
+		}
 		DelayedType type;
 		char c(str[i++]);
 		bool findvar(true);
@@ -681,8 +674,9 @@ EixRc::DelayedType EixRc::find_next_delayed(const string& str, string::size_type
 
 void EixRc::modify_value(string *value, const string& key) {
 	if(*value == "/") {
-		if(prefix_keys.find(key) != prefix_keys.end())
+		if(prefix_keys.find(key) != prefix_keys.end()) {
 			value->clear();
+		}
 	}
 }
 
@@ -694,8 +688,9 @@ void EixRc::clear() {
 }
 
 void EixRc::addDefault(EixRcOption option) {
-	if(unlikely(option.type == EixRcOption::PREFIXSTRING))
+	if(unlikely(option.type == EixRcOption::PREFIXSTRING)) {
 		prefix_keys.insert(option.key);
+	}
 	modify_value(&(option.value), option.key);
 	defaults.push_back(option);
 }

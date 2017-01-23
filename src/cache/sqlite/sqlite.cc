@@ -67,7 +67,7 @@ int sqlite_callback(void *NotUsed ATTRIBUTE_UNUSED, int argc, char **argv, char 
 			% i % azColName[i] % welldefine(argv[i]);
 	}
 #else
-	SqliteCache::callback_arg->sqlite_callback_cpp(argc, const_cast<const char **>(argv), const_cast<const char **>(azColName));
+	SqliteCache::callback_arg->sqlite_callback_cpp(argc, const_cast<const char *const *>(argv), const_cast<const char *const *>(azColName));
 #endif
 	return 0;
 }
@@ -151,12 +151,13 @@ class TrueIndex : public TrueIndexMapper {
 			// 21 "_mtime_"
 		}
 
-		int calc(int argc, const char **azColName, SqliteCache::TrueIndexMap *trueindex) const ATTRIBUTE_NONNULL_ {
+		int calc(int argc, const char *const *azColName, SqliteCache::TrueIndexMap *trueindex) const ATTRIBUTE_NONNULL_ {
 			*trueindex = default_trueindex;
 			for(int i(0); i < argc; ++i) {
 				TrueIndexMapper::const_iterator it(find(azColName[i]));
-				if(it != end())
+				if(it != end()) {
 					(*trueindex)[it->second] = i;
+				}
 			}
 			int max_index(-1);
 			for(TrueIndexRes i(0); likely(i < TrueIndex::LAST); ++i) {
@@ -178,7 +179,7 @@ class TrueIndex : public TrueIndexMapper {
 			return max_index;
 		}
 
-		static const char *c_str(const char **argv, SqliteCache::TrueIndexMap *trueindex, const TrueIndexRes i) ATTRIBUTE_NONNULL((2)) {
+		static const char *c_str(const char *const *argv, SqliteCache::TrueIndexMap *trueindex, const TrueIndexRes i) ATTRIBUTE_NONNULL((2)) {
 			int t((*trueindex)[i]);
 			if(t < 0) {
 				return "";
@@ -189,7 +190,7 @@ class TrueIndex : public TrueIndexMapper {
 
 TrueIndex *SqliteCache::true_index = NULLPTR;
 
-void SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azColName) {
+void SqliteCache::sqlite_callback_cpp(int argc, const char *const *argv, const char *const *azColName) {
 	// If an earlier error occurred, we ignore later calls:
 	if(unlikely(sqlite_callback_error)) {
 		return;
@@ -237,23 +238,22 @@ void SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **
 	} else {
 		dest_cat = &((*packagetree)[catarg]);
 	}
-	char **aux(ExplodeAtom::split(name_ver.c_str()));
-	if(unlikely(aux == NULLPTR)) {
+	if(unlikely(!ExplodeAtom::split(name_ver.c_str()))) {
 		m_error_callback(eix::format(_("cannot split \"%s\" into package and version")) % name_ver);
 		return;
 	}
 	/* Search for existing package */
-	Package *pkg(dest_cat->findPackage(aux[0]));
+	Package *pkg(dest_cat->findPackage(ExplodeAtom::name));
 
 	/* If none was found create one */
 	if(pkg == NULLPTR) {
-		pkg = dest_cat->addPackage(catarg, aux[0]);
+		pkg = dest_cat->addPackage(catarg, ExplodeAtom::name);
 	}
 
 	/* Create a new version and add it to package */
 	Version *version(new Version);
 	string errtext;
-	BasicVersion::ParseResult r(version->parseVersion(aux[1], &errtext));
+	BasicVersion::ParseResult r(version->parseVersion(ExplodeAtom::version, &errtext));
 	if(unlikely(r != BasicVersion::parsedOK)) {
 		m_error_callback(errtext);
 	}
@@ -284,8 +284,7 @@ void SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **
 		}
 	}
 	/* Free old split */
-	free(aux[0]);
-	free(aux[1]);
+	ExplodeAtom::free_split();
 }
 
 bool SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category *cat) {

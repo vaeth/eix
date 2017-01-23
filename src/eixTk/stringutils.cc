@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/assert.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -47,6 +48,9 @@ const char *shellspecial(" \t\r\n\"'`${}()[]<>?*~;|&#");
 const char *doublequotes("\"$\\");
 
 StringHash *StringHash::comparison_this;
+
+const char *ExplodeAtom::name = NULLPTR;
+const char *ExplodeAtom::version = NULLPTR;
 
 locale localeC("C");
 
@@ -205,8 +209,9 @@ bool slot_subslot(const string& full, string *slot, string *subslot) {
 
 const char *ExplodeAtom::get_start_of_version(const char *str, bool allow_star) {
 	// There must be at least one symbol before the version:
-	if(unlikely(*(str++) == '\0'))
+	if(unlikely(*(str++) == '\0')) {
 		return NULLPTR;
+	}
 	const char *x(NULLPTR);
 	while(likely((*str != '\0') && (*str != ':') && (*str != '['))) {
 		if(unlikely(*str++ == '-')) {
@@ -219,34 +224,38 @@ const char *ExplodeAtom::get_start_of_version(const char *str, bool allow_star) 
 	return x;
 }
 
-char *ExplodeAtom::split_version(const char *str) {
+bool ExplodeAtom::split_version(const char *str) {
 	const char *x(get_start_of_version(str, false));
-	if(likely(x != NULLPTR))
-		return strdup(x);
-	return NULLPTR;
-}
-
-char *ExplodeAtom::split_name(const char *str) {
-	const char *x(get_start_of_version(str, false));
-	if(likely(x != NULLPTR)) {
-GCC_DIAG_OFF(sign-conversion)
-		return strndup(str, ((x - 1) - str));
-GCC_DIAG_ON(sign-conversion)
+	if(unlikely(x == NULLPTR)) {
+		return false;
 	}
-	return NULLPTR;
+	eix_assert_paranoic(version == NULLPTR);
+	version = strdup(x);
+	return true;
 }
 
-char **ExplodeAtom::split(const char *str) {
-	static char* out[2] = { NULLPTR, NULLPTR };
+bool ExplodeAtom::split_name(const char *str) {
 	const char *x(get_start_of_version(str, false));
-
-	if(unlikely(x == NULLPTR))
-		return NULLPTR;
+	if(unlikely(x == NULLPTR)) {
+		return false;
+	}
+	eix_assert_paranoic(name == NULLPTR);
 GCC_DIAG_OFF(sign-conversion)
-	out[0] = strndup(str, ((x - 1) - str));
+	name = strndup(str, ((x - 1) - str));
 GCC_DIAG_ON(sign-conversion)
-	out[1] = strdup(x);
-	return out;
+	return true;
+}
+
+bool ExplodeAtom::split(const char *str) {
+	const char *x(get_start_of_version(str, false));
+	if(unlikely(x == NULLPTR)) {
+		return false;
+	}
+GCC_DIAG_OFF(sign-conversion)
+	name = strndup(str, ((x - 1) - str));
+GCC_DIAG_ON(sign-conversion)
+	version = strdup(x);
+	return true;
 }
 
 string to_lower(const string& str) {
@@ -558,7 +567,7 @@ void StringHash::finalize() {
 	}
 }
 
-bool match_list(const char **str_list, const char *str) {
+bool match_list(const char *const *str_list, const char *str) {
 	if(str_list != NULLPTR) {
 		while(likely(*str_list != NULLPTR)) {
 			if(fnmatch(*(str_list++), str, 0) == 0) {

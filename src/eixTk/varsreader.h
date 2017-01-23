@@ -32,7 +32,7 @@ class VarsReader {
 		typedef my_map::const_iterator const_iterator;
 		typedef my_map::iterator iterator;
 		typedef uint16_t Flags;
-		static CONSTEXPR Flags
+		static CONSTEXPR const Flags
 			NONE                 = 0x0000U,  ///< Flag: No flags set; normal behavior.
 			ONLY_KEYWORDS_SLOT   = 0x0001U,  ///< Flag: Only read "KEYWORDS" and "SLOT" once, then stop the parser.
 			KEYWORDS_READ        = 0x0002U,  ///< Flag: Have already read "KEYWORDS" once.
@@ -105,7 +105,7 @@ class VarsReader {
 		/**
 		Set array of keys which values should be prepended to the new value.
 		**/
-		void accumulatingKeys(const char **keys) {
+		void accumulatingKeys(const char *const *keys) {
 			incremental_keys = keys;
 		}
 
@@ -403,7 +403,7 @@ class VarsReader {
 		/**
 		c-array of pattern for keys which values should be prepended to the new value
 		**/
-		const char **incremental_keys;
+		const char *const *incremental_keys;
 		/**
 		Mapping of key to value
 		**/

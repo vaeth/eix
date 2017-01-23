@@ -30,7 +30,7 @@ class ExtendedVersion : public BasicVersion {
 
 	private:
 		typedef eix::UChar HaveBinPkg;
-		static CONSTEXPR HaveBinPkg
+		static CONSTEXPR const HaveBinPkg
 			HAVEBINPKG_UNKNOWN = 0x00U,
 			HAVEBINPKG_TBZ_NO  = 0x01U,
 			HAVEBINPKG_TBZ_YES = 0x02U,
@@ -41,7 +41,7 @@ class ExtendedVersion : public BasicVersion {
 
 	public:
 		typedef uint16_t Restrict;
-		static CONSTEXPR Restrict  // order according to frequency...
+		static CONSTEXPR const Restrict  // order according to frequency...
 			RESTRICT_NONE           = 0x0000U,
 			RESTRICT_BINCHECKS      = 0x0001U,
 			RESTRICT_STRIP          = 0x0002U,
@@ -56,7 +56,7 @@ class ExtendedVersion : public BasicVersion {
 			RESTRICT_ALL            = 0x03FFU;
 
 		typedef eix::UChar Properties;
-		static CONSTEXPR Properties  // order according to frequency...
+		static CONSTEXPR const Properties  // order according to frequency...
 			PROPERTIES_NONE        = 0x00U,
 			PROPERTIES_INTERACTIVE = 0x01U,
 			PROPERTIES_LIVE        = 0x02U,

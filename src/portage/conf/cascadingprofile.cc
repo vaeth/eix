@@ -18,6 +18,7 @@
 
 #include "eixTk/assert.h"
 #include "eixTk/diagnostics.h"
+#include "eixTk/dialect.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -48,7 +49,7 @@ class ParseError;
 /**
 Exclude this files from listing of files in profile
 **/
-static const char *profile_exclude[] = { "parent", "..", "." , NULLPTR };
+static CONSTEXPR const char *const profile_exclude[] = { "parent", "..", "." , NULLPTR };
 
 /**
 Add all files from profile and its parents to m_profile_files

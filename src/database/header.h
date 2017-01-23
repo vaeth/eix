@@ -44,7 +44,7 @@ class DBHeader {
 			depend_hash;
 
 		typedef  eix::UNumber SaveBitmask;
-		static CONSTEXPR SaveBitmask
+		static CONSTEXPR const SaveBitmask
 			SAVE_BITMASK_NONE         = 0x00U,
 			SAVE_BITMASK_DEP          = 0x01U,
 			SAVE_BITMASK_REQUIRED_USE = 0x02U;
@@ -56,7 +56,7 @@ class DBHeader {
 		typedef  eix::UNumber DBVersion;
 
 		typedef  eix::UChar OverlayTest;
-		static CONSTEXPR OverlayTest
+		static CONSTEXPR const OverlayTest
 			OVTEST_NONE              = 0x00U,
 			OVTEST_SAVED_PORTDIR     = 0x01U,
 			OVTEST_PATH              = 0x02U,
@@ -66,13 +66,13 @@ class DBHeader {
 			OVTEST_NOT_SAVED_PORTDIR = OVTEST_PATH|OVTEST_LABEL|OVTEST_NUMBER,
 			OVTEST_ALL               = OVTEST_ALLPATH|OVTEST_LABEL|OVTEST_NUMBER;
 
-		static const char *magic;
+		static const char magic[];
 
 		/**
 		Current version of database-format and what we accept
 		**/
-		static CONSTEXPR DBVersion current = 37;
-		static const DBVersion accept[];
+		static CONSTEXPR const DBVersion current = 37;
+		static const DBHeader::DBVersion accept[];
 
 		/**
 		Version of the db.

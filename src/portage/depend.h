@@ -10,6 +10,8 @@
 
 #include <string>
 
+#include "eixTk/dialect.h"
+
 class Database;
 class DBHeader;
 class Version;
@@ -22,8 +24,8 @@ class Depend {
 		std::string m_depend, m_rdepend, m_pdepend, m_hdepend;
 		bool obsolete;
 
-		static const char c_depend[];
-		static const char c_rdepend[];
+		static CONSTEXPR const char c_depend[] = "${DEPEND}";
+		static CONSTEXPR const char c_rdepend[] = "${RDEPEND}";
 
 		static std::string subst(const std::string& in, const std::string& text, bool obs);
 

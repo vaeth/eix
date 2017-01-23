@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include "database/header.h"
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
@@ -54,7 +55,7 @@ void PrintXml::clear(EixRc *eixrc) {
 	} else {
 		dateformat = (*eixrc)["XML_DATE"];
 		print_overlay = eixrc->getBool("XML_OVERLAY");
-		static const char *values[] = {
+		static CONSTEXPR const char *values[] = {
 			"none",
 			"both",
 			"effective*",

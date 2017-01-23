@@ -198,7 +198,7 @@ class PortageSettings : public std::map<std::string, std::string> {
 		**/
 		CascadingProfile  *profile;
 
-		void override_by_env(const char **vars) ATTRIBUTE_NONNULL_;
+		void override_by_env(const char *const *vars) ATTRIBUTE_NONNULL_;
 		void read_config(const std::string& name, const std::string& prefix);
 
 		void addOverlayProfiles(CascadingProfile *p) const ATTRIBUTE_NONNULL_;

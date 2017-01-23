@@ -415,18 +415,18 @@ void VarsReader::EVAL_READ() {
 /**
 Backslash escapes supported by portage.
 **/
-static CONSTEXPR char ESC_A = 007;
-static CONSTEXPR char ESC_B = 010;
-static CONSTEXPR char ESC_E = 033;
-static CONSTEXPR char ESC_N = 012;
-static CONSTEXPR char ESC_R = 015;
-static CONSTEXPR char ESC_T = 011;
-static CONSTEXPR char ESC_V = 013;
+static CONSTEXPR const char ESC_A = 007;
+static CONSTEXPR const char ESC_B = 010;
+static CONSTEXPR const char ESC_E = 033;
+static CONSTEXPR const char ESC_N = 012;
+static CONSTEXPR const char ESC_R = 015;
+static CONSTEXPR const char ESC_T = 011;
+static CONSTEXPR const char ESC_V = 013;
 /**
 and helper ones.
 **/
-static CONSTEXPR char ESC_BS = '\\';
-static CONSTEXPR char ESC_SP = ' ';
+static CONSTEXPR const char ESC_BS = '\\';
+static CONSTEXPR const char ESC_SP = ' ';
 
 /**
 Read a value enclosed in single quotes (').

@@ -162,7 +162,7 @@ These variables and function are only supposed to be used from
 pushback_files. We cannot use a class here, because scandir wants a
 "blank" selector-function
 **/
-static const char **pushback_files_exclude;
+static const char *const *pushback_files_exclude;
 static bool pushback_files_no_hidden;
 static size_t pushback_files_only_type;
 static const string *pushback_files_dir_path;  // defined if pushback_files_only_type is nonzero
@@ -185,7 +185,7 @@ static int pushback_files_selector(SCANDIR_ARG3 dir_entry) {
 	}
 	if(pushback_files_exclude) {
 		// Look if it's in exclude
-		for(const char **p(pushback_files_exclude); likely(*p != NULLPTR); ++p) {
+		for(const char *const *p(pushback_files_exclude); likely(*p != NULLPTR); ++p) {
 			if(unlikely(strcmp(*p, dir_entry->d_name) == 0)) {
 				return 0;
 			}
@@ -223,7 +223,7 @@ char * in given exlude list.
 @param full_path return full pathnames
 @return true if everything is ok
 **/
-bool pushback_files(const string& dir_path, WordVec *into, const char *exclude[], unsigned char only_type, bool no_hidden, bool full_path) {
+bool pushback_files(const string& dir_path, WordVec *into, const char *const exclude[], unsigned char only_type, bool no_hidden, bool full_path) {
 	pushback_files_exclude = exclude;
 	pushback_files_no_hidden = no_hidden;
 	pushback_files_only_type = only_type;

@@ -40,14 +40,17 @@ const DBHeader::OverlayTest
 const DBHeader::DBVersion DBHeader::current;
 
 /**
-Which version we do accept. The list must end with 0
+Which version of database-format we can read. The list must end with 0.
+It should be linear, ordered downward (we check successively, and
+practically sure the first match should be it; if not, the second.
+The remainder is meant for museum systems.)
 **/
 const DBHeader::DBVersion DBHeader::accept[] = {
 	DBHeader::current, 36, 35, 34, 33, 32, 31,
 	0
 };
 
-const char *DBHeader::magic = "eix\n";
+const char DBHeader::magic[] = "eix\n";
 
 /**
 Get overlay for key from table

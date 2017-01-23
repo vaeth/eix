@@ -41,7 +41,7 @@ typedef map<string, ColorType> ColorMap;
 
 static ColorMap *static_color_map = NULLPTR;
 
-static CONSTEXPR ColorType
+static CONSTEXPR const ColorType
 	acNone       = 0,
 	amNone       = 50,
 	amBold       = 1,
@@ -155,7 +155,7 @@ bool AnsiColor::initcolor(const string& str, string *errtext) {
 					col += (bgFirst - fgFirst);
 				}
 			}
-			static CONSTEXPR unsigned int kLen = 10;
+			static CONSTEXPR const unsigned int kLen = 10;
 			char buf[kLen];
 			if(iscol < 0) {
 				snprintf(buf, kLen, ";%d;5;%s", static_cast<int>(col), curr.c_str());

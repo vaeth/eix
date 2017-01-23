@@ -45,7 +45,7 @@ class PackageTest {
 
 	public:
 		typedef uint32_t MatchField;
-		static CONSTEXPR MatchField
+		static CONSTEXPR const MatchField
 			NONE          = 0x00000U,  ///< Search in name
 			NAME          = 0x00001U,  ///< Search in name
 			DESCRIPTION   = 0x00002U,  ///< Search in description
@@ -81,7 +81,7 @@ class PackageTest {
 		};
 
 		typedef uint8_t TestInstalled;
-		static CONSTEXPR TestInstalled
+		static CONSTEXPR const TestInstalled
 			INS_NONE        = 0x00U,
 			INS_NONEXISTENT = 0x01U,  ///< Test for nonexistent installed packages
 			INS_OVERLAY     = 0x02U,  ///< Test for nonexistent overlays of installed packages
@@ -89,7 +89,7 @@ class PackageTest {
 			INS_SOME        = INS_NONEXISTENT|INS_OVERLAY|INS_MASKED;
 
 		typedef uint8_t TestStability;
-		static CONSTEXPR TestStability
+		static CONSTEXPR const TestStability
 			STABLE_NONE         = 0x00U,
 			STABLE_FULL         = 0x01U,  ///< Test for stable keyword
 			STABLE_TESTING      = 0x02U,  ///< Test for testing keyword

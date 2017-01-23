@@ -256,7 +256,7 @@ void EbuildExec::calc_environment(const char *name, const string& dir, const Pac
 	c_env[i] = NULLPTR;
 }
 
-static CONSTEXPR int EXECLE_FAILED = 127;
+static CONSTEXPR const int EXECLE_FAILED = 127;
 
 string *EbuildExec::make_cachefile(const char *name, const string& dir, const Package& package, const Version& version, const string& eapi) {
 	if(unlikely(!calc_settings())) {
@@ -366,7 +366,7 @@ bool EbuildExec::portageq(std::string *result, const char *var) const {
 		_exit(EXECLE_FAILED);
 	}
 	close(fds[1]);
-	static CONSTEXPR unsigned int kSize = 8000;
+	static CONSTEXPR const unsigned int kSize = 8000;
 	char buf[kSize];
 	size_t curr;
 	string res;

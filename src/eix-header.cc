@@ -38,7 +38,7 @@ class OverlayOption;
 typedef list<OverlayOption> OverlayOptionList;
 
 typedef eix::TinyUnsigned PrintOverlayMode;
-static CONSTEXPR PrintOverlayMode
+static CONSTEXPR const PrintOverlayMode
 	PRINT_OVERLAY_NONE  = 0x00,
 	PRINT_OVERLAY_LABEL = 0x01,
 	PRINT_OVERLAY_PATH  = 0x02,

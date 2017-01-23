@@ -294,8 +294,7 @@ void ParseCache::readPackage(Category *cat, const string& pkg_name, const string
 		}
 
 		/* Check if we can split it */
-		char *ver(ExplodeAtom::split_version(fileit->substr(0, pos).c_str()));
-		if(unlikely(ver == NULLPTR)) {
+		if(unlikely(!ExplodeAtom::split_version(fileit->substr(0, pos).c_str()))) {
 			m_error_callback(eix::format(_("cannot split filename of ebuild %s/%s")) %
 				directory_path % (*fileit));
 			continue;
@@ -304,7 +303,7 @@ void ParseCache::readPackage(Category *cat, const string& pkg_name, const string
 		/* Make version and add it to package. */
 		Version *version(new Version);
 		string errtext;
-		BasicVersion::ParseResult r(version->parseVersion(ver, &errtext));
+		BasicVersion::ParseResult r(version->parseVersion(ExplodeAtom::version, &errtext));
 		if(unlikely(r != BasicVersion::parsedOK)) {
 			m_error_callback(errtext);
 		}
@@ -328,7 +327,7 @@ void ParseCache::readPackage(Category *cat, const string& pkg_name, const string
 		time_t ebuild_time;
 		FurtherCaches::const_iterator it(further.begin());
 		for(; likely(it != further.end()); ++it) {
-			const char *s((*it)->get_md5sum(pkg_name.c_str(), ver));
+			const char *s((*it)->get_md5sum(pkg_name.c_str(), ExplodeAtom::version));
 			if(s != NULLPTR) {
 				if(verify_md5sum(full_path.c_str(), s)) {
 					break;
@@ -336,7 +335,7 @@ void ParseCache::readPackage(Category *cat, const string& pkg_name, const string
 				continue;
 			}
 			time_t t;
-			if((*it)->get_time(&t, pkg_name.c_str(), ver)) {
+			if((*it)->get_time(&t, pkg_name.c_str(), ExplodeAtom::version)) {
 				if(!know_ebuild_time) {
 					know_ebuild_time = true;
 					have_ebuild_time = get_mtime(&ebuild_time, full_path.c_str());
@@ -357,14 +356,14 @@ void ParseCache::readPackage(Category *cat, const string& pkg_name, const string
 					m_catname % pkg_name % version->getFull() %
 					(*it)->getType());
 			}
-			(*it)->get_version_info(pkg_name.c_str(), ver, version);
+			(*it)->get_version_info(pkg_name.c_str(), ExplodeAtom::version, version);
 			if(read_onetime_info) {
-				(*it)->get_common_info(pkg_name.c_str(), ver, pkg);
+				(*it)->get_common_info(pkg_name.c_str(), ExplodeAtom::version, pkg);
 				have_onetime_info = true;
 			}
 		}
 
-		free(ver);
+		ExplodeAtom::free_version();
 	}
 
 	if(have_onetime_info) {
