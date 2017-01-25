@@ -340,7 +340,7 @@ bool MetadataCache::readCategory(Category *cat) {
 			}
 
 			/* Split new filename into package and version, and catch any errors. */
-			if(unlikely(!ExplodeAtom::split_name(&curr_name, it->c_str()))) {
+			if(unlikely(!ExplodeAtom::split(&curr_name, &curr_version, it->c_str()))) {
 				m_error_callback(eix::format(_("cannot split \"%s\" into package and version")) % (*it));
 				++it;
 				break;
