@@ -1180,6 +1180,26 @@ dnl		AC_DEFINE([ASSIGN_MOVE_DEFAULT], [1],
 dnl			[Define if C++ dialect supports assigning default move constructor])],
 dnl		[MV_MSG_RESULT([no])])
 
+# Check if array class can be used
+AC_MSG_CHECKING([whether array class can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+#include <array>
+class T {
+public:
+	std::array<int, 5> a;
+	T() {
+		a.fill(4);
+	}
+};
+	]], [[
+T a;
+return (a.a[4] == 4) ? 0 : 1;
+		]])],
+		[MV_MSG_RESULT([yes])
+		AC_DEFINE([HAVE_ARRAY_CLASS], [1],
+			[Define if C++ dialect supports array class])],
+		[MV_MSG_RESULT([no])])
+
 # What about sqlite?
 AC_MSG_CHECKING([whether sqlite should be used])
 AS_VAR_SET([support_sqlite], [false])

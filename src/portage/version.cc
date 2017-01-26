@@ -145,8 +145,9 @@ void IUseSet::insert(const IUse& iuse) {
 	}
 	IUse::Flags oriflags(it->flags);
 	IUse::Flags newflags(oriflags | (iuse.flags));
-	if(newflags == oriflags)
+	if(newflags == oriflags) {
 		return;
+	}
 	m_iuse.erase(it);
 	m_iuse.insert(IUse(iuse.name(), newflags));
 }
@@ -157,6 +158,30 @@ const Version::EffectiveState
 	Version::EFFECTIVE_UNUSED;
 
 bool Version::use_required_use;
+
+#ifdef HAVE_ARRAY_CLASS
+Version::Version() :
+	effective_state(EFFECTIVE_UNUSED) {
+//	saved_keywords.fill(KeywordsFlags());
+	have_saved_keywords.fill(false);
+//	saved_masks.fill(MaskFlags());
+	have_saved_masks.fill(false);
+//	saved_effective.fill("");
+//	saved_accepted.fill("");
+	states_effective.fill(EFFECTIVE_UNSAVED);
+}
+#else
+Version::Version() :
+	saved_keywords(SAVEKEY_SIZE),
+	have_saved_keywords(SAVEKEY_SIZE, false),
+	saved_masks(SAVEMASK_SIZE),
+	have_saved_masks(SAVEMASK_SIZE, false),
+	saved_effective(SAVEEFFECTIVE_SIZE),
+	saved_accepted(SAVEEFFECTIVE_SIZE),
+	states_effective(SAVEEFFECTIVE_SIZE, EFFECTIVE_UNSAVED),
+	effective_state(EFFECTIVE_UNUSED) {
+}
+#endif
 
 void Version::modify_effective_keywords(const string& modify_keys) {
 	if(effective_state == EFFECTIVE_UNUSED) {

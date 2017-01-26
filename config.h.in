@@ -94,6 +94,9 @@
 /* Define to 1 if _Pragma GCC diagnostic can be used everywhere */
 #undef FULL_GCC_DIAG_PRAGMA
 
+/* Define if C++ dialect supports array class */
+#undef HAVE_ARRAY_CLASS
+
 /* Define to 1 if you have the `atoi' function. */
 #undef HAVE_ATOI
 

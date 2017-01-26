@@ -11,6 +11,9 @@
 #define SRC_PORTAGE_VERSION_H_ 1
 
 #include <algorithm>
+#ifdef HAVE_ARRAY_CLASS
+#include <array>
+#endif
 #include <set>
 #include <string>
 #include <vector>
@@ -130,13 +133,23 @@ class Version : public ExtendedVersion, public Keywords {
 			EFFECTIVE_USED    = 1,
 			EFFECTIVE_UNUSED  = 2;
 
-		std::vector<KeywordsFlags> saved_keywords;
-		std::vector<bool>          have_saved_keywords;
-		std::vector<MaskFlags>     saved_masks;
-		std::vector<bool>          have_saved_masks;
-		std::vector<std::string>   saved_effective;
-		std::vector<std::string>   saved_accepted;
+#ifdef HAVE_ARRAY_CLASS
+		std::array<KeywordsFlags, SAVEKEY_SIZE>      saved_keywords;
+		std::array<bool, SAVEKEY_SIZE>               have_saved_keywords;
+		std::array<MaskFlags, SAVEMASK_SIZE>         saved_masks;
+		std::array<bool, SAVEEFFECTIVE_SIZE>         have_saved_masks;
+		std::array<std::string, SAVEEFFECTIVE_SIZE>  saved_effective;
+		std::array<std::string, SAVEEFFECTIVE_SIZE>  saved_accepted;
+		std::array<EffectiveState, EFFECTIVE_UNUSED> states_effective;
+#else
+		std::vector<KeywordsFlags>  saved_keywords;
+		std::vector<bool>           have_saved_keywords;
+		std::vector<MaskFlags>      saved_masks;
+		std::vector<bool>           have_saved_masks;
+		std::vector<std::string>    saved_effective;
+		std::vector<std::string>    saved_accepted;
 		std::vector<EffectiveState> states_effective;
+#endif
 
 		typedef std::vector<SetsIndex> SetsIndizes;
 		SetsIndizes sets_indizes;
@@ -149,16 +162,7 @@ class Version : public ExtendedVersion, public Keywords {
 
 		std::string required_use;
 
-		Version() :
-			saved_keywords(SAVEKEY_SIZE, KeywordsFlags()),
-			have_saved_keywords(SAVEKEY_SIZE, false),
-			saved_masks(SAVEMASK_SIZE, MaskFlags()),
-			have_saved_masks(SAVEMASK_SIZE, false),
-			saved_effective(SAVEEFFECTIVE_SIZE, ""),
-			saved_accepted(SAVEEFFECTIVE_SIZE, ""),
-			states_effective(SAVEEFFECTIVE_SIZE, EFFECTIVE_UNSAVED),
-			effective_state(EFFECTIVE_UNUSED) {
-		}
+		Version();
 
 		void save_keyflags(SavedKeyIndex i) {
 			have_saved_keywords[i] = true;
