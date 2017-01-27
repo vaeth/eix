@@ -270,7 +270,7 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 	version->set_properties(props);
 	version->set_iuse(iuse);
 	version->set_required_use(required_use);
-	pkg->addVersion(version);
+	pkg->addVersionFinalize(version);
 }
 
 void ParseCache::readPackage(Category *cat, const string& pkg_name, const string& directory_path, const WordVec& files) {
@@ -311,6 +311,7 @@ void ParseCache::readPackage(Category *cat, const string& pkg_name, const string
 			continue;
 		}
 		version->overlay_key = m_overlay_key;
+		pkg->addVersionStart(version);
 
 		string full_path(directory_path + '/' + (*fileit));
 

@@ -229,9 +229,26 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 		~Package();
 
 		/**
+		Adds a version to "the versions" list,
+		updating have_duplicate_versions.
+		Only BasicVersion and overlay needs to be filled here.
+		You must call addVersionFinalize() after filling
+		the remaining data
+		**/
+		void addVersionStart(Version *version) ATTRIBUTE_NONNULL_;
+
+		/**
+		Finishes addVersionStart() after the remaining data have been filled
+		**/
+		void addVersionFinalize(Version *version) ATTRIBUTE_NONNULL_;
+
+		/**
 		Add a version to "the versions" list.
 		**/
-		void addVersion(Version *version) ATTRIBUTE_NONNULL_;
+		void addVersion(Version *version) ATTRIBUTE_NONNULL_ {
+			addVersionStart(version);
+			addVersionFinalize(version);
+		}
 
 		/**
 		Call this after modifying system or world state of versions.
@@ -504,14 +521,6 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 		**/
 		void defaults();
 
-		/**
-		Adds a version to "the versions" list,
-		updating have_duplicate_versions.
-		Only BasicVersion and overlay needs to be filled here.
-		You must call addVersionFinalize() after filling
-		the remaining data
-		**/
-		void addVersionStart(Version *version);
 };
 
 class PackageSave {

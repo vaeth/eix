@@ -100,8 +100,7 @@ void Package::collect_iuse(Version *version) {
 /**
 Finishes addVersionStart() after the remaining data have been filled
 **/
-void Package::addVersion(Version *version) {
-	addVersionStart(version);
+void Package::addVersionFinalize(Version *version) {
 	ExtendedVersion::Overlay key(version->overlay_key);
 
 	if(key == 0) {
