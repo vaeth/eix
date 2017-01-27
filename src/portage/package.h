@@ -208,7 +208,7 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 #ifndef HAVE_ARRAY_CLASS
 			: saved_collects(Version::SAVEMASK_SIZE, MaskFlags(MaskFlags::MASK_NONE))
 #endif
-		{
+		{  // NOLINT(whitespace/braces)
 			defaults();
 		}
 
@@ -520,7 +520,6 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 		Default constructor
 		**/
 		void defaults();
-
 };
 
 class PackageSave {
