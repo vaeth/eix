@@ -185,7 +185,6 @@ void ParseCache::set_checking(string *str, const char *item, const VarsReader& e
 }
 
 void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool read_onetime_info, bool *have_onetime_info, Package *pkg, Version *version) {
-	version->overlay_key = m_overlay_key;
 	string keywords, restr, props, iuse, required_use, slot, eapi;
 	bool ok(try_parse);
 	if(ok || ebuild_sh) {
@@ -271,7 +270,7 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 	version->set_properties(props);
 	version->set_iuse(iuse);
 	version->set_required_use(required_use);
-	pkg->addVersionFinalize(version);
+	pkg->addVersion(version);
 }
 
 void ParseCache::readPackage(Category *cat, const string& pkg_name, const string& directory_path, const WordVec& files) {
@@ -311,7 +310,7 @@ void ParseCache::readPackage(Category *cat, const string& pkg_name, const string
 			delete version;
 			continue;
 		}
-		pkg->addVersionStart(version);
+		version->overlay_key = m_overlay_key;
 
 		string full_path(directory_path + '/' + (*fileit));
 
