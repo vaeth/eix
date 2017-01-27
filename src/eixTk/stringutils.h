@@ -516,11 +516,8 @@ Make a vector from a set
 **/
 template<typename T> inline static void make_vector(std::vector<T> *the_list, const std::set<T>& the_set) {
 	the_list->clear();
-	for(typename std::set<T>::const_iterator it(the_set.begin()),
-			it_end(the_set.end());
-		likely(it != it_end); ++it) {
-		the_list->push_back(*it);
-	}
+	the_list->reserve(the_set.size());
+	the_list->insert(the_list->end(), the_set.begin(), the_set.end());
 }
 
 /**
@@ -528,6 +525,7 @@ Make a vector from map->first
 **/
 template<typename T, typename Y> inline static void make_vector(std::vector<T> *the_list, const std::map<T, Y>& the_map) {
 	the_list->clear();
+	the_list->reserve(the_map.size());
 	for(typename std::map<T, Y>::const_iterator it(the_map.begin()),
 			it_end(the_map.end());
 		likely(it != it_end); ++it) {

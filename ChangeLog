@@ -13,6 +13,7 @@
 	  unexpected copies: https://forums.gentoo.org/viewtopic-t-1057674.html
 	- internal: Finally implement ExplodeAtom in a sane manner
 	- internal: Use array class if available (might require C++11)
+	- internal: Use reserve() (when it presumably really optimizes)
 
 *eix-0.32.4
 	Martin Väth <martin at mvath.de>:
