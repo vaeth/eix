@@ -7,18 +7,20 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
-#ifndef SRC_EIXTK_AUTO_LIST_H_
-#define SRC_EIXTK_AUTO_LIST_H_ 1
+#ifndef SRC_EIXTK_AUTO_ARRAY_H_
+#define SRC_EIXTK_AUTO_ARRAY_H_ 1
 
 #include "eixTk/null.h"
 
+// Make check_includes.sh happy: include "eixTk/auto_array.h"
+
 namespace eix {
-template<typename m_Type> class auto_list {
+template<typename m_Type> class auto_array {
 	public:
-		explicit auto_list(m_Type *p) : m_p(p) {
+		explicit auto_array(m_Type *p) : m_p(p) {
 		}
 
-		~auto_list() {
+		~auto_array() {
 			if(m_p != NULLPTR) {
 				delete[] m_p;
 			}
@@ -33,4 +35,4 @@ template<typename m_Type> class auto_list {
 	};
 }  // namespace eix
 
-#endif  // SRC_EIXTK_AUTO_LIST_H_
+#endif  // SRC_EIXTK_AUTO_ARRAY_H_

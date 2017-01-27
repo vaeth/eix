@@ -162,12 +162,8 @@ bool Version::use_required_use;
 #ifdef HAVE_ARRAY_CLASS
 Version::Version() :
 	effective_state(EFFECTIVE_UNUSED) {
-//	saved_keywords.fill(KeywordsFlags());
 	have_saved_keywords.fill(false);
-//	saved_masks.fill(MaskFlags());
 	have_saved_masks.fill(false);
-//	saved_effective.fill("");
-//	saved_accepted.fill("");
 	states_effective.fill(EFFECTIVE_UNSAVED);
 }
 #else

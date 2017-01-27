@@ -10,11 +10,12 @@
 #define SRC_OUTPUT_PRINT_XML_H_ 1
 
 #include <string>
+#include <vector>
 
 #include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/null.h"
-#include "eixTk/ptr_list.h"
+#include "eixTk/ptr_container.h"
 #include "portage/package.h"
 
 class EixRc;
@@ -37,7 +38,8 @@ class PrintXml {
 		std::string portdir;
 		std::string dateformat;
 
-		eix::ptr_list<Package>::size_type count;
+		typedef eix::ptr_container<std::vector<Package *> > PackageList;
+		PackageList::size_type count;
 		std::string curcat;
 
 		void clear(EixRc *eixrc);

@@ -14,9 +14,11 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <algorithm>
 #include <iostream>
 #include <map>
 #include <string>
+#include <vector>
 
 #include "database/header.h"
 #include "database/io.h"
@@ -32,7 +34,7 @@
 #include "eixTk/null.h"
 #include "eixTk/outputstring.h"
 #include "eixTk/parseerror.h"
-#include "eixTk/ptr_list.h"
+#include "eixTk/ptr_container.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/utils.h"
@@ -63,10 +65,13 @@ template<typename m_Type> class MaskList;
 
 using std::map;
 using std::string;
+using std::vector;
 
 using std::cerr;
 using std::cout;
 using std::endl;
+
+typedef eix::ptr_container<vector<Package *> > PackageList;
 
 static void dump_help();
 static bool opencache(Database *db, const char *filename, const char *tooltext) ATTRIBUTE_NONNULL_;
@@ -76,10 +81,10 @@ static void set_format(EixRc *rc) ATTRIBUTE_NONNULL_;
 static void setup_defaults(EixRc *rc, bool is_tty) ATTRIBUTE_NONNULL_;
 static bool is_current_dbversion(const char *filename, const char *tooltext) ATTRIBUTE_NONNULL_;
 static void print_wordvec(const WordVec& vec);
-static void print_unused(const string& filename, const string& excludefiles, const eix::ptr_list<Package>& packagelist, bool test_empty);
-static void print_removed(const string& dirname, const string& excludefiles, const eix::ptr_list<Package>& packagelist);
-inline static void print_unused(const string& filename, const string& excludefiles, const eix::ptr_list<Package>& packagelist);
-inline static void print_unused(const string& filename, const string& excludefiles, const eix::ptr_list<Package>& packagelist) {
+static void print_unused(const string& filename, const string& excludefiles, const PackageList& packagelist, bool test_empty);
+static void print_removed(const string& dirname, const string& excludefiles, const PackageList& packagelist);
+inline static void print_unused(const string& filename, const string& excludefiles, const PackageList& packagelist);
+inline static void print_unused(const string& filename, const string& excludefiles, const PackageList& packagelist) {
 	print_unused(filename, excludefiles, packagelist, false);
 }
 
@@ -845,8 +850,8 @@ int run_eix(int argc, char** argv) {
 	MatchTree *matchtree = new MatchTree(eixrc.getBool("DEFAULT_IS_OR"));
 	parse_cli(matchtree, &eixrc, &varpkg_db, &portagesettings, format, &stability, &header, parse_error, &marked_list, argreader);
 
-	eix::ptr_list<Package> matches;
-	eix::ptr_list<Package> all_packages; {
+	PackageList matches;
+	PackageList all_packages; {
 		PackageReader reader(&db, header, &portagesettings);
 		bool add_rest(false);
 		while(likely(reader.next())) {
@@ -944,7 +949,7 @@ int run_eix(int argc, char** argv) {
 
 	/* Sort the found matches by rating */
 	if(unlikely(FuzzyAlgorithm::sort_by_levenshtein())) {
-		matches.sort(FuzzyAlgorithm::compare);
+		std::sort(matches.begin(), matches.end(), FuzzyAlgorithm::compare);
 	}
 
 	format->set_marked_list(marked_list);
@@ -954,7 +959,7 @@ int run_eix(int argc, char** argv) {
 	bool need_overlay_table(false);
 	PrintFormat::OverlayUsed overlay_used(header.countOverlays(), false);
 	format->set_overlay_used(&overlay_used, &need_overlay_table);
-	eix::ptr_list<Package>::size_type count(0);
+	PackageList::size_type count(0);
 	PrintXml *print_xml(NULLPTR);
 	if(rc_options.xml || rc_options.be_quiet) {
 		overlay_mode = mode_list_none;
@@ -969,7 +974,7 @@ int run_eix(int argc, char** argv) {
 	bool reached_limit(false), over_limit(false);
 	string limit_var(rc_options.compact_output ? "EIX_LIMIT_COMPACT" : "EIX_LIMIT");
 	eix::Treesize limit(is_tty ? eixrc.getInteger(limit_var) : 0);
-	for(eix::ptr_list<Package>::iterator it(matches.begin());
+	for(PackageList::iterator it(matches.begin());
 		likely(it != matches.end()); ++it) {
 		stability.set_stability(*it);
 
@@ -1026,7 +1031,7 @@ int run_eix(int argc, char** argv) {
 			}
 		}
 		format->set_overlay_translations(&overlay_num);
-		for(eix::ptr_list<Package>::iterator it(matches.begin());
+		for(PackageList::iterator it(matches.begin());
 			likely(it != matches.end()); ++it) {
 			if(format->print(*it, &header, &varpkg_db, &portagesettings, &stability, reached_limit)) {
 				have_printed = true;
@@ -1138,7 +1143,7 @@ static void print_wordvec(const WordVec& vec) {
 	cout << "--\n";
 }
 
-static void print_unused(const string& filename, const string& excludefiles, const eix::ptr_list<Package>& packagelist, bool test_empty) {
+static void print_unused(const string& filename, const string& excludefiles, const PackageList& packagelist, bool test_empty) {
 	WordVec unused;
 	LineVec lines;
 	WordSet excludes;
@@ -1185,7 +1190,7 @@ static void print_unused(const string& filename, const string& excludefiles, con
 			parse_error->output(filename, lines.begin(), i, errtext);
 			continue;
 		}
-		eix::ptr_list<Package>::const_iterator pi(packagelist.begin());
+		PackageList::const_iterator pi(packagelist.begin());
 		for( ; likely(pi != packagelist.end()); ++pi) {
 			if(m.ismatch(**pi)) {
 				break;
@@ -1210,11 +1215,11 @@ static void print_unused(const string& filename, const string& excludefiles, con
 	print_wordvec(unused);
 }
 
-static void print_removed(const string& dirname, const string& excludefiles, const eix::ptr_list<Package>& packagelist) {
+static void print_removed(const string& dirname, const string& excludefiles, const PackageList& packagelist) {
 	/* For faster testing, we build a category->name set */
 	typedef map<string, WordSet> CatName;
 	CatName cat_name;
-	for(eix::ptr_list<Package>::const_iterator pit(packagelist.begin());
+	for(PackageList::const_iterator pit(packagelist.begin());
 		likely(pit != packagelist.end()); ++pit) {
 		cat_name[pit->category].insert(pit->name);
 	}

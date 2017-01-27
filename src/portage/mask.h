@@ -11,10 +11,11 @@
 #define SRC_PORTAGE_MASK_H_ 1
 
 #include <string>
+#include <vector>
 
 #include "eixTk/eixint.h"
 #include "eixTk/null.h"
-#include "eixTk/ptr_list.h"
+#include "eixTk/ptr_container.h"
 #include "eixTk/stringlist.h"
 #include "portage/basicversion.h"
 #include "portage/keywords.h"
@@ -83,7 +84,7 @@ class Mask : public BasicVersion {
 		bool test(const ExtendedVersion *ev) const ATTRIBUTE_NONNULL_;
 
 	public:
-		typedef eix::ptr_list<Version> Matches;
+		typedef eix::ptr_container<std::vector<Version *> > Matches;
 
 		/**
 		Set the stability & masked members of ve according to the mask

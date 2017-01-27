@@ -10,6 +10,9 @@
 #ifndef SRC_PORTAGE_PACKAGE_H_
 #define SRC_PORTAGE_PACKAGE_H_ 1
 
+#ifdef HAVE_ARRAY_CLASS
+#include <array>
+#endif
 #include <list>
 #include <map>
 #include <string>
@@ -17,10 +20,11 @@
 
 #include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
+#include "eixTk/forward_list.h"
 #include "eixTk/inttypes.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/ptr_list.h"
+#include "eixTk/ptr_container.h"
 #include "portage/basicversion.h"
 #include "portage/extendedversion.h"
 #include "portage/instversion.h"
@@ -31,11 +35,11 @@ class VarDbPkg;
 class PortageSettings;
 
 /**
-A sorted list of pointer to Versions
+A list of pointer to Versions. Should be kept sorted
 **/
-class VersionList : public std::list<Version*> {  // null entries are not allowed
+class VersionList : public std::vector<Version*> {  // null entries are not allowed
 	public:
-		explicit VersionList(Version *v) ATTRIBUTE_NONNULL_ : std::list<Version*>(1, v) {
+		explicit VersionList(Version *v) ATTRIBUTE_NONNULL_ : std::vector<Version*>(1, v) {
 		}
 
 		Version* best(bool allow_unstable) const ATTRIBUTE_PURE;
@@ -79,7 +83,7 @@ class SlotList : public std::vector<SlotVersions> {
 A class to represent a package in portage It contains various information
 about a package, including a sorted(!) list of versions.
 **/
-class Package : public eix::ptr_list<Version> {
+class Package : public eix::ptr_container<std::list<Version *> > {
 	public:
 		typedef std::vector<Version *> VerVec;
 
@@ -114,8 +118,11 @@ class Package : public eix::ptr_list<Version> {
 
 		MaskFlags local_collects;
 
+#ifdef HAVE_ARRAY_CLASS
+		std::array<MaskFlags, Version::SAVEMASK_SIZE> saved_collects;
+#else
 		std::vector<MaskFlags> saved_collects;
-
+#endif
 		/**
 		Package properties (stored in db)
 		**/
@@ -197,7 +204,11 @@ class Package : public eix::ptr_list<Version> {
 		/**
 		Preset with defaults
 		**/
-		Package() : saved_collects(Version::SAVEMASK_SIZE, MaskFlags(MaskFlags::MASK_NONE)) {
+		Package()
+#ifndef HAVE_ARRAY_CLASS
+			: saved_collects(Version::SAVEMASK_SIZE, MaskFlags(MaskFlags::MASK_NONE))
+#endif
+		{
 			defaults();
 		}
 
@@ -205,7 +216,10 @@ class Package : public eix::ptr_list<Version> {
 		Fill in name and category and preset with defaults
 		**/
 		Package(const std::string& c, const std::string& n) :
-			saved_collects(Version::SAVEMASK_SIZE, MaskFlags(MaskFlags::MASK_NONE)), category(c), name(n) {
+#ifndef HAVE_ARRAY_CLASS
+			saved_collects(Version::SAVEMASK_SIZE, MaskFlags(MaskFlags::MASK_NONE)),
+#endif
+			category(c), name(n) {
 			defaults();
 		}
 
@@ -215,28 +229,9 @@ class Package : public eix::ptr_list<Version> {
 		~Package();
 
 		/**
-		Adds a version to "the versions" list.
-		Only BasicVersion needs to be filled here.
-		You must call addVersionFinalize() after filling
-		the remaining data
-		**/
-		void addVersionStart(Version *version) {
-			checkDuplicates(version);
-			sortedPushBack(version);
-		}
-
-		/**
-		Finishes addVersion() after the remaining data have been filled
-		**/
-		void addVersionFinalize(Version *version) ATTRIBUTE_NONNULL_;
-
-		/**
 		Add a version to "the versions" list.
 		**/
-		void addVersion(Version *version) ATTRIBUTE_NONNULL_ {
-			addVersionStart(version);
-			addVersionFinalize(version);
-		}
+		void addVersion(Version *version) ATTRIBUTE_NONNULL_;
 
 		/**
 		Call this after modifying system or world state of versions.
@@ -505,19 +500,18 @@ class Package : public eix::ptr_list<Version> {
 		void collect_iuse(Version *version) ATTRIBUTE_NONNULL_;
 
 		/**
-		Check if a package has duplicated versions.
+		Default constructor
 		**/
-		void checkDuplicates(const Version *version) ATTRIBUTE_NONNULL_;
+		void defaults();
 
-		void sortedPushBack(Version *version) ATTRIBUTE_NONNULL_;
-
-		void defaults() {
-			know_upgrade_slots = m_has_cached_slotlist =
-				m_has_cached_subslots = false;
-			have_duplicate_versions = DUP_NONE;
-			version_collects = COLLECT_DEFAULT;
-			local_collects.set(MaskFlags::MASK_NONE);
-		}
+		/**
+		Adds a version to "the versions" list,
+		updating have_duplicate_versions.
+		Only BasicVersion and overlay needs to be filled here.
+		You must call addVersionFinalize() after filling
+		the remaining data
+		**/
+		void addVersionStart(Version *version);
 };
 
 class PackageSave {

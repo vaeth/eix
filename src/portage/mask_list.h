@@ -12,14 +12,14 @@
 
 #include <fnmatch.h>
 
-#include <list>
 #include <map>
 #include <string>
 #include <vector>
 
+#include "eixTk/forward_list.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/ptr_list.h"
+#include "eixTk/ptr_container.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "portage/keywords.h"
@@ -30,13 +30,14 @@ class Package;
 class ParseError;
 class Version;
 
-template<typename m_Type> class Masks : public std::list<m_Type> {
+template<typename m_Type> class Masks : protected eix::forward_list<m_Type> {
 	public:
-		typedef typename std::list<m_Type> MasksList;
+		typedef typename eix::forward_list<m_Type> MasksList;
 		using MasksList::begin;
 		using MasksList::end;
-		using MasksList::insert;
-		using MasksList::push_back;
+#ifdef HAVE_FORWARD_LIST
+		using MasksList::before_begin;
+#endif
 		typedef typename MasksList::iterator iterator;
 		typedef typename MasksList::const_iterator const_iterator;
 
@@ -44,13 +45,24 @@ template<typename m_Type> class Masks : public std::list<m_Type> {
 		}
 
 		void add(const m_Type& m) {
-			for(iterator it(begin()); it != end(); ++it) {
+#ifdef HAVE_FORWARD_LIST
+			iterator parent(before_begin());
+			for(iterator it(begin()); it != end(); parent = it++) {
 				if(m.priority < it->priority) {
-					insert(it, m);
+					MasksList::insert_after(parent, m);
 					return;
 				}
 			}
-			push_back(m);
+			MasksList::insert_after(parent, m);
+#else
+			for(iterator it(begin()); it != end(); ++it) {
+				if(m.priority < it->priority) {
+					MasksList::insert(it, m);
+					return;
+				}
+			}
+			MasksList::push_back(m);
+#endif
 		}
 };
 
@@ -66,7 +78,7 @@ template<typename m_Type> class MaskList {
 		FullType full_name;
 
 	public:
-		typedef typename eix::ptr_list<const m_Type> Get;
+		typedef typename eix::ptr_container<std::vector<const m_Type *> > Get;
 
 		bool empty() const {
 			return (exact_name.empty() && full_name.empty());

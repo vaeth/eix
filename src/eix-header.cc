@@ -14,8 +14,8 @@
 #include <cstring>
 
 #include <iostream>
-#include <list>
 #include <string>
+#include <vector>
 
 #include "database/header.h"
 #include "database/io.h"
@@ -27,15 +27,15 @@
 #include "eixTk/null.h"
 #include "main/main.h"
 
-using std::list;
 using std::string;
+using std::vector;
 
 using std::cerr;
 using std::cout;
 using std::endl;
 
 class OverlayOption;
-typedef list<OverlayOption> OverlayOptionList;
+typedef vector<OverlayOption> OverlayOptionList;
 
 typedef eix::TinyUnsigned PrintOverlayMode;
 static CONSTEXPR const PrintOverlayMode
@@ -89,8 +89,6 @@ class OverlayOption {
 			opt(option), arg(argument) {
 		}
 };
-
-typedef list<OverlayOption> OverlayOptionList;
 
 int run_eix_header(int argc, char *argv[]) {
 	bool verbose(true);

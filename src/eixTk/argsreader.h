@@ -10,7 +10,6 @@
 #ifndef SRC_EIXTK_ARGSREADER_H_
 #define SRC_EIXTK_ARGSREADER_H_ 1
 
-#include <list>
 #include <utility>
 #include <vector>
 
@@ -64,12 +63,12 @@ class Option {
 		u.pr.second = c2;
 	}
 
-	Option(const char *l, int s, enum Type t, std::list<const char*> *c) ATTRIBUTE_NONNULL((2, 5))
+	Option(const char *l, int s, enum Type t, std::vector<const char*> *c) ATTRIBUTE_NONNULL((2, 5))
 		: type(t), longopt(l), shortopt(s) {
 		u.strlist = c;
 	}
 
-	Option(const char *l, int s, enum Type t, std::list<ArgPair> *c) ATTRIBUTE_NONNULL((2, 5))
+	Option(const char *l, int s, enum Type t, std::vector<ArgPair> *c) ATTRIBUTE_NONNULL((2, 5))
 		: type(t), longopt(l), shortopt(s) {
 		u.prlist = c;
 	}
@@ -89,8 +88,8 @@ class Option {
 			const char **first;
 			const char **second;
 		} pr;
-		std::list<const char *> *strlist;
-		std::list<ArgPair> *prlist;
+		std::vector<const char *> *strlist;
+		std::vector<ArgPair> *prlist;
 	} u;
 };
 
@@ -105,7 +104,7 @@ class Parameter {
 		/**
 		Type of argument. ARGUMENT, OPTION, or PAIR
 		**/
-		const enum Type {
+		enum Type {
 			ARGUMENT = 1,
 			OPTION = 2,
 			PAIR = 3
@@ -136,7 +135,7 @@ class Parameter {
 /**
 Main class for argument parsing
 **/
-class ArgumentReader : public std::list<Parameter> {
+class ArgumentReader : public std::vector<Parameter> {
 	public:
 		/**
 		Name of called program
@@ -144,7 +143,7 @@ class ArgumentReader : public std::list<Parameter> {
 		const char *name;
 
 		/**
-		Read arguments into std::list of TParameters
+		Read arguments into list of Parameters
 		**/
 		ArgumentReader(int argc, const char *const *argv, const OptionList& opt_table) ATTRIBUTE_NONNULL_;
 

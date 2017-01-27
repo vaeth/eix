@@ -10,8 +10,8 @@
 #ifndef SRC_PORTAGE_BASICVERSION_H_
 #define SRC_PORTAGE_BASICVERSION_H_ 1
 
-#include <list>
 #include <string>
+#include <vector>
 
 #include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
@@ -132,7 +132,7 @@ class BasicVersion {
 		/**
 		Splitted m_primsplit-version
 		**/
-		typedef std::list<BasicPart> PartsType;
+		typedef std::vector<BasicPart> PartsType;
 		PartsType m_parts;
 };
 

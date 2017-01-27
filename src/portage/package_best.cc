@@ -69,11 +69,13 @@ bool Package::calc_allow_upgrade_slots(const PortageSettings *ps) const {
 
 Version *Package::best(bool allow_unstable) const {
 	for(const_reverse_iterator ri(rbegin()); likely(ri != rend()); ++ri) {
-		if(ri->maskflags.isHardMasked())
+		if(ri->maskflags.isHardMasked()) {
 			continue;
+		}
 		if(ri->keyflags.isStable() ||
-			(allow_unstable && ri->keyflags.isUnstable()))
+			(allow_unstable && ri->keyflags.isUnstable())) {
 			return *ri;
+		}
 	}
 	return NULLPTR;
 }

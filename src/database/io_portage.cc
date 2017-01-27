@@ -12,7 +12,7 @@
 #include "database/header.h"
 #include "database/io.h"
 #include "database/package_reader.h"
-#include "eixTk/auto_list.h"
+#include "eixTk/auto_array.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
@@ -52,7 +52,7 @@ bool Database::read_Part(BasicPart *b, string *errtext) {
 	BasicPart::PartType type(BasicPart::PartType(len % BasicPart::max_type));
 	len /= BasicPart::max_type;
 	if(len != 0) {
-		eix::auto_list<char> buf(new char[len + 1]);
+		eix::auto_array<char> buf(new char[len + 1]);
 		buf.get()[len] = 0;
 		if(unlikely(!read_string_plain(buf.get(), len, errtext))) {
 			return false;
@@ -112,6 +112,7 @@ bool Database::read_version(Version *v, const DBHeader& hdr, string *errtext) {
 	if(unlikely(!read_num(&i, errtext))) {
 		return false;
 	}
+	v->m_parts.reserve(i);
 	for(; likely(i != 0); --i) {
 		BasicPart b;
 		if(unlikely(!read_Part(&b, errtext))) {

@@ -16,7 +16,6 @@
 #include <cstdlib>
 
 #include <iostream>
-#include <list>
 #include <string>
 #include <vector>
 
@@ -46,7 +45,6 @@
 #include "portage/packagetree.h"
 #include "various/drop_permissions.h"
 
-using std::list;
 using std::string;
 using std::vector;
 
@@ -167,12 +165,12 @@ static bool
 
 static bool use_percentage, use_status, verbose;
 
-typedef list<const char *> ExcludeArgs;
+typedef vector<const char *> ExcludeArgs;
 typedef ExcludeArgs AddArgs;
 static ExcludeArgs *exclude_args;
 static AddArgs *add_args;
 
-typedef list <ArgPair> MethodArgs;
+typedef vector<ArgPair> MethodArgs;
 typedef MethodArgs RepoArgs;
 static MethodArgs *method_args;
 static RepoArgs *repo_args;
@@ -462,10 +460,10 @@ int run_eix_update(int argc, char *argv[]) {
 	}
 	add_list.clear();
 
-	WordMap override;
+	WordMap override_map;
 	for(Overrides::iterator it(override_list.begin());
 		unlikely(it != override_list.end()); ++it) {
-		override[(it->name).resolve(&portage_settings)] = it->method;
+		override_map[(it->name).resolve(&portage_settings)] = it->method;
 	}
 	override_list.clear();
 
@@ -506,7 +504,7 @@ int run_eix_update(int argc, char *argv[]) {
 
 	/* Create CacheTable and fill with PORTDIR and PORTDIR_OVERLAY. */
 	CacheTable table(eixrc["CACHE_METHOD_PARSE"]); {
-		WordMap *override_ptr(override.size() ? &override : NULLPTR);
+		WordMap *override_ptr(override_map.size() ? &override_map : NULLPTR);
 		if(likely(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 				portage_settings["PORTDIR"].c_str(), true) == excluded_overlays.end())) {
 			string errtext;

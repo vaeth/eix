@@ -16,7 +16,7 @@
 
 #include "database/header.h"
 #include "database/io.h"
-#include "eixTk/auto_list.h"
+#include "eixTk/auto_array.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
@@ -32,7 +32,7 @@ using std::vector;
 
 bool Database::read_header(DBHeader *hdr, string *errtext, DBHeader::DBVersion minver) {
 	size_t magic_len(strlen(DBHeader::magic));
-	eix::auto_list<char> buf(new char[magic_len + 1]);
+	eix::auto_array<char> buf(new char[magic_len + 1]);
 	buf.get()[magic_len] = 0;
 	if(unlikely(!read_string_plain(buf.get(), magic_len, errtext))) {
 		return false;

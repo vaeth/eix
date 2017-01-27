@@ -11,12 +11,13 @@
 #define SRC_CACHE_CACHETABLE_H_ 1
 
 #include <string>
+#include <vector>
 
 #include "cache/base.h"
-#include "eixTk/ptr_list.h"
+#include "eixTk/ptr_container.h"
 #include "eixTk/stringtypes.h"
 
-typedef eix::ptr_list<BasicCache> CacheTableList;
+typedef eix::ptr_container<std::vector<BasicCache *> > CacheTableList;
 
 class CacheTable : public CacheTableList {
 	private:

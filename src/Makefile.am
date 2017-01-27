@@ -78,13 +78,13 @@ eixTk/ansicolor.cc \
 eixTk/ansicolor.h \
 eixTk/argsreader.cc \
 eixTk/argsreader.h \
-eixTk/auto_list.h \
+eixTk/auto_array.h \
+eixTk/forward_list.h \
 eixTk/inttypes.h \
 eixTk/parseerror.cc \
 eixTk/parseerror.h \
+eixTk/ptr_container.h \
 eixTk/ptr_iterator.h \
-eixTk/ptr_list.h \
-eixTk/ptr_set.h \
 eixTk/regexp.cc \
 eixTk/regexp.h \
 $(sysutils_src) \

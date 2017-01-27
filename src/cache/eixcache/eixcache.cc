@@ -18,10 +18,11 @@
 #include "database/io.h"
 #include "database/package_reader.h"
 #include "eixTk/formated.h"
+#include "eixTk/forward_list.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/ptr_list.h"
+#include "eixTk/ptr_container.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "portage/basicversion.h"
@@ -32,11 +33,11 @@
 
 using std::string;
 
-eix::ptr_list<EixCache> *EixCache::all_eixcaches = NULLPTR;
+EixCache::CachesList *EixCache::all_eixcaches = NULLPTR;
 
 EixCache::~EixCache() {
 	if(all_eixcaches != NULLPTR) {
-		eix::ptr_list<EixCache>::iterator it(std::find(all_eixcaches->begin(),
+		CachesList::iterator it(std::find(all_eixcaches->begin(),
 			all_eixcaches->end(), this));
 		if(it != all_eixcaches->end()) {
 			all_eixcaches->erase(it);
@@ -85,7 +86,7 @@ bool EixCache::initialize(const string& name) {
 	}
 	slavemode = false;
 	if(all_eixcaches == NULLPTR) {
-		all_eixcaches = new eix::ptr_list<EixCache>;
+		all_eixcaches = new CachesList;
 	}
 	all_eixcaches->push_back(this);
 	return (args.size() <= 3);
@@ -98,10 +99,10 @@ void EixCache::setSchemeFinish() {
 		m_full = m_prefix + EIX_CACHEFILE;
 }
 
-void EixCache::allerrors(const Slaves& slaves, const string& msg) {
-	for(Slaves::const_iterator sl(slaves.begin());
+void EixCache::allerrors(const CachesList& slaves, const string& msg) {
+	for(CachesList::const_iterator sl(slaves.begin());
 		unlikely(sl != slaves.end()); ++sl) {
-		string& s((*sl)->err_msg);
+		string& s(sl->err_msg);
 		if(s.empty()) {
 			s = msg;
 		}
@@ -215,14 +216,15 @@ void EixCache::get_package(Package *p) {
 
 bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Category *category) {
 	if(slavemode) {
-		if(err_msg.empty())
+		if(err_msg.empty()) {
 			return true;
+		}
 		m_error_callback(err_msg);
 		return false;
 	}
-	Slaves slaves;
+	CachesList slaves;
 	if(all_eixcaches != NULLPTR) {
-		for(eix::ptr_list<EixCache>::iterator sl(all_eixcaches->begin());
+		for(CachesList::const_iterator sl(all_eixcaches->begin());
 			unlikely(sl != all_eixcaches->end()); ++sl) {
 			if(sl->m_full == m_full) {
 				if(*sl != this) {
@@ -250,9 +252,9 @@ bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Ca
 		return false;
 	}
 	bool success(false);
-	for(Slaves::const_iterator sl(slaves.begin());
+	for(CachesList::const_iterator sl(slaves.begin());
 		unlikely(sl != slaves.end()); ++sl) {
-		if((*sl)->get_overlaydat(header))
+		if(sl->get_overlaydat(header))
 			success = true;
 	}
 	if(!success) {
@@ -267,9 +269,9 @@ bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Ca
 		Package *p(reader.get());
 
 		success = false;
-		for(Slaves::const_iterator sl(slaves.begin());
+		for(CachesList::const_iterator sl(slaves.begin());
 			unlikely(sl != slaves.end()); ++sl) {
-			if((*sl)->get_destcat(packagetree, cat_name, category, p->category)) {
+			if(sl->get_destcat(packagetree, cat_name, category, p->category)) {
 				success = true;
 			}
 		}
@@ -280,9 +282,9 @@ bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Ca
 			break;
 		}
 		p = reader.get();
-		for(Slaves::const_iterator sl(slaves.begin());
+		for(CachesList::const_iterator sl(slaves.begin());
 			unlikely(sl != slaves.end()); ++sl) {
-			(*sl)->get_package(p);
+			sl->get_package(p);
 		}
 	}
 	const char *err_cstr(reader.get_errtext());

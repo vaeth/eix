@@ -13,7 +13,7 @@
 
 #include "cache/base.h"
 #include "eixTk/dialect.h"
-#include "eixTk/ptr_list.h"
+#include "eixTk/ptr_container.h"
 #include "portage/extendedversion.h"
 
 class Category;
@@ -23,8 +23,8 @@ class PackageTree;
 
 class EixCache : public BasicCache {
 	private:
-		typedef std::vector<EixCache*> Slaves;
-		static eix::ptr_list<EixCache> *all_eixcaches;
+		typedef eix::ptr_container<std::vector<EixCache *> > CachesList;
+		static CachesList *all_eixcaches;
 
 		bool slavemode;
 		std::string err_msg;
@@ -35,7 +35,7 @@ class EixCache : public BasicCache {
 		Category *dest_cat;
 
 		void setSchemeFinish() OVERRIDE;
-		void allerrors(const Slaves& slaves, const std::string& msg);
+		void allerrors(const CachesList& slaves, const std::string& msg);
 		void thiserror(const std::string& msg);
 		bool get_overlaydat(const DBHeader& header);
 		bool get_destcat(PackageTree *packagetree, const char *cat_name, Category *category, const std::string& pcat);

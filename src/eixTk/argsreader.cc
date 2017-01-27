@@ -15,6 +15,7 @@
 #include <iostream>
 
 #include "eixTk/argsreader.h"
+#include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -25,6 +26,9 @@ using std::cerr;
 using std::endl;
 
 ArgumentReader::ArgumentReader(int argc, const char *const *argv, const OptionList& opt_table) {
+GCC_DIAG_OFF(sign-conversion)
+	reserve(argc);  // argc is 1 too large, but there might be bundeled options
+GCC_DIAG_ON(sign-conversion)
 	bool seen_escape(false);
 	name = argv[0];
 	eix::TinyUnsigned paramarg_remain(0);

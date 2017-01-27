@@ -94,7 +94,7 @@
 /* Define to 1 if _Pragma GCC diagnostic can be used everywhere */
 #undef FULL_GCC_DIAG_PRAGMA
 
-/* Define if C++ dialect supports array class */
+/* Define if STL has array class */
 #undef HAVE_ARRAY_CLASS
 
 /* Define to 1 if you have the `atoi' function. */
@@ -138,6 +138,9 @@
 
 /* Define to 1 if you have the `fnmatch' function. */
 #undef HAVE_FNMATCH
+
+/* Define if STL has forward_list */
+#undef HAVE_FORWARD_LIST
 
 /* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
 #undef HAVE_FSEEKO

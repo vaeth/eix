@@ -7,42 +7,42 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
-#ifndef SRC_EIXTK_PTR_SET_H_
-#define SRC_EIXTK_PTR_SET_H_ 1
-
-#include <set>
+#ifndef SRC_EIXTK_PTR_CONTAINER_H_
+#define SRC_EIXTK_PTR_CONTAINER_H_ 1
 
 #include "eixTk/ptr_iterator.h"
+
+// Make check_includes.sh happy: include "eixTk/ptr_container.h"
 
 namespace eix {
 /**
 A set that only stores pointers to type
 **/
-template<typename type> class ptr_set : public std::set<type> {
+template<class type> class ptr_container : public type {
 	public:
-		using std::set<type>::begin;
-		using std::set<type>::end;
-		using std::set<type>::clear;
+		using type::begin;
+		using type::end;
+		using type::clear;
 
 		/**
 		Normal access iterator
 		**/
-		typedef ptr_iterator<typename std::set<type>::iterator> iterator;
+		typedef ptr_iterator<typename type::iterator> iterator;
 
 		/**
 		Constant access iterator
 		**/
-		typedef ptr_iterator<typename std::set<type>::const_iterator> const_iterator;
+		typedef ptr_iterator<typename type::const_iterator> const_iterator;
 
 		/**
 		Reverse access iterator
 		**/
-		typedef ptr_iterator<typename std::set<type>::reverse_iterator> reverse_iterator;
+		typedef ptr_iterator<typename type::reverse_iterator> reverse_iterator;
 
 		/**
 		Constant reverse access iterator
 		**/
-		typedef ptr_iterator<typename std::set<type>::const_reverse_iterator> const_reverse_iterator;
+		typedef ptr_iterator<typename type::const_reverse_iterator> const_reverse_iterator;
 
 		void delete_and_clear() {
 			delete_all(begin(), end());
@@ -52,4 +52,4 @@ template<typename type> class ptr_set : public std::set<type> {
 
 }  // namespace eix
 
-#endif  // SRC_EIXTK_PTR_SET_H_
+#endif  // SRC_EIXTK_PTR_CONTAINER_H_

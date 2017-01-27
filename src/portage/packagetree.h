@@ -11,17 +11,18 @@
 #define SRC_PORTAGE_PACKAGETREE_H_ 1
 
 #include <map>
+#include <set>
 #include <string>
 
 #include "eixTk/eixint.h"
 #include "eixTk/null.h"
-#include "eixTk/ptr_set.h"
+#include "eixTk/ptr_container.h"
 #include "eixTk/stringtypes.h"
 #include "portage/package.h"
 
-class Category : public eix::ptr_set<PackagePtr> {
+class Category : public eix::ptr_container<std::set<PackagePtr> > {
 	public:
-		typedef eix::ptr_set<PackagePtr> super;
+		typedef eix::ptr_container<std::set<PackagePtr> > super;
 
 		static void init_static();
 

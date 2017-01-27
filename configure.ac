@@ -1184,20 +1184,28 @@ dnl		[MV_MSG_RESULT([no])])
 AC_MSG_CHECKING([whether array class can be used])
 MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
 #include <array>
-class T {
-public:
-	std::array<int, 5> a;
-	T() {
-		a.fill(4);
-	}
-};
 	]], [[
-T a;
-return (a.a[4] == 4) ? 0 : 1;
+std::array<int, 5> a;
+a.fill(4);
+return (a[4] == 4) ? 0 : 1;
 		]])],
 		[MV_MSG_RESULT([yes])
 		AC_DEFINE([HAVE_ARRAY_CLASS], [1],
-			[Define if C++ dialect supports array class])],
+			[Define if STL has array class])],
+		[MV_MSG_RESULT([no])])
+
+# Check if forward_list can be used
+AC_MSG_CHECKING([whether forward_list can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+#include <forward_list>
+	]], [[
+std::forward_list<int> a;
+a.insert_after(a.before_begin(), 5);
+return (*(a.begin()) == 5) ? 0 : 1;
+		]])],
+		[MV_MSG_RESULT([yes])
+		AC_DEFINE([HAVE_FORWARD_LIST], [1],
+			[Define if STL has forward_list])],
 		[MV_MSG_RESULT([no])])
 
 # What about sqlite?

@@ -16,8 +16,8 @@
 #include <cstdlib>
 
 #include <iostream>
-#include <list>
 #include <string>
+#include <vector>
 
 #include "database/header.h"
 #include "database/io.h"
@@ -47,8 +47,8 @@
 
 #define VAR_DB_PKG "/var/db/pkg/"
 
-using std::list;
 using std::string;
+using std::vector;
 
 using std::cerr;
 using std::cout;
@@ -216,7 +216,7 @@ class DiffReaders {
 				}
 			}
 			if(m_separate_deleted) {
-				for(list<Package *>::iterator it(lost_list.begin());
+				for(vector<Package *>::iterator it(lost_list.begin());
 					likely(it != lost_list.end()); ++it) {
 					lost_package(*it);
 					delete(*it);
@@ -228,7 +228,7 @@ class DiffReaders {
 				delete(old_pkg);
 			}
 			if(m_separate_deleted) {
-				for(list<Package *>::iterator it(found_list.begin());
+				for(vector<Package *>::iterator it(found_list.begin());
 					likely(it != found_list.end()); ++it) {
 					found_package(*it);
 					delete(*it);
@@ -260,7 +260,7 @@ class DiffReaders {
 
 		// These are actually local variables to diff() but used for the subsequent functions
 		bool old_read, new_read;
-		list<Package *> lost_list, found_list;
+		vector<Package *> lost_list, found_list;
 		Package *old_pkg, *new_pkg;
 
 		bool doread_old() {
