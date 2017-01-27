@@ -56,7 +56,6 @@ void Package::addVersionStart(Version *version) {
 			if(check_duplicates == DUP_NONE) {
 				return;
 			}
-			++i;
 			have_inserted = true;
 		}
 		if((check_duplicates == DUP_NONE) ||
