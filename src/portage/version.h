@@ -137,7 +137,7 @@ class Version : public ExtendedVersion, public Keywords {
 		std::array<KeywordsFlags, SAVEKEY_SIZE>      saved_keywords;
 		std::array<bool, SAVEKEY_SIZE>               have_saved_keywords;
 		std::array<MaskFlags, SAVEMASK_SIZE>         saved_masks;
-		std::array<bool, SAVEEFFECTIVE_SIZE>         have_saved_masks;
+		std::array<bool, SAVEMASK_SIZE>              have_saved_masks;
 		std::array<std::string, SAVEEFFECTIVE_SIZE>  saved_effective;
 		std::array<std::string, SAVEEFFECTIVE_SIZE>  saved_accepted;
 		std::array<EffectiveState, EFFECTIVE_UNUSED> states_effective;
