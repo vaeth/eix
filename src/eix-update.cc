@@ -22,6 +22,7 @@
 #include "cache/cachetable.h"
 #include "database/header.h"
 #include "database/io.h"
+#include "eixTk/attribute.h"
 #include "eixTk/argsreader.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"

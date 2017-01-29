@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/inttypes.h"

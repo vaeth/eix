@@ -16,6 +16,7 @@
 
 #include "cache/base.h"
 #include "cache/common/reader.h"
+#include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"

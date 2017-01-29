@@ -14,6 +14,7 @@
 #include <string>
 
 #include "cache/common/reader.h"
+#include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 

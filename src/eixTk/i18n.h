@@ -8,7 +8,7 @@
 #ifndef SRC_EIXTK_I18N_H_
 #define SRC_EIXTK_I18N_H_ 1
 
-// include "eixTk/i18n.h" This comment satisfies check_include script
+// check_includes: include "eixTk/i18n.h"
 
 #ifdef ENABLE_NLS
 

@@ -8,7 +8,7 @@
 #ifndef SRC_EIXTK_LIKELY_H_
 #define SRC_EIXTK_LIKELY_H_ 1
 
-// include "eixTk/likely.h" This comment satisfies check_include script
+// check_includes: include "eixTk/likely.h"
 
 #ifdef HAVE___BUILTIN_EXPECT
 #define likely(x)	__builtin_expect((x), 1)

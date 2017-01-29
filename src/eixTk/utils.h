@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "eixTk/attribute.h"
 #include "eixTk/eixint.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"

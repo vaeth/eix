@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "eixTk/attribute.h"
 #include "eixTk/utils.h"
 
 ATTRIBUTE_PURE int package_selector(SCANDIR_ARG3 dent);

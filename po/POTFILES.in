@@ -53,6 +53,7 @@ src/eixTk/ansicolor_print.cc
 src/eixTk/argsreader.cc
 src/eixTk/argsreader.h
 src/eixTk/assert.h
+src/eixTk/attribute.h
 src/eixTk/auto_array.h
 src/eixTk/compare.cc
 src/eixTk/compare.h

@@ -10,6 +10,8 @@
 
 #include <string>
 
+#include "eixTk/attribute.h"
+
 class EixRc;
 
 ATTRIBUTE_NONNULL_ bool drop_permissions(EixRc *eix, std::string *errtext);

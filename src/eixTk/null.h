@@ -8,7 +8,7 @@
 #ifndef SRC_EIXTK_NULL_H_
 #define SRC_EIXTK_NULL_H_ 1
 
-// include "eixTk/null.h" This comment satisfies check_include script
+// check_includes: include "eixTk/null.h"
 
 #ifdef HAVE_NULLPTR
 #define NULLPTR nullptr

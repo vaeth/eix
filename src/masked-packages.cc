@@ -17,6 +17,7 @@
 #include <string>
 
 #include "eixTk/argsreader.h"
+#include "eixTk/attribute.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"

@@ -19,6 +19,7 @@
 
 #include "database/header.h"
 #include "eixTk/assert.h"
+#include "eixTk/attribute.h"
 #include "eixTk/null.h"
 #include "eixTk/outputstring.h"
 #include "portage/extendedversion.h"

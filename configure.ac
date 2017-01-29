@@ -251,6 +251,7 @@ AS_IF([$new_dialect],
 				-std=gnu++11 \
 				-std=c++11 \
 			], [$my_cxxfatal], [], [break])])])
+AS_VAR_COPY([my_cxxdialect], [my_cxxadd])
 
 m4_if([dnl The following turned out not to be useful currently, so it is
 dnl commented out. Note that this needs a second part at the end of this file
@@ -734,74 +735,74 @@ int setuid(uid_t uid);
 	],
 	[AC_DEFINE([NEED_SETUID_PROTO],
 		[1],
-		[Define to 1 if setuid needs a prototype])],
+		[Define if setuid needs a prototype])],
 	[AC_DEFINE([BROKEN_SETUID],
 		[1],
-		[Define to 1 if setuid is broken])])
+		[Define if setuid is broken])])
 PROTO_SETX([seteuid], [
 int seteuid(uid_t uid);
 	],
 	[AC_DEFINE([NEED_SETEUID_PROTO],
 		[1],
-		[Define to 1 if seteuid needs a prototype])],
+		[Define if seteuid needs a prototype])],
 	[AC_DEFINE([BROKEN_SETEUID],
 		[1],
-		[Define to 1 if seteuid is broken])])
+		[Define if seteuid is broken])])
 PROTO_SETX([setgid], [
 int setgid(gid_t gid);
 	],
 	[AC_DEFINE([NEED_SETGID_PROTO],
 		[1],
-		[Define to 1 if setgid needs a prototype])],
+		[Define if setgid needs a prototype])],
 	[AC_DEFINE([BROKEN_SETGID],
 		[1],
-		[Define to 1 if setgid is broken])])
+		[Define if setgid is broken])])
 PROTO_SETX([setegid], [
 int setegid(gid_t gid);
 	],
 	[AC_DEFINE([NEED_SETEGID_PROTO],
 		[1],
-		[Define to 1 if setegid needs a prototype])],
+		[Define if setegid needs a prototype])],
 	[AC_DEFINE([BROKEN_SETEGID],
 		[1],
-		[Define to 1 if setegid is broken])])
+		[Define if setegid is broken])])
 
 PROTO_GETX([getuid], [
 uid_t getuid();
 	],
 	[AC_DEFINE([NEED_GETUID_PROTO],
 		[1],
-		[Define to 1 if getuid needs a prototype])],
+		[Define if getuid needs a prototype])],
 	[AC_DEFINE([BROKEN_GETUID],
 		[1],
-		[Define to 1 if getuid is broken])])
+		[Define if getuid is broken])])
 PROTO_GETX([geteuid], [
 uid_t geteuid();
 	],
 	[AC_DEFINE([NEED_GETEUID_PROTO],
 		[1],
-		[Define to 1 if geteuid needs a prototype])],
+		[Define if geteuid needs a prototype])],
 	[AC_DEFINE([BROKEN_GETEUID],
 		[1],
-		[Define to 1 if geteuid is broken])])
+		[Define if geteuid is broken])])
 PROTO_GETX([getgid], [
 gid_t getgid();
 	],
 	[AC_DEFINE([NEED_GETGID_PROTO],
 		[1],
-		[Define to 1 if getgid needs a prototype])],
+		[Define if getgid needs a prototype])],
 	[AC_DEFINE([BROKEN_GETGID],
 		[1],
-		[Define to 1 if getgid is broken])])
+		[Define if getgid is broken])])
 PROTO_GETX([getegid], [
 git_t getegid();
 	],
 	[AC_DEFINE([NEED_GETEGID_PROTO],
 		[1],
-		[Define to 1 if getegid needs a prototype])],
+		[Define if getegid needs a prototype])],
 	[AC_DEFINE([BROKEN_GETEGID],
 		[1],
-		[Define to 1 if getegid is broken])])
+		[Define if getegid is broken])])
 
 # If climits exists, we need not check for limits.h
 AC_CHECK_HEADERS([climits limits.h],
@@ -827,17 +828,19 @@ AS_IF([$paranoicassert],
 	[MV_MSG_RESULT([yes])
 	AC_DEFINE([EIX_PARANOIC_ASSERT],
 		[1],
-		[Define to 1 if paranoic asserts should be used])
+		[Define if paranoic asserts should be used])
 	AC_DEFINE([EIX_STATIC_ASSERT],
 		[1],
-		[Define to 1 if asserts for static initializers should be used])],
+		[Define if asserts for static initializers should be used])],
 	[MV_MSG_RESULT([no])])
 
 # Check if __builtin_expect works
 AC_MSG_CHECKING([whether __builtin_expect can be used])
 MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[]], [[
-if(!((__builtin_expect(1, 0)) && (__builtin_expect(1, 1)) &&
-	(!__builtin_expect(0, 0)) && (!__builtin_expect(0, 1))))
+int zero = 0;
+int one = 1;
+if(!((__builtin_expect(one, 0)) && (__builtin_expect(one, 1)) &&
+	(!__builtin_expect(zero, 0)) && (!__builtin_expect(zero, 1))))
 	return 1;
 		]])],
 	[MV_MSG_RESULT([yes])
@@ -847,11 +850,12 @@ if(!((__builtin_expect(1, 0)) && (__builtin_expect(1, 1)) &&
 AS_IF([$bi_expect_works],
 	[AC_DEFINE([HAVE___BUILTIN_EXPECT],
 		[1],
-		[Define to 1 if __builtin_expect can be used])])
+		[Define if __builtin_expect can be used])])
 
 # The __attribute__ tests are special: They should even break on warnings:
 AS_VAR_COPY([CXXFLAGS], [oricxxflags])
 AS_VAR_COPY([LDFLAGS], [orildflags])
+MV_APPEND([CXXFLAGS], [$my_cxxdialect])
 MV_APPEND([CXXFLAGS], [$my_cxxfatal])
 MV_APPEND([LDFLAGS], [$my_ldfatal])
 
@@ -887,7 +891,26 @@ GCC_DIAG_ON(old-style-cast)
 AS_IF([$gcc_diag_pragma],
 	[AC_DEFINE([FULL_GCC_DIAG_PRAGMA],
 		[1],
-		[Define to 1 if _Pragma GCC diagnostic can be used everywhere])])
+		[Define if _Pragma GCC diagnostic can be used everywhere])])
+
+# Check if [[maybe_unused]] works
+AC_MSG_CHECKING([[whether [[maybe_unused]] can be used]])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+static int dummy(int i);
+static int
+dummy([[maybe_unused]] int i)
+{ return 0; }
+		]], [[
+return dummy(1);
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([c11attr_unused], [:])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([c11attr_unused], [false])])
+AS_IF([$c11attr_unused],
+	[AC_DEFINE([HAVE_C11ATTRIBUTE_UNUSED],
+		[1],
+		[Define if [[maybe_unused]] can be used])])
 
 # Check if __attribute__ ((unused)) works
 AC_MSG_CHECKING([whether __attribute__ ((unused)) can be used])
@@ -900,13 +923,33 @@ dummy(__attribute__ ((unused)) int i)
 return dummy(1);
 		]])],
 		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attribute_unused], [:])],
+		AS_VAR_SET([attr_unused], [:])],
 		[MV_MSG_RESULT([no])
-		AS_VAR_SET([attribute_unused], [false])])
-AS_IF([$attribute_unused],
+		AS_VAR_SET([attr_unused], [false])])
+AS_IF([$attr_unused],
 	[AC_DEFINE([HAVE_ATTRIBUTE_UNUSED],
 		[1],
-		[Define to 1 if __attribute__ ((unused)) can be used])])
+		[Define if __attribute__ ((unused)) can be used])])
+
+# Check if [[noreturn]] works
+AC_MSG_CHECKING([[whether [[noreturn]] can be used]])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+#include <cstdlib>
+[[noreturn]] static void dummy();
+static void
+dummy()
+{ exit(0); }
+		]], [[
+dummy()
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([c11attr_noreturn], [:])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([c11attr_noreturn], [false])])
+AS_IF([$c11attr_noreturn],
+	[AC_DEFINE([HAVE_C11ATTRIBUTE_NORETURN],
+		[1],
+		[Define if [[noreturn]] can be used])])
 
 # Check if __attribute__ ((noreturn)) works
 AC_MSG_CHECKING([whether __attribute__ ((noreturn)) can be used])
@@ -920,12 +963,13 @@ dummy()
 dummy()
 		]])],
 		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attribute_noreturn], ["__attribute__ ((noreturn))"])],
+		AS_VAR_SET([attr_noreturn], [:])],
 		[MV_MSG_RESULT([no])
-		AS_VAR_SET([attribute_noreturn], [])])
-AC_DEFINE_UNQUOTED([ATTRIBUTE_NORETURN],
-	[$attribute_noreturn],
-	[Define to [[noreturn]] or __attribute__ ((noreturn)) if it can be used])
+		AS_VAR_SET([attr_noreturn], [false])])
+AS_IF([$attr_noreturn],
+	[AC_DEFINE([HAVE_ATTRIBUTE_NORETURN],
+		[1],
+		[Define if __attribute__ ((noreturn)) can be used])])
 
 # Check if __attribute__ ((signal)) works
 AC_MSG_CHECKING([whether __attribute__ ((signal)) can be used])
@@ -944,12 +988,13 @@ void my_sig_handler(int sig)
 	signal(SIGTERM, my_sig_handler);
 		]])],
 		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attribute_signal], ["__attribute__ ((signal))"])],
+		AS_VAR_SET([attr_signal], [:])],
 		[MV_MSG_RESULT([no])
-		AS_VAR_SET([attribute_signal], [])])
-AC_DEFINE_UNQUOTED([ATTRIBUTE_SIGNAL],
-	[$attribute_signal],
-	[Define to __attribute__ ((signal)) if it can be used])
+		AS_VAR_SET([attr_signal], [false])])
+AS_IF([$attr_signal],
+	[AC_DEFINE([HAVE_ATTRIBUTE_SIGNAL],
+		[1],
+		[Define if __attribute__ ((signal)) can be used])])
 
 # Check if __attribute__ ((const)) works
 AC_MSG_CHECKING([whether __attribute__ ((const)) can be used])
@@ -964,12 +1009,13 @@ int a(int i) { b x; return x.c(i); }
 return !((a(4) == 4) && (a(5) == 5));
 		]])],
 		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attribute_const], ["__attribute__ ((const))"])],
+		AS_VAR_SET([attr_const], [:])],
 		[MV_MSG_RESULT([no])
-		AS_VAR_SET([attribute_const], [])])
-AC_DEFINE_UNQUOTED([ATTRIBUTE_CONST],
-	[$attribute_const],
-	[Define to __attribute__ ((const)) if it can be used])
+		AS_VAR_SET([attr_const], [false])])
+AS_IF([$attr_const],
+	[AC_DEFINE([HAVE_ATTRIBUTE_CONST],
+		[1],
+		[Define if __attribute__ ((const)) can be used])])
 
 # Check if __attribute__ ((pure)) works
 AC_MSG_CHECKING([whether __attribute__ ((pure)) can be used])
@@ -984,18 +1030,45 @@ int a(int i) { b x; return x.c(&i); }
 return !((a(4) == 4) && (a(5) == 5));
 		]])],
 		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attribute_pure], ["__attribute__ ((pure))"])],
+		AS_VAR_SET([attr_pure], [:])],
 		[MV_MSG_RESULT([no])
-		AS_VAR_SET([attribute_pure], [])])
-AC_DEFINE_UNQUOTED([ATTRIBUTE_PURE],
-	[$attribute_pure],
-	[Define to __attribute__ ((pure)) if it can be used])
+		AS_VAR_SET([attr_pure], [false])])
+AS_IF([$attr_pure],
+	[AC_DEFINE([HAVE_ATTRIBUTE_PURE],
+		[1],
+		[Define if __attribute__ ((pure)) can be used])])
 
 # I do not know a reliable way to check whether __attribute__ ((const))
-# can be used for const virtuals. So better use __attribute__ ((pure)).
-AC_DEFINE_UNQUOTED([ATTRIBUTE_CONST_VIRTUAL],
-	[$attribute_pure],
-	[Define to __attribute__ ((pure)) or ((const)) or empty])
+# or  __attribute__ ((const)) can be used for const virtuals.
+# If in doubt use __attribute__ ((pure)) but not __attribute__ ((const))
+
+AC_MSG_CHECKING([whether __attribute__ ((pure)) should be used for const virtuals])
+AC_ARG_ENABLE([pure_for_const_virtuals],
+	[AS_HELP_STRING([--disable-pure-for-const-virtuals],
+		[do not use __attribute__((pure)) for const virtuals])],
+	[MV_ENABLE([pure_for_const_virtuals])
+	AS_VAR_SET([cmt_pure_for_const_virtuals], ["on request"])],
+	[AS_VAR_SET([pure_for_const_virtuals], [:])
+	AS_VAR_SET([cmt_pure_for_const_virtuals], ["default"])])
+MV_MSG_RESULT_BIN([$pure_for_const_virtuals], [$cmt_pure_for_const_virtuals])
+AS_IF([$pure_for_const_virtuals],
+	[AC_DEFINE([USE_PURE_FOR_CONST_VIRTUALS],
+		[1],
+		[Define if __attribute__ ((pure)) can be used for const virtuals])])
+
+AC_MSG_CHECKING([whether __attribute__ ((const)) should be used for const virtuals])
+AC_ARG_ENABLE([const_for_const_virtuals],
+	[AS_HELP_STRING([--enable-const-for-const-virtuals],
+		[do not use __attribute__((const)) for const virtuals])],
+	[MV_ENABLE([const_for_const_virtuals])
+	AS_VAR_SET([cmt_const_for_const_virtuals], ["on request"])],
+	[AS_VAR_SET([const_for_const_virtuals], [false])
+	AS_VAR_SET([cmt_const_for_const_virtuals], ["default"])])
+MV_MSG_RESULT_BIN([$const_for_const_virtuals], [$cmt_const_for_const_virtuals])
+AS_IF([$const_for_const_virtuals],
+	[AC_DEFINE([USE_PURE_FOR_CONST_VIRTUALS],
+		[1],
+		[Define if __attribute__ ((const)) can be used for const virtuals])])
 
 # Check if __attribute__ ((nonnull)) works
 AC_MSG_CHECKING([whether __attribute__ ((nonnull)) can be used])
@@ -1011,12 +1084,13 @@ int i = 4, j = 5;
 return !((a(&i) == 4) && (a(&j) == 5));
 		]])],
 		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attribute_nonnull_], ["__attribute__ ((nonnull))"])],
+		AS_VAR_SET([attr_nonnull_], [:])],
 		[MV_MSG_RESULT([no])
-		AS_VAR_SET([attribute_nonnull_], [])])
-AC_DEFINE_UNQUOTED([ATTRIBUTE_NONNULL_],
-	[$attribute_nonnull_],
-	[Define to __attribute__ ((nonnull)) if it can be used])
+		AS_VAR_SET([attr_nonnull_], [false])])
+AS_IF([$attr_nonnull_],
+	[AC_DEFINE([HAVE_ATTRIBUTE_NONNULL_],
+		[1],
+		[Define if __attribute__ ((nonnull)) can be used])])
 
 # Check if __attribute__ ((nonnull (x, y))) works
 AC_MSG_CHECKING([whether __attribute__ ((nonnull (x, y))) can be used])
@@ -1040,12 +1114,13 @@ b x;
 return !((x.d(&i, 0, &i) == 2) && (x.d(&i, 0, &i) == 2) && (a(&i, 0, &i) == 4));
 		]])],
 		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attribute_nonnull], ["__attribute__ ((nonnull a))"])],
+		AS_VAR_SET([attr_nonnull], [:])],
 		[MV_MSG_RESULT([no])
-		AS_VAR_SET([attribute_nonnull], [])])
-AC_DEFINE_UNQUOTED([ATTRIBUTE_NONNULL(a)],
-	[$attribute_nonnull],
-	[Define to __attribute__ ((nonnull a)) if it can be used])
+		AS_VAR_SET([attr_nonnull], [false])])
+AS_IF([$attr_nonnull],
+	[AC_DEFINE([HAVE_ATTRIBUTE_NONNULL],
+		[1],
+		[Define if __attribute__ ((nonnull (list))) can be used])])
 
 # reset the CXXFLAGS, LDFLAGS for the normal tests
 AS_VAR_COPY([CXXFLAGS], [my_cxxflags])
@@ -1244,7 +1319,7 @@ AS_IF([$manual_sqlite],
 AS_IF([$support_sqlite],
 	[AC_DEFINE([WITH_SQLITE],
 		[1],
-		[Define to 1 if cache method sqlite is wanted])],
+		[Define if cache method sqlite is wanted])],
 	[AS_VAR_SET([SQLITE_LIBS], [])
 	AS_VAR_SET([SQLITE_CFLAGS], [])])
 AC_SUBST([SQLITE_LIBS])

@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/attribute.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "portage/mask.h"

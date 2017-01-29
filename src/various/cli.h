@@ -11,6 +11,7 @@
 #define SRC_VARIOUS_CLI_H_ 1
 
 #include "eixTk/argsreader.h"
+#include "eixTk/attribute.h"
 
 class DBHeader;
 class EixRc;

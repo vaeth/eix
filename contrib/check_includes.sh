@@ -110,7 +110,7 @@ Check() {
 	CheckWith ${1+"$@"}
 }
 
-GrepAllWith -e 'ATTRIBUTE_NONNULL_(' -e 'ATTRIBUTE_NONNULL\([^(_]\|$\)' -e 'ATTRIBUTE_NONNULL(\([^(]\|$\)'
+GrepAllWith -e 'ATTRIBUTE_NONNULL_(' -e '^ATTRIBUTE_NONNULL\([^(_]\|$\)' -e '[^_]ATTRIBUTE_NONNULL\([^(_]\|$\)' -e 'ATTRIBUTE_NONNULL([^(a]'
 GrepHWith 'include .config'
 GrepCCWithout '#include <config\.h>'
 Check '"eixTk/assert\.h"' -e 'eix_assert'
@@ -127,7 +127,8 @@ Check '"eixTk/auto_array\.h"' -e 'auto_array'
 Check '"eixTk/forward_list\.h"' -e 'forward_list'
 Check '"eixTk/ptr_container\.h"' -e 'ptr_container' -e 'ptr_forward_container'
 Check '"eixTk/stringutils\.h"' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e isdigit -e isalpha -e isalnum -e is_numeric -e tolower -e toupper -e to_lower -e trim -e StringHash -e escape_string -e localeC -e match_list -e slot_subslot -e casecontains -e caseequal -e my_atoi
-Check '"eixTk/unused\.h"' -e '[^_]UNUSED' -e 'ATTRIBUTE_UNUSED'
+Check '"eixTk/unused\.h"' -e '[^_]UNUSED' -e '^UNUSED'
+Check '"eixTk/attribute\.h"' -e 'ATTRIBUTE_'
 Check '"portage/basicversion\.h"' -e 'BasicVersion' -e 'BasicPart'
 CheckWithout '"search/packagetest\.h"' -e 'PackageTest::'
 

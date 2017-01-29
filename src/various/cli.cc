@@ -14,6 +14,7 @@
 
 #include "database/header.h"
 #include "eixTk/argsreader.h"
+#include "eixTk/attribute.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"

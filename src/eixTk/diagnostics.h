@@ -8,7 +8,7 @@
 #ifndef SRC_EIXTK_DIAGNOSTICS_H_
 #define SRC_EIXTK_DIAGNOSTICS_H_ 1
 
-// include "eixTk/diagnostics.h"  Make check_includes happy
+// check_includes: include "eixTk/diagnostics.h"
 
 #ifdef FULL_GCC_DIAG_PRAGMA
 #define GCC_DIAG_STR(s) #s

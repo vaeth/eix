@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 
+#include "eixTk/attribute.h"
 #include "eixTk/eixint.h"
 
 typedef std::pair<const char *, const char *> ArgPair;

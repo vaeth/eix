@@ -10,7 +10,7 @@
 #ifndef SRC_EIXTK_FORWARD_LIST_H_
 #define SRC_EIXTK_FORWARD_LIST_H_ 1
 
-// Make check_includes.sh happy: include "eixTk/forward_list.h"
+// check_includes: include "eixTk/forward_list.h"
 
 #ifdef HAVE_FORWARD_LIST
 #include <forward_list>

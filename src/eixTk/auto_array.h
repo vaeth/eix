@@ -12,7 +12,7 @@
 
 #include "eixTk/null.h"
 
-// Make check_includes.sh happy: include "eixTk/auto_array.h"
+// check_includes: include "eixTk/auto_array.h"
 
 namespace eix {
 template<typename m_Type> class auto_array {

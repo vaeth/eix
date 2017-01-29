@@ -14,6 +14,7 @@
 
 #include <string>
 
+#include "eixTk/attribute.h"
 #ifdef STRINGLIST_FREE
 #include "eixTk/inttypes.h"
 #ifdef HAVE_MOVE

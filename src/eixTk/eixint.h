@@ -12,7 +12,7 @@
 
 #include <sys/types.h>
 
-// include "eixTk/eixint.h" make check_includes happy
+// check_includes: include "eixTk/eixint.h"
 
 namespace eix {
 	typedef unsigned char UChar;

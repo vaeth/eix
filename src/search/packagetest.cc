@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "database/package_reader.h"
+#include "eixTk/attribute.h"
 #include "eixTk/assert.h"
 #include "eixTk/eixint.h"
 #include "eixTk/filenames.h"

@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "cache/base.h"
+#include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
 #include "eixTk/ptr_container.h"
 #include "portage/extendedversion.h"

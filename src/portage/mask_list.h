@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/attribute.h"
 #include "eixTk/forward_list.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"

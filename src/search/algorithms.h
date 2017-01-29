@@ -13,6 +13,7 @@
 #include <map>
 #include <string>
 
+#include "eixTk/attribute.h"
 #include "eixTk/regexp.h"
 #include "eixTk/unused.h"
 #include "search/levenshtein.h"

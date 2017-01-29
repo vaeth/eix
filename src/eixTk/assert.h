@@ -10,7 +10,7 @@
 #ifndef SRC_EIXTK_ASSERT_H_
 #define SRC_EIXTK_ASSERT_H_ 1
 
-// include "eixTk/assert.h"  // make check_includes happy
+// check_includes: include "eixTk/assert.h"
 
 #ifndef NDEBUG
 

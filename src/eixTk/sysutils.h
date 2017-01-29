@@ -14,6 +14,8 @@
 
 #include <ctime>
 
+#include "eixTk/attribute.h"
+
 /**
 Get uid of a user.
 @param u pointer to uid_t .. uid is stored there.

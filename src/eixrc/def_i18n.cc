@@ -7,7 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
-// Make check_includes happy: #include <config.h> #include "eixTk/i18n.h"
+// check_includes: #include <config.h> include "eixTk/i18n.h"
 
 AddOption(STRING, "I18N_INSTALLEDVERSIONS", P_("I18N_INSTALLEDVERSIONS",
 	"Installed versions:"), P_("I18N_INSTALLEDVERSIONS",

@@ -15,6 +15,7 @@
 #include <map>
 #include <string>
 
+#include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
 #include "eixTk/inttypes.h"
 #include "eixTk/null.h"

@@ -6,49 +6,28 @@
 /* Default DEFAULT_ARCH */
 #undef ARCH_DEFAULT
 
-/* Define to __attribute__ ((const)) if it can be used */
-#undef ATTRIBUTE_CONST
-
-/* Define to __attribute__ ((pure)) or ((const)) or empty */
-#undef ATTRIBUTE_CONST_VIRTUAL
-
-/* Define to __attribute__ ((nonnull a)) if it can be used */
-#undef ATTRIBUTE_NONNULL
-
-/* Define to __attribute__ ((nonnull)) if it can be used */
-#undef ATTRIBUTE_NONNULL_
-
-/* Define to [[noreturn]] or __attribute__ ((noreturn)) if it can be used */
-#undef ATTRIBUTE_NORETURN
-
-/* Define to __attribute__ ((pure)) if it can be used */
-#undef ATTRIBUTE_PURE
-
-/* Define to __attribute__ ((signal)) if it can be used */
-#undef ATTRIBUTE_SIGNAL
-
-/* Define to 1 if getegid is broken */
+/* Define if getegid is broken */
 #undef BROKEN_GETEGID
 
-/* Define to 1 if geteuid is broken */
+/* Define if geteuid is broken */
 #undef BROKEN_GETEUID
 
-/* Define to 1 if getgid is broken */
+/* Define if getgid is broken */
 #undef BROKEN_GETGID
 
-/* Define to 1 if getuid is broken */
+/* Define if getuid is broken */
 #undef BROKEN_GETUID
 
-/* Define to 1 if setegid is broken */
+/* Define if setegid is broken */
 #undef BROKEN_SETEGID
 
-/* Define to 1 if seteuid is broken */
+/* Define if seteuid is broken */
 #undef BROKEN_SETEUID
 
-/* Define to 1 if setgid is broken */
+/* Define if setgid is broken */
 #undef BROKEN_SETGID
 
-/* Define to 1 if setuid is broken */
+/* Define if setuid is broken */
 #undef BROKEN_SETUID
 
 /* Default DEP */
@@ -60,7 +39,7 @@
 /* Location of the cachefile */
 #undef EIX_CACHEFILE
 
-/* Define to 1 if paranoic asserts should be used */
+/* Define if paranoic asserts should be used */
 #undef EIX_PARANOIC_ASSERT
 
 /* Default EIX_PREFIX */
@@ -81,7 +60,7 @@
 /* Location of the remote cachefile 2 */
 #undef EIX_REMOTECACHEFILE2
 
-/* Define to 1 if asserts for static initializers should be used */
+/* Define if asserts for static initializers should be used */
 #undef EIX_STATIC_ASSERT
 
 /* Define to 1 if translation of program messages to the user's native
@@ -91,7 +70,7 @@
 /* Default EPREFIX */
 #undef EPREFIX_DEFAULT
 
-/* Define to 1 if _Pragma GCC diagnostic can be used everywhere */
+/* Define if _Pragma GCC diagnostic can be used everywhere */
 #undef FULL_GCC_DIAG_PRAGMA
 
 /* Define if STL has array class */
@@ -100,8 +79,32 @@
 /* Define to 1 if you have the `atoi' function. */
 #undef HAVE_ATOI
 
-/* Define to 1 if __attribute__ ((unused)) can be used */
+/* Define if __attribute__ ((const)) can be used */
+#undef HAVE_ATTRIBUTE_CONST
+
+/* Define if __attribute__ ((nonnull (list))) can be used */
+#undef HAVE_ATTRIBUTE_NONNULL
+
+/* Define if __attribute__ ((nonnull)) can be used */
+#undef HAVE_ATTRIBUTE_NONNULL_
+
+/* Define if __attribute__ ((noreturn)) can be used */
+#undef HAVE_ATTRIBUTE_NORETURN
+
+/* Define if __attribute__ ((pure)) can be used */
+#undef HAVE_ATTRIBUTE_PURE
+
+/* Define if __attribute__ ((signal)) can be used */
+#undef HAVE_ATTRIBUTE_SIGNAL
+
+/* Define if __attribute__ ((unused)) can be used */
 #undef HAVE_ATTRIBUTE_UNUSED
+
+/* Define if [[noreturn]] can be used */
+#undef HAVE_C11ATTRIBUTE_NORETURN
+
+/* Define if [[maybe_unused]] can be used */
+#undef HAVE_C11ATTRIBUTE_UNUSED
 
 /* Define to 1 if you have the `canonicalize_file_name' function. */
 #undef HAVE_CANONICALIZE_FILE_NAME
@@ -283,34 +286,34 @@
 /* Define to 1 if you have the `vfork' function. */
 #undef HAVE_VFORK
 
-/* Define to 1 if __builtin_expect can be used */
+/* Define if __builtin_expect can be used */
 #undef HAVE___BUILTIN_EXPECT
 
 /* Default Levenshtein distance for matches (as string) */
 #undef LEVENSHTEIN_DISTANCE_DEFAULT
 
-/* Define to 1 if getegid needs a prototype */
+/* Define if getegid needs a prototype */
 #undef NEED_GETEGID_PROTO
 
-/* Define to 1 if geteuid needs a prototype */
+/* Define if geteuid needs a prototype */
 #undef NEED_GETEUID_PROTO
 
-/* Define to 1 if getgid needs a prototype */
+/* Define if getgid needs a prototype */
 #undef NEED_GETGID_PROTO
 
-/* Define to 1 if getuid needs a prototype */
+/* Define if getuid needs a prototype */
 #undef NEED_GETUID_PROTO
 
-/* Define to 1 if setegid needs a prototype */
+/* Define if setegid needs a prototype */
 #undef NEED_SETEGID_PROTO
 
-/* Define to 1 if seteuid needs a prototype */
+/* Define if seteuid needs a prototype */
 #undef NEED_SETEUID_PROTO
 
-/* Define to 1 if setgid needs a prototype */
+/* Define if setgid needs a prototype */
 #undef NEED_SETGID_PROTO
 
-/* Define to 1 if setuid needs a prototype */
+/* Define if setuid needs a prototype */
 #undef NEED_SETUID_PROTO
 
 /* Name of package */
@@ -349,6 +352,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* Define if __attribute__ ((const)) can be used for const virtuals */
+#undef USE_PURE_FOR_CONST_VIRTUALS
+
 /* Enable extensions on AIX 3, Interix.  */
 #ifndef _ALL_SOURCE
 # undef _ALL_SOURCE
@@ -374,7 +380,7 @@
 /* Version number of package */
 #undef VERSION
 
-/* Define to 1 if cache method sqlite is wanted */
+/* Define if cache method sqlite is wanted */
 #undef WITH_SQLITE
 
 /* Enable large inode numbers on Mac OS X 10.5.  */

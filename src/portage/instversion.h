@@ -12,6 +12,7 @@
 
 #include <ctime>
 
+#include "eixTk/attribute.h"
 #include "eixTk/eixint.h"
 #include "eixTk/stringtypes.h"
 #include "portage/basicversion.h"

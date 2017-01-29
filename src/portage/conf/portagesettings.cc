@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "eixTk/assert.h"
+#include "eixTk/attribute.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/dialect.h"
 #include "eixTk/eixint.h"

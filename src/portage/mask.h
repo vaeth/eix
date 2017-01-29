@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/attribute.h"
 #include "eixTk/eixint.h"
 #include "eixTk/null.h"
 #include "eixTk/ptr_container.h"

@@ -17,7 +17,6 @@
 
 #include <cstring>
 
-#include <map>
 #include <set>
 #include <string>
 #include <utility>
@@ -107,7 +106,6 @@ Reset value pointer
 **/
 #define VALUE_CLEAR value.clear()
 
-using std::map;
 using std::pair;
 using std::set;
 using std::string;
@@ -914,7 +912,6 @@ void VarsReader::var_append(const char *beginning, size_t ref_key_length) {
 		return;
 	}
 	string varname(beginning, ref_key_length);
-	// map<string, string>::const_iterator it; make check_includes happy
 	const_iterator it;
 	if(likely(section.empty()) ||
 		((it = vars->find(varname + section)) == vars->end())) {

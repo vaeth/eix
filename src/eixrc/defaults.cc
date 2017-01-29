@@ -7,8 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
-// Make check_includes happy:
-// #include <config.h> #include "eixTk/i18n.h" #include <cstdlib>
+// check_includes: #include <config.h> include "eixTk/i18n.h" include <cstdlib>
 
 #if (DEFAULT_PART == 1)
 

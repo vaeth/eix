@@ -14,6 +14,7 @@
 
 #include <string>
 
+#include "eixTk/attribute.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/sysutils.h"

@@ -20,11 +20,12 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/attribute.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 
-// include "eixTk/stringutils.h" strlen. Satisfy check_include script
+// check_includes: include "eixTk/stringutils.h" strlen
 
 #ifdef HAVE_STRTOUL
 #define my_atoi(a) strtoul((a), NULLPTR, 10)

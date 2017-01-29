@@ -10,6 +10,8 @@
 
 #include <string>
 
+#include "eixTk/attribute.h"
+
 ATTRIBUTE_NONNULL_ bool verify_md5sum(const char *file, const std::string& md5sum);
 
 #endif  // SRC_EIXTK_MD5_H_

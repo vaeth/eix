@@ -13,6 +13,8 @@
 #include <vector>
 #include <string>
 
+#include "eixTk/attribute.h"
+
 typedef std::vector<std::string>::size_type SetsIndex;
 
 class SetsList : public std::vector<SetsIndex> {

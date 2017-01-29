@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "cache/base.h"
+#include "eixTk/attribute.h"
 #include "eixTk/ptr_container.h"
 #include "eixTk/stringtypes.h"
 

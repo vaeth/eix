@@ -18,7 +18,7 @@
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 
-// #include "eixTk/i18n.h" #include <iostream> make check_includes happy
+// check_includes: include "eixTk/i18n.h" include <iostream>
 
 namespace eix {
 

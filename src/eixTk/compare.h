@@ -11,6 +11,7 @@
 
 #include <string>
 
+#include "eixTk/attribute.h"
 #include "eixTk/eixint.h"
 
 namespace eix {

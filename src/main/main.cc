@@ -19,6 +19,7 @@
 #include <string>
 #include <iostream>
 
+#include "eixTk/attribute.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"

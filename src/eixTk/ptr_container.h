@@ -12,7 +12,7 @@
 
 #include "eixTk/ptr_iterator.h"
 
-// Make check_includes.sh happy: include "eixTk/ptr_container.h"
+// check_includes:  include "eixTk/ptr_container.h"
 
 namespace eix {
 /**

@@ -13,6 +13,7 @@
 #include <string>
 
 #include "cache/base.h"
+#include "eixTk/attribute.h"
 #include "eixTk/null.h"
 #include "eixTk/unused.h"
 

@@ -16,6 +16,7 @@
 #include <iostream>
 #include <stack>
 
+#include "eixTk/attribute.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"

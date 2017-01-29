@@ -38,6 +38,7 @@
 #endif
 #include <string>
 
+#include "eixTk/attribute.h"
 #include "eixTk/filenames.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"

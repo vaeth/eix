@@ -13,12 +13,13 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 
 class Database;
 
-// include "portage/basicversion.h" make check_includes happy
+// check_includes: include "portage/basicversion.h"
 
 class BasicPart {
 	public:

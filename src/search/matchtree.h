@@ -10,6 +10,7 @@
 
 #include <stack>
 
+#include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
 #include "eixTk/null.h"
 

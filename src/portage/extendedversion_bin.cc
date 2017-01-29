@@ -15,6 +15,7 @@
 #include <string>
 
 #include "eixTk/assert.h"
+#include "eixTk/attribute.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"

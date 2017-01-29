@@ -11,7 +11,7 @@
 // define C++-11 dialect specific keywords (if available)
 // or poor man's substitutes
 
-// make the check_includes script happy: include "eixTk/dialect.h"
+// check_includes: include "eixTk/dialect.h"
 
 #ifdef HAVE_CONSTEXPR
 #define CONSTEXPR constexpr

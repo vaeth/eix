@@ -78,6 +78,7 @@ eixTk/ansicolor.cc \
 eixTk/ansicolor.h \
 eixTk/argsreader.cc \
 eixTk/argsreader.h \
+eixTk/attribute.h \
 eixTk/auto_array.h \
 eixTk/forward_list.h \
 eixTk/inttypes.h \

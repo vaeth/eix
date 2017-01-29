@@ -13,6 +13,7 @@
 #include <string>
 
 #include "database/header.h"
+#include "eixTk/attribute.h"
 #include "eixTk/diagnostics.h"
 #ifdef HAVE_MOVE
 #include "eixTk/dialect.h"
@@ -23,7 +24,7 @@
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 
-// include "portage/basicversion.h" This comment satisfies check_include script
+// check_includes: include "portage/basicversion.h"
 
 class BasicPart;
 class IUseSet;

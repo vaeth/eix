@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/attribute.h"
 #include "eixTk/stringtypes.h"
 
 class OutputString {

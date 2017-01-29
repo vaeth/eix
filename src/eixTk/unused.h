@@ -8,24 +8,12 @@
 #ifndef SRC_EIXTK_UNUSED_H_
 #define SRC_EIXTK_UNUSED_H_ 1
 
-// include "eixTk/unused.h" This comment satisfies check_include script
+// check_includes: include "eixTk/unused.h" include "eixTk/attribute.h"
 
-#ifdef ATTRIBUTE_UNUSED
+#if defined(HAVE_C11ATTRIBUTE_UNUSED) || defined(HAVE_ATTRIBUTE_UNUSED)
 #define UNUSED(p)
-
-#else /* ifndef ATTRIBUTE_UNUSED */
-
-#ifdef HAVE_ATTRIBUTE_UNUSED
-
-#define ATTRIBUTE_UNUSED __attribute__ ((__unused__))
-#define UNUSED(p)
-
-#else /* ifndef HAVE_ATTRIBUTE_UNUSED */
-
-#define ATTRIBUTE_UNUSED
+#else
 #define UNUSED(p) ((void)(p))
-
-#endif /* HAVE_ATTRIBUTE_UNUSED */
-#endif /* ATTRIBUTE_UNUSED */
+#endif
 
 #endif  // SRC_EIXTK_UNUSED_H_

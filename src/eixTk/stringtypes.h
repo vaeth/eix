@@ -8,7 +8,7 @@
 #ifndef SRC_EIXTK_STRINGTYPES_H_
 #define SRC_EIXTK_STRINGTYPES_H_
 
-// include "eixTk/stringtypes.h" make check_includes happy
+// check_includes: include "eixTk/stringtypes.h"
 
 #include <map>
 #include <set>

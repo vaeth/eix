@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/attribute.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -32,7 +33,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-ATTRIBUTE_NONNULL_ ATTRIBUTE_NORETURN static void failparse(const string& v);
+ATTRIBUTE_NORETURN ATTRIBUTE_NONNULL_ static void failparse(const string& v);
 ATTRIBUTE_NONNULL_ static void get_version(string *version, const char *str);
 ATTRIBUTE_NONNULL_ static void get_name_version(string *name, string *version, const char *str);
 ATTRIBUTE_NONNULL_ static void parse_version(BasicVersion *b, const string& v);

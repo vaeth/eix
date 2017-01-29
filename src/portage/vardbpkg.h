@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/attribute.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"

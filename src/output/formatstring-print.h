@@ -12,6 +12,8 @@
 
 #include <string>
 
+#include "eixTk/attribute.h"
+
 class PrintFormat;
 class OutputString;
 

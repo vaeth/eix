@@ -20,7 +20,7 @@
 #include "eixrc/eixrc.h"
 #include "eixrc/global.h"
 
-// Make check_includes happy: _(
+// check_includes: _(
 
 #define DO_STRINGIFY(a) #a
 #define EXPAND_STRINGIFY(a) DO_STRINGIFY(a)

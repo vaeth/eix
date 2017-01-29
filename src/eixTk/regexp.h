@@ -12,11 +12,12 @@
 
 #include <regex.h>
 
-// include <cstdlib> make check_includes happy
+// check_includes: include <cstdlib>
 
 #include <string>
 #include <vector>
 
+#include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
 
 /**

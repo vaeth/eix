@@ -19,6 +19,7 @@
 
 #include "database/header.h"
 #include "database/io.h"
+#include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"

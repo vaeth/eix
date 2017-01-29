@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "cache/base.h"
+#include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
 
 class Category;
