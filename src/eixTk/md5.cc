@@ -287,7 +287,7 @@ GCC_DIAG_ON(sign-conversion)
 		filebuffer = static_cast<char *>(mmap(NULLPTR, filesize, PROT_READ, MAP_SHARED, fd, 0));
 		close(fd);
 GCC_DIAG_OFF(old-style-cast)
-		if (filebuffer == MAP_FAILED) {
+		if(filebuffer == MAP_FAILED) {
 GCC_DIAG_ON(old-style-cast)
 			return false;
 		}

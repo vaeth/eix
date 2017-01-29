@@ -1084,7 +1084,7 @@ GCC_DIAG_OFF(sign-conversion)
 GCC_DIAG_ON(sign-conversion)
 	close(fd);
 GCC_DIAG_OFF(old-style-cast)
-	if (buffer == MAP_FAILED) {
+	if(buffer == MAP_FAILED) {
 GCC_DIAG_ON(old-style-cast)
 		if(errtext != NULLPTR) {
 			*errtext = eix::format(_("cannot map file %s")) % filename;
