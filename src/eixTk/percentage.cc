@@ -91,7 +91,7 @@ void PercentStatus::next() {
 void PercentStatus::finish(const string& append_string) {
 	m_append.clear();
 	m_finished = true;
-	if(m_verbose)  {
+	if(m_verbose) {
 		reprint();
 	}
 	cout << append_string << endl;

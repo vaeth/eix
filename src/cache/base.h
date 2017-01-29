@@ -47,7 +47,7 @@ class BasicCache {
 		virtual ~BasicCache() {
 		}
 
-		virtual bool use_prefixport() const ATTRIBUTE_CONST_VIRTUAL {
+		ATTRIBUTE_CONST_VIRTUAL virtual bool use_prefixport() const {
 			return false;
 		}
 
@@ -122,7 +122,7 @@ class BasicCache {
 		/**
 		@return true if the method even read multiple categories at once
 		**/
-		virtual bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL {
+		ATTRIBUTE_CONST_VIRTUAL virtual bool can_read_multiple_categories() const {
 			return false;
 		}
 
@@ -133,13 +133,13 @@ class BasicCache {
 		@param category If packagetree is NULLPTR, the packages matching cat_name are added to this category.
 		@return false if some error caused incomplete read
 		**/
-		virtual bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED, const char *cat_name ATTRIBUTE_UNUSED, Category *category ATTRIBUTE_UNUSED) {
+		virtual bool readCategories(ATTRIBUTE_UNUSED PackageTree *packagetree, ATTRIBUTE_UNUSED const char *cat_name, ATTRIBUTE_UNUSED Category *category) {
 			UNUSED(packagetree);
 			UNUSED(cat_name);
 			UNUSED(category);
 			return 1;
 		}
-		bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED) {
+		bool readCategories(ATTRIBUTE_UNUSED PackageTree *packagetree) {
 			return readCategories(packagetree, NULLPTR, NULLPTR);
 		}
 
@@ -151,7 +151,7 @@ class BasicCache {
 		In case of a false return value, readCategory() must not be called,
 		but readCategoryFinalize() must be called anyway.
 		**/
-		virtual bool readCategoryPrepare(const char *cat_name) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ virtual bool readCategoryPrepare(const char *cat_name) {
 			m_catname = cat_name;
 			return true;
 		}
@@ -162,7 +162,7 @@ class BasicCache {
 		After calling this, readCategoryFinalize() must be called.
 		@return false if some error caused incomplete read.
 		**/
-		virtual bool readCategory(Category *cat) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ virtual bool readCategory(Category *cat) {
 			return readCategories(NULLPTR, m_catname.c_str(), cat);
 		}
 
@@ -174,26 +174,26 @@ class BasicCache {
 			m_catname.clear();
 		}
 
-		virtual bool get_time(time_t *t ATTRIBUTE_UNUSED, const std::string &pkg_name ATTRIBUTE_UNUSED, const std::string &ver_name ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ virtual bool get_time(ATTRIBUTE_UNUSED time_t *t,ATTRIBUTE_UNUSED const std::string &pkg_name, ATTRIBUTE_UNUSED const std::string &ver_name) const {
 			UNUSED(t);
 			UNUSED(pkg_name);
 			UNUSED(ver_name);
 			return 0;
 		}
 
-		virtual const char *get_md5sum(const std::string &pkg_name ATTRIBUTE_UNUSED, const std::string &ver_name ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ virtual const char *get_md5sum(ATTRIBUTE_UNUSED const std::string &pkg_name, ATTRIBUTE_UNUSED const std::string &ver_name) const {
 			UNUSED(pkg_name);
 			UNUSED(ver_name);
 			return NULLPTR;
 		}
 
-		virtual void get_version_info(const std::string &pkg_name ATTRIBUTE_UNUSED, const std::string &ver_name ATTRIBUTE_UNUSED, Version *version ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ virtual void get_version_info(ATTRIBUTE_UNUSED const std::string &pkg_name, ATTRIBUTE_UNUSED const std::string &ver_name, ATTRIBUTE_UNUSED Version *version) const {
 			UNUSED(pkg_name);
 			UNUSED(ver_name);
 			UNUSED(version);
 		}
 
-		virtual void get_common_info(const std::string &pkg_name ATTRIBUTE_UNUSED, const std::string &ver_name ATTRIBUTE_UNUSED, Package *pkg ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ virtual void get_common_info(ATTRIBUTE_UNUSED const std::string &pkg_name, ATTRIBUTE_UNUSED const std::string &ver_name, ATTRIBUTE_UNUSED Package *pkg) const {
 			UNUSED(pkg_name);
 			UNUSED(ver_name);
 			UNUSED(pkg);
@@ -208,7 +208,7 @@ class BasicCache {
 		bool have_prefix;
 		ExtendedVersion::Overlay m_overlay_key;
 		ErrorCallback m_error_callback;
-		void env_add_package(WordMap *env, const Package& package, const Version& version, const std::string& ebuild_dir, const char *ebuild_full) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void env_add_package(WordMap *env, const Package& package, const Version& version, const std::string& ebuild_dir, const char *ebuild_full) const;
 
 	public:
 		PortageSettings *portagesettings;

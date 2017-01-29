@@ -42,7 +42,7 @@ class MatchAtom {
 		@param p Package to match
 		@return true if match; else false
 		**/
-		virtual bool match(PackageReader *p) ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE virtual bool match(PackageReader *p);
 
 		virtual MatchAtomOperator *as_operator() {
 			return NULLPTR;
@@ -119,7 +119,7 @@ class MatchParseData {
 		**/
 		bool negatebrace;
 
-		explicit MatchParseData(MatchAtom **p) ATTRIBUTE_NONNULL((2))
+		ATTRIBUTE_NONNULL((2)) explicit MatchParseData(MatchAtom **p)
 			: parent(p), subroot(NULLPTR), useright(false), negatebrace(false) {
 		}
 };

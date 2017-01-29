@@ -31,7 +31,7 @@ class CacheTable : public CacheTableList {
 			delete_and_clear();
 		}
 
-		bool addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const std::string& cache_name, const WordMap *override, std::string *errtext) ATTRIBUTE_NONNULL((4));
+		ATTRIBUTE_NONNULL((4)) bool addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const std::string& cache_name, const WordMap *override, std::string *errtext);
 };
 
 #endif  // SRC_CACHE_CACHETABLE_H_

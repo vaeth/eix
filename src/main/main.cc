@@ -116,8 +116,8 @@ The name under which we have been called.
 **/
 const char *program_name;
 
-static void sig_handler(int sig) ATTRIBUTE_SIGNAL ATTRIBUTE_NORETURN;
-static void sanitize_filename(string *s) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_SIGNAL ATTRIBUTE_NORETURN static void sig_handler(int sig);
+ATTRIBUTE_NONNULL_ static void sanitize_filename(string *s);
 
 /**
 On segfault: show some instructions to help us find the bug.
@@ -162,7 +162,7 @@ static void sanitize_filename(string *s) {
 }
 
 #ifdef BINARY_COLLECTION
-inline static int run_program(int argc, char *argv[]) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ inline static int run_program(int argc, char *argv[]);
 
 inline static int run_program(int argc, char *argv[]) {
 	const string program_lower(to_lower(program_name));

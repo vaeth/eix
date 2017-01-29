@@ -31,7 +31,7 @@ using std::string;
 
 class RestrictMap : public map<string, ExtendedVersion::Restrict> {
 	private:
-		void mapinit(const char *s, ExtendedVersion::Restrict r) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void mapinit(const char *s, ExtendedVersion::Restrict r) {
 			(*this)[s] = r;
 		}
 
@@ -49,7 +49,7 @@ class RestrictMap : public map<string, ExtendedVersion::Restrict> {
 			mapinit("parallel",       ExtendedVersion::RESTRICT_PARALLEL);
 		}
 
-		ExtendedVersion::Restrict getRestrict(const string& s) const ATTRIBUTE_PURE {
+		ATTRIBUTE_PURE ExtendedVersion::Restrict getRestrict(const string& s) const {
 			RestrictMap::const_iterator i(find(s));
 			if(i != end())
 				return i->second;
@@ -61,7 +61,7 @@ static RestrictMap *restrict_map = NULLPTR;
 
 class PropertiesMap : public map<string, ExtendedVersion::Properties> {
 	private:
-		void mapinit(const char *s, ExtendedVersion::Properties p) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void mapinit(const char *s, ExtendedVersion::Properties p) {
 			(*this)[s] = p;
 		}
 	public:
@@ -72,7 +72,7 @@ class PropertiesMap : public map<string, ExtendedVersion::Properties> {
 			mapinit("set",         ExtendedVersion::PROPERTIES_SET);
 		}
 
-		ExtendedVersion::Properties getProperties(const string& s) const ATTRIBUTE_PURE {
+		ATTRIBUTE_PURE ExtendedVersion::Properties getProperties(const string& s) const {
 			PropertiesMap::const_iterator i(find(s));
 			if(i != end()) {
 				return i->second;

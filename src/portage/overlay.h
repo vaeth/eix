@@ -78,11 +78,11 @@ class RepoList : public OverlayVec {
 
 		const char *get_path(const std::string& label);
 
-		RepoList::iterator find_filename(const char *search, bool parent_ok, bool resolve_mask) ATTRIBUTE_NONNULL_;
-		RepoList::iterator find_filename(const char *search, bool parent_ok) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ RepoList::iterator find_filename(const char *search, bool parent_ok, bool resolve_mask);
+		ATTRIBUTE_NONNULL_ RepoList::iterator find_filename(const char *search, bool parent_ok) {
 			return find_filename(search, parent_ok, true);
 		}
-		RepoList::iterator find_filename(const char *search) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ RepoList::iterator find_filename(const char *search) {
 			return find_filename(search, false);
 		}
 

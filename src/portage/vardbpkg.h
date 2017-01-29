@@ -32,7 +32,7 @@ class VarDbPkg {
 	private:
 		typedef std::map<std::string, InstVec> InstVecPkg;
 		typedef std::map<std::string, InstVecPkg *> InstVecCat;
-		static void sort_installed(VarDbPkg::InstVecPkg *maping) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ static void sort_installed(VarDbPkg::InstVecPkg *maping);
 		/**
 		Mapping of [category][package] to list versions.
 		**/
@@ -54,7 +54,7 @@ class VarDbPkg {
 		Read category from db-directory.
 		@param category read this category.
 		**/
-		void readCategory(const char *category) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void readCategory(const char *category);
 
 	public:
 		/**
@@ -82,15 +82,15 @@ class VarDbPkg {
 			return care_of_slots;
 		}
 
-		bool readSlot(const Package& p, InstVersion *v) const ATTRIBUTE_NONNULL_;
-		void readEapi(const Package& p, InstVersion *v) const ATTRIBUTE_NONNULL_;
-		bool readUse(const Package& p, InstVersion *v) const ATTRIBUTE_NONNULL_;
-		void readRestricted(const Package& p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
-		void readInstDate(const Package& p, InstVersion *v) const ATTRIBUTE_NONNULL_;
-		void readDepend(const Package& p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ bool readSlot(const Package& p, InstVersion *v) const;
+		ATTRIBUTE_NONNULL_ void readEapi(const Package& p, InstVersion *v) const;
+		ATTRIBUTE_NONNULL_ bool readUse(const Package& p, InstVersion *v) const;
+		ATTRIBUTE_NONNULL_ void readRestricted(const Package& p, InstVersion *v, const DBHeader& header) const;
+		ATTRIBUTE_NONNULL_ void readInstDate(const Package& p, InstVersion *v) const;
+		ATTRIBUTE_NONNULL_ void readDepend(const Package& p, InstVersion *v, const DBHeader& header) const;
 
-		bool readOverlay(const Package& p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
-		std::string readOverlayLabel(const Package *p, const BasicVersion *v) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ bool readOverlay(const Package& p, InstVersion *v, const DBHeader& header) const;
+		ATTRIBUTE_NONNULL_ std::string readOverlayLabel(const Package *p, const BasicVersion *v) const;
 		eix::SignedBool check_installed_overlays;
 
 		/**
@@ -130,7 +130,7 @@ class VarDbPkg {
 		Test if a particular version is installed from the correct overlay.
 		@return 1 (yes) or 0 (no) or -1 (might be - overlay unclear)
 		**/
-		eix::SignedBool isInstalledVersion(const Package& p, const Version *v, const DBHeader& header) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ eix::SignedBool isInstalledVersion(const Package& p, const Version *v, const DBHeader& header) {
 			InstVersion *inst;
 			return isInstalledVersion(&inst, p, v, header);
 		}
@@ -138,12 +138,12 @@ class VarDbPkg {
 		/**
 		As above and store pointer to installed version in *inst
 		**/
-		eix::SignedBool isInstalledVersion(InstVersion **inst, const Package& p, const Version *v, const DBHeader& header) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ eix::SignedBool isInstalledVersion(InstVersion **inst, const Package& p, const Version *v, const DBHeader& header);
 
 		/**
 		@return matching available version or NULLPTR
 		**/
-		Version *getAvailable(const Package& p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ Version *getAvailable(const Package& p, InstVersion *v, const DBHeader& header) const;
 
 		/**
 		@param p Check for this Package

@@ -32,10 +32,10 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-static void failparse(const string& v) ATTRIBUTE_NONNULL_ ATTRIBUTE_NORETURN;
-static void get_version(string *version, const char *str) ATTRIBUTE_NONNULL_;
-static void get_name_version(string *name, string *version, const char *str) ATTRIBUTE_NONNULL_;
-static void parse_version(BasicVersion *b, const string& v) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ ATTRIBUTE_NORETURN static void failparse(const string& v);
+ATTRIBUTE_NONNULL_ static void get_version(string *version, const char *str);
+ATTRIBUTE_NONNULL_ static void get_name_version(string *name, string *version, const char *str);
+ATTRIBUTE_NONNULL_ static void parse_version(BasicVersion *b, const string& v);
 
 static void failparse(const string& v) {
 	cerr << eix::format(_("cannot determine version of \"%s\"")) % v << endl;

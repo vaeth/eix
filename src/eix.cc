@@ -74,12 +74,12 @@ using std::endl;
 typedef eix::ptr_container<vector<Package *> > PackageList;
 
 static void dump_help();
-static bool opencache(Database *db, const char *filename, const char *tooltext) ATTRIBUTE_NONNULL_;
-static bool print_overlay_table(PrintFormat *fmt, DBHeader *header, PrintFormat::OverlayUsed *overlay_used) ATTRIBUTE_NONNULL((1, 2));
-static void parseFormat(const char *sourcename, const char *content) ATTRIBUTE_NONNULL_;
-static void set_format(EixRc *rc) ATTRIBUTE_NONNULL_;
-static void setup_defaults(EixRc *rc, bool is_tty) ATTRIBUTE_NONNULL_;
-static bool is_current_dbversion(const char *filename, const char *tooltext) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ static bool opencache(Database *db, const char *filename, const char *tooltext);
+ATTRIBUTE_NONNULL((1, 2)) static bool print_overlay_table(PrintFormat *fmt, DBHeader *header, PrintFormat::OverlayUsed *overlay_used);
+ATTRIBUTE_NONNULL_ static void parseFormat(const char *sourcename, const char *content);
+ATTRIBUTE_NONNULL_ static void set_format(EixRc *rc);
+ATTRIBUTE_NONNULL_ static void setup_defaults(EixRc *rc, bool is_tty);
+ATTRIBUTE_NONNULL_ static bool is_current_dbversion(const char *filename, const char *tooltext);
 static void print_wordvec(const WordVec& vec);
 static void print_unused(const string& filename, const string& excludefiles, const PackageList& packagelist, bool test_empty);
 static void print_removed(const string& dirname, const string& excludefiles, const PackageList& packagelist);

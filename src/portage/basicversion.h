@@ -61,12 +61,12 @@ class BasicPart {
 		BasicPart(PartType p, char c) : parttype(p), partcontent(1, c) {
 		}
 
-		BasicPart(PartType p, const char *s) ATTRIBUTE_NONNULL_ : parttype(p), partcontent(s) {
+		ATTRIBUTE_NONNULL_ BasicPart(PartType p, const char *s) : parttype(p), partcontent(s) {
 		}
 
-		static eix::SignedBool compare(const BasicPart& left, const BasicPart& right) ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE static eix::SignedBool compare(const BasicPart& left, const BasicPart& right);
 
-		static bool equal_but_right_is_cut(const BasicPart& left, const BasicPart& right) ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE static bool equal_but_right_is_cut(const BasicPart& left, const BasicPart& right);
 };
 
 
@@ -80,7 +80,7 @@ class BasicVersion {
 		/**
 		Compare the version
 		**/
-		static eix::SignedBool compare(const BasicVersion& right, const BasicVersion& left, bool right_maybe_shorter) ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE static eix::SignedBool compare(const BasicVersion& right, const BasicVersion& left, bool right_maybe_shorter);
 
 	public:
 		enum ParseResult {
@@ -102,7 +102,7 @@ class BasicVersion {
 		/**
 		Compare all except gentoo revisions
 		**/
-		static eix::SignedBool compareTilde(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE static eix::SignedBool compareTilde(const BasicVersion& left, const BasicVersion& right);
 
 		/**
 		Compare the version
@@ -140,32 +140,32 @@ class BasicVersion {
 /**
 Short compare-stuff
 **/
-inline static bool operator<(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator<(const BasicVersion& left, const BasicVersion& right);
 inline static bool operator<(const BasicVersion& left, const BasicVersion& right) {
 	return BasicVersion::compare(left, right) < 0;
 }
 
-inline static bool operator>(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator>(const BasicVersion& left, const BasicVersion& right);
 inline static bool operator>(const BasicVersion& left, const BasicVersion& right) {
 	return BasicVersion::compare(left, right) > 0;
 }
 
-inline static bool operator==(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator==(const BasicVersion& left, const BasicVersion& right);
 inline static bool operator==(const BasicVersion& left, const BasicVersion& right) {
 	return BasicVersion::compare(left, right) == 0;
 }
 
-inline static bool operator!=(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator!=(const BasicVersion& left, const BasicVersion& right);
 inline static bool operator!=(const BasicVersion& left, const BasicVersion& right) {
 	return BasicVersion::compare(left, right) != 0;
 }
 
-inline static bool operator>=(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator>=(const BasicVersion& left, const BasicVersion& right);
 inline static bool operator>=(const BasicVersion& left, const BasicVersion& right) {
 	return BasicVersion::compare(left, right) >= 0;
 }
 
-inline static bool operator<=(const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator<=(const BasicVersion& left, const BasicVersion& right);
 inline static bool operator<=(const BasicVersion& left, const BasicVersion& right) {
 	return BasicVersion::compare(left, right) <= 0;
 }

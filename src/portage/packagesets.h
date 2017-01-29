@@ -37,7 +37,7 @@ class SetsList : public std::vector<SetsIndex> {
 		**/
 		bool add_system();
 
-		bool has(SetsIndex i) const ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE bool has(SetsIndex i) const;
 
 		/**
 		@return true if something has changed

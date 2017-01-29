@@ -57,7 +57,7 @@ class Directory {
 		}
 };
 
-static bool pushback_lines_file(const char *file, WordVec *v, bool keep_empty, eix::SignedBool keep_comments, string *errtext) ATTRIBUTE_NONNULL((1, 2));
+ATTRIBUTE_NONNULL((1, 2)) static bool pushback_lines_file(const char *file, WordVec *v, bool keep_empty, eix::SignedBool keep_comments, string *errtext);
 static int pushback_files_selector(SCANDIR_ARG3 dir_entry);
 
 bool scandir_cc(const string& dir, WordVec *namelist, select_dirent select, bool sorted) {
@@ -95,7 +95,7 @@ static bool pushback_lines_file(const char *file, LineVec *v, bool keep_empty, e
 	}
 	while(likely(ifstr.good())) {
 		getline(ifstr, line);
-		if(unlikely(line.empty() && unlikely(!ifstr.good())))  {
+		if(unlikely(line.empty() && unlikely(!ifstr.good()))) {
 			break;
 		}
 		if(keep_comments <= 0) {

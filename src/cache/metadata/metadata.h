@@ -57,17 +57,17 @@ class MetadataCache : public BasicCache {
 
 		bool initialize(const std::string& name);
 
-		bool readCategoryPrepare(const char *cat_name) OVERRIDE ATTRIBUTE_NONNULL_;
-		bool readCategory(Category *cat) OVERRIDE ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ bool readCategoryPrepare(const char *cat_name) OVERRIDE;
+		ATTRIBUTE_NONNULL_ bool readCategory(Category *cat) OVERRIDE;
 		void readCategoryFinalize() OVERRIDE;
 
-		const char *get_md5sum(const std::string &pkg_name, const std::string &ver_name) const OVERRIDE ATTRIBUTE_NONNULL_;
-		bool get_time(time_t *t, const std::string &pkg_name, const std::string &ver_name) const OVERRIDE ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ const char *get_md5sum(const std::string &pkg_name, const std::string &ver_name) const OVERRIDE;
+		ATTRIBUTE_NONNULL_ bool get_time(time_t *t, const std::string &pkg_name, const std::string &ver_name) const OVERRIDE;
 
-		void get_version_info(const std::string &pkg_name, const std::string &ver_name, Version *version) const OVERRIDE ATTRIBUTE_NONNULL_;
-		void get_common_info(const std::string &pkg_name, const std::string &ver_name, Package *pkg) const OVERRIDE ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void get_version_info(const std::string &pkg_name, const std::string &ver_name, Version *version) const OVERRIDE;
+		ATTRIBUTE_NONNULL_ void get_common_info(const std::string &pkg_name, const std::string &ver_name, Package *pkg) const OVERRIDE;
 
-		bool use_prefixport() const OVERRIDE ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE bool use_prefixport() const OVERRIDE;
 
 		const char *getType() const OVERRIDE {
 			return m_type.c_str();

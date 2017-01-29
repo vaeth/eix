@@ -55,12 +55,12 @@ using std::cout;
 using std::endl;
 
 static void print_help();
-static void init_db(const char *file, Database *db, DBHeader *header, PackageReader **reader, PortageSettings *ps) ATTRIBUTE_NONNULL_;
-static void set_virtual(PrintFormat *fmt, const DBHeader& header, const string& eprefix_virtual) ATTRIBUTE_NONNULL_;
-static void print_changed_package(Package *op, Package *np) ATTRIBUTE_NONNULL_;
-static void print_found_package(Package *p) ATTRIBUTE_NONNULL_;
-static void print_lost_package(Package *p) ATTRIBUTE_NONNULL_;
-static void parseFormat(Node **format, const char *varname, EixRc *rc) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ static void init_db(const char *file, Database *db, DBHeader *header, PackageReader **reader, PortageSettings *ps);
+ATTRIBUTE_NONNULL_ static void set_virtual(PrintFormat *fmt, const DBHeader& header, const string& eprefix_virtual);
+ATTRIBUTE_NONNULL_ static void print_changed_package(Package *op, Package *np);
+ATTRIBUTE_NONNULL_ static void print_found_package(Package *p);
+ATTRIBUTE_NONNULL_ static void print_lost_package(Package *p);
+ATTRIBUTE_NONNULL_ static void parseFormat(Node **format, const char *varname, EixRc *rc);
 
 static PortageSettings *portagesettings;
 static SetStability   *set_stability_old, *set_stability_new;
@@ -168,15 +168,15 @@ static void set_virtual(PrintFormat *fmt, const DBHeader& header, const string& 
 
 class DiffReaders {
 	public:
-		typedef void (*lost_func) (Package *p) ATTRIBUTE_NONNULL_;
-		typedef void (*found_func) (Package *p) ATTRIBUTE_NONNULL_;
-		typedef void (*changed_func) (Package *p1, Package *p2) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ typedef void (*lost_func) (Package *p);
+		ATTRIBUTE_NONNULL_ typedef void (*found_func) (Package *p);
+		ATTRIBUTE_NONNULL_ typedef void (*changed_func) (Package *p1, Package *p2);
 
 		lost_func lost_package;
 		found_func found_package;
 		changed_func changed_package;
 
-		DiffReaders(VarDbPkg *vardbpkg, PortageSettings *portage_settings, bool only_installed, bool compare_slots, bool separate_deleted) ATTRIBUTE_NONNULL_ :
+		ATTRIBUTE_NONNULL_ DiffReaders(VarDbPkg *vardbpkg, PortageSettings *portage_settings, bool only_installed, bool compare_slots, bool separate_deleted) :
 			m_vardbpkg(vardbpkg), m_portage_settings(portage_settings), m_only_installed(only_installed),
 			m_slots(compare_slots), m_separate_deleted(separate_deleted) {
 		}

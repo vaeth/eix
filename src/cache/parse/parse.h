@@ -36,13 +36,13 @@ class ParseCache : public BasicCache {
 		WordVec m_packages;
 		std::string m_catpath;
 
-		void set_checking(std::string *str, const char *item, const VarsReader& ebuild, bool *ok) ATTRIBUTE_NONNULL((2, 3));
-		void set_checking(std::string *str, const char *item, const VarsReader& ebuild) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL((2, 3)) void set_checking(std::string *str, const char *item, const VarsReader& ebuild, bool *ok);
+		ATTRIBUTE_NONNULL_ void set_checking(std::string *str, const char *item, const VarsReader& ebuild) {
 			set_checking(str, item, ebuild, NULLPTR);
 		}
 
-		void parse_exec(const char *fullpath, const std::string& dirpath, bool read_onetime_info, bool *have_onetime_info, Package *pkg, Version *version) ATTRIBUTE_NONNULL_;
-		void readPackage(Category *cat, const std::string& pkg_name, const std::string& directory_path, const WordVec& files) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void parse_exec(const char *fullpath, const std::string& dirpath, bool read_onetime_info, bool *have_onetime_info, Package *pkg, Version *version);
+		ATTRIBUTE_NONNULL_ void readPackage(Category *cat, const std::string& pkg_name, const std::string& directory_path, const WordVec& files);
 
 	public:
 		ParseCache() : BasicCache(), verbose(false), ebuild_exec(NULLPTR) {
@@ -61,11 +61,11 @@ class ParseCache : public BasicCache {
 			verbose = true;
 		}
 
-		bool readCategoryPrepare(const char *cat_name) OVERRIDE ATTRIBUTE_NONNULL_;
-		bool readCategory(Category *cat) OVERRIDE ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ bool readCategoryPrepare(const char *cat_name) OVERRIDE;
+		ATTRIBUTE_NONNULL_ bool readCategory(Category *cat) OVERRIDE;
 		void readCategoryFinalize() OVERRIDE;
 
-		bool use_prefixport() const OVERRIDE ATTRIBUTE_CONST_VIRTUAL {
+		ATTRIBUTE_CONST_VIRTUAL bool use_prefixport() const OVERRIDE {
 			return true;
 		}
 

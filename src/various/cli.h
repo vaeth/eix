@@ -23,7 +23,7 @@ class SetStability;
 class VarDbPkg;
 template<typename m_Type> class MaskList;
 
-void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, const ParseError *parse_error, MaskList<Mask> **marked_list, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, const ParseError *parse_error, MaskList<Mask> **marked_list, const ArgumentReader& ar);
 
 /*
 	If you want to add a new parameter to eix just insert a line into

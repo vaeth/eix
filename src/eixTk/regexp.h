@@ -75,7 +75,7 @@ class Regex {
 		@arg s string to match.
 		@return true if the regular expression matches
 		**/
-		bool match(const char *s) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ bool match(const char *s) const;
 
 		/**
 		@arg s string to match
@@ -83,7 +83,7 @@ class Regex {
 		@arg e end of match
 		@return true if the regular expression matches
 		**/
-		bool match(const char *s, std::string::size_type *b, std::string::size_type *e) const ATTRIBUTE_NONNULL((2));
+		ATTRIBUTE_NONNULL((2)) bool match(const char *s, std::string::size_type *b, std::string::size_type *e) const;
 
 		bool compiled() const {
 			return m_compiled;

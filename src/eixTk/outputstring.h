@@ -80,7 +80,7 @@ class OutputString {
 			return m_string;
 		}
 
-		bool is_equal(const OutputString& t) const ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE bool is_equal(const OutputString& t) const;
 		void assign(const OutputString& t);
 		/**
 		@arg s is the size in visible characters
@@ -109,7 +109,7 @@ class OutputString {
 		**/
 		void append_fast(char s);
 		void append_column(WordSize s);
-		void append_escape(const char **pos) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void append_escape(const char **pos);
 		/**
 		@arg s is the size in visible characters
 		**/
@@ -124,8 +124,8 @@ class OutputString {
 		**/
 		void append_fast(const char *c);
 		void append(const OutputString& a);
-		void print(std::string *dest, WordSize *s) const ATTRIBUTE_NONNULL_;
-		void print(WordSize *s) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void print(std::string *dest, WordSize *s) const;
+		ATTRIBUTE_NONNULL_ void print(WordSize *s) const;
 };
 
 #endif  // SRC_EIXTK_OUTPUTSTRING_H_

@@ -94,8 +94,8 @@ NowarnMaskList *PackageTest::nowarn_list = NULLPTR;
 
 static void init_match_field_map();
 static void init_match_algorithm_map();
-static bool stabilitytest(const Package *p, PackageTest::TestStability what) ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
-inline static void get_p(Package **p, PackageReader *pkg) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE static bool stabilitytest(const Package *p, PackageTest::TestStability what);
+ATTRIBUTE_NONNULL_ inline static void get_p(Package **p, PackageReader *pkg);
 
 PackageTest::PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f, const SetStability *set_stability, const DBHeader *dbheader, const ParseError *e) {
 	vardbpkg = vdb;

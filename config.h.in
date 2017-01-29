@@ -18,7 +18,7 @@
 /* Define to __attribute__ ((nonnull)) if it can be used */
 #undef ATTRIBUTE_NONNULL_
 
-/* Define to __attribute__ ((noreturn)) if it can be used */
+/* Define to [[noreturn]] or __attribute__ ((noreturn)) if it can be used */
 #undef ATTRIBUTE_NORETURN
 
 /* Define to __attribute__ ((pure)) if it can be used */

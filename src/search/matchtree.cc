@@ -29,7 +29,7 @@ using std::cout;
 #endif
 using std::endl;
 
-bool MatchAtom::match(PackageReader *p ATTRIBUTE_UNUSED) {
+bool MatchAtom::match(ATTRIBUTE_UNUSED PackageReader *p) {
 	UNUSED(p);
 #ifdef DEBUG_MATCHTREE
 	cout << (m_negate ? " '!' " : " '' ");

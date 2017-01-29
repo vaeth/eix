@@ -894,7 +894,7 @@ AC_MSG_CHECKING([whether __attribute__ ((unused)) can be used])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 static int dummy(int i);
 static int
-dummy(int i __attribute__ ((unused)))
+dummy(__attribute__ ((unused)) int i)
 { return 0; }
 		]], [[
 return dummy(1);
@@ -912,7 +912,7 @@ AS_IF([$attribute_unused],
 AC_MSG_CHECKING([whether __attribute__ ((noreturn)) can be used])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <cstdlib>
-static void dummy() __attribute__ ((noreturn));
+__attribute__ ((noreturn)) static void dummy();
 static void
 dummy()
 { exit(0); }
@@ -925,15 +925,15 @@ dummy()
 		AS_VAR_SET([attribute_noreturn], [])])
 AC_DEFINE_UNQUOTED([ATTRIBUTE_NORETURN],
 	[$attribute_noreturn],
-	[Define to __attribute__ ((noreturn)) if it can be used])
+	[Define to [[noreturn]] or __attribute__ ((noreturn)) if it can be used])
 
 # Check if __attribute__ ((signal)) works
 AC_MSG_CHECKING([whether __attribute__ ((signal)) can be used])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <csignal>
-void my_sig_handler(int sig) __attribute__ ((signal));
+__attribute__ ((signal)) void my_sig_handler(int sig);
 class my_int {
-friend void my_sig_handler(int sig) __attribute__ ((signal));
+friend __attribute__ ((signal)) void my_sig_handler(int sig);
 private:	static int i;
 		static void set(int s) { i=s; }
 };
@@ -949,7 +949,7 @@ void my_sig_handler(int sig)
 		AS_VAR_SET([attribute_signal], [])])
 AC_DEFINE_UNQUOTED([ATTRIBUTE_SIGNAL],
 	[$attribute_signal],
-	[Define to  __attribute__ ((signal)) if it can be used])
+	[Define to __attribute__ ((signal)) if it can be used])
 
 # Check if __attribute__ ((const)) works
 AC_MSG_CHECKING([whether __attribute__ ((const)) can be used])
@@ -969,7 +969,7 @@ return !((a(4) == 4) && (a(5) == 5));
 		AS_VAR_SET([attribute_const], [])])
 AC_DEFINE_UNQUOTED([ATTRIBUTE_CONST],
 	[$attribute_const],
-	[Define to  __attribute__ ((const)) if it can be used])
+	[Define to __attribute__ ((const)) if it can be used])
 
 # Check if __attribute__ ((pure)) works
 AC_MSG_CHECKING([whether __attribute__ ((pure)) can be used])
@@ -978,7 +978,7 @@ class b {
 public:
 	static int c(int *i) __attribute__ ((pure)) { return *i; }
 };
-int a(int i) __attribute__ ((pure));
+__attribute__ ((pure)) int a(int i);
 int a(int i) { b x; return x.c(&i); }
 		]], [[
 return !((a(4) == 4) && (a(5) == 5));
@@ -989,20 +989,20 @@ return !((a(4) == 4) && (a(5) == 5));
 		AS_VAR_SET([attribute_pure], [])])
 AC_DEFINE_UNQUOTED([ATTRIBUTE_PURE],
 	[$attribute_pure],
-	[Define to  __attribute__ ((pure)) if it can be used])
+	[Define to __attribute__ ((pure)) if it can be used])
 
 # I do not know a reliable way to check whether __attribute__ ((const))
 # can be used for const virtuals. So better use __attribute__ ((pure)).
 AC_DEFINE_UNQUOTED([ATTRIBUTE_CONST_VIRTUAL],
 	[$attribute_pure],
-	[Define to  __attribute__ ((pure)) or ((const)) or empty])
+	[Define to __attribute__ ((pure)) or ((const)) or empty])
 
 # Check if __attribute__ ((nonnull)) works
 AC_MSG_CHECKING([whether __attribute__ ((nonnull)) can be used])
 MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
 class b {
 public:
-	int c(int *i) __attribute__ ((nonnull)) { return *i; }
+	__attribute__ ((nonnull)) int c(int *i) { return *i; }
 };
 int a(int *i) __attribute__ ((nonnull));
 int a(int *i) { b x; return x.c(i); }
@@ -1016,20 +1016,24 @@ return !((a(&i) == 4) && (a(&j) == 5));
 		AS_VAR_SET([attribute_nonnull_], [])])
 AC_DEFINE_UNQUOTED([ATTRIBUTE_NONNULL_],
 	[$attribute_nonnull_],
-	[Define to  __attribute__ ((nonnull)) if it can be used])
+	[Define to __attribute__ ((nonnull)) if it can be used])
 
 # Check if __attribute__ ((nonnull (x, y))) works
 AC_MSG_CHECKING([whether __attribute__ ((nonnull (x, y))) can be used])
 MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
 class b {
 public:
-	static int c(int *i, int *j, int *k) __attribute__ ((nonnull (1, 3)))
-	{ return (j ? ((*i) - (*k)) : ((*i) + (*k))); }
-	int d(int *i, int *j, int *k) __attribute__ ((nonnull (2, 4)))
-	{ return c(i,j,k); }
+	__attribute__ ((nonnull (1, 3))) static int c(int *i, int *j, int *k) {
+		return (j ? ((*i) - (*k)) : ((*i) + (*k)));
+	}
+	__attribute__ ((nonnull (2, 4))) int d(int *i, int *j, int *k) {
+		return c(i,j,k);
+	}
 };
-int a(int *i, int *j, int *k) __attribute__ ((nonnull (1, 3)));
-int a(int *i, int *j, int *k) { b x; return x.d(i, j, k) + x.d(i, 0, k); }
+__attribute__ ((nonnull (1, 3))) int a(int *i, int *j, int *k);
+int a(int *i, int *j, int *k) {
+	b x; return x.d(i, j, k) + x.d(i, 0, k);
+}
 		]], [[
 int i = 1;
 b x;
@@ -1041,7 +1045,7 @@ return !((x.d(&i, 0, &i) == 2) && (x.d(&i, 0, &i) == 2) && (a(&i, 0, &i) == 4));
 		AS_VAR_SET([attribute_nonnull], [])])
 AC_DEFINE_UNQUOTED([ATTRIBUTE_NONNULL(a)],
 	[$attribute_nonnull],
-	[Define to  __attribute__ ((nonnull a)) if it can be used])
+	[Define to __attribute__ ((nonnull a)) if it can be used])
 
 # reset the CXXFLAGS, LDFLAGS for the normal tests
 AS_VAR_COPY([CXXFLAGS], [my_cxxflags])

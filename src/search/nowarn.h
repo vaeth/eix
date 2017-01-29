@@ -96,7 +96,7 @@ class NowarnPreList : public PreList {
 			: super(lines, filename, NULLPTR, only_add, false) {
 		}
 
-		void initialize(NowarnMaskList *l, const ParseError *parse_error) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void initialize(NowarnMaskList *l, const ParseError *parse_error);
 };
 
 #endif  // SRC_SEARCH_NOWARN_H_

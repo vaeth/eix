@@ -25,7 +25,7 @@ using std::string;
 using std::cerr;
 using std::endl;
 
-static void badformat() ATTRIBUTE_NORETURN;
+ATTRIBUTE_NORETURN static void badformat();
 static void badformat() {
 	cerr << _("bad % in eix::format; perhaps %% is meant") << endl;
 	exit(EXIT_FAILURE);

@@ -46,10 +46,10 @@ StringHash *StringHash::comparison_this;
 
 locale localeC("C");
 
-static void erase_escapes(string *s, const char *at) ATTRIBUTE_NONNULL_;
-template<typename S, typename T> inline static S calc_table_pos(const vector<S>& table, S pos, const T *pattern, T c) ATTRIBUTE_PURE ATTRIBUTE_NONNULL_;
-template<typename T> inline static void split_string_template(T *vec, const string& str, bool handle_escape, const char *at, bool ignore_empty) ATTRIBUTE_NONNULL_;
-template<typename T> inline static void join_to_string_template(string *s, const T& vec, const string& glue) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ static void erase_escapes(string *s, const char *at);
+template<typename S, typename T> ATTRIBUTE_PURE ATTRIBUTE_NONNULL_ inline static S calc_table_pos(const vector<S>& table, S pos, const T *pattern, T c);
+template<typename T> ATTRIBUTE_NONNULL_ inline static void split_string_template(T *vec, const string& str, bool handle_escape, const char *at, bool ignore_empty);
+template<typename T> ATTRIBUTE_NONNULL_ inline static void join_to_string_template(string *s, const T& vec, const string& glue);
 
 /**
 Check whether str contains only digits
@@ -303,8 +303,9 @@ template<typename T> inline static void split_string_template(T *vec, const stri
 			}
 			string r(str, last_pos, pos - last_pos);
 			erase_escapes(&r, at);
-			if(likely((!r.empty()) || !ignore_empty))
+			if(likely((!r.empty()) || !ignore_empty)) {
 				push_back(vec, r);
+			}
 		} else if(likely((pos > last_pos) || !ignore_empty)) {
 			push_back(vec, str.substr(last_pos, pos - last_pos));
 		}
@@ -313,8 +314,9 @@ template<typename T> inline static void split_string_template(T *vec, const stri
 	if(unlikely(handle_escape)) {
 		string r(str, last_pos);
 		erase_escapes(&r, at);
-		if(likely((!r.empty()) || !ignore_empty))
+		if(likely((!r.empty()) || !ignore_empty)) {
 			push_back(vec, r);
+		}
 	} else if(likely((str.size() > last_pos) || !ignore_empty)) {
 		push_back(vec, str.substr(last_pos));
 	}

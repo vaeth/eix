@@ -15,7 +15,7 @@
 class PrintFormat;
 class OutputString;
 
-void get_package_property(OutputString *s, const PrintFormat *fmt, void *entity, const std::string& name) ATTRIBUTE_NONNULL_;
-void get_diff_package_property(OutputString *s, const PrintFormat *fmt, void *void_entity, const std::string& name) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ void get_package_property(OutputString *s, const PrintFormat *fmt, void *entity, const std::string& name);
+ATTRIBUTE_NONNULL_ void get_diff_package_property(OutputString *s, const PrintFormat *fmt, void *void_entity, const std::string& name);
 
 #endif  // SRC_OUTPUT_FORMATSTRING_PRINT_H_

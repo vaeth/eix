@@ -80,18 +80,18 @@ class VarsReader {
 		Read file.
 		@return true if the file was successfully read.
 		**/
-		bool read(const char *filename, std::string *errtext, bool noexist_ok, WordSet *sourced, bool nodir) ATTRIBUTE_NONNULL((2));
-		bool read(const char *filename, std::string *errtext, bool noexist_ok, WordSet *sourced) ATTRIBUTE_NONNULL((2)) {
+		ATTRIBUTE_NONNULL((2)) bool read(const char *filename, std::string *errtext, bool noexist_ok, WordSet *sourced, bool nodir);
+		ATTRIBUTE_NONNULL((2)) bool read(const char *filename, std::string *errtext, bool noexist_ok, WordSet *sourced) {
 			return read(filename, errtext, noexist_ok, sourced, false);
 		}
-		bool read(const char *filename, std::string *errtext, bool noexist_ok) ATTRIBUTE_NONNULL((2)) {
+		ATTRIBUTE_NONNULL((2)) bool read(const char *filename, std::string *errtext, bool noexist_ok) {
 			return read(filename, errtext, noexist_ok, NULLPTR);
 		}
 
 		/**
 		Use a supplied map for variables.
 		**/
-		void useMap(my_map *vars_map) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void useMap(my_map *vars_map) {
 			vars = vars_map;
 		}
 
@@ -116,7 +116,7 @@ class VarsReader {
 			return (*vars)[key];
 		}
 
-		const std::string *find(const std::string& key) const ATTRIBUTE_PURE {
+		ATTRIBUTE_PURE const std::string *find(const std::string& key) const {
 			const_iterator i(vars->find(key));
 			if(i == vars->end())
 				return NULLPTR;
@@ -339,7 +339,7 @@ class VarsReader {
 		**/
 		void NOISE_DOUBLE_QUOTE_ESCAPE();
 
-		void var_append(const char *beginning, size_t ref_key_length) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void var_append(const char *beginning, size_t ref_key_length);
 
 		/**
 		Try to resolve $... references to variables.
@@ -429,14 +429,14 @@ class VarsReader {
 		/**
 		@return true if c matches [A-Za-z0-9_]
 		**/
-		static bool isValidKeyCharacter(char c) ATTRIBUTE_PURE {
+		ATTRIBUTE_PURE static bool isValidKeyCharacter(char c) {
 			return (my_isalnum(c) || (c == '_') || (c == '-'));
 		}
 
 		/**
 		@return true if c matches [A-Za-z_]
 		**/
-		static bool isValidKeyCharacterStart(char c) ATTRIBUTE_PURE {
+		ATTRIBUTE_PURE static bool isValidKeyCharacterStart(char c) {
 			return (my_isalpha(c) || (c == '_'));
 		}
 

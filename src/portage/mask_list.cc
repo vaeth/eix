@@ -335,7 +335,7 @@ void PreList::finalize() {
 	have.clear();
 }
 
-void PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines, const ParseError *parse_error)  {
+void PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines, const ParseError *parse_error) {
 	finalize();
 	StringList *comments(NULLPTR);
 	bool finishcomment(false);

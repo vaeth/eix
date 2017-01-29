@@ -70,42 +70,42 @@ class PortageUserConfig {
 		bool readMasks();
 		bool readKeywords();
 
-		bool CheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const ATTRIBUTE_NONNULL_;
-		bool CheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const ATTRIBUTE_NONNULL_;
-		void ReadVersionFile(const char *file, MaskList<KeywordMask> *list) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ bool CheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const;
+		ATTRIBUTE_NONNULL_ bool CheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const;
+		ATTRIBUTE_NONNULL_ void ReadVersionFile(const char *file, MaskList<KeywordMask> *list) const;
 
-		void pushback_set_accepted_keywords(WordVec *result, const Version *v) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void pushback_set_accepted_keywords(WordVec *result, const Version *v) const;
 
 	public:
-		PortageUserConfig(PortageSettings *psettings, CascadingProfile *local_profile) ATTRIBUTE_NONNULL((2));
+		ATTRIBUTE_NONNULL((2)) PortageUserConfig(PortageSettings *psettings, CascadingProfile *local_profile);
 
 		~PortageUserConfig();
 
-		void setProfileMasks(Package *p) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void setProfileMasks(Package *p) const;
 
 		/**
 		@return true if something from /etc/portage/package.* applied and check involves masks
 		**/
-		bool setMasks(Package *p, Keywords::Redundant check, bool file_mask_is_profile) const ATTRIBUTE_NONNULL_;
-		bool setMasks(Package *p, Keywords::Redundant check) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ bool setMasks(Package *p, Keywords::Redundant check, bool file_mask_is_profile) const;
+		ATTRIBUTE_NONNULL_ bool setMasks(Package *p, Keywords::Redundant check) const {
 			return setMasks(p, check, false);
 		}
-		bool setMasks(Package *p) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ bool setMasks(Package *p) const {
 			return setMasks(p, Keywords::RED_NOTHING);
 		}
 
 		/**
 		@return true if something from /etc/portage/package.* applied and check involves keywords
 		**/
-		bool setKeyflags(Package *p, Keywords::Redundant check) const ATTRIBUTE_NONNULL_;
-		bool setKeyflags(Package *p) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ bool setKeyflags(Package *p, Keywords::Redundant check) const;
+		ATTRIBUTE_NONNULL_ bool setKeyflags(Package *p) const {
 			return setKeyflags(p, Keywords::RED_NOTHING);
 		}
 
 		/**
 		@return true if something from /etc/portage/package.use applied
 		**/
-		bool CheckUse(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ bool CheckUse(Package *p, Keywords::Redundant check) {
 			if(check & Keywords::RED_ALL_USE) {
 				return CheckFile(p, USER_USE_FILE, &m_use, &read_use, check & Keywords::RED_DOUBLE_USE, check & Keywords::RED_IN_USE);
 			}
@@ -114,7 +114,7 @@ class PortageUserConfig {
 		/**
 		@return true if something from /etc/portage/package.env applied
 		**/
-		bool CheckEnv(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ bool CheckEnv(Package *p, Keywords::Redundant check) {
 			if(check & Keywords::RED_ALL_ENV) {
 				return CheckFile(p, USER_ENV_FILE, &m_env, &read_env, check & Keywords::RED_DOUBLE_ENV, check & Keywords::RED_IN_ENV);
 			}
@@ -123,7 +123,7 @@ class PortageUserConfig {
 		/**
 		@return true if something from /etc/portage/package.license applied
 		**/
-		bool CheckLicense(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ bool CheckLicense(Package *p, Keywords::Redundant check) {
 			if(check & Keywords::RED_ALL_LICENSE) {
 				return CheckFile(p, USER_LICENSE_FILE, &m_license, &read_license, check & Keywords::RED_DOUBLE_LICENSE, check & Keywords::RED_IN_LICENSE);
 			}
@@ -132,7 +132,7 @@ class PortageUserConfig {
 		/**
 		@return true if something from /etc/portage/package.accept_restrict applied
 		**/
-		bool CheckAcceptRestrict(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ bool CheckAcceptRestrict(Package *p, Keywords::Redundant check) {
 			if(check & Keywords::RED_ALL_RESTRICT) {
 				return CheckFile(p, USER_RESTRICT_FILE, &m_restrict, &read_restrict, check & Keywords::RED_DOUBLE_RESTRICT, check & Keywords::RED_IN_RESTRICT);
 			}
@@ -141,7 +141,7 @@ class PortageUserConfig {
 		/**
 		@return true if something from /etc/portage/package.cflags applied
 		**/
-		bool CheckCflags(Package *p, Keywords::Redundant check) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ bool CheckCflags(Package *p, Keywords::Redundant check) {
 			if(check & Keywords::RED_ALL_CFLAGS) {
 				return CheckFile(p, USER_CFLAGS_FILE, &m_cflags, &read_cflags, check & Keywords::RED_DOUBLE_CFLAGS, check & Keywords::RED_IN_CFLAGS);
 			}
@@ -198,15 +198,15 @@ class PortageSettings : public std::map<std::string, std::string> {
 		**/
 		CascadingProfile  *profile;
 
-		void override_by_env(const char *const *vars) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void override_by_env(const char *const *vars);
 		void read_config(const std::string& name, const std::string& prefix);
 
-		void addOverlayProfiles(CascadingProfile *p) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void addOverlayProfiles(CascadingProfile *p) const;
 
-		void calc_recursive_sets(Package *p) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void calc_recursive_sets(Package *p) const;
 
-		void read_world_sets(const char *file) ATTRIBUTE_NONNULL_;
-		void calc_world_sets(Package *p) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void read_world_sets(const char *file);
+		ATTRIBUTE_NONNULL_ void calc_world_sets(Package *p);
 
 		void update_world_setslist();
 
@@ -244,20 +244,20 @@ class PortageSettings : public std::map<std::string, std::string> {
 		using my_map::end;
 		using my_map::operator[];
 
-		const std::string& operator[](const std::string& var) const ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE const std::string& operator[](const std::string& var) const;
 
-		const char *cstr(const std::string& var) const ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE const char *cstr(const std::string& var) const;
 
 		/**
 		Read make.globals and make.conf
 		**/
-		void init(EixRc *eixrc, const ParseError *e, bool getlocal, bool init_world, bool print_profile_paths) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void init(EixRc *eixrc, const ParseError *e, bool getlocal, bool init_world, bool print_profile_paths);
 
-		PortageSettings(EixRc *eixrc, const ParseError *e, bool getlocal, bool init_world, bool print_profile_paths) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ PortageSettings(EixRc *eixrc, const ParseError *e, bool getlocal, bool init_world, bool print_profile_paths) {
 			init(eixrc, e, getlocal, init_world, print_profile_paths);
 		}
 
-		PortageSettings(EixRc *eixrc, const ParseError *e, bool getlocal, bool init_world) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ PortageSettings(EixRc *eixrc, const ParseError *e, bool getlocal, bool init_world) {
 			init(eixrc, e, getlocal, init_world, false);
 		}
 
@@ -280,8 +280,8 @@ class PortageSettings : public std::map<std::string, std::string> {
 			store_world_sets(s_world_sets, false);
 		}
 
-		void get_setnames(WordSet *names, const Package *p, bool also_nonlocal) const ATTRIBUTE_NONNULL_;
-		void get_setnames(WordSet *names, const Package *p) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void get_setnames(WordSet *names, const Package *p, bool also_nonlocal) const;
+		ATTRIBUTE_NONNULL_ void get_setnames(WordSet *names, const Package *p) const {
 			get_setnames(names, p, false);
 		}
 
@@ -300,34 +300,34 @@ class PortageSettings : public std::map<std::string, std::string> {
 		pushback categories from profiles to vec. Categories may be duplicate.
 		Result is not cashed, i.e. this should be called only once.
 		**/
-		void pushback_categories(WordVec *vec) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void pushback_categories(WordVec *vec);
 
-		void setMasks(Package *p, bool filemask_is_profile) const ATTRIBUTE_NONNULL_;
-		void setMasks(Package *p) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void setMasks(Package *p, bool filemask_is_profile) const;
+		ATTRIBUTE_NONNULL_ void setMasks(Package *p) const {
 			setMasks(p, false);
 		}
 
 		/**
 		Set stability according to arch or local ACCEPTED_KEYWORDS
 		**/
-		void setKeyflags(Package *pkg, bool use_accepted_keywords) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void setKeyflags(Package *pkg, bool use_accepted_keywords) const;
 
-		void add_name(SetsList *l, const std::string& s, bool recurse) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void add_name(SetsList *l, const std::string& s, bool recurse) const;
 
-		bool calc_allow_upgrade_slots(const Package *p) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ bool calc_allow_upgrade_slots(const Package *p) const;
 
-		void calc_local_sets(Package *p) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void calc_local_sets(Package *p) const;
 
-		void finalize(Package *p) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void finalize(Package *p) {
 			calc_world_sets(p);
 			p->finalize_masks();
 		}
 
-		void get_effective_keywords_profile(Package *p) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void get_effective_keywords_profile(Package *p) const;
 
-		void get_effective_keywords_userprofile(Package *p) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void get_effective_keywords_userprofile(Package *p) const;
 
-		bool use_expand(std::string *var, std::string *expvar, const std::string& value) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ bool use_expand(std::string *var, std::string *expvar, const std::string& value) const;
 
 		static void init_static();
 };

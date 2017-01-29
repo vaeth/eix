@@ -51,13 +51,13 @@ Essentially, this is just a C-wrapper to get the implicit this argument in
 */
 SqliteCache *SqliteCache::callback_arg;
 
-inline static const char *welldefine(const char *s) ATTRIBUTE_CONST;
+ATTRIBUTE_CONST inline static const char *welldefine(const char *s);
 
 inline static const char *welldefine(const char *s) {
 	return ((s != NULLPTR) ? s : "");
 }
 
-int sqlite_callback(void *NotUsed ATTRIBUTE_UNUSED, int argc, char **argv, char **azColName) {
+int sqlite_callback(ATTRIBUTE_UNUSED void *NotUsed, int argc, char **argv, char **azColName) {
 	UNUSED(NotUsed);
 #ifdef SQLITE_ONLY_DEBUG
 	for(int i(0); likely(i < argc); ++i) {
@@ -118,7 +118,7 @@ class TrueIndex : public TrueIndexMapper {
 		SqliteCache::TrueIndexMap default_trueindex;
 
 	private:
-		void mapinit(int true_index, TrueIndexRes my_index, const char *s) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void mapinit(int true_index, TrueIndexRes my_index, const char *s) {
 			(*this)[s] = my_index;
 			default_trueindex[my_index] = true_index;
 		}
@@ -149,7 +149,7 @@ class TrueIndex : public TrueIndexMapper {
 			// 21 "_mtime_"
 		}
 
-		int calc(int argc, const char *const *azColName, SqliteCache::TrueIndexMap *trueindex) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ int calc(int argc, const char *const *azColName, SqliteCache::TrueIndexMap *trueindex) const {
 			*trueindex = default_trueindex;
 			for(int i(0); i < argc; ++i) {
 				TrueIndexMapper::const_iterator it(find(azColName[i]));
@@ -177,7 +177,7 @@ class TrueIndex : public TrueIndexMapper {
 			return max_index;
 		}
 
-		static const char *c_str(const char *const *argv, SqliteCache::TrueIndexMap *trueindex, const TrueIndexRes i) ATTRIBUTE_NONNULL((2)) {
+		ATTRIBUTE_NONNULL((2)) static const char *c_str(const char *const *argv, SqliteCache::TrueIndexMap *trueindex, const TrueIndexRes i) {
 			int t((*trueindex)[i]);
 			if(t < 0) {
 				return "";
@@ -324,7 +324,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Cate
 #include "eixTk/i18n.h"  // NOLINT(build/include)
 #include "eixTk/unused.h"  // NOLINT(build/include)
 
-bool SqliteCache::readCategories(PackageTree *pkgtree ATTRIBUTE_UNUSED, const char *catname ATTRIBUTE_UNUSED, Category *cat ATTRIBUTE_UNUSED) {
+bool SqliteCache::readCategories(ATTRIBUTE_UNUSED PackageTree *pkgtree, ATTRIBUTE_UNUSED const char *catname, ATTRIBUTE_UNUSED Category *cat) {
 	UNUSED(pkgtree);
 	UNUSED(catname);
 	UNUSED(cat);

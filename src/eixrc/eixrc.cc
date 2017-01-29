@@ -52,7 +52,7 @@ const EixRc::DelayvarFlags
 	EixRc::DELAYVAR_ESCAPE,
 	EixRc::DELAYVAR_APPEND;
 
-static void override_by_env(map<string, string> *m) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ static void override_by_env(map<string, string> *m);
 
 eix::SignedBool EixRc::getBoolText(const string& key, const char *text) {
 	const string& s((*this)[key]);

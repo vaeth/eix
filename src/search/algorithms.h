@@ -43,9 +43,9 @@ class BaseAlgorithm {
 		virtual ~BaseAlgorithm() {
 		}
 
-		virtual bool operator()(const char *s, Package *p) const ATTRIBUTE_NONNULL((2)) = 0;
+		ATTRIBUTE_NONNULL((2)) virtual bool operator()(const char *s, Package *p) const = 0;
 
-		bool operator()(const char *s, Package *p, bool simplify) ATTRIBUTE_NONNULL((2));
+		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, Package *p, bool simplify);
 };
 
 /**
@@ -65,7 +65,7 @@ class RegexAlgorithm : public BaseAlgorithm {
 			re.compile(search_string.c_str(), REG_ICASE);
 		}
 
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL((2)) {
+		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const {
 			UNUSED(p);
 			return re.match(s);
 		}
@@ -76,7 +76,7 @@ exact string matching
 **/
 class ExactAlgorithm : public BaseAlgorithm {
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
+		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const;
 };
 
 /**
@@ -84,7 +84,7 @@ substring matching
 **/
 class SubstringAlgorithm : public BaseAlgorithm {
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL((2)) {
+		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const {
 			UNUSED(p);
 			return (std::string(s).find(search_string) != std::string::npos);
 		}
@@ -95,7 +95,7 @@ begin-of-string matching
 **/
 class BeginAlgorithm : public BaseAlgorithm {
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
+		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const;
 };
 
 /**
@@ -103,7 +103,7 @@ end-of-string matching
 **/
 class EndAlgorithm : public BaseAlgorithm {
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
+		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const;
 };
 
 /**
@@ -129,9 +129,9 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 		explicit FuzzyAlgorithm(Levenshtein max) : max_levenshteindistance(max) {
 		}
 
-		bool operator()(const char *s, Package *p) const ATTRIBUTE_NONNULL((2));
+		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, Package *p) const;
 
-		static bool compare(Package *p1, Package *p2) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ static bool compare(Package *p1, Package *p2);
 
 		static bool sort_by_levenshtein() {
 			return (!levenshtein_map->empty());
@@ -150,7 +150,7 @@ class PatternAlgorithm : public BaseAlgorithm {
 		}
 
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL((2));
+		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const;
 };
 
 #endif  // SRC_SEARCH_ALGORITHMS_H_

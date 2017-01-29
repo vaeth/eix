@@ -39,7 +39,7 @@ class EixCache : public BasicCache {
 		void thiserror(const std::string& msg);
 		bool get_overlaydat(const DBHeader& header);
 		bool get_destcat(PackageTree *packagetree, const char *cat_name, Category *category, const std::string& pcat);
-		void get_package(Package *p) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void get_package(Package *p);
 
 	public:
 		~EixCache();
@@ -47,7 +47,7 @@ class EixCache : public BasicCache {
 		// @return true if successful
 		bool initialize(const std::string& name);
 
-		bool can_read_multiple_categories() const OVERRIDE ATTRIBUTE_CONST_VIRTUAL {
+		ATTRIBUTE_CONST_VIRTUAL bool can_read_multiple_categories() const OVERRIDE {
 			return true;
 		}
 

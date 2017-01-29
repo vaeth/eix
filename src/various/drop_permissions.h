@@ -12,6 +12,6 @@
 
 class EixRc;
 
-bool drop_permissions(EixRc *eix, std::string *errtext) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ bool drop_permissions(EixRc *eix, std::string *errtext);
 
 #endif  // SRC_VARIOUS_DROP_PERMISSIONS_H_

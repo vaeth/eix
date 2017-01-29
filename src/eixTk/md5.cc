@@ -35,9 +35,9 @@ inline static uint32_t md5G(uint32_t x, uint32_t y, uint32_t z);
 inline static uint32_t md5H(uint32_t x, uint32_t y, uint32_t z);
 inline static uint32_t md5I(uint32_t x, uint32_t y, uint32_t z);
 inline static uint32_t md5rotate(uint32_t x, unsigned int c);
-static void md5fill(const char *buffer, uint32_t *mybuf, unsigned int len) ATTRIBUTE_NONNULL_;
-static void md5chunk(const uint32_t *mybuf, uint32_t *resarr) ATTRIBUTE_NONNULL_;
-static void calc_md5sum(const char *buffer, Md5DataLen totalsize, uint32_t *resarr) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ static void md5fill(const char *buffer, uint32_t *mybuf, unsigned int len);
+ATTRIBUTE_NONNULL_ static void md5chunk(const uint32_t *mybuf, uint32_t *resarr);
+ATTRIBUTE_NONNULL_ static void calc_md5sum(const char *buffer, Md5DataLen totalsize, uint32_t *resarr);
 
 inline static uint32_t md5F(uint32_t x, uint32_t y, uint32_t z) {
 	return (x & y) | ((~x) & z);
@@ -235,7 +235,7 @@ static void calc_md5sum(const char *buffer, Md5DataLen totalsize, uint32_t *resa
 using std::cout;
 using std::endl;
 
-static void debug_md5(const uint32_t *resarr) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ static void debug_md5(const uint32_t *resarr);
 
 static void debug_md5(const uint32_t *resarr) {
 	for(int i(0); i < 4; ++i) {

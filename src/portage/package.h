@@ -39,11 +39,11 @@ A list of pointer to Versions. Should be kept sorted
 **/
 class VersionList : public std::vector<Version*> {  // null entries are not allowed
 	public:
-		explicit VersionList(Version *v) ATTRIBUTE_NONNULL_ : std::vector<Version*>(1, v) {
+		ATTRIBUTE_NONNULL_ explicit VersionList(Version *v) : std::vector<Version*>(1, v) {
 		}
 
-		Version* best(bool allow_unstable) const ATTRIBUTE_PURE;
-		Version* best() const ATTRIBUTE_PURE {
+		ATTRIBUTE_PURE Version* best(bool allow_unstable) const;
+		ATTRIBUTE_PURE Version* best() const {
 			return best(false);
 		}
 };
@@ -65,7 +65,7 @@ class SlotVersions {
 			return m_version_list;
 		}
 
-		SlotVersions(const char *s, Version *v)  ATTRIBUTE_NONNULL((2, 3)) :
+		ATTRIBUTE_NONNULL_ SlotVersions(const char *s, Version *v) :
 			m_slotname(s), m_version_list(v) {
 		}
 };
@@ -75,8 +75,8 @@ This list is always sorted with respect to the first version for each slot
 **/
 class SlotList : public std::vector<SlotVersions> {
 	public:
-		void push_back_largest(Version *version) ATTRIBUTE_NONNULL_;
-		const VersionList *operator[](const char *s) const ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
+		ATTRIBUTE_NONNULL_ void push_back_largest(Version *version);
+		ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE const VersionList *operator[](const char *s) const;
 };
 
 /**
@@ -135,7 +135,7 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 		mutable since it is just a cache.
 		**/
 		mutable bool allow_upgrade_slots, know_upgrade_slots;
-		bool calc_allow_upgrade_slots(const PortageSettings *ps) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ bool calc_allow_upgrade_slots(const PortageSettings *ps) const;
 
 		const SlotList& slotlist() const {
 			if(!m_has_cached_slotlist) {
@@ -235,17 +235,17 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 		You must call addVersionFinalize() after filling
 		the remaining data
 		**/
-		void addVersionStart(Version *version) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void addVersionStart(Version *version);
 
 		/**
 		Finishes addVersionStart() after the remaining data have been filled
 		**/
-		void addVersionFinalize(Version *version) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void addVersionFinalize(Version *version);
 
 		/**
 		Add a version to "the versions" list.
 		**/
-		void addVersion(Version *version) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void addVersion(Version *version) {
 			addVersionStart(version);
 			addVersionFinalize(version);
 		}
@@ -302,30 +302,30 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 			return true;
 		}
 
-		Version *best(bool allow_unstable) const ATTRIBUTE_PURE;
-		Version *best() const ATTRIBUTE_PURE {
+		ATTRIBUTE_PURE Version *best(bool allow_unstable) const;
+		ATTRIBUTE_PURE Version *best() const {
 			return best(false);
 		}
 
-		Version *best_slot(const char *slot_name, bool allow_unstable) const ATTRIBUTE_NONNULL_;
-		Version *best_slot(const char *slot_name) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ Version *best_slot(const char *slot_name, bool allow_unstable) const;
+		ATTRIBUTE_NONNULL_ Version *best_slot(const char *slot_name) const {
 			return best_slot(slot_name, false);
 		}
 
-		void best_slots(Package::VerVec *l, bool allow_unstable) const ATTRIBUTE_NONNULL_;
-		void best_slots(Package::VerVec *l) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void best_slots(Package::VerVec *l, bool allow_unstable) const;
+		ATTRIBUTE_NONNULL_ void best_slots(Package::VerVec *l) const {
 			return best_slots(l, false);
 		}
 
 		/**
 		Calculate list of uninstalled upgrade candidates
 		**/
-		void best_slots_upgrade(Package::VerVec *versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const ATTRIBUTE_NONNULL((2, 4));
+		ATTRIBUTE_NONNULL((2, 4)) void best_slots_upgrade(Package::VerVec *versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const;
 
 		/**
 		@return true if version is an (installed or uninstalled) upgrade candidate
 		**/
-		bool is_best_upgrade(bool check_slots, const Version *version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const ATTRIBUTE_NONNULL((3, 5));
+		ATTRIBUTE_NONNULL((3, 5)) bool is_best_upgrade(bool check_slots, const Version *version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const;
 
 		/**
 		Test whether p has a worse best_slot().
@@ -357,7 +357,7 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 		-  3: same, but overlays (or slots if test_slot)
 		      are different
 		**/
-		eix::TinySigned compare_best(const Package& p, bool test_slot) const ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE eix::TinySigned compare_best(const Package& p, bool test_slot) const;
 
 		/**
 		@return true if p has a worse/missing best/best_slot/different overlay
@@ -415,7 +415,7 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 		/**
 		@return true if we can upgrade v or has v different slots
 		**/
-		bool can_upgrade(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const ATTRIBUTE_NONNULL((3)) {
+		ATTRIBUTE_NONNULL((3)) bool can_upgrade(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const {
 			if(!test_slots) {
 				return (check_best(v, only_installed, false) > 0);
 			}
@@ -445,7 +445,7 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 		/**
 		@return true if we have an upgrade/downgrade recommendation
 		**/
-		bool recommend(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const ATTRIBUTE_NONNULL((3)) {
+		ATTRIBUTE_NONNULL((3)) bool recommend(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const {
 			return can_upgrade(v, ps, only_installed, test_slots) ||
 				must_downgrade(v, test_slots);
 		}
@@ -461,7 +461,7 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 		Get the name of a slot of a version.
 		returns NULLPTR if not found.
 		**/
-		const char *slotname(const ExtendedVersion& v) const ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE const char *slotname(const ExtendedVersion& v) const;
 
 		/**
 		Get the name of a slot of an installed version,
@@ -469,8 +469,8 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 		@return true if a reasonable choice seems to be found
 		(v.know_slot determines whether we had full success).
 		**/
-		bool guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *force) const ATTRIBUTE_NONNULL((2));
-		bool guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg) const ATTRIBUTE_NONNULL((2)) {
+		ATTRIBUTE_NONNULL((2)) bool guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *force) const;
+		ATTRIBUTE_NONNULL((2)) bool guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg) const {
 			return guess_slotname(v, vardbpkg, NULLPTR);
 		}
 
@@ -514,7 +514,7 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 		This is called by addVersionFinalize() to calculate
 		collected iuse and to save memory by freeing version iuse
 		**/
-		void collect_iuse(Version *version) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void collect_iuse(Version *version);
 
 		/**
 		Default constructor
@@ -533,7 +533,7 @@ class PackageSave {
 
 		void store(const Package *p);
 
-		void restore(Package *p) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void restore(Package *p) const;
 };
 
 class PackagePtr {

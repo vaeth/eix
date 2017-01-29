@@ -63,102 +63,102 @@ class InstVersion : public ExtendedVersion, public Keywords {
 			know_instDate(false), know_overlay(false), overlay_failed(false) {
 		}
 
-		static eix::SignedBool compare(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE static eix::SignedBool compare(const InstVersion& left, const InstVersion& right);
 
-		static eix::SignedBool compare(const InstVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE static eix::SignedBool compare(const InstVersion& left, const ExtendedVersion& right);
 
-		static eix::SignedBool compare(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE static eix::SignedBool compare(const ExtendedVersion& left, const InstVersion& right);
 };
 
 /**
 Short compare-stuff
 **/
-inline static bool operator<(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator<(const ExtendedVersion& left, const InstVersion& right);
 inline static bool operator<(const ExtendedVersion& left, const InstVersion& right) {
 	return InstVersion::compare(left, right) < 0;
 }
 
-inline static bool operator>(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator>(const ExtendedVersion& left, const InstVersion& right);
 inline static bool operator>(const ExtendedVersion& left, const InstVersion& right) {
 	return InstVersion::compare(left, right) > 0;
 }
 
-inline static bool operator==(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator==(const ExtendedVersion& left, const InstVersion& right);
 inline static bool operator==(const ExtendedVersion& left, const InstVersion& right) {
 	return InstVersion::compare(left, right) == 0;
 }
 
-inline static bool operator!=(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator!=(const ExtendedVersion& left, const InstVersion& right);
 inline static bool operator!=(const ExtendedVersion& left, const InstVersion& right) {
 	return InstVersion::compare(left, right) != 0;
 }
 
-inline static bool operator>=(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator>=(const ExtendedVersion& left, const InstVersion& right);
 inline static bool operator>=(const ExtendedVersion& left, const InstVersion& right) {
 	return InstVersion::compare(left, right) >= 0;
 }
 
-inline static bool operator<=(const ExtendedVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator<=(const ExtendedVersion& left, const InstVersion& right);
 inline static bool operator<=(const ExtendedVersion& left, const InstVersion& right) {
 	return InstVersion::compare(left, right) <= 0;
 }
 
-inline static bool operator<(const InstVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator<(const InstVersion& left, const ExtendedVersion& right);
 inline static bool operator<(const InstVersion& left, const ExtendedVersion& right) {
 	return InstVersion::compare(left, right) < 0;
 }
 
-inline static bool operator>(const InstVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator>(const InstVersion& left, const ExtendedVersion& right);
 inline static bool operator>(const InstVersion& left, const ExtendedVersion& right) {
 	return InstVersion::compare(left, right) > 0;
 }
 
-inline static bool operator==(const InstVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator==(const InstVersion& left, const ExtendedVersion& right);
 inline static bool operator==(const InstVersion& left, const ExtendedVersion& right) {
 	return InstVersion::compare(left, right) == 0;
 }
 
-inline static bool operator!=(const InstVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator!=(const InstVersion& left, const ExtendedVersion& right);
 inline static bool operator!=(const InstVersion& left, const ExtendedVersion& right) {
 	return InstVersion::compare(left, right) != 0;
 }
 
-inline static bool operator>=(const InstVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator>=(const InstVersion& left, const ExtendedVersion& right);
 inline static bool operator>=(const InstVersion& left, const ExtendedVersion& right) {
 	return InstVersion::compare(left, right) >= 0;
 }
 
-inline static bool operator<=(const InstVersion& left, const ExtendedVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator<=(const InstVersion& left, const ExtendedVersion& right);
 inline static bool operator<=(const InstVersion& left, const ExtendedVersion& right) {
 	return InstVersion::compare(left, right) <= 0;
 }
 
-inline static bool operator<(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator<(const InstVersion& left, const InstVersion& right);
 inline static bool operator<(const InstVersion& left, const InstVersion& right) {
 	return InstVersion::compare(left, right) < 0;
 }
 
-inline static bool operator>(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator>(const InstVersion& left, const InstVersion& right);
 inline static bool operator>(const InstVersion& left, const InstVersion& right) {
 	return InstVersion::compare(left, right) > 0;
 }
 
-inline static bool operator==(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator==(const InstVersion& left, const InstVersion& right);
 inline static bool operator==(const InstVersion& left, const InstVersion& right) {
 	return InstVersion::compare(left, right) == 0;
 }
 
-inline static bool operator!=(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator!=(const InstVersion& left, const InstVersion& right);
 inline static bool operator!=(const InstVersion& left, const InstVersion& right) {
 	return InstVersion::compare(left, right) != 0;
 }
 
-inline static bool operator>=(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator>=(const InstVersion& left, const InstVersion& right);
 inline static bool operator>=(const InstVersion& left, const InstVersion& right) {
 	return InstVersion::compare(left, right) >= 0;
 }
 
-inline static bool operator<=(const InstVersion& left, const InstVersion& right) ATTRIBUTE_PURE;
+ATTRIBUTE_PURE inline static bool operator<=(const InstVersion& left, const InstVersion& right);
 inline static bool operator<=(const InstVersion& left, const InstVersion& right) {
 	return InstVersion::compare(left, right) <= 0;
 }

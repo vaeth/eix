@@ -81,8 +81,8 @@ class CascadingProfile {
 		/**
 		Add all files from profile and its parents to m_profile_files
 		**/
-		bool addProfile(const char *profile, WordSet *sourced_files) ATTRIBUTE_NONNULL((2));
-		bool addProfile(const char *profile) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL((2)) bool addProfile(const char *profile, WordSet *sourced_files);
+		ATTRIBUTE_NONNULL_ bool addProfile(const char *profile) {
 			return addProfile(profile, NULLPTR);
 		}
 
@@ -127,7 +127,7 @@ class CascadingProfile {
 		bool readPackageAcceptKeywords(const std::string& filename, const char *repo, bool only_repo);
 
 	public:
-		CascadingProfile(PortageSettings *portagesettings, bool init_world) ATTRIBUTE_NONNULL_ :
+		ATTRIBUTE_NONNULL_ CascadingProfile(PortageSettings *portagesettings, bool init_world) :
 			print_profile_paths(false),
 			use_world(false), finalized(false),
 			m_init_world(init_world),
@@ -172,8 +172,8 @@ class CascadingProfile {
 			m_profile_files.clear();
 		}
 
-		void applyMasks(Package *p) const ATTRIBUTE_NONNULL_;
-		void applyKeywords(Package *p) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void applyMasks(Package *p) const;
+		ATTRIBUTE_NONNULL_ void applyKeywords(Package *p) const;
 
 		static void init_static();
 };

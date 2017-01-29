@@ -46,9 +46,9 @@ static CONSTEXPR const PrintOverlayMode
 	PRINT_OVERLAY_LABEL_PATH = (PRINT_OVERLAY_LABEL | PRINT_OVERLAY_PATH);
 
 static void print_help();
-int overlay_loop(string *result, const OverlayOptionList& options) ATTRIBUTE_NONNULL_;
-bool open_database(DBHeader *header, const char *name, bool verbose) ATTRIBUTE_NONNULL_;
-bool print_overlay_data(string *result, const DBHeader *header, const char *overlay, const string& sep, const char *name, PrintOverlayMode mode, bool verbose) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ int overlay_loop(string *result, const OverlayOptionList& options);
+ATTRIBUTE_NONNULL_ bool open_database(DBHeader *header, const char *name, bool verbose);
+ATTRIBUTE_NONNULL_ bool print_overlay_data(string *result, const DBHeader *header, const char *overlay, const string& sep, const char *name, PrintOverlayMode mode, bool verbose);
 
 static void print_help() {
 	cout << eix::format(

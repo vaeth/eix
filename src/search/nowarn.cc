@@ -37,7 +37,7 @@ class NowarnKeywords {
 		NameMap name_map;
 
 	public:
-		void init_red(const char *s, Keywords::Redundant red) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void init_red(const char *s, Keywords::Redundant red) {
 			name_map.insert(pair<string, NowarnFlags>(s, NowarnFlags(red)));
 		}
 

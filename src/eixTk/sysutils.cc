@@ -157,7 +157,7 @@ bool get_geometry(unsigned int *lines, unsigned int *columns) {
 	return false;
 }
 #else
-bool get_geometry(unsigned int *lines ATTRIBUTE_UNUSED, unsigned int *columns ATTRIBUTE_UNUSED) {
+bool get_geometry(ATTRIBUTE_UNUSED unsigned int *lines, ATTRIBUTE_UNUSED unsigned int *columns) {
 	UNUSED(lines);
 	UNUSED(columns);
 	return false;

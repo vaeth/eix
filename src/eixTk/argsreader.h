@@ -42,38 +42,38 @@ class Option {
 		KEEP_PAIR_OPTIONAL     ///< Do not remove. Pair of strings arg.
 	} type;
 
-	Option(const char *l, int s, enum Type t, int *i) ATTRIBUTE_NONNULL((2, 5))
+	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, int *i)
 		: type(t), longopt(l), shortopt(s) {
 		u.integer = i;
 	}
 
-	Option(const char *l, int s, enum Type t, bool *b) ATTRIBUTE_NONNULL((2, 5))
+	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, bool *b)
 		: type(t), longopt(l), shortopt(s) {
 		u.boolean = b;
 	}
 
-	Option(const char *l, int s, enum Type t, const char *c[]) ATTRIBUTE_NONNULL((2, 5))
+	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, const char *c[])
 		: type(t), longopt(l), shortopt(s) {
 		u.str = c;
 	}
 
-	Option(const char *l, int s, enum Type t, const char *c1[], const char *c2[]) ATTRIBUTE_NONNULL((2, 5, 6))
+	ATTRIBUTE_NONNULL((2, 5, 6)) Option(const char *l, int s, enum Type t, const char *c1[], const char *c2[])
 		: type(t), longopt(l), shortopt(s) {
 		u.pr.first = c1;
 		u.pr.second = c2;
 	}
 
-	Option(const char *l, int s, enum Type t, std::vector<const char*> *c) ATTRIBUTE_NONNULL((2, 5))
+	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, std::vector<const char*> *c)
 		: type(t), longopt(l), shortopt(s) {
 		u.strlist = c;
 	}
 
-	Option(const char *l, int s, enum Type t, std::vector<ArgPair> *c) ATTRIBUTE_NONNULL((2, 5))
+	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, std::vector<ArgPair> *c)
 		: type(t), longopt(l), shortopt(s) {
 		u.prlist = c;
 	}
 
-	Option(const char *l, int s, enum Type t = KEEP) ATTRIBUTE_NONNULL((2))
+	ATTRIBUTE_NONNULL((2)) Option(const char *l, int s, enum Type t = KEEP)
 		: type(t), longopt(l), shortopt(s) {
 	}
 
@@ -123,7 +123,7 @@ class Parameter {
 		explicit Parameter(int option) : type(Parameter::OPTION), m_option(option) {
 		}
 
-		explicit Parameter(const char *argument) ATTRIBUTE_NONNULL((2))
+		ATTRIBUTE_NONNULL((2)) explicit Parameter(const char *argument)
 			: type(Parameter::ARGUMENT), m_argument(argument) {
 		}
 
@@ -145,13 +145,13 @@ class ArgumentReader : public std::vector<Parameter> {
 		/**
 		Read arguments into list of Parameters
 		**/
-		ArgumentReader(int argc, const char *const *argv, const OptionList& opt_table) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ ArgumentReader(int argc, const char *const *argv, const OptionList& opt_table);
 
 	private:
 		/**
 		@return shortopt for longopt stored in opt
 		**/
-		static int lookup_longopt(const char *long_opt, const OptionList& opt_table) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ static int lookup_longopt(const char *long_opt, const OptionList& opt_table);
 
 		/**
 		Check if short_opt is a known option.
@@ -162,12 +162,12 @@ class ArgumentReader : public std::vector<Parameter> {
 		/**
 		@return option from internal table
 		**/
-		static const Option *lookup_option(const int opt, const OptionList& opt_table) ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE static const Option *lookup_option(const int opt, const OptionList& opt_table);
 
 		/**
 		@return number of args for opt
 		**/
-		static eix::TinyUnsigned numargs(const int opt, const OptionList& opt_table) ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE static eix::TinyUnsigned numargs(const int opt, const OptionList& opt_table);
 
 		/**
 		Fold parameter-list so that a option with an arguments has its argument set

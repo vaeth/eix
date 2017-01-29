@@ -101,7 +101,7 @@ class PackageTest {
 		/**
 		Set default values.
 		**/
-		PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f, const SetStability *stability, const DBHeader *dbheader, const ParseError *e) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f, const SetStability *stability, const DBHeader *dbheader, const ParseError *e);
 
 		~PackageTest();
 
@@ -109,7 +109,7 @@ class PackageTest {
 
 		void setAlgorithm(MatchAlgorithm a);
 
-		void setPattern(const char *p) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void setPattern(const char *p);
 
 		bool match(PackageReader *pkg) const;
 
@@ -216,15 +216,15 @@ class PackageTest {
 			worldset = worldset_only_selected = true;
 		}
 
-		void StabilityDefault(Package *p) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void StabilityDefault(Package *p) const {
 			stability->set_stability(p);
 		}
 
-		void StabilityLocal(Package *p) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void StabilityLocal(Package *p) const {
 			stability->set_stability(true, p);
 		}
 
-		void StabilityNonlocal(Package *p) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void StabilityNonlocal(Package *p) const {
 			stability->set_stability(false, p);
 		}
 
@@ -365,7 +365,7 @@ class PackageTest {
 		static MatchField     get_matchfield(const char *p);
 		static MatchAlgorithm get_matchalgorithm(const char *p);
 
-		bool stringMatch(Package *pkg) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ bool stringMatch(Package *pkg) const;
 
 		void setNeeds(const PackageReader::Attributes i) {
 			if(need < i) {
@@ -380,7 +380,7 @@ class PackageTest {
 
 		bool have_redundant(const Package& p, Keywords::Redundant r, const RedAtom& t) const;
 		bool have_redundant(const Package& p, Keywords::Redundant r) const;
-		bool instabilitytest(const Package *p, TestStability what) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ bool instabilitytest(const Package *p, TestStability what) const;
 
 		static Keywords::Redundant nowarn_keywords(const Package& p);
 		static Keywords::Redundant nowarn_mask(const Package& p);

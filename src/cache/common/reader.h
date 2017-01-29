@@ -34,20 +34,20 @@ class BasicReader {
 		virtual ~BasicReader() {
 		}
 
-		virtual const char *get_md5sum(const std::string& filename ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ virtual const char *get_md5sum(ATTRIBUTE_UNUSED const std::string& filename) {
 			UNUSED(filename);
 			return NULLPTR;
 		}
 
-		virtual bool get_mtime(time_t *t ATTRIBUTE_UNUSED, const std::string& filename ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ virtual bool get_mtime(ATTRIBUTE_UNUSED time_t *t, ATTRIBUTE_UNUSED const std::string& filename) {
 			UNUSED(t);
 			UNUSED(filename);
 			return false;
 		}
 
-		virtual void get_keywords_slot_iuse_restrict(const std::string& filename, std::string *eapi, std::string *keywords, std::string *slotname, std::string *iuse, std::string *required_use, std::string *restr, std::string *props, Depend *dep) ATTRIBUTE_NONNULL_ = 0;
+		ATTRIBUTE_NONNULL_ virtual void get_keywords_slot_iuse_restrict(const std::string& filename, std::string *eapi, std::string *keywords, std::string *slotname, std::string *iuse, std::string *required_use, std::string *restr, std::string *props, Depend *dep) = 0;
 
-		virtual void read_file(const std::string& filename, Package *pkg) ATTRIBUTE_NONNULL_ = 0;
+		ATTRIBUTE_NONNULL_ virtual void read_file(const std::string& filename, Package *pkg) = 0;
 
 	public:
 		BasicCache *m_cache;

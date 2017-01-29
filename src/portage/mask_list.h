@@ -106,11 +106,11 @@ template<typename m_Type> class MaskList {
 			return false;
 		}
 
-		bool match_name(const Package *p) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ bool match_name(const Package *p) const {
 			return match_full(p->category + "/" + p->name);
 		}
 
-		inline static void push_result(Get **l, const Masks<m_Type>& r) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ inline static void push_result(Get **l, const Masks<m_Type>& r) {
 			if(*l == NULLPTR) {
 				*l = new Get;
 			}
@@ -138,7 +138,7 @@ template<typename m_Type> class MaskList {
 			return get_full(std::string(SET_CATEGORY) + "/" + setname);
 		}
 
-		Get *get(const Package *p) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ Get *get(const Package *p) const {
 			return get_full(p->category + "/" + p->name);
 		}
 
@@ -156,8 +156,8 @@ template<typename m_Type> class MaskList {
 		/**
 		@return true if something was added
 		**/
-		bool add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines, const ParseError *parse_error) ATTRIBUTE_NONNULL_;
-		bool add_file(const char *file, Mask::Type mask_type, bool recursive, const ParseError *parse_error) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ bool add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines, const ParseError *parse_error);
+		ATTRIBUTE_NONNULL_ bool add_file(const char *file, Mask::Type mask_type, bool recursive, const ParseError *parse_error) {
 			return add_file(file, mask_type, recursive, false, parse_error);
 		}
 
@@ -168,7 +168,7 @@ template<typename m_Type> class MaskList {
 		void finalize() {
 		}
 
-		void applyListItems(Package *p) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void applyListItems(Package *p) const {
 			Get *masks(get(p));
 			if(masks == NULLPTR) {
 				return;
@@ -180,7 +180,7 @@ template<typename m_Type> class MaskList {
 			delete masks;
 		}
 
-		void applyListSetItems(Version *v, const std::string& set_name) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void applyListSetItems(Version *v, const std::string& set_name) const {
 			Get *masks(get_setname(set_name));
 			if(masks == NULLPTR) {
 				return;
@@ -195,17 +195,17 @@ template<typename m_Type> class MaskList {
 		/**
 		@return true if some mask potentially applied
 		**/
-		bool applyMasks(Package *p, Keywords::Redundant check) const ATTRIBUTE_NONNULL_;
-		bool applyMasks(Package *p) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ bool applyMasks(Package *p, Keywords::Redundant check) const;
+		ATTRIBUTE_NONNULL_ bool applyMasks(Package *p) const {
 			return applyMasks(p, Keywords::RED_NOTHING);
 		}
 
 		/**
 		@return true if some mask matches
 		**/
-		bool MaskMatches(Package *p) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ bool MaskMatches(Package *p) const;
 
-		void applySetMasks(Version *v, const std::string& set_name) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void applySetMasks(Version *v, const std::string& set_name) const;
 };
 
 /**
@@ -255,9 +255,9 @@ class PreListFilename {
 			return filename;
 		}
 
-		const char *repo() const ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE const char *repo() const;
 
-		const char *repo_if_only() const ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE const char *repo_if_only() const;
 };
 
 /**
@@ -372,14 +372,14 @@ class PreList : public std::vector<PreListEntry> {
 
 		void finalize();
 
-		void initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines, const ParseError *parse_error) ATTRIBUTE_NONNULL_;
-		void initialize(MaskList<Mask> *l, Mask::Type t, const ParseError *parse_error) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines, const ParseError *parse_error);
+		ATTRIBUTE_NONNULL_ void initialize(MaskList<Mask> *l, Mask::Type t, const ParseError *parse_error) {
 			initialize(l, t, false, parse_error);
 		}
 
-		void initialize(MaskList<KeywordMask> *l, std::string raised_arch, const ParseError *parse_error) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void initialize(MaskList<KeywordMask> *l, std::string raised_arch, const ParseError *parse_error);
 
-		void initialize(MaskList<PKeywordMask> *l, const ParseError *parse_error) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void initialize(MaskList<PKeywordMask> *l, const ParseError *parse_error);
 };
 
 #endif  // SRC_PORTAGE_MASK_LIST_H_

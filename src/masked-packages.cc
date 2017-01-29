@@ -83,18 +83,18 @@ MaskedOptionList::MaskedOptionList() {
 	push_back(Option("mask",      'm', Option::KEEP_STRING));
 }
 
-static void read_stdin(LineVec *lines, string *name) ATTRIBUTE_NONNULL((1));
+ATTRIBUTE_NONNULL((1)) static void read_stdin(LineVec *lines, string *name);
 
-static void add_file(LineVec *lines, const string& name, string *new_name) ATTRIBUTE_NONNULL((1));
-inline static void add_file(LineVec *lines, const string& name) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL((1)) static void add_file(LineVec *lines, const string& name, string *new_name);
+ATTRIBUTE_NONNULL_ inline static void add_file(LineVec *lines, const string& name);
 inline static void add_file(LineVec *lines, const string& name) {
 	add_file(lines, name, NULLPTR);
 }
 
-static void add_file(PreList *pre_list, const string& name) ATTRIBUTE_NONNULL_;
-static void add_words(LineVec *lines, const string& name) ATTRIBUTE_NONNULL_;
-static void read_args(MaskList<Mask> *mask_list, WordVec *args, const ArgumentReader& ar, const ParseError *parse_error) ATTRIBUTE_NONNULL_;
-static const char *opt_arg(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ static void add_file(PreList *pre_list, const string& name);
+ATTRIBUTE_NONNULL_ static void add_words(LineVec *lines, const string& name);
+ATTRIBUTE_NONNULL_ static void read_args(MaskList<Mask> *mask_list, WordVec *args, const ArgumentReader& ar, const ParseError *parse_error);
+ATTRIBUTE_NONNULL_ static const char *opt_arg(ArgumentReader::const_iterator *arg, const ArgumentReader& ar);
 
 static void read_stdin(LineVec *lines, string *name) {
 	static size_t stdin_count(0);

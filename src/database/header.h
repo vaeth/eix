@@ -104,16 +104,16 @@ class DBHeader {
 		The special name portdir (if defined) matches 0 (if OVTEST_PATH)
 		The special name '' matches everything but 0.
 		**/
-		bool find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const ATTRIBUTE_NONNULL((2, 3));
-		bool find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir) const ATTRIBUTE_NONNULL((2, 3)) {
+		ATTRIBUTE_NONNULL((2, 3)) bool find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const;
+		ATTRIBUTE_NONNULL((2, 3)) bool find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir) const {
 			return find_overlay(num, name, portdir, 0, OVTEST_NOT_SAVED_PORTDIR);
 		}
 
 		/**
 		Add all overlay-numbers >=minimal for name to vec (name might be a number string)
 		**/
-		void get_overlay_vector(std::set<ExtendedVersion::Overlay> *overlayset, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const ATTRIBUTE_NONNULL((2, 3));
-		void get_overlay_vector(std::set<ExtendedVersion::Overlay> *overlayset, const char *name, const char *portdir) const ATTRIBUTE_NONNULL((2, 3)) {
+		ATTRIBUTE_NONNULL((2, 3)) void get_overlay_vector(std::set<ExtendedVersion::Overlay> *overlayset, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const;
+		ATTRIBUTE_NONNULL((2, 3)) void get_overlay_vector(std::set<ExtendedVersion::Overlay> *overlayset, const char *name, const char *portdir) const {
 			get_overlay_vector(overlayset, name, portdir, 0, OVTEST_NOT_SAVED_PORTDIR);
 		}
 
@@ -121,7 +121,7 @@ class DBHeader {
 			return ExtendedVersion::Overlay(overlays.size());
 		}
 
-		bool isCurrent() const ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE bool isCurrent() const;
 };
 
 #endif  // SRC_DATABASE_HEADER_H_

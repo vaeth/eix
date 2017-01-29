@@ -41,7 +41,7 @@ class IUse : public std::string {
 			USEFLAGS_MINUS  = 4;
 		Flags flags;
 
-		static Flags parse(std::string *s) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ static Flags parse(std::string *s);
 
 		std::string& name() {
 			return *static_cast<std::string *>(this);
@@ -58,7 +58,7 @@ class IUse : public std::string {
 		IUse(const std::string& s, Flags f) : std::string(s), flags(f) {
 		}
 
-		const char *prefix() const ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE const char *prefix() const;
 
 		std::string asString() const;
 
@@ -277,7 +277,7 @@ class Version : public ExtendedVersion, public Keywords {
 
 		void add_reason(const StringList& reason);
 
-		void reasons_string(OutputString *s, const OutputString& skip, const OutputString& sep) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void reasons_string(OutputString *s, const OutputString& skip, const OutputString& sep) const;
 
 		bool have_reasons() const {
 			return !reasons.empty();

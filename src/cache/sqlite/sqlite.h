@@ -27,7 +27,7 @@ class SqliteCache : public BasicCache {
 
 	private:
 		bool never_add_categories;
-		void sqlite_callback_cpp(int argc, const char *const *argv, const char *const *azColName) ATTRIBUTE_NONNULL((4));
+		ATTRIBUTE_NONNULL((4)) void sqlite_callback_cpp(int argc, const char *const *argv, const char *const *azColName);
 		TrueIndexMap trueindex;
 		int maxindex;
 
@@ -55,7 +55,7 @@ class SqliteCache : public BasicCache {
 		explicit SqliteCache(bool add_categories) : BasicCache(), never_add_categories(!add_categories) {
 		}
 
-		bool can_read_multiple_categories() const OVERRIDE ATTRIBUTE_CONST_VIRTUAL {
+		ATTRIBUTE_CONST_VIRTUAL bool can_read_multiple_categories() const OVERRIDE {
 			return true;
 		}
 

@@ -40,37 +40,37 @@ class SetStability {
 		that our calculated index really is correct in all cases...
 		*/
 
-		Version::SavedKeyIndex keyword_index(bool get_local) const ATTRIBUTE_PURE;
-		Version::SavedKeyIndex keyword_index() const ATTRIBUTE_PURE {
+		ATTRIBUTE_PURE Version::SavedKeyIndex keyword_index(bool get_local) const;
+		ATTRIBUTE_PURE Version::SavedKeyIndex keyword_index() const {
 			return keyword_index(m_local);
 		}
 
-		Version::SavedMaskIndex mask_index(bool get_local) const ATTRIBUTE_PURE;
-		Version::SavedMaskIndex mask_index() const ATTRIBUTE_PURE {
+		ATTRIBUTE_PURE Version::SavedMaskIndex mask_index(bool get_local) const;
+		ATTRIBUTE_PURE Version::SavedMaskIndex mask_index() const {
 		return mask_index(m_local);
 		}
 #endif
 
 	public:
-		SetStability(const PortageSettings *psettings, bool localsettings, bool filemask_is_profile, bool always_accept_keywords) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ SetStability(const PortageSettings *psettings, bool localsettings, bool filemask_is_profile, bool always_accept_keywords) {
 			portagesettings = psettings;
 			m_local = localsettings;
 			m_filemask_is_profile = filemask_is_profile;
 			m_always_accept_keywords = always_accept_keywords;
 		}
 
-		void set_stability(bool get_local, Package *package) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void set_stability(bool get_local, Package *package) const;
 
-		void set_stability(Package *package) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void set_stability(Package *package) const {
 			set_stability(m_local, package);
 		}
 
-		void calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsFlags *keyflags, const Version *v, Package *p) const ATTRIBUTE_NONNULL((5, 6));
+		ATTRIBUTE_NONNULL((5, 6)) void calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsFlags *keyflags, const Version *v, Package *p) const;
 
 #if 0
-		void set_stability(Category *category) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void set_stability(Category *category) const;
 
-		void set_stability(PackageTree *tree) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void set_stability(PackageTree *tree) const;
 #endif
 };
 

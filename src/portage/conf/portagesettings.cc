@@ -55,8 +55,8 @@ static string *emptystring = NULLPTR;
 
 typedef char ArchUsed;
 
-static ArchUsed apply_keyword(const string& key, const WordSet& keywords_set, KeywordsFlags kf, const WordSet *arch_set, Keywords::Redundant *redundant, Keywords::Redundant check, bool shortcut) ATTRIBUTE_NONNULL_;
-inline static void increase(char *s) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ static ArchUsed apply_keyword(const string& key, const WordSet& keywords_set, KeywordsFlags kf, const WordSet *arch_set, Keywords::Redundant *redundant, Keywords::Redundant check, bool shortcut);
+ATTRIBUTE_NONNULL_ inline static void increase(char *s);
 
 const string& PortageSettings::operator[](const string& var) const {
 	const_iterator it(find(var));

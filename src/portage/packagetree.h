@@ -41,7 +41,7 @@ class Category : public eix::ptr_container<std::set<PackagePtr> > {
 			return ((i == end()) ? NULLPTR : static_cast<Package *>(*i));
 		}
 
-		void addPackage(Package *pkg) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void addPackage(Package *pkg) {
 			insert(PackagePtr(pkg));
 		}
 
@@ -63,7 +63,7 @@ class PackageTree : public std::map<std::string, Category*> {
 
 		~PackageTree();
 
-		Category *find(const std::string& cat_name) const ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE Category *find(const std::string& cat_name) const;
 
 		Category& insert(const std::string& cat_name);
 
@@ -73,9 +73,9 @@ class PackageTree : public std::map<std::string, Category*> {
 			return insert(cat_name);
 		}
 
-		Package *findPackage(const std::string& cat_name, const std::string& pkg_name) const ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE Package *findPackage(const std::string& cat_name, const std::string& pkg_name) const;
 
-		eix::Treesize countPackages() const ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE eix::Treesize countPackages() const;
 
 		eix::Catsize countCategories() const {
 			return size();

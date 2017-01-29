@@ -21,10 +21,10 @@ class BasicCache;
 class Package;
 class Version;
 
-void ebuild_sig_handler(int sig) ATTRIBUTE_SIGNAL;
+ATTRIBUTE_SIGNAL void ebuild_sig_handler(int sig);
 
 class EbuildExec {
-		friend void ebuild_sig_handler(int sig) ATTRIBUTE_SIGNAL;
+		ATTRIBUTE_SIGNAL friend void ebuild_sig_handler(int sig);
 		friend class EbuildExecSettings;
 
 	private:
@@ -48,7 +48,7 @@ class EbuildExec {
 		const char **c_env;
 		int exec_status;
 		WordVec *envstrings;
-		void calc_environment(const char *name, const std::string& dir, const Package& package, const Version& version, const std::string& eapi) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void calc_environment(const char *name, const std::string& dir, const Package& package, const Version& version, const std::string& eapi);
 
 		static EbuildExecSettings *settings;
 
@@ -59,10 +59,10 @@ class EbuildExec {
 		bool calc_settings();
 
 	public:
-		std::string *make_cachefile(const char *name, const std::string& dir, const Package& package, const Version& version, const std::string& eapi) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ std::string *make_cachefile(const char *name, const std::string& dir, const Package& package, const Version& version, const std::string& eapi);
 		void delete_cachefile();
 
-		EbuildExec(bool will_use_sh, const BasicCache *b) ATTRIBUTE_NONNULL_ :
+		ATTRIBUTE_NONNULL_ EbuildExec(bool will_use_sh, const BasicCache *b) :
 			base(b),
 			have_set_signals(false),
 			cache_defined(false),

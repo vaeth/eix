@@ -138,7 +138,7 @@ class ProfileFilenames {
 			name_map.insert(pair<string, Handler>(s, h));
 		}
 
-		Handler operator[](const std::string s) const ATTRIBUTE_PURE {
+		ATTRIBUTE_PURE Handler operator[](const std::string s) const {
 			NameMap::const_iterator it(name_map.find(s));
 			if(it != name_map.end()) {
 				return it->second;

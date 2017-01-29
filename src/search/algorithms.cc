@@ -87,17 +87,17 @@ bool FuzzyAlgorithm::operator()(const char *s, Package *p) const {
 	return ok;
 }
 
-bool ExactAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const {
+bool ExactAlgorithm::operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const {
 	UNUSED(p);
 	return (strcmp(search_string.c_str(), s) == 0);
 }
 
-bool BeginAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const {
+bool BeginAlgorithm::operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const {
 	UNUSED(p);
 	return (strncmp(search_string.c_str(), s, search_string.size()) == 0);
 }
 
-bool EndAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const {
+bool EndAlgorithm::operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const {
 	UNUSED(p);
 	string::size_type l(strlen(s));
 	string::size_type sl(search_string.size());
@@ -107,7 +107,7 @@ bool EndAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const 
 	return (strcmp(search_string.c_str(), s + (l - sl)) == 0);
 }
 
-bool PatternAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED) const {
+bool PatternAlgorithm::operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const {
 	UNUSED(p);
 	return (fnmatch(search_string.c_str(), s, FNMATCH_FLAGS) == 0);
 }

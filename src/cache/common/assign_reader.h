@@ -37,13 +37,13 @@ class AssignReader : public BasicReader {
 			}
 		}
 
-		const char *get_md5sum(const std::string &filename) OVERRIDE ATTRIBUTE_NONNULL_;
-		bool get_mtime(time_t *t, const std::string &filename) OVERRIDE ATTRIBUTE_NONNULL_;
-		void get_keywords_slot_iuse_restrict(const std::string& filename, std::string *eapi, std::string *keywords, std::string *slotname, std::string *iuse, std::string *required_use, std::string *restr, std::string *props, Depend *dep) OVERRIDE ATTRIBUTE_NONNULL_;
-		void read_file(const std::string& filename, Package *pkg) OVERRIDE ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ const char *get_md5sum(const std::string &filename) OVERRIDE;
+		ATTRIBUTE_NONNULL_ bool get_mtime(time_t *t, const std::string &filename) OVERRIDE;
+		ATTRIBUTE_NONNULL_ void get_keywords_slot_iuse_restrict(const std::string& filename, std::string *eapi, std::string *keywords, std::string *slotname, std::string *iuse, std::string *required_use, std::string *restr, std::string *props, Depend *dep) OVERRIDE;
+		ATTRIBUTE_NONNULL_ void read_file(const std::string& filename, Package *pkg) OVERRIDE;
 
 	private:
-		bool get_map(const std::string &file) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ bool get_map(const std::string &file);
 
 		std::string *currfile;
 		WordMap *cf;

@@ -60,7 +60,7 @@ using std::cerr;
 #define NORMALIZE_PATH_EXPORT static
 #define NORMALIZE_PATH original_normalize_path
 
-static string NORMALIZE_PATH(const char *path, bool resolve, bool want_slash) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ static string NORMALIZE_PATH(const char *path, bool resolve, bool want_slash);
 
 string normalize_path(const char *path, bool resolve, bool want_slash) {
 	cerr << "Debug: Calling normalize_path(\"" << path << "\", " << resolve << ")...\nDebug: (with";

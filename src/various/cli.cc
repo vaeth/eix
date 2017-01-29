@@ -35,7 +35,7 @@ class ParseError;
 
 using std::string;
 
-static bool optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ static bool optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader& ar);
 static bool optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) {
 	ArgumentReader::const_iterator next(*arg);
 	if(likely(++next != ar.end()) && (next->type == Parameter::ARGUMENT)) {
@@ -45,7 +45,7 @@ static bool optional_increase(ArgumentReader::const_iterator *arg, const Argumen
 	return false;
 }
 
-static bool optional_numeric_increase(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) ATTRIBUTE_NONNULL_;
+ATTRIBUTE_NONNULL_ static bool optional_numeric_increase(ArgumentReader::const_iterator *arg, const ArgumentReader& ar);
 static bool optional_numeric_increase(ArgumentReader::const_iterator *arg, const ArgumentReader& ar) {
 	ArgumentReader::const_iterator next(*arg);
 	if(likely(++next != ar.end()) && (next->type == Parameter::ARGUMENT)

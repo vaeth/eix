@@ -81,7 +81,7 @@ class Mask : public BasicVersion {
 		@param ev test this version
 		@return true if applies.
 		**/
-		bool test(const ExtendedVersion *ev) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ bool test(const ExtendedVersion *ev) const;
 
 	public:
 		typedef eix::ptr_container<std::vector<Version *> > Matches;
@@ -92,7 +92,7 @@ class Mask : public BasicVersion {
 		@param do_test    set conditionally or unconditionally
 		@param check      check these for changes
 		**/
-		void apply(Version *ve, bool do_test, Keywords::Redundant check) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void apply(Version *ve, bool do_test, Keywords::Redundant check) const;
 
 		explicit Mask(Type type) :
 			m_type(type),
@@ -108,19 +108,19 @@ class Mask : public BasicVersion {
 		@param errtext contains error message if not 0 and not parseOK
 		@param accept_garbage passed to parseVersion if appropriate
 		**/
-		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, eix::SignedBool accept_garbage, const char *default_repo) ATTRIBUTE_NONNULL((2, 3));
-		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, eix::SignedBool accept_garbage) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL((2, 3)) BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, eix::SignedBool accept_garbage, const char *default_repo);
+		ATTRIBUTE_NONNULL_ BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, eix::SignedBool accept_garbage) {
 			return parseMask(str, errtext, accept_garbage, NULLPTR);
 		}
-		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ BasicVersion::ParseResult parseMask(const char *str, std::string *errtext) {
 			return parseMask(str, errtext, 1, NULLPTR);
 		}
 
-		void match(Matches *m, Package *pkg) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void match(Matches *m, Package *pkg) const;
 
 		bool have_match(const Package& pkg) const;
 
-		void to_package(Package *p) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void to_package(Package *p) const;
 
 		const char *getName() const {
 			return m_name.c_str();
@@ -139,8 +139,8 @@ class Mask : public BasicVersion {
 		@param pkg            package you want tested
 		@param check          Redundancy checks which should apply
 		**/
-		void checkMask(Package *pkg, Keywords::Redundant check) const ATTRIBUTE_NONNULL_;
-		void checkMask(Package *pkg) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void checkMask(Package *pkg, Keywords::Redundant check) const;
+		ATTRIBUTE_NONNULL_ void checkMask(Package *pkg) const {
 			checkMask(pkg, Keywords::RED_NOTHING);
 		}
 
@@ -161,9 +161,9 @@ class KeywordMask : public Mask {
 			locally_double(false) {
 		}
 
-		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void applyItem(Package *pkg) const;
 
-		void applyItem(Version *ver) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void applyItem(Version *ver) const {
 			ver->add_accepted_keywords(keywords);
 		}
 };
@@ -175,9 +175,9 @@ class PKeywordMask : public Mask {
 		PKeywordMask() : Mask(maskTypeNone) {
 		}
 
-		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void applyItem(Package *pkg) const;
 
-		void applyItem(Version *ver) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void applyItem(Version *ver) const {
 			ver->modify_effective_keywords(keywords);
 		}
 };
@@ -189,7 +189,7 @@ class SetMask : public Mask {
 		explicit SetMask(SetsIndex set_index) : Mask(maskTypeNone), m_set(set_index) {
 		}
 
-		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void applyItem(Package *pkg) const;
 };
 
 #endif  // SRC_PORTAGE_MASK_H_

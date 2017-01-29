@@ -47,11 +47,11 @@ string::size_type PrintFormat::currcolumn = 0;
 
 typedef vector<Darkmode> DarkModes;
 
-static void parse_color(OutputString *color, bool use_color) ATTRIBUTE_NONNULL_;
-static void colorstring(string *color, bool use_color) ATTRIBUTE_NONNULL_;
-static bool parse_colors(OutputString *ret, const string& colorstring, bool colors, string *errtext) ATTRIBUTE_NONNULL_;
-static void parse_termdark(DarkModes *mode, WordVec *regexp, const string& termdark) ATTRIBUTE_NONNULL_;
-inline static const char *seek_character(const char *fmt) ATTRIBUTE_PURE;
+ATTRIBUTE_NONNULL_ static void parse_color(OutputString *color, bool use_color);
+ATTRIBUTE_NONNULL_ static void colorstring(string *color, bool use_color);
+ATTRIBUTE_NONNULL_ static bool parse_colors(OutputString *ret, const string& colorstring, bool colors, string *errtext);
+ATTRIBUTE_NONNULL_ static void parse_termdark(DarkModes *mode, WordVec *regexp, const string& termdark);
+ATTRIBUTE_PURE inline static const char *seek_character(const char *fmt);
 
 LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg) :
 	PackageSave((fmt->recommend_mode) == LOCALMODE_DEFAULT ? NULLPTR : pkg) {
@@ -170,7 +170,7 @@ class Darkmode {
 		}
 
 		bool init(const string& s) {
-			if(s == "true")  {
+			if(s == "true") {
 				init(true, false);
 			} else if(s == "true*") {
 				init(true, true);

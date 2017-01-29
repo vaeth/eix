@@ -140,7 +140,7 @@ class FormatParser {
 		}
 #endif
 
-		bool start(const char *fmt, bool colors, bool parse_only_colors, std::string *errtext) ATTRIBUTE_NONNULL((2));
+		ATTRIBUTE_NONNULL((2)) bool start(const char *fmt, bool colors, bool parse_only_colors, std::string *errtext);
 
 		Node *rootnode() {
 			return root_node;
@@ -166,7 +166,7 @@ class VarParserCacheNode {
 			delete root_node;
 		}
 
-		bool init(const char *fmt, bool colors, bool use, std::string *errtext) ATTRIBUTE_NONNULL((2));
+		ATTRIBUTE_NONNULL((2)) bool init(const char *fmt, bool colors, bool use, std::string *errtext);
 		Node *rootnode() {
 			return root_node;
 		}
@@ -184,11 +184,11 @@ class VersionVariables;
 class PrintFormat {
 	friend class LocalCopy;
 	friend class Scanner;
-	friend void get_package_property(OutputString *s, const PrintFormat *fmt, void *entity, const std::string& name) ATTRIBUTE_NONNULL_;
-	friend void get_diff_package_property(OutputString *s, const PrintFormat *fmt, void *void_entity, const std::string& name) ATTRIBUTE_NONNULL_;
+	ATTRIBUTE_NONNULL_ friend void get_package_property(OutputString *s, const PrintFormat *fmt, void *entity, const std::string& name);
+	ATTRIBUTE_NONNULL_ friend void get_diff_package_property(OutputString *s, const PrintFormat *fmt, void *void_entity, const std::string& name);
 
 	public:
-		typedef void (*GetProperty)(OutputString *s, const PrintFormat *fmt, void *entity, const std::string& property) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ typedef void (*GetProperty)(OutputString *s, const PrintFormat *fmt, void *entity, const std::string& property);
 		typedef std::vector<ExtendedVersion::Overlay> OverlayTranslations;
 		typedef std::vector<bool> OverlayUsed;
 
@@ -225,190 +225,190 @@ class PrintFormat {
 		const SetStability *stability;
 
 		/* return true if something was actually printed */
-		bool recPrint(OutputString *result, void *entity, GetProperty get_property, Node *root) const ATTRIBUTE_NONNULL((3));
+		ATTRIBUTE_NONNULL((3)) bool recPrint(OutputString *result, void *entity, GetProperty get_property, Node *root) const;
 
 		/* return true if something was actually printed */
 		bool printString(OutputString *result, const OutputString& output) const;
 
-		bool parse_variable(Node **rootnode, const std::string& varname, std::string *errtext) const ATTRIBUTE_NONNULL((2));
+		ATTRIBUTE_NONNULL((2)) bool parse_variable(Node **rootnode, const std::string& varname, std::string *errtext) const;
 		Node *parse_variable(const std::string& varname) const;
 
 		void iuse_expand(OutputString *s, const IUseSet& iuse, bool coll, HandleExpand expand) const;
-		void get_inst_use(OutputString *s, const Package& package, InstVersion *i, HandleExpand expand) const ATTRIBUTE_NONNULL_;
-		void get_installed(Package *package, Node *root) const ATTRIBUTE_NONNULL((2));
-		void get_versions_versorted(Package *package, Node *root, PrintFormat::VerVec *versions) const ATTRIBUTE_NONNULL((2));
-		void get_versions_slotsorted(Package *package, Node *root, PrintFormat::VerVec *versions) const ATTRIBUTE_NONNULL((2));
-		void get_pkg_property(OutputString *s, Package *package, const std::string& name) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void get_inst_use(OutputString *s, const Package& package, InstVersion *i, HandleExpand expand) const;
+		ATTRIBUTE_NONNULL((2)) void get_installed(Package *package, Node *root) const;
+		ATTRIBUTE_NONNULL((2)) void get_versions_versorted(Package *package, Node *root, PrintFormat::VerVec *versions) const;
+		ATTRIBUTE_NONNULL((2)) void get_versions_slotsorted(Package *package, Node *root, PrintFormat::VerVec *versions) const;
+		ATTRIBUTE_NONNULL_ void get_pkg_property(OutputString *s, Package *package, const std::string& name) const;
 
 		// It follows a list of indirect functions called in get_pkg_property():
 		// Functions with capital letters are parser destinations; other functions
 		// here are sort of "macros" used by several other "capital letter" functions.
 
-		void COLON_VER_DATE(OutputString *s, Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
-		void colon_pkg_availableversions(Package *package, const std::string& after_colon, bool only_marked) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_AVAILABLEVERSIONS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_MARKEDVERSIONS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
-		void colon_pkg_bestversion(Package *package, const std::string& after_colon, bool allow_unstable) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_BESTVERSION(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_BESTVERSIONS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
-		void colon_pkg_bestslotversions(Package *package, const std::string& after_colon, bool allow_unstable) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_BESTSLOTVERSIONS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_BESTSLOTVERSIONSS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
-		void colon_pkg_bestslotupgradeversions(Package *package, const std::string& after_colon, bool allow_unstable) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_BESTSLOTUPGRADEVERSIONS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_BESTSLOTUPGRADEVERSIONSS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
-		void COLON_PKG_INSTALLEDVERSIONS(Package *package, const std::string& after_colon) const ATTRIBUTE_NONNULL_;
-		void PKG_INSTALLED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_VERSIONLINES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_SLOTSORTED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_COLOR(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_HAVEBEST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_HAVEBESTS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_CATEGORY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_NAME(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_DESCRIPTION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_HOMEPAGE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_LICENSES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_BINARY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_MAINREPO(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_OVERLAYKEY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_OVERLAYNAME(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_SYSTEM(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_PROFILE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_WORLD(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_WORLD_SETS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_SETNAMES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_ALLSETNAMES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void pkg_upgrade(OutputString *s, Package *package, bool only_installed, bool test_slots) const ATTRIBUTE_NONNULL_;
-		void PKG_UPGRADE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_UPGRADEORINSTALL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_BESTUPGRADE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_BESTUPGRADEORINSTALL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void pkg_downgrade(OutputString *s, Package *package, bool test_slots) const ATTRIBUTE_NONNULL_;
-		void PKG_DOWNGRADE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_BESTDOWNGRADE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void pkg_recommend(OutputString *s, Package *package, bool only_installed, bool test_slots) const ATTRIBUTE_NONNULL_;
-		void PKG_RECOMMEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_RECOMMENDORINSTALL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_BESTRECOMMEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_BESTRECOMMENDORINSTALL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_MARKED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_HAVEMARKEDVERSION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_SLOTS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_SLOTTED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_HAVEVIRTUAL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_HAVENONVIRTUAL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_HAVECOLLIUSE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_COLLIUSE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_COLLIUSES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void PKG_COLLIUSE0(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		const ExtendedVersion *ver_version() const ATTRIBUTE_PURE;
-		void VER_FIRST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_LAST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_SLOTFIRST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_SLOTLAST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ONESLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		const ExtendedVersion *ver_versionslot(Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_FULLSLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISFULLSLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_SLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISSLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_SUBSLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISSUBSLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_EAPI(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_VERSION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_PLAINVERSION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_REVISION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void ver_overlay(OutputString *s, Package *package, bool numeric, bool only_noncommon, bool only_nonzero) const ATTRIBUTE_NONNULL_;
-		void VER_OVERLAYNUM(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_OVERLAYVER(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_OVERLAYPLAINNAMES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_OVERLAYPLAINNAME(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_OVERLAYVERNAMES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_OVERLAYVERNAME(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_VERSIONKEYWORDSS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_VERSIONKEYWORDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_VERSIONEKEYWORDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void ver_isbestupgrade(OutputString *s, Package *package, bool check_slots, bool allow_unstable) const ATTRIBUTE_NONNULL_;
-		void VER_ISBESTUPGRADESLOT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISBESTUPGRADESLOTS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISBESTUPGRADE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISBESTUPGRADES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_MARKEDVERSION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_INSTALLEDVERSION(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_HAVEUSE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_USE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_USES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_USE0(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_REQUIREDUSE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_HAVEREQUIREDUSE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_VIRTUAL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISBINARY(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISTBZ(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISPAK(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISMULTIPAK(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_PAKCOUNT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		const ExtendedVersion *ver_restrict(Package *package) const ATTRIBUTE_NONNULL_;
-		void ver_restrict(OutputString *s, Package *package, ExtendedVersion::Restrict r) const ATTRIBUTE_NONNULL_;
-		void VER_RESTRICT(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_RESTRICTFETCH(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_RESTRICTMIRROR(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_RESTRICTPRIMARYURI(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_RESTRICTBINCHECKS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_RESTRICTSTRIP(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_RESTRICTTEST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_RESTRICTUSERPRIV(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_RESTRICTINSTALLSOURCES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_RESTRICTBINDIST(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_RESTRICTPARALLEL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void ver_properties(OutputString *s, Package *package, ExtendedVersion::Properties p) const ATTRIBUTE_NONNULL_;
-		void VER_PROPERTIES(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_PROPERTIESINTERACTIVE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_PROPERTIESLIVE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_PROPERTIESVIRTUAL(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_PROPERTIESSET(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_HAVEDEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_HAVERDEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_HAVEPDEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_HAVEHDEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_HAVEDEPS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_DEPENDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_DEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_RDEPENDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_RDEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_PDEPENDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_PDEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_HDEPENDS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_HDEPEND(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		const MaskFlags *ver_maskflags() const ATTRIBUTE_PURE;
-		void VER_ISHARDMASKED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISPROFILEMASKED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISMASKED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		const KeywordsFlags *ver_keywordsflags() const ATTRIBUTE_PURE;
-		void VER_ISSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISUNSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISALIENSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISALIENUNSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISMISSINGKEYWORD(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISMINUSKEYWORD(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISMINUSUNSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_ISMINUSASTERISK(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		bool ver_wasflags(Package *package, MaskFlags *maskflags, KeywordsFlags *keyflags) const ATTRIBUTE_NONNULL((2));
-		void VER_WASHARDMASKED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_WASPROFILEMASKED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_WASMASKED(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_WASSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_WASUNSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_WASALIENSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_WASALIENUNSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_WASMISSINGKEYWORD(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_WASMINUSKEYWORD(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_WASMINUSUNSTABLE(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_WASMINUSASTERISK(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_HAVEMASKREASONS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void COLON_VER_DATE(OutputString *s, Package *package, const std::string& after_colon) const;
+		ATTRIBUTE_NONNULL_ void colon_pkg_availableversions(Package *package, const std::string& after_colon, bool only_marked) const;
+		ATTRIBUTE_NONNULL_ void COLON_PKG_AVAILABLEVERSIONS(Package *package, const std::string& after_colon) const;
+		ATTRIBUTE_NONNULL_ void COLON_PKG_MARKEDVERSIONS(Package *package, const std::string& after_colon) const;
+		ATTRIBUTE_NONNULL_ void colon_pkg_bestversion(Package *package, const std::string& after_colon, bool allow_unstable) const;
+		ATTRIBUTE_NONNULL_ void COLON_PKG_BESTVERSION(Package *package, const std::string& after_colon) const;
+		ATTRIBUTE_NONNULL_ void COLON_PKG_BESTVERSIONS(Package *package, const std::string& after_colon) const;
+		ATTRIBUTE_NONNULL_ void colon_pkg_bestslotversions(Package *package, const std::string& after_colon, bool allow_unstable) const;
+		ATTRIBUTE_NONNULL_ void COLON_PKG_BESTSLOTVERSIONS(Package *package, const std::string& after_colon) const;
+		ATTRIBUTE_NONNULL_ void COLON_PKG_BESTSLOTVERSIONSS(Package *package, const std::string& after_colon) const;
+		ATTRIBUTE_NONNULL_ void colon_pkg_bestslotupgradeversions(Package *package, const std::string& after_colon, bool allow_unstable) const;
+		ATTRIBUTE_NONNULL_ void COLON_PKG_BESTSLOTUPGRADEVERSIONS(Package *package, const std::string& after_colon) const;
+		ATTRIBUTE_NONNULL_ void COLON_PKG_BESTSLOTUPGRADEVERSIONSS(Package *package, const std::string& after_colon) const;
+		ATTRIBUTE_NONNULL_ void COLON_PKG_INSTALLEDVERSIONS(Package *package, const std::string& after_colon) const;
+		ATTRIBUTE_NONNULL_ void PKG_INSTALLED(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_VERSIONLINES(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_SLOTSORTED(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_COLOR(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_HAVEBEST(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_HAVEBESTS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_CATEGORY(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_NAME(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_DESCRIPTION(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_HOMEPAGE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_LICENSES(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_BINARY(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_MAINREPO(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_OVERLAYKEY(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_OVERLAYNAME(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_SYSTEM(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_PROFILE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_WORLD(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_WORLD_SETS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_SETNAMES(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_ALLSETNAMES(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void pkg_upgrade(OutputString *s, Package *package, bool only_installed, bool test_slots) const;
+		ATTRIBUTE_NONNULL_ void PKG_UPGRADE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_UPGRADEORINSTALL(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_BESTUPGRADE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_BESTUPGRADEORINSTALL(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void pkg_downgrade(OutputString *s, Package *package, bool test_slots) const;
+		ATTRIBUTE_NONNULL_ void PKG_DOWNGRADE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_BESTDOWNGRADE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void pkg_recommend(OutputString *s, Package *package, bool only_installed, bool test_slots) const;
+		ATTRIBUTE_NONNULL_ void PKG_RECOMMEND(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_RECOMMENDORINSTALL(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_BESTRECOMMEND(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_BESTRECOMMENDORINSTALL(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_MARKED(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_HAVEMARKEDVERSION(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_SLOTS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_SLOTTED(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_HAVEVIRTUAL(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_HAVENONVIRTUAL(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_HAVECOLLIUSE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_COLLIUSE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_COLLIUSES(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void PKG_COLLIUSE0(OutputString *s, Package *package) const;
+		ATTRIBUTE_PURE const ExtendedVersion *ver_version() const;
+		ATTRIBUTE_NONNULL_ void VER_FIRST(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_LAST(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_SLOTFIRST(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_SLOTLAST(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ONESLOT(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ const ExtendedVersion *ver_versionslot(Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_FULLSLOT(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISFULLSLOT(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_SLOT(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISSLOT(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_SUBSLOT(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISSUBSLOT(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_EAPI(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_VERSION(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_PLAINVERSION(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_REVISION(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void ver_overlay(OutputString *s, Package *package, bool numeric, bool only_noncommon, bool only_nonzero) const;
+		ATTRIBUTE_NONNULL_ void VER_OVERLAYNUM(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_OVERLAYVER(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_OVERLAYPLAINNAMES(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_OVERLAYPLAINNAME(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_OVERLAYVERNAMES(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_OVERLAYVERNAME(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_VERSIONKEYWORDSS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_VERSIONKEYWORDS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_VERSIONEKEYWORDS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void ver_isbestupgrade(OutputString *s, Package *package, bool check_slots, bool allow_unstable) const;
+		ATTRIBUTE_NONNULL_ void VER_ISBESTUPGRADESLOT(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISBESTUPGRADESLOTS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISBESTUPGRADE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISBESTUPGRADES(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_MARKEDVERSION(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_INSTALLEDVERSION(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_HAVEUSE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_USE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_USES(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_USE0(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_REQUIREDUSE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_HAVEREQUIREDUSE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_VIRTUAL(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISBINARY(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISTBZ(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISPAK(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISMULTIPAK(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_PAKCOUNT(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ const ExtendedVersion *ver_restrict(Package *package) const;
+		ATTRIBUTE_NONNULL_ void ver_restrict(OutputString *s, Package *package, ExtendedVersion::Restrict r) const;
+		ATTRIBUTE_NONNULL_ void VER_RESTRICT(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_RESTRICTFETCH(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_RESTRICTMIRROR(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_RESTRICTPRIMARYURI(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_RESTRICTBINCHECKS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_RESTRICTSTRIP(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_RESTRICTTEST(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_RESTRICTUSERPRIV(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_RESTRICTINSTALLSOURCES(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_RESTRICTBINDIST(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_RESTRICTPARALLEL(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void ver_properties(OutputString *s, Package *package, ExtendedVersion::Properties p) const;
+		ATTRIBUTE_NONNULL_ void VER_PROPERTIES(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_PROPERTIESINTERACTIVE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_PROPERTIESLIVE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_PROPERTIESVIRTUAL(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_PROPERTIESSET(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_HAVEDEPEND(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_HAVERDEPEND(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_HAVEPDEPEND(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_HAVEHDEPEND(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_HAVEDEPS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_DEPENDS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_DEPEND(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_RDEPENDS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_RDEPEND(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_PDEPENDS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_PDEPEND(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_HDEPENDS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_HDEPEND(OutputString *s, Package *package) const;
+		ATTRIBUTE_PURE const MaskFlags *ver_maskflags() const;
+		ATTRIBUTE_NONNULL_ void VER_ISHARDMASKED(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISPROFILEMASKED(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISMASKED(OutputString *s, Package *package) const;
+		ATTRIBUTE_PURE const KeywordsFlags *ver_keywordsflags() const;
+		ATTRIBUTE_NONNULL_ void VER_ISSTABLE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISUNSTABLE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISALIENSTABLE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISALIENUNSTABLE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISMISSINGKEYWORD(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISMINUSKEYWORD(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISMINUSUNSTABLE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISMINUSASTERISK(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL((2)) bool ver_wasflags(Package *package, MaskFlags *maskflags, KeywordsFlags *keyflags) const;
+		ATTRIBUTE_NONNULL_ void VER_WASHARDMASKED(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_WASPROFILEMASKED(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_WASMASKED(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_WASSTABLE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_WASUNSTABLE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_WASALIENSTABLE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_WASALIENUNSTABLE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_WASMISSINGKEYWORD(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_WASMINUSKEYWORD(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_WASMINUSUNSTABLE(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_WASMINUSASTERISK(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_HAVEMASKREASONS(OutputString *s, Package *package) const;
 		void ver_maskreasons(OutputString *s, const OutputString& skip, const OutputString& sep) const;
-		void VER_MASKREASONS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
-		void VER_MASKREASONSS(OutputString *s, Package *package) const ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void VER_MASKREASONS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_MASKREASONSS(OutputString *s, Package *package) const;
 
 	public:
 		bool	no_color,             ///< Shall we use colors?
@@ -448,7 +448,7 @@ class PrintFormat {
 		}
 
 		// Initialize those variables common to eix and eix-diff:
-		void setupResources(EixRc *eixrc) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ void setupResources(EixRc *eixrc);
 
 		void setupColors();
 
@@ -459,9 +459,9 @@ class PrintFormat {
 			set_as_virtual(overlay, true);
 		}
 
-		bool is_virtual(const ExtendedVersion::Overlay overlay) const ATTRIBUTE_PURE;
+		ATTRIBUTE_PURE bool is_virtual(const ExtendedVersion::Overlay overlay) const;
 
-		bool have_virtual(const Package *p, bool nonvirtual) const ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
+		ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE bool have_virtual(const Package *p, bool nonvirtual) const;
 
 		void set_overlay_translations(OverlayTranslations *translations) {
 			overlay_translations = translations;
@@ -476,51 +476,51 @@ class PrintFormat {
 			marked_list = m_list;
 		}
 
-		void overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay, bool plain) const ATTRIBUTE_NONNULL_;
-		void overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay, bool plain) const;
+		ATTRIBUTE_NONNULL_ void overlay_keytext(OutputString *s, ExtendedVersion::Overlay overlay) const {
 			overlay_keytext(s, overlay, false);
 		}
 
 		/* return true if something was actually printed */
-		bool print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s, bool check_only) ATTRIBUTE_NONNULL((2, 5, 6, 7, 8));
+		ATTRIBUTE_NONNULL((2, 5, 6, 7, 8)) bool print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s, bool check_only);
 
 		/* return true if something was actually printed */
-		bool print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL((2, 5, 6, 7, 8)) {
+		ATTRIBUTE_NONNULL((2, 5, 6, 7, 8)) bool print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) {
 			return print(entity, get_property, root, dbheader, vardbpkg, ps, s, false);
 		}
 
 		/* return true if something was actually printed */
-		bool print(void *entity, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s, bool check_only) ATTRIBUTE_NONNULL((2, 4, 5, 6, 7)) {
+		ATTRIBUTE_NONNULL((2, 4, 5, 6, 7)) bool print(void *entity, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s, bool check_only) {
 			return print(entity, m_get_property, root, dbheader, vardbpkg, ps, s, check_only);
 		}
 
 		/* return true if something was actually printed */
-		bool print(void *entity, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL((2, 4, 5, 6, 7)) {
+		ATTRIBUTE_NONNULL((2, 4, 5, 6, 7)) bool print(void *entity, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) {
 			return print(entity, m_get_property, root, dbheader, vardbpkg, ps, s);
 		}
 
 		/* return true if something was actually printed */
-		bool print(void *entity, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s, bool check_only) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ bool print(void *entity, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s, bool check_only) {
 			return print(entity, root_node, dbheader, vardbpkg, ps, s, check_only);
 		}
 
 		/* return true if something was actually printed */
-		bool print(void *entity, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ bool print(void *entity, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s) {
 			return print(entity, root_node, dbheader, vardbpkg, ps, s);
 		}
 
-		bool parseFormat(Node **rootnode, const char *fmt, std::string *errtext) ATTRIBUTE_NONNULL((2, 3));
+		ATTRIBUTE_NONNULL((2, 3)) bool parseFormat(Node **rootnode, const char *fmt, std::string *errtext);
 
-		bool parseFormat(const char *fmt, std::string *errtext) ATTRIBUTE_NONNULL((2)) {
+		ATTRIBUTE_NONNULL((2)) bool parseFormat(const char *fmt, std::string *errtext) {
 			delete root_node;
 			return parseFormat(&root_node, fmt, errtext);
 		}
 
-		void StabilityLocal(Package *p) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void StabilityLocal(Package *p) const {
 			stability->set_stability(true, p);
 		}
 
-		void StabilityNonlocal(Package *p) const ATTRIBUTE_NONNULL_ {
+		ATTRIBUTE_NONNULL_ void StabilityNonlocal(Package *p) const {
 			stability->set_stability(false, p);
 		}
 
@@ -529,7 +529,7 @@ class PrintFormat {
 
 class LocalCopy : public PackageSave {
 	public:
-		LocalCopy(const PrintFormat *fmt, Package *pkg) ATTRIBUTE_NONNULL_;
+		ATTRIBUTE_NONNULL_ LocalCopy(const PrintFormat *fmt, Package *pkg);
 };
 
 
