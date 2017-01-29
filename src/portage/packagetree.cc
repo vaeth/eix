@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/packagetree.h"
 #include <config.h>
 
 #include <string>
@@ -18,7 +19,6 @@
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "portage/package.h"
-#include "portage/packagetree.h"
 
 using std::pair;
 using std::string;

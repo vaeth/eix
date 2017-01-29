@@ -8,6 +8,8 @@
 #ifndef SRC_EIXTK_DIAGNOSTICS_H_
 #define SRC_EIXTK_DIAGNOSTICS_H_ 1
 
+#include <config.h>
+
 // check_includes: include "eixTk/diagnostics.h"
 
 #ifdef FULL_GCC_DIAG_PRAGMA

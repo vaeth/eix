@@ -8,6 +8,8 @@
 #ifndef SRC_EIXTK_DIALECT_H_
 #define SRC_EIXTK_DIALECT_H_ 1
 
+#include <config.h>
+
 // define C++-11 dialect specific keywords (if available)
 // or poor man's substitutes
 

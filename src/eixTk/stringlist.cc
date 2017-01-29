@@ -5,13 +5,13 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/stringlist.h"
 #include <config.h>
 
 #include <string>
 
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/stringlist.h"
 #include "eixTk/stringtypes.h"
 
 void StringListContent::finalize() {

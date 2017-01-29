@@ -6,11 +6,11 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/compare.h"
 #include <config.h>
 
 #include <string>
 
-#include "eixTk/compare.h"
 #include "eixTk/eixint.h"
 
 using std::string;

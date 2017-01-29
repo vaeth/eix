@@ -5,11 +5,11 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/stringlist.h"
 #include <config.h>
 
 #include "eixTk/likely.h"
 #include "eixTk/outputstring.h"
-#include "eixTk/stringlist.h"
 #include "eixTk/stringtypes.h"
 
 void StringListContent::append_to_string(OutputString *s, const OutputString& skip) const {

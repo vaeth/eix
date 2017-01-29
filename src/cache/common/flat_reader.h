@@ -10,6 +10,8 @@
 #ifndef SRC_CACHE_COMMON_FLAT_READER_H_
 #define SRC_CACHE_COMMON_FLAT_READER_H_ 1
 
+#include <config.h>
+
 #include <fstream>
 #include <string>
 

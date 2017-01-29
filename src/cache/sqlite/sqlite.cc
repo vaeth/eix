@@ -9,6 +9,7 @@
 
 // #define SQLITE_ONLY_DEBUG
 
+#include "cache/sqlite/sqlite.h"
 #include <config.h>
 
 #ifdef WITH_SQLITE
@@ -20,7 +21,6 @@
 #include <map>
 #include <string>
 
-#include "cache/sqlite/sqlite.h"
 #include "eixTk/attribute.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -321,7 +321,6 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Cate
 
 #else /* Not WITH_SQLITE */
 
-#include "cache/sqlite/sqlite.h"  // NOLINT(build/include)
 #include "eixTk/i18n.h"  // NOLINT(build/include)
 #include "eixTk/unused.h"  // NOLINT(build/include)
 

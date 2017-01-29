@@ -8,6 +8,8 @@
 #ifndef SRC_PORTAGE_EAPI_H_
 #define SRC_PORTAGE_EAPI_H_ 1
 
+#include <config.h>
+
 #include <string>
 
 #include "eixTk/inttypes.h"

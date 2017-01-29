@@ -10,6 +10,8 @@
 #ifndef SRC_CACHE_SQLITE_SQLITE_H_
 #define SRC_CACHE_SQLITE_SQLITE_H_ 1
 
+#include <config.h>
+
 #include <vector>
 
 #include "cache/base.h"

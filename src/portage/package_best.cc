@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/package.h"
 #include <config.h>
 
 #include <cstring>
@@ -21,7 +22,6 @@
 #include "portage/extendedversion.h"
 #include "portage/instversion.h"
 #include "portage/keywords.h"
-#include "portage/package.h"
 #include "portage/vardbpkg.h"
 #include "portage/version.h"
 

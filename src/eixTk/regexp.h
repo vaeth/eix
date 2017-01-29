@@ -10,6 +10,8 @@
 #ifndef SRC_EIXTK_REGEXP_H_
 #define SRC_EIXTK_REGEXP_H_ 1
 
+#include <config.h>
+
 #include <regex.h>
 
 // check_includes: include <cstdlib>

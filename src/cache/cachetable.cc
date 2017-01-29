@@ -7,13 +7,13 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "cache/cachetable.h"
 #include <config.h>
 
 #include <string>
 
 #include "cache/base.h"
 #include "cache/cache_map.h"
-#include "cache/cachetable.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"

@@ -10,6 +10,8 @@
 #ifndef SRC_CACHE_COMMON_ASSIGN_READER_H_
 #define SRC_CACHE_COMMON_ASSIGN_READER_H_ 1
 
+#include <config.h>
+
 #include <ctime>
 
 #include <string>

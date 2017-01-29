@@ -10,6 +10,8 @@
 #ifndef SRC_SEARCH_PACKAGETEST_H_
 #define SRC_SEARCH_PACKAGETEST_H_ 1
 
+#include <config.h>
+
 #include <set>
 #include <string>
 #include <vector>

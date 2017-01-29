@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "cache/parse/parse.h"
 #include <config.h>
 
 #include <ctime>
@@ -18,7 +19,6 @@
 #include "cache/common/flat_reader.h"
 #include "cache/common/selectors.h"
 #include "cache/metadata/metadata.h"
-#include "cache/parse/parse.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"

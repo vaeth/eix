@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "eixrc/eixrc.h"
 #include <config.h>
 
 #include <cstdio>
@@ -29,7 +30,6 @@
 #include "eixTk/stringutils.h"
 #include "eixTk/sysutils.h"
 #include "eixTk/varsreader.h"
-#include "eixrc/eixrc.h"
 
 #ifndef SYSCONFDIR
 #define SYSCONFDIR "/etc"

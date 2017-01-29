@@ -10,6 +10,8 @@
 #ifndef SRC_CACHE_BASE_H_
 #define SRC_CACHE_BASE_H_ 1
 
+#include <config.h>
+
 #include <ctime>
 
 #include <string>
@@ -175,7 +177,7 @@ class BasicCache {
 			m_catname.clear();
 		}
 
-		ATTRIBUTE_NONNULL_ virtual bool get_time(ATTRIBUTE_UNUSED time_t *t,ATTRIBUTE_UNUSED const std::string &pkg_name, ATTRIBUTE_UNUSED const std::string &ver_name) const {
+		ATTRIBUTE_NONNULL_ virtual bool get_time(ATTRIBUTE_UNUSED time_t *t, ATTRIBUTE_UNUSED const std::string &pkg_name, ATTRIBUTE_UNUSED const std::string &ver_name) const {
 			UNUSED(t);
 			UNUSED(pkg_name);
 			UNUSED(ver_name);

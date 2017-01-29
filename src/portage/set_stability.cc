@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/set_stability.h"
 #include <config.h>
 
 #ifndef ALWAYS_RECALCULATE_STABILITY
@@ -26,7 +27,6 @@
 #include "portage/keywords.h"
 #include "portage/package.h"
 #include "portage/packagetree.h"
-#include "portage/set_stability.h"
 #include "portage/version.h"
 
 #ifndef ALWAYS_RECALCULATE_STABILITY

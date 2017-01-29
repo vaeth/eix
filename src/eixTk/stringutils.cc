@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/stringutils.h"
 #include <config.h>
 
 #include <fnmatch.h>
@@ -28,7 +29,6 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
-#include "eixTk/stringutils.h"
 
 using std::string;
 using std::vector;

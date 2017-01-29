@@ -8,6 +8,8 @@
 #ifndef SRC_EIXTK_NULL_H_
 #define SRC_EIXTK_NULL_H_ 1
 
+#include <config.h>
+
 // check_includes: include "eixTk/null.h"
 
 #ifdef HAVE_NULLPTR

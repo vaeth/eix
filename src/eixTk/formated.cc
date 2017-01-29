@@ -6,6 +6,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/formated.h"
 #include <config.h>
 
 #include <cstdlib>
@@ -16,7 +17,6 @@
 
 #include "eixTk/attribute.h"
 #include "eixTk/eixint.h"
-#include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/stringutils.h"

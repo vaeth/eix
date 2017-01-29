@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/utils.h"
 #include <config.h>
 
 #include <dirent.h>
@@ -30,7 +31,6 @@
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
-#include "eixTk/utils.h"
 #include "eixrc/global.h"
 
 using std::string;

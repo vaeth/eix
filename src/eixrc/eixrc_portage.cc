@@ -5,6 +5,7 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "eixrc/eixrc.h"
 #include <config.h>
 
 #include <iostream>
@@ -16,7 +17,6 @@
 #include "eixTk/null.h"
 #include "eixTk/parseerror.h"
 #include "eixTk/stringutils.h"
-#include "eixrc/eixrc.h"
 #include "portage/conf/portagesettings.h"
 
 using std::map;

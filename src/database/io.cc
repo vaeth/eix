@@ -5,6 +5,7 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "database/io.h"
 #include <config.h>
 
 #include <cstdio>
@@ -16,7 +17,6 @@
 #endif
 
 #include "database/header.h"
-#include "database/io.h"
 #include "eixTk/auto_array.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"

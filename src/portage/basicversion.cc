@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/basicversion.h"
 #include <config.h>
 
 #include <algorithm>
@@ -23,7 +24,6 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringutils.h"
-#include "portage/basicversion.h"
 
 using std::string;
 

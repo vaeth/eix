@@ -5,13 +5,13 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/instversion.h"
 #include <config.h>
 
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "portage/basicversion.h"
 #include "portage/extendedversion.h"
-#include "portage/instversion.h"
 
 eix::SignedBool InstVersion::compare(const InstVersion& left, const InstVersion& right) {
 	if(likely(left.know_overlay && right.know_overlay && (!left.overlay_failed) && (!right.overlay_failed))) {

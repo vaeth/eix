@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/argsreader.h"
 #include <config.h>
 
 #include <cstdlib>
@@ -14,7 +15,6 @@
 
 #include <iostream>
 
-#include "eixTk/argsreader.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"

@@ -7,9 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
-#include <config.h>
-
 #include "eixrc/globals.h"
+#include <config.h>  // NOLINT(build/include_order)
 
 #define DEFAULT_PART 4
 

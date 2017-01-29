@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "various/cli.h"
 #include <config.h>
 
 #include <iostream>
@@ -30,7 +31,6 @@
 #include "search/algorithms.h"
 #include "search/matchtree.h"
 #include "search/packagetest.h"
-#include "various/cli.h"
 
 class ParseError;
 

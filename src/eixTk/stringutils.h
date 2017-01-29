@@ -10,6 +10,8 @@
 #ifndef SRC_EIXTK_STRINGUTILS_H_
 #define SRC_EIXTK_STRINGUTILS_H_
 
+#include <config.h>
+
 #include <locale>
 
 #include <cstdlib>
@@ -393,7 +395,7 @@ inline static bool casecontains(const std::string& str, const char *pattern) {
 /**
 Check whether char is utf8 first-byte
 **/
-ATTRIBUTE_PURE inline bool isutf8firstbyte(char c) ;
+ATTRIBUTE_PURE inline bool isutf8firstbyte(char c);
 inline bool isutf8firstbyte(char c) {
 	return ((c & 0xC0) != 0x80);
 }
@@ -402,11 +404,11 @@ inline bool isutf8firstbyte(char c) {
 Calculate size of utf8 string
 **/
 ATTRIBUTE_PURE std::string::size_type utf8size(const std::string& t, std::string::size_type begin, std::string::size_type end);
-ATTRIBUTE_PURE inline static std::string::size_type utf8size(const std::string &t, std::string::size_type begin) ;
+ATTRIBUTE_PURE inline static std::string::size_type utf8size(const std::string &t, std::string::size_type begin);
 inline static std::string::size_type utf8size(const std::string &t, std::string::size_type begin) {
 	return utf8size(t, begin, std::string::npos);
 }
-ATTRIBUTE_PURE inline static std::string::size_type utf8size(const std::string &t) ;
+ATTRIBUTE_PURE inline static std::string::size_type utf8size(const std::string &t);
 inline static std::string::size_type utf8size(const std::string &t) {
 	return utf8size(t, 0, std::string::npos);
 }

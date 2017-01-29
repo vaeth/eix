@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/parseerror.h"
 #include <config.h>
 
 #include <iostream>
@@ -17,7 +18,6 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/parseerror.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 

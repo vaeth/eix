@@ -10,6 +10,8 @@
 #ifndef SRC_EIXTK_PTR_ITERATOR_H_
 #define SRC_EIXTK_PTR_ITERATOR_H_ 1
 
+#include <config.h>
+
 #include <iterator>
 
 namespace eix {

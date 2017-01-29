@@ -10,6 +10,8 @@
 #ifndef SRC_EIXTK_EIXINT_H_
 #define SRC_EIXTK_EIXINT_H_ 1
 
+#include <config.h>
+
 #include <sys/types.h>
 
 // check_includes: include "eixTk/eixint.h"

@@ -5,13 +5,13 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/ansicolor.h"
 #include <config.h>
 
 #include <cstdio>
 
 #include <iostream>
 
-#include "eixTk/ansicolor.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"

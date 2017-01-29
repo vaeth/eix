@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/sysutils.h"
 #include <config.h>
 
 #include <grp.h>
@@ -49,7 +50,6 @@
 #include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/sysutils.h"
 #include "eixTk/unused.h"
 
 using std::string;

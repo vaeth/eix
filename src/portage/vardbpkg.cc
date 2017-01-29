@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/vardbpkg.h"
 #include <config.h>
 
 #include <dirent.h>
@@ -27,7 +28,6 @@
 #include "portage/basicversion.h"
 #include "portage/extendedversion.h"
 #include "portage/instversion.h"
-#include "portage/vardbpkg.h"
 
 using std::string;
 

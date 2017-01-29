@@ -10,6 +10,8 @@
 #ifndef SRC_EIXTK_ASSERT_H_
 #define SRC_EIXTK_ASSERT_H_ 1
 
+#include <config.h>
+
 // check_includes: include "eixTk/assert.h"
 
 #ifndef NDEBUG

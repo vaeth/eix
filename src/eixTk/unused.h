@@ -8,6 +8,8 @@
 #ifndef SRC_EIXTK_UNUSED_H_
 #define SRC_EIXTK_UNUSED_H_ 1
 
+#include <config.h>
+
 // check_includes: include "eixTk/unused.h" include "eixTk/attribute.h"
 
 #if defined(HAVE_C11ATTRIBUTE_UNUSED) || defined(HAVE_ATTRIBUTE_UNUSED)

@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/regexp.h"
 #include <config.h>
 
 #include <cstdlib>
@@ -18,7 +19,6 @@
 #include "eixTk/diagnostics.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/regexp.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 

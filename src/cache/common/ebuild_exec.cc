@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "cache/common/ebuild_exec.h"
 #include <config.h>
 
 #include <unistd.h>
@@ -22,7 +23,6 @@
 #include <string>
 
 #include "cache/base.h"
-#include "cache/common/ebuild_exec.h"
 #include "eixTk/dialect.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/formated.h"

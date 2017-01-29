@@ -7,6 +7,7 @@
 
 // #define DEBUG_MATCHTREE 1
 
+#include "search/matchtree.h"
 #include <config.h>
 
 #ifdef DEBUG_MATCHTREE
@@ -21,7 +22,6 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/unused.h"
-#include "search/matchtree.h"
 #include "search/packagetest.h"
 
 using std::cerr;

@@ -10,6 +10,8 @@
 #ifndef SRC_EIXTK_PTR_CONTAINER_H_
 #define SRC_EIXTK_PTR_CONTAINER_H_ 1
 
+#include <config.h>
+
 #include "eixTk/ptr_iterator.h"
 
 // check_includes:  include "eixTk/ptr_container.h"

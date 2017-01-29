@@ -10,6 +10,8 @@
 #ifndef SRC_EIXRC_GLOBAL_H_
 #define SRC_EIXRC_GLOBAL_H_ 1
 
+#include <config.h>
+
 #include "eixTk/attribute.h"
 
 class EixRc;

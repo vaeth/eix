@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "search/algorithms.h"
 #include <config.h>
 
 #include <fnmatch.h>
@@ -22,7 +23,6 @@
 #include "eixTk/null.h"
 #include "eixTk/unused.h"
 #include "portage/package.h"
-#include "search/algorithms.h"
 #include "search/levenshtein.h"
 
 /*

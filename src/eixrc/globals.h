@@ -14,6 +14,8 @@
 // It collects common includes and macros for eixrc/global?.cc
 // It should be included *only* by these files!
 
+#include <config.h>
+
 #include <cstdlib>
 
 #include "eixTk/i18n.h"

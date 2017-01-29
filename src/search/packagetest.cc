@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "search/packagetest.h"
 #include <config.h>
 
 #include <iostream>
@@ -40,7 +41,6 @@
 #include "portage/vardbpkg.h"
 #include "search/algorithms.h"
 #include "search/nowarn.h"
-#include "search/packagetest.h"
 
 class DBHeader;
 class SetStability;

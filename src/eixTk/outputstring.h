@@ -8,6 +8,8 @@
 #ifndef SRC_EIXTK_OUTPUTSTRING_H_
 #define SRC_EIXTK_OUTPUTSTRING_H_ 1
 
+#include <config.h>
+
 #include <string>
 #include <vector>
 

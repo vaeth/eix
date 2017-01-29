@@ -8,6 +8,8 @@
 #ifndef SRC_EIXTK_LIKELY_H_
 #define SRC_EIXTK_LIKELY_H_ 1
 
+#include <config.h>
+
 // check_includes: include "eixTk/likely.h"
 
 #ifdef HAVE___BUILTIN_EXPECT

@@ -20,6 +20,7 @@
 	- internal: Introduce generic ptr_container
 	- internal: Use vector instead of list when presumably more efficient
 	- internal: Place attributes in front. Use attribute.h. Use C++11 attr
+	- internal: Use bugchecking include order
 
 *eix-0.32.4
 	Martin Väth <martin at mvath.de>:

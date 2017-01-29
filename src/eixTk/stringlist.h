@@ -8,6 +8,8 @@
 #ifndef SRC_EIXTK_STRINGLIST_H_
 #define SRC_EIXTK_STRINGLIST_H_
 
+#include <config.h>
+
 // Without STRINGLIST_FREE, stringlists cannot be completely destructed.
 // However, using STRINGLIST_FREE has a slight memory and code overhead.
 #define STRINGLIST_FREE 1

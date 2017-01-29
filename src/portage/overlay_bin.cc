@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/overlay.h"
 #include <config.h>
 
 #include <string>
@@ -18,7 +19,6 @@
 #include "eixTk/stringtypes.h"
 #include "eixTk/utils.h"
 #include "eixTk/varsreader.h"
-#include "portage/overlay.h"
 
 using std::string;
 

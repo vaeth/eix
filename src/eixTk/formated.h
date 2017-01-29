@@ -9,6 +9,8 @@
 #ifndef SRC_EIXTK_FORMATED_H_
 #define SRC_EIXTK_FORMATED_H_ 1
 
+#include <config.h>
+
 #include <ostream>
 #include <sstream>
 #include <string>

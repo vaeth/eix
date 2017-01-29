@@ -10,6 +10,8 @@
 #ifndef SRC_EIXRC_EIXRC_H_
 #define SRC_EIXRC_EIXRC_H_ 1
 
+#include <config.h>
+
 #include <cstdio>
 
 #include <map>

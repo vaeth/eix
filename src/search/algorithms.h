@@ -10,6 +10,8 @@
 #ifndef SRC_SEARCH_ALGORITHMS_H_
 #define SRC_SEARCH_ALGORITHMS_H_ 1
 
+#include <config.h>
+
 #include <map>
 #include <string>
 

@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "cache/metadata/metadata.h"
 #include <config.h>
 
 #include <dirent.h>
@@ -19,7 +20,6 @@
 #include "cache/common/assign_reader.h"
 #include "cache/common/flat_reader.h"
 #include "cache/common/reader.h"
-#include "cache/metadata/metadata.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"

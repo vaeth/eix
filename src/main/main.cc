@@ -10,6 +10,9 @@
 // This file is meant to be included from a wrapper which should start with:
 // #include <config.h>
 
+#include "main/main.h"
+#include <config.h>
+
 #include <csignal>  /* signal handlers */
 #include <cstdlib>
 #ifdef ENABLE_NLS
@@ -25,7 +28,6 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringutils.h"
-#include "main/main.h"
 
 /*
 You must define by a wrapper file - one or several of

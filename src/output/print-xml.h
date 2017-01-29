@@ -9,6 +9,8 @@
 #ifndef SRC_OUTPUT_PRINT_XML_H_
 #define SRC_OUTPUT_PRINT_XML_H_ 1
 
+#include <config.h>
+
 #include <string>
 #include <vector>
 

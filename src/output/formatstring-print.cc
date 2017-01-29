@@ -7,9 +7,10 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
-#include <config.h>
-
 // #define EIX_PARANOIC_ASSERT
+
+#include "output/formatstring-print.h"
+#include <config.h>
 
 #include <cstdlib>
 #include <cstring>
@@ -31,7 +32,6 @@
 #include "eixTk/sysutils.h"
 #include "eixTk/unused.h"
 #include "eixrc/eixrc.h"
-#include "output/formatstring-print.h"
 #include "output/formatstring.h"
 #include "portage/conf/portagesettings.h"
 #include "portage/extendedversion.h"

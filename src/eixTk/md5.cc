@@ -6,6 +6,7 @@
 //   Martin Väth <martin@mvath.de>
 
 // #define DEBUG_MD5
+#include "eixTk/md5.h"
 #include <config.h>
 
 #include <fcntl.h>
@@ -24,7 +25,6 @@
 #include "eixTk/diagnostics.h"
 #include "eixTk/dialect.h"
 #include "eixTk/inttypes.h"
-#include "eixTk/md5.h"
 #include "eixTk/null.h"
 
 using std::string;

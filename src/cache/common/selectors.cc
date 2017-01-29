@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "cache/common/selectors.h"
 #include <config.h>
 
 #include <dirent.h>
@@ -15,7 +16,6 @@
 
 #include <string>
 
-#include "cache/common/selectors.h"
 #include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"

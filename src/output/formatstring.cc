@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "output/formatstring.h"
 #include <config.h>
 
 #include <sys/types.h>
@@ -32,7 +33,6 @@
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixrc/eixrc.h"
-#include "output/formatstring.h"
 #include "portage/extendedversion.h"
 
 class PortageSettings;

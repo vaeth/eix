@@ -5,6 +5,7 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/eapi.h"
 #include <config.h>
 
 #include <map>
@@ -14,7 +15,6 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
-#include "portage/eapi.h"
 
 using std::map;
 using std::string;

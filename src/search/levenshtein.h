@@ -9,6 +9,8 @@
 #ifndef SRC_SEARCH_LEVENSHTEIN_H_
 #define SRC_SEARCH_LEVENSHTEIN_H_ 1
 
+#include <config.h>
+
 #include "eixTk/attribute.h"
 
 typedef unsigned int Levenshtein;

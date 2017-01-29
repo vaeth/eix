@@ -7,13 +7,13 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "cache/base.h"
 #include <config.h>
 
 #include <cstdlib>
 
 #include <string>
 
-#include "cache/base.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"

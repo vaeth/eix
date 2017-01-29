@@ -6,6 +6,7 @@
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "search/levenshtein.h"
 #include <config.h>
 
 #include <sys/types.h>
@@ -17,7 +18,6 @@
 
 #include "eixTk/likely.h"
 #include "eixTk/stringutils.h"
-#include "search/levenshtein.h"
 
 using std::vector;
 

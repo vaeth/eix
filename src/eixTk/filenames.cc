@@ -5,6 +5,7 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/filenames.h"
 #include <config.h>
 
 // #define DEBUG_NORMALIZE_PATH
@@ -39,7 +40,6 @@
 #include <string>
 
 #include "eixTk/attribute.h"
-#include "eixTk/filenames.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"

@@ -8,6 +8,8 @@
 #ifndef SRC_SEARCH_MATCHTREE_H_
 #define SRC_SEARCH_MATCHTREE_H_ 1
 
+#include <config.h>
+
 #include <stack>
 
 #include "eixTk/attribute.h"

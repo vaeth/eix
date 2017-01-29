@@ -8,6 +8,8 @@
 #ifndef SRC_EIXTK_I18N_H_
 #define SRC_EIXTK_I18N_H_ 1
 
+#include <config.h>
+
 // check_includes: include "eixTk/i18n.h"
 
 #ifdef ENABLE_NLS

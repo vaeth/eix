@@ -5,12 +5,10 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/packagesets.h"
 #include <config.h>
 
 #include <algorithm>
-
-#include "portage/packagesets.h"
-
 
 /**
 @return true if something has changed

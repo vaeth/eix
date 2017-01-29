@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/mask_list.h"
 #include <config.h>
 
 #include <map>
@@ -22,7 +23,6 @@
 #include "portage/basicversion.h"
 #include "portage/keywords.h"
 #include "portage/mask.h"
-#include "portage/mask_list.h"
 #include "portage/package.h"
 
 class Version;

@@ -5,11 +5,11 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/version.h"
 #include <config.h>
 
 #include "eixTk/outputstring.h"
 #include "eixTk/stringlist.h"
-#include "portage/version.h"
 
 void Version::reasons_string(OutputString *s, const OutputString& skip, const OutputString& sep) const {
 	bool psep(false);

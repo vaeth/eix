@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/varsreader.h"
 #include <config.h>
 
 #include <fcntl.h>
@@ -32,7 +33,6 @@
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/utils.h"
-#include "eixTk/varsreader.h"
 
 /**
 Current input for FSM

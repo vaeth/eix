@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/percentage.h"
 #include <config.h>
 
 #include <cstdio>
@@ -18,7 +19,6 @@
 
 #include "eixTk/formated.h"
 #include "eixTk/likely.h"
-#include "eixTk/percentage.h"
 
 using std::string;
 

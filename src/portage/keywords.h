@@ -10,6 +10,8 @@
 #ifndef SRC_PORTAGE_KEYWORDS_H_
 #define SRC_PORTAGE_KEYWORDS_H_ 1
 
+#include <config.h>
+
 #include <string>
 
 #include "eixTk/dialect.h"

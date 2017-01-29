@@ -7,12 +7,12 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "database/header.h"
 #include <config.h>
 
 #include <set>
 #include <string>
 
-#include "database/header.h"
 #include "eixTk/filenames.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"

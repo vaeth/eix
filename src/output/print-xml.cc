@@ -6,6 +6,7 @@
 //   Bob Shaffer II <bob.shaffer.2 at gmail.com>
 //   Martin Väth <martin@mvath.de>
 
+#include "output/print-xml.h"
 #include <config.h>
 
 #include <set>
@@ -20,7 +21,6 @@
 #include "eixTk/sysutils.h"
 #include "eixrc/eixrc.h"
 #include "output/formatstring.h"
-#include "output/print-xml.h"
 #include "portage/basicversion.h"
 #include "portage/depend.h"
 #include "portage/extendedversion.h"

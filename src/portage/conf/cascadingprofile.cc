@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/conf/cascadingprofile.h"
 #include <config.h>
 
 #include <cstring>
@@ -28,7 +29,6 @@
 #include "eixTk/stringtypes.h"
 #include "eixTk/sysutils.h"
 #include "eixTk/utils.h"
-#include "portage/conf/cascadingprofile.h"
 #include "portage/conf/portagesettings.h"
 #include "portage/mask.h"
 #include "portage/mask_list.h"

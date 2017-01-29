@@ -10,6 +10,8 @@
 #ifndef SRC_OUTPUT_FORMATSTRING_PRINT_H_
 #define SRC_OUTPUT_FORMATSTRING_PRINT_H_ 1
 
+#include <config.h>
+
 #include <string>
 
 #include "eixTk/attribute.h"

@@ -5,6 +5,7 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "various/drop_permissions.h"
 #include <config.h>
 
 #include <unistd.h>
@@ -25,7 +26,6 @@
 #include "eixTk/null.h"
 #include "eixTk/sysutils.h"
 #include "eixrc/eixrc.h"
-#include "various/drop_permissions.h"
 
 using std::string;
 

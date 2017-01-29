@@ -5,9 +5,9 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "database/header.h"
 #include <config.h>
 
-#include "database/header.h"
 #include "eixTk/likely.h"
 #include "portage/conf/portagesettings.h"
 #include "portage/overlay.h"

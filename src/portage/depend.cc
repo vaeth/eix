@@ -5,6 +5,7 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/depend.h"
 #include <config.h>
 
 #include <string>
@@ -12,7 +13,6 @@
 #include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/stringutils.h"
-#include "portage/depend.h"
 
 using std::string;
 

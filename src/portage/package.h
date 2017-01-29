@@ -10,6 +10,8 @@
 #ifndef SRC_PORTAGE_PACKAGE_H_
 #define SRC_PORTAGE_PACKAGE_H_ 1
 
+#include <config.h>
+
 #ifdef HAVE_ARRAY_CLASS
 #include <array>
 #endif

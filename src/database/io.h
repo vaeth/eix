@@ -8,6 +8,8 @@
 #ifndef SRC_DATABASE_IO_H_
 #define SRC_DATABASE_IO_H_ 1
 
+#include <config.h>
+
 #include <cstdio>
 
 #include <string>

@@ -5,13 +5,13 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/statusline.h"
 #include <config.h>
 
 #include <iostream>
 #include <string>
 
 #include "eixTk/i18n.h"
-#include "eixTk/statusline.h"
 
 using std::string;
 

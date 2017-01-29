@@ -7,12 +7,12 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "eixrc/global.h"
 #include <config.h>
 
 #include "eixTk/assert.h"
 #include "eixTk/null.h"
 #include "eixrc/eixrc.h"
-#include "eixrc/global.h"
 
 static EixRc *static_eixrc = NULLPTR;
 

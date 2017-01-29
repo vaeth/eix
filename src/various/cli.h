@@ -10,6 +10,8 @@
 #ifndef SRC_VARIOUS_CLI_H_
 #define SRC_VARIOUS_CLI_H_ 1
 
+#include <config.h>
+
 #include "eixTk/argsreader.h"
 #include "eixTk/attribute.h"
 
@@ -20,6 +22,7 @@ class MatchTree;
 class PackageTest;
 class ParseError;
 class PortageSettings;
+class PrintFormat;
 class SetStability;
 class VarDbPkg;
 template<typename m_Type> class MaskList;

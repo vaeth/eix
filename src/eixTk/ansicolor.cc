@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/ansicolor.h"
 #include <config.h>
 
 #include <cstdio>
@@ -14,7 +15,6 @@
 #include <map>
 #include <string>
 
-#include "eixTk/ansicolor.h"
 #include "eixTk/assert.h"
 #include "eixTk/dialect.h"
 #include "eixTk/eixint.h"

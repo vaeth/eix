@@ -8,6 +8,8 @@
 #ifndef SRC_EIXTK_STRINGTYPES_H_
 #define SRC_EIXTK_STRINGTYPES_H_
 
+#include <config.h>
+
 // check_includes: include "eixTk/stringtypes.h"
 
 #include <map>

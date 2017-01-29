@@ -9,6 +9,8 @@
 #ifndef SRC_EIXTK_INTTYPES_H_
 #define SRC_EIXTK_INTTYPES_H_ 1
 
+#include <config.h>
+
 #ifdef HAVE_TR1_CSTDINT
 #include <tr1/cstdint>  // NOLINT(build/c++tr1)
 #else

@@ -5,6 +5,7 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "eixTk/outputstring.h"
 #include <config.h>
 
 #include <cstring>
@@ -15,7 +16,6 @@
 #include "eixTk/diagnostics.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/outputstring.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 

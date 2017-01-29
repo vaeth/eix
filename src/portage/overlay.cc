@@ -7,10 +7,10 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/overlay.h"
 #include <config.h>
 
 #include "eixTk/null.h"
-#include "portage/overlay.h"
 
 void OverlayIdent::init(const char *patharg, const char *labelarag) {
 	if(patharg == NULLPTR) {

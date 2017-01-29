@@ -5,20 +5,20 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "database/io.h"
 #include <config.h>
 
 #include <string>
 
 #include "database/header.h"
-#include "database/io.h"
 #include "database/package_reader.h"
 #include "eixTk/auto_array.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/stringutils.h"
 #include "eixTk/stringtypes.h"
+#include "eixTk/stringutils.h"
 #include "portage/basicversion.h"
 #include "portage/depend.h"
 #include "portage/extendedversion.h"

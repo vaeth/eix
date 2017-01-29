@@ -5,6 +5,7 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "cache/eixcache/eixcache.h"
 #include <config.h>
 
 #include <cerrno>
@@ -13,7 +14,6 @@
 #include <algorithm>
 #include <string>
 
-#include "cache/eixcache/eixcache.h"
 #include "database/header.h"
 #include "database/io.h"
 #include "database/package_reader.h"

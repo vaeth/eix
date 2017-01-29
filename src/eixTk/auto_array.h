@@ -10,6 +10,8 @@
 #ifndef SRC_EIXTK_AUTO_ARRAY_H_
 #define SRC_EIXTK_AUTO_ARRAY_H_ 1
 
+#include <config.h>
+
 #include "eixTk/null.h"
 
 // check_includes: include "eixTk/auto_array.h"

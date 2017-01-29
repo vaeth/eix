@@ -7,10 +7,10 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "database/package_reader.h"
 #include <config.h>
 
 #include "database/io.h"
-#include "database/package_reader.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"

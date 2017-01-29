@@ -80,6 +80,17 @@ GrepHWith() {
 	EchoResult "*.h files with $*:"
 }
 
+GrepHWithout() {
+	result=`find . -name "*.h" -exec $grep_cmd -L -e ${1+"$@"} -- '{}' '+'`
+	EchoResult "*.h files with $*:"
+}
+
+GrepCCWith() {
+	result=`find . '(' -name "generate*.sh" -o -name "*.cc" ')' \
+		-exec $grep_cmd -l -e ${1+"$@"} -- '{}' '+'`
+	EchoResult "*.cc files without $*:"
+}
+
 GrepCCWithout() {
 	result=`find . '(' -name "generate*.sh" -o -name "*.cc" ')' \
 		-exec $grep_cmd -L -e ${1+"$@"} -- '{}' '+'`
@@ -111,7 +122,8 @@ Check() {
 }
 
 GrepAllWith -e 'ATTRIBUTE_NONNULL_(' -e '^ATTRIBUTE_NONNULL\([^(_]\|$\)' -e '[^_]ATTRIBUTE_NONNULL\([^(_]\|$\)' -e 'ATTRIBUTE_NONNULL([^(a]'
-GrepHWith 'include .config'
+#GrepHWith 'include .config'
+GrepHWithout '#include <config\.h>'
 GrepCCWithout '#include <config\.h>'
 Check '"eixTk/assert\.h"' -e 'eix_assert'
 Check '"eixTk/stringtypes\.h"' -e 'WordVec' -e 'WordSet' -e 'WordMap' -e 'WordList' -e 'LineVec' -e 'WordSize'

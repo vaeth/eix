@@ -10,6 +10,8 @@
 #ifndef SRC_EIXTK_SYSUTILS_H_
 #define SRC_EIXTK_SYSUTILS_H_ 1
 
+#include <config.h>
+
 #include <sys/types.h>
 
 #include <ctime>

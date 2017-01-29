@@ -5,6 +5,7 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
+#include "search/nowarn.h"
 #include <config.h>
 
 #include <map>
@@ -24,7 +25,6 @@
 #include "portage/mask.h"
 #include "portage/mask_list.h"
 #include "portage/packagesets.h"
-#include "search/nowarn.h"
 #include "search/packagetest.h"
 
 using std::map;

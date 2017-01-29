@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "portage/extendedversion.h"
 #include <config.h>
 
 #include <cstring>
@@ -23,7 +24,6 @@
 #include "eixTk/sysutils.h"
 #include "eixTk/utils.h"
 #include "portage/conf/portagesettings.h"
-#include "portage/extendedversion.h"
 #include "portage/package.h"
 
 using std::equal;

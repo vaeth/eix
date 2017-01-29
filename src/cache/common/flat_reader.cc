@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
+#include "cache/common/flat_reader.h"
 #include <config.h>
 
 #include <cerrno>
@@ -17,7 +18,6 @@
 #include <string>
 
 #include "cache/base.h"
-#include "cache/common/flat_reader.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"

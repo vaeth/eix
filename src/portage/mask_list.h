@@ -10,6 +10,8 @@
 #ifndef SRC_PORTAGE_MASK_LIST_H_
 #define SRC_PORTAGE_MASK_LIST_H_ 1
 
+#include <config.h>
+
 #include <fnmatch.h>
 
 #include <map>
