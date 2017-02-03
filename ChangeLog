@@ -11,6 +11,7 @@
 	- Fix duplicate detection with overlays for parsing cache methods
 	- Add configure option for treatment of const virtuals
 	- xml output: use shortcuts like <description/>. Omit some quoting
+	- eix-header: Update help text for recommended functions.sh usage
 	- internal: Use eix::format throughout for output
 	- internal: Use C++11 if available: delete copy constructors, override
 	- internal: Use constexpr for const arrays; gcc might otherwise produce
