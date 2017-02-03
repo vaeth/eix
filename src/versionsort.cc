@@ -12,7 +12,6 @@
 #include <cstdlib>
 
 #include <algorithm>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -29,17 +28,13 @@
 using std::string;
 using std::vector;
 
-using std::cerr;
-using std::cout;
-using std::endl;
-
 ATTRIBUTE_NORETURN ATTRIBUTE_NONNULL_ static void failparse(const string& v);
 ATTRIBUTE_NONNULL_ static void get_version(string *version, const char *str);
 ATTRIBUTE_NONNULL_ static void get_name_version(string *name, string *version, const char *str);
 ATTRIBUTE_NONNULL_ static void parse_version(BasicVersion *b, const string& v);
 
 static void failparse(const string& v) {
-	cerr << eix::format(_("cannot determine version of \"%s\"")) % v << endl;
+	eix::say_error(_("cannot determine version of \"%s\"")) % v;
 	exit(EXIT_FAILURE);
 }
 
@@ -64,7 +59,7 @@ static void parse_version(BasicVersion *b, const string& v) {
 	string errtext;
 	BasicVersion::ParseResult r(b->parseVersion(v, &errtext, true));
 	if(unlikely(r != BasicVersion::parsedOK)) {
-		cerr << errtext << endl;
+		eix::say_error() % errtext;
 		if(r != BasicVersion::parsedGarbage) {
 			exit(EXIT_FAILURE);
 		}
@@ -77,7 +72,7 @@ int run_versionsort(int argc, char *argv[]) {
 	if(likely(argc == 2)) {
 		string ver;
 		get_version(&ver, argv[1]);
-		cout << ver;
+		eix::print() % ver;
 		return EXIT_SUCCESS;
 	}
 	if((argc >= 2) && (argv[1][0] == '-') && (argv[1][1] != '\0') && (argv[1][2] == '\0')) {
@@ -117,16 +112,18 @@ int run_versionsort(int argc, char *argv[]) {
 						parse_version(&b, curr_version);
 						result.append(revision ? b.getFull() : b.getPlain());
 					}
-					cout << result;
+					eix::print() % result;
 				} else {
 					string curr_version;
 					get_version(&curr_version, str);
 					BasicVersion b;
 					parse_version(&b, curr_version);
-					cout << (full ? b.getFull() : (revision ? b.getRevision() : b.getPlain()));
+					eix::print() % (full ? b.getFull() :
+						(revision ? b.getRevision() :
+							b.getPlain()));
 				}
 				if(argc != 3) {
-					cout << "\n";
+					eix::say_empty();
 				}
 				if(unlikely(++curr == argc)) {
 					return EXIT_SUCCESS;
@@ -146,7 +143,7 @@ int run_versionsort(int argc, char *argv[]) {
 	sort(versions.begin(), versions.end());
 	for(Versions::const_iterator it(versions.begin());
 		likely(it != versions.end()); ++it) {
-		cout << it->getFull() << "\n";
+		eix::say() % it->getFull();
 	}
 	return EXIT_SUCCESS;
 }

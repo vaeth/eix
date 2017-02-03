@@ -15,6 +15,7 @@
 #include <ostream>
 #include <string>
 
+#include "eixTk/formated.h"
 #include "eixTk/inttypes.h"
 
 class AnsiColor;
@@ -23,10 +24,10 @@ class AnsiColor;
 A class for using ANSI color codes and marker
 Example:
 @code
- include <iostream>
- AnsiColor::init_static(); // must be called exactly once
- AnsiColor special("yellow,1;blue;underline", 0);
- std::cout << special << "marked text" << AnsiColor::reset() << "normal text";
+  #include <iostream>
+  AnsiColor::init_static(); // must be called exactly once
+  AnsiColor special("yellow,1;blue;underline", 0);
+  std::cout << special << "marked text" << AnsiColor::reset() << "normal text";
 @endcode
 **/
 class AnsiColor {
@@ -81,6 +82,11 @@ class AnsiColor {
 inline static std::ostream& operator<<(std::ostream& os, const AnsiColor& ac) {
 	os << ac.asString();
 	return os;
+}
+
+inline static eix::format& operator%(eix::format& format, const AnsiColor& ac) {  // NOLINT(runtime/references)
+	format % ac.asString();
+	return format;
 }
 
 #endif  // SRC_EIXTK_ANSICOLOR_H_

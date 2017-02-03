@@ -10,6 +10,8 @@
 	  Previously, words with more than one / had been tacitly ignored
 	- Fix duplicate detection with overlays for parsing cache methods
 	- Add configure option for treatment of const virtuals
+	- xml output: use shortcuts like <description/>. Omit some quoting
+	- internal: Use eix::format throughout for output
 	- internal: Use C++11 if available: delete copy constructors, override
 	- internal: Use constexpr for const arrays; gcc might otherwise produce
 	  unexpected copies: https://forums.gentoo.org/viewtopic-t-1057674.html

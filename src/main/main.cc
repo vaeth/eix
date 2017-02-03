@@ -20,7 +20,6 @@
 #endif
 
 #include <string>
-#include <iostream>
 
 #include "eixTk/attribute.h"
 #include "eixTk/formated.h"
@@ -111,8 +110,6 @@ If several are selected, main() will select depending on the call name.
 #endif
 
 using std::string;
-using std::cerr;
-using std::endl;
 
 /**
 The name under which we have been called.
@@ -126,8 +123,8 @@ ATTRIBUTE_NONNULL_ static void sanitize_filename(string *s);
 On segfault: show some instructions to help us find the bug.
 **/
 static void sig_handler(int sig) {
-	if(sig == SIGSEGV)
-		cerr << eix::format(_(
+	if(sig == SIGSEGV) {
+		eix::say_error(_(
 				"Received SIGSEGV - you probably found a bug in eix.\n"
 				"Please proceed with the following few instructions and help us find the bug:\n"
 				" * install gdb (sys-devel/gdb)\n"
@@ -138,8 +135,8 @@ static void sig_handler(int sig) {
 				" * post a bugreport and be sure to include the output from gdb.\n"
 				"\n"
 				"Sorry for the inconvenience and thanks in advance!")) %
-				program_name % program_name
-				<< endl;
+				program_name % program_name;
+	}
 	exit(EXIT_FAILURE);
 }
 

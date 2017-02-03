@@ -18,7 +18,6 @@
 #include <cstring>
 
 #include <algorithm>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -32,10 +31,6 @@
 
 using std::string;
 using std::vector;
-
-using std::cerr;
-using std::cout;
-using std::endl;
 
 using std::locale;
 
@@ -392,8 +387,7 @@ bool resolve_plus_minus(WordSet *s, const WordVec& l, const WordSet *warnignore)
 			continue;
 		}
 		if(unlikely((*it)[0] == '+')) {
-			cerr << eix::format(_("flags should not start with a '+': %s")) % *it
-				<< endl;
+			eix::say_error(_("flags should not start with a '+': %s")) % (*it);
 			s->insert(it->substr(1));
 			continue;
 		}
@@ -431,7 +425,7 @@ bool resolve_plus_minus(WordSet *s, const WordVec& l, const WordSet *warnignore)
 
 void StringHash::store_string(const string& s) {
 	if(finalized) {
-		cerr << _("internal error: Storing required after finalizing") << endl;
+		eix::say_error(_("internal error: storing required after finalizing"));
 		exit(EXIT_FAILURE);
 	}
 	push_back(s);
@@ -439,11 +433,11 @@ void StringHash::store_string(const string& s) {
 
 void StringHash::hash_string(const string& s) {
 	if(finalized) {
-		cerr << _("internal error: Hashing required after finalizing") << endl;
+		eix::say_error(_("internal error: hashing required after finalizing"));
 		exit(EXIT_FAILURE);
 	}
 	if(!hashing) {
-		cerr << _("internal error: Hashing required in non-hash mode") << endl;
+		eix::say_error(_("internal error: hashing required in non-hash mode"));
 		exit(EXIT_FAILURE);
 	}
 	// During hashing, we use str_map as a frequency counter to optimize
@@ -469,12 +463,12 @@ void StringHash::hash_words(const WordVec& v) {
 
 StringHash::size_type StringHash::get_index(const string& s) const {
 	if(!finalized) {
-		cerr << _("internal error: Index required before sorting.") << endl;
+		eix::say_error(_("internal error: index required before sorting"));
 		exit(EXIT_FAILURE);
 	}
 	StrSizeMap::const_iterator i(str_map.find(s));
 	if(i == str_map.end()) {
-		cerr << _("internal error: Trying to shortcut non-hashed string.") << endl;
+		eix::say_error(_("internal error: trying to shortcut non-hashed string"));
 		exit(EXIT_FAILURE);
 	}
 	return i->second;
@@ -482,7 +476,7 @@ StringHash::size_type StringHash::get_index(const string& s) const {
 
 const string& StringHash::operator[](StringHash::size_type i) const {
 	if(i >= size()) {
-		cerr << _("database corrupt: nonexistent hash required");
+		eix::say_error(_("database corrupt: nonexistent hash required"));
 		exit(EXIT_FAILURE);
 	}
 	return WordVec::operator[](i);
@@ -490,7 +484,7 @@ const string& StringHash::operator[](StringHash::size_type i) const {
 
 void StringHash::output() const {
 	for(WordVec::const_iterator i(begin()); likely(i != end()); ++i) {
-		cout << *i << "\n";
+		eix::say() % (*i);
 	}
 }
 
@@ -514,7 +508,7 @@ void StringHash::output_depends() const {
 		}
 	}
 	for(WordSet::const_iterator i(out.begin()); likely(i != out.end()); ++i) {
-		cout << *i << "\n";
+		eix::say() % (*i);
 	}
 }
 

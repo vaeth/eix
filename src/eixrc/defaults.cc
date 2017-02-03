@@ -163,7 +163,7 @@ AddOption(STRING, "TMPDIR",
 	"", P_("TMPDIR",
 	"This variable is used for delayed substitution in EIX_TMPDIR.\n"
 	"Usually this is set by the environment variable.\n"
-	"eix exports this variable initialized to EIX_TMPDIR.\n"));
+	"eix exports this variable initialized to EIX_TMPDIR."));
 
 AddOption(STRING, "EIX_TMPDIR",
 	"%{TMPDIR}", P_("EIX_TMPDIR",

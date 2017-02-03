@@ -14,7 +14,6 @@
 #include <cstring>
 
 #include <algorithm>
-#include <iostream>
 #include <map>
 #include <string>
 #include <vector>
@@ -25,6 +24,7 @@
 #include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/filenames.h"
+#include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -48,9 +48,6 @@
 using std::map;
 using std::string;
 using std::vector;
-
-using std::cerr;
-using std::endl;
 
 static string *emptystring = NULLPTR;
 
@@ -165,7 +162,7 @@ void PortageSettings::read_config(const string& name, const string& prefix) {
 	configfile.setPrefix(prefix);
 	string errtext;
 	if(unlikely(!configfile.read(name.c_str(), &errtext, true))) {
-		cerr << errtext << endl;
+		eix::say_error() % errtext;
 	}
 }
 
@@ -741,7 +738,7 @@ void PortageSettings::pushback_categories(WordVec *vec) {
 		filename.assign(m_eprefixaccessoverlays + (i->path) + "/" + PORTDIR_CATEGORIES_FILE);
 		if(!pushback_lines(filename.c_str(), vec, false, true, 0, &errtext)) {
 			if(i == repos.begin()) {
-				cerr << errtext << endl;
+				eix::say_error() % errtext;
 			}
 		}
 		index = verify_categories(filename, vec, index);
@@ -1317,7 +1314,7 @@ bool PortageUserConfig::setMasks(Package *p, Keywords::Redundant check, bool fil
 	}
 	if(file_mask_is_profile) {
 		if(unlikely(!(p->restore_maskflags(Version::SAVEMASK_FILE)))) {
-			cerr << _("internal error: Tried to restore nonlocal mask without saving") << endl;
+			eix::say_error(_("internal error: Tried to restore nonlocal mask without saving"));
 			exit(EXIT_FAILURE);
 		}
 	} else {
@@ -1344,7 +1341,7 @@ bool PortageUserConfig::setMasks(Package *p, Keywords::Redundant check, bool fil
 void PortageSettings::setMasks(Package *p, bool filemask_is_profile) const {
 	if(filemask_is_profile) {
 		if(!(p->restore_maskflags(Version::SAVEMASK_FILE))) {
-			cerr << _("internal error: Tried to restore nonlocal mask without saving");
+			eix::say_error(_("internal error: Tried to restore nonlocal mask without saving"));
 			exit(EXIT_FAILURE);
 		}
 		return;

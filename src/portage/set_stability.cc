@@ -12,11 +12,12 @@
 
 #ifndef ALWAYS_RECALCULATE_STABILITY
 #ifndef NDEBUG
+#ifdef EIX_PARANOIC_ASSERT
 #include <cstdlib>
 
-#include <iostream>
-
+#include "eixTk/formated.h"
 #include "eixTk/i18n.h"
+#endif
 #endif
 #endif
 
@@ -30,10 +31,6 @@
 #include "portage/version.h"
 
 #ifndef ALWAYS_RECALCULATE_STABILITY
-#ifndef NDEBUG
-using std::cerr;
-using std::endl;
-#endif
 
 /*
 Calculating the index manually makes it sometimes unnecessary
@@ -44,18 +41,22 @@ that our calculated index really is correct in all cases...
 */
 
 Version::SavedKeyIndex SetStability::keyword_index(bool get_local) const {
-	if(get_local)
+	if(get_local) {
 		return Version::SAVEKEY_ACCEPT;
-	if(m_always_accept_keywords)
+	}
+	if(m_always_accept_keywords) {
 		return Version::SAVEKEY_ACCEPT;
+	}
 	return Version::SAVEKEY_ARCH;
 }
 
 Version::SavedMaskIndex SetStability::mask_index(bool get_local) const {
-	if(m_filemask_is_profile)
+	if(m_filemask_is_profile) {
 		return Version::SAVEMASK_FILE;
-	if(get_local)
+	}
+	if(get_local) {
 		return Version::SAVEMASK_USERPROFILE;
+	}
 	return Version::SAVEMASK_PROFILE;
 }
 
@@ -111,7 +112,7 @@ void SetStability::calc_version_flags(bool get_local, MaskFlags *maskflags, Keyw
 	if(!(v->have_saved_masks[mi]) || !(v->have_saved_keywords[ki]) ||
 		((maskflags != NULLPTR) && (v->saved_masks[mi]) != *maskflags) ||
 		((keyflags != NULLPTR) && ((v->saved_keywords[ki]) != *keyflags))) {
-		cerr << _("internal error: SetStability calculates wrong index") << endl;
+		eix::say_error(_("internal error: SetStability calculates wrong index"));
 		exit(EXIT_FAILURE);
 	}
 #endif

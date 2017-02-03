@@ -10,7 +10,6 @@
 #include "eixTk/parseerror.h"
 #include <config.h>
 
-#include <iostream>
 #include <set>
 #include <string>
 
@@ -23,9 +22,6 @@
 
 using std::string;
 using std::set;
-
-using std::cerr;
-using std::endl;
 
 static set<string> *printed = NULLPTR;
 
@@ -45,13 +41,13 @@ void ParseError::output(const string& file, const LineVec::size_type line_nr, co
 		return;
 	}
 	printed->insert(cache);
-	cerr << eix::format(_("-- invalid line %s in %s: \"%s\""))
-		% line_nr % file % line << endl;
+	eix::say_error(_("-- invalid line %s in %s: \"%s\""))
+		% line_nr % file % line;
 
 	// Indent the message correctly
 	WordVec lines;
 	split_string(&lines, errtext, false, "\n", false);
 	for(WordVec::const_iterator i(lines.begin()); likely(i != lines.end()); ++i) {
-		cerr << "    " << *i << endl;
+		eix::say_error("    %s") % (*i);
 	}
 }

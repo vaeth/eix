@@ -11,7 +11,6 @@
 #include <config.h>
 
 #include <algorithm>
-#include <iostream>
 #include <iterator>
 #include <ostream>
 #include <sstream>
@@ -27,8 +26,6 @@
 
 using std::string;
 
-using std::cerr;
-using std::endl;
 using std::ostream;
 using std::stringstream;
 
@@ -120,8 +117,8 @@ static ostream& operator<<(ostream& s, const BasicPart& part) {
 		default:
 			break;
 	}
-	cerr << eix::format(_("internal error: unknown PartType on (\"%s\",\"%s\")"))
-		% static_cast<int>(part.parttype) % part.partcontent << endl;
+	eix::say_error(_("internal error: unknown PartType on (\"%s\",\"%s\")"))
+		% static_cast<int>(part.parttype) % part.partcontent;
 }
 
 string BasicVersion::getFull() const {

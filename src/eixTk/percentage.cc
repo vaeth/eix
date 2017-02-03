@@ -10,11 +10,6 @@
 #include "eixTk/percentage.h"
 #include <config.h>
 
-#include <cstdio>
-
-#include <iostream>
-#include <ostream>
-#include <sstream>
 #include <string>
 
 #include "eixTk/formated.h"
@@ -22,22 +17,11 @@
 
 using std::string;
 
-using std::cout;
-using std::endl;
-
 static string percent_to_string(PercentStatus::Percentage i);
 static string percent_to_string(PercentStatus::Percentage i, string::size_type wanted);
-static void flush_total();
 
 static string percent_to_string(PercentStatus::Percentage i) {
-	std::ostringstream o;
-	o << i;
-	return o.str();
-}
-
-static void flush_total() {
-	cout.flush();
-	fflush(stdout);
+	return (eix::format() % i);
 }
 
 static string percent_to_string(PercentStatus::Percentage i, string::size_type wanted) {
@@ -78,8 +62,9 @@ void PercentStatus::next(const string& append_string) {
 }
 
 void PercentStatus::next() {
-	if((!m_verbose) || m_finished)
+	if((!m_verbose) || m_finished) {
 		return;
+	}
 	if(m_current != m_total) {
 		++m_current;
 		if(m_current == m_total) {
@@ -94,34 +79,33 @@ void PercentStatus::finish(const string& append_string) {
 	if(m_verbose) {
 		reprint();
 	}
-	cout << append_string << endl;
-	flush_total();
+	eix::say(true) % append_string;
 }
 
 void PercentStatus::reprint() {
 	string out;
 	if(m_verbose) {
 		if(m_finished) {
-			out = eix::format(m_format)
+			out.assign(eix::format(m_format)
 				% m_total_s
 				% m_total_s
-				% "100";
+				% "100");
 		} else {
 			Percentage p(0);
 			if(likely(m_total != 0)) {
 				p = (m_current * 100) / m_total;
 			}
-			out = eix::format(m_format)
+			out.assign(eix::format(m_format)
 				% percent_to_string(m_current, m_total_s.size())
 				% m_total_s
-				% percent_to_string(p, 3);
+				% percent_to_string(p, 3));
 		}
 	} else {
-		out = m_format;
+		out.assign(m_format);
 	}
 	out.append(m_append);
 	if(m_size == 0) {
-		cout << out;
+		eix::print(true) % out;
 		m_size = out.size();
 	} else {
 		if(out.size() < m_size) {
@@ -132,14 +116,12 @@ void PercentStatus::reprint() {
 		} else {
 			m_size = out.size();
 		}
-		cout << '\r' << out;
+		eix::print("\r%s", true) % out;
 	}
-	flush_total();
 }
 
 void PercentStatus::interprint_start() {
-	cout << endl;
-	flush_total();
+	eix::say_empty(true);
 	m_size = 0;
 }
 

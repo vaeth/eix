@@ -14,7 +14,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <iostream>
 #include <map>
 #include <set>
 #include <string>
@@ -43,9 +42,6 @@ using std::map;
 using std::set;
 using std::string;
 using std::vector;
-
-using std::cerr;
-using std::endl;
 
 const EixRc::DelayvarFlags
 	EixRc::DELAYVAR_NONE,
@@ -225,9 +221,9 @@ void EixRc::resolve_delayed(const string& key, set<string> *has_delayed) {
 	string errvar;
 	if(unlikely(resolve_delayed_recurse(key, &visited, has_delayed,
 		&errtext, &errvar) == NULLPTR)) {
-		cerr << eix::format(_(
+		eix::say_error(_(
 			"fatal config error: %s in delayed substitution of %s"))
-			% errtext % errvar << endl;
+			% errtext % errvar;
 		exit(EXIT_FAILURE);
 	}
 }
@@ -415,25 +411,25 @@ void EixRc::read_undelayed(set<string> *has_delayed) {
 	string errtext;
 	if(unlikely(rc_file != NULLPTR)) {
 		if(unlikely(!rc.read(rc_file, &errtext, true))) {
-			cerr << errtext << endl;
+			eix::say_error() % errtext;
 			exit(EXIT_FAILURE);
 		}
 	} else {
 		// override with EIX_SYSTEMRC
 		if(unlikely(!rc.read((m_eprefixconf + EIX_SYSTEMRC).c_str(), &errtext, true))) {
-			cerr << errtext << endl;
+			eix::say_error() % errtext;
 			exit(EXIT_FAILURE);
 		}
 
 		// override with EIX_USERRC
 		char *home(getenv("HOME"));
 		if(unlikely(home == NULLPTR)) {
-			cerr << _("no $HOME found in environment.") << endl;
+			eix::say_error(_("no $HOME found in environment."));
 		} else {
 			string eixrc(home);
 			eixrc.append(EIX_USERRC);
 			if(unlikely(!rc.read(eixrc.c_str(), &errtext, true))) {
-				cerr << errtext << endl;
+				eix::say_error() % errtext;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -755,10 +751,10 @@ void EixRc::getRedundantFlags(const string& key, Keywords::Redundant type, RedPa
 		break;
 	}
 
-	cerr << eix::format(_(
+	eix::say_error(_(
 		"%s has unknown value \"%s\"\n"
 		"\tassuming value \"all-installed\" instead."))
-		% key % value << endl;
+		% key % value;
 
 	getRedundantFlagAtom("all-installed", type, &(p->first));
 	getRedundantFlagAtom(NULLPTR, type, &(p->second));
@@ -809,31 +805,33 @@ void EixRc::dumpDefaults(FILE *s, bool use_defaults) {
 		string deflt(defaults[i].value);
 		escape_string(&deflt, doublequotes);
 		if(unlikely(typestring == NULLPTR)) {
-			fprintf(s, "# %s\n%s=\"%s\"\n\n",
-				_("locally added:"),
-				key, value.c_str());
+			eix::format(s,
+				"# %s\n%s=\"%s\"\n", 1)
+				% _("locally added:")
+				% key
+				% value;
 			continue;
 		}
 		const string& output(use_defaults ? deflt : value);
 		const string& comment(use_defaults ? value : deflt);
 
-		fprintf(s,
-				"# %s\n"
-				"# %s\n"
-				"%s=\"%s\"\n",
-				as_comment(typestring).c_str(),
-				as_comment(defaults[i].description.c_str()).c_str(),
-				key,
-				output.c_str());
+		eix::format(s,
+			"# %s\n"
+			"# %s\n"
+			"%s=\"%s\"", 1)
+			% as_comment(typestring)
+			% as_comment(defaults[i].description.c_str())
+			% key
+			% output;
 		if(deflt == value) {
-			putc('\n', s);
+			eix::format(s, "", 1);
 		} else {
-			fprintf(s,
+			eix::format(s,
 				"# %s\n"
-				"# %s=\"%s\"\n\n",
-				message.c_str(),
-				key,
-				as_comment(comment).c_str());
+				"# %s=\"%s\"\n", 1)
+				% message
+				% key
+				% as_comment(comment);
 		}
 	}
 }

@@ -8,11 +8,11 @@
 #include "eixrc/eixrc.h"
 #include <config.h>
 
-#include <iostream>
 #include <map>
 #include <set>
 #include <string>
 
+#include "eixTk/formated.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/parseerror.h"
@@ -22,8 +22,6 @@
 using std::map;
 using std::set;
 using std::string;
-
-using std::cout;
 
 void EixRc::known_vars() {
 	set<string> vars;
@@ -39,7 +37,7 @@ void EixRc::known_vars() {
 	}
 	for(set<string>::const_iterator it(vars.begin());
 		it != vars.end(); ++it) {
-		cout << *it << "\n";
+		eix::say() % *it;
 	}
 }
 
@@ -50,7 +48,7 @@ bool EixRc::print_var(const string& key) {
 	if(likely(key != "PORTDIR")) {
 		s = cstr(key);
 		if(likely(s != NULLPTR)) {
-			cout << s << print_append;
+			eix::print("%s%s") % s % print_append;
 			return true;
 		}
 	}
@@ -58,7 +56,7 @@ bool EixRc::print_var(const string& key) {
 	PortageSettings ps(this, &parse_error, false, true);
 	s = ps.cstr(key);
 	if(likely(s != NULLPTR)) {
-		cout << s << print_append;
+		eix::print("%s%s") % s % print_append;
 		return true;
 	}
 	return false;

@@ -34,12 +34,12 @@
 
 #include <cstring>
 
-#ifdef DEBUG_NORMALIZE_PATH
-#include <iostream>
-#endif
 #include <string>
 
 #include "eixTk/attribute.h"
+#ifdef DEBUG_NORMALIZE_PATH
+#include "eixTk/formated.h"
+#endif
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
@@ -56,7 +56,6 @@
 using std::string;
 
 #ifdef DEBUG_NORMALIZE_PATH
-using std::cerr;
 
 #define NORMALIZE_PATH_EXPORT static
 #define NORMALIZE_PATH original_normalize_path
@@ -64,23 +63,25 @@ using std::cerr;
 ATTRIBUTE_NONNULL_ static string NORMALIZE_PATH(const char *path, bool resolve, bool want_slash);
 
 string normalize_path(const char *path, bool resolve, bool want_slash) {
-	cerr << "Debug: Calling normalize_path(\"" << path << "\", " << resolve << ")...\nDebug: (with";
+	eix::say_error("Debug: Calling normalize_path(\"%s\", %s)...")
+		% path % resolve;
+	eix::print_error("Debug: (with"
 #ifndef HAVE_CANONICALIZE_FILE_NAME
-	cerr << "out";
+		"out"
 #endif
-	cerr << " canonicalize_file_name(), with";
+		" canonicalize_file_name(), with"
 #ifndef HAVE_REALPATH
-	cerr << "out";
+		"out"
 #endif
-	cerr << " realpath(), with";
+		" realpath(), with");
 #ifdef PATH_MAX
-	cerr << " PATH_MAX=" << PATH_MAX;
+	eix::print_error(" PATH_MAX=%s") % PATH_MAX;
 #else
-	cerr << "out PATH_MAX";
+	eix::print_error("out PATH_MAX");
 #endif
-	cerr << ")\n";
+	eix::say_error(')');
 	string s(NORMALIZE_PATH(path, resolve, want_slash));
-	cerr << "Debug: ... returned with: \"" << s << "\"\n";
+	eix::say_error("Debug: ... returned with: \"%s\"") % s;
 	return s;
 }
 #else

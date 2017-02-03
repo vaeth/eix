@@ -10,10 +10,12 @@
 
 #include <config.h>
 
+#include <ostream>
 #include <string>
 #include <vector>
 
 #include "eixTk/attribute.h"
+#include "eixTk/formated.h"
 #include "eixTk/stringtypes.h"
 
 class OutputString {
@@ -130,5 +132,15 @@ class OutputString {
 		ATTRIBUTE_NONNULL_ void print(std::string *dest, WordSize *s) const;
 		ATTRIBUTE_NONNULL_ void print(WordSize *s) const;
 };
+
+inline static std::ostream& operator<<(std::ostream& os, const OutputString& str) {
+	os << str.as_string();
+	return os;
+}
+
+inline static eix::format& operator%(eix::format& format, const OutputString& str) {  // NOLINT(runtime/references)
+	format % str.as_string();
+	return format;
+}
 
 #endif  // SRC_EIXTK_OUTPUTSTRING_H_

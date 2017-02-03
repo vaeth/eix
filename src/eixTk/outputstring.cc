@@ -10,18 +10,16 @@
 
 #include <cstring>
 
-#include <iostream>
 #include <string>
 
 #include "eixTk/diagnostics.h"
+#include "eixTk/formated.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 
 using std::string;
-
-using std::cout;
 
 bool OutputString::is_equal(const OutputString& t) const {
 	return ((m_string == t.m_string) &&
@@ -278,5 +276,5 @@ void OutputString::print(std::string *dest, WordSize *s) const {
 void OutputString::print(WordSize *s) const {
 	string d;
 	print(&d, s);
-	cout << d;
+	eix::print() % d;
 }

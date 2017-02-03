@@ -14,26 +14,20 @@
 #include <cstdlib>
 #endif
 
-#include <iostream>
 #include <stack>
 
 #include "eixTk/attribute.h"
+#include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/unused.h"
 #include "search/packagetest.h"
 
-using std::cerr;
-#ifdef DEBUG_MATCHTREE
-using std::cout;
-#endif
-using std::endl;
-
 bool MatchAtom::match(ATTRIBUTE_UNUSED PackageReader *p) {
 	UNUSED(p);
 #ifdef DEBUG_MATCHTREE
-	cout << (m_negate ? " '!' " : " '' ");
+	eix::print(m_negate ? " '!' " : " '' ");
 	return false;
 #endif
 	return !m_negate;
@@ -46,17 +40,19 @@ MatchAtomOperator::~MatchAtomOperator() {
 
 bool MatchAtomOperator::match(PackageReader *p) {
 #ifdef DEBUG_MATCHTREE
-	cout << (m_negate ? " !(" : " (");
-	if(m_left == NULLPTR)
-		cout << " NULLPTR ";
-	else
+	eix::print(m_negate ? " !(" : " (");
+	if(m_left == NULLPTR) {
+		eix::print(" NULLPTR ");
+	} else {
 		m_left->match(p);
-	cout << ((m_operator == AtomAnd) ? '&' : '|');
-	if(m_right == NULLPTR)
-		cout << " NULLPTR ";
-	else
+	}
+	eix::print((m_operator == AtomAnd) ? '&' : '|');
+	if(m_right == NULLPTR) {
+		eix::print(" NULLPTR ");
+	} else {
 		m_right->match(p);
-	cout << ") ";
+	}
+	eix::print(") ");
 	return false;
 #endif
 	bool is_match((m_left == NULLPTR) || m_left->match(p));
@@ -83,16 +79,16 @@ MatchAtomTest::~MatchAtomTest() {
 
 bool MatchAtomTest::match(PackageReader *p) {
 #ifdef DEBUG_MATCHTREE
-	cout << (m_negate ? " [!" : " [");
+	eix::print(m_negate ? " [!" : " [");
 	if(m_pipe != NULLPTR) {
-		cout << "|";
+		eix::print('|');
 	}
 	if(m_test == NULLPTR) {
-		cout << "NULLPTR";
+		eix::print("NULLPTR");
 	} else {
-		cout << *reinterpret_cast<int*>(m_test);
+		eix::print() % *reinterpret_cast<int*>(m_test);
 	}
-	cout << "] ";
+	eix::print("] ");
 	return false;
 #else
 	bool is_match((likely(m_pipe == NULLPTR)) ||
@@ -266,7 +262,7 @@ void MatchTree::parse_closeforce() {
 
 void MatchTree::parse_close() {
 	if(parser_stack.size() <= 1) {
-		cerr << _("warning: ignoring --close without --open") << endl;
+		eix::say_error(_("warning: ignoring --close without --open"));
 		return;
 	}
 	local_finished = true;
@@ -284,10 +280,10 @@ void MatchTree::end_parse() {
 	}
 #ifdef DEBUG_MATCHTREE
 	if(root == NULLPTR) {
-		cout << "root=NULLPTR\n";
+		eix::say("root=NULLPTR");
 	} else {
 		root->match(NULLPTR);
-		cout << "\n";
+		eix::say_empty();
 	}
 	exit(EXIT_SUCCESS);
 #endif

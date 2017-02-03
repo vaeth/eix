@@ -13,7 +13,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -30,10 +29,6 @@
 
 using std::string;
 using std::vector;
-
-using std::cerr;
-using std::cout;
-using std::endl;
 
 class OverlayOption;
 typedef vector<OverlayOption> OverlayOptionList;
@@ -52,7 +47,7 @@ ATTRIBUTE_NONNULL_ bool open_database(DBHeader *header, const char *name, bool v
 ATTRIBUTE_NONNULL_ bool print_overlay_data(string *result, const DBHeader *header, const char *overlay, const string& sep, const char *name, PrintOverlayMode mode, bool verbose);
 
 static void print_help() {
-	cout << eix::format(
+	eix::say(
 	/* xgettext: no-space-ellipsis-check */
 _("Usage: %s [-q] [-f FILE] [-s SEP] [-c|-C] [-l OV] [-p OV] [-o OV] ...\n"
 "Check whether eix database FILE has current format, and print label, path,\n"
@@ -75,7 +70,7 @@ _("Usage: %s [-q] [-f FILE] [-s SEP] [-c|-C] [-l OV] [-p OV] [-o OV] ...\n"
 "The special option -h outputs this help text and quits.\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n")) % program_name % EIX_CACHEFILE % program_name;
+"further information.")) % program_name % EIX_CACHEFILE % program_name;
 }
 
 class OverlayOption {
@@ -159,7 +154,7 @@ int run_eix_header(int argc, char *argv[]) {
 	string result;
 	int ret(overlay_loop(&result, options));
 	if(likely(!result.empty())) {
-		cout << result;
+		eix::print() % result;
 	}
 	return ret;
 }
@@ -241,17 +236,16 @@ bool open_database(DBHeader *header, const char *name, bool verbose) {
 			return true;
 		}
 		if(likely(verbose)) {
-			cerr << eix::format(_(
+			eix::say_error(_(
 				"%s was created with an incompatible eix-update:\n"
 				"It uses database format %s (current is %s)."))
-				% name % header->version % DBHeader::current
-				<< endl;
+				% name % header->version % DBHeader::current;
 		}
 	} else {
 		if(likely(verbose)) {
-			cerr << eix::format(_(
+			eix::say_error(_(
 				"cannot open database file %s for reading (mode = 'rb')"))
-				% name << endl;
+				% name;
 		}
 	}
 	return false;
@@ -264,7 +258,7 @@ bool print_overlay_data(string *result, const DBHeader *header, const char *over
 		0, emptysearch ? DBHeader::OVTEST_NUMBER : DBHeader::OVTEST_ALL));
 	if(unlikely((!found) && !emptysearch)) {
 		if(likely(verbose)) {
-			cerr << eix::format(_("cannot find overlay %s in %s")) % overlay % name << endl;
+			eix::say_error(_("cannot find overlay %s in %s")) % overlay % name;
 		}
 		return false;
 	}

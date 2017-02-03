@@ -87,6 +87,17 @@ AC_ARG_ENABLE([paranoicasserts],
 AS_IF([$debugging],
 	[AS_VAR_SET([paranoicasserts], [true])])
 
+AC_ARG_ENABLE([debug-format],
+	[AS_HELP_STRING([--enable-debug-format],
+		[activate string format runtime tests])],
+	[MV_ENABLE([debug_format])
+	AS_VAR_SET([cmt_debug_format], ["on request"])],
+	[AS_IF([$debugging],
+		[AS_VAR_SET([debug_format], [true])
+		AS_VAR_SET([cmt_debug_format], ["default due to debugging"])],
+		[AS_VAR_SET([debug_format], [true])
+		AS_VAR_SET([cmt_debug_format], ["default"])])])
+
 AC_ARG_ENABLE([new_dialect],
 	[AS_HELP_STRING([--enable-new-dialect],
 		[enable most current C++ dialect; provides optimitations])],
@@ -833,6 +844,15 @@ AS_IF([$paranoicassert],
 		[1],
 		[Define if asserts for static initializers should be used])],
 	[MV_MSG_RESULT([no])])
+
+# Use string format runtime tests?
+AC_MSG_CHECKING([whether string format runtime tests are used])
+AS_IF([$debug_format],
+	[MV_MSG_RESULT([yes], [$cmt_debug_format])
+	AC_DEFINE([EIX_DEBUG_FORMAT],
+		[1],
+		[Define if string format runtime tests should be used])],
+	[MV_MSG_RESULT([no], [$cmt_debug_format])])
 
 # Check if __builtin_expect works
 AC_MSG_CHECKING([whether __builtin_expect can be used])

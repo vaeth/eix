@@ -9,39 +9,59 @@
 #include "eixTk/formated.h"
 #include <config.h>
 
+#include <cstdio>
 #include <cstdlib>
 
-#include <iostream>
 #include <string>
 #include <vector>
 
-#include "eixTk/attribute.h"
-#include "eixTk/eixint.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
+#include "eixTk/null.h"
 #include "eixTk/stringutils.h"
 
 using std::string;
 
-using std::cerr;
-using std::endl;
+// check_includes.sh: eix::format()
 
-ATTRIBUTE_NORETURN static void badformat();
-static void badformat() {
-	cerr << _("bad % in eix::format; perhaps %% is meant") << endl;
+namespace eix {
+
+const FormatManip::ArgType
+	FormatManip::NONE,
+	FormatManip::STRING,
+	FormatManip::DIGIT,
+	FormatManip::BOTH;
+
+void format::bad_format() const {
+	eix::say_error(_("internal error: bad format specification \"%s\""))
+		% m_text;
 	exit(EXIT_FAILURE);
 }
 
-eix::format::format(const string& format_string) {
-	m_text.assign(format_string);
+#ifdef EIX_DEBUG_FORMAT
+void format::too_few_arguments() const {
+	eix::say_error(_("internal error: too few arguments passed for \"%s\""))
+		% m_text;
+	exit(EXIT_FAILURE);
+}
+
+void format::too_many_arguments() const {
+	eix::say_error(_("internal error: too many arguments passed for \"%s\""))
+		% m_text;
+	exit(EXIT_FAILURE);
+}
+#endif
+
+void format::init() {
 	simple = false;
 	current = 0;
 	FormatManip::ArgCount imp(0);
 	string::size_type i(0);
 	while(i = m_text.find('%', i), likely(i != string::npos)) {
 		string::size_type start(i), len(2);
-		if(unlikely(++i == m_text.size())) {
-			badformat();
+		++i;
+		if(unlikely(i == m_text.size())) {
+			bad_format();
 		}
 		char c(m_text[i]);
 		if(c == '%') {
@@ -52,48 +72,51 @@ eix::format::format(const string& format_string) {
 			}
 			break;
 		}
-		FormatManip::ArgCount argnum(imp++);
+		ArgCount argnum(imp++);
 		if(my_isdigit(c)) {
 			string::size_type e(m_text.find('$', i));
 			if(unlikely(e == string::npos)) {
-				badformat();
+				bad_format();
 			}
 			len += e - start;
 			string number(m_text, i, e - i);
-#ifndef NDEBUG
 			if(unlikely(!is_numeric(number.c_str()))) {
-				badformat();
+				bad_format();
 			}
-#endif
 			argnum = my_atoi(number.c_str());
 			if(unlikely(argnum <= 0)) {
-				badformat();
+				bad_format();
 			}
 			--argnum;
-			if(unlikely(++e == m_text.size())) {
-				badformat();
+			++e;
+			if(unlikely(e == m_text.size())) {
+				bad_format();
 			}
 			c = m_text[e];
 		}
-		eix::SignedBool typ;
+		ArgType typ;
+#ifdef EIX_DEBUG_FORMAT
 		switch(c) {
 			case 's':
-				typ = 1;
+				typ = FormatManip::STRING;
 				break;
 			case 'd':
-				typ = -1;
+				typ = FormatManip::DIGIT;
 				break;
 			default:
-				badformat();
+				bad_format();
 				break;
 		}
-		if(argnum == wanted.size()) {
+#else
+		typ = ((c == 's') ? FormatManip::STRING : FormatManip::DIGIT);
+#endif
+		if(likely(argnum == wanted.size())) {
 			wanted.push_back(typ);
 		} else if(argnum > wanted.size()) {
-			wanted.insert(wanted.end(), argnum - wanted.size() + 1, 0);
+			wanted.insert(wanted.end(), argnum - wanted.size() + 1, FormatManip::NONE);
 			wanted[argnum] = typ;
-		} else if(wanted[argnum] != typ) {
-			wanted[argnum] = 0;
+		} else {
+			wanted[argnum] |= typ;
 		}
 		manip.push_back(FormatManip(start, argnum, typ));
 		m_text.erase(start, len);
@@ -103,13 +126,13 @@ eix::format::format(const string& format_string) {
 		}
 	}
 	if(unlikely(wanted.empty())) {
-		manipulate();
+		finalize();
 	} else {
 		args.insert(args.end(), wanted.size(), FormatReplace());
 	}
 }
 
-void eix::format::manipulate() {
+void format::finalize() {
 	for(std::vector<FormatManip>::const_reverse_iterator it(manip.rbegin());
 		it != manip.rend(); ++it) {
 		m_text.insert(it->m_index, (it->m_type ?
@@ -118,4 +141,21 @@ void eix::format::manipulate() {
 	manip.clear();
 	wanted.clear();
 	args.clear();
+	newline_output();
 }
+
+void format::newline_output() {
+	if(add_newline) {
+		m_text.append(1, '\n');
+	}
+	if(output != NULLPTR) {
+		if(likely(!m_text.empty())) {
+			fwrite(m_text.c_str(), sizeof(char),  m_text.size(), output);
+		}
+		if(unlikely(do_flush)) {
+			fflush(output);
+		}
+	}
+}
+
+}/* namespace eix */

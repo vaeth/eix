@@ -17,13 +17,12 @@
 
 #include <string>
 
-#ifdef DEBUG_MD5
-#include <iostream>
-#endif
-
 #include "eixTk/attribute.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/dialect.h"
+#ifdef DEBUG_MD5
+#include "eixTk/formated.h"
+#endif
 #include "eixTk/inttypes.h"
 #include "eixTk/null.h"
 
@@ -233,9 +232,6 @@ static void calc_md5sum(const char *buffer, Md5DataLen totalsize, uint32_t *resa
 
 #ifdef DEBUG_MD5
 
-using std::cout;
-using std::endl;
-
 ATTRIBUTE_NONNULL_ static void debug_md5(const uint32_t *resarr);
 
 static void debug_md5(const uint32_t *resarr) {
@@ -250,14 +246,14 @@ static void debug_md5(const uint32_t *resarr) {
 				res /= 256;
 			}
 			if(c < 10) {
-				cout << static_cast<char>('0' + c);
+				eix::print(static_cast<char>('0' + c));
 			} else {
 				c -= 10;
-				cout << static_cast<char>('a' + c);
+				eix::print(static_cast<char>('a' + c));
 			}
 		}
 	}
-	cout << endl;
+	eix:say("");
 }
 #endif
 
@@ -298,7 +294,8 @@ GCC_DIAG_ON(old-style-cast)
 		munmap(filebuffer, filesize);
 	}
 #ifdef DEBUG_MD5
-	cout << "file: " << file << " size: "<< filesize << " should be: " <<  md5sum << " is: ";
+	eix::print("file: %s size: %s should be: %s is: ")
+		% file % filesize % md5sum;
 	debug_md5(resarr);
 #endif
 	string::size_type curr(0);

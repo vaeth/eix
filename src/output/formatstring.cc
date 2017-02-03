@@ -15,7 +15,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -40,9 +39,6 @@ class Darkmode;
 
 using std::string;
 using std::vector;
-
-using std::cerr;
-using std::endl;
 
 string::size_type PrintFormat::currcolumn = 0;
 
@@ -121,7 +117,7 @@ Node *PrintFormat::parse_variable(const string& varname) const {
 	string errtext;
 	Node *rootnode;
 	if(unlikely(!parse_variable(&rootnode, varname, &errtext))) {
-		cerr << errtext << endl;
+		eix::say_error() % errtext;
 		exit(EXIT_FAILURE);
 	}
 	return rootnode;
@@ -206,7 +202,7 @@ static void parse_termdark(DarkModes *modes, WordVec *regexp, const string& term
 		}
 		Darkmode darkmode;
 		if(!darkmode.init(*text)) {
-			cerr << eix::format(_("DARK_TERM has illegal format: %s")) % termdark;
+			eix::say_error(_("DARK_TERM has illegal format: %s")) % termdark;
 			exit(EXIT_FAILURE);
 		}
 		modes->push_back(darkmode);
@@ -293,7 +289,7 @@ void PrintFormat::setupResources(EixRc *rc) {
 static void parse_color(OutputString *color, bool use_color) {
 	string errtext;
 	if(unlikely(!parse_colors(color, color->as_string(), use_color, &errtext))) {
-		cerr << errtext << endl;
+		eix::say_error() % errtext;
 	}
 }
 
@@ -307,7 +303,7 @@ static void colorstring(string *color, bool use_color) {
 	if(likely(ac.initcolor(*color, &errtext))) {
 		*color = ac.asString();
 	} else {
-		cerr << errtext << endl;
+		eix::say_error() % errtext;
 	}
 }
 

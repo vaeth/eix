@@ -130,7 +130,7 @@ Check '"eixTk/stringtypes\.h"' -e 'WordVec' -e 'WordSet' -e 'WordMap' -e 'WordLi
 Check '"eixTk/dialect\.h"' -e 'CONSTEXPR' -e 'ASSIGN_DELETE' -e 'OVERRIDE[^_A-Z]' -e 'NOEXCEPT'
 Check '"eixTk/diagnostics\.h"' -e DIAG_OFF -e DIAG_ON
 Check '"eixTk/eixint\.h"' -e OffsetType -e UChar -e UNumber -e Treesize -e Catsize -e Versize -e SignedBool -e TinySigned -e TinyUnsigned
-Check '"eixTk/formated\.h"' -e '::format'
+Check '"eixTk/formated\.h"' -e 'eix::format' -e 'eix::print' -e 'eix::say'
 Check '"eixTk/i18n\.h"' -e '_('
 Check '"eixTk/inttypes\.h"' -e int8 -e int16 -e int32 -e int64
 Check '"eixTk/likely\.h"' -e 'likely('
@@ -159,9 +159,10 @@ Check : 'set' -e '[^:_]set<' -e '^set<'
 Check : 'vector' -e '[^:_]vector<' -e '^vector<'
 CheckWith : 'string' -e '[^:_]string[^a-zA-Z_0-9]*'
 
-Check : 'cerr' -e '[^:_]cerr[^a-z]'
-Check : 'cout' -e '[^:_]cout[^a-z]'
-Check : 'endl' -e '[^:_]endl[^a-z]'
+#Check : 'cerr' -e '[^:_]cerr[^a-z]'
+#Check : 'cout' -e '[^:_]cout[^a-z]'
+#Check : 'endl' -e '[^:_]endl[^a-z]'
+GrepAllWith -e '[^:_]cerr[^a-z]' -e '[^:_]cout[^a-z]' -e '[^:_]endl[^a-z]'
 
 Check '<cassert>' -e 'assert('
 Check '<cstddef>' -e '[^_N]NULL\([^P]\|$\)'

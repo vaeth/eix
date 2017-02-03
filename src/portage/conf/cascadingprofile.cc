@@ -12,7 +12,6 @@
 
 #include <cstring>
 
-#include <iostream>
 #include <map>
 #include <string>
 #include <utility>
@@ -41,10 +40,6 @@ using std::map;
 using std::pair;
 using std::string;
 
-using std::cerr;
-using std::cout;
-using std::endl;
-
 class ParseError;
 
 /**
@@ -59,11 +54,11 @@ bool CascadingProfile::addProfile(const char *profile, WordSet *sourced_files) {
 	string truename(normalize_path(profile, true, true));
 	if(unlikely(print_profile_paths)) {
 		if(likely(is_dir(truename.c_str()))) {
-			cout << truename;
+			eix::print() % truename;
 			if(profile_paths_append.empty()) {
-				cout << '\0';
+				eix::print('\0');
 			} else {
-				cout << profile_paths_append;
+				eix::print() % profile_paths_append;
 			}
 		}
 	}
@@ -74,7 +69,7 @@ bool CascadingProfile::addProfile(const char *profile, WordSet *sourced_files) {
 	if(unlikely(topcall)) {
 		sourced_files = new WordSet;
 	} else if(sourced_files->find(truename) != sourced_files->end()) {
-		cerr << _("Recursion level for cascading profiles exceeded; stopping reading parents") << endl;
+		eix::say_error(_("Recursion level for cascading profiles exceeded; stopping reading parents"));
 		return false;
 	}
 	sourced_files->insert(truename);
@@ -108,8 +103,8 @@ bool CascadingProfile::addProfile(const char *profile, WordSet *sourced_files) {
 				path = repos.get_path(repo);
 			}
 			if(path == NULLPTR) {
-				cerr << eix::format(_("warning: ignoring parent %s of file %s"))
-					% (*it) % currfile << endl;
+				eix::say_error(_("warning: ignoring parent %s of file %s"))
+					% (*it) % currfile;
 				continue;
 			}
 			addProfile((string(path) + "/profiles/" + it->substr(colon + 1)).c_str(), sourced_files);

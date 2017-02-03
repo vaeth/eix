@@ -15,7 +15,6 @@
 
 #include <cstdlib>
 
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -49,13 +48,7 @@
 using std::string;
 using std::vector;
 
-using std::cerr;
-using std::cout;
-using std::endl;
-
-inline static void INFO(const string& s) {
-	cout << s;
-}
+#define INFO eix::say
 
 class Pathname {
 	private:
@@ -116,7 +109,7 @@ ATTRIBUTE_NONNULL_ static void override_label(OverlayIdent *overlay, const RepoN
 static bool stringstart_in_wordlist(const string& to_check, const WordVec& wordlist);
 
 static void print_help() {
-	cout << eix::format(_("Usage: %s [options]\n"
+	eix::say(_("Usage: %s [options]\n"
 "\n"
 " -h, --help              show a short help screen\n"
 " -V, --version           show version-string\n"
@@ -145,7 +138,7 @@ static void print_help() {
 " -r  --repo-name         set label for matching overlay.\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n")) % program_name % EIX_CACHEFILE;
+"further information.")) % program_name % EIX_CACHEFILE;
 }
 
 enum cli_options {
@@ -221,7 +214,7 @@ static void add_override(Overrides *override_list, EixRc *eixrc, const char *s) 
 	WordVec v;
 	split_string(&v, (*eixrc)[s], true);
 	if(unlikely(v.size() & 1)) {
-		cerr << eix::format(_("%s must be a list of the form DIRECTORY METHOD")) % s << endl;
+		eix::say_error(_("%s must be a list of the form DIRECTORY METHOD")) % s;
 		exit(EXIT_FAILURE);
 	}
 	for(WordVec::iterator it(v.begin()); unlikely(it != v.end()); ++it) {
@@ -235,7 +228,7 @@ static void add_reponames(RepoNames *repo_names, EixRc *eixrc, const char *s) {
 	WordVec v;
 	split_string(&v, (*eixrc)[s], true);
 	if(unlikely(v.size() & 1)) {
-		cerr << eix::format(_("%s must be a list of the form DIR-PATTERN OVERLAY-LABEL")) % s << endl;
+		eix::say_error(_("%s must be a list of the form DIR-PATTERN OVERLAY-LABEL")) % s;
 		exit(EXIT_FAILURE);
 	}
 	for(WordVec::const_iterator it(v.begin()); unlikely(it != v.end()); ++it) {
@@ -248,17 +241,16 @@ static void add_reponames(RepoNames *repo_names, EixRc *eixrc, const char *s) {
 static void add_virtuals(Overrides *override_list, PathVec *add, RepoNames *repo_names, const string& cachefile, const string& eprefix_virtual) {
 	Database db;
 	if(unlikely(!db.openread(cachefile.c_str()))) {
-		INFO(eix::format(_(
-			"KEEP_VIRTUALS is ignored: there is no previous %s\n"))
-			% cachefile);
+		INFO(_("KEEP_VIRTUALS is ignored: there is no previous %s"))
+			% cachefile;
 		return;
 	}
 
-	INFO(eix::format(_("Adding virtual overlays from %s...\n")) % cachefile);
+	INFO(_("Adding virtual overlays from %s...")) % cachefile;
 	DBHeader header;
 	bool is_current(db.read_header(&header, NULLPTR, 0));
 	if(unlikely(!is_current)) {
-		cerr << _("warning: KEEP_VIRTUALS ignored because database format has changed");
+		eix::say_error(_("warning: KEEP_VIRTUALS ignored because database format has changed"));
 		return;
 	}
 	for(ExtendedVersion::Overlay i(0); likely(i != header.countOverlays()); ++i) {
@@ -308,7 +300,7 @@ int run_eix_update(int argc, char *argv[]) {
 		string errtext;
 		bool success(drop_permissions(&eixrc, &errtext));
 		if(!errtext.empty()) {
-			cerr << errtext << endl;
+			eix::say_error() % errtext;
 		}
 		if(!success) {
 			return EXIT_FAILURE;
@@ -385,7 +377,7 @@ int run_eix_update(int argc, char *argv[]) {
 	/* Honour a wish for silence */
 	if(unlikely(quiet)) {
 		if(!freopen(DEV_NULL, "w", stdout)) {
-			cerr << eix::format(_("cannot redirect to \"%s\"")) % DEV_NULL << endl;
+			eix::say_error(_("cannot redirect to \"%s\"")) % DEV_NULL;
 			return EXIT_FAILURE;
 		}
 	}
@@ -404,7 +396,7 @@ int run_eix_update(int argc, char *argv[]) {
 		program_name, eixrc["EXIT_STATUSLINE"]);
 
 	ParseError parse_error;
-	INFO(_("Reading Portage settings...\n"));
+	INFO(_("Reading Portage settings..."));
 	PortageSettings portage_settings(&eixrc, &parse_error, false, true);
 
 	/* Build default (overlay/method/...) lists, using environment vars */
@@ -515,11 +507,11 @@ int run_eix_update(int argc, char *argv[]) {
 				eixrc["PORTDIR_CACHE_METHOD"],
 				override_ptr,
 				&errtext))) {
-				cerr << errtext << endl;
+				eix::say_error() % errtext;
 			}
 		} else {
-			INFO(eix::format(_("Excluded PORTDIR: %s\n"))
-				% portage_settings["PORTDIR"]);
+			INFO(_("Excluded PORTDIR: %s"))
+				% portage_settings["PORTDIR"];
 		}
 
 		portage_settings.add_repo_vector(add_overlays, false);
@@ -534,22 +526,22 @@ int run_eix_update(int argc, char *argv[]) {
 					eixrc.prefix_cstr("EPREFIX_ACCESS_OVERLAYS"),
 					path,
 					eixrc["OVERLAY_CACHE_METHOD"], override_ptr, &errtext))) {
-					cerr << errtext << endl;
+					eix::say_error() % errtext;
 				}
 			} else {
-				INFO(eix::format(_("Excluded overlay %s\n"))
-					% it->human_readable());
+				INFO(_("Excluded overlay %s"))
+					% it->human_readable();
 			}
 		}
 	}
 
-	INFO(eix::format(_("Building database (%s)...\n")) % outputfile);
+	INFO(_("Building database (%s)...")) % outputfile;
 
 	/* Update the database from scratch */
 	string errtext;
 	if(unlikely(!update(outputfile.c_str(), &table, &portage_settings, override_umask,
 			repo_names, excluded_overlays, &statusline, &errtext))) {
-		cerr << errtext << endl;
+		eix::say_error() % errtext;
 		statusline.failure();
 		return EXIT_FAILURE;
 	}
@@ -559,7 +551,7 @@ int run_eix_update(int argc, char *argv[]) {
 
 static void error_callback(const string& str) {
 	reading_percent_status->interprint_start();
-	cerr << str << endl;
+	eix::say_error() % str;
 	reading_percent_status->interprint_end();
 }
 
@@ -584,10 +576,10 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		override_label(&overlay, repo_names);
 		overlay.readLabel(cache->getPrefixedPath().c_str());
 		if(unlikely(find(exclude_labels.begin(), exclude_labels.end(), overlay.label) != exclude_labels.end())) {
-			INFO(eix::format(_("Excluding \"%s\" %s (cache: %s)\n"))
+			INFO(_("Excluding \"%s\" %s (cache: %s)"))
 				% overlay.label
 				% cache->getPathHumanReadable()
-				% cache->getType());
+				% cache->getType();
 			it = cache_table->erase(it);
 			continue;
 		}
@@ -606,11 +598,11 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 	for(CacheTable::iterator it(cache_table->begin());
 		likely(it != cache_table->end()); ++it) {
 		BasicCache *cache(*it);
-		INFO(eix::format(_("[%s] \"%s\" %s (cache: %s)\n"))
+		INFO(_("[%s] \"%s\" %s (cache: %s)"))
 			% cache->getKey()
 			% cache->getOverlayName()
 			% cache->getPathHumanReadable()
-			% cache->getType());
+			% cache->getType();
 		statusline->print(eix::format(P_("Statusline eix-update", "[%s] %s"))
 				% cache->getKey()
 				% cache->getOverlayName());
@@ -669,7 +661,7 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 	statusline->print(P_("Statusline eix-update", "Analyzing"));
 
 	/* Now apply all masks... */
-	INFO(_("Applying masks...\n"));
+	INFO(_("Applying masks..."));
 	for(PackageTree::iterator c(package_tree.begin());
 		likely(c != package_tree.end()); ++c) {
 		Category *ci = c->second;
@@ -680,12 +672,12 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		}
 	}
 
-	INFO(_("Calculating hash tables...\n"));
+	INFO(_("Calculating hash tables..."));
 	Database::prep_header_hashs(&dbheader, package_tree);
 
 	/* And write database back to disk... */
 	statusline->print(eix::format(P_("Statusline eix-update", "Creating %s")) % outputfile);
-	INFO(eix::format(_("Writing database file %s...\n")) % outputfile);
+	INFO(_("Writing database file %s...")) % outputfile;
 	mode_t old_umask;
 	if(override_umask) {
 		old_umask = umask(2);
@@ -707,10 +699,9 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		return false;
 	}
 
-	INFO(eix::format(N_(
-		"Database contains %s packages in %s category.\n",
-		"Database contains %s packages in %s categories.\n",
+	INFO(N_("Database contains %s packages in %s category",
+		"Database contains %s packages in %s categories",
 		dbheader.size))
-		% package_tree.countPackages() % dbheader.size);
+		% package_tree.countPackages() % dbheader.size;
 	return true;
 }

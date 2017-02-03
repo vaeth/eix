@@ -11,10 +11,10 @@
 
 #include <set>
 #include <string>
-#include <iostream>
 
 #include "database/header.h"
 #include "eixTk/dialect.h"
+#include "eixTk/formated.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
@@ -34,8 +34,6 @@
 
 using std::set;
 using std::string;
-
-using std::cout;
 
 const PrintXml::XmlVersion PrintXml::current;
 
@@ -82,8 +80,8 @@ void PrintXml::start() {
 	}
 	started = true;
 
-	cout << "<?xml version='1.0' encoding='UTF-8'?>\n"
-		"<eixdump version=\"" << current << "\">\n";
+	eix::say("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+		"<eixdump version=\"%s\">") % current;
 }
 
 void PrintXml::finish() {
@@ -92,9 +90,9 @@ void PrintXml::finish() {
 	}
 
 	if(count) {
-		cout << "\t</category>\n";
+		eix::say("\t</category>");
 	}
-	cout << "</eixdump>\n";
+	eix::say("</eixdump>");
 
 	runclear();
 }
@@ -106,19 +104,19 @@ static void print_iuse(const IUseSet::IUseStd& s, IUse::Flags wanted, const char
 			continue;
 		}
 		if(likely(have_found)) {
-			cout << " " << PrintXml::escape_xmlstring(it->name());
+			eix::print(" %s") % PrintXml::escape_xmlstring(false, it->name());
 			continue;
 		}
 		have_found = true;
 		if(dflt != NULLPTR) {
-			cout << "\t\t\t\t<iuse default=\"" << dflt << "\">";
+			eix::print("\t\t\t\t<iuse default=\"%s\">") % dflt;
 		} else {
-			cout << "\t\t\t\t<iuse>";
+			eix::print("\t\t\t\t<iuse>");
 		}
-		cout << PrintXml::escape_xmlstring(it->name());
+		eix::print() % PrintXml::escape_xmlstring(false, it->name());
 	}
 	if(have_found) {
-		cout << "</iuse>\n";
+		eix::say("</iuse>");
 	}
 }
 
@@ -127,16 +125,17 @@ void PrintXml::package(Package *pkg) {
 		start();
 	if(unlikely(curcat != pkg->category)) {
 		if(!curcat.empty()) {
-			cout << "\t</category>\n";
+			eix::say("\t</category>");
 		}
 		curcat = pkg->category;
-		cout << "\t<category name=\"" << escape_xmlstring(curcat) << "\">\n";
+		eix::say("\t<category name=\"%s\">") % escape_xmlstring(true, curcat);
 	}
 	// category, name, desc, homepage, licenses;
-	cout << "\t\t<package name=\"" << escape_xmlstring(pkg->name) << "\">\n"
-		"\t\t\t<description>" << escape_xmlstring(pkg->desc) << "</description>\n"
-		"\t\t\t<homepage>" << escape_xmlstring(pkg->homepage) << "</homepage>\n"
-		"\t\t\t<licenses>" << escape_xmlstring(pkg->licenses) << "</licenses>\n";
+	eix::say("\t\t<package name=\"%s\">")
+		% escape_xmlstring(true, pkg->name);
+	say_xml_element("\t\t\t", "description", pkg->desc);
+	say_xml_element("\t\t\t", "homepage", pkg->homepage);
+	say_xml_element("\t\t\t", "licenses", pkg->licenses);
 
 	set<const Version*> have_inst;
 	if((likely(var_db_pkg != NULLPTR)) && var_db_pkg->isInstalled(*pkg)) {
@@ -176,30 +175,34 @@ void PrintXml::package(Package *pkg) {
 			}
 		}
 
-		cout << "\t\t\t<version id=\"" << escape_xmlstring(ver->getFull()) <<
-			"\" EAPI=\"" << escape_xmlstring(ver->eapi.get()) << '"';
+		eix::print("\t\t\t<version id=\"%s\" EAPI=\"%s\"")
+			% escape_xmlstring(true, ver->getFull())
+			% escape_xmlstring(true, ver->eapi.get());
 		ExtendedVersion::Overlay overlay_key(ver->overlay_key);
 		if(unlikely(overlay_key != 0)) {
 			if(print_format->is_virtual(overlay_key)) {
-				cout << " virtual=\"1\"";
+				eix::print(" virtual=\"1\"");
 			}
 			const OverlayIdent& overlay(hdr->getOverlay(overlay_key));
 			if((print_overlay || overlay.label.empty()) && !(overlay.path.empty())) {
-				cout << " overlay=\"" << escape_xmlstring(overlay.path) << '"';
+				eix::print(" overlay=\"%s\"")
+					% escape_xmlstring(true, overlay.path);
 			}
 			if(!overlay.label.empty()) {
-				cout << " repository=\"" << escape_xmlstring(overlay.label) << '"';
+				eix::print(" repository=\"%s\"")
+					% escape_xmlstring(true, overlay.label);
 			}
 		}
 		if(!ver->get_shortfullslot().empty()) {
-			cout << " slot=\"" << escape_xmlstring(ver->get_longfullslot()) << '"';
+			eix::print(" slot=\"%s\"")
+				% escape_xmlstring(true, ver->get_longfullslot());
 		}
 		if(versionInstalled) {
-			cout << " installed=\"1\" installDate=\"" <<
-				escape_xmlstring(date_conv(dateformat.c_str(), installedVersion->instDate)) <<
-				"\" installEAPI=\"" << escape_xmlstring(installedVersion->eapi.get()) << '"';
+			eix::print(" installed=\"1\" installDate=\"%s\" installEAPI=\"%s\"")
+				% escape_xmlstring(true, date_conv(dateformat.c_str(), installedVersion->instDate))
+				% escape_xmlstring(false, installedVersion->eapi.get());
 		}
-		cout << ">\n";
+		eix::say('>');
 
 		MaskFlags currmask(ver->maskflags);
 		KeywordsFlags currkey(ver->keyflags);
@@ -267,7 +270,7 @@ void PrintXml::package(Package *pkg) {
 
 		for(WordVec::const_iterator it(mask_text.begin());
 			unlikely(it != mask_text.end()); ++it) {
-			cout << "\t\t\t\t<mask type=\"" << *it << "\" />\n";
+			eix::say("\t\t\t\t<mask type=\"%s\"/>") % (*it);
 		}
 
 		if(unlikely(ver->have_reasons())) {
@@ -278,24 +281,24 @@ void PrintXml::package(Package *pkg) {
 				if((vec == NULLPTR) || (vec->empty())) {
 					continue;
 				}
-				cout << "\t\t\t\t<maskreason>";
+				eix::print("\t\t\t\t<maskreason>");
 				bool pret(false);
 				for(WordVec::const_iterator wit(vec->begin());
 					likely(wit != vec->end()); ++wit) {
 					if(likely(pret)) {
-						cout << "\n";
+						eix::say_empty();
 					} else {
 						pret = true;
 					}
-					cout << escape_xmlstring(*wit);
+					eix::say() % escape_xmlstring(false, *wit);
 				}
-				cout << "</maskreason>\n";
+				eix::say("</maskreason>");
 			}
 		}
 
 		for(WordVec::const_iterator it(unmask_text.begin());
 			unlikely(it != unmask_text.end()); ++it) {
-			cout << "\t\t\t\t<unmask type=\"" << *it << "\" />\n";
+			eix::say("\t\t\t\t<unmask type=\"%s\"/>") % (*it);
 		}
 
 		if(!(ver->iuse.empty())) {
@@ -307,9 +310,8 @@ void PrintXml::package(Package *pkg) {
 		if(Version::use_required_use) {
 			string &required_use(ver->required_use);
 			if(!(required_use.empty())) {
-				cout << "\t\t\t\t<required_use>"
-					<< escape_xmlstring(required_use)
-					<< "</required_use>\n";
+				eix::say("\t\t\t\t<required_use>%s</required_use>")
+					% escape_xmlstring(false, required_use);
 			}
 		}
 		if(versionInstalled) {
@@ -331,59 +333,61 @@ void PrintXml::package(Package *pkg) {
 				}
 			}
 			if(!iuse_disabled.empty()) {
-				cout << "\t\t\t\t<use enabled=\"0\">" << escape_xmlstring(iuse_disabled) << "</use>\n";
+				eix::say("\t\t\t\t<use enabled=\"0\">%s</use>")
+					% escape_xmlstring(false, iuse_disabled);
 			}
 			if(!iuse_enabled.empty()) {
-				cout << "\t\t\t\t<use enabled=\"1\">" << escape_xmlstring(iuse_enabled) << "</use>\n";
+				eix::say("\t\t\t\t<use enabled=\"1\">%s</use>")
+					% escape_xmlstring(false, iuse_enabled);
 			}
 		}
 
 		ExtendedVersion::Restrict restrict(ver->restrictFlags);
 		if(unlikely(restrict != ExtendedVersion::RESTRICT_NONE)) {
 			if(unlikely(restrict & ExtendedVersion::RESTRICT_BINCHECKS)) {
-				cout << "\t\t\t\t<restrict flag=\"binchecks\" />\n";
+				eix::say("\t\t\t\t<restrict flag=\"binchecks\"/>");
 			}
 			if(unlikely(restrict & ExtendedVersion::RESTRICT_STRIP)) {
-				cout << "\t\t\t\t<restrict flag=\"strip\" />\n";
+				eix::say("\t\t\t\t<restrict flag=\"strip\"/>");
 			}
 			if(unlikely(restrict & ExtendedVersion::RESTRICT_TEST)) {
-				cout << "\t\t\t\t<restrict flag=\"test\" />\n";
+				eix::say("\t\t\t\t<restrict flag=\"test\"/>");
 			}
 			if(unlikely(restrict & ExtendedVersion::RESTRICT_USERPRIV)) {
-				cout << "\t\t\t\t<restrict flag=\"userpriv\" />\n";
+				eix::say("\t\t\t\t<restrict flag=\"userpriv\"/>");
 			}
 			if(unlikely(restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES)) {
-				cout << "\t\t\t\t<restrict flag=\"installsources\" />\n";
+				eix::say("\t\t\t\t<restrict flag=\"installsources\"/>");
 			}
 			if(unlikely(restrict & ExtendedVersion::RESTRICT_FETCH)) {
-				cout << "\t\t\t\t<restrict flag=\"fetch\" />\n";
+				eix::say("\t\t\t\t<restrict flag=\"fetch\"/>");
 			}
 			if(unlikely(restrict & ExtendedVersion::RESTRICT_MIRROR)) {
-				cout << "\t\t\t\t<restrict flag=\"mirror\" />\n";
+				eix::say("\t\t\t\t<restrict flag=\"mirror\"/>");
 			}
 			if(unlikely(restrict & ExtendedVersion::RESTRICT_PRIMARYURI)) {
-				cout << "\t\t\t\t<restrict flag=\"primaryuri\" />\n";
+				eix::say("\t\t\t\t<restrict flag=\"primaryuri\"/>");
 			}
 			if(unlikely(restrict & ExtendedVersion::RESTRICT_BINDIST)) {
-				cout << "\t\t\t\t<restrict flag=\"bindist\" />\n";
+				eix::say("\t\t\t\t<restrict flag=\"bindist\"/>");
 			}
 			if(unlikely(restrict & ExtendedVersion::RESTRICT_PARALLEL)) {
-				cout << "\t\t\t\t<restrict flag=\"parallel\" />\n";
+				eix::say("\t\t\t\t<restrict flag=\"parallel\"/>");
 			}
 		}
 		ExtendedVersion::Restrict properties(ver->propertiesFlags);
 		if(unlikely(properties != ExtendedVersion::PROPERTIES_NONE)) {
 			if(unlikely(properties & ExtendedVersion::PROPERTIES_INTERACTIVE)) {
-				cout << "\t\t\t\t<properties flag=\"interactive\" />\n";
+				eix::say("\t\t\t\t<properties flag=\"interactive\"/>");
 			}
 			if(unlikely(properties & ExtendedVersion::PROPERTIES_LIVE)) {
-				cout << "\t\t\t\t<properties flag=\"live\" />\n";
+				eix::say("\t\t\t\t<properties flag=\"live\"/>");
 			}
 			if(unlikely(properties & ExtendedVersion::PROPERTIES_VIRTUAL)) {
-				cout << "\t\t\t\t<properties flag=\"virtual\" />\n";
+				eix::say("\t\t\t\t<properties flag=\"virtual\"/>");
 			}
 			if(unlikely(properties & ExtendedVersion::PROPERTIES_SET)) {
-				cout << "\t\t\t\t<properties flag=\"set\" />\n";
+				eix::say("\t\t\t\t<properties flag=\"set\"/>");
 			}
 		}
 
@@ -407,50 +411,66 @@ void PrintXml::package(Package *pkg) {
 				}
 			}
 			if(print_full) {
-				cout << "\t\t\t\t<keywords>" << escape_xmlstring(full_kw) << "</keywords>\n";
+				say_xml_element("\t\t\t\t", "keywords", full_kw);
 			}
 			if(print_effective) {
-				cout << "\t\t\t\t<effective_keywords>" << escape_xmlstring(eff_kw) << "</effective_keywords>\n";
+				say_xml_element("\t\t\t\t", "effective_keywords", eff_kw);
 			}
 		}
 
 		if(Depend::use_depend) {
-			string s(ver->depend.get_depend());
-			if(!s.empty()) {
-				cout << "\t\t\t\t<depend>" << escape_xmlstring(s) << "</depend>\n";
+			const string& depend = ver->depend.get_depend();
+			if(!depend.empty()) {
+				eix::say("\t\t\t\t<depend>%s</depend>")
+					% escape_xmlstring(false, depend);
 			}
-			s = ver->depend.get_rdepend();
-			if(!s.empty()) {
-				cout << "\t\t\t\t<rdepend>" << escape_xmlstring(s) << "</rdepend>\n";
+			const string& rdepend = ver->depend.get_rdepend();
+			if(!rdepend.empty()) {
+				eix::say("\t\t\t\t<rdepend>%s</rdepend>")
+					% escape_xmlstring(false, rdepend);
 			}
-			s = ver->depend.get_pdepend();
-			if(!s.empty()) {
-				cout << "\t\t\t\t<pdepend>" << escape_xmlstring(s) << "</pdepend>\n";
+			const string& pdepend = ver->depend.get_pdepend();
+			if(!pdepend.empty()) {
+				eix::say("\t\t\t\t<pdepend>%s</pdepend>")
+					% escape_xmlstring(false, pdepend);
 			}
-			s = ver->depend.get_hdepend();
-			if(!s.empty()) {
-				cout << "\t\t\t\t<hdepend>" << escape_xmlstring(s) << "</hdepend>\n";
+			const string& hdepend = ver->depend.get_hdepend();
+			if(!hdepend.empty()) {
+				eix::say("\t\t\t\t<hdepend>%s</hdepend>")
+					% escape_xmlstring(false, hdepend);
 			}
 		}
-		cout << "\t\t\t</version>\n";
+		eix::say("\t\t\t</version>");
 	}
-	cout << "\t\t</package>\n";
+	eix::say("\t\t</package>");
 	++count;
 }  // NOLINT(readability/fn_size)
 
-string PrintXml::escape_xmlstring(const string& s) {
+string PrintXml::escape_xmlstring(bool quoted, const string& s) {
 	string ret;
 	string::size_type prev(0);
 	string::size_type len(s.length());
 	for(string::size_type i(0); likely(i < len); ++i) {
 		const char *replace;
 		switch(s[i]) {
-			case '&': replace = "&amp;"; break;
-			case '<': replace = "&lt;"; break;
-			case '>': replace = "&gt;"; break;
-			case '\'': replace = "&apos;"; break;
-			case '\"': replace = "&quot;"; break;
-			default: replace = NULLPTR; break;
+			case '&':
+				replace = "&amp;";
+				break;
+			case '<':
+				replace = "&lt;";
+				break;
+			case '>':
+				replace = "&gt;";
+				break;
+			case '\'':
+				replace = (quoted ? "&apos;" : NULLPTR);
+				break;
+			case '\"':
+				replace = (quoted ? "&quot;" : NULLPTR);
+				break;
+			default:
+				replace = NULLPTR;
+				break;
 		}
 		if(unlikely(replace != NULLPTR)) {
 			ret.append(s, prev, i - prev);
@@ -465,4 +485,13 @@ string PrintXml::escape_xmlstring(const string& s) {
 		ret.append(s, prev, len - prev);
 	}
 	return ret;
+}
+
+void PrintXml::say_xml_element(const string& prefix, const string& name, const string& content) {
+	if(unlikely(content.empty())) {
+		eix::say("%s<%s/>") % prefix % name;
+		return;
+	}
+	eix::say("%s<%s>%s</%2$s>") % prefix % name
+		% escape_xmlstring(false, content);
 }

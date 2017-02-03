@@ -9,13 +9,10 @@
 
 #include <config.h>
 
-// Everyone wanted something like esync from esearch .. so here it is!
-
 #include <unistd.h>
 
 #include <cstdlib>
 
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -51,10 +48,6 @@
 using std::string;
 using std::vector;
 
-using std::cerr;
-using std::cout;
-using std::endl;
-
 static void print_help();
 ATTRIBUTE_NONNULL_ static void init_db(const char *file, Database *db, DBHeader *header, PackageReader **reader, PortageSettings *ps);
 ATTRIBUTE_NONNULL_ static void set_virtual(PrintFormat *fmt, const DBHeader& header, const string& eprefix_virtual);
@@ -72,7 +65,7 @@ static PackageReader  *old_reader, *new_reader;
 static Node           *format_new, *format_delete, *format_changed;
 
 static void print_help() {
-	cout << eix::format(_("Usage: %s [options] old-cache [new-cache]\n"
+	eix::say(_("Usage: %s [options] old-cache [new-cache]\n"
 "\n"
 " -Q, --quick (toggle)    do (not) read unguessable slots of installed packages\n"
 "     --care              always read slots of installed packages\n"
@@ -90,7 +83,7 @@ static void print_help() {
 " -V, --version           show version-string\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n")) % program_name;
+"further information.")) % program_name;
 }
 
 bool cli_show_help(false),
@@ -151,9 +144,9 @@ static void init_db(const char *file, Database *db, DBHeader *header, PackageRea
 			ps->store_world_sets(&(header->world_sets));
 			return;
 		}
-		cerr << eix::format(_("error in database file %s: %s")) % file % errtext << endl;
+		eix::say_error(_("error in database file %s: %s")) % file % errtext;
 	} else {
-		cerr << eix::format(_("cannot open database file %s for reading (mode = 'rb')")) % file << endl;
+		eix::say_error(_("cannot open database file %s for reading (mode = 'rb')")) % file;
 	}
 	exit(EXIT_FAILURE);
 }
@@ -246,7 +239,7 @@ class DiffReaders {
 			}
 			bool ret(EXIT_SUCCESS);
 			if(unlikely(err_cstr != NULLPTR)) {
-				cerr << err_cstr << endl;
+				eix::say_error() % err_cstr;
 				ret = EXIT_FAILURE;
 			}
 			delete old_reader;
@@ -345,8 +338,8 @@ static void parseFormat(Node **format, const char *varname, EixRc *rc) {
 	if(likely((format_for_new->parseFormat(format, (*rc)[varname].c_str(), &errtext)))) {
 		return;
 	}
-	cerr << eix::format(_("problems while parsing %s: %s\n"))
-			% varname % errtext << endl;
+	eix::say_error(_("problems while parsing %s: %s"))
+			% varname % errtext;
 	exit(EXIT_FAILURE);
 }
 
@@ -365,7 +358,7 @@ int run_eix_diff(int argc, char *argv[]) {
 		string errtext;
 		bool success(drop_permissions(&rc, &errtext));
 		if(!errtext.empty()) {
-			cerr << errtext << endl;
+			eix::say_error() % errtext;
 		}
 		if(!success) {
 			return EXIT_FAILURE;
@@ -419,7 +412,7 @@ int run_eix_diff(int argc, char *argv[]) {
 
 	if(unlikely(cli_quiet)) {
 		if(!freopen(DEV_NULL, "w", stdout)) {
-			cerr << eix::format(_("cannot redirect to \"%s\"")) % DEV_NULL << endl;
+			eix::say_error(_("cannot redirect to \"%s\"")) % DEV_NULL;
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -489,7 +482,7 @@ int run_eix_diff(int argc, char *argv[]) {
 	differ.changed_package = print_changed_package;
 
 	int ret(differ.diff());
-	cout << format_for_new->color_end;
+	eix::print() % format_for_new->color_end;
 
 	delete varpkg_db;
 	delete portagesettings;

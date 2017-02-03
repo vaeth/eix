@@ -10,13 +10,10 @@
 
 #include <cstdio>
 
-#include <iostream>
-
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
-
-using std::cout;
 
 typedef unsigned int CalcType;
 
@@ -59,19 +56,22 @@ class Display {
 };
 
 void Display::resetnl() {
-	puts(AnsiColor::reset());
+	eix::say() % AnsiColor::reset();
 }
 
 void Display::nl() {
-	puts("");
+	eix::say_empty();
 }
 
 void Display::output(CalcType color, CalcType fg, CalcType dark, CalcType light) {
-	printf("\x1B[%s38;5;%d;48;5;%dm%3d ",
+	static CONSTEXPR const unsigned int kLen = 30;
+	char buf[kLen];
+	snprintf(buf, kLen, "\x1B[%s38;5;%d;48;5;%dm%3d ",
 		(bold ? "1;" : ""),
 		static_cast<int>(foreground ? color : fg),
 		static_cast<int>(foreground ? ((foreground > 0) ? dark : light) : color),
 		static_cast<int>(color));
+	eix::print() % buf;
 }
 
 void Display::syscol() {
@@ -104,11 +104,11 @@ void Display::cube(CalcType red_s, CalcType red_e) {
 					(((green != 0) || (red != 0) || (blue > 2)) ? 0 : 238),
 					((((green * 4) + (red * 3) + (blue * 1) > 26)) ? 244 : 7));
 			}
-			fputs(AnsiColor::reset(), stdout);
+			eix::print() % AnsiColor::reset();
 			if(++red == red_e) {
 				break;
 			}
-			fputc(' ', stdout);
+			eix::print(' ');
 		}
 		nl();
 	}
@@ -150,11 +150,11 @@ void Display::palette(eix::SignedBool f, bool b, const char *s) {
 	} else {
 		printed_palette = true;
 	}
-	cout << eix::format(_("System Colors (%s):\n")) % s;
+	eix::say(_("System Colors (%s):")) % s;
 	syscol();
-	cout << eix::format(_("6x6x6 Color Cube (%s):\n")) % s;
+	eix::say(_("6x6x6 Color Cube (%s):")) % s;
 	cube();
-	cout << eix::format(_("Grayscale Ramp (%s):\n")) % s;
+	eix::say(_("Grayscale Ramp (%s):")) % s;
 	ramp();
 }
 

@@ -10,7 +10,6 @@
 #include "search/packagetest.h"
 #include <config.h>
 
-#include <iostream>
 #include <map>
 #include <string>
 #include <vector>
@@ -48,9 +47,6 @@ class SetStability;
 using std::map;
 using std::string;
 using std::vector;
-
-using std::cerr;
-using std::endl;
 
 const PackageTest::MatchField
 		PackageTest::NONE,
@@ -300,7 +296,7 @@ PackageTest::MatchField PackageTest::name2field(const string& p) {
 	eix_assert_static(static_match_field_map != NULLPTR);
 	MatchFieldMap::const_iterator it(static_match_field_map->find(p));
 	if(unlikely(it == static_match_field_map->end())) {
-		cerr << eix::format(_("cannot find match field \"%s\"")) % p << endl;
+		eix::say_error(_("cannot find match field \"%s\"")) % p;
 		return NAME;
 	}
 	return it->second;
@@ -310,7 +306,7 @@ PackageTest::MatchAlgorithm PackageTest::name2algorithm(const string& p) {
 	eix_assert_static(static_match_algorithm_map != NULLPTR);
 	MatchAlgorithmMap::const_iterator it(static_match_algorithm_map->find(p));
 	if(unlikely(it == static_match_algorithm_map->end())) {
-		cerr << eix::format(_("cannot find match algorithm \"%s\"")) % p << endl;
+		eix::say_error(_("cannot find match algorithm \"%s\"")) % p;
 		return ALGO_REGEX;
 	}
 	return it->second;

@@ -15,9 +15,6 @@
 #ifdef WITH_SQLITE
 #include <sqlite3.h>
 
-#ifdef SQLITE_ONLY_DEBUG
-#include <iostream>
-#endif
 #include <map>
 #include <string>
 
@@ -36,10 +33,6 @@
 
 using std::map;
 using std::string;
-
-#ifdef SQLITE_ONLY_DEBUG
-using std::cout;
-#endif
 
 /* Path to portage cache */
 #define PORTAGE_CACHE_PATH "/var/cache/edb/dep"
@@ -62,7 +55,7 @@ int sqlite_callback(ATTRIBUTE_UNUSED void *NotUsed, int argc, char **argv, char 
 	UNUSED(NotUsed);
 #ifdef SQLITE_ONLY_DEBUG
 	for(int i(0); likely(i < argc); ++i) {
-		cout << eix::format("%s: %s = %s\n")
+		eix::say("%s: %s = %s")
 			% i % azColName[i] % welldefine(argv[i]);
 	}
 #else

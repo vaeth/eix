@@ -15,7 +15,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <iostream>
 #include <map>
 #include <string>
 #include <utility>
@@ -44,9 +43,6 @@
 using std::map;
 using std::pair;
 using std::string;
-
-using std::cerr;
-using std::endl;
 
 ATTRIBUTE_NONNULL_ static Package *old_or_new(string *new_name, Package *older, Package *newer, const string& name);
 
@@ -592,13 +588,13 @@ void PrintFormat::get_pkg_property(OutputString *s, Package *package, const stri
 			}
 		}
 		if(unlikely(col == string::npos)) {
-			cerr << eix::format(_("unknown property \"%s\"")) % name << endl;
+			eix::say_error(_("unknown property \"%s\"")) % name;
 			exit(EXIT_FAILURE);
 		}
 		after_colon.assign(name, col + 1, string::npos);
 	}
 	if(unlikely((t == Scanner::VER) && (version_variables == NULLPTR))) {
-		cerr << eix::format(_("property \"%s\" used outside version context")) % name << endl;
+		eix::say_error(_("property \"%s\" used outside version context")) % name;
 		exit(EXIT_FAILURE);
 	}
 	if(plain != NULLPTR) {

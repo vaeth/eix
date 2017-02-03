@@ -12,11 +12,11 @@
 
 #include <cstdlib>
 
-#include <iostream>
 #include <string>
 #include <vector>
 
 #include "eixTk/diagnostics.h"
+#include "eixTk/formated.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
@@ -24,9 +24,6 @@
 
 using std::string;
 using std::vector;
-
-using std::cerr;
-using std::endl;
 
 /**
 Free the regular expression
@@ -54,7 +51,7 @@ void Regex::compile(const char *regex, int eflags) {
 	if(unlikely(retval != 0)) {
 		char buf[512];
 		regerror(retval, &m_re, buf, 511);
-		cerr << "regcomp(" << regex << "): " << buf << endl;
+		eix::say_error("regcomp(%s)") % buf;
 		exit(EXIT_FAILURE);
 	}
 	m_compiled = true;

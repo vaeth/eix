@@ -13,12 +13,12 @@
 #include <dirent.h>
 
 #include <algorithm>
-#include <iostream>
 #include <string>
 
 #include "database/header.h"
 #include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
+#include "eixTk/formated.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
@@ -30,9 +30,6 @@
 #include "portage/instversion.h"
 
 using std::string;
-
-using std::cerr;
-using std::endl;
 
 void VarDbPkg::sort_installed(VarDbPkg::InstVecPkg *maping) {
 	for(VarDbPkg::InstVecPkg::iterator it(maping->begin());
@@ -407,7 +404,7 @@ void VarDbPkg::readCategory(const char *category) {
 		InstVersion instver;
 		BasicVersion::ParseResult r(instver.parseVersion(curr_version, &errtext));
 		if(unlikely(r != BasicVersion::parsedOK)) {
-			cerr << errtext << endl;
+			eix::say_error() % errtext;
 		}
 		if(likely(r != BasicVersion::parsedError)) {
 			(*category_installed)[curr_name].push_back(instver);

@@ -50,7 +50,7 @@ class PrintXml {
 
 	public:
 		typedef eix::UNumber XmlVersion;
-		static CONSTEXPR const XmlVersion current = 13;
+		static CONSTEXPR const XmlVersion current = 14;
 
 		ATTRIBUTE_NONNULL_ void init(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string& port_dir) {
 			hdr = header;
@@ -72,7 +72,8 @@ class PrintXml {
 		void start();
 		ATTRIBUTE_NONNULL_ void package(Package *pkg);
 		void finish();
-		static std::string escape_xmlstring(const std::string& s);
+		static std::string escape_xmlstring(bool quoted, const std::string& s);
+		static void say_xml_element(const std::string& prefix, const std::string& name, const std::string& content);
 
 		~PrintXml() {
 			finish();

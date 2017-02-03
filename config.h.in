@@ -39,6 +39,9 @@
 /* Location of the cachefile */
 #undef EIX_CACHEFILE
 
+/* Define if string format runtime tests should be used */
+#undef EIX_DEBUG_FORMAT
+
 /* Define if paranoic asserts should be used */
 #undef EIX_PARANOIC_ASSERT
 

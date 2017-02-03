@@ -9,7 +9,6 @@
 
 #include <sys/types.h>
 
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
@@ -34,27 +33,23 @@
 
 using std::string;
 
-using std::cerr;
-using std::cout;
-using std::endl;
-
 static void print_help() {
 	/* xgettext: no-space-ellipsis-check */
-	cout << eix::format(_("Usage: %s [options] category/name-version[:slot][::repo] ...\n"
+	eix::say(_("Usage: %s [options] category/name-version[:slot][::repo] ...\n"
 "Output all arguments matching a list of mask\n"
 "Options:\n"
-" -h, --help              show a short help screen\n"
-" -q, --quiet (toggle)    do not output matching arguments, but exit with\n"
-"                         success only if at least one argument matches.\n"
-" -Q, --nowarn (toggle)   suppress some warnings for bad syntax.\n"
-" -m, --mask MASK         add MASK to the list of masks\n"
-" -f, --file FILE         add masks from FILE.\n"
-" -F, --read-file FILE    read args as words from FILE.\n"
+" -h, --help               show a short help screen\n"
+" -q, --quiet (toggle)     do not output matching arguments, but exit with\n"
+"                          success only if at least one argument matches.\n"
+" -Q, --nowarn (toggle)    suppress some warnings for bad syntax.\n"
+" -m, --mask MASK          add MASK to the list of masks\n"
+" -f, --file FILENAME      add masks from file FILENAME.\n"
+" -F, --read-file FILENAME read args as words from file FILENAME.\n"
 "Directories are read recursively.\n"
 "An empty/omitted filename means standard input.\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n")) % program_name;
+"further information.")) % program_name;
 }
 
 /**
@@ -201,7 +196,8 @@ int run_masked_packages(int argc, char *argv[]) {
 		Mask m(Mask::maskPseudomask);
 		string errtext;
 		if(unlikely(m.parseMask(it->c_str(), &errtext) == BasicVersion::parsedError)) {
-			cerr << eix::format(_("warning: ignoring \"%s\": %s")) % *it % errtext << endl;
+			eix::say_error(_("warning: ignoring \"%s\": %s"))
+				% (*it) % errtext;
 			continue;
 		}
 		Package p;
@@ -214,7 +210,7 @@ int run_masked_packages(int argc, char *argv[]) {
 				if(rc_options.be_quiet) {
 					return EXIT_SUCCESS;
 				}
-				cout << *it << "\n";
+				eix::say() % (*it);
 				break;
 			}
 		}

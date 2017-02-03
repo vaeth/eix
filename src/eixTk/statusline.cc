@@ -8,21 +8,18 @@
 #include "eixTk/statusline.h"
 #include <config.h>
 
-#include <iostream>
 #include <string>
 
+#include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 
 using std::string;
 
-using std::cout;
-
 void Statusline::print_force(const string& str) {
 	if(soft) {
-		cout << "\033k" << header << str << "\033\\";
+		eix::print("\033k%s%s\033\\") % header % str;
 	}
-	cout << "\033]0;" << header << str << '\007';
-	flush(cout);
+	eix::print("\033]0;%s%s\007", true) % header % str;
 }
 
 void Statusline::print(const string& str) {

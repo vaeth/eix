@@ -15,7 +15,6 @@
 #include <sys/types.h>
 
 #include <cerrno>
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
@@ -263,6 +262,6 @@ void join_map(WordMap *append_to, WordMap::const_iterator it, WordMap::const_ite
 }
 
 void dump_version() {
-	fputs(PACKAGE_VERSION "\n", stdout);
+	eix::say() % PACKAGE_VERSION;
 	exit(EXIT_SUCCESS);
 }
