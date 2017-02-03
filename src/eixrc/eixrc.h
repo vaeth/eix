@@ -77,9 +77,9 @@ class EixRc {
 
 		LocalMode getLocalMode(const std::string& key);
 
-		void getRedundantFlags(const std::string& key,
+		ATTRIBUTE_NONNULL_ void getRedundantFlags(const std::string& key,
 			Keywords::Redundant type,
-			ATTRIBUTE_NONNULL_ RedPair *p);
+			RedPair *p);
 
 		unsigned int getInteger(const std::string& key);
 
