@@ -44,7 +44,7 @@ bool AssignReader::get_map(const string &file) {
 		cf->clear();
 	}
 
-	ifstream is(file);
+	ifstream is(file.c_str());
 	if(unlikely(!is.is_open())) {
 		return (currstate = false);
 	}

@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.32.6
+	Martin Väth <martin at mvath.de>:
+	- Fix compilation with C++98 (regression from eix-0.32.5), see
+	  https://github.com/vaeth/eix/issues/35
+
 *eix-0.32.5
 	Martin Väth <martin at mvath.de>:
 	- Fix completion with >=zsh-5.3

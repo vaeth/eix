@@ -41,7 +41,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.32.5], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
+AC_INIT([eix], [0.32.6], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
 AC_PREREQ([2.64])
 
 m4_ifdef([AC_CONFIG_MACRO_DIR],
@@ -1142,10 +1142,6 @@ AS_IF([$attr_nonnull],
 		[1],
 		[Define if __attribute__ ((nonnull (list))) can be used])])
 
-# reset the CXXFLAGS, LDFLAGS for the normal tests
-AS_VAR_COPY([CXXFLAGS], [my_cxxflags])
-AS_VAR_COPY([LDFLAGS], [my_ldflags])
-
 # Check if nullptr works
 AC_MSG_CHECKING([whether nullptr can be used])
 MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
@@ -1306,6 +1302,10 @@ return (*(a.begin()) == 5) ? 0 : 1;
 		AC_DEFINE([HAVE_FORWARD_LIST], [1],
 			[Define if STL has forward_list])],
 		[MV_MSG_RESULT([no])])
+
+# reset the CXXFLAGS, LDFLAGS for the normal tests
+AS_VAR_COPY([CXXFLAGS], [my_cxxflags])
+AS_VAR_COPY([LDFLAGS], [my_ldflags])
 
 # What about sqlite?
 AC_MSG_CHECKING([whether sqlite should be used])
