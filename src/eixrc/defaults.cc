@@ -855,9 +855,11 @@ AddOption(STRING, "MATCH_FIELD_CATEGORY_NAME",
 	"It is a regular expression used in DEFAULT_MATCH_FIELD for category/name."));
 
 AddOption(STRING, "MATCH_FIELD_LICENSE",
-	"GPL|BSD|Art", P_("MATCH_FIELD_LICENSE",
+	"%{MATCH_FIELD_CATEGORY_NAME}", P_("MATCH_FIELD_LICENSE",
 	"This variable is only used for delayed substitution.\n"
-	"It is a regular expression used in DEFAULT_MATCH_FIELD for license."));
+	"It is a regular expression used in DEFAULT_MATCH_FIELD for license.\n"
+	"If it is identical to MATCH_FIELD_CATEGORY_NAME, it is de facto disabled,\n"
+	"because the latter takes precedence."));
 
 AddOption(STRING, "MATCH_FIELD_DEPS",
 	"[<>=!]", P_("MATCH_FIELD_DEPS",
@@ -865,9 +867,11 @@ AddOption(STRING, "MATCH_FIELD_DEPS",
 	"It is a regular expression used in DEFAULT_MATCH_FIELD for deps."));
 
 AddOption(STRING, "MATCH_FIELD_EAPI",
-	"^[0-9]+$", P_("MATCH_FIELD_EAPI",
+	"%{MATCH_FIELD_CATEGORY_NAME}", P_("MATCH_FIELD_EAPI",
 	"This variable is only used for delayed substitution.\n"
-	"It is a regular expression used in DEFAULT_MATCH_FIELD for eapi."));
+	"It is a regular expression used in DEFAULT_MATCH_FIELD for eapi.\n"
+	"If it is identical to MATCH_FIELD_CATEGORY_NAME, it is de facto disabled,\n"
+	"because the latter takes precedence."));
 
 AddOption(STRING, "DEFAULT_MATCH_FIELD",
 	"%{\\MATCH_FIELD_DESCRIPTION} description "
