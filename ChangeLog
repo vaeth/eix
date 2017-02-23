@@ -8,6 +8,7 @@
 	  identical to MATCH_FIELD_CATEGORY_NAME so that they never match and
 	  are de facto disabled. This hopefully avoids user confusion without
 	  breaking user configs. https://bugs.gentoo.org/show_bug.cgi?id=610424
+	- Let default value of MATCH_ALGORITH_EXACT be less aggressive
 
 *eix-0.32.5
 	Martin Väth <martin at mvath.de>:
