@@ -818,17 +818,17 @@ void EixRc::dumpDefaults(FILE *s, bool use_defaults) {
 		eix::format(s,
 			"# %s\n"
 			"# %s\n"
-			"%s=\"%s\"", 1)
+			"%s=\"%s\"", true)
 			% as_comment(typestring)
 			% as_comment(defaults[i].description.c_str())
 			% key
 			% output;
 		if(deflt == value) {
-			eix::format(s, "", 1);
+			eix::format(true, s);
 		} else {
 			eix::format(s,
 				"# %s\n"
-				"# %s=\"%s\"\n", 1)
+				"# %s=\"%s\"\n", true)
 				% message
 				% key
 				% as_comment(comment);
