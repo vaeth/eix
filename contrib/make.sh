@@ -94,6 +94,9 @@ SetCcache() {
 	ccache -C
 }
 
+clang_cxx=`PATH=${PATH-}${PATH:+:}/usr/lib/llvm/*/bin command -v clang++ 2>/dev/null` \
+  && [ -n "${clang_cxx:++}" ] && clang=: || clang=false
+
 quiet=false
 dep_default=:
 earlystop=false
@@ -110,7 +113,6 @@ optimization=false
 recache=false
 clear_ccache=false
 debugging=false
-command -v clang++ >/dev/null 2>&1 && clang=: || clang=false
 dialect='enable'
 nopie_security=:
 OPTIND=1
@@ -220,7 +222,7 @@ then	unset CFLAGS CXXFLAGS LDFLAGS CPPFLAGS CXX
 	CXX=`portageq envvar CXX`
 	export CFLAGS CXXFLAGS LDFLAGS CPPFLAGS
 	if $clang
-	then	CXX='clang++'
+	then	CXX=$clang_cxx
 		FilterClang
 	fi
 	[ -z "$CXX" ] || export CXX
