@@ -171,6 +171,18 @@ then	ls /root >/dev/null 2>&1 && \
 	chown -R root:root .
 fi
 
+FirstMatchesFilter() {
+	firstmatches=$1
+	shift
+	for filterpattern
+	do	case $firstmatches in
+		$filterpattern)
+			return 0;;
+		esac
+	done
+	return 1
+}
+
 Filter() {
 	for currvar in \
 		CFLAGS \
@@ -180,10 +192,8 @@ Filter() {
 	do	eval oldflags=\$$currvar
 		newflags=
 		for currflag in $oldflags
-		do	case " $* " in
-			*" $currflag "*)	continue;;
-			esac
-			newflags=$newflags${newflags:+ }$currflag
+		do	FirstMatchesFilter "$currflag" "$@" || \
+				newflags=$newflags${newflags:+ }$currflag
 		done
 		eval $currvar=\$newflags
 	done
@@ -191,26 +201,35 @@ Filter() {
 
 FilterClang() {
 	Filter \
-		-fnothrow-opt \
-		-frename-registers \
-		-funsafe-loop-optimizations \
-		-fgcse-sm \
-		-fgcse-las \
-		-fgcse-after-reload \
-		-fpredictive-commoning \
-		-ftree-switch-conversion \
-		-fno-ident \
-		-flto-partition=none \
-		-ftree-vectorize \
-		-fweb \
-		-fgraphite \
-		-fgraphite-identity \
-		-floop-interchange \
-		-floop-strip-mine \
-		-floop-block \
-		-fno-enforce-eh-specs \
-		-fdirectives-only \
-		-ftracer
+		'-f*enforce-eh-specs' \
+		'-f*ident' \
+		'-f*semantic-interposition' \
+		'-fdevirtualize-speculatively' \
+		'-fdirectives*' \
+		'-fgcse*' \
+		'-fgraphite*' \
+		'-finline-functions' \
+		'-fipa-pta' \
+		'-fira-loop-pressure' \
+		'-fisolate-erroneous-paths-attribute' \
+		'-fivopts' \
+		'-floop*' \
+		'-flto-*' \
+		'-fmodulo*' \
+		'-fnothrow-opt' \
+		'-fpredictive-commoning' \
+		'-frename-registers' \
+		'-freorder-functions' \
+		'-frerun-cse-after-loop' \
+		'-fsched*' \
+		'-fsection-anchors' \
+		'-ftree*' \
+		'-funsafe-loop*' \
+		'-fuse-linker-plugin' \
+		'-fvect-cost-model' \
+		'-fweb' \
+		'-fwhole-program' \
+		'-mvectorize*'
 }
 
 if ! $keepenv

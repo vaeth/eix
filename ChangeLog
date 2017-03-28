@@ -3,6 +3,7 @@
 *eix-0.32.7
 	Martin Väth <martin at mvath.de>:
 	- internal: provide and use eix::array instead of hacks
+	- contrib/make.sh: Improve clang filtering
 
 *eix-0.32.6
 	Martin Väth <martin at mvath.de>:
