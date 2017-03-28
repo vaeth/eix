@@ -39,6 +39,7 @@ eixTk/compare.cc \
 eixTk/compare.h \
 eixTk/diagnostics.h \
 eixTk/dialect.h \
+eixTk/eixarray.h \
 eixTk/eixint.h \
 eixTk/formated.cc \
 eixTk/formated.h \

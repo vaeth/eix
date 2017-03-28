@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.32.7
+	Martin Väth <martin at mvath.de>:
+	- internal: provide and use eix::array instead of hacks
+
 *eix-0.32.6
 	Martin Väth <martin at mvath.de>:
 	- Fix compilation with C++98 (regression from eix-0.32.5), see

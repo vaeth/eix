@@ -13,15 +13,13 @@
 #include <config.h>
 
 #include <algorithm>
-#ifdef HAVE_ARRAY_CLASS
-#include <array>
-#endif
 #include <set>
 #include <string>
 #include <vector>
 
 #include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
+#include "eixTk/eixarray.h"
 #include "eixTk/eixint.h"
 #include "eixTk/stringlist.h"
 #include "eixTk/stringtypes.h"
@@ -136,23 +134,13 @@ class Version : public ExtendedVersion, public Keywords {
 			EFFECTIVE_USED    = 1,
 			EFFECTIVE_UNUSED  = 2;
 
-#ifdef HAVE_ARRAY_CLASS
-		std::array<KeywordsFlags, SAVEKEY_SIZE>      saved_keywords;
-		std::array<bool, SAVEKEY_SIZE>               have_saved_keywords;
-		std::array<MaskFlags, SAVEMASK_SIZE>         saved_masks;
-		std::array<bool, SAVEMASK_SIZE>              have_saved_masks;
-		std::array<std::string, SAVEEFFECTIVE_SIZE>  saved_effective;
-		std::array<std::string, SAVEEFFECTIVE_SIZE>  saved_accepted;
-		std::array<EffectiveState, EFFECTIVE_UNUSED> states_effective;
-#else
-		std::vector<KeywordsFlags>  saved_keywords;
-		std::vector<bool>           have_saved_keywords;
-		std::vector<MaskFlags>      saved_masks;
-		std::vector<bool>           have_saved_masks;
-		std::vector<std::string>    saved_effective;
-		std::vector<std::string>    saved_accepted;
-		std::vector<EffectiveState> states_effective;
-#endif
+		eix::array<KeywordsFlags, SAVEKEY_SIZE>      saved_keywords;
+		eix::array<bool, SAVEKEY_SIZE>               have_saved_keywords;
+		eix::array<MaskFlags, SAVEMASK_SIZE>         saved_masks;
+		eix::array<bool, SAVEMASK_SIZE>              have_saved_masks;
+		eix::array<std::string, SAVEEFFECTIVE_SIZE>  saved_effective;
+		eix::array<std::string, SAVEEFFECTIVE_SIZE>  saved_accepted;
+		eix::array<EffectiveState, EFFECTIVE_UNUSED> states_effective;
 
 		typedef std::vector<SetsIndex> SetsIndizes;
 		SetsIndizes sets_indizes;

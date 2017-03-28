@@ -23,8 +23,9 @@
 #include <string>
 
 #include "cache/base.h"
-#include "eixTk/dialect.h"
 #include "eixTk/diagnostics.h"
+#include "eixTk/dialect.h"
+#include "eixTk/eixarray.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -366,14 +367,13 @@ bool EbuildExec::portageq(std::string *result, const char *var) const {
 		_exit(EXECLE_FAILED);
 	}
 	close(fds[1]);
-	static CONSTEXPR const unsigned int kSize = 8000;
-	char buf[kSize];
+	eix::array<char, 8192> buffer;
 	size_t curr;
 	string res;
 GCC_DIAG_OFF(sign-conversion)
-	while((curr = read(fds[0], buf, kSize)),
-		((curr > 0) && (curr <= kSize))) {
-		res.append(buf, curr);
+	while((curr = read(fds[0], buffer.data(), buffer.size())),
+		((curr > 0) && (curr <= buffer.size()))) {
+		res.append(buffer.data(), curr);
 	}
 GCC_DIAG_ON(sign-conversion)
 	close(fds[0]);

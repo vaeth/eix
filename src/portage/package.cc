@@ -39,9 +39,7 @@ void Package::defaults() {
 	have_duplicate_versions = DUP_NONE;
 	version_collects = COLLECT_DEFAULT;
 	local_collects.set(MaskFlags::MASK_NONE);
-#ifdef HAVE_ARRAY_CLASS
 	saved_collects.fill(MaskFlags(MaskFlags::MASK_NONE));
-#endif
 }
 
 void Package::addVersionStart(Version *version) {

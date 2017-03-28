@@ -159,25 +159,12 @@ const Version::EffectiveState
 
 bool Version::use_required_use;
 
-#ifdef HAVE_ARRAY_CLASS
 Version::Version() :
 	effective_state(EFFECTIVE_UNUSED) {
 	have_saved_keywords.fill(false);
 	have_saved_masks.fill(false);
 	states_effective.fill(EFFECTIVE_UNSAVED);
 }
-#else
-Version::Version() :
-	saved_keywords(SAVEKEY_SIZE),
-	have_saved_keywords(SAVEKEY_SIZE, false),
-	saved_masks(SAVEMASK_SIZE),
-	have_saved_masks(SAVEMASK_SIZE, false),
-	saved_effective(SAVEEFFECTIVE_SIZE),
-	saved_accepted(SAVEEFFECTIVE_SIZE),
-	states_effective(SAVEEFFECTIVE_SIZE, EFFECTIVE_UNSAVED),
-	effective_state(EFFECTIVE_UNUSED) {
-}
-#endif
 
 void Version::modify_effective_keywords(const string& modify_keys) {
 	if(effective_state == EFFECTIVE_UNUSED) {

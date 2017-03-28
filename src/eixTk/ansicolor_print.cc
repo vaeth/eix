@@ -11,6 +11,7 @@
 #include <cstdio>
 
 #include "eixTk/dialect.h"
+#include "eixTk/eixarray.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -64,14 +65,13 @@ void Display::nl() {
 }
 
 void Display::output(CalcType color, CalcType fg, CalcType dark, CalcType light) {
-	static CONSTEXPR const unsigned int kLen = 30;
-	char buf[kLen];
-	snprintf(buf, kLen, "\x1B[%s38;5;%d;48;5;%dm%3d ",
+	eix::array<char, 30> buffer;
+	snprintf(buffer.data(), buffer.size(), "\x1B[%s38;5;%d;48;5;%dm%3d ",
 		(bold ? "1;" : ""),
 		static_cast<int>(foreground ? color : fg),
 		static_cast<int>(foreground ? ((foreground > 0) ? dark : light) : color),
 		static_cast<int>(color));
-	eix::print() % buf;
+	eix::print() % buffer.data();
 }
 
 void Display::syscol() {

@@ -12,9 +12,6 @@
 
 #include <config.h>
 
-#ifdef HAVE_ARRAY_CLASS
-#include <array>
-#endif
 #include <list>
 #include <map>
 #include <string>
@@ -22,6 +19,7 @@
 
 #include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
+#include "eixTk/eixarray.h"
 #include "eixTk/eixint.h"
 #include "eixTk/forward_list.h"
 #include "eixTk/inttypes.h"
@@ -121,11 +119,8 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 
 		MaskFlags local_collects;
 
-#ifdef HAVE_ARRAY_CLASS
-		std::array<MaskFlags, Version::SAVEMASK_SIZE> saved_collects;
-#else
-		std::vector<MaskFlags> saved_collects;
-#endif
+		eix::array<MaskFlags, Version::SAVEMASK_SIZE> saved_collects;
+
 		/**
 		Package properties (stored in db)
 		**/
@@ -208,9 +203,6 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 		Preset with defaults
 		**/
 		Package()
-#ifndef HAVE_ARRAY_CLASS
-			: saved_collects(Version::SAVEMASK_SIZE, MaskFlags(MaskFlags::MASK_NONE))
-#endif
 		{  // NOLINT(whitespace/braces)
 			defaults();
 		}
@@ -219,9 +211,6 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 		Fill in name and category and preset with defaults
 		**/
 		Package(const std::string& c, const std::string& n) :
-#ifndef HAVE_ARRAY_CLASS
-			saved_collects(Version::SAVEMASK_SIZE, MaskFlags(MaskFlags::MASK_NONE)),
-#endif
 			category(c), name(n) {
 			defaults();
 		}
