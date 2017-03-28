@@ -106,16 +106,19 @@ GCC_DIAG_OFF(old-style-cast)
 		sigaction(SIGTERM, &m_handler, NULLPTR);
 #else
 	// ifndef HAVE_SIGACTION
-	handleHUP  = signal(SIGHUP, SIG_IGN);
-	handleINT  = signal(SIGINT, SIG_IGN);
-	handleTERM = signal(SIGTERM, SIG_IGN);
+	handleHUP  = std::signal(SIGHUP, SIG_IGN);
+	handleINT  = std::signal(SIGINT, SIG_IGN);
+	handleTERM = std::signal(SIGTERM, SIG_IGN);
 	have_set_signals = true;
-	if(handleHUP != SIG_IGN)
-		signal(SIGHUP, ebuild_sig_handler);
-	if(handleINT != SIG_IGN)
-		signal(SIGINT, ebuild_sig_handler);
-	if(handleTERM != SIG_IGN)
-		signal(SIGTERM, ebuild_sig_handler);
+	if(handleHUP != SIG_IGN) {
+		std::signal(SIGHUP, ebuild_sig_handler);
+	}
+	if(handleINT != SIG_IGN) {
+		std::signal(SIGINT, ebuild_sig_handler);
+	}
+	if(handleTERM != SIG_IGN) {
+		std::signal(SIGTERM, ebuild_sig_handler);
+	}
 #endif
 GCC_DIAG_ON(old-style-cast)
 }
@@ -128,9 +131,9 @@ void EbuildExec::remove_handler() {
 	sigaction(SIGINT,  &handleHUP,  NULLPTR);
 	sigaction(SIGTERM, &handleTERM, NULLPTR);
 #else
-	signal(SIGHUP,  handleHUP);
-	signal(SIGINT,  handleINT);
-	signal(SIGTERM, handleTERM);
+	std::signal(SIGHUP,  handleHUP);
+	std::signal(SIGINT,  handleINT);
+	std::signal(SIGTERM, handleTERM);
 #endif
 	have_set_signals = false;
 }
@@ -141,10 +144,10 @@ bool EbuildExec::make_tempfile() {
 	string::size_type l(tmpdir.size());
 	char *temp = new char[256 + l];
 	if(l == 0) {
-		strcpy(temp, "/tmp/ebuild-cache.XXXXXXXX");  // NOLINT(runtime/printf)
+		std::strcpy(temp, "/tmp/ebuild-cache.XXXXXXXX");  // NOLINT(runtime/printf)
 	} else {
-		strcpy(temp, tmpdir.c_str());  // NOLINT(runtime/printf)
-		strcpy(temp + l, "/ebuild-cache.XXXXXXXX");  // NOLINT(runtime/printf)
+		std::strcpy(temp, tmpdir.c_str());  // NOLINT(runtime/printf)
+		std::strcpy(temp + l, "/ebuild-cache.XXXXXXXX");  // NOLINT(runtime/printf)
 	}
 	int fd(mkstemp(temp));
 	if(fd == -1) {
@@ -195,7 +198,7 @@ void EbuildExec::calc_environment(const char *name, const string& dir, const Pac
 #ifndef HAVE_SETENV
 	if(!use_ebuild_sh) {
 		for(char **e(environ); likely(*e != NULLPTR); ++e) {
-			const char *s(strchr(*e, '='));
+			const char *s(std::strchr(*e, '='));
 			if(likely(s != NULLPTR)) {
 				env[string(*e, s - (*e))] = s + 1;
 			}

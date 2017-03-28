@@ -71,11 +71,11 @@ void BasicCache::env_add_package(WordMap *env, const Package& package, const Ver
 
 	// Set default variables
 
-	const char *envptr(getenv("PATH"));
+	const char *envptr(std::getenv("PATH"));
 	if(likely(envptr != NULLPTR)) {
 		(*env)["PATH"] = envptr;
 	}
-	envptr = getenv("ROOT");
+	envptr = std::getenv("ROOT");
 	if(unlikely(envptr != NULLPTR)) {
 		(*env)["ROOT"] = envptr;
 		eroot = envptr + m_prefix;

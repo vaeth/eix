@@ -70,19 +70,19 @@ class File {
 		ATTRIBUTE_NONNULL_ bool openwrite(const char *name);
 
 		int getch() {
-			return fgetc(fp);
+			return std::fgetc(fp);
 		}
 
 		bool putch(eix::UChar c) {
-			return (fputc(c, fp) != EOF);
+			return (std::fputc(c, fp) != EOF);
 		}
 
 		bool read(char *s, std::string::size_type len) {
-			return (fread(s, sizeof(*s), len, fp) == len);
+			return (std::fread(s, sizeof(*s), len, fp) == len);
 		}
 
 		bool write(const std::string str) {
-			return (fwrite(static_cast<const void *>(str.c_str()), sizeof(*(str.c_str())), str.size(), fp) == str.size());
+			return (std::fwrite(static_cast<const void *>(str.c_str()), sizeof(*(str.c_str())), str.size(), fp) == str.size());
 		}
 
 		ATTRIBUTE_NONNULL((2)) bool read_string_plain(char *s, std::string::size_type len, std::string *errtext);

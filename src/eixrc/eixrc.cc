@@ -165,12 +165,12 @@ const char *EixRc::prefix_cstr(const string& key) const {
 
 void EixRc::read() {
 	const char *name("EIX_PREFIX");
-	const char *eixrc_prefix(getenv(name));
+	const char *eixrc_prefix(std::getenv(name));
 	if(eixrc_prefix) {
 		m_eprefixconf = eixrc_prefix;
 	} else {
 		name = "PORTAGE_CONFIGROOT";
-		eixrc_prefix = getenv(name);
+		eixrc_prefix = std::getenv(name);
 		if(eixrc_prefix) {
 			m_eprefixconf = eixrc_prefix;
 		} else {
@@ -224,7 +224,7 @@ void EixRc::resolve_delayed(const string& key, set<string> *has_delayed) {
 		eix::say_error(_(
 			"fatal config error: %s in delayed substitution of %s"))
 			% errtext % errvar;
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 }
 
@@ -380,7 +380,7 @@ string *EixRc::resolve_delayed_recurse(const string& key, set<string> *visited, 
 
 static void override_by_env(map<string, string> *m) {
 	for(map<string, string>::iterator it(m->begin()); likely(it != m->end()); ++it) {
-		char *val(getenv((it->first).c_str()));
+		char *val(std::getenv((it->first).c_str()));
 		if(unlikely(val != NULLPTR))
 			it->second = string(val);
 	}
@@ -407,22 +407,22 @@ void EixRc::read_undelayed(set<string> *has_delayed) {
 	rc.useMap(&filevarmap);
 	rc.setPrefix("EIXRC_SOURCE");
 
-	const char *rc_file(getenv("EIXRC"));
+	const char *rc_file(std::getenv("EIXRC"));
 	string errtext;
 	if(unlikely(rc_file != NULLPTR)) {
 		if(unlikely(!rc.read(rc_file, &errtext, true))) {
 			eix::say_error() % errtext;
-			exit(EXIT_FAILURE);
+			std::exit(EXIT_FAILURE);
 		}
 	} else {
 		// override with EIX_SYSTEMRC
 		if(unlikely(!rc.read((m_eprefixconf + EIX_SYSTEMRC).c_str(), &errtext, true))) {
 			eix::say_error() % errtext;
-			exit(EXIT_FAILURE);
+			std::exit(EXIT_FAILURE);
 		}
 
 		// override with EIX_USERRC
-		char *home(getenv("HOME"));
+		char *home(std::getenv("HOME"));
 		if(unlikely(home == NULLPTR)) {
 			eix::say_error(_("no $HOME found in environment."));
 		} else {
@@ -430,7 +430,7 @@ void EixRc::read_undelayed(set<string> *has_delayed) {
 			eixrc.append(EIX_USERRC);
 			if(unlikely(!rc.read(eixrc.c_str(), &errtext, true))) {
 				eix::say_error() % errtext;
-				exit(EXIT_FAILURE);
+				std::exit(EXIT_FAILURE);
 			}
 		}
 	}
@@ -450,7 +450,7 @@ void EixRc::read_undelayed(set<string> *has_delayed) {
 				wide.clear();
 			}
 		} else {
-			wide = ((my_atoi(c.c_str()) > 80) ? "true" : "false");
+			wide = ((my_atou(c.c_str()) > 80) ? "true" : "false");
 		}
 	}
 
@@ -486,7 +486,7 @@ void EixRc::join_key(const string& key, set<string> *has_delayed, bool add_top_t
 		*val = f->second;
 	} else {
 	// If it was not defined in a file, it might be in ENV anyway:
-		char *envval(getenv(key.c_str()));
+		char *envval(std::getenv(key.c_str()));
 		if(unlikely(envval != NULLPTR))
 			*val = string(envval);
 	}
@@ -734,8 +734,8 @@ void EixRc::getRedundantFlags(const string& key, Keywords::Redundant type, RedPa
 		}
 		const char *s(it->c_str());
 		if(caseequal(*it, "or") ||
-			(strcmp(s, "||") == 0) ||
-			(strcmp(s, "|") == 0)) {
+			(std::strcmp(s, "||") == 0) ||
+			(std::strcmp(s, "|") == 0)) {
 			++it;
 			if(unlikely(it == a.end())) {
 				break;
@@ -761,7 +761,7 @@ void EixRc::getRedundantFlags(const string& key, Keywords::Redundant type, RedPa
 }
 
 unsigned int EixRc::getInteger(const string& key) {
-	return my_atoi((*this)[key].c_str());
+	return my_atou((*this)[key].c_str());
 }
 
 string EixRc::as_comment(const string& s) {

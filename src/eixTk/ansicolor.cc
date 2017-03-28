@@ -158,11 +158,11 @@ bool AnsiColor::initcolor(const string& str, string *errtext) {
 			}
 			eix::array<char, 10> buffer;
 			if(iscol < 0) {
-				snprintf(buffer.data(), buffer.size(),
+				std::snprintf(buffer.data(), buffer.size(),
 					";%d;5;%s",
 					static_cast<int>(col), curr.c_str());
 			} else {
-				snprintf(buffer.data(), buffer.size(),
+				std::snprintf(buffer.data(), buffer.size(),
 					";%d", static_cast<int>(col));
 			}
 			if(iscol == 0) {
@@ -246,7 +246,7 @@ void AnsiColor::AnsiPalette() {
 	for(CalcType red(0); red < 6; ++red) {
 		for(CalcType green(0); green < 6; ++green) {
 			for(CalcType blue(0); blue < 6; ++blue) {
-				snprintf(buffer.data(), buffer.size(),
+				std::snprintf(buffer.data(), buffer.size(),
 					"\x1B]4;%d;rgb:%2.2x/%2.2x/%2.2x\x1B\\",
 					static_cast<int>(16 + (red * 36) + (green * 6) + blue),
 					static_cast<int>(transcalc(red)),
@@ -258,7 +258,7 @@ void AnsiColor::AnsiPalette() {
 	}
 	for(CalcType gray(0); gray < 24; ++gray) {
 		int trans(static_cast<int>((gray * 10) + 8));
-		snprintf(buffer.data(), buffer.size(),
+		std::snprintf(buffer.data(), buffer.size(),
 			"\x1B]4;%d;rgb:%2.2x/%2.2x/%2.2x\x1B\\",
 			static_cast<int>(232 + gray), trans, trans, trans);
 		eix::print() % buffer.data();

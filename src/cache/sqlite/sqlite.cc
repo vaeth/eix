@@ -20,11 +20,14 @@
 
 #include "eixTk/attribute.h"
 #include "eixTk/formated.h"
+#endif
+
 #include "eixTk/i18n.h"
+
+#ifdef WITH_SQLITE
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringutils.h"
-#include "eixTk/unused.h"
 #include "portage/basicversion.h"
 #include "portage/depend.h"
 #include "portage/package.h"
@@ -51,8 +54,7 @@ inline static const char *welldefine(const char *s) {
 	return ((s != NULLPTR) ? s : "");
 }
 
-int sqlite_callback(ATTRIBUTE_UNUSED void *NotUsed, int argc, char **argv, char **azColName) {
-	UNUSED(NotUsed);
+int sqlite_callback(void * /* NotUsed */, int argc, char **argv, char **azColName) {
 #ifdef SQLITE_ONLY_DEBUG
 	for(int i(0); likely(i < argc); ++i) {
 		eix::say("%s: %s = %s")
@@ -312,15 +314,9 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Cate
 	return !sqlite_callback_error;
 }
 
-#else /* Not WITH_SQLITE */
+#else  // Not WITH_SQLITE
 
-#include "eixTk/i18n.h"  // NOLINT(build/include)
-#include "eixTk/unused.h"  // NOLINT(build/include)
-
-bool SqliteCache::readCategories(ATTRIBUTE_UNUSED PackageTree *pkgtree, ATTRIBUTE_UNUSED const char *catname, ATTRIBUTE_UNUSED Category *cat) {
-	UNUSED(pkgtree);
-	UNUSED(catname);
-	UNUSED(cat);
+bool SqliteCache::readCategories(PackageTree * /* pkgtree */, const char * /* catname */, Category * /* cat */) {
 	m_error_callback(_("cache method sqlite is not compiled in.\n"
 		"Recompile eix, using configure option --with-sqlite to add sqlite support"));
 	return false;

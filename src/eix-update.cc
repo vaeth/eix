@@ -215,7 +215,7 @@ static void add_override(Overrides *override_list, EixRc *eixrc, const char *s) 
 	split_string(&v, (*eixrc)[s], true);
 	if(unlikely(v.size() & 1)) {
 		eix::say_error(_("%s must be a list of the form DIRECTORY METHOD")) % s;
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 	for(WordVec::iterator it(v.begin()); unlikely(it != v.end()); ++it) {
 		Override o(Pathname(*it, true));
@@ -229,7 +229,7 @@ static void add_reponames(RepoNames *repo_names, EixRc *eixrc, const char *s) {
 	split_string(&v, (*eixrc)[s], true);
 	if(unlikely(v.size() & 1)) {
 		eix::say_error(_("%s must be a list of the form DIR-PATTERN OVERLAY-LABEL")) % s;
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 	for(WordVec::const_iterator it(v.begin()); unlikely(it != v.end()); ++it) {
 		RepoName r(Pathname(*it, true));

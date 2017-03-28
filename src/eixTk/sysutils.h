@@ -52,12 +52,12 @@ ATTRIBUTE_NONNULL_ bool is_pure_file(const char *file);
 /**
 @return true if mtime of file can be read
 **/
-ATTRIBUTE_NONNULL_ bool get_mtime(time_t *t, const char *file);
+ATTRIBUTE_NONNULL_ bool get_mtime(std::time_t *t, const char *file);
 
 /**
 @return mydate formatted according to locales and dateFormat
 **/
-ATTRIBUTE_NONNULL_ const char *date_conv(const char *dateFormat, time_t mydate);
+ATTRIBUTE_NONNULL_ const char *date_conv(const char *dateFormat, std::time_t mydate);
 
 /**
 @return true in case of success

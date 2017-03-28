@@ -20,7 +20,6 @@
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/sysutils.h"
-#include "eixTk/unused.h"
 #include "portage/extendedversion.h"
 
 class Category;
@@ -136,13 +135,10 @@ class BasicCache {
 		@param category If packagetree is NULLPTR, the packages matching cat_name are added to this category.
 		@return false if some error caused incomplete read
 		**/
-		virtual bool readCategories(ATTRIBUTE_UNUSED PackageTree *packagetree, ATTRIBUTE_UNUSED const char *cat_name, ATTRIBUTE_UNUSED Category *category) {
-			UNUSED(packagetree);
-			UNUSED(cat_name);
-			UNUSED(category);
-			return 1;
+		virtual bool readCategories(PackageTree * /* packagetree */, const char * /* cat_name */, Category * /* category */) {
+			return true;
 		}
-		bool readCategories(ATTRIBUTE_UNUSED PackageTree *packagetree) {
+		bool readCategories(PackageTree *packagetree) {
 			return readCategories(packagetree, NULLPTR, NULLPTR);
 		}
 
@@ -177,29 +173,18 @@ class BasicCache {
 			m_catname.clear();
 		}
 
-		ATTRIBUTE_NONNULL_ virtual bool get_time(ATTRIBUTE_UNUSED time_t *t, ATTRIBUTE_UNUSED const std::string &pkg_name, ATTRIBUTE_UNUSED const std::string &ver_name) const {
-			UNUSED(t);
-			UNUSED(pkg_name);
-			UNUSED(ver_name);
+		ATTRIBUTE_NONNULL_ virtual bool get_time(std::time_t * /* time */, const std::string & /* pkg_name */, const std::string & /* ver_name */) const {
 			return 0;
 		}
 
-		ATTRIBUTE_NONNULL_ virtual const char *get_md5sum(ATTRIBUTE_UNUSED const std::string &pkg_name, ATTRIBUTE_UNUSED const std::string &ver_name) const {
-			UNUSED(pkg_name);
-			UNUSED(ver_name);
+		ATTRIBUTE_NONNULL_ virtual const char *get_md5sum(const std::string & /* pkg_name */, const std::string & /* ver_name */) const {
 			return NULLPTR;
 		}
 
-		ATTRIBUTE_NONNULL_ virtual void get_version_info(ATTRIBUTE_UNUSED const std::string &pkg_name, ATTRIBUTE_UNUSED const std::string &ver_name, ATTRIBUTE_UNUSED Version *version) const {
-			UNUSED(pkg_name);
-			UNUSED(ver_name);
-			UNUSED(version);
+		ATTRIBUTE_NONNULL_ virtual void get_version_info(const std::string & /* pkg_name */, const std::string & /* ver_name */, Version * /* version */) const {
 		}
 
-		ATTRIBUTE_NONNULL_ virtual void get_common_info(ATTRIBUTE_UNUSED const std::string &pkg_name, ATTRIBUTE_UNUSED const std::string &ver_name, ATTRIBUTE_UNUSED Package *pkg) const {
-			UNUSED(pkg_name);
-			UNUSED(ver_name);
-			UNUSED(pkg);
+		ATTRIBUTE_NONNULL_ virtual void get_common_info(const std::string & /* pkg_name */, const std::string & /* ver_name */, Package * /* pkg */) const {
 		}
 
 	protected:

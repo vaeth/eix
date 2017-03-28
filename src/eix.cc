@@ -500,7 +500,7 @@ Setup default values for all global variables
 **/
 static void setup_defaults(EixRc *rc, bool is_tty) {
 	// Setup defaults
-	memset(&rc_options, 0, sizeof(rc_options));
+	std::memset(&rc_options, 0, sizeof(rc_options));
 
 	Depend::use_depend         = rc->getBool("DEP");
 	Version::use_required_use  = rc->getBool("REQUIRED_USE");
@@ -574,7 +574,7 @@ static void parseFormat(const char *sourcename, const char *content) {
 	}
 	eix::say_error(_("problems while parsing %s: %s"))
 			% sourcename % error_text;
-	exit(EXIT_FAILURE);
+	std::exit(EXIT_FAILURE);
 }
 
 static void set_format(EixRc *rc) {

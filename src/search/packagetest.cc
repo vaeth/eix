@@ -346,7 +346,6 @@ class N { \
 \
 		~N() { \
 			for(mType::iterator it(m.begin()); likely(it != m.end()); ++it) { \
-				(*it)->free(); \
 				delete *it; \
 			} \
 		} \

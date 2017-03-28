@@ -90,7 +90,6 @@ eixTk/ptr_iterator.h \
 eixTk/regexp.cc \
 eixTk/regexp.h \
 $(sysutils_src) \
-eixTk/unused.h \
 $(varsreader_src)
 
 nodist_eixtk_src =

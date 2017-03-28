@@ -129,6 +129,7 @@ Check '"eixTk/assert\.h"' -e 'eix_assert'
 Check '"eixTk/stringtypes\.h"' -e 'WordVec' -e 'WordSet' -e 'WordMap' -e 'WordList' -e 'LineVec' -e 'WordSize'
 Check '"eixTk/dialect\.h"' -e 'CONSTEXPR' -e 'ASSIGN_DELETE' -e 'OVERRIDE[^_A-Z]' -e 'NOEXCEPT'
 Check '"eixTk/diagnostics\.h"' -e DIAG_OFF -e DIAG_ON
+Check '"eixTk/eixarray\.h"' -e 'eix::array'
 Check '"eixTk/eixint\.h"' -e OffsetType -e UChar -e UNumber -e Treesize -e Catsize -e Versize -e SignedBool -e TinySigned -e TinyUnsigned
 Check '"eixTk/formated\.h"' -e 'eix::format' -e 'eix::print' -e 'eix::say'
 Check '"eixTk/i18n\.h"' -e '_('
@@ -138,13 +139,12 @@ Check '"eixTk/null\.h"' -e 'NULLPTR'
 Check '"eixTk/auto_array\.h"' -e 'auto_array'
 Check '"eixTk/forward_list\.h"' -e 'forward_list'
 Check '"eixTk/ptr_container\.h"' -e 'ptr_container' -e 'ptr_forward_container'
-Check '"eixTk/stringutils\.h"' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e isdigit -e isalpha -e isalnum -e is_numeric -e tolower -e toupper -e to_lower -e trim -e StringHash -e escape_string -e localeC -e match_list -e slot_subslot -e casecontains -e caseequal -e my_atoi
-Check '"eixTk/unused\.h"' -e '[^_]UNUSED' -e '^UNUSED'
+Check '"eixTk/stringutils\.h"' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e isdigit -e isalpha -e isalnum -e is_numeric -e tolower -e toupper -e to_lower -e trim -e StringHash -e escape_string -e localeC -e match_list -e slot_subslot -e casecontains -e caseequal -e my_atou -e my_atos
 Check '"eixTk/attribute\.h"' -e 'ATTRIBUTE_'
 Check '"portage/basicversion\.h"' -e 'BasicVersion' -e 'BasicPart'
 CheckWithout '"search/packagetest\.h"' -e 'PackageTest::'
 
-Check '<iostream>' -e '[^a-z]cout[^a-z]' -e '[^a-z]cerr[^a-z]' -e '[^a-z]cin[^a-z]'
+Check '<iostream>' -e std::cout -e std::cerr -e std::cin
 Check '<list>' -e '[^_]list<' -e '^list<'
 Check '<map>' -e '[^_]map<' -e '^map<'
 Check '<set>' -e '[^_]set<' -e '^set<'
@@ -163,19 +163,23 @@ CheckWith : 'string' -e '[^:_]string[^a-zA-Z_0-9]*'
 #Check : 'cout' -e '[^:_]cout[^a-z]'
 #Check : 'endl' -e '[^:_]endl[^a-z]'
 GrepAllWith -e '[^:_]cerr[^a-z]' -e '[^:_]cout[^a-z]' -e '[^:_]endl[^a-z]'
+GrepAllWith -e '[^:]fopen' -e '[^:]fclose' -e '[^:]fflush' -e '[^:"]fseek[^o]' -e '[^:]ftell[^o]' -e '[^:]fread' -e '[^:]fwrite' -e '[^:fn]printf(' -e '[^:]fprintf(' -e '[^:]snprintf(' -e '[^:f]puts(' -e '[^:]fputs(' -e '[^:f]putc(' -e '[^:]fputc(' -e '[^:f]getc(' -e '[^:]fgetc('
+GrepAllWith -e '[^:_a-z]exit(' -e '[^:.>a-z_]free(' -e '[^:]malloc' -e '[^:]getenv' -e '[^:]strtoull' -e '[^:]strtoul' -e '[^:]strtoll' -e '[^:]strtol' -e '[^:_]atoi'
+GrepAllWith -e '[^:]strlen' -e '[^:]strcmp' -e '[^:]strncmp' -e '[^:]strchr' -e '[^:]strrchr' -e '[^:]strerror' -e '[^:]memset'
+GrepAllWith -e '[^:]time_t'
+GrepAllWith -e '[^:]signal('
+GrepAllWith -e '[^:]strerror'
 
 Check '<cassert>' -e 'assert('
 Check '<cstddef>' -e '[^_N]NULL\([^P]\|$\)'
-Check '<cstdio>' -e fopen -e fclose -e fflush -e '[^A-Z_]FILE[^A-Z_]' -e 'printf(' -e fseek -e 'puts(' -e 'putc('
-Check '<cstdlib>' -e '[^_a-z]exit[^_]' -e '[^.>]free[^a-z]' -e malloc -e getenv -e strtol -e EXIT_SUCCESS -e EXIT_FAILURE
-Check '<cstring>' -e strlen -e strcmp -e strncmp -e strchr -e strrchr -e strerror -e memset
-Check '<csignal>' -e signal -e sigaction
-Check '<cerrno>' -e '[^c]errno'
-Check '<ctime>' -e time_t
+Check '<cstdio>' -e std::fopen -e std::fclose -e std::fflush -e std::fseek -e fseeko -e std::ftell -e ftello -e std::fread -e std::fwrite -e std::printf  -e std::fprintf  -e std::snprintf -e std::puts -e std::fputs -e std::putc -e std::fputc -e std::getc -e std::fgetc -e flock -e fileno -e '[^A-Z_]FILE[^A-Z_]'
+Check '<cstdlib>' -e std::exit -e std::free -e std::malloc -e std::getenv -e std::strtoull -e std::strtoul -e std::strtoll -e std::strtol -e std::atoi -e EXIT_SUCCESS -e EXIT_FAILURE -e mkstemp
+Check '<cstring>' -e std::strlen -e std::strcmp -e std::strncmp -e strcasecmp -e strncasecmp -e std::strchr -e std::strrchr -e std::strerror -e std::memset
+Check '<csignal>' -e std::signal -e sigaction
+Check '<cerrno>' -e '[^c]errno' -e std::strerror
+Check '<ctime>' -e std::time_t
 Check '<fcntl\.h>' -e '[^a-z_.]open(' -e '[^a-z_.]close(' -e '[^a-z_.]open (' -e '[^a-z_.]close ('
 Check '<unistd\.h>' -e '[^a-z]_exit' -e '[^a-z]exec[lv]' -e setuid -e getuid -e chown -e '[^a-z_.]close(' -e isatty
 Check '<sys/types\.h>' -e uid_t -e gid_t -e "size_t[^y]" -e off_t
 Check '<sys/stat\.h>' -e fchown -e fchmod -e 'stat[^a-z]'
 Check '<sys/mman\.h>' -e mmap
-
-

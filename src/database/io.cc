@@ -29,7 +29,7 @@
 using std::string;
 
 bool File::openread(const char *name) {
-	if((fp = fopen(name, "rb")) == NULLPTR) {
+	if((fp = std::fopen(name, "rb")) == NULLPTR) {
 		return false;
 	}
 #ifdef HAVE_FILENO
@@ -41,7 +41,7 @@ bool File::openread(const char *name) {
 }
 
 bool File::openwrite(const char *name) {
-	if((fp = fopen(name, "wb")) == NULLPTR) {
+	if((fp = std::fopen(name, "wb")) == NULLPTR) {
 		return false;
 	}
 #ifdef HAVE_FILENO
@@ -58,19 +58,19 @@ void File::destroy() {
 	}
 #ifdef HAVE_FILENO
 #ifdef HAVE_FLOCK
-	// do not unlock: fclose(fp) will unlock anyway, and maybe some
+	// do not unlock: std::fclose(fp) will unlock anyway, and maybe some
 	// caching of FILE handles might lead to races otherwise...
 	// flock(fileno(fp), LOCK_UN);
 #endif
 #endif
-	fclose(fp);
+	std::fclose(fp);
 }
 
 bool File::seek(eix::OffsetType offset, int whence, string *errtext) {
 #ifdef HAVE_FSEEKO
 	if(likely(fseeko(fp, offset, whence) == 0))
 #else
-	if(likely(fseek(fp, offset, whence) == 0))
+	if(likely(std::fseek(fp, offset, whence) == 0))
 #endif
 		return true;
 	if(errtext != NULLPTR) {
@@ -85,7 +85,7 @@ eix::OffsetType File::tell() {
 	// All systems with fseeko() also supply ftello()
 	return ftello(fp);
 #else
-	return ftell(fp);
+	return std::ftell(fp);
 #endif
 }
 

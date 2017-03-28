@@ -10,7 +10,6 @@
 
 #include <cstdio>
 
-#include "eixTk/dialect.h"
 #include "eixTk/eixarray.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
@@ -66,7 +65,7 @@ void Display::nl() {
 
 void Display::output(CalcType color, CalcType fg, CalcType dark, CalcType light) {
 	eix::array<char, 30> buffer;
-	snprintf(buffer.data(), buffer.size(), "\x1B[%s38;5;%d;48;5;%dm%3d ",
+	std::snprintf(buffer.data(), buffer.size(), "\x1B[%s38;5;%d;48;5;%dm%3d ",
 		(bold ? "1;" : ""),
 		static_cast<int>(foreground ? color : fg),
 		static_cast<int>(foreground ? ((foreground > 0) ? dark : light) : color),

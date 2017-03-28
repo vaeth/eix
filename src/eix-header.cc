@@ -99,14 +99,14 @@ int run_eix_header(int argc, char *argv[]) {
 		return EXIT_FAILURE;
 	}
 	for(; argc > 0; --argc, ++argv) {
-		size_t len(strlen(argv[0]));
+		size_t len(std::strlen(argv[0]));
 		if(unlikely((len < 2) || (argv[0][0] != '-'))) {
 			print_help();
 			return EXIT_FAILURE;
 		}
 		size_t curr(1);
 		char opt(argv[0][curr++]);
-		while(unlikely(strchr("CcqhH?", opt) != NULLPTR)) {
+		while(unlikely(std::strchr("CcqhH?", opt) != NULLPTR)) {
 			switch(opt) {
 				case '?':
 				case 'H':
@@ -130,7 +130,7 @@ int run_eix_header(int argc, char *argv[]) {
 		if(opt == 0) {
 			continue;
 		}
-		if(unlikely(strchr("sflpo", opt) == NULLPTR)) {
+		if(unlikely(std::strchr("sflpo", opt) == NULLPTR)) {
 			if(likely(verbose)) {
 				print_help();
 			}

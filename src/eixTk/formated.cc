@@ -35,20 +35,20 @@ const FormatManip::ArgType
 void format::bad_format() const {
 	eix::say_error(_("internal error: bad format specification \"%s\""))
 		% m_text;
-	exit(EXIT_FAILURE);
+	std::exit(EXIT_FAILURE);
 }
 
 #ifdef EIX_DEBUG_FORMAT
 void format::too_few_arguments() const {
 	eix::say_error(_("internal error: too few arguments passed for \"%s\""))
 		% m_text;
-	exit(EXIT_FAILURE);
+	std::exit(EXIT_FAILURE);
 }
 
 void format::too_many_arguments() const {
 	eix::say_error(_("internal error: too many arguments passed for \"%s\""))
 		% m_text;
-	exit(EXIT_FAILURE);
+	std::exit(EXIT_FAILURE);
 }
 #endif
 
@@ -83,7 +83,7 @@ void format::init() {
 			if(unlikely(!is_numeric(number.c_str()))) {
 				bad_format();
 			}
-			argnum = my_atoi(number.c_str());
+			argnum = my_atou(number.c_str());
 			if(unlikely(argnum <= 0)) {
 				bad_format();
 			}
@@ -150,10 +150,10 @@ void format::newline_output() {
 	}
 	if(output != NULLPTR) {
 		if(likely(!m_text.empty())) {
-			fwrite(m_text.c_str(), sizeof(char),  m_text.size(), output);
+			std::fwrite(m_text.c_str(), sizeof(char),  m_text.size(), output);
 		}
 		if(unlikely(do_flush)) {
-			fflush(output);
+			std::fflush(output);
 		}
 	}
 }

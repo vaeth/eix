@@ -70,7 +70,7 @@ bool scandir_cc(const string& dir, WordVec *namelist, select_dirent select, bool
 		while(likely((d = my_dir.read()) != NULLPTR)) {
 			const char *name(d->d_name);
 			// Omit "." and ".." since we must not rely on their existence anyway
-			if(likely(strcmp(name, ".") && strcmp(name, "..") && (*select)(d))) {
+			if(likely(std::strcmp(name, ".") && std::strcmp(name, "..") && (*select)(d))) {
 				namelist->push_back(name);
 			}
 		}
@@ -89,7 +89,7 @@ static bool pushback_lines_file(const char *file, LineVec *v, bool keep_empty, e
 	std::ifstream ifstr(file);
 	if(unlikely(!ifstr.is_open())) {
 		if(errtext != NULLPTR) {
-			*errtext = eix::format(_("cannot open %s: %s")) % file % strerror(errno);
+			*errtext = eix::format(_("cannot open %s: %s")) % file % std::strerror(errno);
 		}
 		return false;
 	}
@@ -117,7 +117,7 @@ static bool pushback_lines_file(const char *file, LineVec *v, bool keep_empty, e
 		return true;
 	}
 	if(errtext != NULLPTR) {
-		*errtext = eix::format(_("error reading %s: %s")) % file % strerror;
+		*errtext = eix::format(_("error reading %s: %s")) % file % std::strerror(errno);
 	}
 	return false;
 }
@@ -179,14 +179,14 @@ static int pushback_files_selector(SCANDIR_ARG3 dir_entry) {
 		}
 		// files ending with '~' are hidden.
 		// (Note that we already excluded the bad case of empty names).
-		if((dir_entry->d_name)[strlen(dir_entry->d_name) - 1] == '~') {
+		if((dir_entry->d_name)[std::strlen(dir_entry->d_name) - 1] == '~') {
 			return 0;
 		}
 	}
 	if(pushback_files_exclude) {
 		// Look if it's in exclude
 		for(const char *const *p(pushback_files_exclude); likely(*p != NULLPTR); ++p) {
-			if(unlikely(strcmp(*p, dir_entry->d_name) == 0)) {
+			if(unlikely(std::strcmp(*p, dir_entry->d_name) == 0)) {
 				return 0;
 			}
 		}
@@ -263,5 +263,5 @@ void join_map(WordMap *append_to, WordMap::const_iterator it, WordMap::const_ite
 
 void dump_version() {
 	eix::say() % PACKAGE_VERSION;
-	exit(EXIT_SUCCESS);
+	std::exit(EXIT_SUCCESS);
 }

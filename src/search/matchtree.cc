@@ -16,16 +16,13 @@
 
 #include <stack>
 
-#include "eixTk/attribute.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/unused.h"
 #include "search/packagetest.h"
 
-bool MatchAtom::match(ATTRIBUTE_UNUSED PackageReader *p) {
-	UNUSED(p);
+bool MatchAtom::match(PackageReader * /* p */) {
 #ifdef DEBUG_MATCHTREE
 	eix::print(m_negate ? " '!' " : " '' ");
 	return false;
@@ -285,7 +282,7 @@ void MatchTree::end_parse() {
 		root->match(NULLPTR);
 		eix::say_empty();
 	}
-	exit(EXIT_SUCCESS);
+	std::exit(EXIT_SUCCESS);
 #endif
 }
 

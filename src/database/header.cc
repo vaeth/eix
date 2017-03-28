@@ -119,7 +119,7 @@ bool DBHeader::find_overlay(ExtendedVersion::Overlay *num, const char *name, con
 	if(!is_numeric(name)) {
 		return false;
 	}
-	number = my_atoi(name);
+	number = my_atou(name);
 	if(number >= countOverlays()) {
 		return false;
 	}

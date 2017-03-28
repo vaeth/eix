@@ -100,14 +100,8 @@
 /* Define if __attribute__ ((signal)) can be used */
 #undef HAVE_ATTRIBUTE_SIGNAL
 
-/* Define if __attribute__ ((unused)) can be used */
-#undef HAVE_ATTRIBUTE_UNUSED
-
 /* Define if [[noreturn]] can be used */
 #undef HAVE_C11ATTRIBUTE_NORETURN
-
-/* Define if [[maybe_unused]] can be used */
-#undef HAVE_C11ATTRIBUTE_UNUSED
 
 /* Define to 1 if you have the `canonicalize_file_name' function. */
 #undef HAVE_CANONICALIZE_FILE_NAME
@@ -247,8 +241,14 @@
 /* Define to 1 if you have the `strtol' function. */
 #undef HAVE_STRTOL
 
+/* Define to 1 if you have the `strtoll' function. */
+#undef HAVE_STRTOLL
+
 /* Define to 1 if you have the `strtoul' function. */
 #undef HAVE_STRTOUL
+
+/* Define to 1 if you have the `strtoull' function. */
+#undef HAVE_STRTOULL
 
 /* Define to 1 if you have the <sys/file.h> header file. */
 #undef HAVE_SYS_FILE_H

@@ -17,7 +17,6 @@
 
 #include "eixTk/attribute.h"
 #include "eixTk/regexp.h"
-#include "eixTk/unused.h"
 #include "search/levenshtein.h"
 
 class Package;
@@ -68,8 +67,7 @@ class RegexAlgorithm : public BaseAlgorithm {
 			re.compile(search_string.c_str(), REG_ICASE);
 		}
 
-		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const {
-			UNUSED(p);
+		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, Package * /* p */) const {
 			return re.match(s);
 		}
 };
@@ -79,7 +77,7 @@ exact string matching
 **/
 class ExactAlgorithm : public BaseAlgorithm {
 	public:
-		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const;
+		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, Package * /* p */) const;
 };
 
 /**
@@ -87,8 +85,7 @@ substring matching
 **/
 class SubstringAlgorithm : public BaseAlgorithm {
 	public:
-		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const {
-			UNUSED(p);
+		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, Package * /* p */) const {
 			return (std::string(s).find(search_string) != std::string::npos);
 		}
 };
@@ -98,7 +95,7 @@ begin-of-string matching
 **/
 class BeginAlgorithm : public BaseAlgorithm {
 	public:
-		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const;
+		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, Package * /* p */) const;
 };
 
 /**
@@ -106,7 +103,7 @@ end-of-string matching
 **/
 class EndAlgorithm : public BaseAlgorithm {
 	public:
-		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const;
+		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, Package * /* p */) const;
 };
 
 /**
@@ -153,7 +150,7 @@ class PatternAlgorithm : public BaseAlgorithm {
 		}
 
 	public:
-		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const;
+		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, Package * /* p */) const;
 };
 
 #endif  // SRC_SEARCH_ALGORITHMS_H_

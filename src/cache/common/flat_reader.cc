@@ -35,7 +35,7 @@ bool FlatReader::skip_lines(const eix::TinyUnsigned nr, ifstream *is, const stri
 		is->ignore(std::numeric_limits<int>::max(), '\n');
 		if(is->fail()) {
 			m_cache->m_error_callback(eix::format(_("cannot read cache file %s: %s"))
-				% filename % strerror(errno));
+				% filename % std::strerror(errno));
 			return false;
 		}
 	}
@@ -49,7 +49,7 @@ void FlatReader::get_keywords_slot_iuse_restrict(const string& filename, string 
 	ifstream is(filename.c_str());
 	if(!is.is_open()) {
 		m_cache->m_error_callback(eix::format(_("cannot open %s: %s"))
-			% filename % strerror(errno));
+			% filename % std::strerror(errno));
 	}
 	string depend, rdepend, pdepend;
 	bool use_dep(Depend::use_depend);
@@ -97,7 +97,7 @@ void FlatReader::read_file(const string& filename, Package *pkg) {
 	ifstream is(filename.c_str());
 	if(!is.is_open()) {
 		m_cache->m_error_callback(eix::format(_("cannot open %s: %s"))
-			% filename % strerror(errno));
+			% filename % std::strerror(errno));
 	}
 	skip_lines(5, &is, filename);
 	string linebuf;

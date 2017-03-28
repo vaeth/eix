@@ -3,6 +3,8 @@
 *eix-0.32.7
 	Martin Väth <martin at mvath.de>:
 	- internal: provide and use eix::array instead of hacks
+	- internal: use std::.. for documented functions from #include <c...>
+	- internal: remove UNUSED hackery
 	- contrib/make.sh: Improve clang filtering
 
 *eix-0.32.6

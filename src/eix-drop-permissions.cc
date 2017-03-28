@@ -40,7 +40,7 @@ int run_eix_drop_permissions(int argc, char *argv[]) {
 		++argv;
 		--argc;
 	}
-	if((argc > 0) && (strcmp("--", argv[0]) == 0)) {
+	if((argc > 0) && (std::strcmp("--", argv[0]) == 0)) {
 		++argv;
 		--argc;
 	}

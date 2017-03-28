@@ -238,7 +238,7 @@ bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Ca
 	Database db;
 	if(unlikely(!db.openread(m_full.c_str()))) {
 		allerrors(slaves, eix::format(_("cannot read cache file %s: %s")) %
-			m_full % strerror(errno));
+			m_full % std::strerror(errno));
 		m_error_callback(err_msg);
 		return false;
 	}

@@ -43,7 +43,7 @@ Version *VersionList::best(bool allow_unstable) const {
 void SlotList::push_back_largest(Version *version) {
 	const char *name((version->slotname).c_str());
 	for(iterator it(begin()); likely(it != end()); ++it) {
-		if(unlikely(strcmp(name, it->slotname()) == 0)) {
+		if(unlikely(std::strcmp(name, it->slotname()) == 0)) {
 			(it->version_list()).push_back(version);
 			return;
 		}
@@ -53,7 +53,7 @@ void SlotList::push_back_largest(Version *version) {
 
 const VersionList *SlotList::operator[](const char *s) const {
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
-		if(unlikely(strcmp(s, it->slotname()) == 0)) {
+		if(unlikely(std::strcmp(s, it->slotname()) == 0)) {
 			return &(it->const_version_list());
 		}
 	}

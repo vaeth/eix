@@ -46,11 +46,9 @@
 
 #include <string>
 
-#include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/unused.h"
 
 using std::string;
 
@@ -119,7 +117,7 @@ bool is_pure_file(const char *file) {
 /**
 @return mtime of file.
 **/
-bool get_mtime(time_t *t, const char *file) {
+bool get_mtime(std::time_t *t, const char *file) {
 	struct stat stat_b;
 	if(unlikely(stat(file, &stat_b))) {
 		return false;
@@ -131,7 +129,7 @@ bool get_mtime(time_t *t, const char *file) {
 /**
 @return mydate formatted according to locales and dateFormat
 **/
-const char *date_conv(const char *dateFormat, time_t mydate) {
+const char *date_conv(const char *dateFormat, std::time_t mydate) {
 	static CONSTEXPR const int max_datelen = 256;
 	static char buffer[max_datelen];
 	string old_lcall = setlocale(LC_ALL, NULLPTR);
@@ -158,9 +156,7 @@ bool get_geometry(unsigned int *lines, unsigned int *columns) {
 	return false;
 }
 #else
-bool get_geometry(ATTRIBUTE_UNUSED unsigned int *lines, ATTRIBUTE_UNUSED unsigned int *columns) {
-	UNUSED(lines);
-	UNUSED(columns);
+bool get_geometry(unsigned int * /* lines */, unsigned int * /* columns */) {
 	return false;
 }
 #endif

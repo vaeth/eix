@@ -170,7 +170,7 @@ ExtendedVersion::CountBinPkg ExtendedVersion::num_pak_pkg(const PortageSettings 
 		it != bin_packages.end(); ++it) {
 		const string &name(*it);
 		string::size_type i(pkg_search.size());
-		if((i > name.size()) || (strncmp(pkg_search.c_str(), name.c_str(), i) != 0)) {
+		if((i > name.size()) || (std::strncmp(pkg_search.c_str(), name.c_str(), i) != 0)) {
 			continue;
 		}
 		for(; (i != name.size()) && my_isdigit(name[i]); ++i) {

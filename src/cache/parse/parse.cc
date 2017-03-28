@@ -324,7 +324,7 @@ void ParseCache::readPackage(Category *cat, const string& pkg_name, const string
 		}
 
 		bool know_ebuild_time(false), have_ebuild_time(false);
-		time_t ebuild_time;
+		std::time_t ebuild_time;
 		FurtherCaches::const_iterator it(further.begin());
 		for(; likely(it != further.end()); ++it) {
 			const char *s((*it)->get_md5sum(pkg_name, curr_version));
@@ -334,7 +334,7 @@ void ParseCache::readPackage(Category *cat, const string& pkg_name, const string
 				}
 				continue;
 			}
-			time_t t;
+			std::time_t t;
 			if((*it)->get_time(&t, pkg_name, curr_version)) {
 				if(!know_ebuild_time) {
 					know_ebuild_time = true;

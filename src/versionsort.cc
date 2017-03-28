@@ -35,7 +35,7 @@ ATTRIBUTE_NONNULL_ static void parse_version(BasicVersion *b, const string& v);
 
 static void failparse(const string& v) {
 	eix::say_error(_("cannot determine version of \"%s\"")) % v;
-	exit(EXIT_FAILURE);
+	std::exit(EXIT_FAILURE);
 }
 
 static void get_version(string *version, const char *str) {
@@ -61,7 +61,7 @@ static void parse_version(BasicVersion *b, const string& v) {
 	if(unlikely(r != BasicVersion::parsedOK)) {
 		eix::say_error() % errtext;
 		if(r != BasicVersion::parsedGarbage) {
-			exit(EXIT_FAILURE);
+			std::exit(EXIT_FAILURE);
 		}
 	}
 }

@@ -17,7 +17,6 @@
 #include "cache/base.h"
 #include "eixTk/attribute.h"
 #include "eixTk/null.h"
-#include "eixTk/unused.h"
 
 class BasicCache;
 class Depend;
@@ -37,14 +36,11 @@ class BasicReader {
 		virtual ~BasicReader() {
 		}
 
-		ATTRIBUTE_NONNULL_ virtual const char *get_md5sum(ATTRIBUTE_UNUSED const std::string& filename) {
-			UNUSED(filename);
+		ATTRIBUTE_NONNULL_ virtual const char *get_md5sum(const std::string& /* filename */) {
 			return NULLPTR;
 		}
 
-		ATTRIBUTE_NONNULL_ virtual bool get_mtime(ATTRIBUTE_UNUSED time_t *t, ATTRIBUTE_UNUSED const std::string& filename) {
-			UNUSED(t);
-			UNUSED(filename);
+		ATTRIBUTE_NONNULL_ virtual bool get_mtime(std::time_t * /* time */, const std::string& /* filename */) {
 			return false;
 		}
 

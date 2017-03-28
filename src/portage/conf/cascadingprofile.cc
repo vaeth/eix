@@ -168,7 +168,7 @@ bool CascadingProfile::readremoveFiles() {
 	bool ret(false);
 	for(ProfileFiles::iterator file(m_profile_files.begin());
 		likely(file != m_profile_files.end()); ++file) {
-		const char *filename(strrchr(file->c_str(), '/'));
+		const char *filename(std::strrchr(file->c_str(), '/'));
 		if(filename == NULLPTR) {
 			continue;
 		}
@@ -253,7 +253,7 @@ Read all "make.defaults" files found in profile
 **/
 void CascadingProfile::readMakeDefaults() {
 	for(WordVec::size_type i(0); likely(i < m_profile_files.size()); ++i) {
-		if(unlikely(strcmp(strrchr(m_profile_files[i].c_str(), '/'), "/make.defaults") == 0)) {
+		if(unlikely(std::strcmp(std::strrchr(m_profile_files[i].c_str(), '/'), "/make.defaults") == 0)) {
 			m_portagesettings->read_config(m_profile_files[i].name(), "");
 		}
 	}

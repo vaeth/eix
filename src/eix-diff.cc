@@ -148,7 +148,7 @@ static void init_db(const char *file, Database *db, DBHeader *header, PackageRea
 	} else {
 		eix::say_error(_("cannot open database file %s for reading (mode = 'rb')")) % file;
 	}
-	exit(EXIT_FAILURE);
+	std::exit(EXIT_FAILURE);
 }
 
 static void set_virtual(PrintFormat *fmt, const DBHeader& header, const string& eprefix_virtual) {
@@ -340,7 +340,7 @@ static void parseFormat(Node **format, const char *varname, EixRc *rc) {
 	}
 	eix::say_error(_("problems while parsing %s: %s"))
 			% varname % errtext;
-	exit(EXIT_FAILURE);
+	std::exit(EXIT_FAILURE);
 }
 
 int run_eix_diff(int argc, char *argv[]) {
@@ -413,7 +413,7 @@ int run_eix_diff(int argc, char *argv[]) {
 	if(unlikely(cli_quiet)) {
 		if(!freopen(DEV_NULL, "w", stdout)) {
 			eix::say_error(_("cannot redirect to \"%s\"")) % DEV_NULL;
-			exit(EXIT_FAILURE);
+			std::exit(EXIT_FAILURE);
 		}
 	}
 

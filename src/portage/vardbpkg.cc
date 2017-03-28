@@ -318,7 +318,7 @@ void VarDbPkg::readInstDate(const Package& p, InstVersion *v) const {
 			&datelines, false, false, 1)) {
 		for(LineVec::const_iterator it(datelines.begin());
 			it != datelines.end(); ++it) {
-			if(likely((v->instDate = my_atois(it->c_str())) != 0)) {
+			if(likely((v->instDate = my_atos(it->c_str())) != 0)) {
 				return;
 			}
 		}

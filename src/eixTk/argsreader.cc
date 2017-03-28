@@ -126,12 +126,12 @@ Return shortopt for longopt stored in opt.
 int ArgumentReader::lookup_longopt(const char *long_opt, const OptionList& opt_table) {
 	for(OptionList::const_iterator it(opt_table.begin());
 		likely(it != opt_table.end()); ++it) {
-		if(unlikely((it->longopt != NULLPTR) && (strcmp(it->longopt, long_opt) == 0))) {
+		if(unlikely((it->longopt != NULLPTR) && (std::strcmp(it->longopt, long_opt) == 0))) {
 			return it->shortopt;
 		}
 	}
 	eix::say_error(_("unknown option --%s")) % long_opt;
-	exit(EXIT_FAILURE);
+	std::exit(EXIT_FAILURE);
 	return 0;  // never reached, but might avoid compiler warning
 }
 
@@ -147,7 +147,7 @@ int ArgumentReader::lookup_shortopt(const char short_opt, const OptionList& opt_
 			return short_opt;
 	}
 	eix::say_error(_("unknown option -%s")) % short_opt;
-	exit(EXIT_FAILURE);
+	std::exit(EXIT_FAILURE);
 	return 0;  // never reached, but might avoid compiler warning
 }
 
@@ -217,7 +217,7 @@ void ArgumentReader::foldAndRemove(const OptionList& opt_table) {
 					if(it == end()) {
 						if(!optional) {
 							eix::say_error(_("missing parameter to --%s")) % (c->longopt);
-							exit(EXIT_FAILURE);
+							std::exit(EXIT_FAILURE);
 						}
 					} else {
 						remember = it->m_argument;
@@ -241,7 +241,7 @@ void ArgumentReader::foldAndRemove(const OptionList& opt_table) {
 					if(it == end()) {
 						if(!optional) {
 							eix::say_error(_("missing second parameter to --%s")) % (c->longopt);
-							exit(EXIT_FAILURE);
+							std::exit(EXIT_FAILURE);
 						}
 					} else {
 						second = it->m_argument;

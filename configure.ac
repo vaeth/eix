@@ -672,9 +672,12 @@ AC_CHECK_FUNCS([regcomp strchr strerror strrchr fnmatch memset],
 	[AC_MSG_ERROR([We really need this function ..])])
 
 # We need at least one of the following, the former the better
-AC_CHECK_FUNCS([strtoul strtol atoi],
+AC_CHECK_FUNCS([strtoull strtoul],
 	[break],
-	[AC_MSG_ERROR([At least one of strtoul/strtoll/atoi is needed ..])])
+	[:])
+AC_CHECK_FUNCS([strtoll strtol atoi],
+	[break],
+	[AC_MSG_ERROR([At least one of stroll/strtol/atoi is needed ..])])
 
 # Optional header files:
 AC_CHECK_HEADERS([sys/param.h \
@@ -912,44 +915,6 @@ AS_IF([$gcc_diag_pragma],
 	[AC_DEFINE([FULL_GCC_DIAG_PRAGMA],
 		[1],
 		[Define if _Pragma GCC diagnostic can be used everywhere])])
-
-# Check if [[maybe_unused]] works
-AC_MSG_CHECKING([[whether [[maybe_unused]] can be used]])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-static int dummy(int i);
-static int
-dummy([[maybe_unused]] int i)
-{ return 0; }
-		]], [[
-return dummy(1);
-		]])],
-		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([c11attr_unused], [:])],
-		[MV_MSG_RESULT([no])
-		AS_VAR_SET([c11attr_unused], [false])])
-AS_IF([$c11attr_unused],
-	[AC_DEFINE([HAVE_C11ATTRIBUTE_UNUSED],
-		[1],
-		[Define if [[maybe_unused]] can be used])])
-
-# Check if __attribute__ ((unused)) works
-AC_MSG_CHECKING([whether __attribute__ ((unused)) can be used])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-static int dummy(int i);
-static int
-dummy(__attribute__ ((unused)) int i)
-{ return 0; }
-		]], [[
-return dummy(1);
-		]])],
-		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attr_unused], [:])],
-		[MV_MSG_RESULT([no])
-		AS_VAR_SET([attr_unused], [false])])
-AS_IF([$attr_unused],
-	[AC_DEFINE([HAVE_ATTRIBUTE_UNUSED],
-		[1],
-		[Define if __attribute__ ((unused)) can be used])])
 
 # Check if [[noreturn]] works
 AC_MSG_CHECKING([[whether [[noreturn]] can be used]])

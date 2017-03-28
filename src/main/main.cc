@@ -137,7 +137,7 @@ static void sig_handler(int sig) {
 				"Sorry for the inconvenience and thanks in advance!")) %
 				program_name % program_name;
 	}
-	exit(EXIT_FAILURE);
+	std::exit(EXIT_FAILURE);
 }
 
 /**
@@ -223,7 +223,7 @@ int main(int argc, char** argv) {
 	sigemptyset(&(my_handler.sa_mask));
 	sigaction(SIGSEGV, &my_handler, NULLPTR);
 #else
-	signal(SIGSEGV, sig_handler);
+	std::signal(SIGSEGV, sig_handler);
 #endif
 
 	string my_program_name(argv[0]);

@@ -150,7 +150,7 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 				break;
 			case O_MULTIBINARY: USE_TEST;
 				if(optional_numeric_increase(&arg, ar)) {
-					test->Binary(my_atoi(arg->m_argument));
+					test->Binary(my_atou(arg->m_argument));
 				} else {
 					test->Binary(2);
 				}
@@ -466,7 +466,7 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 			// Check for algorithms {{{
 			case 'f': USE_TEST;
 				if(optional_numeric_increase(&arg, ar)) {
-					test->setAlgorithm(new FuzzyAlgorithm(my_atoi(arg->m_argument)));
+					test->setAlgorithm(new FuzzyAlgorithm(my_atou(arg->m_argument)));
 				} else {
 					test->setAlgorithm(PackageTest::ALGO_FUZZY);
 				}

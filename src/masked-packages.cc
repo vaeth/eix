@@ -178,7 +178,7 @@ static void read_args(MaskList<Mask> *mask_list, WordVec *args, const ArgumentRe
 }
 
 int run_masked_packages(int argc, char *argv[]) {
-	memset(&rc_options, 0, sizeof(rc_options));
+	std::memset(&rc_options, 0, sizeof(rc_options));
 	ArgumentReader argreader(argc, argv, MaskedOptionList());
 
 	if(rc_options.help) {

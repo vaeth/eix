@@ -18,10 +18,8 @@
 #include <string>
 
 #include "eixTk/assert.h"
-#include "eixTk/attribute.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/unused.h"
 #include "portage/package.h"
 #include "search/levenshtein.h"
 
@@ -88,27 +86,23 @@ bool FuzzyAlgorithm::operator()(const char *s, Package *p) const {
 	return ok;
 }
 
-bool ExactAlgorithm::operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const {
-	UNUSED(p);
-	return (strcmp(search_string.c_str(), s) == 0);
+bool ExactAlgorithm::operator()(const char *s, Package * /* p */) const {
+	return (std::strcmp(search_string.c_str(), s) == 0);
 }
 
-bool BeginAlgorithm::operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const {
-	UNUSED(p);
-	return (strncmp(search_string.c_str(), s, search_string.size()) == 0);
+bool BeginAlgorithm::operator()(const char *s, Package * /* p */) const {
+	return (std::strncmp(search_string.c_str(), s, search_string.size()) == 0);
 }
 
-bool EndAlgorithm::operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const {
-	UNUSED(p);
-	string::size_type l(strlen(s));
+bool EndAlgorithm::operator()(const char *s, Package * /* p */) const {
+	string::size_type l(std::strlen(s));
 	string::size_type sl(search_string.size());
 	if(l < sl) {
 		return false;
 	}
-	return (strcmp(search_string.c_str(), s + (l - sl)) == 0);
+	return (std::strcmp(search_string.c_str(), s + (l - sl)) == 0);
 }
 
-bool PatternAlgorithm::operator()(const char *s, ATTRIBUTE_UNUSED Package *p) const {
-	UNUSED(p);
+bool PatternAlgorithm::operator()(const char *s, Package * /* p */) const {
 	return (fnmatch(search_string.c_str(), s, FNMATCH_FLAGS) == 0);
 }

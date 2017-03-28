@@ -14,8 +14,6 @@
 
 #include <regex.h>
 
-// check_includes: include <cstdlib>
-
 #include <string>
 #include <vector>
 
@@ -60,10 +58,10 @@ class Regex {
 		/**
 		Free the regular expression
 		**/
-		void free();
+		void clear();
 
 		~Regex() {
-			free();
+			clear();
 		}
 
 		/**

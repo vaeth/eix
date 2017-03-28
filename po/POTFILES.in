@@ -59,6 +59,7 @@ src/eixTk/compare.cc
 src/eixTk/compare.h
 src/eixTk/diagnostics.h
 src/eixTk/dialect.h
+src/eixTk/eixarray.h
 src/eixTk/eixint.h
 src/eixTk/filenames.cc
 src/eixTk/filenames.h
@@ -91,7 +92,6 @@ src/eixTk/stringutils.cc
 src/eixTk/stringutils.h
 src/eixTk/sysutils.cc
 src/eixTk/sysutils.h
-src/eixTk/unused.h
 src/eixTk/utils.cc
 src/eixTk/utils.h
 src/eixTk/varsreader.cc

@@ -100,7 +100,7 @@ NORMALIZE_PATH_EXPORT string NORMALIZE_PATH(const char *path, bool resolve, bool
 		normalized = canonicalize_file_name(path);
 		if(likely(normalized != NULLPTR)) {
 			if(unlikely(*normalized == '\0')) {
-				free(normalized);
+				std::free(normalized);
 				normalized = NULLPTR;
 			}
 		}
@@ -110,11 +110,11 @@ NORMALIZE_PATH_EXPORT string NORMALIZE_PATH(const char *path, bool resolve, bool
 #ifdef PATH_MAX
 			// Some implementations of realpath are vulnerable
 			// against internal buffer overflow, so better test:
-			if(likely(strlen(path) < PATH_MAX)) {
-				normalized = static_cast<char *>(malloc(PATH_MAX + 1));
+			if(likely(std::strlen(path) < PATH_MAX)) {
+				normalized = static_cast<char *>(std::malloc(PATH_MAX + 1));
 				if(likely(normalized != NULLPTR)) {
 					if(unlikely(realpath(path, normalized) == NULLPTR)) {
-						free(normalized);
+						std::free(normalized);
 						normalized = NULLPTR;
 					}
 				}
@@ -126,7 +126,7 @@ NORMALIZE_PATH_EXPORT string NORMALIZE_PATH(const char *path, bool resolve, bool
 			// Let normalized="" act as normalized=NULLPTR:
 			if(likely(normalized != NULLPTR)) {
 				if(unlikely(*normalized == '\0')) {
-					free(normalized);
+					std::free(normalized);
 					normalized = NULLPTR;
 				}
 			}
@@ -134,7 +134,7 @@ NORMALIZE_PATH_EXPORT string NORMALIZE_PATH(const char *path, bool resolve, bool
 #endif
 		if(likely(normalized != NULLPTR)) {
 			name = normalized;
-			free(normalized);
+			std::free(normalized);
 		} else {
 			name = path;
 		}

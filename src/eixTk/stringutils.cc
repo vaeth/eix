@@ -277,7 +277,7 @@ static void erase_escapes(string *s, const char *at) {
 			break;
 		}
 		char c((*s)[pos]);
-		if((c == '\\') || (strchr(at, c) != NULLPTR))
+		if((c == '\\') || (std::strchr(at, c) != NULLPTR))
 			s->erase(pos - 1, 1);
 	}
 }
@@ -426,7 +426,7 @@ bool resolve_plus_minus(WordSet *s, const WordVec& l, const WordSet *warnignore)
 void StringHash::store_string(const string& s) {
 	if(finalized) {
 		eix::say_error(_("internal error: storing required after finalizing"));
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 	push_back(s);
 }
@@ -434,11 +434,11 @@ void StringHash::store_string(const string& s) {
 void StringHash::hash_string(const string& s) {
 	if(finalized) {
 		eix::say_error(_("internal error: hashing required after finalizing"));
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 	if(!hashing) {
 		eix::say_error(_("internal error: hashing required in non-hash mode"));
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 	// During hashing, we use str_map as a frequency counter to optimize
 	StrSizeMap::iterator i(str_map.find(s));
@@ -464,12 +464,12 @@ void StringHash::hash_words(const WordVec& v) {
 StringHash::size_type StringHash::get_index(const string& s) const {
 	if(!finalized) {
 		eix::say_error(_("internal error: index required before sorting"));
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 	StrSizeMap::const_iterator i(str_map.find(s));
 	if(i == str_map.end()) {
 		eix::say_error(_("internal error: trying to shortcut non-hashed string"));
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 	return i->second;
 }
@@ -477,7 +477,7 @@ StringHash::size_type StringHash::get_index(const string& s) const {
 const string& StringHash::operator[](StringHash::size_type i) const {
 	if(i >= size()) {
 		eix::say_error(_("database corrupt: nonexistent hash required"));
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 	return WordVec::operator[](i);
 }
@@ -571,7 +571,7 @@ const char *first_alnum(const char *s) {
 
 const char *first_not_alnum_or_ok(const char *s, const char *ok) {
 	for(char c(*s); likely(c != '\0'); c = *(++s)) {
-		if(unlikely((!my_isalnum(c)) && (strchr(ok, c) == NULLPTR))) {
+		if(unlikely((!my_isalnum(c)) && (std::strchr(ok, c) == NULLPTR))) {
 			return s;
 		}
 	}
@@ -610,7 +610,7 @@ Check whether str contains a nonempty lowercase pattern case-insensitively
 bool casecontains(const char *str, const char *pattern) {
 	// Knuth-Morris-Pratt algorithm
 	typedef string::size_type IndexType;
-	IndexType l(strlen(pattern));
+	IndexType l(std::strlen(pattern));
 	vector<IndexType> table(l, 0);
 	IndexType pos(0);
 	for(IndexType i(1); likely(i < l); ++i) {

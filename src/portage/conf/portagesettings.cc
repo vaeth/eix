@@ -139,7 +139,7 @@ static CONSTEXPR const char *test_in_env_late[] = {
 
 void PortageSettings::override_by_env(const char *const *vars) {
 	for(const char *var(*vars); likely(var != NULLPTR); var = *(++vars)) {
-		const char *e(getenv(var));
+		const char *e(std::getenv(var));
 		if(e == NULLPTR)
 			continue;
 		if(!match_list(default_accumulating_keys, var)) {
@@ -255,7 +255,7 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 					prio = reposfile.find(string("priority:") + *main_repo);
 				}
 				if(prio != NULLPTR) {
-					priority = my_atois(prio->c_str());
+					priority = my_atos(prio->c_str());
 				}
 				if(p != NULLPTR) {
 					portdirref = *p;
@@ -281,7 +281,7 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 			}
 			for(VarsReader::const_iterator it(reposfile.begin());
 				likely(it != reposfile.end()); ++it) {
-				if(strncmp(it->first.c_str(), "location:", 9)) {
+				if(std::strncmp(it->first.c_str(), "location:", 9)) {
 					continue;
 				}
 				string label(it->first.substr(9));
@@ -290,7 +290,7 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 				}
 				const string *prio(reposfile.find(string("priority:") + label));
 				if(prio != NULLPTR) {
-					priority = my_atois(prio->c_str());
+					priority = my_atos(prio->c_str());
 				}
 				add_repo(it->second, true, label.c_str(), priority, false);
 			}
@@ -383,7 +383,7 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 		m_plain_accepted_keywords_set.clear();
 		for(WordSet::const_iterator it(m_accepted_keywords_set.begin());
 			unlikely(it != m_accepted_keywords_set.end()); ++it) {
-			if(strchr("-~", (*it)[0]) == NULLPTR) {
+			if(std::strchr("-~", (*it)[0]) == NULLPTR) {
 				m_plain_accepted_keywords_set.insert(*it);
 			} else {
 				m_plain_accepted_keywords_set.insert(it->substr(1));
@@ -402,7 +402,7 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 		WordSet archset;
 		for(WordSet::const_iterator it(m_arch_set.begin());
 			unlikely(it != m_arch_set.end()); ++it) {
-			if(strchr("-~", (*it)[0]) == NULLPTR) {
+			if(std::strchr("-~", (*it)[0]) == NULLPTR) {
 				archset.insert(string("~") + *it);
 			}
 		}
@@ -1315,7 +1315,7 @@ bool PortageUserConfig::setMasks(Package *p, Keywords::Redundant check, bool fil
 	if(file_mask_is_profile) {
 		if(unlikely(!(p->restore_maskflags(Version::SAVEMASK_FILE)))) {
 			eix::say_error(_("internal error: Tried to restore nonlocal mask without saving"));
-			exit(EXIT_FAILURE);
+			std::exit(EXIT_FAILURE);
 		}
 	} else {
 		setProfileMasks(p);
@@ -1342,7 +1342,7 @@ void PortageSettings::setMasks(Package *p, bool filemask_is_profile) const {
 	if(filemask_is_profile) {
 		if(!(p->restore_maskflags(Version::SAVEMASK_FILE))) {
 			eix::say_error(_("internal error: Tried to restore nonlocal mask without saving"));
-			exit(EXIT_FAILURE);
+			std::exit(EXIT_FAILURE);
 		}
 		return;
 	}

@@ -160,7 +160,7 @@ void MetadataCache::setFlat(bool set_flat) {
 
 static int cachefiles_selector(SCANDIR_ARG3 dent) {
 	return ((dent->d_name[0] != '.')
-			&& (strchr(dent->d_name, '-') != NULLPTR));
+			&& (std::strchr(dent->d_name, '-') != NULLPTR));
 }
 
 bool MetadataCache::readCategoryPrepare(const char *cat_name) {
@@ -264,7 +264,7 @@ const char *MetadataCache::get_md5sum(const string &pkg_name, const string &ver_
 	return (reader->get_md5sum)(m_catpath + "/" + pkg_name + "-" + ver_name);
 }
 
-bool MetadataCache::get_time(time_t *t, const string &pkg_name, const string &ver_name) const {
+bool MetadataCache::get_time(std::time_t *t, const string &pkg_name, const string &ver_name) const {
 	return (reader->get_mtime)(t, m_catpath + "/" + pkg_name + "-" + ver_name);
 }
 

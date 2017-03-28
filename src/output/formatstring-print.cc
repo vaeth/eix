@@ -29,7 +29,6 @@
 #include "eixTk/outputstring.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/sysutils.h"
-#include "eixTk/unused.h"
 #include "eixrc/eixrc.h"
 #include "output/formatstring.h"
 #include "portage/conf/portagesettings.h"
@@ -589,13 +588,13 @@ void PrintFormat::get_pkg_property(OutputString *s, Package *package, const stri
 		}
 		if(unlikely(col == string::npos)) {
 			eix::say_error(_("unknown property \"%s\"")) % name;
-			exit(EXIT_FAILURE);
+			std::exit(EXIT_FAILURE);
 		}
 		after_colon.assign(name, col + 1, string::npos);
 	}
 	if(unlikely((t == Scanner::VER) && (version_variables == NULLPTR))) {
 		eix::say_error(_("property \"%s\" used outside version context")) % name;
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 	if(plain != NULLPTR) {
 		(this->*plain)(s, package);
@@ -737,22 +736,19 @@ void PrintFormat::PKG_INSTALLED(OutputString *s, Package *package) const {
 	}
 }
 
-void PrintFormat::PKG_VERSIONLINES(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::PKG_VERSIONLINES(OutputString *s, Package * /* package */) const {
 	if(style_version_lines) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::PKG_SLOTSORTED(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::PKG_SLOTSORTED(OutputString *s, Package * /* package */) const {
 	if(slot_sorted) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::PKG_COLOR(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::PKG_COLOR(OutputString *s, Package * /* package */) const {
 	if(!no_color) {
 		s->set_one();
 	}
@@ -989,36 +985,31 @@ const ExtendedVersion *PrintFormat::ver_version() const {
 	return version_variables->version();
 }
 
-void PrintFormat::VER_FIRST(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_FIRST(OutputString *s, Package * /* package */) const {
 	if(version_variables->first) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::VER_LAST(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_LAST(OutputString *s, Package * /* package */) const {
 	if(version_variables->last) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::VER_SLOTFIRST(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_SLOTFIRST(OutputString *s, Package * /* package */) const {
 	if(version_variables->slotfirst) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::VER_SLOTLAST(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_SLOTLAST(OutputString *s, Package * /* package */) const {
 	if(version_variables->slotlast) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::VER_ONESLOT(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_ONESLOT(OutputString *s, Package * /* package */) const {
 	if(version_variables->oneslot) {
 		s->set_one();
 	}
@@ -1070,8 +1061,7 @@ void PrintFormat::VER_ISSUBSLOT(OutputString *s, Package *package) const {
 	}
 }
 
-void PrintFormat::VER_EAPI(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_EAPI(OutputString *s, Package *package) const {
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
 		vardb->readEapi(*package, i);
@@ -1081,8 +1071,7 @@ void PrintFormat::VER_EAPI(OutputString *s, ATTRIBUTE_UNUSED Package *package) c
 	}
 }
 
-void PrintFormat::VER_VERSION(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_VERSION(OutputString *s, Package * /* package */) const {
 	if(version_variables->isinst) {
 		s->assign_smart(version_variables->instver()->getFull());
 	} else {
@@ -1090,8 +1079,7 @@ void PrintFormat::VER_VERSION(OutputString *s, ATTRIBUTE_UNUSED Package *package
 	}
 }
 
-void PrintFormat::VER_PLAINVERSION(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_PLAINVERSION(OutputString *s, Package * /* package */) const {
 	if(version_variables->isinst) {
 		s->assign_smart(version_variables->instver()->getPlain());
 	} else {
@@ -1099,8 +1087,7 @@ void PrintFormat::VER_PLAINVERSION(OutputString *s, ATTRIBUTE_UNUSED Package *pa
 	}
 }
 
-void PrintFormat::VER_REVISION(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_REVISION(OutputString *s, Package * /* package */) const {
 	if(version_variables->isinst) {
 		s->assign_smart(version_variables->instver()->getRevision());
 	} else {
@@ -1183,8 +1170,7 @@ void PrintFormat::VER_VERSIONKEYWORDSS(OutputString *s, Package *package) const 
 	s->assign_smart(version_variables->version()->get_effective_keywords());
 }
 
-void PrintFormat::VER_VERSIONKEYWORDS(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_VERSIONKEYWORDS(OutputString *s, Package * /* package */) const {
 	if(unlikely(version_variables->isinst)) {
 		return;
 	}
@@ -1286,8 +1272,7 @@ void PrintFormat::VER_USE0(OutputString *s, Package *package) const {
 	}
 }
 
-void PrintFormat::VER_REQUIREDUSE(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_REQUIREDUSE(OutputString *s, Package * /* package */) const {
 	if(version_variables->isinst) {
 		return;
 	}
@@ -1296,8 +1281,7 @@ void PrintFormat::VER_REQUIREDUSE(OutputString *s, ATTRIBUTE_UNUSED Package *pac
 	}
 }
 
-void PrintFormat::VER_HAVEREQUIREDUSE(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_HAVEREQUIREDUSE(OutputString *s, Package * /* package */) const {
 	if(version_variables->isinst) {
 		return;
 	}
@@ -1561,24 +1545,21 @@ const MaskFlags *PrintFormat::ver_maskflags() const {
 		NULLPTR : (&(version_variables->version()->maskflags)));
 }
 
-void PrintFormat::VER_ISHARDMASKED(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_ISHARDMASKED(OutputString *s, Package * /* package */) const {
 	const MaskFlags *maskflags(ver_maskflags());
 	if((maskflags != NULLPTR) && (maskflags->isHardMasked())) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::VER_ISPROFILEMASKED(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_ISPROFILEMASKED(OutputString *s, Package * /* package */) const {
 	const MaskFlags *maskflags(ver_maskflags());
 	if((maskflags != NULLPTR) && (maskflags->isProfileMask())) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::VER_ISMASKED(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_ISMASKED(OutputString *s, Package * /* package */) const {
 	const MaskFlags *maskflags(ver_maskflags());
 	if((maskflags != NULLPTR) && (maskflags->isPackageMask())) {
 		s->set_one();
@@ -1590,64 +1571,56 @@ const KeywordsFlags *PrintFormat::ver_keywordsflags() const {
 		NULLPTR : (&(version_variables->version()->keyflags)));
 }
 
-void PrintFormat::VER_ISSTABLE(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_ISSTABLE(OutputString *s, Package * /* package */) const {
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
 	if((keywordsflags != NULLPTR) && (keywordsflags->isStable())) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::VER_ISUNSTABLE(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_ISUNSTABLE(OutputString *s, Package * /* package */) const {
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
 	if((keywordsflags != NULLPTR) && (keywordsflags->isUnstable())) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::VER_ISALIENSTABLE(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_ISALIENSTABLE(OutputString *s, Package * /* package */) const {
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
 	if((keywordsflags != NULLPTR) && (keywordsflags->isAlienStable())) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::VER_ISALIENUNSTABLE(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_ISALIENUNSTABLE(OutputString *s, Package * /* package */) const {
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
 	if((keywordsflags != NULLPTR) && (keywordsflags->isAlienUnstable())) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::VER_ISMISSINGKEYWORD(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_ISMISSINGKEYWORD(OutputString *s, Package * /* package */) const {
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
 	if((keywordsflags != NULLPTR) && (keywordsflags->isMissingKeyword())) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::VER_ISMINUSKEYWORD(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_ISMINUSKEYWORD(OutputString *s, Package * /* package */) const {
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
 	if((keywordsflags != NULLPTR) && (keywordsflags->isMinusKeyword())) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::VER_ISMINUSUNSTABLE(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_ISMINUSUNSTABLE(OutputString *s, Package * /* package */) const {
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
 	if((keywordsflags != NULLPTR) && (keywordsflags->isMinusUnstable())) {
 		s->set_one();
 	}
 }
 
-void PrintFormat::VER_ISMINUSASTERISK(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_ISMINUSASTERISK(OutputString *s, Package * /* package */) const {
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
 	if((keywordsflags != NULLPTR) && (keywordsflags->isMinusAsterisk())) {
 		s->set_one();
@@ -1739,8 +1712,7 @@ void PrintFormat::VER_WASMINUSASTERISK(OutputString *s, Package *package) const 
 	}
 }
 
-void PrintFormat::VER_HAVEMASKREASONS(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_HAVEMASKREASONS(OutputString *s, Package * /* package */) const {
 	if(unlikely(version_variables->isinst)) {
 		return;
 	}
@@ -1756,23 +1728,21 @@ void PrintFormat::ver_maskreasons(OutputString *s, const OutputString& skip, con
 	version_variables->version()->reasons_string(s, skip, sep);
 }
 
-void PrintFormat::VER_MASKREASONS(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_MASKREASONS(OutputString *s, Package * /* package */) const {
 	ver_maskreasons(s, maskreasons_skip, maskreasons_sep);
 }
 
-void PrintFormat::VER_MASKREASONSS(OutputString *s, ATTRIBUTE_UNUSED Package *package) const {
-	UNUSED(package);
+void PrintFormat::VER_MASKREASONSS(OutputString *s, Package * /* package */) const {
 	ver_maskreasons(s, maskreasonss_skip, maskreasonss_sep);
 }
 
 static Package *old_or_new(string *new_name, Package *older, Package *newer, const string& name) {
 	const char *s(name.c_str());
-	if(strncmp(s, "old", 3) == 0) {
+	if(std::strncmp(s, "old", 3) == 0) {
 		*new_name = s + 3;
 		return older;
 	}
-	if(strncmp(s, "new", 3) == 0) {
+	if(std::strncmp(s, "new", 3) == 0) {
 		*new_name = s + 3;
 		return newer;
 	}

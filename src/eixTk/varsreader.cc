@@ -170,13 +170,13 @@ void VarsReader::ASSIGN_KEY_VALUE() {
 			STOP;
 		}
 	} else if(unlikely( (parse_flags & ONLY_KEYWORDS_SLOT) )) {
-		if(unlikely(strncmp("KEYWORDS=", key_begin, 9) == 0)) {
+		if(unlikely(std::strncmp("KEYWORDS=", key_begin, 9) == 0)) {
 			(*vars)[string(key_begin, key_len)] = value;
 			parse_flags |= KEYWORDS_READ;
 			if(parse_flags & SLOT_READ) {
 				STOP;
 			}
-		} else if(unlikely(strncmp("SLOT=", key_begin, 5) == 0)) {
+		} else if(unlikely(std::strncmp("SLOT=", key_begin, 5) == 0)) {
 			(*vars)[string(key_begin, key_len)] = value;
 			parse_flags |= SLOT_READ;
 			if(parse_flags & KEYWORDS_READ) {
@@ -233,7 +233,7 @@ void VarsReader::JUMP_WHITESPACE() {
 					NEXT_INPUT;
 					++i;
 				}
-				if(unlikely((i != 6) || strncmp("source", beginning, 6) != 0)) {
+				if(unlikely((i != 6) || std::strncmp("source", beginning, 6) != 0)) {
 					CHSTATE(JUMP_NOISE);
 					break;
 				}
@@ -1030,7 +1030,7 @@ bool VarsReader::readmem(const char *buffer, const char *buffer_end, string *err
 	if(buffer_end != NULLPTR) {
 		filebuffer_end = buffer_end;
 	} else {
-		filebuffer_end = buffer + strlen(buffer);
+		filebuffer_end = buffer + std::strlen(buffer);
 	}
 	if(likely(parse())) {
 		return true;

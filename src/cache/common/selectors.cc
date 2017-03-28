@@ -28,7 +28,7 @@ using std::string;
 
 int package_selector(SCANDIR_ARG3 dent) {
 	return (dent->d_name[0] != '.'
-			&& strcmp(dent->d_name, "CVS") != 0);
+			&& std::strcmp(dent->d_name, "CVS") != 0);
 }
 
 int ebuild_selector(SCANDIR_ARG3 dent) {

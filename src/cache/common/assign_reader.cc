@@ -73,7 +73,7 @@ const char *AssignReader::get_md5sum(const string &filename) {
 	return md5->second.c_str();
 }
 
-bool AssignReader::get_mtime(time_t *t, const string &filename) {
+bool AssignReader::get_mtime(std::time_t *t, const string &filename) {
 	if(unlikely(!get_map(filename))) {
 		return false;
 	}
@@ -81,7 +81,7 @@ bool AssignReader::get_mtime(time_t *t, const string &filename) {
 	if(mt == cf->end()) {
 		return false;
 	}
-	return likely(((*t) = my_atois(mt->second.c_str())) != 0);
+	return likely(((*t) = my_atos(mt->second.c_str())) != 0);
 }
 
 /**
@@ -92,7 +92,7 @@ void AssignReader::get_keywords_slot_iuse_restrict(const string& filename, strin
 	string *props, Depend *dep) {
 	if(unlikely(!get_map(filename))) {
 		m_cache->m_error_callback(eix::format(_("cannot read cache file %s: %s"))
-			% filename % strerror(errno));
+			% filename % std::strerror(errno));
 		return;
 	}
 	(*eapi)     = (*cf)["EAPI"];
@@ -115,7 +115,7 @@ Read an "assign type" cache file
 void AssignReader::read_file(const string& filename, Package *pkg) {
 	if(unlikely(!get_map(filename))) {
 		m_cache->m_error_callback(eix::format(_("cannot read cache file %s: %s"))
-			% filename % strerror(errno));
+			% filename % std::strerror(errno));
 		return;
 	}
 	pkg->homepage = (*cf)["HOMEPAGE"];

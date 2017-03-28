@@ -16,7 +16,7 @@
 #include <array>
 #endif
 
-#include <eixTk/dialect.h>
+#include "eixTk/dialect.h"
 
 namespace eix {
 

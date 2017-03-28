@@ -65,7 +65,7 @@ class MetadataCache : public BasicCache {
 		void readCategoryFinalize() OVERRIDE;
 
 		ATTRIBUTE_NONNULL_ const char *get_md5sum(const std::string &pkg_name, const std::string &ver_name) const OVERRIDE;
-		ATTRIBUTE_NONNULL_ bool get_time(time_t *t, const std::string &pkg_name, const std::string &ver_name) const OVERRIDE;
+		ATTRIBUTE_NONNULL_ bool get_time(std::time_t *t, const std::string &pkg_name, const std::string &ver_name) const OVERRIDE;
 
 		ATTRIBUTE_NONNULL_ void get_version_info(const std::string &pkg_name, const std::string &ver_name, Version *version) const OVERRIDE;
 		ATTRIBUTE_NONNULL_ void get_common_info(const std::string &pkg_name, const std::string &ver_name, Package *pkg) const OVERRIDE;

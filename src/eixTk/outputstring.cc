@@ -111,13 +111,13 @@ void OutputString::append_escape(const char **pos) {
 	if(ch == 'C') {
 		if(likely(*(++band_position) == '<')) {
 			const char *start(++band_position);
-			const char *end(strchr(start, '>'));
+			const char *end(std::strchr(start, '>'));
 			if(likely(end != NULLPTR)) {
 GCC_DIAG_OFF(sign-conversion)
 				string num(start, end - start);
 GCC_DIAG_ON(sign-conversion)
 				if(likely(is_numeric(num.c_str()))) {
-					string::size_type s(my_atoi(num.c_str()));
+					string::size_type s(my_atou(num.c_str()));
 					if(s > 0) {
 						append_column(s);
 					}

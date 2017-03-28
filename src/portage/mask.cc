@@ -87,11 +87,11 @@ BasicVersion::ParseResult Mask::parseMask(const char *str, string *errtext, eix:
 				priority = curr->priority;
 				break;
 			}
-			if(unlikely(strncmp(str, curr->str, len) == 0)) {
+			if(unlikely(std::strncmp(str, curr->str, len) == 0)) {
 				m_operator = curr->op;
 				priority = curr->priority;
 				// Skip the operator-part
-				str += strlen(curr->str);
+				str += std::strlen(curr->str);
 				if(unlikely(m_operator == maskIsSet)) {
 					m_category = SET_CATEGORY;
 					m_name = str;
@@ -119,13 +119,13 @@ BasicVersion::ParseResult Mask::parseMask(const char *str, string *errtext, eix:
 	// If :... is appended, mark the slot part,
 	// and if :: occurs, mark the repository part.
 	// If [...] is appended (possibly after : or ::), remove it
-	const char *end(strchr(str, ':'));
+	const char *end(std::strchr(str, ':'));
 	if(end != NULLPTR) {
 		string *dest;
 		const char *source(end + 1);
 		if((*source) != ':') {
 			m_test_slot = true;
-			const char *slot_end(strchr(source, ':'));
+			const char *slot_end(std::strchr(source, ':'));
 			if(unlikely(slot_end != NULLPTR)) {
 GCC_DIAG_OFF(sign-conversion)
 				m_slotname.assign(source, slot_end - source);
@@ -149,8 +149,8 @@ GCC_DIAG_ON(sign-conversion)
 			m_slotname.clear();
 			dest = &m_reponame;
 		}
-		const char *usestart(strchr(source, '['));
-		if((usestart != NULLPTR) && (strchr(usestart + 1, ']') == NULLPTR)) {
+		const char *usestart(std::strchr(source, '['));
+		if((usestart != NULLPTR) && (std::strchr(usestart + 1, ']') == NULLPTR)) {
 GCC_DIAG_OFF(sign-conversion)
 			dest->assign(source, usestart - source);
 GCC_DIAG_ON(sign-conversion)
@@ -168,8 +168,8 @@ GCC_DIAG_ON(sign-conversion)
 		m_slotname.clear();
 		m_subslotname.clear();
 		m_reponame.clear();
-		end = strchr(str, '[');
-		if((end != NULLPTR) && (strchr(end + 1, ']') == NULLPTR))
+		end = std::strchr(str, '[');
+		if((end != NULLPTR) && (std::strchr(end + 1, ']') == NULLPTR))
 			end = NULLPTR;
 	}
 	if((!m_test_reponame) && (default_repo != NULLPTR)) {
@@ -201,7 +201,7 @@ GCC_DIAG_OFF(sign-conversion)
 GCC_DIAG_ON(sign-conversion)
 
 		// Check for wildcard-version
-		const char *wildcard((m_type != maskPseudomask) ? strchr(p, '*') : NULLPTR);
+		const char *wildcard((m_type != maskPseudomask) ? std::strchr(p, '*') : NULLPTR);
 		if(unlikely((unlikely(wildcard != NULLPTR)) &&
 			(likely((end == NULLPTR) || (wildcard <= end))))) {
 			if(unlikely(m_operator == maskOpAll)) {  // maskMarkOptional without explicit "="

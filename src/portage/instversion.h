@@ -52,7 +52,7 @@ class InstVersion : public ExtendedVersion, public Keywords {
 		**/
 		bool know_instDate;
 
-		time_t instDate;    ///< Installation date according to vardbpkg
+		std::time_t instDate;  ///< Installation date according to vardbpkg
 		WordVec inst_iuse;  ///< Useflags in iuse according to vardbpkg
 		WordSet usedUse;    ///< Those useflags in iuse actually used
 

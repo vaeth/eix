@@ -30,8 +30,8 @@ Calculates the Levenshtein distance of two strings
 @return int Levenshtein distance of str_a <> str_b
 **/
 Levenshtein get_levenshtein_distance(const char *str_a, const char *str_b) {
-	size_t n(strlen(str_a));
-	size_t m(strlen(str_b));
+	size_t n(std::strlen(str_a));
+	size_t m(std::strlen(str_b));
 	if(n == 0) {
 		return m;
 	}

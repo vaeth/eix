@@ -31,13 +31,13 @@ using std::string;
 using std::vector;
 
 bool Database::read_header(DBHeader *hdr, string *errtext, DBHeader::DBVersion minver) {
-	size_t magic_len(strlen(DBHeader::magic));
+	size_t magic_len(std::strlen(DBHeader::magic));
 	eix::auto_array<char> buf(new char[magic_len + 1]);
 	buf.get()[magic_len] = 0;
 	if(unlikely(!read_string_plain(buf.get(), magic_len, errtext))) {
 		return false;
 	}
-	if(unlikely(strcmp(DBHeader::magic, buf.get()) != 0)) {
+	if(unlikely(std::strcmp(DBHeader::magic, buf.get()) != 0)) {
 		char c(buf.get()[0]);
 		// Until version 30 the first char is the version:
 GCC_DIAG_OFF(sign-conversion)

@@ -15,7 +15,6 @@
 #include <locale>
 
 #include <cstdlib>
-#include <cstring>
 
 #include <map>
 #include <set>
@@ -27,22 +26,28 @@
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 
-// check_includes: include "eixTk/stringutils.h" strlen
+// check_includes: include "eixTk/stringutils.h"
 
+#ifdef HAVE_STRTOLL
+#define my_atos(a) std::strtoll((a), NULLPTR, 10)
+#else
+#ifdef HAVE_STRTOL
+#define my_atos(a) std::strtol((a), NULLPTR, 10)
+#else
+#define my_atos(a) std::atoi(a)
+#endif  // HAVE_STRTOL
+#endif  // HAVE_STRTOLL
+
+#ifdef HAVe_STRTOULL
+#define my_atou(a) std::strtoull((a), NULLPTR, 10)
+#else
 #ifdef HAVE_STRTOUL
-#define my_atoi(a) strtoul((a), NULLPTR, 10)
+#define my_atou(a) std::strtoul((a), NULLPTR, 10)
 #else
-#ifdef HAVE_STRTOL
-#define my_atoi(a) strtol((a), NULLPTR, 10)
-#else
-#define my_atoi(a) atoi(a)
-#endif
-#endif
-#ifdef HAVE_STRTOL
-#define my_atois(a) strtol((a), NULLPTR, 10)
-#else
-#define my_atois(a) atoi(a)
-#endif
+#define my_atou(a) static_cast<WordVec::size_type>(my_atos(a))
+#endif  // HAVE_STRTOUL
+#endif  // HAVE_STRTOULL
+
 
 #define my_isalnum(a) isalnum((a), localeC)
 #define my_isalpha(a) isalpha((a), localeC)

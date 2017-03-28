@@ -28,7 +28,7 @@ using std::vector;
 /**
 Free the regular expression
 **/
-void Regex::free() {
+void Regex::clear() {
 	if(m_compiled) {
 		regfree(&m_re);
 		m_compiled = false;
@@ -52,7 +52,7 @@ void Regex::compile(const char *regex, int eflags) {
 		char buf[512];
 		regerror(retval, &m_re, buf, 511);
 		eix::say_error("regcomp(%s)") % buf;
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 	m_compiled = true;
 }
@@ -116,7 +116,6 @@ RegexList::RegexList(const string& stringlist) {
 RegexList::~RegexList() {
 	for(vector<Regex*>::iterator it(reglist.begin());
 		likely(it != reglist.end()); ++it) {
-		(*it)->free();
 		delete *it;
 	}
 }

@@ -118,7 +118,7 @@ Node *PrintFormat::parse_variable(const string& varname) const {
 	Node *rootnode;
 	if(unlikely(!parse_variable(&rootnode, varname, &errtext))) {
 		eix::say_error() % errtext;
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 	return rootnode;
 }
@@ -203,7 +203,7 @@ static void parse_termdark(DarkModes *modes, WordVec *regexp, const string& term
 		Darkmode darkmode;
 		if(!darkmode.init(*text)) {
 			eix::say_error(_("DARK_TERM has illegal format: %s")) % termdark;
-			exit(EXIT_FAILURE);
+			std::exit(EXIT_FAILURE);
 		}
 		modes->push_back(darkmode);
 		if(is_default) {
@@ -282,7 +282,7 @@ void PrintFormat::setupResources(EixRc *rc) {
 				}
 			}
 		}
-		AnsiColor::colorscheme = my_atoi(schemes[entry].c_str());
+		AnsiColor::colorscheme = my_atou(schemes[entry].c_str());
 	}
 }
 
@@ -458,7 +458,7 @@ void FormatParser::getPosition(size_t *line, size_t *column) {
 	const char *x(band), *y(band);
 	while((x != NULLPTR) && (x <= band_position)) {
 		y = x;
-		x = strchr(x, '\n');
+		x = std::strchr(x, '\n');
 		if(x != NULLPTR) {
 			++x;
 			++*line;
@@ -494,7 +494,7 @@ FormatParser::ParserState FormatParser::state_START() {
 FormatParser::ParserState FormatParser::state_TEXT() {
 	OutputString textbuffer;
 	const char *end_of_text(only_colors ? "(" : "<{(");
-	while(*band_position && (strchr(end_of_text, *band_position) == NULLPTR)) {
+	while(*band_position && (std::strchr(end_of_text, *band_position) == NULLPTR)) {
 		if(*band_position == '\\') {
 			textbuffer.append_escape(&band_position);
 		} else {
@@ -507,7 +507,7 @@ FormatParser::ParserState FormatParser::state_TEXT() {
 }
 
 FormatParser::ParserState FormatParser::state_COLOR() {
-	const char *q(strchr(band_position, ')'));
+	const char *q(std::strchr(band_position, ')'));
 	if(q == NULLPTR) {
 		last_error = _("'(' without closing ')'");
 		return ERROR;
@@ -535,7 +535,7 @@ inline static const char *seek_character(const char *fmt) {
 }
 
 FormatParser::ParserState FormatParser::state_PROPERTY() {
-	const char *q(strchr(band_position, '>'));
+	const char *q(std::strchr(band_position, '>'));
 	if(q == NULLPTR) {
 		last_error = _("'<' without closing '>'");
 		return ERROR;
@@ -562,11 +562,11 @@ GCC_DIAG_ON(sign-conversion)
 }
 
 FormatParser::ParserState FormatParser::state_IF() {
-	if(strncmp(band_position, "else}", 5) == 0) {
+	if(std::strncmp(band_position, "else}", 5) == 0) {
 		band_position += 5;
 		return ELSE;
 	}
-	if(strncmp(band_position, "}", 1) == 0) {
+	if(std::strncmp(band_position, "}", 1) == 0) {
 		band_position += 1;
 		return FI;
 	}
@@ -680,7 +680,7 @@ FormatParser::ParserState FormatParser::state_IF() {
 			}
 		} else if((c == '(') && (parse_modus != single_quote) && (parse_modus != double_quote)) {
 			const char *q(++band_position);
-			while(isalnum(*q) || (strchr("|,;:", *q) != NULLPTR)) {
+			while(isalnum(*q) || (std::strchr("|,;:", *q) != NULLPTR)) {
 				++q;
 			}
 			bool is_color(false);

@@ -113,7 +113,7 @@ void SetStability::calc_version_flags(bool get_local, MaskFlags *maskflags, Keyw
 		((maskflags != NULLPTR) && (v->saved_masks[mi]) != *maskflags) ||
 		((keyflags != NULLPTR) && ((v->saved_keywords[ki]) != *keyflags))) {
 		eix::say_error(_("internal error: SetStability calculates wrong index"));
-		exit(EXIT_FAILURE);
+		std::exit(EXIT_FAILURE);
 	}
 #endif
 #endif

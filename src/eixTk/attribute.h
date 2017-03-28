@@ -10,7 +10,7 @@
 
 #include <config.h>
 
-// check_includes: include "eixTk/attribute.h" include <csignal>
+// check_includes: include "eixTk/attribute.h"
 
 #ifdef HAVE_C11ATTRIBUTE_NORETURN
 #define ATTRIBUTE_NORETURN [[noreturn]]  // NOLINT(whitespace/braces)
@@ -50,16 +50,6 @@
 #endif  // USE PURE_FOR_CONST_VIRTUALS
 #endif  // USE CONST_FOR_CONST_VIRTUALS
 
-#ifdef HAVE_C11ATTRIBUTE_UNUSED
-#define ATTRIBUTE_UNUSED [[maybe_unused]]  // NOLINT(whitespace/braces)
-#else
-#ifdef HAVE_ATTRIBUTE_UNUSED
-#define ATTRIBUTE_UNUSED __attribute__ ((unused))
-#else
-#define ATTRIBUTE_UNUSED
-#endif  // HAVE_ATTRIBUTE_UNUSED
-#endif  // HAVE_C11ATTRIBUTE_UNUSED
-
 #ifdef HAVE_ATTRIBUTE_NONNULL_
 #define ATTRIBUTE_NONNULL_ __attribute__ ((nonnull))
 #else
@@ -71,6 +61,5 @@
 #else
 #define ATTRIBUTE_NONNULL(a)
 #endif
-
 
 #endif  // SRC_EIXTK_ATTRIBUTE_H_
