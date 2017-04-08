@@ -38,9 +38,7 @@ template<typename m_Type> class Masks : protected eix::forward_list<m_Type> {
 		typedef typename eix::forward_list<m_Type> MasksList;
 		using MasksList::begin;
 		using MasksList::end;
-#ifdef HAVE_FORWARD_LIST
 		using MasksList::before_begin;
-#endif
 		typedef typename MasksList::iterator iterator;
 		typedef typename MasksList::const_iterator const_iterator;
 
@@ -48,7 +46,6 @@ template<typename m_Type> class Masks : protected eix::forward_list<m_Type> {
 		}
 
 		void add(const m_Type& m) {
-#ifdef HAVE_FORWARD_LIST
 			iterator parent(before_begin());
 			for(iterator it(begin()); it != end(); parent = it++) {
 				if(m.priority < it->priority) {
@@ -57,15 +54,6 @@ template<typename m_Type> class Masks : protected eix::forward_list<m_Type> {
 				}
 			}
 			MasksList::insert_after(parent, m);
-#else
-			for(iterator it(begin()); it != end(); ++it) {
-				if(m.priority < it->priority) {
-					MasksList::insert(it, m);
-					return;
-				}
-			}
-			MasksList::push_back(m);
-#endif
 		}
 };
 

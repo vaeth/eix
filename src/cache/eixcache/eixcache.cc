@@ -18,7 +18,6 @@
 #include "database/io.h"
 #include "database/package_reader.h"
 #include "eixTk/formated.h"
-#include "eixTk/forward_list.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
