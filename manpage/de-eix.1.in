@@ -3193,16 +3193,51 @@ B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<hdepend>.
 Sie entsprechen den analogen Kommandozeilenoptionen für die Operandenwahl.
 .TP
 .BR DEFAULT_MATCH_ALGORITHM " " "(Stringliste)"
-Dies ist eine Stringliste der Gestalt I<regulärer_Ausdruck>[\\n\\r\\t ]I<Matchalgorithmus>,
+Dies ist eine Stringliste der Gestalt  B<(>I<Operandenfeld_Spezifikation>B<)>I<regulärer_Ausdruck>[\\n\\r\\t ]I<Matchalgorithmus>,
 die benutzt wird, um die Vorgabe für den Matchalgorithmus
 (für den das Suchmuster gedacht ist) zu ermitteln.
-Dies ist analog wie bei B<DEFAULT_MATCH_FIELD>, nur mit dem Unterschied,
+Dies ist analog wie bei B<DEFAULT_MATCH_FIELD>, haupstächlichr mit dem Unterschied,
 dass natürlich I<Matchalgorithmus> den Vorgabe-Matchalgorithmus angibt.
 
 Die möglichen Werte für I<Matchalgorithmus> sind:
 B<regex>, B<pattern>, B<substring>, B<begin>, B<end>, B<exact>, B<fuzzy>.
 Sie entsprechen den analogen Kommandozeilenoptionen für die Wahl des Matchalgorithmus.
 Falls keine andere Vorgabe für den Matchalgorithmus spezifiziert wird, wird B<regex> benutzt.
+
+In jedem String kann einer der beiden Teile B<(>I<Operandenfeld_Spezifikation>B<)> und I<regulärer_Ausdruck> weggelassen werden.
+Wird keiner weggelassen, müssen sie beide gleichzeitig passen, damit der Algorithmus selektiert wird.
+Die I<Operandenfeld_Spezifikation> bezieht sich auf die effektiv selektierten Operandenfeld-Werte
+gemäß der folgenden Regeln.
+
+I<Operandenfeld_Spezifikation> ist eine Verkettung von Worten der Gestalt
+B<|>I<Operandenfeld>, B<&>I<Operandenfeld> und B<!>I<Operandenfeld>,,
+wobei für I<Operandenfeld> die selben Werte möglich sind wie in B<DEFAULT_MATCH_FIELD>.
+Die Reihenfolge dieser Worte spielt keine Rolle.
+
+eix kombiniert alle I<Operandenfeld>-Werte, die mit dem selben Zeichen beginnen
+(B<|>, B<&> oder B<!>) und gewinnt dadurch 3 (möglicherweise leere) Familien von Operandenfeldern.
+Die I<Operandenfeld_Spezifikation> passt, wenn die folgenden Bedingungen alle erfüllt sind:
+
+1. Wenn die erste Familie (B<|>) nicht leer ist, so ist mindestens ein Operandenfeld dieser Familie effektiv selektiert (man denke an ein logisches "oder").
+
+2. Mindestens all Operandenfelder der zweiten Familie (B<&>) sind effektiv selektiert (man denke an ein logisches "und").
+
+3. Wenn die dritte Familie (B<!>) nicht leer ist, so sind höchststens Operandenfelder dieser Familie selektiert (man denke an ein logisches "nicht (... oder ... oder ...)").
+
+Um beispielsweise anzugeben, dass genau alle der Felder B<depend>, B<rdepend>, B<pdepend>, B<hdepend> selektiert sind
+(also B<--deps>) und kein weiteres, kann man einen der Spezifikationen
+
+.B (&deps!deps)
+
+.B (&depend&rdepend&pdepend&hdepend!depend!rdepend!pdepend!hdepend)
+
+benutzen.
+Will man andererseits spezifieren, dass mindestens eines von B<depend>, B<rdepend>, B<pdepend>, B<hdepend>
+selektiert ist aber ansonsten nichts, kann man das wie folgt tun:
+
+.B (|deps!deps)
+
+.B (|depend|rdepend|pdepend|hdepend!depend!rdepend!pdepend!hdepend)
 .TP
 .\" }}}
 .\" {{{ Definition of Redundancy

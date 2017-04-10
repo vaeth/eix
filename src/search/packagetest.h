@@ -363,10 +363,11 @@ class PackageTest {
 			test_stability_local, test_stability_nonlocal;
 		TestStability test_instability;
 
-		static MatchField     name2field(const std::string& p);
+		static MatchField     name2field(const std::string& p, bool default_match_field);
 		static MatchAlgorithm name2algorithm(const std::string& p);
 		static MatchField     get_matchfield(const char *p);
-		static MatchAlgorithm get_matchalgorithm(const char *p);
+		static MatchAlgorithm get_matchalgorithm(const char *p, MatchField field);
+		static void parse_field_specification(const std::string& spec, MatchField *or_field, MatchField *and_field, MatchField *not_field);
 
 		ATTRIBUTE_NONNULL_ bool stringMatch(Package *pkg) const;
 

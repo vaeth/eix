@@ -10,20 +10,14 @@
 #include "search/packagetest.h"
 #include <config.h>
 
-#include <map>
 #include <string>
-#include <vector>
 
 #include "database/package_reader.h"
 #include "eixTk/attribute.h"
-#include "eixTk/assert.h"
 #include "eixTk/eixint.h"
 #include "eixTk/filenames.h"
-#include "eixTk/formated.h"
-#include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/regexp.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/utils.h"
@@ -41,12 +35,10 @@
 #include "search/algorithms.h"
 #include "search/nowarn.h"
 
+using std::string;
+
 class DBHeader;
 class SetStability;
-
-using std::map;
-using std::string;
-using std::vector;
 
 const PackageTest::MatchField
 		PackageTest::NONE,
@@ -89,8 +81,6 @@ const PackageTest::TestStability
 
 NowarnMaskList *PackageTest::nowarn_list = NULLPTR;
 
-static void init_match_field_map();
-static void init_match_algorithm_map();
 ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE static bool stabilitytest(const Package *p, PackageTest::TestStability what);
 ATTRIBUTE_NONNULL_ inline static void get_p(Package **p, PackageReader *pkg);
 
@@ -180,251 +170,6 @@ void PackageTest::calculateNeeds() {
 		(test_stability_local != STABLE_NONE) ||
 		(test_stability_nonlocal != STABLE_NONE))
 		setNeeds(PackageReader::VERSIONS);
-}
-
-typedef map<string, PackageTest::MatchField> MatchFieldMap;
-static MatchFieldMap *static_match_field_map = NULLPTR;
-
-static void init_match_field_map() {
-	eix_assert_static(static_match_field_map == NULLPTR);
-	static_match_field_map = new MatchFieldMap;
-	MatchFieldMap& match_field_map(*static_match_field_map);
-	match_field_map["NAME"]           = PackageTest::NAME;
-	match_field_map["name"]           = PackageTest::NAME;
-	match_field_map["DESCRIPTION"]    = PackageTest::DESCRIPTION;
-	match_field_map["description"]    = PackageTest::DESCRIPTION;
-	match_field_map["LICENSE"]        = PackageTest::LICENSE;
-	match_field_map["license"]        = PackageTest::LICENSE;
-	match_field_map["CATEGORY"]       = PackageTest::CATEGORY;
-	match_field_map["category"]       = PackageTest::CATEGORY;
-	match_field_map["CATEGORY_NAME"]  = PackageTest::CATEGORY_NAME;
-	match_field_map["CATEGORY-NAME"]  = PackageTest::CATEGORY_NAME;
-	match_field_map["CATEGORY/NAME"]  = PackageTest::CATEGORY_NAME;
-	match_field_map["category_name"]  = PackageTest::CATEGORY_NAME;
-	match_field_map["category-name"]  = PackageTest::CATEGORY_NAME;
-	match_field_map["category/name"]  = PackageTest::CATEGORY_NAME;
-	match_field_map["HOMEPAGE"]       = PackageTest::HOMEPAGE;
-	match_field_map["homepage"]       = PackageTest::HOMEPAGE;
-	match_field_map["IUSE"]           = PackageTest::IUSE;
-	match_field_map["USE"]            = PackageTest::IUSE;
-	match_field_map["iuse"]           = PackageTest::IUSE;
-	match_field_map["use"]            = PackageTest::IUSE;
-	match_field_map["WITH_USE"]              = PackageTest::USE_ENABLED;
-	match_field_map["WITH-USE"]              = PackageTest::USE_ENABLED;
-	match_field_map["INSTALLED_WITH_USE"]    = PackageTest::USE_ENABLED;
-	match_field_map["INSTALLED-WITH-USE"]    = PackageTest::USE_ENABLED;
-	match_field_map["with_use"]              = PackageTest::USE_ENABLED;
-	match_field_map["with-use"]              = PackageTest::USE_ENABLED;
-	match_field_map["installed_with_use"]    = PackageTest::USE_ENABLED;
-	match_field_map["installed-with-use"]    = PackageTest::USE_ENABLED;
-	match_field_map["WITHOUT_USE"]           = PackageTest::USE_DISABLED;
-	match_field_map["WITHOUT-USE"]           = PackageTest::USE_DISABLED;
-	match_field_map["INSTALLED_WITHOUT_USE"] = PackageTest::USE_DISABLED;
-	match_field_map["INSTALLED-WITHOUT-USE"] = PackageTest::USE_DISABLED;
-	match_field_map["without_use"]           = PackageTest::USE_DISABLED;
-	match_field_map["without-use"]           = PackageTest::USE_DISABLED;
-	match_field_map["installed_without_use"] = PackageTest::USE_DISABLED;
-	match_field_map["installed-without-use"] = PackageTest::USE_DISABLED;
-	match_field_map["SET"]            = PackageTest::SET;
-	match_field_map["set"]            = PackageTest::SET;
-	match_field_map["EAPI"]           = PackageTest::EAPI;
-	match_field_map["eapi"]           = PackageTest::EAPI;
-	match_field_map["INSTALLED_EAPI"] = PackageTest::INST_EAPI;
-	match_field_map["INSTALLED-EAPI"] = PackageTest::INST_EAPI;
-	match_field_map["INSTALLEDEAPI"]  = PackageTest::INST_EAPI;
-	match_field_map["installed_eapi"] = PackageTest::INST_EAPI;
-	match_field_map["installed-eapi"] = PackageTest::INST_EAPI;
-	match_field_map["instelledeapi"]  = PackageTest::INST_EAPI;
-	match_field_map["SLOT"]           = PackageTest::SLOT;
-	match_field_map["slot"]           = PackageTest::SLOT;
-	match_field_map["FULLSLOT"]       = PackageTest::FULLSLOT;
-	match_field_map["fullslot"]       = PackageTest::FULLSLOT;
-	match_field_map["INSTALLED_SLOT"] = PackageTest::INST_SLOT;
-	match_field_map["INSTALLED-SLOT"] = PackageTest::INST_SLOT;
-	match_field_map["INSTALLEDSLOT"]  = PackageTest::INST_SLOT;
-	match_field_map["installed_slot"] = PackageTest::INST_SLOT;
-	match_field_map["installed-slot"] = PackageTest::INST_SLOT;
-	match_field_map["installedslot"]  = PackageTest::INST_SLOT;
-	match_field_map["INSTALLED_FULLSLOT"] = PackageTest::INST_FULLSLOT;
-	match_field_map["INSTALLED-FULLSLOT"] = PackageTest::INST_FULLSLOT;
-	match_field_map["INSTALLEDFULLSLOT"]  = PackageTest::INST_FULLSLOT;
-	match_field_map["installed_fullslot"] = PackageTest::INST_FULLSLOT;
-	match_field_map["installed-fullslot"] = PackageTest::INST_FULLSLOT;
-	match_field_map["installedfullslot"]  = PackageTest::INST_FULLSLOT;
-	match_field_map["DEP"]            = PackageTest::DEPS;
-	match_field_map["DEPS"]           = PackageTest::DEPS;
-	match_field_map["DEPENDENCIES"]   = PackageTest::DEPS;
-	match_field_map["dep"]            = PackageTest::DEPS;
-	match_field_map["deps"]           = PackageTest::DEPS;
-	match_field_map["dependencies"]   = PackageTest::DEPS;
-	match_field_map["DEPEND"]         = PackageTest::DEPEND;
-	match_field_map["depend"]         = PackageTest::DEPEND;
-	match_field_map["RDEPEND"]        = PackageTest::RDEPEND;
-	match_field_map["rdepend"]        = PackageTest::RDEPEND;
-	match_field_map["PDEPEND"]        = PackageTest::PDEPEND;
-	match_field_map["pdepend"]        = PackageTest::PDEPEND;
-	match_field_map["HDEPEND"]        = PackageTest::HDEPEND;
-	match_field_map["hdepend"]        = PackageTest::HDEPEND;
-}
-
-typedef map<string, PackageTest::MatchAlgorithm> MatchAlgorithmMap;
-static MatchAlgorithmMap *static_match_algorithm_map = NULLPTR;
-
-static void init_match_algorithm_map() {
-	eix_assert_static(static_match_algorithm_map == NULLPTR);
-	static_match_algorithm_map = new MatchAlgorithmMap;
-	MatchAlgorithmMap& match_algorithm_map(*static_match_algorithm_map);
-	match_algorithm_map["REGEX"]      = PackageTest::ALGO_REGEX;
-	match_algorithm_map["REGEXP"]     = PackageTest::ALGO_REGEX;
-	match_algorithm_map["regex"]      = PackageTest::ALGO_REGEX;
-	match_algorithm_map["regexp"]     = PackageTest::ALGO_REGEX;
-	match_algorithm_map["EXACT"]      = PackageTest::ALGO_EXACT;
-	match_algorithm_map["exact"]      = PackageTest::ALGO_EXACT;
-	match_algorithm_map["BEGIN"]      = PackageTest::ALGO_BEGIN;
-	match_algorithm_map["begin"]      = PackageTest::ALGO_BEGIN;
-	match_algorithm_map["END"]        = PackageTest::ALGO_END;
-	match_algorithm_map["end"]        = PackageTest::ALGO_END;
-	match_algorithm_map["SUBSTRING"]  = PackageTest::ALGO_SUBSTRING;
-	match_algorithm_map["substring"]  = PackageTest::ALGO_SUBSTRING;
-	match_algorithm_map["PATTERN"]    = PackageTest::ALGO_PATTERN;
-	match_algorithm_map["pattern"]    = PackageTest::ALGO_PATTERN;
-	match_algorithm_map["FUZZY"]      = PackageTest::ALGO_FUZZY;
-	match_algorithm_map["fuzzy"]      = PackageTest::ALGO_FUZZY;
-}
-
-PackageTest::MatchField PackageTest::name2field(const string& p) {
-	eix_assert_static(static_match_field_map != NULLPTR);
-	MatchFieldMap::const_iterator it(static_match_field_map->find(p));
-	if(unlikely(it == static_match_field_map->end())) {
-		eix::say_error(_("cannot find match field \"%s\"")) % p;
-		return NAME;
-	}
-	return it->second;
-}
-
-PackageTest::MatchAlgorithm PackageTest::name2algorithm(const string& p) {
-	eix_assert_static(static_match_algorithm_map != NULLPTR);
-	MatchAlgorithmMap::const_iterator it(static_match_algorithm_map->find(p));
-	if(unlikely(it == static_match_algorithm_map->end())) {
-		eix::say_error(_("cannot find match algorithm \"%s\"")) % p;
-		return ALGO_REGEX;
-	}
-	return it->second;
-}
-
-/**
-It is more convenient to make this a macro than a template,
-because otherwise we would have to pass initialization functions
-**/
-
-#define MatcherClassDefinition(N, T, f, d) \
-class N { \
-	private: \
-		typedef vector<Regex *> mType; \
-		mType m; \
-		typedef vector<T> vType; \
-		vType v; \
-		T default_value; \
-\
-	public: \
-		explicit N(const string& s) { \
-			WordVec pairs; \
-			split_string(&pairs, s, true); \
-			for(WordVec::iterator it(pairs.begin()); \
-				likely(it != pairs.end()); ++it) { \
-				string *s_ptr(&(*it)); \
-				++it; \
-				if(it == pairs.end()) { \
-					default_value = f(*s_ptr); \
-					return; \
-				} \
-				m.push_back(new Regex(s_ptr->c_str())); \
-				v.push_back(f(*it)); \
-			} \
-			default_value = d; \
-		} \
-\
-		~N() { \
-			for(mType::iterator it(m.begin()); likely(it != m.end()); ++it) { \
-				delete *it; \
-			} \
-		} \
-\
-		T parse(const char *p) { \
-			for(mType::size_type i(0); likely(i != m.size()); ++i) { \
-				if(m[i]->match(p)) { \
-					return v[i]; \
-				} \
-			} \
-			return default_value; \
-		} \
-}
-
-MatcherClassDefinition(MatcherField, PackageTest::MatchField, PackageTest::name2field, PackageTest::NAME);
-MatcherClassDefinition(MatcherAlgorithm, PackageTest::MatchAlgorithm, PackageTest::name2algorithm, PackageTest::ALGO_REGEX);
-
-PackageTest::MatchField PackageTest::get_matchfield(const char *p) {
-	static MatcherField *m = NULLPTR;
-	if(m == NULLPTR) {
-		EixRc& rc(get_eixrc());
-		m = new MatcherField(rc["DEFAULT_MATCH_FIELD"]);
-	}
-	return m->parse(p);
-}
-
-PackageTest::MatchAlgorithm PackageTest::get_matchalgorithm(const char *p) {
-	static MatcherAlgorithm *m = NULLPTR;
-	if(m == NULLPTR) {
-		EixRc& rc(get_eixrc());
-		m = new MatcherAlgorithm(rc["DEFAULT_MATCH_ALGORITHM"]);
-	}
-	return m->parse(p);
-}
-
-void PackageTest::setAlgorithm(BaseAlgorithm *p) {
-	delete algorithm;
-	algorithm = p;
-}
-
-void PackageTest::setAlgorithm(MatchAlgorithm a) {
-	switch(a) {
-		case ALGO_REGEX:
-			setAlgorithm(new RegexAlgorithm());
-			break;
-		case ALGO_EXACT:
-			setAlgorithm(new ExactAlgorithm());
-			break;
-		case ALGO_BEGIN:
-			setAlgorithm(new BeginAlgorithm());
-			break;
-		case ALGO_END:
-			setAlgorithm(new EndAlgorithm());
-			break;
-		case ALGO_SUBSTRING:
-			setAlgorithm(new SubstringAlgorithm());
-			break;
-		case ALGO_PATTERN:
-			setAlgorithm(new PatternAlgorithm());
-			break;
-		// case ALGO_FUZZY:
-		default:
-			setAlgorithm(new FuzzyAlgorithm(get_eixrc().getInteger("LEVENSHTEIN_DISTANCE")));
-			break;
-	}
-}
-
-void PackageTest::setPattern(const char *p) {
-	if(!know_pattern) {
-		if(algorithm == NULLPTR) {
-			setAlgorithm(get_matchalgorithm(p));
-		}
-
-		if(field == NONE) {
-			field = get_matchfield(p);
-		}
-		know_pattern = true;
-	}
-	algorithm->setString(p);
 }
 
 void PackageTest::finalize() {
@@ -1229,11 +974,4 @@ void PackageTest::get_nowarn_list() const {
 	}
 	nowarn_list = new NowarnMaskList;
 	prelist.initialize(nowarn_list, parse_error);
-}
-
-void PackageTest::init_static() {
-	NowarnMask::init_static();
-	FuzzyAlgorithm::init_static();
-	init_match_field_map();
-	init_match_algorithm_map();
 }

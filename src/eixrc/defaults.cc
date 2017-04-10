@@ -892,32 +892,32 @@ AddOption(STRING, "DEFAULT_MATCH_FIELD",
 AddOption(STRING, "MATCH_ALGORITHM_REGEX",
 	"[][^$|()]|[.][*+?]", P_("MATCH_ALGORITHM_REGEX",
 	"This variable is only used for delayed substitution.\n"
-	"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for regex."));
+	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for regex."));
 
 AddOption(STRING, "MATCH_ALGORITHM_PATTERN1",
 	"^[*]|[^][().][*]", P_("MATCH_ALGORITHM_PATTERN1",
 	"This variable is only used for delayed substitution.\n"
-	"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for pattern."));
+	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for pattern."));
 
 AddOption(STRING, "MATCH_ALGORITHM_SUBSTRING",
 	"^$", P_("MATCH_ALGORITHM_SUBSTRING",
 	"This variable is only used for delayed substitution.\n"
-	"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for substring."));
+	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for substring."));
 
 AddOption(STRING, "MATCH_ALGORITHM_EXACT",
-	":|^[@=]", P_("MATCH_ALGORITHM_EXACT",
+	"(!use!set!eapi!installed-eapi!slot!installed-slot!use!with-use!without-use)", P_("MATCH_ALGORITHM_EXACT",
 	"This variable is only used for delayed substitution.\n"
-	"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for exact."));
+	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for exact."));
 
 AddOption(STRING, "MATCH_ALGORITHM_PATTERN2",
 	"[][?]", P_("MATCH_ALGORITHM_PATTERN2",
 	"This variable is only used for delayed substitution.\n"
-	"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for pattern."));
+	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for pattern."));
 
 AddOption(STRING, "MATCH_ALGORITHM_BEGIN",
 	"/", P_("MATCH_ALGORITHM_BEGIN",
 	"This variable is only used for delayed substitution.\n"
-	"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for begin."));
+	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for begin."));
 
 AddOption(STRING, "DEFAULT_MATCH_ALGORITHM",
 	"%{\\MATCH_ALGORITHM_REGEX} regex "
@@ -927,8 +927,9 @@ AddOption(STRING, "DEFAULT_MATCH_ALGORITHM",
 	"%{\\MATCH_ALGORITHM_PATTERN2} pattern "
 	"%{\\MATCH_ALGORITHM_BEGIN} begin "
 	"regex", P_("DEFAULT_MATCH_ALGORITHM",
-	"This is a list of strings of the form regexp[ ]match_algorithm.\n"
-	"If regexp matches the search pattern, use match_algorithm as the default.\n"
+	"This is a list of strings of the form (spec)regexp[ ]match_algorithm.\n"
+	"If spec matches the match field(s) and regexp matches the search pattern,\n"
+	"use match_algorithm as the default.\n"
 	"A fallback match_algorithm may be specified as the last entry in the list.\n"
 	"Admissible values for match_algorithm are: regex, pattern, substring,\n"
 	"begin, end, exact, fuzzy."));

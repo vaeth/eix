@@ -177,6 +177,7 @@ src/search/nowarn.cc
 src/search/nowarn.h
 src/search/packagetest.cc
 src/search/packagetest.h
+src/search/packagetest_default.cc
 src/search/redundancy.h
 src/various/cli.cc
 src/various/cli.h

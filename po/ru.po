@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2017-02-22 20:01+0100\n"
-"PO-Revision-Date: 2017-02-22 20:05+0100\n"
+"POT-Creation-Date: 2017-04-10 21:12+0200\n"
+"PO-Revision-Date: 2017-04-10 21:00+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: ru\n"
@@ -3961,49 +3961,50 @@ msgstr ""
 msgctxt "MATCH_ALGORITHM_REGEX"
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for regex."
+"It is the criterion used in DEFAULT_MATCH_ALGORITHM for regex."
 msgstr ""
 
 #: src/eixrc/defaults.cc
 msgctxt "MATCH_ALGORITHM_PATTERN1"
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for pattern."
+"It is the criterion used in DEFAULT_MATCH_ALGORITHM for pattern."
 msgstr ""
 
 #: src/eixrc/defaults.cc
 msgctxt "MATCH_ALGORITHM_SUBSTRING"
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for substring."
+"It is the criterion used in DEFAULT_MATCH_ALGORITHM for substring."
 msgstr ""
 
 #: src/eixrc/defaults.cc
 msgctxt "MATCH_ALGORITHM_EXACT"
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for exact."
+"It is the criterion used in DEFAULT_MATCH_ALGORITHM for exact."
 msgstr ""
 
 #: src/eixrc/defaults.cc
 msgctxt "MATCH_ALGORITHM_PATTERN2"
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for pattern."
+"It is the criterion used in DEFAULT_MATCH_ALGORITHM for pattern."
 msgstr ""
 
 #: src/eixrc/defaults.cc
 msgctxt "MATCH_ALGORITHM_BEGIN"
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It is a regular expression used in DEFAULT_MATCH_ALGORITHM for begin."
+"It is the criterion used in DEFAULT_MATCH_ALGORITHM for begin."
 msgstr ""
 
 #: src/eixrc/defaults.cc
 msgctxt "DEFAULT_MATCH_ALGORITHM"
 msgid ""
-"This is a list of strings of the form regexp[ ]match_algorithm.\n"
-"If regexp matches the search pattern, use match_algorithm as the default.\n"
+"This is a list of strings of the form (spec)regexp[ ]match_algorithm.\n"
+"If spec matches the match field(s) and regexp matches the search pattern,\n"
+"use match_algorithm as the default.\n"
 "A fallback match_algorithm may be specified as the last entry in the list.\n"
 "Admissible values for match_algorithm are: regex, pattern, substring,\n"
 "begin, end, exact, fuzzy."
@@ -7272,17 +7273,35 @@ msgstr "внутренняя ошибка: SetStability рассчитывает
 msgid "warning: ignoring --close without --open"
 msgstr "внимание: игнорирую --close без --open"
 
-# fuzzy (only punctation changed)
-#: src/search/packagetest.cc
-#, c-format
-msgid "cannot find match field \"%s\""
-msgstr "невозможно сопоставить поле «%s»"
+# fuzzy
+#: src/search/packagetest_default.cc
+#, fuzzy, c-format
+msgid "unknown match field \"%s\" in DEFAULT_MATCH_FIELD"
+msgstr "невозможно сопоставить поле «%s» in DEFAULT_MATCH_FIELD"
 
-# fuzzy (only punctation changed)
-#: src/search/packagetest.cc
+# fuzzy
+#: src/search/packagetest_default.cc
 #, c-format
-msgid "cannot find match algorithm \"%s\""
-msgstr "невозможно сопоставить алгоритм «%s»"
+msgid "unknown match field \"%s\" in DEFAULT_MATCH_ALGORITHM"
+msgstr "невозможно сопоставить поле «%s» in DEFAULT_MATCH_ALGORITHM"
+
+# fuzzy
+#: src/search/packagetest_default.cc
+#, c-format
+msgid "unknown match algorithm \"%s\" in DEFAULT_MATCH_ALGORITHM"
+msgstr "невозможно сопоставить алгоритм «%s» in DEFAULT_MATCH_ALGORITHM"
+
+# fuzzy
+#: src/search/packagetest_default.cc
+#, c-format
+msgid "missing '|', '&', or '!' in \"%s\" in DEFAULT_MATCH_ALGORITHM"
+msgstr "missing «|», «&», or «|» in «%s» in DEFAULT_MATCH_ALGORITHM"
+
+# fuzzy
+#: src/search/packagetest_default.cc
+#, c-format
+msgid "closing ')' missing in \"%s\" in DEFAULT_MATCH_ALGORITHM"
+msgstr "closing «)» missing in \"%s\" in DEFAULT_MATCH_ALGORITHM"
 
 #: src/various/drop_permissions.cc
 msgid "failed to drop permissions"

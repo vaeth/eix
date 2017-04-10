@@ -1,5 +1,14 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.32.8
+	Martin Väth <martin at mvath.de>:
+	- IMPORTANT:
+	  Change MATCH_ALGORITHM_EXACT so that --exact is default if the match
+	  field contains _only_ things like USE-flags, sets, EAPI, or SLOT.
+	  This may cause a surprising change of behaviour and might perhaps be
+	  reverted.
+	- Extend DEFAULT_MATCH_ALGORITHM to allow checking for match field.
+
 *eix-0.32.7
 	Martin Väth <martin at mvath.de>:
 	- internal: provide and use eix::array instead of hacks

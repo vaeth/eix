@@ -232,6 +232,7 @@ search/matchtree.cc \
 search/matchtree.h \
 search/packagetest.cc \
 search/packagetest.h \
+search/packagetest_default.cc \
 search/nowarn.cc \
 search/nowarn.h \
 search/redundancy.h

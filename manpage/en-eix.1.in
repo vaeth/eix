@@ -3125,13 +3125,48 @@ B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<hdepend>,
 corresponding to the analogous command line option for the match field.
 .TP
 .BR DEFAULT_MATCH_ALGORITHM " " "(string list)"
-This is a list of strings of the form I<regular_expression>[\\n\\r\\t ]I<match_algorithm>
+This is a list of strings of the form B<(>I<match_field_specification>B<)>I<regular_expression>[\\n\\r\\t ]I<match_algorithm>
 which is used to determine the default match algorithm.
-This is analogous to B<DEFAULT_MATCH_FIELD> with the only difference that I<match_algorithm>
+
+The interpretation is essentially analogous to B<DEFAULT_MATCH_FIELD> with the main difference that I<match_algorithm>
 specifies the default match algorithm chosen.
 The possible values for I<match_algorithm> are B<regex>, B<pattern>, B<substring>, B<begin>, B<end>, B<exact>, B<fuzzy>
 which correspond to the analogous command line option for the match algorithm.
 If no other default match algorithm default is specified, then B<regex> is used.
+
+In each string one of the two parts B<(>I<match_field_specification>B<)> and I<regular_expression> can be omitted.
+If neither is omitted, they must both match simultaneously for the algorithm to be selected.
+The I<match_field_specification> refers to the effectively selected match field(s),
+according to the following rules.
+
+I<match_field_specification> is a concatenation of words of the form
+B<|>I<match_field>, B<&>I<match_field>, and B<!>I<match_field>,
+where I<match_field> has the possible values specfied in the description of B<DEFAULT_MATCH_FIELD>.
+The order of these words plays no role.
+
+eix combines all I<match_field> values with the same leading symbol
+(B<|>, B<&>, or B<!>) and thus obtains three (possibly empty) families of match fields.
+Now I<match_field_specification> matches if all of the following holds:
+
+1. If the first family (B<|>) is nonempty, at least one match field of that family is effectively selected (think of a logical "or").
+
+2. At least all match fields of the second family (B<&>) are effectively selected (think of a logical "and").
+
+3. If the third family (B<!>) is nonempty, at most match fields from that family are selected (think of a logical "not (... or ... or ...)").
+
+Thus, for instance, to specify that exactly all of B<depend>, B<rdepend>, B<pdepend>, B<hdepend> are
+selected (i.e. B<--deps>) and no other field is selected, you can use either of
+
+.B (&deps!deps)
+
+.B (&depend&rdepend&pdepend&hdepend!depend!rdepend!pdepend!hdepend)
+
+On the other hand, if you want to specify that at least one of B<depend>, B<rdepend>, B<pdepend>, B<hdepend> are selected
+and no other than these fields are selected, you can use either of
+
+.B (|deps!deps)
+
+.B (|depend|rdepend|pdepend|hdepend!depend!rdepend!pdepend!hdepend)
 .TP
 .\" }}}
 .\" {{{ Definition of Redundancy
