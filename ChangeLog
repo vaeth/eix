@@ -2,12 +2,15 @@
 
 *eix-0.32.8
 	Martin Väth <martin at mvath.de>:
-	- IMPORTANT:
-	  Change MATCH_ALGORITHM_EXACT so that --exact is default if the match
-	  field contains _only_ things like USE-flags, sets, EAPI, or SLOT.
+	- Change MATCH_ALGORITHM_EXACT so that --exact is default if the match
+	  field contains _only_ things like USE-flags, sets, EAPI, or SLOT
+	  and search string does not look like a regex/pattern.
 	  This may cause a surprising change of behaviour and might perhaps be
 	  reverted.
-	- Extend DEFAULT_MATCH_ALGORITHM to allow checking for match field.
+	- Change MATCH_ALGORITHM_SUBSTRING to apply if match field contains
+	  only category/version and search string does not look like a
+	  regex/pattern.
+	- Extend DEFAULT_MATCH_ALGORITHM to allow checking for match field(s).
 
 *eix-0.32.7
 	Martin Väth <martin at mvath.de>:

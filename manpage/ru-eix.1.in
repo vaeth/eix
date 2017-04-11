@@ -883,12 +883,13 @@ The subsequent options define the algorithm by which the match field should be t
 against the expression.
 Only one algorithm can be chosen for an expression.
 If you do not specify some of these options, the default is chosen according
-to some heuristic depending on the form of your search pattern.
+to some heuristic depending on the form of your search pattern and according
+to the selected match field.
 In most cases, the default will be B<--regex> unless your expression
 "looks" like a glob pattern or a substring (in which case the corresponding
-algorithm will be the default), or if the pattern has a particular content like
-"@set" or "cat/n" which most people would expect to match the whole string or
-the beginning of a string, respectively.
+algorithm will be the default), or if the selected match field refers only
+to USE-flags, sets, EAPI, or SLOT which perhaps most people would expect to
+match the whole string.
 Details of the heuristic are specified by the B<DEFAULT_MATCH_ALGORITHM>
 configuration variable explained later.
 .TP
@@ -2532,11 +2533,6 @@ Never display a list of overlays.
 anything else
 List all overlays for every query (even if not even one is needed).
 .RE
-
-.TP
-.BR TERM_STATUSLINE " " (string)
-This is a list of (space-separated) words; if one of these words matches
-the beginning of TERM, it is assumed that the terminal supports a status line.
 
 .TP
 .BR TERM " " (string)

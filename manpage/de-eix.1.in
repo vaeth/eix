@@ -901,17 +901,18 @@ die es noch in der Datenbank gibt.
 
 .\" {{{ -------- Match-Algorithmus
 .SS "Match-Algorithmus"
-Die folgenden Optionen legen den Algorithmus fest, nach dem das Testfeld gegen das SUCHMUSTER
-getestet werden soll.
+Die folgenden Optionen legen den Algorithmus fest, nach dem das Operandenfeld
+gegen das SUCHMUSTER getestet werden soll.
 Nur ein Algorithmus kann pro AUSDRUCK gewählt werden.
 Falls keine dieser Optionen benutzt wird, wird die Vorgabe anhand einer
-Heuristik ausgewählt, der von der Gestelt der Suchmusters abhängt.
+Heuristik ausgewählt, die von der Gestelt des Suchmusters und vom ausgewählten
+Operandenfeld abhängt.
 In den meisten Fällen wird diese Vorgabe B<--regex> sein, außer wenn das
 Suchmuster aussieht wie "typischerweise" ein glob-Muster or ein Teilstring
 (in diesem Fall wird der entsprechende Algorithmus die Vorgabe), oder falls
-das Suchmuster einen speziellen Inhalt wie "@set" oder "cat/n" hat, in welchem
-Fall die meisten Benutzer erwarten, dass gegen den gesamten String bzw, gegen
-den Stringanfang getestet wird.
+das ausgewählte Operandenfeld sich nur auf USE-flags, sets, EAPI oder SLOT
+bezieht, so dass die meisten Benutzer vermutlich erwarten, dass auch tatsächlich
+gegen den gesamten String getestet werden soll.
 Details der Heuristik werden in der später erklärten B<DEFAULT_MATCH_ALGORITHM>-Konfigurationsvariable festgelegt.
 .TP
 .BR -e ", " --exact

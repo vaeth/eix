@@ -894,13 +894,13 @@ AddOption(STRING, "MATCH_ALGORITHM_REGEX",
 	"This variable is only used for delayed substitution.\n"
 	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for regex."));
 
-AddOption(STRING, "MATCH_ALGORITHM_PATTERN1",
-	"^[*]|[^][().][*]", P_("MATCH_ALGORITHM_PATTERN1",
+AddOption(STRING, "MATCH_ALGORITHM_PATTERN",
+	"^[*]|[^][().][*]|[][?]", P_("MATCH_ALGORITHM_PATTERN",
 	"This variable is only used for delayed substitution.\n"
 	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for pattern."));
 
 AddOption(STRING, "MATCH_ALGORITHM_SUBSTRING",
-	"^$", P_("MATCH_ALGORITHM_SUBSTRING",
+	"(!category-name)/", P_("MATCH_ALGORITHM_SUBSTRING",
 	"This variable is only used for delayed substitution.\n"
 	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for substring."));
 
@@ -909,22 +909,16 @@ AddOption(STRING, "MATCH_ALGORITHM_EXACT",
 	"This variable is only used for delayed substitution.\n"
 	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for exact."));
 
-AddOption(STRING, "MATCH_ALGORITHM_PATTERN2",
-	"[][?]", P_("MATCH_ALGORITHM_PATTERN2",
-	"This variable is only used for delayed substitution.\n"
-	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for pattern."));
-
 AddOption(STRING, "MATCH_ALGORITHM_BEGIN",
-	"/", P_("MATCH_ALGORITHM_BEGIN",
+	"^$", P_("MATCH_ALGORITHM_BEGIN",
 	"This variable is only used for delayed substitution.\n"
 	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for begin."));
 
 AddOption(STRING, "DEFAULT_MATCH_ALGORITHM",
 	"%{\\MATCH_ALGORITHM_REGEX} regex "
-	"%{\\MATCH_ALGORITHM_PATTERN1} pattern "
+	"%{\\MATCH_ALGORITHM_PATTERN} pattern "
 	"%{\\MATCH_ALGORITHM_SUBSTRING} substring "
 	"%{\\MATCH_ALGORITHM_EXACT} exact "
-	"%{\\MATCH_ALGORITHM_PATTERN2} pattern "
 	"%{\\MATCH_ALGORITHM_BEGIN} begin "
 	"regex", P_("DEFAULT_MATCH_ALGORITHM",
 	"This is a list of strings of the form (spec)regexp[ ]match_algorithm.\n"
