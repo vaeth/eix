@@ -887,7 +887,7 @@ AddOption(STRING, "DEFAULT_MATCH_FIELD",
 	"A fallback match_field may be specified as the last entry in the list.\n"
 	"Admissible values for match_field are: name, category, category/name,\n"
 	"description, license, homepage, set, slot, installed-slot, use\n"
-	"with-use, without-use."));
+	"with-use, without-use, error."));
 
 AddOption(STRING, "MATCH_ALGORITHM_REGEX",
 	"[][^$|()]|[.][*+?]", P_("MATCH_ALGORITHM_REGEX",
@@ -926,7 +926,7 @@ AddOption(STRING, "DEFAULT_MATCH_ALGORITHM",
 	"use match_algorithm as the default.\n"
 	"A fallback match_algorithm may be specified as the last entry in the list.\n"
 	"Admissible values for match_algorithm are: regex, pattern, substring,\n"
-	"begin, end, exact, fuzzy."));
+	"begin, end, exact, fuzzy, error."));
 
 AddOption(BOOLEAN, "TEST_FOR_EMPTY",
 	"true", P_("TEST_FOR_EMPTY",

@@ -807,6 +807,8 @@ In den meisten Fällen wird das Vorgabefeld B<--name> sein, aber wenn das
 SUCHMUSTER "speziell" aussieht, etwa "cat/n" oder "@set", so wird das Vorgabefeld
 auf B<--category-name>, B<--set>, B<--description>, B<--homepage> oder B<--license> geändert.
 Details der Heuristik werden in der später erklärten B<DEFAULT_MATCH_FIELD>-Konfigurationsvariable festgelegt.
+Je nach Wert dieser Variablen kann es auch passieren, dass eine der folgenden
+Optionen explizit für jede Suche angegeben werden muss.
 .TP
 .BR -y ", " --any
 Jedes Feld wird durchsucht.
@@ -914,6 +916,8 @@ das ausgewählte Operandenfeld sich nur auf USE-flags, sets, EAPI oder SLOT
 bezieht, so dass die meisten Benutzer vermutlich erwarten, dass auch tatsächlich
 gegen den gesamten String getestet werden soll.
 Details der Heuristik werden in der später erklärten B<DEFAULT_MATCH_ALGORITHM>-Konfigurationsvariable festgelegt.
+Je nach Wert dieser Variablen kann es auch passieren, dass eine der folgenden
+Optionen explizit für jede Suche angegeben werden muss.
 .TP
 .BR -e ", " --exact
 Das Suchmuster ist ein exakter (ganzer) String.
@@ -3190,8 +3194,16 @@ Die möglichen Werte für I<Operandenfeld> sind: B<name>, B<category>, B<categor
 (oder B<category-name>), B<description>, B<license>, B<homepage>, B<set>, B<eapi>, B<installed-eapi>,
 B<slot>, B<installed-slot>, B<use> (oder B<iuse>), B<with-use> (oder B<installed-with-use>),
 B<without-use> (oder B<installed-without-use>),
-B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<hdepend>.
+B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<hdepend> und B<error>.
 Sie entsprechen den analogen Kommandozeilenoptionen für die Operandenwahl.
+Der spezielle Wert B<error> bedeutet, dass eix mit der Fehlermeldung abbricht,
+dass das Operandenfeld nicht automatisch erkannt werden kann und explizit
+angegeben werden muss.
+
+Zum Testen von Skripten empfiehlt es sich, B<DEFAULT_MATCH_FIELD=error> zu
+setzen, so dass sich Skripte nicht auf spezielle Vorgaben von
+B<DEEFAULT_MATCH_FIELD> verlassen: Diese Vorgabe hat sich in der Geschichte von
+eix bereits mehrfach geändert und wird es vermutlich irgendwann wieder tun.
 .TP
 .BR DEFAULT_MATCH_ALGORITHM " " "(Stringliste)"
 Dies ist eine Stringliste der Gestalt  B<(>I<Operandenfeld_Spezifikation>B<)>I<regulärer_Ausdruck>[\\n\\r\\t ]I<Matchalgorithmus>,
@@ -3203,6 +3215,9 @@ dass natürlich I<Matchalgorithmus> den Vorgabe-Matchalgorithmus angibt.
 Die möglichen Werte für I<Matchalgorithmus> sind:
 B<regex>, B<pattern>, B<substring>, B<begin>, B<end>, B<exact>, B<fuzzy>.
 Sie entsprechen den analogen Kommandozeilenoptionen für die Wahl des Matchalgorithmus.
+Der spezielle Wert B<error> bedeutet, dass eix mit der Fehlermeldung abbricht,
+dass der Matchalgorithmus nicht automatisch erkannt werden kann und explizit
+angegeben werden muss.
 Falls keine andere Vorgabe für den Matchalgorithmus spezifiziert wird, wird B<regex> benutzt.
 
 In jedem String kann einer der beiden Teile B<(>I<Operandenfeld_Spezifikation>B<)> und I<regulärer_Ausdruck> weggelassen werden.
@@ -3212,7 +3227,7 @@ gemäß der folgenden Regeln.
 
 I<Operandenfeld_Spezifikation> ist eine Verkettung von Worten der Gestalt
 B<|>I<Operandenfeld>, B<&>I<Operandenfeld> und B<!>I<Operandenfeld>,,
-wobei für I<Operandenfeld> die selben Werte möglich sind wie in B<DEFAULT_MATCH_FIELD>.
+wobei für I<Operandenfeld> die selben Werte möglich sind wie in B<DEFAULT_MATCH_FIELD> (mit Ausnahme von B<error>).
 Die Reihenfolge dieser Worte spielt keine Rolle.
 
 eix kombiniert alle I<Operandenfeld>-Werte, die mit dem selben Zeichen beginnen
@@ -3239,6 +3254,11 @@ selektiert ist aber ansonsten nichts, kann man das wie folgt tun:
 .B (|deps!deps)
 
 .B (|depend|rdepend|pdepend|hdepend!depend!rdepend!pdepend!hdepend)
+
+Zum Testen von Skripten empfiehlt es sich, B<DEFAULT_MATCH_ALGORITHM=error> zu
+setzen, so dass sich Skripte nicht auf spezielle Vorgaben von
+B<DEEFAULT_MATCH_ALGORITHM> verlassen: Diese Vorgabe hat sich in der Geschichte von
+eix bereits mehrfach geändert und wird es vermutlich irgendwann wieder tun.
 .TP
 .\" }}}
 .\" {{{ Definition of Redundancy

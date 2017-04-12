@@ -102,7 +102,7 @@ FORMAT='%{FORMAT_TEST_OBSOLETE}'
 export DEFAULT_FORMAT FORMAT
 
 Statusline "`pgettext 'Statusline eix-test-obsolete' 'eix -t'`"
-eix '-t*!'
+eix '-t*!sb'
 
 # sets is the list of all "*" for which there are set_* variables
 sets=
@@ -138,13 +138,13 @@ FalseExcept() {
 }
 
 Output() {
-	if ! NOFOUND_STATUS=1 COUNT_ONLY_PRINTED=false eix --nowarn -Tq0
+	if ! NOFOUND_STATUS=1 COUNT_ONLY_PRINTED=false eix --nowarn -Tq0sb
 	then	[ -z "${1:++}" ] || Echo "$1"
 		return
 	fi
 	printf '\n%s\n' "$2"
 	if [ $# -le 3 ] || $nodetails
-	then	eix --nowarn -T
+	then	eix --nowarn -Tsb
 		echo
 		return
 	fi

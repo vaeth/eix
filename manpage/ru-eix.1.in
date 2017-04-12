@@ -784,6 +784,8 @@ looks "special" like e.g. "cat/n" or "@set", the default match field will change
 B<--category-name>, B<--set>, B<--description>, B<--homepage>, or B<--license>.
 Details of the heuristic are specified by the B<DEFAULT_MATCH_FIELD>
 configuration variable explained later.
+Depending on the configuration of that variable, it might even be non-optional
+to specify some of the following options for every query.
 .TP
 .BR -y ", " --any
 Any match field is searched. This is the same as specifying simultaneously
@@ -892,6 +894,8 @@ to USE-flags, sets, EAPI, or SLOT which perhaps most people would expect to
 match the whole string.
 Details of the heuristic are specified by the B<DEFAULT_MATCH_ALGORITHM>
 configuration variable explained later.
+Depending on the configuration of that variable, it might even be non-optional
+to specify some of the following options for every query.
 .TP
 .BR -e ", " --exact
 Pattern is an exact (full) string. For example, "eix -e gcc" will only show packages
@@ -3119,8 +3123,15 @@ The possible values for I<match_field> are B<name>, B<category>, B<category/name
 (or B<category-name>), B<description>, B<license>, B<homepage>, B<set>, B<eapi>, B<installed-eapi>,
 B<slot>, B<installed-slot>, B<use> (or B<iuse>), B<with-use> (or B<installed-with-use>),
 B<without-use> (or B<installed-without-use>),
-B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<hdepend>,
+B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<hdepend>, or B<error>,
 corresponding to the analogous command line option for the match field.
+The special value B<error> means that eix stops with an error message claiming
+that a match field is not autodetected and must be specified explicitly.
+
+For testing scripts, it is recommended to use B<DEFAULT_MATCH_FIELD=error> so
+that scripts do not rely on particular defaults of that variable: This default
+has already changed several times in the history of eix and probably will also
+eventually change in the future.
 .TP
 .BR DEFAULT_MATCH_ALGORITHM " " "(string list)"
 This is a list of strings of the form B<(>I<match_field_specification>B<)>I<regular_expression>[\\n\\r\\t ]I<match_algorithm>
@@ -3128,8 +3139,10 @@ which is used to determine the default match algorithm.
 
 The interpretation is essentially analogous to B<DEFAULT_MATCH_FIELD> with the main difference that I<match_algorithm>
 specifies the default match algorithm chosen.
-The possible values for I<match_algorithm> are B<regex>, B<pattern>, B<substring>, B<begin>, B<end>, B<exact>, B<fuzzy>
-which correspond to the analogous command line option for the match algorithm.
+The possible values for I<match_algorithm> are B<regex>, B<pattern>, B<substring>, B<begin>, B<end>, B<exact>, B<fuzzy>,
+or B<error> which correspond to the analogous command line option for the match algorithm.
+The special value B<error> means that eix stops with an error message claiming
+that a match algorithm is not autodetected and must be specified explicitly.
 If no other default match algorithm default is specified, then B<regex> is used.
 
 In each string one of the two parts B<(>I<match_field_specification>B<)> and I<regular_expression> can be omitted.
@@ -3139,7 +3152,7 @@ according to the following rules.
 
 I<match_field_specification> is a concatenation of words of the form
 B<|>I<match_field>, B<&>I<match_field>, and B<!>I<match_field>,
-where I<match_field> has the possible values specfied in the description of B<DEFAULT_MATCH_FIELD>.
+where I<match_field> can have the same values as in B<DEFAULT_MATCH_FIELD> (except for B<error>).
 The order of these words plays no role.
 
 eix combines all I<match_field> values with the same leading symbol
@@ -3165,6 +3178,11 @@ and no other than these fields are selected, you can use either of
 .B (|deps!deps)
 
 .B (|depend|rdepend|pdepend|hdepend!depend!rdepend!pdepend!hdepend)
+
+For testing scripts, it is recommended to use B<DEFAULT_MATCH_ALGORIRTHM=error>
+so that scripts do not rely on particular defaults of that variable: This default
+has already changed several times in the history of eix and probably will also
+eventually change in the future.
 .TP
 .\" }}}
 .\" {{{ Definition of Redundancy

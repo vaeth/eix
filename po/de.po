@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2017-04-10 21:12+0200\n"
-"PO-Revision-Date: 2017-04-11 22:06+0200\n"
+"POT-Creation-Date: 2017-04-12 11:01+0200\n"
+"PO-Revision-Date: 2017-04-12 11:05+0200\n"
 "Last-Translator: Martin Väth <martin@mvath.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -4233,14 +4233,14 @@ msgid ""
 "A fallback match_field may be specified as the last entry in the list.\n"
 "Admissible values for match_field are: name, category, category/name,\n"
 "description, license, homepage, set, slot, installed-slot, use\n"
-"with-use, without-use."
+"with-use, without-use, error."
 msgstr ""
 "Dies ist eine Stringliste von Ausdrücken der Gestalt regexp[ ]match_field.\n"
 "Falls regexp auf das Suchmuster zutrifft, benutze match_field als\n"
 "Vorgabe. Ein Fallback-match_field kann als letzter Eintrag der\n"
 "Liste angegeben werden. Zulässige Werte für match_field sind:\n"
 "name, category, category/name, description, license, homepage,\n"
-"set, slot, installed-slot, use, with-use, without-use."
+"set, slot, installed-slot, use, with-use, without-use, error."
 
 #: src/eixrc/defaults.cc
 msgctxt "MATCH_ALGORITHM_REGEX"
@@ -4300,7 +4300,7 @@ msgid ""
 "use match_algorithm as the default.\n"
 "A fallback match_algorithm may be specified as the last entry in the list.\n"
 "Admissible values for match_algorithm are: regex, pattern, substring,\n"
-"begin, end, exact, fuzzy."
+"begin, end, exact, fuzzy, error."
 msgstr ""
 "Dies ist eine Stringliste von Ausdrücken der Gestalt\n"
 "(spec)regexp[ ]match_algorithm.\n"
@@ -4308,7 +4308,7 @@ msgstr ""
 "zutrifft, wird match_algorithm als Vorgabe benutzt.\n"
 "Ein Fallback-match_algorithm kann als letzter Eintrag der Liste auftreten.\n"
 "Zulässige Werte für match_algorithm sind:\n"
-"regex, pattern, substring, begin, end, exact, fuzzy."
+"regex, pattern, substring, begin, end, exact, fuzzy, error"
 
 #: src/eixrc/defaults.cc
 msgctxt "TEST_FOR_EMPTY"
@@ -8400,6 +8400,10 @@ msgid "unknown match field \"%s\" in DEFAULT_MATCH_ALGORITHM"
 msgstr "unbekanntes Operandenfeld „%s“ in DEFAULT_MATCH_ALGORITHM"
 
 #: src/search/packagetest_default.cc
+msgid "match field \"error\" is invalid in DEFAULT_MATCH_ALGORITHM"
+msgstr "Operandenfeld „error“ ist ungültig in DEFAULT_MATCH_ALGORITHM"
+
+#: src/search/packagetest_default.cc
 #, c-format
 msgid "unknown match algorithm \"%s\" in DEFAULT_MATCH_ALGORITHM"
 msgstr "unbekannter Match-Algorithmus „%s“ in DEFAULT_MATCH_ALGORITHM"
@@ -8413,6 +8417,24 @@ msgstr "Fehlendes „|“, „&“ oder „!“ in „%s“ in DEFAULT_MATCH_ALG
 #, c-format
 msgid "closing ')' missing in \"%s\" in DEFAULT_MATCH_ALGORITHM"
 msgstr "Schließende „)“ fehlt in „%s“ in DEFAULT_MATCH_ALGORITHM"
+
+#: src/search/packagetest_default.cc
+#, c-format
+msgid ""
+"cannot autodetect match field for search string \"%s\"\n"
+"Specify some explicitly, e.g. --any, --name, --category, --slot, etc."
+msgstr ""
+"Keine automatische Erkennung des Operandenfelds für Suchstring „%s“\n"
+"Bitte explizit angeben, etwa --any, --name, --category, --slot, …."
+
+#: src/search/packagetest_default.cc
+#, c-format
+msgid ""
+"cannot autodetect match algorithm for search string \"%s\"\n"
+"Specify some explicitly, e.g. --regex, --pattern, --exact, etc."
+msgstr ""
+"Keine automatische Erkennung des Matchalgorithmus' für Suchstring „%s“\n"
+"Bitte explizit angeben, etwa --regex, --pattern, --exact, …"
 
 #: src/various/drop_permissions.cc
 msgid "failed to drop permissions"

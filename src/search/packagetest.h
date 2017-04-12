@@ -80,7 +80,8 @@ class PackageTest {
 			ALGO_END,
 			ALGO_SUBSTRING,
 			ALGO_PATTERN,
-			ALGO_FUZZY
+			ALGO_FUZZY,
+			ALGO_ERROR
 		};
 
 		typedef uint8_t TestInstalled;

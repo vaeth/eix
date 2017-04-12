@@ -238,7 +238,7 @@ DATE_FORMAT='%s' \
 DATE_OUTPUT='%x %X' \
 NAME='<category>/<package>' \
 LINE='<date:DATE_FORMAT>\t%{'$input'}\t%{'$output'}'$date_output'\n' \
-eix --format '<installedversions:LINE>' '-I*' \
+eix --format '<installedversions:LINE>' '-I*sb' \
 | sort -n \
 | {
 	while read -r line

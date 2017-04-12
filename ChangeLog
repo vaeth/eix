@@ -2,6 +2,12 @@
 
 *eix-0.32.8
 	Martin Väth <martin at mvath.de>:
+	- IMPORTANT: For testing scripts, it is strongly recommended to use
+	  DEFAULT_MATCH_FIELD=error
+	  DEFAULT_MATCH_ALGORITHM=error
+	  (and to always specify match field/algorithm explicitly).
+	  This way the scripts are independent of current and/or future changes
+	  of the default heuristics for these values.
 	- Change MATCH_ALGORITHM_EXACT so that --exact is default if the match
 	  field contains _only_ things like USE-flags, sets, EAPI, or SLOT
 	  and search string does not look like a regex/pattern.
@@ -10,6 +16,9 @@
 	- Change MATCH_ALGORITHM_SUBSTRING to apply if match field contains
 	  only category/version and search string does not look like a
 	  regex/pattern.
+	- Introduce a default match algorithm/field "error" so that the user
+	  can be required to explicitly specify algorithm/field, thus avoiding
+	  any dangerous heuristics.
 	- Extend DEFAULT_MATCH_ALGORITHM to allow checking for match field(s).
 
 *eix-0.32.7

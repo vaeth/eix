@@ -10,6 +10,8 @@
 #include "search/packagetest.h"
 #include <config.h>
 
+#include <cstdlib>
+
 #include <map>
 #include <string>
 #include <vector>
@@ -120,6 +122,8 @@ static void init_match_field_map() {
 	match_field_map["pdepend"]        = PackageTest::PDEPEND;
 	match_field_map["HDEPEND"]        = PackageTest::HDEPEND;
 	match_field_map["hdepend"]        = PackageTest::HDEPEND;
+	match_field_map["ERROR"]          = PackageTest::NONE;
+	match_field_map["error"]          = PackageTest::NONE;
 }
 
 PackageTest::MatchField PackageTest::name2field(const string& p, bool default_match_field) {
@@ -133,7 +137,11 @@ PackageTest::MatchField PackageTest::name2field(const string& p, bool default_ma
 		eix::say_error(_("unknown match field \"%s\" in DEFAULT_MATCH_ALGORITHM")) % p;
 		return NONE;
 	}
-	return it->second;
+	MatchField result(it->second);
+	if(unlikely((!default_match_field) && (result == NONE))) {
+		eix::say_error(_("match field \"error\" is invalid in DEFAULT_MATCH_ALGORITHM"));
+	}
+	return result;
 }
 
 class MatcherField {
@@ -207,6 +215,8 @@ static void init_match_algorithm_map() {
 	match_algorithm_map["pattern"]    = PackageTest::ALGO_PATTERN;
 	match_algorithm_map["FUZZY"]      = PackageTest::ALGO_FUZZY;
 	match_algorithm_map["fuzzy"]      = PackageTest::ALGO_FUZZY;
+	match_algorithm_map["ERROR"]      = PackageTest::ALGO_ERROR;
+	match_algorithm_map["error"]      = PackageTest::ALGO_ERROR;
 }
 
 PackageTest::MatchAlgorithm PackageTest::name2algorithm(const string& p) {
@@ -373,8 +383,23 @@ void PackageTest::setPattern(const char *p) {
 	if(!know_pattern) {
 		if(field == NONE) {
 			field = get_matchfield(p);
+			if(unlikely(field == NONE)) {
+				eix::say_error(
+					_("cannot autodetect match field for search string \"%s\"\n"
+					"Specify some explicitly, e.g. --any, --name, --category, --slot, etc."))
+					% p;
+				std::exit(EXIT_FAILURE);
+			}
 		}
 		if(algorithm == NULLPTR) {
+			MatchAlgorithm algo(get_matchalgorithm(p, field));
+			if(unlikely(algo == ALGO_ERROR)) {
+				eix::say_error(
+					_("cannot autodetect match algorithm for search string \"%s\"\n"
+					"Specify some explicitly, e.g. --regex, --pattern, --exact, etc."))
+					% p;
+				std::exit(EXIT_FAILURE);
+			}
 			setAlgorithm(get_matchalgorithm(p, field));
 		}
 		know_pattern = true;

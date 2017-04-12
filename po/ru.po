@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2017-04-10 21:12+0200\n"
-"PO-Revision-Date: 2017-04-11 22:06+0200\n"
+"POT-Creation-Date: 2017-04-12 11:01+0200\n"
+"PO-Revision-Date: 2017-04-12 11:06+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: ru\n"
@@ -3954,7 +3954,7 @@ msgid ""
 "A fallback match_field may be specified as the last entry in the list.\n"
 "Admissible values for match_field are: name, category, category/name,\n"
 "description, license, homepage, set, slot, installed-slot, use\n"
-"with-use, without-use."
+"with-use, without-use, error."
 msgstr ""
 
 #: src/eixrc/defaults.cc
@@ -4000,7 +4000,7 @@ msgid ""
 "use match_algorithm as the default.\n"
 "A fallback match_algorithm may be specified as the last entry in the list.\n"
 "Admissible values for match_algorithm are: regex, pattern, substring,\n"
-"begin, end, exact, fuzzy."
+"begin, end, exact, fuzzy, error."
 msgstr ""
 
 #: src/eixrc/defaults.cc
@@ -7280,6 +7280,11 @@ msgstr "невозможно сопоставить поле «%s» in DEFAULT_M
 
 # fuzzy
 #: src/search/packagetest_default.cc
+msgid "match field \"error\" is invalid in DEFAULT_MATCH_ALGORITHM"
+msgstr "сопоставить поле «error» неверное in DEFAULT_MATCH_ALGORITHM"
+
+# fuzzy
+#: src/search/packagetest_default.cc
 #, c-format
 msgid "unknown match algorithm \"%s\" in DEFAULT_MATCH_ALGORITHM"
 msgstr "невозможно сопоставить алгоритм «%s» in DEFAULT_MATCH_ALGORITHM"
@@ -7294,7 +7299,27 @@ msgstr "missing «|», «&», or «|» in «%s» in DEFAULT_MATCH_ALGORITHM"
 #: src/search/packagetest_default.cc
 #, c-format
 msgid "closing ')' missing in \"%s\" in DEFAULT_MATCH_ALGORITHM"
-msgstr "closing «)» missing in \"%s\" in DEFAULT_MATCH_ALGORITHM"
+msgstr "closing «)» missing in «%s» in DEFAULT_MATCH_ALGORITHM"
+
+# fuzzy
+#: src/search/packagetest_default.cc
+#, c-format
+msgid ""
+"cannot autodetect match field for search string «%s»\n"
+"Specify some explicitly, e.g. --any, --name, --category, --slot, etc."
+msgstr ""
+"cannot autodetect match field for search string «%s»\n"
+"Specify some explicitly, e.g. --any, --name, --category, --slot, etc."
+
+# fuzzy
+#: src/search/packagetest_default.cc
+#, c-format
+msgid ""
+"cannot autodetect match algorithm for search string \"%s\"\n"
+"Specify some explicitly, e.g. --regex, --pattern, --exact, etc."
+msgstr ""
+"cannot autodetect match algorithm for search string «%s»\n"
+"Specify some explicitly, e.g. --regex, --pattern, --exact, etc."
 
 #: src/various/drop_permissions.cc
 msgid "failed to drop permissions"
