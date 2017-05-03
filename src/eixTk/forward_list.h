@@ -130,6 +130,25 @@ template<class T> class forward_list {
 		typedef forward_list_node<T> *node_ptr;
 		node_ptr head;
 
+		void assign_no_clear(const forward_list& source) {
+			node_ptr *parent(&head);
+			for(node_ptr curr(source.head);
+				likely(curr != NULLPTR); curr = curr->node) {
+				node_ptr new_node(new node_type(curr->value));
+				*parent = new_node;
+				parent = &(new_node->node);
+			}
+			*parent = NULLPTR;
+		}
+
+		void clear_no_headnull() {
+			for(node_ptr curr(head); likely(curr != NULLPTR); ) {
+				node_ptr next(curr->node);
+				delete curr;
+				curr = next;
+			}
+		}
+
 	public:
 		typedef T value_type;
 		typedef forward_list_iterator<T> iterator;
@@ -139,12 +158,27 @@ template<class T> class forward_list {
 			: head(NULLPTR) {
 		}
 
+		forward_list(const forward_list& source) {
+			assign_no_clear(source);
+		}
+
+		forward_list& operator=(const forward_list& source) {
+			assign(source);
+			return *this;
+		}
+
 		~forward_list() {
-			for(node_ptr curr(head); likely(curr != NULLPTR); ) {
-				node_ptr next(curr->node);
-				delete curr;
-				curr = next;
-			}
+			clear_no_headnull();
+		}
+
+		void assign(const forward_list& source) {
+			clear_no_headnull();
+			assign_no_clear(source);
+		}
+
+		void clear() {
+			clear_no_headnull();
+			head = NULLPTR;
 		}
 
 		iterator begin() {

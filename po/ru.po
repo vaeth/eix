@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2017-04-12 11:01+0200\n"
-"PO-Revision-Date: 2017-04-12 11:06+0200\n"
+"POT-Creation-Date: 2017-05-03 08:12+0200\n"
+"PO-Revision-Date: 2017-05-03 08:18+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: ru\n"
@@ -6935,7 +6935,7 @@ msgid ""
 "in the C locale."
 msgstr ""
 
-# fuzzy (change might be needed if length of other fuzzy changed; man eix)
+# fuzzy (change might be needed if length of translations changed; man eix)
 #: src/eixrc/def_i18n.cc
 msgctxt "I18N_COLUMN_CONTENT"
 msgid "%{C_COLUMN_CONTENT}"
@@ -7268,7 +7268,7 @@ msgstr "внимание: игнорирую --close без --open"
 
 # fuzzy
 #: src/search/packagetest_default.cc
-#, fuzzy, c-format
+#, c-format
 msgid "unknown match field \"%s\" in DEFAULT_MATCH_FIELD"
 msgstr "невозможно сопоставить поле «%s» in DEFAULT_MATCH_FIELD"
 
@@ -7305,7 +7305,7 @@ msgstr "closing «)» missing in «%s» in DEFAULT_MATCH_ALGORITHM"
 #: src/search/packagetest_default.cc
 #, c-format
 msgid ""
-"cannot autodetect match field for search string «%s»\n"
+"cannot autodetect match field for search string \"%s\"\n"
 "Specify some explicitly, e.g. --any, --name, --category, --slot, etc."
 msgstr ""
 "cannot autodetect match field for search string «%s»\n"

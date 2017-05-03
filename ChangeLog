@@ -20,6 +20,9 @@
 	  can be required to explicitly specify algorithm/field, thus avoiding
 	  any dangerous heuristics.
 	- Extend DEFAULT_MATCH_ALGORITHM to allow checking for match field(s).
+	- Fix segfault (regression from eix-0.32.7): Provide correct default
+	  copy/assign constructor in poor man's (not C++-11) eix::forward_list,
+	  https://github.com/vaeth/eix/issues/39
 
 *eix-0.32.7
 	Martin Väth <martin at mvath.de>:
