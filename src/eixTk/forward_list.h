@@ -23,6 +23,7 @@ namespace eix {
 
 // This is not a full implementation of forward_list; only some things we use
 
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 namespace eix {
@@ -167,6 +168,18 @@ template<class T> class forward_list {
 			return *this;
 		}
 
+#ifdef HAVE_MOVE
+		forward_list(forward_list&& s) NOEXCEPT : head(s.head) {
+			s.head = NULLPTR;
+		}
+
+		forward_list& operator=(forward_list&& s) NOEXCEPT {
+			clear_no_headnull();
+			head = s.head;
+			s.head = NULLPTR;
+			return *this;
+		}
+#endif
 		~forward_list() {
 			clear_no_headnull();
 		}
