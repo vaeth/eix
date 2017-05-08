@@ -106,7 +106,7 @@ ATTRIBUTE_NONNULL_ static void add_override(Overrides *override_list, EixRc *eix
 ATTRIBUTE_NONNULL_ static void add_reponames(RepoNames *repo_names, EixRc *eixrc, const char *s);
 ATTRIBUTE_NONNULL_ static void add_virtuals(Overrides *override_list, PathVec *add, RepoNames *repo_names, const string& cachefile, const string& eprefix_virtual);
 ATTRIBUTE_NONNULL_ static void override_label(OverlayIdent *overlay, const RepoNames& repo_names);
-static bool stringstart_in_wordlist(const string& to_check, const WordVec& wordlist);
+ATTRIBUTE_PURE static bool stringstart_in_wordlist(const string& to_check, const WordVec& wordlist);
 
 static void print_help() {
 	eix::say(_("Usage: %s [options]\n"

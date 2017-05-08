@@ -14,6 +14,7 @@
 
 #include <string>
 
+#include "eixTk/attribute.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
@@ -23,7 +24,7 @@
 
 using std::string;
 
-inline static string::size_type revision_index(const string& ver) {
+ATTRIBUTE_PURE inline static string::size_type revision_index(const string& ver) {
 	string::size_type i(ver.rfind("-r"));
 	if(i == string::npos) {
 		return string::npos;

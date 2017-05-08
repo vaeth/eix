@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.32.9
+	Martin Väth <martin at mvath.de>:
+	- internal: Add some pure attributes where possible
+	- internal: Switch off format-nonliteral warning for strftime
+
 *eix-0.32.8
 	Martin Väth <martin at mvath.de>:
 	- IMPORTANT: For testing scripts, it is strongly recommended to use
