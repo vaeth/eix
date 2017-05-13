@@ -2,6 +2,8 @@
 
 *eix-0.32.9
 	Martin Väth <martin at mvath.de>:
+	- Treat -* values as "false" only if it is a plain "-"
+	  https://bugs.gentoo.org/show_bug.cgi?id=616972
 	- internal: Add some pure attributes where possible
 	- internal: Switch off format-nonliteral warning for strftime
 

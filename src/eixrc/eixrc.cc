@@ -694,13 +694,16 @@ void EixRc::addDefault(EixRcOption option) {
 
 bool EixRc::istrue(const char *s) {
 	switch(s[0]) {
+		case '-':
+			if(s[1] != '\0') {
+				break;
+			}
 		case 0:
 		case 'N':
 		case 'n':
 		case 'f':
 		case 'F':
 		case '0':
-		case '-':
 			return false;
 		case 'o':
 		case 'O':
