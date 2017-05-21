@@ -361,6 +361,11 @@ class PreList : public std::vector<PreListEntry> {
 		**/
 		bool remove_splitted(const std::vector<std::string>& line);
 
+		/**
+		@return true if something was changed
+		**/
+		bool remove_all();
+
 		void finalize();
 
 		ATTRIBUTE_NONNULL_ void initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines, const ParseError *parse_error);

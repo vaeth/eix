@@ -2,6 +2,9 @@
 
 *eix-0.32.9
 	Martin Väth <martin at mvath.de>:
+	- Support - and -* in profile "packages" files, see
+	  https://bugs.gentoo.org/show_bug.cgi?id=610670
+	- Fix remove_line(): Do not consider removing removed lines a change
 	- Treat -* values as "false" only if it is a plain "-"
 	  https://bugs.gentoo.org/show_bug.cgi?id=616972
 	- internal: Add some pure attributes where possible

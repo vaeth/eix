@@ -211,12 +211,20 @@ bool CascadingProfile::readPackages(const string& filename, const char *repo, bo
 		}
 		if(*p == '*') {
 			if(unlikely(remove)) {
-				ret |= p_system.remove_line(p);
+				if(unlikely(p[1] == '\0')) {
+					ret |= p_system.remove_all();
+				} else {
+					ret |= p_system.remove_line(p);
+				}
 			} else {
 				ret |= p_system.add_line(p, file_system, number, false);
 			}
 		} else if(unlikely(remove)) {
-			ret |= p_profile.remove_line(p);
+			if(unlikely(*p == '\0')) {
+				ret |= p_profile.remove_all();
+			} else {
+				ret |= p_profile.remove_line(p);
+			}
 		} else {
 			ret |= p_profile.add_line(p, file_profile, number, false);
 		}

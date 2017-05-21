@@ -282,8 +282,21 @@ bool PreList::remove_splitted(const LineVec& line) {
 	if(it == have.end()) {
 		return false;
 	}
-	order[it->second].removed = true;
-	return true;
+	bool& removed = order[it->second].removed;
+	bool ret(!removed);
+	removed = true;
+	return ret;
+}
+
+bool PreList::remove_all() {
+	bool ret(false);
+	for(Order::iterator it(order.begin()); it != order.end(); ++it) {
+		bool& removed = it->removed;
+		if(!removed) {
+			ret = removed = true;
+		}
+	}
+	return ret;
 }
 
 void PreList::finalize() {
