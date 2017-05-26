@@ -5,7 +5,7 @@
 	- Support - and -* in profile "packages" files, see
 	  https://bugs.gentoo.org/show_bug.cgi?id=610670
 	- Fix remove_line(): Do not consider removing removed lines a change
-	- Treat -* values as "false" only if it is a plain "-"
+	- Only treat 0 and - as "false" if nothing else follows, see
 	  https://bugs.gentoo.org/show_bug.cgi?id=616972
 	- internal: Add some pure attributes where possible
 	- internal: Switch off format-nonliteral warning for strftime

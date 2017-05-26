@@ -159,7 +159,7 @@ case $service in
 	if ((CURRENT>2))
 	then	is_or=:
 		case $(PRINT_APPEND=n _call_program default_is_or 'eix --print DEFAULT_IS_OR 2>/dev/null') in
-		([nNfF0-]*|[oO][fF]*)
+		([nNfF]*|[oO][fF]*|0|-)
 			is_or=false;;
 		esac
 		for ((i=2;i<CURRENT;++i))

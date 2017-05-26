@@ -263,6 +263,7 @@ string *EixRc::resolve_delayed_recurse(const string& key, set<string> *visited, 
 			case DelayedIfEmpty:
 			case DelayedIfNonempty:
 				will_test = true;
+				break;
 			default:
 				break;
 		}
@@ -694,16 +695,11 @@ void EixRc::addDefault(EixRcOption option) {
 
 bool EixRc::istrue(const char *s) {
 	switch(s[0]) {
-		case '-':
-			if(s[1] != '\0') {
-				break;
-			}
 		case 0:
 		case 'N':
 		case 'n':
 		case 'f':
 		case 'F':
-		case '0':
 			return false;
 		case 'o':
 		case 'O':
@@ -714,6 +710,13 @@ bool EixRc::istrue(const char *s) {
 				default:
 					break;
 			}
+			break;
+		case '0':
+		case '-':
+			if(s[1] == '\0') {
+				return false;
+			}
+			break;
 		default:
 			break;
 	}
