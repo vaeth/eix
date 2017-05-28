@@ -2,7 +2,7 @@
 
 *eix-0.32.9
 	Martin Väth <martin at mvath.de>:
-	- Support - and -* in profile "packages" files, see
+	- Support -* in profile "packages" files, see
 	  https://bugs.gentoo.org/show_bug.cgi?id=610670
 	- Fix remove_line(): Do not consider removing removed lines a change
 	- Only treat 0 and - as "false" if nothing else follows, see
