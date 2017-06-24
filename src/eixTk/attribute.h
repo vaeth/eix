@@ -62,4 +62,19 @@
 #define ATTRIBUTE_NONNULL(a)
 #endif
 
+#ifdef HAVE_ATTRIBUTE_FALLTHROUGH
+#define ATTRIBUTE_FALLTHROUGH [[fallthrough]];  // NOLINT(whitespace/braces)
+#else
+#ifdef HAVE_ATTRIBUTE_GNUFALLTHROUGH
+#define ATTRIBUTE_FALLTHROUGH [[gnu::fallthrough]];  // NOLINT(whitespace/braces)
+#else
+#ifdef HAVE_ATTRIBUTE_AFALLTHROUGH
+#define ATTRIBUTE_FALLTHROUGH __attribute__ ((fallthrough));
+#else
+#define ATTRIBUTE_FALLTHROUGH
+#endif  /* HAVE_ATTRIBUTE_AFALLTHROUGH */
+#endif  /* HAVE_ATTRIBUTE_GNUFALLTHROUGH */
+#endif  /* HAVE_ATTRIBUTE_FALLTHROUGH */
+
 #endif  // SRC_EIXTK_ATTRIBUTE_H_
+

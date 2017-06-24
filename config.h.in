@@ -82,8 +82,17 @@
 /* Define to 1 if you have the `atoi' function. */
 #undef HAVE_ATOI
 
+/* Define if __attribute__ ((fallthrough)) can be used */
+#undef HAVE_ATTRIBUTE_AFALLTHROUGH
+
 /* Define if __attribute__ ((const)) can be used */
 #undef HAVE_ATTRIBUTE_CONST
+
+/* Define if [[fallthrough]] can be used */
+#undef HAVE_ATTRIBUTE_FALLTHROUGH
+
+/* Define if [[gnu::fallthrough]] can be used */
+#undef HAVE_ATTRIBUTE_GNUFALLTHROUGH
 
 /* Define if __attribute__ ((nonnull (list))) can be used */
 #undef HAVE_ATTRIBUTE_NONNULL

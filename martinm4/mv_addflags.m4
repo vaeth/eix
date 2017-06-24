@@ -53,9 +53,22 @@ dnl see https://bugs.gentoo.org/show_bug.cgi?id=510102
 #include <vector>
 int my_func();
 int my_func() { std::vector<const char*> a(1, "a"); int my_a[1000];
-for (int j = 999; j < 999 + a.size(); ++j) my_a[j] = 0;
+for (std::vector<const char*>::size_type j = 999; j < 999 + a.size(); ++j) my_a[j] = 0;
 return (strchr(a[0], *a[0]) == *(a.begin())) ? my_a[999] : 1; }
+#ifdef __cplusplus
+#if __cplusplus >= 201103L
+#include <type_traits>
+void func_noexcept() noexcept;
+void func_noexcept() noexcept {}
+#define C11TESTCALL if(!std::is_function<decltype(func_noexcept)>::value) { return 1; }
+#else
+#define C11TESTCALL
+#endif
+#else
+#define C11TESTCALL
+#endif
 						]], [[
+C11TESTCALL
 return my_func();
 						]])],
 						[AC_MSG_RESULT([yes])

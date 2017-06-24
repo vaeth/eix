@@ -644,6 +644,8 @@ EixRc::DelayedType EixRc::find_next_delayed(const string& str, string::size_type
 					continue;
 				}
 				varlen = i - varstart - 1;
+				// Not necessary, but silences warning of stupid compilers:
+				appendstart = appendlen = string::npos;
 			}
 			if(caseequal(str.substr(pos + 2, i - pos - 3), "else")) {
 				type = DelayedElse;

@@ -41,6 +41,7 @@ IUse::Flags IUse::parse(string *s) {
 			case '{':
 			case '(':
 				ret |= USEFLAGS_NORMAL;
+				continue;
 			case ']':
 			case '}':
 			case ')':

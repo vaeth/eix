@@ -41,7 +41,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.32.9], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
+AC_INIT([eix], [0.32.10], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
 AC_PREREQ([2.64])
 
 m4_ifdef([AC_CONFIG_MACRO_DIR],
@@ -524,10 +524,14 @@ AS_IF([$strong_security],
 		-fstack-protector-all
 		-fstack-protector-strong
 		-fstack-protector
+		-fstack-check
+		-fstack-check=specific
 	"])],
 	[AS_VAR_SET([my_stackprotector], ["
 		-fstack-protector-strong
 		-fstack-protector
+		-fstack-check
+		-fstack-check=specific
 	"])])
 AS_IF([$security],
 	# We try to add -fstack-protector to LDFLAGS before adding to CXXFLAGS
@@ -551,13 +555,13 @@ AS_IF([$security],
 			-Wl,-z,noexecstack \
 		], [$my_ldfatal], [], [:])
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
-			$my_stack_protector \
+			$my_stackprotector \
 			], [$my_ldfatal], [], [break])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-D_FORTIFY_SOURCE=2 \
 		], [$my_cxxfatal], [$CPPFLAGS], [:])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
-			$my_stack_protector \
+			$my_stackprotector \
 			], [$my_cxxfatal], [$CPPFLAGS], [break])])
 AS_IF([$strong_security],
 	# We try to add -fsanitize=... to LDFLAGS before adding to CXXFLAGS
@@ -581,7 +585,9 @@ AS_IF([$strong_security],
 			-fsanitize=alignment
 			-fsanitize=object-size
 			-fsanitize=vptr
+			-mmpx
 			-fcheck-pointer-bounds
+			-Wchkp
 		"])
 	# The following -fsanitize do not work properly
 	# -fsanitize=threads
@@ -955,6 +961,72 @@ AS_IF([$attr_noreturn],
 	[AC_DEFINE([HAVE_ATTRIBUTE_NORETURN],
 		[1],
 		[Define if __attribute__ ((noreturn)) can be used])])
+
+# Check if [[fallthrough]] works
+AC_MSG_CHECKING([[whether [[fallthrough]] can be used]])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+		]], [[
+int i = 0;
+switch(i) {
+	case 0:
+		--i;
+		[[fallthrough]];
+	default:
+		return i + 1;
+}
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([attr_fallthrough], [:])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([attr_fallthrough], [false])])
+AS_IF([$attr_fallthrough],
+	[AC_DEFINE([HAVE_ATTRIBUTE_FALLTHROUGH],
+		[1],
+		[Define if [[fallthrough]] can be used])])
+
+# Check if [[gnu::fallthrough]] works
+AC_MSG_CHECKING([[whether [[gnu::fallthrough]] can be used]])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+		]], [[
+int i = 0;
+switch(i) {
+	case 0:
+		--i;
+		[[gnu::fallthrough]];
+	default:
+		return i + 1;
+}
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([attr_gnufallthrough], [:])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([attr_gnufallthrough], [false])])
+AS_IF([$attr_gnufallthrough],
+	[AC_DEFINE([HAVE_ATTRIBUTE_GNUFALLTHROUGH],
+		[1],
+		[Define if [[gnu::fallthrough]] can be used])])
+
+# Check if __attribute__ ((noreturn)) works
+AC_MSG_CHECKING([[whether __attribute__ ((fallthrough)) can be used]])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+		]], [[
+int i = 0;
+switch(i) {
+	case 0:
+		--i;
+		[[fallthrough]];
+	default:
+		return i + 1;
+}
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([attr_afallthrough], [:])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([attr_afallthrough], [false])])
+AS_IF([$attr_afallthrough],
+	[AC_DEFINE([HAVE_ATTRIBUTE_AFALLTHROUGH],
+		[1],
+		[Define if __attribute__ ((fallthrough)) can be used])])
 
 # Check if __attribute__ ((signal)) works
 AC_MSG_CHECKING([whether __attribute__ ((signal)) can be used])

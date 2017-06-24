@@ -113,6 +113,7 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 			// Note that we must *not* FINISH_TEST here!
 			case O_PIPE_MASK:
 				pipe_mode = true;
+				ATTRIBUTE_FALLTHROUGH
 			case '|': force_test = curr_pipe = use_pipe = true;
 				break;
 			case 'I': USE_TEST;
@@ -226,7 +227,7 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 						(*portagesettings)["PORTDIR"].c_str());
 					break;
 				}
-				// No break here...
+				ATTRIBUTE_FALLTHROUGH
 			case O_NONVIRTUAL: USE_TEST;
 				test->Nonvirtual();
 				break;
@@ -257,7 +258,7 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 						(*portagesettings)["PORTDIR"].c_str());
 					break;
 				}
-				// No break here...
+				ATTRIBUTE_FALLTHROUGH
 			case O_INSTALLED_SOME: USE_TEST;
 				header->get_overlay_vector(
 					test->InOverlayInstList(),
@@ -273,7 +274,7 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 					test->FromForeignOverlayInstList()->push_back(arg->m_argument);
 					break;
 				}
-				// No break here...
+				ATTRIBUTE_FALLTHROUGH
 			case 'J': USE_TEST;
 				header->get_overlay_vector(
 					test->FromOverlayInstList(),

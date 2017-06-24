@@ -11,6 +11,7 @@
 #include <config.h>
 
 #include "database/io.h"
+#include "eixTk/attribute.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -33,29 +34,37 @@ bool PackageReader::read(Attributes need) {
 				m_error = true;
 				return false;
 			}
-			if(unlikely(need == NAME))
+			if(unlikely(need == NAME)) {
 				break;
+			}
+			ATTRIBUTE_FALLTHROUGH
 		case NAME:
 			if(unlikely(!m_db->read_string(&(m_pkg->desc), &m_errtext))) {
 				m_error = true;
 				return false;
 			}
-			if(unlikely(need == DESCRIPTION))
+			if(unlikely(need == DESCRIPTION)) {
 				break;
+			}
+			ATTRIBUTE_FALLTHROUGH
 		case DESCRIPTION:
 			if(unlikely(!m_db->read_string(&(m_pkg->homepage), &m_errtext))) {
 				m_error = true;
 				return false;
 			}
-			if(unlikely(need == HOMEPAGE))
+			if(unlikely(need == HOMEPAGE)) {
 				break;
+			}
+			ATTRIBUTE_FALLTHROUGH
 		case HOMEPAGE:
 			if(unlikely(!m_db->read_hash_string(header->license_hash, &(m_pkg->licenses), &m_errtext))) {
 				m_error = true;
 				return false;
 			}
-			if(unlikely(need == LICENSE))
+			if(unlikely(need == LICENSE)) {
 				break;
+			}
+			ATTRIBUTE_FALLTHROUGH
 		case LICENSE: {
 				eix::Versize i;
 				if(unlikely(!m_db->read_num(&i, &m_errtext))) {

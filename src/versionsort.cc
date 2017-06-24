@@ -82,15 +82,19 @@ int run_versionsort(int argc, char *argv[]) {
 		switch(argv[1][1]) {
 			case 'f':
 				revision = true;
+				ATTRIBUTE_FALLTHROUGH
 			case 'p':
 				full = true;
+				ATTRIBUTE_FALLTHROUGH
 			case 'n':
 				mode = 1;
 				break;
 			case 'V':
 				full = true;
+				ATTRIBUTE_FALLTHROUGH
 			case 'r':
 				revision = true;
+				ATTRIBUTE_FALLTHROUGH
 			case 'v':
 				mode = -1;
 				break;

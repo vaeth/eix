@@ -569,8 +569,9 @@ void PrintFormat::get_pkg_property(OutputString *s, Package *package, const stri
 	eix_assert_static(scanner != NULLPTR);
 	Scanner::Prop t;
 	Scanner::Plain plain(scanner->get_plain(name, &t));
-	Scanner::ColonVar colon_var;
-	Scanner::ColonOther colon_other;
+	// Unnecessary initializations, but silence warning of stupid compiler:
+	Scanner::ColonVar colon_var(NULLPTR);
+	Scanner::ColonOther colon_other(NULLPTR);
 	string after_colon;
 	if(plain == NULLPTR) {
 		string::size_type col(name.find(':'));

@@ -10,6 +10,7 @@
 
 #include <cstdio>
 
+#include "eixTk/attribute.h"
 #include "eixTk/eixarray.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
@@ -85,6 +86,7 @@ void Display::syscol() {
 				break;
 			case 8:
 				resetnl();
+				ATTRIBUTE_FALLTHROUGH
 			default:
 				light = 7;
 		}

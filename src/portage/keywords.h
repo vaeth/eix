@@ -356,7 +356,7 @@ class Keywords {
 		/**
 		temporary redundant-related stuff during mask testing
 		**/
-		char red_mask;
+		eix::UChar red_mask;
 };
 
 class KeywordSave {

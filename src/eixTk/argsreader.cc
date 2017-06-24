@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "eixTk/attribute.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
@@ -189,9 +190,11 @@ void ArgumentReader::foldAndRemove(const OptionList& opt_table) {
 			case Option::KEEP_STRING_OPTIONAL:
 			case Option::KEEP_PAIR_OPTIONAL:
 					optional = true;
+					ATTRIBUTE_FALLTHROUGH
 			case Option::KEEP_STRING:
 			case Option::KEEP_PAIR:
 					keep = true;
+					ATTRIBUTE_FALLTHROUGH
 			case Option::STRING:
 			case Option::PAIR:
 			case Option::STRINGLIST:

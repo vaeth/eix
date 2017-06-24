@@ -112,10 +112,10 @@ static CONSTEXPR const uint32_t md5init[4] = {
 static void md5fill(const char *buffer, uint32_t *mybuf, unsigned int len) {
 	while(len != 0) {
 		*(mybuf++) =
-			buffer[3] * 0x1000000UL +
-			buffer[2] * 0x10000UL +
-			buffer[1] * 0x100UL +
-			buffer[0];
+			(static_cast<uint32_t>(buffer[3]) << 24) +
+			(static_cast<uint32_t>(buffer[2]) << 16) +
+			(static_cast<uint32_t>(buffer[1]) << 8) +
+			static_cast<uint32_t>(buffer[0]);
 		buffer += 4;
 		--len;
 	}
@@ -196,19 +196,19 @@ static void calc_md5sum(const char *buffer, Md5DataLen totalsize, uint32_t *resa
 	buffer += 4 * len;
 	switch(restsize % 4) {
 		case 3:
-			mybuf[len] = 0x80UL * 0x1000000UL +
-				buffer[2] * 0x10000UL +
-				buffer[1] * 0x100UL +
-				buffer[0];
+			mybuf[len] = (0x80UL << 24) +
+				(static_cast<uint32_t>(buffer[2]) << 16) +
+				(static_cast<uint32_t>(buffer[1]) << 8) +
+				static_cast<uint32_t>(buffer[0]);
 			break;
 		case 2:
-			mybuf[len] = 0x80UL * 0x10000UL +
-				buffer[1] * 0x100UL +
-				buffer[0];
+			mybuf[len] = (0x80UL << 16) +
+				(static_cast<uint32_t>(buffer[1]) << 8) +
+				static_cast<uint32_t>(buffer[0]);
 			break;
 		case 1:
-			mybuf[len] = 0x80UL * 0x100UL +
-				buffer[0];
+			mybuf[len] = (0x80UL << 8) +
+				static_cast<uint32_t>(buffer[0]);
 			break;
 		/* case 0: */
 		default:

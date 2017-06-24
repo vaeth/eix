@@ -219,6 +219,7 @@ void VarsReader::JUMP_WHITESPACE() {
 			if((parse_flags & PORTAGE_SECTIONS) == NONE) {
 				break;
 			}
+			ATTRIBUTE_FALLTHROUGH
 		case '#':
 			NEXT_INPUT;
 			while(likely(INPUT != '\n')) {
@@ -239,6 +240,7 @@ void VarsReader::JUMP_WHITESPACE() {
 				}
 			}
 			--x;
+			ATTRIBUTE_FALLTHROUGH
 		case '.':
 			NEXT_INPUT;
 			if((parse_flags & ALLOW_SOURCE) &&
@@ -302,15 +304,19 @@ GCC_DIAG_ON(sign-conversion)
 			if((parse_flags & PORTAGE_SECTIONS) == NONE) {
 				break;
 			}
+			ATTRIBUTE_FALLTHROUGH
 		case '=':
 			CHSTATE(EVAL_VALUE);
+			break;
 		case ';':
 			if((parse_flags & PORTAGE_SECTIONS) == NONE) {
 				break;
 			}
+			ATTRIBUTE_FALLTHROUGH
 		case '#':
 			NEXT_INPUT;
 			CHSTATE(JUMP_COMMENT);
+			break;
 		default:
 			break;
 	}
@@ -588,6 +594,7 @@ void VarsReader::VALUE_WHITESPACE() {
 					}
 					continue;
 				}
+				ATTRIBUTE_FALLTHROUGH
 			default:
 				VALUE_APPEND(INPUT);
 				NEXT_INPUT_EVAL;
@@ -661,9 +668,11 @@ void VarsReader::EVAL_SECTION() {
 					section.assign(1, ':');
 					section.append(value);
 				}
+				ATTRIBUTE_FALLTHROUGH
 			case '\r':
 			case '\n':
 				CHSTATE(JUMP_NOISE);
+				break;
 			case '\\':
 				NEXT_INPUT;
 				switch(INPUT) {

@@ -1,5 +1,17 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.32.10
+	Martin Väth <martin at mvath.de>:
+	- Fix stress test for C++11 (fixes compilation with clang & gcc++ lib)
+	- Fix adding of -fstack-protector-strong and friends
+	- Add -fstack-check
+	- Fix stress test in ./configure to not spit warning which breaks
+	- Fix some sign type conversions
+	- Support fallthrough attribute
+	- Correctly support mpx with --enable-strong-security if available
+	- Fix get_geometry() error check
+	- Initialize some variables redundantly to make stupid compiler happy
+
 *eix-0.32.9
 	Martin Väth <martin at mvath.de>:
 	- Support -* in profile "packages" files, see

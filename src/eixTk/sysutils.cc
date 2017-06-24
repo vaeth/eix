@@ -150,7 +150,7 @@ GCC_DIAG_ON(format-nonliteral)
 bool get_geometry(unsigned int *lines, unsigned int *columns) {
 	struct winsize win;
 	if(ioctl(1, TIOCGWINSZ, &win) == 0) {
-		if((win.ws_row >= 0) && (win.ws_col >= 0)) {
+		if((win.ws_row > 0) && (win.ws_col > 0)) {
 			*lines = win.ws_row;
 			*columns = win.ws_col;
 			return true;
