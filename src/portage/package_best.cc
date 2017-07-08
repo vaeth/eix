@@ -13,6 +13,7 @@
 #include <cstring>
 
 #include <set>
+#include <string>
 
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
@@ -26,6 +27,7 @@
 #include "portage/version.h"
 
 using std::set;
+using std::string;
 
 Version *VersionList::best(bool allow_unstable) const {
 	for(const_reverse_iterator ri(rbegin()); likely(ri != rend()); ++ri) {
@@ -193,16 +195,21 @@ bool Package::is_best_upgrade(bool check_slots, const Version *version, VarDbPkg
 	return false;
 }
 
-const char *Package::slotname(const ExtendedVersion& v) const {
+bool Package::get_slotsubslot(const ExtendedVersion& v, string *slot, string *subslot) const {
 	for(const_iterator i(begin()); likely(i != end()); ++i) {
 		if(**i == v) {
-			return (i->slotname).c_str();
+			*slot = i->slotname;
+			*subslot = i->subslotname;
+			return true;
 		}
 	}
-	return NULLPTR;
+	return false;
 }
 
 bool Package::guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *force) const {
+	if(likely(v->know_slot)) {
+		return true;
+	}
 	if(vardbpkg != NULLPTR) {
 		if(vardbpkg->care_slots()) {
 			if(vardbpkg->readSlot(*this, v)) {
@@ -213,19 +220,10 @@ bool Package::guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const cha
 			}
 			return false;
 		}
-		if(likely(v->know_slot)) {
-			return true;
-		}
-		const char *s(slotname(*v));
-		if(s != NULLPTR) {
-			v->slotname = s;
-			v->know_slot = true;
+		if(likely(get_slotsubslot(*v, &(v->slotname), &(v->subslotname)))) {
+			return (v->know_slot = true);
 		}
 		if(vardbpkg->readSlot(*this, v)) {
-			return true;
-		}
-	} else {
-		if(v->know_slot) {
 			return true;
 		}
 	}

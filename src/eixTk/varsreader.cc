@@ -23,6 +23,7 @@
 #include <utility>
 #include <vector>
 
+#include "eixTk/attribute.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/dialect.h"
 #include "eixTk/filenames.h"

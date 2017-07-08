@@ -449,10 +449,10 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 		}
 
 		/**
-		Get the name of a slot of a version.
-		returns NULLPTR if not found.
+		Get the name of a slot/subslot of a version.
+		returns true if found.
 		**/
-		ATTRIBUTE_PURE const char *slotname(const ExtendedVersion& v) const;
+		bool get_slotsubslot(const ExtendedVersion& v, std::string *slot, std::string *subslot) const;
 
 		/**
 		Get the name of a slot of an installed version,

@@ -2,6 +2,7 @@
 
 *eix-0.32.10
 	Martin Väth <martin at mvath.de>:
+	- Fix subversion guessing without CAREMODE=true
 	- Fix stress test for C++11 (fixes compilation with clang & gcc++ lib)
 	- Fix adding of -fstack-protector-strong and friends
 	- Add -fstack-check
