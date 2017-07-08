@@ -479,6 +479,7 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wshift-overflow=2 \
 			-Wnull-dereference \
 			-Wduplicated-cond \
+			-Wno-c++1z-extensions \
 		], [$my_cxxfatal], [], [:])
 dnl We do not use:
 dnl Not needed anymore with current clang:
@@ -599,7 +600,9 @@ AS_IF([$strong_security],
 		], [$my_cxxfatal], [$CPPFLAGS], [:])])
 
 # We are done with testing, the real flag mangling takes place:
+AS_VAR_COPY([CXXFLAGS], [oricxxflags])
 MV_PREPEND([CXXFLAGS], [$my_cxxadd])
+AS_VAR_COPY([LDFLAGS], [orildflags])
 AS_CASE([" $LDFLAGS $my_ldadd "],
 	[*" -flto "*], [MV_APPEND([my_ldadd], [$CXXFLAGS])])
 MV_PREPEND([LDFLAGS], [$my_ldadd])
