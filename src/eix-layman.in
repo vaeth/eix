@@ -25,12 +25,11 @@ Usage() {
 	eval_gettext 'Usage: ${n} [options] command
 Add or remove local layman overlays to the eix database (${p}).
 
-Explanation: If your /etc/make.conf does not source layman/make.conf,
-then the layman overlays are not considered as part of your PORTDIR_OVERLAY;
-in this case, they are usually not added to your eix database and thus
-cannot be found with eix.
+Explanation: There might be (security) reasons to avoid adding layman overlays
+to the regular portage repositories. If you avoid this, they are also
+not added to your eix database and thus also cannot be found with eix.
 However, you might want to add/remove them temporarily to your eix database
-without changing your /etc/make.conf. This is the purpose of this script.
+without changing your configuration. This is the purpose of this script.
 This script is also meant as an example how to use eix-functions.sh.
 
 The following commands are provided:

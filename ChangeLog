@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.32.11
+	Martin Väth <martin at mvath.de>:
+	- Replace /etc/make.conf by the new path /etc/portage/make.conf in docs
+	- eix-layman help text: Avoid mentioning source commands in make.conf
+	  since most users will use nowadays repositories.conf
+
 *eix-0.32.10
 	Martin Väth <martin at mvath.de>:
 	- Fix subversion guessing without CAREMODE=true

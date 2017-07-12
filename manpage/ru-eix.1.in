@@ -78,7 +78,8 @@ It outputs packages installed after (or before) the last (or first) emerge of a 
 To get more help on this script call B<eix-installed-after -h>.
 
 B<eix-layman> может добавлять или убирать местные оверлеи layman к/из текущей базы данных.
-Это нужно если Вы не указываете layman-овский make.conf в Вашем I</etc/make.conf>.
+You might want to use this if you want to avoid adding layman overlays to
+the regular portage repositories.
 Для полученья дополнительной информации по B<eix-layman> вызовите B<eix-layman -h>.
 B<eix-layman> также является примером использованья B<eix-functions.sh>:
 
@@ -962,7 +963,7 @@ When this option is used, the current B<umask> will be honoured:
 otherwise, the B<umask> is forced to B<002> for creating the file.
 .TP
 .BR  -a " " I<overlay> ", " --add-overlay " " I<overlay>
-This is similar to adding I<overlay> to B<PORTDIR_OVERLAY> in /etc/make.conf
+This is similar to adding I<overlay> to B<PORTDIR_OVERLAY> in /etc/portage/make.conf
 or to B<ADD_OVERLAY> but has the advantage that you need not modify some of those,
 and you can also use spaces in I<overlay>.
 Overlays added by this option come after overlays added by B<KEEP_VIRTUALS>.
@@ -1707,7 +1708,7 @@ Always error out on layman/hook errors.
 This was always the case in earlier eix versions.
 .TP
 .B -C --ignore-default-opts
-Use this line if you have --ask in EMERGE_DEFAULT_OPTS in /etc/make.conf
+Use this line if you have --ask in EMERGE_DEFAULT_OPTS in /etc/portage/make.conf
 but do not want to get asked for eix-sync.
 .TP
 .B -r -M
@@ -2080,8 +2081,8 @@ delayed substitution for the following variables analogously to B<EPREFIX>
 (see above).
 
 The purpose of B<ROOT> is to follow roughly portage's usage of this variable.
-Note that variables in /etc/make.conf do not influence eix configuration variables.
-In particular, a B<ROOT=>I<something> command in /etc/make.conf does not influence eix.
+Note that variables in /etc/portage/make.conf do not influence eix configuration variables.
+In particular, a B<ROOT=>I<something> command in /etc/portage/make.conf does not influence eix.
 You must set it instead in the environment or in an eix configuration file.
 
 You can easily customize to which paths the B<EPREFIX> or B<ROOT> variables apply:
@@ -2129,7 +2130,7 @@ This path might be used as a prefix for I</usr/bin/ebuild>.
 .TP
 .BR EPREFIX_SOURCE " " (prefix-string)
 This path is prepended to paths occurring as the argument of source commands
-in /etc/make.conf and /etc/make.globals.
+in /etc/portage/make.conf and /etc/make.globals.
 
 .TP
 .BR EPREFIX_INSTALLED " " (prefix-string)
