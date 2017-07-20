@@ -308,7 +308,7 @@ case $state in
 			_description packages expl 'package'
 			i=($(FORMAT='<category>/<name>\n' _call_program packages${installed:+-installed} 'eix $eixopt 2>/dev/null'))
 			compadd "$expl[@]" - ${i:t} ${i%%/*}/
-		esac;;
+		esac && ret=0;;
 	(useflag)
 		_tags useflags
 		_tags && {

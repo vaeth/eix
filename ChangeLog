@@ -2,6 +2,8 @@
 
 *eix-0.32.11
 	Martin Väth <martin at mvath.de>:
+	- Fix return value in _eix completion. Thanks to
+	  Mikael Magnusson <mikachu at gmail.com>
 	- Replace /etc/make.conf by the new path /etc/portage/make.conf in docs
 	- eix-layman help text: Avoid mentioning source commands in make.conf
 	  since most users will use nowadays repositories.conf
