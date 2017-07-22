@@ -79,13 +79,13 @@ AC_ARG_ENABLE([debugging],
 	[AS_VAR_SET([debugging], [false])
 	AS_VAR_SET([cmt_debugging], ["default"])])
 
-AC_ARG_ENABLE([paranoicasserts],
+AC_ARG_ENABLE([paranoic-asserts],
 	[AS_HELP_STRING([--enable-paranoic-asserts],
 		[activate paranoic asserts])],
-	[MV_ENABLE([paranoicasserts])],
-	[AS_VAR_SET([paranoicasserts], [false])])
+	[MV_ENABLE([paranoic_asserts])],
+	[AS_VAR_SET([paranoic_asserts], [false])])
 AS_IF([$debugging],
-	[AS_VAR_SET([paranoicasserts], [true])])
+	[AS_VAR_SET([paranoic_asserts], [true])])
 
 AC_ARG_ENABLE([debug-format],
 	[AS_HELP_STRING([--enable-debug-format],
@@ -100,7 +100,7 @@ AC_ARG_ENABLE([debug-format],
 
 AC_ARG_ENABLE([new_dialect],
 	[AS_HELP_STRING([--enable-new-dialect],
-		[enable most current C++ dialect; provides optimitations])],
+		[enable most current C++ dialect; provides optimizations])],
 	[MV_ENABLE([new_dialect])
 	AS_VAR_SET([cmt_new_dialect], ["on request"])],
 	[AS_VAR_SET([new_dialect], [false])
@@ -169,7 +169,7 @@ AC_MSG_CHECKING([whether debugging asserts/flags should be used])
 MV_MSG_RESULT_BIN([$debugging], [$cmt_debugging])
 
 AC_MSG_CHECKING([whether strong optimization options should be used])
-AS_IF([$paranoicasserts],
+AS_IF([$paranoic_asserts],
 	[AS_VAR_SET([strong_optimization], [false])
 	AS_VAR_SET([cmt_strong_optimization], ["disabled by paranoic asserts"])])
 MV_MSG_RESULT_BIN([$strong_optimization], [$cmt_strong_optimization])
@@ -632,7 +632,7 @@ AC_SUBST([INST_MAN_LINGUAS])
 # This must be an early test, since we need the null device later in this file:
 AC_MSG_CHECKING([for null-device])
 AC_ARG_WITH([dev-null],
-	[AS_HELP_STRING([--with-null-device=STR],
+	[AS_HELP_STRING([--with-dev-null=STR],
 		[null device of the system, usually /dev/null])],
 	[AS_VAR_COPY([DEV_NULL], [withval])],
 	[AS_VAR_SET([DEV_NULL], [])])
@@ -1119,7 +1119,7 @@ AS_IF([$pure_for_const_virtuals],
 AC_MSG_CHECKING([whether __attribute__ ((const)) should be used for const virtuals])
 AC_ARG_ENABLE([const_for_const_virtuals],
 	[AS_HELP_STRING([--enable-const-for-const-virtuals],
-		[do not use __attribute__((const)) for const virtuals])],
+		[use __attribute__((const)) for const virtuals])],
 	[MV_ENABLE([const_for_const_virtuals])
 	AS_VAR_SET([cmt_const_for_const_virtuals], ["on request"])],
 	[AS_VAR_SET([const_for_const_virtuals], [false])
@@ -1545,7 +1545,7 @@ AC_SUBST([DEP_DEFAULT])
 AC_MSG_CHECKING([REQUIRED_USE default])
 AC_ARG_WITH([required-use-default],
 	[AS_HELP_STRING([--with-required-use-default],
-		[default to REQUIRED_USE_DEFAULT=true])],
+		[default to REQUIRED_USE=true])],
 	[AS_CASE(["$withval"],
 		[no], [AS_VAR_SET([REQUIRED_USE_DEFAULT], ["false"])],
 		[AS_VAR_SET([REQUIRED_USE_DEFAULT], ["true"])])],
