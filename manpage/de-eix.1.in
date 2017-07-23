@@ -110,7 +110,7 @@ ausgibt, und das prüfen kann, welche Pakete mit/ohne Repository- oder Buildtime
 (vgl. die Beschreibung zu B<CHECK_INSTALLED_OVERLAYS> und B<USE_BUILD_TIME>).
 Mehr zu B<eix-installed> erfahren Sie durch den Aufruf B<eix-installed -h>.
 
-B<eix-etcat> ist ein Wrapper-Skripts, das eix mit einer Konfiguaration aufruft,
+B<eix-etcat> ist ein Wrapper-Skripts, das eix mit einer Konfiguration aufruft,
 so dass das Verhalten ähnlich dem von B<etcat -v> aus alten
 app-portage/gentoolkit Versionen oder dessen aktuelle Version von
 https://github.com/proteusx/etcat/ (z.B. app-portage/etcat aus dem mv overlay) ist.
@@ -936,7 +936,7 @@ Das Suchmuster ist ein Stringende.
 Das Suchmuster taucht irgendwo im String auf.
 .TP
 .BR -f " [" I<N> "], " --fuzzy " [" I<N> "]"
-Fuzzy-Suche mit dem maximalen Levenshtein-Abstand I<N> (default @LEVENSHTEIN_DISTANCE@) für den ganzen String.
+Fuzzy-Suche mit dem maximalen Levenshtein-Abstand I<N> (default @LEVENSHTEIN_DISTANCE_DEFAULT@) für den ganzen String.
 Diese Option reduziert die Suchgeschwindigkeit.
 .TP
 .BR -p ", " --pattern

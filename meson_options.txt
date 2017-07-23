@@ -1,0 +1,72 @@
+option('nls', type : 'boolean', value : true,
+	description : 'use native language support')
+option('new-dialect', type : 'boolean', value : true,
+	description : 'enable most current C++ dialect; provides optimitations')
+option('debugging', type : 'boolean', value : false,
+	description : 'activate paranoic asserts and flags for debugging')
+option('debug-format', type : 'boolean', value : true,
+	description : 'activate string format runtime tests')
+option('paranoic-asserts', type : 'boolean', value : false,
+	description : 'activate paranoic asserts')
+option('security', type : 'boolean', value : false,
+	description : 'append security relevant options to flags')
+option('strong-security', type : 'boolean', value : false,
+	description : 'append paranoic security options to flags; slowdown')
+option('nopie-security', type : 'boolean', value : false,
+	description : 'as strong-security but avoid pie to make sanitizer work')
+option('optimization', type : 'boolean', value : false,
+	description : 'append optimization flags')
+option('strong-optimization', type : 'boolean', value : false,
+	description : 'use also optimization flags which might not work on broken compilers')
+option('warnings', type : 'boolean', value : false,
+	description : 'append warning/testing flags; might produce worse code')
+option('strong-warnings', type : 'boolean', value : false,
+	description : 'append flags to get lots of mostly unimportant warnings')
+option('separate-binaries', type : 'boolean', value : false,
+	description : 'create a separate binary for each of eix, eix-update, eix-diff')
+option('separate-update', type : 'boolean', value : false,
+	description : 'create a separate eix-update binary')
+option('separate-tools', type : 'boolean', value : false,
+	description : 'create separate binaries for versionsort, eix-drop-permissions')
+option('pure-for-const-virtuals', type : 'boolean', value : true,
+	description : 'use __attribute__((pure)) for const virtuals')
+option('const-for-const-virtuals', type : 'boolean', value : false,
+	description : 'use __attribute__((const)) for const virtuals')
+option('swap-remote', type : 'boolean', value : false,
+	description : 'swap the remote paths')
+option('extra-doc', type : 'boolean', value : false,
+	description : 'install developer documentation. Might need rst2html.py from docutils')
+option('sqlite', type : 'combo', choices : [ 'auto', 'true', 'false' ],
+	description : 'Compile in support for cache method sqlite')
+option('dev-null', type : 'string', value : '/dev/null',
+	description : 'null device of the system, usually /dev/null')
+option('sh-shebang', type : 'string', value : 'auto',
+	description : 'use argument as sh script shebang. Pass auto for autodetection')
+option('portdir-cache-method', type : 'string', value : 'metadata-md5-or-flat',
+	description : 'default PORTDIR_CACHE_METHOD')
+option('eprefix-default', type : 'string', value : 'auto',
+	description : 'default EPREFIX. Pass auto for autodetection')
+option('eix-prefix-default', type : 'string', value : '',
+	description : 'default EIX_PREFIX')
+option('root-default', type : 'string', value : '',
+	description : 'default ROOT')
+option('portage-rootpath', type : 'string', value : '',
+	description : 'default PORTAGE_ROOTPATH')
+option('default-arch', type : 'string', value : '',
+	description : 'default DEFAULT_ARCH')
+option('always-accept-keywords', type : 'boolean', value : false,
+	description : 'default ALWAYS_ACCEPT_KEYWORDS')
+option('dep-default', type : 'boolean', value : false,
+	description : 'default DEP')
+option('required-use-default', type : 'boolean', value : false,
+	description : 'default REQUIRED_USE')
+option('zsh-completion', type : 'string', value : 'share/zsh/site-functions',
+	description : 'Where to install zsh-completion. Empty string means no installation')
+option('remote-file1', type : 'string', value : 'http://gpo.zugaina.org/eix_cache/eix-cache.tbz2',
+	description : 'default remote path 1 for eix-remote')
+option('remote-file2', type : 'string', value : 'http://dev.gentooexperimental.org/eix_cache/eix-caches.tbz2',
+	description : 'default remote path 2 for eix-remote')
+option('docdir', type : 'string',
+	description : 'directory for docs. If empty default to $datadir/doc/eix')
+option('htmldir', type : 'string',
+	description : 'directory for html files. If empty default to $docdir/html')

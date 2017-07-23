@@ -1,0 +1,1597 @@
+project('eix', 'cpp',
+	version : '0.32.11',
+	license : 'GPLv2',
+	default_options : [
+		'prefix=/usr',
+		'sysconfdir=/etc',
+	],
+	meson_version : '>= 0.41', # support configure_file(capture : true)
+)
+
+new_dialect = get_option('new-dialect')
+debugging = get_option('debugging')
+debug_format = get_option('debug-format')
+paranoic_asserts = get_option('paranoic-asserts')
+security = get_option('security')
+strong_security = get_option('strong-security')
+nopie_security = get_option('nopie-security')
+optimization = get_option('optimization')
+strong_optimization = get_option('strong-optimization')
+warnings = get_option('warnings')
+strong_warnings = get_option('strong-warnings')
+
+optimization_msg = ''
+strong_optimization_msg = ''
+paranoic_asserts_msg = ''
+warnings_msg = ''
+security_msg = ''
+strong_security_msg = ''
+
+if debugging and not paranoic_asserts
+	paranoic_asserts = true
+	paranoic_asserts_msg = ' (forced by debugging)'
+endif
+if debugging and strong_optimization
+	strong_optimization = false
+	strong_optimization_msg = ' (disabled by debugging)'
+endif
+if debugging and optimization
+	optimization = false
+	optimization_msg = ' (disabled by debugging)'
+endif
+if strong_optimization and not optimization
+	optimization = true
+	optimization_msg = ' (disabled by strong-optimization)'
+endif
+if paranoic_asserts and strong_optimization
+	strong_optimization = false
+	strong_optimization_msg = ' (disabled by paranoic-asserts)'
+endif
+if strong_warnings and not warnings
+	warnings = true
+	warnings_msg = ' (forced by strong-warnings)'
+endif
+if nopie_security and not strong_security
+	strong_security = true
+	strong_security_msg = ' (forced by nopie-security)'
+endif
+if strong_security and not security
+	security = true
+	security_msg = ' (forced by strong-security)'
+endif
+
+result = [ 'Passed options:' ]
+result += [ 'new-dialect=' + new_dialect.to_string() ]
+result += [ 'debugging=' + debugging.to_string() ]
+result += [ 'debug-format=' + debug_format.to_string() ]
+result += [ 'paranoic-asserts=' + paranoic_asserts.to_string() + paranoic_asserts_msg ]
+result += [ 'security=' + security.to_string() + security_msg ]
+result += [ 'strong_security=' + strong_security.to_string() + strong_security_msg ]
+result += [ 'nopie_security=' + nopie_security.to_string() ]
+result += [ 'optimization=' + optimization.to_string() + optimization_msg ]
+result += [ 'strong-optimization=' + strong_optimization.to_string() + strong_optimization_msg ]
+result += [ 'warnings=' + warnings.to_string() + warnings_msg ]
+result += [ 'strong-warnings=' + strong_warnings.to_string() ]
+
+
+cxx = meson.get_compiler('cpp')
+sh = find_program('sh')
+sed = find_program('sed')
+incdir = include_directories('src')
+
+builddir = meson.current_build_dir()
+sourcedir = meson.current_source_dir()
+package = meson.project_name()
+version = meson.project_version()
+prefix = get_option('prefix')
+bindir = join_paths(prefix, get_option('bindir'))
+datadir = join_paths(prefix, get_option('datadir'))
+sysconfdir = get_option('sysconfdir')
+localedir = join_paths(prefix, get_option('localedir'))
+mandir = join_paths(prefix, get_option('mandir'))
+
+docdir = get_option('docdir')
+if docdir != ''
+	docdir = join_paths(prefix, docdir)
+else
+	docdir = join_paths(prefix, datadir, 'doc', package)
+endif
+
+htmldir = get_option('htmldir')
+if htmldir != ''
+	htmldir = join_paths(prefix, htmldir)
+else
+	htmldir = join_paths(docdir, 'html')
+endif
+
+flags_fatal = []
+foreach arg : [
+	'-Werror',
+	'-Werror=unknown-warning-option',
+	'-Wunknown-warning-option',
+	'-Wl,--fatal-warnings',
+]
+	if cxx.has_argument(arg)
+		flags_fatal += [ arg ]
+	endif
+endforeach
+
+attr_args = flags_fatal
+foreach arg : [
+	'-Wattributes',
+]
+	if cxx.has_argument(arg)
+		attr_args += [ arg ]
+	endif
+endforeach
+
+dialect = ''
+if new_dialect
+	dialect = cxx.first_supported_argument(
+		'-std=gnu++17',
+		'-std=c++17',
+		'-std=gnu++1z',
+		'-std=c++1z',
+		'-std=gnu++14',
+		'-std=c++14',
+		'-std=gnu++1y',
+		'-std=c++1y',
+		'-std=gnu++11',
+		'-std=c++11',
+	)
+	if dialect != ''
+		add_global_arguments(dialect, language : 'cpp')
+		add_global_link_arguments(dialect, language : 'cpp')
+	endif
+endif
+
+ldflags_opt = []
+cxxflags_opt = []
+ldcxxflags_opt = []
+if debugging
+	ldcxxflags_opt += [
+		'-g',
+		'-ggdb3']
+endif
+if optimization
+	cxxflags_opt += [
+		'-O2',
+		'-fomit-frame-pointer',
+		'-fno-common',
+		'-fstrict-aliasing',
+		'-fstrict-enums',
+		'-fmerge-all-constants',
+		'-finline-functions',
+		'-fvisibility=hidden',
+		'-fvisibility-inlines-hidden',
+		'-ftree-pre',
+		'-ftree-partial-pre',
+		'-fnothrow-opt',
+		'-frename-registers',
+		'-funsafe-loop-optimizations',
+		'-fgcse-sm',
+		'-fgcse-las',
+		'-fgcse-after-reload',
+		'-fpredictive-commoning',
+		'-ftree-switch-conversion',
+		'-fno-ident',
+		'-freorder-functions',
+		'-fdevirtualize-speculatively',
+		'-fdevirtualize-at-ltrans',
+		'-fno-semantic-interposition',
+		'-fira-loop-pressure',
+		'-ftree-loop-distribution',
+		'-ftree-loop-distribute-patterns',
+		'-ftree-loop-im',
+		'-fivopts',
+		'-fdelete-null-pointer-checks',
+	]
+	ldflags_opt += [
+		'-Wl,-O1',
+		'-Wl,--relax',
+		'-Wl,--as-needed',
+		'-Wl,--sort-common',
+		'-Wl,-z,combreloc',
+	]
+endif
+if strong_optimization
+	ldcxxflags_opt = [
+		'-use-linker-plugin',
+		'-flto',
+		'-flto-partition=none',
+		'-flto-odr-type-merging',
+		'-fwhole-program',
+		'-fno-fat-lto-objects',
+		'-emit-llvm',
+	]
+	cxxflags_opt += [
+		'-fweb',
+		'-fgraphite',
+		'-fgraphite-identity',
+		'-floop-interchange',
+		'-floop-strip-mine',
+		'-floop-block',
+		'-fno-enforce-eh-specs',
+		'-ftree-vectorize',
+		'-fvect-cost-model',
+		'-fno-rtti',
+		'-fno-threadsafe-statics',
+	]
+	ldflags_opt += [
+		'-Wl,-O9',
+		'-Wl,-z,noexecstack',
+		# '-Wl,--hash-style=gnu',
+		# '-Wl,--enable-new-dtags',
+	]
+	if not strong_security
+		cxxflags_opt += [
+			'-DNDEBUG',
+			'-DNO_DEBUG',
+			'-DG_DISABLE_ASSERT',
+		]
+	endif
+endif
+if strong_warnings
+	ldflags_opt += [
+		'-Wl,--warn-common',
+	]
+endif
+if warnings
+	if dialect != ''
+		ldcxxflags_opt += [
+			'-Wzero-as-null-pointer-constant',
+		]
+	endif
+	cxxflags_opt += [
+		'-fno-common',
+		'-funsigned-char',
+		'-fdirectives-only',
+		'-ftracer',
+		'-fconcepts',
+		'-Wpedantic',
+		'-pedantic',
+		'-Wall',
+		'-Weverything',
+		'-Wextra',
+		'-Wformat=2',
+		'-Wunused-variable',
+		'-Wunused-parameter',
+		'-Wstring-plus-int',
+		'-WNSObject-attribute',
+		'-Winit-self',
+		'-Wmissing-include-dirs',
+		'-Wswitch-default',
+		'-Wunused',
+		'-Wunused-parameter',
+		'-Wstrict-aliasing=1',
+		'-Wstrict-overflow=5',
+		'-Wfloat-equal',
+		'-Wundef',
+		'-Wshadow',
+		'-Wpointer-arith',
+		'-Wcast-qual',
+		'-Wcast-align',
+		'-Wwrite-strings',
+		'-Wsign-compare',
+		'-Wmissing-field-initializers',
+		'-Wnormalized=nfkc',
+		'-Wpacked',
+		'-Wredundant-decls',
+		'-Winvalid-pch',
+		'-Wvolatile-register-var',
+		'-Wdisabled-optimization',
+		'-Wlogical-op',
+		'-Wvla',
+		'-Wabi',
+		'-Wctor-dtor-privacy',
+		'-Wstrict-null-sentinel',
+		'-Wstring-plus-int',
+		'-Woverloaded-virtual',
+		'-Wsign-promo',
+		'-Wnoexcept',
+		'-Wmissing-declarations',
+		'-Wmissing-format-attribute',
+		'-Wunused-but-set-variable',
+		'-Wunused-but-set-parameter',
+		'-Wsuggest-attribute=pure',
+		'-Wsuggest-attribute=const',
+		'-Wsuggest-attribute=noreturn',
+		'-Wdelete-non-virtual-dtor',
+		'-Wint-to-pointer-cast',
+		'-Wcomment',
+		'-WNSObject-attribute',
+		'-fdiagnostic-color=always',
+		'-Wswitch-bool',
+		'-Wlogical-not-parantheses',
+		'-Wsizeof-array-argument',
+		'-Wbool-compare',
+		'-Wodr-type-mismatch',
+		'-Wshift-negative-value',
+		'-Wshift-overflow',
+		'-Wshift-overflow=2',
+		'-Wnull-dereference',
+		'-Wduplicated-cond',
+		'-Wno-c++1z-extensions',
+		# '-Wno-unknown-warning-option',
+		# '-fmem-report',
+		# '-Wtraditional',
+		# '-Wc++-compat',
+		# '-Wstrict-prototypes',
+		# '-Wold-style-definition',
+		# '-Wmissing-prototypes',
+		# '-Wnested-externs',
+		# '-Wpointer-sign',
+		# '-Wtautological-compare',
+		# '-Wmisleading-indentation',
+	]
+	ldflags_opt += [
+		'-Wl,-z,defs',
+		'-Wl,--no-undefined',
+		'-Wl,--no-allow-shlib-undefined',
+		'-Wl,--no-undefined-version',
+	]
+endif
+if strong_warnings
+	cxxflags_opt += [
+		# '-Wconversion',
+		# '-Wswitch-enum',
+		# '-Wunsafe-loop-optimizations',
+		# '-Wpadded',
+		# '-Wunreachable-code',
+		# '-Waggregate-return',
+		# '-Winline',
+		# '-Weffc++',
+		'-Wsign-conversion',
+		'-Wold-style-cast',
+		'-Wmissing-noreturn',
+	]
+endif
+if security
+	stack_protector = cxx.first_supported_argument(
+		'-fstack-protector-strong',
+		'-fstack-protector-all',
+		'-fstack-protector',
+	)
+	if stack_protector != ''
+		add_global_arguments(stack_protector, language : 'cpp')
+		add_global_link_arguments(stack_protector, language : 'cpp')
+	endif
+	stack_check = cxx.first_supported_argument(
+		'-fstack-check',
+		'-fstack-check=specific',
+	)
+	if stack_check != ''
+		add_global_arguments(stack_check, language : 'cpp')
+		add_global_link_arguments(stack_check, language : 'cpp')
+	endif
+	ldflags_opt += [
+		'-Wl,-z,now',
+		'-Wl,-z,relro',
+		'-Wl,-z,noexecstack',
+	]
+	if not nopie_security
+		ldcxxflags_opt += [
+			'-fPIE',
+			'-pie',
+		]
+	endif
+endif
+if strong_security
+	ldcxxflags_opt += [
+		'-faddress-sanitizer',
+		'-fsanitize=address',
+		'-fsanitize=leak',
+		'-fsanitize=undefined',
+		'-fsanitize=vla-bound',
+		'-fsanitize=shift',
+		'-fsanitize=signed-integer-overflow',
+		'-fsanitize=integer-divide-by-zero',
+		'-fsanitize=unreachable',
+		'-fsanitize=null',
+		'-fsanitize=return',
+		'-fsanitize=float-divide-by-zero',
+		'-fsanitize=float-cast-overflow',
+		'-fsanitize=bounds',
+		'-fsanitize=bounds-strict',
+		'-fsanitize=alignment',
+		'-fsanitize=object-size',
+		'-fsanitize=vptr',
+		'-mmpx',
+		'-fcheck-pointer-bounds',
+		'-Wchkp',
+	]
+endif
+
+foreach arg : ldflags_opt
+	if cxx.has_argument(arg)
+		add_global_link_arguments(arg, language : 'cpp')
+	endif
+endforeach
+
+# We currently hack: Add to cxxflags to ldflags if argument is known
+ldcxxflags_opt += cxxflags_opt
+foreach arg : ldcxxflags_opt
+	if cxx.has_argument(arg)
+		add_global_arguments(arg, language : 'cpp')
+		add_global_link_arguments(arg, language : 'cpp')
+	endif
+endforeach
+
+conf = configuration_data()
+conf.set_quoted('PACKAGE_VERSION', version)
+subst = configuration_data()
+subst.set('PACKAGE_STRING', package + ' ' + version)
+subst.set('PACKAGE_BUGREPORT', 'https://github.com/vaeth/eix/issues/')
+subst.set('PACKAGE_URL', 'https://github.com/vaeth/eix/')
+
+subst.set('BINDIR', bindir)
+
+subst.set('SYSCONFDIR', sysconfdir)
+conf.set_quoted('SYSCONFDIR', sysconfdir,
+	description : 'Path to the configuration directory, usually /etc')
+
+subst.set('LOCALEDIR', localedir)
+conf.set_quoted('LOCALEDIR', localedir,
+	description : 'Path to the locale directory, usually /usr/share/locale')
+
+conf.set('EIX_PARANOIC_ASSERTS', paranoic_asserts,
+	description : 'Define if paranoic asserts should be used')
+conf.set('EIX_STATIC_ASSERTS', paranoic_asserts,
+	description : 'Define if asserts for static initializers should be used')
+conf.set('EIX_DEBUG_FORMAT', debug_format,
+	description : 'Define if string format runtime tests should be used')
+
+dev_null = get_option('dev-null')
+result += [ 'dev-null=' + dev_null ]
+subst.set('DEV_NULL', dev_null)
+conf.set_quoted('DEV_NULL', dev_null,
+	description : 'null device of the system, usually /dev/null')
+
+nls = get_option('nls')
+result += [ 'nls=' + nls.to_string() ]
+manpages = [ 'en' ]
+if nls
+	langs = []
+	test_linguas='''case " ${LINGUAS-*} " in
+*" $1 "*|*' * '*) exit 1;;
+esac
+'''
+	check_langs = [
+		['de', true],
+		['en@quot', false],
+		['en@boldquot', false],
+		['ru', true],
+	]
+	foreach p : check_langs
+		l = p.get(0)
+		r = run_command(sh, '-c', test_linguas, 'sh', l)
+		if r.returncode() != 0
+			langs += l
+			if p.get(1)
+				manpages += l
+			endif
+		endif
+	endforeach
+	xgettext_options = [
+		'--keyword=_',
+		'--keyword=N_:1,2',
+		'--keyword=P_:1c,2',
+		'--keyword=NP_:1c,2,3',
+		'--keyword=pgettext:1c,2',
+		'--keyword=npgettext:1c,2,3',
+		'--keyword=eval_pgettext:1c,2',
+		'--keyword=eval_npgettext:1c,2,3',
+		'--add-location=file --no-wrap',
+		'--check=space-ellipsis',
+	]
+	i18n = import('i18n')
+	i18n.gettext(package,
+		languages : langs,
+		args : xgettext_options,
+	)
+endif
+subst.set('USE_NLS', nls ? 'yes' : 'no')
+subst.set('TEXTDOMAIN', package)
+subst.set('TEXTDOMAINDIR', localedir)
+
+check_headers = [
+	['HAVE_CLIMITS', 'climits'],
+	['HAVE_CSTDINT', 'cstdint'],
+	['HAVE_GRP_H', 'grp.h'],
+	['HAVE_INTERIX_SECURITY_H', 'interix/security.h'],
+	['HAVE_LIMITS_H', 'limits.h'],
+	['HAVE_STDINT_H', 'stdint.h'],
+	['HAVE_STROPTS_H', 'stropts.h'],
+	['HAVE_SYS_FILE_H', 'sys/file.h'],
+	['HAVE_SYS_IOCTL_H', 'sys/ioctl.h'],
+	['HAVE_SYS_PARAM_H', 'sys/param.h'],
+	['HAVE_SYS_PTEM_H', 'sys/ptem.h'],
+	['HAVE_SYS_PTY_H', 'sys/pty.h'],
+	['HAVE_SYS_STREAM_H', 'sys/stream.h'],
+	['HAVE_SYS_TTY_H', 'sys/tty.h'],
+	['HAVE_TERMIOS_H', 'termios.h'],
+	['HAVE_TR1_CSTDINT', 'tr1/cstdint'],
+]
+foreach p : check_headers
+	h = p.get(1)
+	conf.set(p.get(0), cxx.has_header(h),
+		description : 'Define if ' + h + ' can be included')
+endforeach
+
+cheaders = '''
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+'''
+if conf.get('HAVE_SYS_FILE_H')
+	cheaders += '#include <sys/file.h>\n'
+endif
+if conf.get('HAVE_INTERIX_SECURITY_H')
+	cheaders += '#include <interix/security.h>\n'
+endif
+if conf.get('HAVE_GRP_H')
+	cheaders += '#include <grp.h>\n'
+endif
+
+check_functions = [
+	['HAVE_ATOI', 'atoi'],
+	['HAVE_CANONICALIZE_FILE_NAME', 'canonicalize_file_name'],
+	['HAVE_FILENO', 'fileno'],
+	['HAVE_FLOCK', 'flock'],
+	['HAVE_FSEEKO', 'fseeko'],
+	['HAVE_GETEGID', 'getegid'],
+	['HAVE_GETEUID', 'geteuid'],
+	['HAVE_GETGID', 'getgid'],
+	['HAVE_GETUID', 'getuid'],
+	['HAVE_INITGROUPS', 'initgroups'],
+	['HAVE_REALPATH', 'realpath'],
+	['HAVE_SETEGID', 'setegid'],
+	['HAVE_SETENV', 'setenv'],
+	['HAVE_SETEUID', 'seteuid'],
+	['HAVE_SETGID', 'setgid'],
+	['HAVE_SETGROUPS', 'setgroups'],
+	['HAVE_SETUID', 'setuid'],
+	['HAVE_SETUSER', 'setuser'],
+	['HAVE_SIGACTION', 'sigaction'],
+	['HAVE_STRTOL', 'strtol'],
+	['HAVE_STRTOLL', 'strtoll'],
+	['HAVE_STRTOUL', 'strtoul'],
+	['HAVE_STRTOULL', 'strtoull'],
+	['HAVE_VFORK', 'vfork'],
+]
+foreach p : check_functions
+	f = p.get(1)
+	conf.set(p.get(0), cxx.has_function(f), prefix : cheaders,
+		description : 'Define if ' + f + '() is available')
+endforeach
+
+foreach p : [
+	['getegid', 'gid_t seteuid()', ''],
+	['geteuid', 'uid_t seteuid()', ''],
+	['getgid', 'git_d setgid()', ''],
+	['getuid', 'uid_t setuid()', ''],
+	['setegid', 'int setegid(gid_t gid)', '0'],
+	['seteuid', 'int seteuid(uid_t uid)', '0'],
+	['setgid', 'int setgid(gid_t gid)', '0'],
+	['setuid', 'int setuid(uid_t uid)', '0'],
+]
+	program = 'int main() {\n'
+	program += 'return !' + p.get(0) + '(' + p.get(2) + ');\n}'
+	broken = not cxx.links(cheaders + program)
+	conf.set('NEED_' + p.get(0).to_upper() + '_PROTO', broken,
+		description : 'Define if ' + p.get(0) + ' needs a prototype')
+	if broken
+		broken = not cxx.links(cheaders + p.get(1) + ';\n' + program)
+		if broken
+			message(p.get(0) + '() is broken')
+		else
+			message(p.get(0) + '() needs a prototype')
+		endif
+	else
+		message(p.get(0) + '() works')
+	endif
+	conf.set('BROKEN_' + p.get(0).to_upper(), broken,
+		description : 'Define if ' + p.get(0) + ' is broken')
+endforeach
+
+builtin_expect = cxx.links('''
+int main() {
+int zero = 0;
+int one = 1;
+if(!((__builtin_expect(one, 0)) && (__builtin_expect(one, 1)) &&
+	(!__builtin_expect(zero, 0)) && (!__builtin_expect(zero, 1))))
+	return 1;
+}
+''')
+message('__builtin_expect: ' + builtin_expect.to_string())
+conf.set('HAVE___BUILTIN_EXPECT', builtin_expect,
+	description : 'Define if __builtin_expect can be used')
+
+pragma_diagnostic = cxx.links('''
+#define GCC_DIAG_STR(s) #s
+#define GCC_DIAG_JOINSTR(x, y) GCC_DIAG_STR(x ## y)
+#define GCC_DIAG_DO_PRAGMA(x) _Pragma (#x)
+#define GCC_DIAG_PRAGMA(x) GCC_DIAG_DO_PRAGMA(GCC diagnostic x)
+#define GCC_DIAG_OFF(x) GCC_DIAG_PRAGMA(push) \
+	GCC_DIAG_PRAGMA(ignored GCC_DIAG_JOINSTR(-W, x))
+#define GCC_DIAG_ON(x) GCC_DIAG_PRAGMA(pop)
+int main() {
+signed char j(0);
+unsigned char i;
+GCC_DIAG_OFF(sign-conversion)
+i = j;
+GCC_DIAG_ON(sign-conversion)
+GCC_DIAG_OFF(old-style-cast)
+return ((int)i);
+GCC_DIAG_ON(old-style-cast)
+}
+''')
+message('_Pragma GCC diagnostic: ' + pragma_diagnostic.to_string())
+conf.set('FULL_GCC_DIAG_PRAGMA', pragma_diagnostic,
+	description : 'Define if _Pragma GCC diagnostic can be used everywhere')
+
+c11attr_noreturn = cxx.links('''
+#include <cstdlib>
+[[noreturn]] static void dummy();
+static void
+dummy()
+{ exit(0); }
+int main() {
+	dummy();
+	return 0;
+}
+''', args : attr_args)
+message('[[noreturn]]: ' + c11attr_noreturn.to_string())
+conf.set('HAVE_C11ATTRIBUTE_NORETURN', c11attr_noreturn,
+	description : 'Define if [[noreturn]] can be used')
+
+attribute_noreturn = cxx.links('''
+#include <cstdlib>
+__attribute__ ((noreturn)) static void dummy();
+static void
+dummy()
+{ exit(0); }
+int main() {
+	dummy();
+	return 0;
+}
+''', args : attr_args)
+message('__attribute__ ((noreturn)): ' + attribute_noreturn.to_string())
+conf.set('HAVE_C11ATTRIBUTE_NORETURN', attribute_noreturn,
+	description : 'Define if __attribute__ ((noreturn)) can be used')
+
+attr_fallthrough = cxx.links('''
+int main() {
+	int i = 0;
+	switch(i) {
+		case 0:
+			--i;
+			[[fallthrough]];
+		default:
+			return i + 1;
+	}
+}
+''', args : attr_args)
+message('[[fallthrough]]: ' + attr_fallthrough.to_string())
+conf.set('HAVE_ATTRIBUTE_FALLTHROUGH', attr_fallthrough,
+	description : 'Define if [[fallthrough]] can be used')
+
+attr_gnufallthrough = cxx.links('''
+int main() {
+	int i = 0;
+	switch(i) {
+		case 0:
+			--i;
+			[[gnu::fallthrough]];
+		default:
+			return i + 1;
+	}
+}
+''', args : attr_args)
+message('[[gnu::fallthrough]]: ' + attr_gnufallthrough.to_string())
+conf.set('HAVE_ATTRIBUTE_GNUFALLTHROUGH', attr_gnufallthrough,
+	description : 'Define if [[gnu::fallthrough]] can be used')
+
+attr_afallthrough = cxx.links('''
+int main() {
+	int i = 0;
+	switch(i) {
+		case 0:
+			--i;
+			__attribute__ ((fallthrough));
+		default:
+			return i + 1;
+	}
+}
+''', args : attr_args)
+message('__attribute__ ((fallthrough)) ' + attr_afallthrough.to_string())
+conf.set('HAVE_ATTRIBUTE_AFALLTHROUGH', attr_afallthrough,
+	description : 'Define if __attribute__ ((fallthrough)) can be used')
+
+attr_signal = cxx.links('''
+#include <csignal>
+__attribute__ ((signal)) void my_sig_handler(int sig);
+class my_int {
+friend __attribute__ ((signal)) void my_sig_handler(int sig);
+private:	static int i;
+		static void set(int s) { i=s; }
+};
+int my_int::i;
+void my_sig_handler(int sig)
+{ my_int::set(sig); }
+int main() {
+	signal(SIGTERM, my_sig_handler);
+	return 0;
+}
+''', args : attr_args)
+message('__attribute__ ((signal)) ' + attr_signal.to_string())
+conf.set('HAVE_ATTRIBUTE_SIGNAL', attr_signal,
+	description : 'Define if __attribute__ ((signal)) can be used')
+
+attr_const = cxx.links('''
+class b {
+public:
+	static int c(int i) __attribute__ ((const)) { return i; }
+};
+int a(int i) __attribute__ ((const));
+int a(int i) { b x; return x.c(i); }
+int main() {
+	return !((a(4) == 4) && (a(5) == 5));
+}
+''', args : attr_args)
+message('__attribute__ ((const)) ' + attr_const.to_string())
+conf.set('HAVE_ATTRIBUTE_CONST', attr_const,
+	description : 'Define if __attribute__ ((const)) can be used')
+
+attr_pure = cxx.links('''
+class b {
+public:
+	static int c(int *i) __attribute__ ((pure)) { return *i; }
+};
+__attribute__ ((pure)) int a(int i);
+int a(int i) { b x; return x.c(&i); }
+int main() {
+	return !((a(4) == 4) && (a(5) == 5));
+}
+''', args : attr_args)
+message('__attribute__ ((pure)) ' + attr_pure.to_string())
+conf.set('HAVE_ATTRIBUTE_PURE', attr_pure,
+	description : 'Define if __attribute__ ((pure)) can be used')
+
+pure_for_const_virtuals = get_option('pure-for-const-virtuals')
+result += [ 'pure-for-const-virtuals=' + pure_for_const_virtuals.to_string() ]
+conf.set('USE_PURE_FOR_CONST_VIRTUALS', pure_for_const_virtuals,
+	description : 'Define if __attribute__ ((pure)) can be used for const virtuals')
+
+const_for_const_virtuals = get_option('const-for-const-virtuals')
+result += [ 'const-for-const-virtuals=' + const_for_const_virtuals.to_string() ]
+conf.set('USE_CONST_FOR_CONST_VIRTUALS', const_for_const_virtuals,
+	description : 'Define if __attribute__ ((const)) can be used for const virtuals')
+
+attr_nonnull_ = cxx.links('''
+class b {
+public:
+	__attribute__ ((nonnull)) int c(int *i) { return *i; }
+};
+int a(int *i) __attribute__ ((nonnull));
+int a(int *i) { b x; return x.c(i); }
+int main() {
+	int i = 4, j = 5;
+	return !((a(&i) == 4) && (a(&j) == 5));
+}
+''', args : attr_args)
+message('__attribute__ ((nonnull)) ' + attr_nonnull_.to_string())
+conf.set('HAVE_ATTRIBUTE_NONNULL_', attr_nonnull_,
+	description : 'Define if __attribute__ ((nonnull)) can be used')
+
+attr_nonnull = cxx.links('''
+class b {
+public:
+	__attribute__ ((nonnull (1, 3))) static int c(int *i, int *j, int *k) {
+		return (j ? ((*i) - (*k)) : ((*i) + (*k)));
+	}
+	__attribute__ ((nonnull (2, 4))) int d(int *i, int *j, int *k) {
+		return c(i,j,k);
+	}
+};
+__attribute__ ((nonnull (1, 3))) int a(int *i, int *j, int *k);
+int a(int *i, int *j, int *k) {
+	b x; return x.d(i, j, k) + x.d(i, 0, k);
+}
+int main() {
+	int i = 1;
+	b x;
+	return !((x.d(&i, 0, &i) == 2) && (x.d(&i, 0, &i) == 2) && (a(&i, 0, &i) == 4));
+}
+''', args : attr_args)
+message('__attribute__ ((nonnull (list))) ' + attr_nonnull.to_string())
+conf.set('HAVE_ATTRIBUTE_NONNULL', attr_nonnull,
+	description : 'Define if __attribute__ ((nonnull (list))) can be used')
+
+nullptr = cxx.links('''
+static const char *a = nullptr;
+int main() {
+	const char *b(nullptr);
+	return !((a == b) && (b == nullptr));
+}
+''')
+message('nullptr: ' + nullptr.to_string())
+conf.set('HAVE_NULLPTR', nullptr,
+	description : 'Define if C++ dialect has nullptr type')
+
+constexpr = cxx.links('''
+class T {
+public:
+	static constexpr const int a = 5;
+};
+const int T::a;
+int main() {
+	return (T::a != 5);
+}
+''')
+message('constexpr: ' + constexpr.to_string())
+conf.set('HAVE_CONSTEXPR', constexpr,
+	description : 'Define if C++ dialect has constexpr modifier')
+
+override = cxx.links('''
+class T {
+public:
+	virtual int foo() {return 1;}
+};
+class S : public T {
+public:
+	int foo() override {return 0;}
+};
+int main() {
+	S a;
+	T *b(&a);
+	return b->foo();
+}
+''')
+message('override: ' + override.to_string())
+conf.set('HAVE_OVERRIDE', override,
+	description : 'Define if C++ dialect has override modifier')
+
+delete = cxx.links('''
+#include <utility>
+class T {
+private:
+	T(const T& s) = delete;
+	T& operator=(const T& s) = delete;
+public:
+	T() { }
+};
+int main() {
+	T a;
+	return 0;
+}
+''')
+message('delete: ' + delete.to_string())
+conf.set('HAVE_DELETE', delete,
+	description : 'Define if C++ dialect supports assigning delete')
+
+noexcept = cxx.links('''
+class T {
+public:
+	int s;
+	T() noexcept : s(0) {
+	}
+};
+int main() {
+	return T().s;
+}
+''')
+message('noexcept: ' + noexcept.to_string())
+conf.set('HAVE_NOEXCEPT', noexcept,
+	description : 'Define if C++ dialect has noexcept')
+
+have_move = cxx.links('''
+#include <utility>
+class T {
+public:
+	T() { }
+	~T() { }
+	T(T&&) { }
+	T& operator=(T&&) { return *this; }
+	int ret() { return 0; }
+};
+int main() {
+	T a, b;
+	T c = std::move(a);
+	b = std::move(c);
+	return b.ret();
+}
+''')
+message('move constructor: ' + have_move.to_string())
+conf.set('HAVE_MOVE', have_move,
+	description : 'Define if C++ dialect supports assigning default move constructor')
+
+have_array_class = cxx.links('''
+#include <array>
+int main() {
+	std::array<int, 5> a;
+	a.fill(4);
+	return (a[4] == 4) ? 0 : 1;
+}
+''')
+message('array class: ' + have_array_class.to_string())
+conf.set('HAVE_ARRAY_CLASS', have_array_class,
+	description : 'Define if STL has array class')
+
+have_forward_list = cxx.links('''
+#include <forward_list>
+int main() {
+	std::forward_list<int> a;
+	a.insert_after(a.before_begin(), 5);
+	return (*(a.begin()) == 5) ? 0 : 1;
+}
+''')
+message('forward_list: ' + have_forward_list.to_string())
+conf.set('HAVE_FORWARD_LIST', have_forward_list,
+	description : 'Define if STL has forward_list')
+
+sqlite_dep = []
+with_sqlite = false
+want_sqlite = get_option('sqlite')
+sqlite_msg = ''
+if want_sqlite == 'auto'
+	sqlite_msg = ' (auto)'
+endif
+if want_sqlite != 'false'
+	sqlite_dep = dependency('sqlite3', required : false)
+	if sqlite_dep.found()
+		with_sqlite = true
+		want_sqlite = 'true'
+	elif want_sqlite == true
+		error('sqlite required by option but not found')
+	else
+		want_sqlite = 'false'
+	endif
+endif
+result += [ 'sqlite=' + want_sqlite + sqlite_msg ]
+conf.set('WITH_SQLITE', with_sqlite,
+	description: 'Define if cache method sqlite is wanted')
+eix_update_deps = sqlite_dep
+
+portdir_cache_method = get_option('portdir-cache-method')
+result += [ 'portdir-cache-method=' + portdir_cache_method ]
+subst.set('PORTDIR_CACHE_METHOD', portdir_cache_method)
+conf.set_quoted('PORTDIR_CACHE_METHOD', portdir_cache_method,
+	description : 'Default PORTDIR_CACHE_METHOD')
+
+eprefix_default = get_option('eprefix-default')
+eprefix_default_msg = ''
+if eprefix_default == 'auto'
+	eprefix_default = ''
+	r = run_command('portageq', 'envvar', 'EPREFIX')
+	if r.returncode() == 0
+		eprefix_default = r.stdout().strip()
+		eprefix_default_msg = ' (auto)'
+	endif
+endif
+result += [ 'eprefix-default=' + eprefix_default + eprefix_default_msg ]
+conf.set_quoted('EPREFIX_DEFAULT', eprefix_default,
+	description : 'Default EPREFIX')
+
+sh_shebang = get_option('sh-shebang')
+sh_shebang_msg = ''
+if sh_shebang == 'auto'
+	sh_shebang = ''
+	r = run_command('sh', '-c', 'command', '-v', 'sh')
+	if r.returncode() == 0
+		sh_shebang = r.stdout().strip()
+		sh_shebang_msg = ' (auto)'
+	endif
+endif
+if sh_shebang == ''
+	sh_shebang = '/usr/bin/env sh'
+	sh_shebang_msg = ' (fallback)'
+endif
+result += [ 'sh-shebang=' + sh_shebang ]
+subst.set('SH_SHEBANG', sh_shebang)
+
+eix_prefix_default = get_option('eix-prefix-default')
+result += [ 'eix-prefix-default=' + eix_prefix_default ]
+conf.set_quoted('EIX_PREFIX_DEFAULT', eix_prefix_default,
+	description : 'Default EIX_PREFIX')
+
+root_default = get_option('root-default')
+result += [ 'root-default=' + root_default ]
+conf.set_quoted('ROOT_DEFAULT', root_default,
+	description : 'Default ROOT')
+
+portage_rootpath = get_option('portage-rootpath')
+result += [ 'portage-rootpath=' + portage_rootpath ]
+conf.set_quoted('PORTAGE_ROOTPATH_DEFAULT', portage_rootpath,
+	description : 'Default PORTAGE_ROOTPATH')
+
+default_arch = get_option('default-arch')
+result += [ 'default-arch=' + default_arch ]
+conf.set_quoted('ARCH_DEFAULT', default_arch,
+	description : 'Default DEFAULT_ARCH')
+
+if get_option('swap-remote')
+	remote_file1 = get_option('remote-file2')
+	remote_file2 = get_option('remote-file1')
+else
+	remote_file1 = get_option('remote-file1')
+	remote_file2 = get_option('remote-file2')
+endif
+result += [ 'remote-file1=' + remote_file1 ]
+result += [ 'remote-file2=' + remote_file2 ]
+subst.set('DEFAULT_REMOTE_PATH1', remote_file1)
+subst.set('DEFAULT_REMOTE_PATH2', remote_file2)
+
+always_accept_keywords = get_option('always-accept-keywords')
+result += [ 'always-accept-keywords=' + always_accept_keywords.to_string() ]
+conf.set_quoted('ALWAYS_ACCEPT_KEYWORDS_DEFAULT', always_accept_keywords.to_string(),
+	description : 'Default ALWAYS_ACCEPT_KEYWORDS')
+
+dep_default = get_option('dep-default')
+result += [ 'dep-default=' + dep_default.to_string() ]
+conf.set_quoted('DEP_DEFAULT', dep_default.to_string(),
+	description : 'Default DEP')
+
+required_use_default = get_option('required-use-default')
+result += [ 'required-use-default=' + required_use_default.to_string() ]
+conf.set_quoted('REQUIRED_USE_DEFAULT', required_use_default.to_string(),
+	description : 'Default REQUIRED_USE')
+
+zsh_completion_path = get_option('zsh-completion')
+zsh_completions = []
+if zsh_completion_path != ''
+	zsh_completion_path = join_paths(prefix, zsh_completion_path)
+	foreach file : files(
+		join_paths('zsh', '_eix-header'),
+		join_paths('zsh', '_eix-installed'),
+		join_paths('zsh', '_eix-installed-after'),
+		join_paths('zsh', '_eix-layman'),
+		join_paths('zsh', '_eix-remote'),
+		join_paths('zsh', '_eix-sync'),
+		join_paths('zsh', '_eix-test-obsolete'),
+	)
+		install_data(file, install_dir : zsh_completion_path)
+	endforeach
+	zsh_completions = [
+		'_eix'
+	]
+endif
+result += [ 'zsh-completion=' + zsh_completion_path ]
+
+extra_doc = get_option('extra-doc')
+result += [ 'extra-doc=' + extra_doc.to_string() ]
+
+sed_get = [ '-n', '-e',
+	's/^.*static * CONSTEXPR *.* current *= *\([0-9]*\) *;.*$/\1/p',
+	'--',
+]
+f = join_paths('src', 'database', 'header.h')
+database_version = ''
+r = run_command(sed, sed_get, files(f))
+if r.returncode() == 0
+	database_version = r.stdout().strip()
+endif
+if database_version == ''
+	error('failed to get current database version from ' + f)
+endif
+subst.set('CURRENT', database_version)
+
+f = join_paths('src', 'output', 'print-xml.h')
+xml_version = ''
+r = run_command(sed, sed_get, files(f))
+if r.returncode() == 0
+	xml_version = r.stdout().strip()
+endif
+if xml_version == ''
+	error('failed to get currrent xml version from ' + f)
+endif
+subst.set('CURRENTXML', xml_version)
+
+eix_cachefile = '/var/cache/eix/portage.eix'
+subst.set('EIX_CACHEFILE', eix_cachefile)
+conf.set_quoted('EIX_CACHEFILE', eix_cachefile,
+	description : 'Location of the cachefile')
+
+eix_previous = '/var/cache/eix/previous.eix'
+subst.set('EIX_PREVIOUS', eix_previous)
+conf.set_quoted('EIX_PREVIOUS', eix_previous,
+	description : 'Location of the previous cachefile')
+
+eix_remotecachefile1 = '/var/cache/eix/remote.eix'
+subst.set('EIX_REMOTECACHEFILE1', eix_remotecachefile1)
+conf.set_quoted('EIX_REMOTECACHEFILE1', eix_remotecachefile1,
+	description : 'Location of the remote cachefile 1')
+
+eix_remotecachefile2 = '/var/cache/eix/remote2.eix'
+subst.set('EIX_REMOTECACHEFILE2', eix_remotecachefile2)
+conf.set_quoted('EIX_REMOTECACHEFILE2', eix_remotecachefile2,
+	description : 'Location of the remote cachefile 2')
+
+eix_remotearchive1 = '/var/cache/eix/remote.tar.bz2'
+subst.set('EIX_REMOTEARCHIVE1', eix_remotearchive1)
+conf.set_quoted('EIX_REMOTEARCHIVE1', eix_remotearchive1,
+	description : 'Location of the local remote cache arhive 1')
+
+eix_remotearchive2 = '/var/cache/eix/remote2.tar.bz2'
+subst.set('EIX_REMOTEARCHIVE2', eix_remotearchive2)
+conf.set_quoted('EIX_REMOTEARCHIVE2', eix_remotearchive2,
+	description : 'Location of the local remote cache arhive 2')
+
+levenshtein_distance = '2'
+subst.set('LEVENSHTEIN_DISTANCE_DEFAULT', levenshtein_distance)
+conf.set_quoted('LEVENSHTEIN_DISTANCE_DEFAULT', levenshtein_distance,
+	description : 'Default Levenshtein distance for matches (as string)')
+
+configure_file(
+	output : 'config.h',
+	configuration : conf,
+)
+
+header_src = files(
+	join_paths('src', 'database', 'io.cc'),
+	join_paths('src', 'database', 'io_header.cc'),
+	join_paths('src', 'database', 'header.cc'),
+)
+database_src = header_src
+database_src += files(
+	join_paths('src', 'database', 'header_portage.cc'),
+	join_paths('src', 'database', 'io_portage.cc'),
+	join_paths('src', 'database', 'package_reader.cc'),
+)
+stringutils_src = files(
+	join_paths('src', 'eixTk', 'compare.cc'),
+	join_paths('src', 'eixTk', 'formated.cc'),
+	join_paths('src', 'eixTk', 'stringutils.cc'),
+)
+sysutils_src = files(
+	join_paths('src', 'eixTk', 'sysutils.cc'),
+)
+utils_src = files(
+	join_paths('src', 'eixTk', 'filenames.cc'),
+	join_paths('src', 'eixTk', 'utils.cc'),
+)
+varsreader_src = utils_src
+varsreader_src += files(
+	join_paths('src', 'eixTk', 'varsreader.cc'),
+)
+masklist_src = files(
+	join_paths('src', 'eixTk', 'stringlist.cc'),
+	join_paths('src', 'portage', 'mask.cc'),
+	join_paths('src', 'portage', 'mask_list.cc'),
+)
+eixtk_src = stringutils_src
+eixtk_src += files(
+	join_paths('src', 'eixTk', 'ansicolor.cc'),
+	join_paths('src', 'eixTk', 'argsreader.cc'),
+	join_paths('src', 'eixTk', 'parseerror.cc'),
+	join_paths('src', 'eixTk', 'regexp.cc'),
+)
+eixtk_src += sysutils_src
+eixtk_src += varsreader_src
+eixrc_src = files(
+	join_paths('src', 'eixrc', 'eixrc.cc'),
+	join_paths('src', 'eixrc', 'global.cc'),
+	join_paths('src', 'eixrc', 'global1.cc'),
+	join_paths('src', 'eixrc', 'global2.cc'),
+	join_paths('src', 'eixrc', 'global3.cc'),
+	join_paths('src', 'eixrc', 'global4.cc'),
+	join_paths('src', 'eixrc', 'global5.cc'),
+	join_paths('src', 'eixrc', 'global6.cc'),
+)
+depend_src = files(
+	join_paths('src', 'portage', 'depend.cc'),
+)
+overlay_src = files(
+	join_paths('src', 'portage', 'overlay.cc'),
+)
+portage_src = files(
+	join_paths('src', 'portage', 'conf', 'portagesettings.cc'),
+	join_paths('src', 'portage', 'conf', 'cascadingprofile.cc'),
+)
+portage_src += masklist_src
+portage_src += depend_src
+portage_src += files(
+	join_paths('src', 'portage', 'basicversion.cc'),
+	join_paths('src', 'portage', 'eapi.cc'),
+	join_paths('src', 'portage', 'extendedversion.cc'),
+	join_paths('src', 'portage', 'extendedversion_bin.cc'),
+	join_paths('src', 'portage', 'instversion.cc'),
+	join_paths('src', 'portage', 'package.cc'),
+	join_paths('src', 'portage', 'package_best.cc'),
+	join_paths('src', 'portage', 'packagesets.cc'),
+	join_paths('src', 'portage', 'vardbpkg.cc'),
+	join_paths('src', 'portage', 'packagetree.cc'),
+	join_paths('src', 'portage', 'keywords.cc'),
+	join_paths('src', 'portage', 'overlay_bin.cc'),
+)
+portage_src += overlay_src
+portage_src += files(
+	join_paths('src', 'portage', 'set_stability.cc'),
+	join_paths('src', 'portage', 'version.cc'),
+)
+gencache_src = custom_target('cache_map',
+	input : files(join_paths('src', 'cache', 'generate_cachemap.sh')),
+	output : [ 'cache_map.cc' ],
+	command : [ sh, '@INPUT@' ],
+	capture : true,
+)
+cache_src = files(
+	join_paths('src', 'cache', 'cachetable.cc'),
+	join_paths('src', 'cache', 'common', 'assign_reader.cc'),
+	join_paths('src', 'cache', 'common', 'ebuild_exec.cc'),
+	join_paths('src', 'cache', 'common', 'flat_reader.cc'),
+	join_paths('src', 'cache', 'common', 'selectors.cc'),
+	join_paths('src', 'cache', 'base.cc'),
+	join_paths('src', 'cache', 'eixcache', 'eixcache.cc'),
+	join_paths('src', 'cache', 'metadata', 'metadata.cc'),
+	join_paths('src', 'cache', 'parse', 'parse.cc'),
+	join_paths('src', 'cache', 'sqlite', 'sqlite.cc'),
+	join_paths('src', 'eixTk', 'md5.cc'),
+)
+cache_src += [
+	gencache_src
+]
+cli_src = files(
+	join_paths('src', 'various', 'cli.cc'),
+)
+drop_permissions_src = files(
+	join_paths('src', 'various', 'drop_permissions.cc'),
+)
+percentage_src = files(
+	join_paths('src', 'eixTk', 'percentage.cc'),
+	join_paths('src', 'eixTk', 'statusline.cc'),
+)
+printxml_src = files(
+	join_paths('src', 'output', 'print-xml.cc'),
+)
+outputstring_src = files(
+	join_paths('src', 'eixTk', 'outputstring.cc'),
+	join_paths('src', 'eixTk', 'stringlist_output.cc'),
+)
+output_src = outputstring_src
+output_src += files(
+	join_paths('src', 'portage', 'version_output.cc'),
+	join_paths('src', 'output', 'formatstring.cc'),
+	join_paths('src', 'output', 'formatstring-print.cc'),
+)
+search_src = files(
+	join_paths('src', 'search', 'levenshtein.cc'),
+	join_paths('src', 'search', 'algorithms.cc'),
+	join_paths('src', 'search', 'matchtree.cc'),
+	join_paths('src', 'search', 'packagetest.cc'),
+	join_paths('src', 'search', 'packagetest_default.cc'),
+	join_paths('src', 'search', 'nowarn.cc'),
+)
+common_src = drop_permissions_src
+common_src += eixtk_src
+common_src += database_src
+common_src += portage_src
+common_src += eixrc_src
+common_src += files(
+	join_paths('src', 'eixrc', 'eixrc_portage.cc'),
+)
+eix_only_src = files(
+	join_paths('src', 'eix.cc'),
+)
+eix_only_src += cli_src
+eix_only_src += printxml_src
+eix_only_src += search_src
+eix_only_src += files(
+	join_paths('src', 'eixTk', 'ansicolor_print.cc'),
+)
+diff_only_src = files(
+	join_paths('src', 'eix-diff.cc'),
+)
+output_only_src = output_src
+update_only_src = files(
+	join_paths('src', 'eix-update.cc'),
+)
+update_only_src += percentage_src
+update_only_src += cache_src
+masked_packages_src = files(
+	join_paths('src', 'eixTk', 'parseerror.cc'),
+)
+masked_packages_src += stringutils_src
+masked_packages_src += files(
+	join_paths('src', 'eixTk', 'utils.cc'),
+	join_paths('src', 'portage', 'basicversion.cc'),
+	join_paths('src', 'portage', 'extendedversion.cc'),
+	join_paths('src', 'portage', 'keywords.cc'),
+	join_paths('src', 'portage', 'version.cc'),
+	join_paths('src', 'portage', 'package.cc'),
+)
+masked_packages_src += masklist_src
+masked_packages_src += files(
+	join_paths('src', 'eixTk', 'argsreader.cc'),
+	join_paths('src', 'masked-packages.cc'),
+	join_paths('src', 'main', 'main_masked_packages.cc'),
+)
+versionsort_src = stringutils_src
+versionsort_src += files(
+	join_paths('src', 'portage', 'basicversion.cc'),
+	join_paths('src', 'versionsort.cc'),
+	join_paths('src', 'main', 'main_versionsort.cc'),
+)
+eix_header_src = stringutils_src
+eix_header_src += utils_src
+eix_header_src += header_src
+eix_header_src += depend_src
+eix_header_src += overlay_src
+eix_header_src += sysutils_src
+eix_header_src += files(
+	join_paths('src', 'eix-header.cc'),
+	join_paths('src', 'main', 'main_overlay.cc'),
+)
+eix_drop_permissions_src = stringutils_src
+eix_drop_permissions_src += eixrc_src
+eix_drop_permissions_src += drop_permissions_src
+eix_drop_permissions_src += sysutils_src
+eix_drop_permissions_src += varsreader_src
+eix_drop_permissions_src += files(
+	join_paths('src', 'eix-drop-permissions.cc'),
+	join_paths('src', 'main', 'main_drop_permissions.cc'),
+)
+main_output_src = files(
+	join_paths('src', 'main', 'main_output.cc'),
+)
+main_eix_src = files(
+	join_paths('src', 'main', 'main_eix.cc'),
+)
+main_diff_src = files(
+	join_paths('src', 'main', 'main_diff.cc'),
+)
+
+inst_link = []
+inst_link_tools = []
+separate_tools = get_option('separate-tools')
+separate_binaries = get_option('separate-binaries')
+separate_update = get_option('separate-update')
+separate_update_msg = ''
+if separate_binaries and not separate_update
+	separate_update = true
+	separate_update_msg = ' (forced by separate-binaries)'
+endif
+result += [ 'separate-tools=' + separate_tools.to_string() ]
+result += [ 'separate-binaries=' + separate_binaries.to_string() ]
+result += [ 'separate-update=' + separate_update.to_string() + separate_update_msg ]
+if separate_tools
+	executable('masked-packages', masked_packages_src,
+		include_directories : incdir,
+		install : true,
+	)
+	executable('versionsort', versionsort_src,
+		include_directories : incdir,
+		install : true,
+	)
+	executable('eix-header', eix_header_src,
+		include_directories : incdir,
+		install : true,
+	)
+	executable('eix-drop-permissions', eix_drop_permissions_src,
+		include_directories : incdir,
+		install : true,
+	)
+	main_all_src = files(
+		join_paths('src', 'main', 'main_all.cc'),
+	)
+	main_update_src = files(
+		join_paths('src', 'main', 'main_update.cc'),
+	)
+else
+	inst_link_tools = [
+		'masked-packages',
+		'versionsort',
+		'eix-header',
+		'eix-drop-permissions',
+	]
+	main_all_src = files(
+		join_paths('src', 'masked-packages.cc'),
+		join_paths('src', 'versionsort.cc'),
+		join_paths('src', 'eix-header.cc'),
+		join_paths('src', 'eix-drop-permissions.cc'),
+		join_paths('src', 'main', 'main_all_tools.cc'),
+	)
+	main_update_src = files(
+		join_paths('src', 'masked-packages.cc'),
+		join_paths('src', 'versionsort.cc'),
+		join_paths('src', 'eix-header.cc'),
+		join_paths('src', 'eix-drop-permissions.cc'),
+		join_paths('src', 'main', 'main_update_tools.cc'),
+	)
+endif
+eix_update_src = common_src
+eix_update_src += update_only_src
+eix_update_src += main_update_src
+eix_dep = sqlite_dep
+eix_update_link = 'eix'
+if separate_binaries or separate_update
+	eix_update_link = 'eix'
+	executable('eix-update', eix_update_src,
+		include_directories : incdir,
+		dependencies : eix_dep,
+		install : true,
+	)
+	eix_dep = []
+endif
+foreach l : inst_link_tools
+	inst_link += [
+		[ eix_update_link, l ],
+	]
+endforeach
+if separate_binaries
+	eix_src = common_src
+	eix_src += eix_only_src
+	eix_src += output_only_src
+	eix_src += main_eix_src
+	eix_diff_src = common_src
+	eix_diff_src += diff_only_src
+	eix_diff_src += output_only_src
+	eix_diff_src += main_diff_src
+	executable('eix-diff', eix_diff_src,
+		include_directories : incdir,
+		install : true,
+	)
+else
+	inst_link += [
+		[ 'eix', 'eix-diff' ],
+	]
+	if separate_update
+		eix_src = common_src
+		eix_src += eix_only_src
+		eix_src += diff_only_src
+		eix_src += output_only_src
+		eix_src += main_output_src
+	else
+		inst_link += [
+			[ 'eix', 'eix-update' ]
+		]
+		eix_src = common_src
+		eix_src += output_only_src
+		eix_src += eix_only_src
+		eix_src += diff_only_src
+		eix_src += update_only_src
+		eix_src += main_all_src
+	endif
+endif
+executable('eix', eix_src,
+	include_directories : incdir,
+	dependencies : eix_dep,
+	install : true,
+)
+
+bin_scripts = [
+	'eix-etcat',
+	'eix-functions.sh',
+	'eix-installed',
+	'eix-installed-after',
+	'eix-layman',
+	'eix-remote',
+	'eix-sync',
+	'eix-test-obsolete',
+]
+
+sed_args = [
+	'-e', 's,/dev/null,@DEV_NULL@,g',
+	'-e', 's,\./eix-functions\.sh\.sh\.in,\'@BINDIR@/eix-functions.sh\',g',
+	'-e', 's,\./eix-drop-permissions,\'@BINDIR@/eix-drop-permissions\',g',
+	'-e', 's,\./eix-remote.in,\'@BINDIR@/eix-remote\',g',
+	'-e', 's,^#!/usr/bin/env sh$,#!@SH_SHEBANG@,g',
+	'--',
+]
+foreach file : bin_scripts
+	file_sed = file + '.sh.subst'
+	path_in = files(join_paths('src', file + '.sh.in'))
+	configure_file(
+		input : path_in,
+		output : file_sed,
+		command : [ sed, sed_args, path_in ],
+		capture : true,
+	)
+	path_sed = join_paths(builddir, file_sed)
+	c = configure_file(
+		input : path_sed,
+		output : file,
+		configuration : subst,
+	)
+	install_data(c, install_dir : bindir)
+endforeach
+
+foreach file : zsh_completions
+	file_sed = file + '.subst'
+	path_in = files(join_paths('zsh', file + '.in'))
+	configure_file(
+		input : path_in,
+		output : file_sed,
+		command : [ sed, sed_args, path_in ],
+		capture : true,
+	)
+	path_sed = join_paths(builddir, file_sed)
+	c = configure_file(
+		input : path_sed,
+		output : file,
+		configuration : subst,
+	)
+	install_data(c, install_dir : zsh_completion_path)
+endforeach
+
+if extra_doc
+	foreach file : [
+		'eix-db.txt',
+		'eix-xml.txt',
+		'eix-xml.xsd',
+	]
+		c = configure_file(
+			input : files(join_paths('doc', file + '.in')),
+			output : file,
+			configuration : subst,
+		)
+		install_data(c, install_dir : docdir)
+	endforeach
+	docinput = join_paths(sourcedir, 'doc')
+	rst2html = files(join_paths('doc', 'call_rst2html.sh'))
+	foreach file : [
+		'eix-db',
+		'eix-xml',
+	]
+		txtfile = join_paths(builddir, file + '.txt')
+		htmlfile = file + '.html'
+		htmldest = join_paths(builddir, htmlfile)
+		fallback = join_paths(sourcedir, 'doc', htmlfile)
+		r = run_command(sh, rst2html,
+			txtfile, htmldest, fallback, docinput, dev_null)
+		if r.returncode() != 0
+			error('call_rst2html.sh failed for ' + htmlfile)
+		endif
+		install_data(htmldest, install_dir : htmldir)
+	endforeach
+endif
+
+sed_manpage = '''test -d "$3" || mkdir -- "$3" && sed \
+-e 's/$Date:[^,]*, *\([^)]*\)[^\$]*\$/\1/' \
+-e 's,\([BI]\)<\([^>]\+\)>,\\f\1\2\\fR,g' \
+-e 's/Ä/\\(:A/g' \
+-e 's/Ö/\\(:O/g' \
+-e 's/Ü/\\(:U/g' \
+-e 's/ä/\\(:a/g' \
+-e 's/ö/\\(:o/g' \
+-e 's/ü/\\(:u/g' \
+-e 's/ß/\\(ss/g' \
+-- "$1" >|"$2"
+'''
+foreach l : manpages
+	file = l + '-eix.1'
+	file_subst = file + '.subst'
+	configure_file(
+		input : files(join_paths('manpage', file + '.in')),
+		output : file_subst,
+		configuration : subst,
+	)
+	manpagedir = join_paths(builddir, l)
+	manpagefile = join_paths(manpagedir, 'eix.1')
+	r = run_command(sh, '-c', sed_manpage, 'sh',
+		join_paths(builddir, file_subst),
+		manpagefile,
+		manpagedir)
+	if r.returncode() != 0
+		error('sed failed: ' + file)
+	endif
+	mansubdir = mandir
+	if l != 'en'
+		mansubdir = join_paths(mandir, l)
+	endif
+	install_data(manpagefile, install_dir : mansubdir)
+endforeach
+
+ln_s = '''test -d "$DESTDIR$3" || mkdir -p -- "$DESTDIR$3"
+ln -s -- "$1" "$DESTDIR$2" || \
+ln -- "$1" "$DESTDIR$2" || \
+cp -p -- "$1" "$DESTDIR$2"
+'''
+foreach l : inst_link
+	meson.add_install_script(sh.path(), '-c', ln_s, 'sh',
+		l.get(0), join_paths(bindir, l.get(1)), bindir)
+endforeach
+
+message('\n-D'.join(result))

@@ -930,9 +930,7 @@ AC_MSG_CHECKING([[whether [[noreturn]] can be used]])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <cstdlib>
 [[noreturn]] static void dummy();
-static void
-dummy()
-{ exit(0); }
+static void dummy() { exit(0); }
 		]], [[
 dummy()
 		]])],
@@ -950,9 +948,7 @@ AC_MSG_CHECKING([whether __attribute__ ((noreturn)) can be used])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <cstdlib>
 __attribute__ ((noreturn)) static void dummy();
-static void
-dummy()
-{ exit(0); }
+static void dummy() { exit(0); }
 		]], [[
 dummy()
 		]])],
@@ -1009,7 +1005,7 @@ AS_IF([$attr_gnufallthrough],
 		[1],
 		[Define if [[gnu::fallthrough]] can be used])])
 
-# Check if __attribute__ ((noreturn)) works
+# Check if __attribute__ ((fallthrough)) works
 AC_MSG_CHECKING([[whether __attribute__ ((fallthrough)) can be used]])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 		]], [[
@@ -1017,7 +1013,7 @@ int i = 0;
 switch(i) {
 	case 0:
 		--i;
-		[[fallthrough]];
+		__attribute__ ((fallthrough));
 	default:
 		return i + 1;
 }
@@ -1616,7 +1612,7 @@ AC_SUBST([EIX_REMOTEARCHIVE2])
 AC_DEFINE_UNQUOTED([LEVENSHTEIN_DISTANCE_DEFAULT],
 	["2"],
 	[Default Levenshtein distance for matches (as string)])
-AC_SUBST([LEVENSHTEIN_DISTANCE])
+AC_SUBST([LEVENSHTEIN_DISTANCE_DEFAULT])
 
 m4_if([dnl This is the second part of the check near the top of this file.
 dnl To use it you must also uncomment the above check

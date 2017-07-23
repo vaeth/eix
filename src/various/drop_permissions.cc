@@ -117,25 +117,29 @@ static bool drop_permissions(EixRc *eix) {
 #endif
 	if(set_gid) {
 #if defined(HAVE_SETGID) && !defined(BROKEN_SETGID)
+		{
 #if defined(HAVE_GETGID) && !defined(BROKEN_GETGID)
-		bool forcing_success(force_success || (getgid() == gid));
+			bool forcing_success(force_success || (getgid() == gid));
 #endif
-		if(setgid(gid)) {
+			if(setgid(gid)) {
 #if defined(HAVE_GETGID) && !defined(BROKEN_GETGID)
-			if(!forcing_success)
+				if(!forcing_success)
 #endif
-			success = false;
+				success = false;
+			}
 		}
 #endif
 #if defined(HAVE_SETEGID) && !defined(BROKEN_SETEGID)
+		{
 #if defined(HAVE_GETEGID) && !defined(BROKEN_GETEGID)
-		bool forcing_success(force_success || (getegid() == gid));
+			bool forcing_success(force_success || (getegid() == gid));
 #endif
-		if(setegid(gid)) {
+			if(setegid(gid)) {
 #if defined(HAVE_GETEGID) && !defined(BROKEN_GETEGID)
-			if(!forcing_success)
+				if(!forcing_success)
 #endif
-			success = false;
+				success = false;
+			}
 		}
 #endif
 #ifdef HAVE_SETGROUPS
@@ -151,25 +155,29 @@ static bool drop_permissions(EixRc *eix) {
 	}
 	if(set_uid) {
 #if defined(HAVE_SETUID) && !defined(BROKEN_SETUID)
+		{
 #if defined(HAVE_GETUID) && !defined(BROKEN_GETUID)
-		bool forcing_success(force_success || (getuid() == uid));
+			bool forcing_success(force_success || (getuid() == uid));
 #endif
-		if(setuid(uid)) {
+			if(setuid(uid)) {
 #if defined(HAVE_GETUID) && !defined(BROKEN_GETUID)
-			if(!forcing_success)
+				if(!forcing_success)
 #endif
-			success = false;
+				success = false;
+			}
 		}
 #endif
 #if defined(HAVE_SETEUID) && !defined(BROKEN_SETEUID)
+		{
 #if defined(HAVE_GETEUID) && !defined(BROKEN_GETEUID)
-		bool forcing_success(force_success || (geteuid() == uid));
+			bool forcing_success(force_success || (geteuid() == uid));
 #endif
-		if(seteuid(uid)) {
+			if(seteuid(uid)) {
 #if defined(HAVE_GETEUID) && !defined(BROKEN_GETEUID)
-			if(!forcing_success)
+				if(!forcing_success)
 #endif
-			success = false;
+				success = false;
+			}
 		}
 #endif
 	}

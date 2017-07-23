@@ -17,7 +17,7 @@ Available options are
   -1/2/3 Generate 1/2/3 binaries for eix-{,diff,update} but no separate tools
       (unless combined with -4)
   -4  Enable separate tools but no separate binaries (unless combined with 2/3)
-  -d  Do not use dep-default, required-use-default
+  -D  Do not use dep-default, required-use-default
   -w  Use -werror
   -W  Do not use --enable-strong-warnings
   -g  Use clang++, setting CXX, filtering some flags (default if available)
@@ -31,9 +31,12 @@ Available options are
   -Y  Do not use new c++ dialect
   -jX Use -jX (currently $jarg)
   -c OPT Add OPT to ./configure
-  -d  As -c --enable-debugging
-  -O  As -c --enable-strong-optimization -c --enable-security
+  -M OPT Add OPT to meson
+  -m  Use meson instead of autotools
+  -d  As -c --enable-debugging -M -Ddebugging=true
+  -O  As -c --enable-strong-optimization -c --enable-security (and -M ...)
   -o  Do not pass --enable-nopie-security
+  -R  Remove builddir (for meson)
   -r  Change also directory permissions to root (for fakeroot-ng)"
 	exit ${1:-1}
 }
@@ -97,6 +100,8 @@ SetCcache() {
 clang_cxx=`PATH=${PATH-}${PATH:+:}/usr/lib/llvm/*/bin command -v clang++ 2>/dev/null` \
   && [ -n "${clang_cxx:++}" ] && clang=: || clang=false
 
+meson=false
+remove_builddir=false
 quiet=false
 dep_default=:
 earlystop=false
@@ -108,42 +113,51 @@ use_chown=false
 jarg='-j3'
 use_ccache=:
 automake_extra=
-configure_extra='--prefix=/usr --sysconfdir=/etc'
+meson_extra='--prefix=/usr --sysconfdir=/etc'
+configure_extra=$meson_extra
 optimization=false
 recache=false
 clear_ccache=false
 debugging=false
-dialect='enable'
+dialect=:
 nopie_security=:
 OPTIND=1
-while getopts 'q1234gGdnewWsSrOoCxXyYdc:j:hH' opt
+while getopts 'mRq1234gGDnewWsSrOoCxXyYdM:c:j:hH' opt
 do	case $opt in
+	m)	meson=:;;
+	R)	remove_builddir=:;;
 	q)	quiet=:;;
 	1)	separate_all=false;;
 	2)	separate_all=false
+		meson_extra=$meson_extra' -Dseparate-update=true'
 		configure_extra=$configure_extra' --enable-separate-update';;
 	3)	separate_all=false
+		meson_extra=$meson_extra' -Dseparate-binaries=true'
 		configure_extra=$configure_extra' --enable-separate-binaries';;
 	4)	separate_all=false
+		meson_extra=$meson_extra' -Dseparate-tools=true'
 		configure_extra=$configure_extra' --enable-separate-tools';;
 	g)	clang=:;;
 	G)	clang=false;;
-	d)	dep_default=false;;
+	D)	dep_default=false;;
 	n)	earlystop=:;;
 	e)	keepenv=:;;
 	w)	werror=:;;
 	W)	warnings=false;;
-	s)	configure_extra=$configure_extra' --with-sqlite';;
-	S)	configure_extra=$configure_extra' --without-sqlite';;
+	s)	meson_extra=$meson_extra' -Dsqlite=true'
+		configure_extra=$configure_extra' --with-sqlite';;
+	S)	meson_extra=$meson_extra' -Dsqlite=false'
+		configure_extra=$configure_extra' --without-sqlite';;
 	r)	use_chown=:;;
 	O)	optimization=:;;
 	o)	nopie_security=false;;
 	C)	use_ccache=false;;
 	x)	recache=:;;
 	X)	clear_ccache=:;;
-	y)	dialect='enable';;
-	Y)	dialect='disable';;
+	y)	dialect=:;;
+	Y)	dialect=false;;
 	d)	debugging=:;;
+	M)	meson_extra=$meson_extra" $OPTARG";;
 	c)	configure_extra=$configure_extra" $OPTARG";;
 	j)	[ -n "${OPTARG:++}" ] && jarg='-j'$OPTARG || jarg=;;
 	'?')	exit 1;;
@@ -156,14 +170,36 @@ then	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && \
 fi
 
 SetCcache
-[ -n "${dialect:++}" ] && configure_extra=$configure_extra" --$dialect-new-dialect"
-$dep_default && configure_extra=$configure_extra' --with-dep-default --with-required-use-default'
-$separate_all && configure_extra=$configure_extra' --enable-separate-binaries --enable-separate-tools'
-$optimization && configure_extra=$configure_extra' --enable-strong-optimization --enable-security'
-$nopie_security && configure_extra=$configure_extra' --enable-nopie-security'
-$debugging && configure_extra=$configure_extra' --enable-debugging'
-
-$quiet && quietredirect='>/dev/null' || quietredirect=
+if $dialect
+then	meson_extra=$meson_extra' -Dnew-dialect=true'
+	configure_extra=$configure_extra' --enable-new-dialect'
+else	meson_extra=$meson_extra' -Dnew-dialect=false'
+	configure_extra=$configure_extra' --disable-new-dialect'
+fi
+if $dep_default
+then	meson_extra=$meson_extra' -Ddep-default=true -Drequired-use-default=true'
+	configure_extra=$configure_extra' --with-dep-default --with-required-use-default'
+fi
+if $separate_all
+then	meson_extra=$meson_extra' -Dseparate-binaries=true -Dseparate-tools=true'
+	configure_extra=$configure_extra' --enable-separate-binaries --enable-separate-tools'
+fi
+if $optimization
+then	meson_extra=$meson_extra' -Dstrong-optimization=true -Denable-security=true'
+	configure_extra=$configure_extra' --enable-strong-optimization --enable-security'
+fi
+if $nopie_security
+then	meson_extra=$meson_extra' -Dnopie-security=true'
+	configure_extra=$configure_extra' --enable-nopie-security'
+fi
+if $debugging
+then	meson_extra=$meson_extra' -Ddebugging=true'
+	configure_extra=$configure_extra' --enable-debugging'
+fi
+if $quiet
+then	quietredirect='>/dev/null'
+else	quietredirect=
+fi
 
 if $use_chown
 then	ls /root >/dev/null 2>&1 && \
@@ -246,7 +282,8 @@ then	unset CFLAGS CXXFLAGS LDFLAGS CPPFLAGS CXX
 	fi
 	[ -z "$CXX" ] || export CXX
 	if $warnings
-	then	configure_extra=$configure_extra' --enable-strong-warnings'
+	then	meson_extra=$meson_extra' -Dstrong-warnings=true'
+		configure_extra=$configure_extra' --enable-strong-warnings'
 		automake_extra=$automake_extra' -Wall'
 	fi
 	if $werror
@@ -254,10 +291,28 @@ then	unset CFLAGS CXXFLAGS LDFLAGS CPPFLAGS CXX
 		automake_extra=$automake_extra' -Werror'
 	fi
 fi
-[ -z "${CXXFLAGS-}" ] ||Info "export CXXFLAGS='${CXXFLAGS}'"
-[ -z "${LDFLAGS-}" ] ||Info "export LDFLAGS='${LDFLAGS}'"
-[ -z "${CPPFLAGS-}" ] ||Info "export CPPFLAGS='${CPPFLAGS}'"
-[ -z "${CXX-}" ] ||  Info "export CXX='${CXX}'"
+[ -z "${CXXFLAGS-}" ] || Info "export CXXFLAGS='${CXXFLAGS}'"
+[ -z "${LDFLAGS-}" ] || Info "export LDFLAGS='${LDFLAGS}'"
+[ -z "${CPPFLAGS-}" ] || Info "export CPPFLAGS='${CPPFLAGS}'"
+[ -z "${CXX-}" ] || Info "export CXX='${CXX}'"
+if $remove_builddir && test -d builddir
+then	InfoVerbose rm -rf builddir
+	rm -rf builddir
+fi
+if $meson
+then	if ! test -d builddir
+	then	InfoVerbose meson $meson_extra builddir
+		unset LC_ALL
+		eval "meson \$meson_extra builddir $quietredirect" || Die 'meson failed'
+	fi
+	$earlystop && exit
+	InfoVerbose ninja -C builddir $jarg
+	if $quiet
+	then	exec ninja -C builddir $jarg ${1+"$@"} >/dev/null
+	else	exec ninja -C builddir $jarg ${1+"$@"}
+	fi
+	exit
+fi
 if ! test -e Makefile
 then	if ! test -e configure || ! test -e Makefile.in
 	then	InfoVerbose './autogen.sh' $automake_extra

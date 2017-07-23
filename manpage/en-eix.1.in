@@ -916,7 +916,7 @@ Pattern is the end of the string.
 Pattern occurs somewhere within the string.
 .TP
 .BR -f " [" I<N> "], " --fuzzy " [" I<N> "]"
-Do a fuzzy search with a maximal levenshtein-distance of I<N> (default @LEVENSHTEIN_DISTANCE@)
+Do a fuzzy search with a maximal levenshtein-distance of I<N> (default @LEVENSHTEIN_DISTANCE_DEFAULT@)
 for the full string.
 Note that this command slows down search speed.
 .TP

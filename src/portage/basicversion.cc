@@ -119,6 +119,7 @@ static ostream& operator<<(ostream& s, const BasicPart& part) {
 	}
 	eix::say_error(_("internal error: unknown PartType on (\"%s\",\"%s\")"))
 		% static_cast<int>(part.parttype) % part.partcontent;
+	return s;
 }
 
 string BasicVersion::getFull() const {

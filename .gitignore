@@ -6,6 +6,7 @@
 /config/
 /m4/
 /eix-*/
+/builddir*/
 
 # autotools/doxygen files:
 /ABOUT-NLS

@@ -1,11 +1,12 @@
-#!/bin/sh
+#!/usr/bin/env sh
 # This script is part of the eix project and distributed under the
 # terms of the GNU General Public License v2.
 #
 # Author and Copyright (c):
 #   Martin V\"ath <martin@mvath.de>
 #
-# This script calls eix with options appropriate for etcat emulation
+# This script calls eix with options appropriate for etcat emulation.
+# (@PACKAGE_STRING@).
 DEFAULT_IS_OR=true
 DEFAULT_MATCH_ALGORITHM='exact'
 DEFAULT_MATCH_FIELD='/ category/name name'

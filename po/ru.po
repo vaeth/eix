@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2017-05-03 08:12+0200\n"
+"POT-Creation-Date: 2017-07-23 20:21+0200\n"
 "PO-Revision-Date: 2017-07-12 06:16+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -27,70 +27,70 @@ msgstr ""
 "X-Generator: Gtranslator 2.91.6\n"
 
 # Statusline should not contain utf8
-# msgstr "Готово"
-#: src/eix-functions.sh.in
+# msgstr 'Готово'
+#: src/eix-functions.sh.sh.in
 msgctxt "Statusline eix-functions"
 msgid "Finished"
 msgstr ""
 
 # Statusline should not contain utf8
-# msgstr "Ошибка"
-#: src/eix-functions.sh.in
+# msgstr 'Ошибка'
+#: src/eix-functions.sh.sh.in
 msgctxt "Statusline eix-functions"
 msgid "Failure"
 msgstr ""
 
-#: src/eix-functions.sh.in
+#: src/eix-functions.sh.sh.in
 #, sh-format
 msgid "Problems running ${eixf_cmd}"
 msgstr "Проблема при запуске ${eixf_cmd}"
 
-#: src/eix-functions.sh.in
+#: src/eix-functions.sh.sh.in
 msgid "push.sh from https://github.com/vaeth/push/ is needed"
 msgstr ""
 
-#: src/eix-functions.sh.in
+#: src/eix-functions.sh.sh.in
 msgid "Installation of https://github.com/vaeth/quoter/ is needed"
 msgstr ""
 
-#: src/eix-functions.sh.in
+#: src/eix-functions.sh.sh.in
 msgid "quoter_pipe.sh from https://github.com/vaeth/quoter/ is needed"
 msgstr ""
 
 # Statusline should not contain utf8
-# msgstr "Запускаю eix-update"
-#: src/eix-functions.sh.in
+# msgstr 'Запускаю eix-update'
+#: src/eix-functions.sh.sh.in
 msgctxt "Statusline eix-functions"
 msgid "Calling eix-update"
 msgstr ""
 
-#: src/eix-functions.sh.in
+#: src/eix-functions.sh.sh.in
 msgid "Calling eix-update"
 msgstr "Запускаю eix-update"
 
-#: src/eix-functions.sh.in src/eix-remote.sh
+#: src/eix-functions.sh.sh.in src/eix-remote.sh.in
 msgid "eix-update failed"
 msgstr "ошибка eix-update"
 
-#: src/eix-functions.sh.in
+#: src/eix-functions.sh.sh.in
 #, sh-format
 msgid "${eixf_patha} cannot be found in PATH"
 msgstr "${eixf_patha} не найден в PATH"
 
-#: src/eix-functions.sh.in
+#: src/eix-functions.sh.sh.in
 msgid "found no free temporary name after 10000 attempts"
 msgstr "невозможно найти свободное временное имя после 10000 попыток"
 
-#: src/eix-functions.sh.in
+#: src/eix-functions.sh.sh.in
 msgid "cannot create temporary directory"
 msgstr "невозможно создать временный каталог"
 
-#: src/eix-functions.sh.in
+#: src/eix-functions.sh.sh.in
 msgid "cannot create temporary file"
 msgstr "невозможно создать временный каталог"
 
 # fuzzy (only punctation changed)
-#: src/eix-installed.sh
+#: src/eix-installed.sh.in
 #, sh-format
 msgid ""
 "Usage: ${n} [options] ARG [ARG ARG ...]\n"
@@ -140,7 +140,7 @@ msgstr ""
 "Можно использовать аббревиатуру вместо АРГ, например «nr» вместо «no-repo»."
 
 # fuzzy (correct plural forms required)
-#: src/eix-installed.sh
+#: src/eix-installed.sh.in
 #, sh-format
 msgid "(one version listed above)"
 msgid_plural "(${c} versions listed above)"
@@ -149,32 +149,32 @@ msgstr[1] "(общее количество версий перечисленн�
 msgstr[2] "(общее количество версий перечисленных выше: ${c})"
 msgstr[3] "(общее количество версий перечисленных выше: ${c})"
 
-#: src/eix-installed.sh
+#: src/eix-installed.sh.in
 msgid "The following package versions are installed:"
 msgstr "Следующие версии пакетов установлены:"
 
-#: src/eix-installed.sh
+#: src/eix-installed.sh.in
 msgid "The following package versions are installed with repository information:"
 msgstr "Следующие версии пакетов установлены с информацией о репозитории:"
 
-#: src/eix-installed.sh
+#: src/eix-installed.sh.in
 msgid "The following package versions are installed without repository information:"
 msgstr "Следующие версии пакетов установлены без информации о репозитории:"
 
-#: src/eix-installed.sh
+#: src/eix-installed.sh.in
 msgid "The following package versions are installed with build-time information:"
 msgstr "Следующие версии пакетов установлены со сборочной информацией:"
 
-#: src/eix-installed.sh
+#: src/eix-installed.sh.in
 msgid "The following package versions are installed without build-time information:"
 msgstr "Следующие версии пакетов установлены без сборочной информации:"
 
-#: src/eix-installed.sh
+#: src/eix-installed.sh.in
 msgid "cannot locate your database of installed packages"
 msgstr "невозможно найти базу данных установленных пакетов"
 
 # fuzzy (only punctation changed)
-#: src/eix-installed-after.sh
+#: src/eix-installed-after.sh.in
 #, sh-format
 msgid ""
 "Usage: ${n} [options] category/package[:slot]\n"
@@ -278,18 +278,18 @@ msgstr ""
 "     независимо от значения USE_BUILD_TIME\n"
 "-T   Никогда не использовать время сборки"
 
-#: src/eix-installed-after.sh
+#: src/eix-installed-after.sh.in
 #, sh-format
 msgid "cannot read ${logfile}"
 msgstr "невозможно прочесть ${logfile}"
 
-#: src/eix-installed-after.sh
+#: src/eix-installed-after.sh.in
 #, sh-format
 msgid "cannot find merge of ${match} in ${logfile}"
 msgstr "невозможно найти установку ${match} в ${logfile}"
 
 # fuzzy
-#: src/eix-layman.sh
+#: src/eix-layman.sh.in
 #, sh-format
 msgid ""
 "Usage: ${n} [options] command\n"
@@ -334,11 +334,11 @@ msgstr ""
 "-A ПУТЬ       Добавить ПУТЬ в make.conf-ы, используемый для определения\n"
 "              оверлеев layman. Текущее значение:"
 
-#: src/eix-layman.sh
+#: src/eix-layman.sh.in
 msgid "none (i.e. no readable layman make.conf specified)"
 msgstr "нет (т.е. не указан читаемый make.conf от layman)"
 
-#: src/eix-layman.sh
+#: src/eix-layman.sh.in
 msgid ""
 "\n"
 "-C            Clear the above list\n"
@@ -355,23 +355,23 @@ msgstr ""
 "-q            Тихо"
 
 # Statusline should not contain utf8
-# msgstr "Анализ"
-#: src/eix-layman.sh
+# msgstr 'Анализ'
+#: src/eix-layman.sh.in
 msgctxt "Statusline eix-layman"
 msgid "Analyzing"
 msgstr ""
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid "failed to execute ${prg}"
 msgstr "ошибка выполнения ${prg}"
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 msgid "temporary file"
 msgstr "временный файл"
 
 # fuzzy
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid ""
 "Usage: ${n} [options] command\n"
@@ -488,42 +488,42 @@ msgstr ""
 "-H       Подавить обновление строки состояния\n"
 "-q       Тихо"
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid "$LOCAL_LAYMAN must not be empty"
 msgstr "$LOCAL_LAYMAN не может быть пустым"
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid "$LOCAL_LAYMAN must start with /"
 msgstr "$LOCAL_LAYMAN должен начинаться с /"
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid "cannot determine useful $LOCAL_LAYMAN"
 msgstr "невозможно определить полезный $LOCAL_LAYMAN"
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "невозможно перейти в ${a}"
 
 # Statusline should not contain utf8
-# msgstr "Загрузка удалённых данных"
-#: src/eix-remote.sh
+# msgstr 'Загрузка удалённых данных'
+#: src/eix-remote.sh.in
 msgctxt "Statusline eix-remote"
 msgid "Downloading remote data"
 msgstr ""
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 msgid "cannot cd to tempdir"
 msgstr "невозможно перейти в tempdir"
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 msgid "failed: "
 msgstr "ошибка: "
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 msgid ""
 "Probably your eix cachefile was *not* updated successfully.\n"
 "Unless the above messages suggest another cause or you specified a\n"
@@ -559,45 +559,45 @@ msgstr ""
 "Это неудобство неизбежно и ошибкой не является!"
 
 # Statusline should not contain utf8
-# msgstr "Распаковка данных"
-#: src/eix-remote.sh
+# msgstr 'Распаковка данных'
+#: src/eix-remote.sh.in
 msgctxt "Statusline eix-remote"
 msgid "Unpacking data"
 msgstr ""
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 msgid "Unpacking data"
 msgstr "Распаковка данных"
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid "cannot unpack ${a}"
 msgstr "невозможно распаковать ${a}"
 
 # Statusline should not contain utf8
-# msgstr "Анализ"
-#: src/eix-remote.sh
+# msgstr 'Анализ'
+#: src/eix-remote.sh.in
 msgctxt "Statusline eix-remote"
 msgid "Analyzing"
 msgstr ""
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid "file ${p} of ${a} contains no overlay"
 msgstr "Файл ${p} in ${a} не содержит оверлей"
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "невозможно прочесть все файлы кэша eix от ${a}"
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid "no file in ${a} contains an overlay"
 msgstr "No Файл in ${a} не содержит оверлей"
 
 # fuzzy (correct plural forms required)
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid "${failcount} file in ${a} contains no overlay"
 msgid_plural "${failcount} files in ${a} contain no overlay"
@@ -606,32 +606,32 @@ msgstr[1] "${failcount} Файл in ${a} не содержит оверлей"
 msgstr[2] "${failcount} Файл in ${a} не содержит оверлей"
 msgstr[3] "${failcount} Файл in ${a} не содержит оверлей"
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid "Output to remote database ${eix_remote}"
 msgstr "Вывод в удалённую БД ${eix_remote}"
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 msgid "A temporary file makes only sense for update mode"
 msgstr "Временный файл имеет смысл только для режима обновления"
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
 msgstr "невозможно сделать копию ${file} временного файла"
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid "cannot read ${archive}"
 msgstr "невозможно прочесть ${archive}"
 
-#: src/eix-remote.sh
+#: src/eix-remote.sh.in
 #, sh-format
 msgid "mkdir ${tmpsub} failed"
 msgstr "ошибка создания каталога ${tmpsub}"
 
 # fuzzy
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid ""
@@ -768,37 +768,37 @@ msgstr ""
 "-H   Подавить обновления строки состояния.\n"
 "-h   Показать этот текст и выйти."
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "Something went wrong with ${curr_cmd}"
 msgstr "Что-то не так с ${curr_cmd}"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync"
 msgid "Running !!-hooks"
 msgstr "Выполняются !!-хуки"
 
 # Statusline should not contain utf8
-# msgstr "Выполняются !!-хуки"
-#: src/eix-sync.sh
+# msgstr 'Выполняются !!-хуки'
+#: src/eix-sync.sh.in
 msgctxt "Statusline eix-sync"
 msgid "Running !!-hooks"
 msgstr ""
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync"
 msgid "Running !-hooks"
 msgstr "Выполняются !-хуки"
 
 # Statusline should not contain utf8
-# msgstr "Выполняются !-хуки"
-#: src/eix-sync.sh
+# msgstr 'Выполняются !-хуки'
+#: src/eix-sync.sh.in
 msgctxt "Statusline eix-sync"
 msgid "Running !-hooks"
 msgstr ""
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync"
 msgid ""
 "Your eix-sync configuration contains an obsolete hook\n"
@@ -810,240 +810,240 @@ msgid ""
 "a different syntax like quoting eix-remote."
 msgstr ""
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync"
 msgid "Syncing all portage overlays"
 msgstr "Синхронизация всех оверлеев"
 
 # Statusline should not contain utf8
-# msgstr "Синхронизация всех оверлеев"
-#: src/eix-sync.sh
+# msgstr 'Синхронизация всех оверлеев'
+#: src/eix-sync.sh.in
 msgctxt "Statusline eix-sync"
 msgid "Syncing all portage overlays"
 msgstr ""
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "${mycmd} -S failed"
 msgstr "ошибка ${mycmd} -S"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "Syncing portage overlay ${j}"
 msgstr "Синхронизация оверлея ${j}"
 
 # Statusline should not contain utf8
-# msgstr "Синхронизация оверлея ${j}"
-#: src/eix-sync.sh
+# msgstr 'Синхронизация оверлея ${j}'
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "Statusline eix-sync"
 msgid "Syncing portage overlay ${j}"
 msgstr ""
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "${mycmd} -s ${j} failed"
 msgstr "ошибка ${mycmd} -s ${j}"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "Running ${myvarcmd}"
 msgstr "Запуск ${myvarcmd}"
 
 # Statusline should not contain utf8
-# msgstr "Запуск ${myvarcmd}"
-#: src/eix-sync.sh
+# msgstr 'Запуск ${myvarcmd}'
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "Statusline eix-sync"
 msgid "Running ${myvarcmd}"
 msgstr ""
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "${myvarcmd} failed"
 msgstr "ошибка ${myvarcmd}"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync times"
 msgid "%6d seconds for %s\\n"
 msgstr "%6d секунд для %s\\n"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync times"
 msgid "Time statistics:"
 msgstr "Статистика времени:"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync times"
 msgid "initial eix-update"
 msgstr "начальный eix-update"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync times"
 msgid "syncing"
 msgstr "синхронизация"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync times"
 msgid "client syncing"
 msgstr "синхронизация клиента"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync times"
 msgid "metadata update"
 msgstr "обновление метаданных"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync times"
 msgid "eix-update"
 msgstr "eix-update"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync times"
 msgid "eix-diff"
 msgstr "eix-diff"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync times"
 msgid "%6d seconds total\\n"
 msgstr "%6d секунд всего\\n"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync"
 msgid "Running ~-hooks"
 msgstr "Выполняются ~-хуки"
 
 # Statusline should not contain utf8
-# msgstr "Выполняются ~-хуки"
-#: src/eix-sync.sh
+# msgstr 'Выполняются ~-хуки'
+#: src/eix-sync.sh.in
 msgctxt "Statusline eix-sync"
 msgid "Running ~-hooks"
 msgstr ""
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "${c} (output of ${curr_cmd}) failed"
 msgstr "${c} (ошибка вывода ${curr_cmd})"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "${curr_cmd} failed"
 msgstr "Ошибка ${curr_cmd}"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr "Удаление старого кэша portage в ${local_varcache}/var/cache/edb/dep"
 
 # Statusline should not contain utf8
-# msgstr "Удаление старого кэша portage в ${local_varcache}/var/cache/edb/dep"
-#: src/eix-sync.sh
+# msgstr 'Удаление старого кэша portage в ${local_varcache}/var/cache/edb/dep'
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "Statusline eix-sync"
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr ""
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
 msgstr "Ошибка rm -rf ${local_varcache}/var/cache/edb/dep/*"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "rsyncing from ${hostdir}"
 msgstr "Выполняю rsync в ${hostdir}"
 
 # Statusline should not contain utf8
-# msgstr "Выполняю rsync в ${hostdir}"
-#: src/eix-sync.sh
+# msgstr 'Выполняю rsync в ${hostdir}'
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "Statusline eix-sync"
 msgid "rsyncing from ${hostdir}"
 msgstr ""
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "Could not rsync from ${hostdir}"
 msgstr "Невозможно выполнить rsync из ${hostdir}"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "rsyncing to ${hostdir}"
 msgstr "Выполняю rsync в ${hostdir}"
 
 # Statusline should not contain utf8
-# msgstr "Выполняю rsync в ${hostdir}"
-#: src/eix-sync.sh
+# msgstr 'Выполняю rsync в ${hostdir}'
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "Statusline eix-sync"
 msgid "rsyncing to ${hostdir}"
 msgstr ""
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "Could not rsync to ${hostdir}"
 msgstr "Невозможно выполнить rsync в ${hostdir}"
 
 # fuzzy (only punctation changed)
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync"
 msgid "eix-cache does not exist"
 msgstr "eix-cache не существует"
 
 # fuzzy (only punctation changed)
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync"
 msgid "eix-cache format has changed"
 msgstr "Формат eix-cache изменился"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "Copying old ${eixcache} cache to temporary file"
 msgstr "Копирую старый кэш ${eixcache} во временный файл"
 
 # Statusline should not contain utf8
-# msgstr "Копирую старый кэш ${eixcache} во временный файл"
-#: src/eix-sync.sh
+# msgstr 'Копирую старый кэш ${eixcache} во временный файл'
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "Statusline eix-sync"
 msgid "Copying old ${eixcache} cache to temporary file"
 msgstr ""
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Невозможно скопировать базу данных во временный файл ${tmpfile}"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "Copying old database to ${eixprevious}"
 msgstr "Копирую старую базу данных в ${eixprevious}"
 
 # Statusline should not contain utf8
-# msgstr "Копирую старую базу данных в ${eixprevious}"
-#: src/eix-sync.sh
+# msgstr 'Копирую старую базу данных в ${eixprevious}'
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "Statusline eix-sync"
 msgid "Copying old database to ${eixprevious}"
 msgstr ""
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "Could not copy database to ${eixprevious}"
@@ -1051,61 +1051,61 @@ msgstr "Невозможно скопировать базу данных в ${e
 
 # fuzzy
 # sh-format
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "eix-remote add${remote_num}"
 msgstr "eix-remote add${remote_num}"
 
 # Statusline should not contain utf8
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "Statusline eix-sync"
 msgid "eix-remote add${remote_num}"
 msgstr ""
 
 # fuzzy
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 #, sh-format
 msgctxt "eix-sync"
 msgid "eix-remote add${remote_num} failed"
 msgstr "ошибка eix-remote add${remote_num}"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync"
 msgid "eix-update was apparently already called in a hook"
 msgstr "Вероятно, eix-update уже вызван крюком"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync"
 msgid "Running @@-hooks"
 msgstr "Выполняются @@-хуки"
 
 # Statusline should not contain utf8
-# msgstr "Выполняются @@-хуки"
-#: src/eix-sync.sh
+# msgstr 'Выполняются @@-хуки'
+#: src/eix-sync.sh.in
 msgctxt "Statusline eix-sync"
 msgid "Running @@-hooks"
 msgstr ""
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync"
 msgid "Calling eix-diff"
 msgstr "Вызов eix-diff"
 
 # Statusline should not contain utf8
-# msgstr "Вызов eix-diff"
-#: src/eix-sync.sh
+# msgstr 'Вызов eix-diff'
+#: src/eix-sync.sh.in
 msgctxt "Statusline eix-sync"
 msgid "Calling eix-diff"
 msgstr ""
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync"
 msgid "failed to diff against current cache"
 msgstr "Ошибка сравнения с текущим кэшем"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync"
 msgid ""
 "Main gentoo tree does not appear to have changed: exiting\n"
@@ -1114,20 +1114,20 @@ msgstr ""
 "Главное дерево gentoo не изменилось, выхожу\n"
 "Ключ -a или have_changed=: в !=хуке позволит обойти проверку"
 
-#: src/eix-sync.sh
+#: src/eix-sync.sh.in
 msgctxt "eix-sync"
 msgid "Running @-hooks"
 msgstr "Выполняются @-хуки"
 
 # Statusline should not contain utf8
-# msgstr "Выполняются @-хуки"
-#: src/eix-sync.sh
+# msgstr 'Выполняются @-хуки'
+#: src/eix-sync.sh.in
 msgctxt "Statusline eix-sync"
 msgid "Running @-hooks"
 msgstr ""
 
 # fuzzy (only punctation changed)
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgid ""
 "Usage: ${n} [options] detail|brief|quick\n"
@@ -1207,396 +1207,396 @@ msgstr ""
 "можно заменить на «b»."
 
 # Statusline should not contain utf8
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 msgctxt "Statusline eix-test-obsolete"
 msgid "eix -t"
 msgstr ""
 
 # fuzzy (only punctation changed)
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "... considered as ${z}"
 msgstr "… считается как ${z} "
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check of entries in ${rump}*"
 msgstr "Пропускаю проверку записей в ${rump}*"
 
 # Statusline should not contain utf8
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 msgctxt "Statusline eix-test-obsolete"
 msgid "package.*"
 msgstr ""
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No redundant entries in any ${rump}*"
 msgstr "Нет  лишних  записей в любом ${rump}*"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Redundant in some ${rump}*:"
 msgstr "Лишнее в некотором ${rump}*:"
 
 # Statusline should not contain utf8
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 msgctxt "Statusline eix-test-obsolete"
 msgid "accept_keywords"
 msgstr ""
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No  redundant  entries in ${rump}{,accept_}keywords"
 msgstr "Нет  лишних  записей в ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Redundant in ${rump}{,accept_}keywords:"
 msgstr "Лишнее в ${rump}{,accept_}keywords:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check:  redundant  entries in ${rump}{,accept_}keywords"
 msgstr "Пропускаю проверку: лишние записи в ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No uninstalled entries in ${rump}{,accept_}keywords"
 msgstr "Нет удалённых записей в ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Not installed but in ${rump}{,accept_}keywords:"
 msgstr "Не установлено, но в ${rump}{,accept_}keywords:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check: uninstalled entries in ${rump}{,accept_}keywords"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}{,accept_}keywords"
 
 # Statusline should not contain utf8
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 msgctxt "Statusline eix-test-obsolete"
 msgid "mask"
 msgstr ""
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No  redundant  entries in ${rump}mask"
 msgstr "Нет  лишних  записей в ${rump}mask"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Redundant in ${rump}mask:"
 msgstr "Лишнее в ${rump}mask:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check:  redundant  entries in ${rump}mask"
 msgstr "Пропускаю проверку: лишние записи в ${rump}mask"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No uninstalled entries in ${rump}mask"
 msgstr "Нет удалённых записей в ${rump}mask"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Not installed but in ${rump}mask:"
 msgstr "Не установлено, но в ${rump}mask:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check: uninstalled entries in ${rump}mask"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}mask"
 
 # Statusline should not contain utf8
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 msgctxt "Statusline eix-test-obsolete"
 msgid "unmask"
 msgstr ""
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No  redundant  entries in ${rump}unmask"
 msgstr "Нет  лишних  записей в ${rump}unmask"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Redundant in ${rump}unmask:"
 msgstr "Лишнее в ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check:  redundant  entries in ${rump}unmask"
 msgstr "Пропускаю проверку:  лишние  записи в ${rump}unmask"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No uninstalled entries in ${rump}unmask"
 msgstr "Нет удалённых записей в ${rump}unmask"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Not installed but in ${rump}unmask:"
 msgstr "Не установлено, но в ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check: uninstalled entries in ${rump}unmask"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}unmask"
 
 # Statusline should not contain utf8
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 msgctxt "Statusline eix-test-obsolete"
 msgid "use"
 msgstr ""
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No  redundant  entries in ${rump}use"
 msgstr "Нет  лишних  записей в ${rump}use"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Redundant in ${rump}use:"
 msgstr "Лишнее в ${rump}use:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check:  redundant  entries in ${rump}use"
 msgstr "Пропускаю проверку:  лишние  записи в ${rump}use"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No uninstalled entries in ${rump}use"
 msgstr "Нет удалённых записей в ${rump}use"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Not installed but in ${rump}use:"
 msgstr "Не установлено, но в ${rump}use:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check: uninstalled entries in ${rump}use"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}use"
 
 # Statusline should not contain utf8
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 msgctxt "Statusline eix-test-obsolete"
 msgid "env"
 msgstr ""
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No  redundant  entries in ${rump}env"
 msgstr "Нет  лишних  записей в ${rump}env"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Redundant in ${rump}env:"
 msgstr "Лишнее в ${rump}env:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check:  redundant  entries in ${rump}env"
 msgstr "Пропускаю проверку:  лишние  записи в ${rump}env"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No uninstalled entries in ${rump}env"
 msgstr "Нет удалённых записей в ${rump}env"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Not installed but in ${rump}env:"
 msgstr "Не установлено, но в ${rump}env:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check: uninstalled entries in ${rump}env"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}env"
 
 # Statusline should not contain utf8
-# msgstr "Лицензия"
-#: src/eix-test-obsolete.sh
+# msgstr 'Лицензия'
+#: src/eix-test-obsolete.sh.in
 msgctxt "Statusline eix-test-obsolete"
 msgid "license"
 msgstr ""
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No  redundant  entries in ${rump}license"
 msgstr "Нет  лишних  записей в ${rump}license"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Redundant in ${rump}license:"
 msgstr "Лишнее в ${rump}license:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check:  redundant  entries in ${rump}license"
 msgstr "Пропускаю проверку:  лишние  записи в ${rump}license"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No uninstalled entries in ${rump}license"
 msgstr "Нет удалённых записей в ${rump}license"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Not installed but in ${rump}license:"
 msgstr "Не установлено, но в ${rump}license:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check: uninstalled entries in ${rump}license"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}license"
 
 # Statusline should not contain utf8
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 msgctxt "Statusline eix-test-obsolete"
 msgid "accept_restrict"
 msgstr ""
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No  redundant  entries in ${rump}accept_restrict"
 msgstr "Нет  лишних  записей в ${rump}accept_restrict"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Redundant in ${rump}accept_restrict:"
 msgstr "Лишнее в ${rump}accept_restrict:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check:  redundant  entries in ${rump}accept_restrict"
 msgstr "Пропускаю проверку: лишние записи в ${rump}accept_restrict"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No uninstalled entries in ${rump}accept_restrict"
 msgstr "Нет удалённых записей в ${rump}accept_restrict"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Not installed but in ${rump}accept_restrict:"
 msgstr "Не установлено, но в ${rump}accept_restrict:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check: uninstalled entries in ${rump}accept_restrict"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}accept_restrict"
 
 # Statusline should not contain utf8
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 msgctxt "Statusline eix-test-obsolete"
 msgid "cflags"
 msgstr ""
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No  redundant  entries in ${rump}cflags"
 msgstr "Нет  лишних  записей в ${rump}cflags"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Redundant in ${rump}cflags:"
 msgstr "Лишнее в ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check:  redundant  entries in ${rump}cflags"
 msgstr "Пропускаю проверку:  лишние  записи в ${rump}cflags"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "No uninstalled entries in ${rump}cflags"
 msgstr "Нет удалённых записей в ${rump}cflags"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Not installed but in ${rump}cflags:"
 msgstr "Не установлено, но в ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 #, sh-format
 msgctxt "Obsolete-Table"
 msgid "Skipping check: uninstalled entries in ${rump}cflags"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}cflags"
 
 # Statusline should not contain utf8
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 msgctxt "Statusline eix-test-obsolete"
 msgid "installed"
 msgstr ""
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 msgctxt "Obsolete-Table"
 msgid "All installed versions of packages are in the database."
 msgstr "Все установленные пакеты присутствуют в базе данных."
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 msgctxt "Obsolete-Table"
 msgid "Installed packages with a version not in the database (or masked):"
 msgstr "Установленные пакеты с версией не в базе данных (или замаскированной):"
 
-#: src/eix-test-obsolete.sh
+#: src/eix-test-obsolete.sh.in
 msgctxt "Obsolete-Table"
 msgid "Skipping check: installed but not in the database"
 msgstr "Пропускаю проверку: установлено, но не в базе данных"
@@ -2336,7 +2336,7 @@ msgid "EMPTY!"
 msgstr "ПУСТО!"
 
 # Statusline should not contain utf8
-# msgstr "Анализ"
+# msgstr 'Анализ'
 #: src/eix-update.cc
 msgctxt "Statusline eix-update"
 msgid "Analyzing"
@@ -2701,14 +2701,14 @@ msgid "-- invalid line %s in %s: \"%s\""
 msgstr "-- Неверная строка %s в %s: «%s»"
 
 # Statusline should not contain utf8
-# msgstr "Готово"
+# msgstr 'Готово'
 #: src/eixTk/statusline.cc
 msgctxt "Statusline eix-update"
 msgid "Finished"
 msgstr ""
 
 # Statusline should not contain utf8
-# msgstr "Ошибка"
+# msgstr 'Ошибка'
 #: src/eixTk/statusline.cc
 msgctxt "Statusline eix-update"
 msgid "Failure"

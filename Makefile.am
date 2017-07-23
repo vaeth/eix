@@ -32,6 +32,8 @@ contrib/cpplint.sh \
 autogen.sh \
 CPPLINT.cfg \
 doxygen.cfg.in \
+meson.build \
+meson_options.txt \
 tmpfiles.d/eix.conf
 
 ACLOCAL_AMFLAGS = -I m4 -I martinm4
@@ -40,9 +42,10 @@ ACLOCAL_AMFLAGS = -I m4 -I martinm4
 
 # Remove things created by autogen.sh
 maintainer-clean-local:
-	$(AM_V_at)$(RM) -vfr "$(top_srcdir)/build" "$(top_srcdir)/config" "$(top_srcdir)/m4"
-	$(AM_V_at)$(RM) -vf "$(top_srcdir)/ABOUT-NLS" "$(top_srcdir)/aclocal.m4"
-	$(AM_V_at)$(RM) -vf "$(top_srcdir)/configure" "$(top_srcdir)/config.h.in~"
+	$(AM_V_at)$(RM) -vfr "$(top_srcdir)/build" "$(top_srcdir)/config" \
+		"$(top_srcdir)/m4" "$(top_srcdir)/builddir"
+	$(AM_V_at)$(RM) -vf "$(top_srcdir)/ABOUT-NLS" "$(top_srcdir)/aclocal.m4" \
+		"$(top_srcdir)/configure" "$(top_srcdir)/config.h.in~"
 
 # Remove doxygen/ and rpo files (-frepo with gcc) on clean
 clean-local: doxygen-clean

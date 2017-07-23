@@ -48,7 +48,7 @@ SUFFIXES = .in
 		-e "s,\@EIX_REMOTEARCHIVE2\@,$(EIX_REMOTEARCHIVE2),g" \
 		-e "s,\@PACKAGE_BUGREPORT\@,$(PACKAGE_BUGREPORT),g" \
 		-e "s,\@PACKAGE_URL\@,$(PACKAGE_URL),g" \
-		-e "s,\@LEVENSHTEIN_DISTANCE\@,$(LEVENSHTEIN_DISTANCE),g" \
+		-e "s,\@LEVENSHTEIN_DISTANCE_DEFAULT\@,$(LEVENSHTEIN_DISTANCE_DEFAULT),g" \
 		-e "s,\@PORTDIR_CACHE_METHOD\@,$(PORTDIR_CACHE_METHOD),g" \
 		-e "s,\@BINDIR\@,$(bindir),g" \
 		-e "s,\@SYSCONFDIR\@,$(sysconfdir),g" \
@@ -61,7 +61,7 @@ SUFFIXES = .in
 	"$<" > "$@"
 
 eix-db.html: eix-db.txt $(css_data)
-	$(AM_V_GEN)$(SHELL) ./call_rst2html.sh eix-db.txt "$@"
+	$(AM_V_GEN)$(SHELL) ./call_rst2html.sh eix-db.txt "$@" "$@" . "$(DEV_NULL)"
 
 eix-xml.html: eix-xml.txt $(css_data)
-	$(AM_V_GEN)$(SHELL) ./call_rst2html.sh eix-xml.txt "$@"
+	$(AM_V_GEN)$(SHELL) ./call_rst2html.sh eix-xml.txt "$@" "$@" . "$(DEV_NULL)"

@@ -311,6 +311,7 @@ nodist_extra_update_only_src =
 
 # Additional binaries (scripts) we will install
 nodist_bin_SCRIPTS = \
+eix-etcat \
 eix-functions.sh \
 eix-installed \
 eix-installed-after \
@@ -318,9 +319,6 @@ eix-layman \
 eix-remote \
 eix-sync \
 eix-test-obsolete
-
-bin_SCRIPTS = \
-eix-etcat
 
 # Remove files we don't want ..
 CLEANFILES = \
@@ -344,24 +342,17 @@ eix-update$(EXEEXT) \
 eix-header$(EXEEXT) \
 eix-drop-permissions$(EXEEXT) \
 masked-packages$(EXEEXT) \
-versionsort$(EXEEXT) \
-$(srcdir)/eix-installed.sh \
-$(srcdir)/eix-installed-after.sh \
-$(srcdir)/eix-layman.sh \
-$(srcdir)/eix-remote.sh \
-$(srcdir)/eix-sync.sh \
-$(srcdir)/eix-etcat.sh \
-$(srcdir)/eix-test-obsolete.sh
+versionsort$(EXEEXT)
 
 # Files we need for generation in the tarball which are not canonical
 EXTRA_DIST = \
-eix-functions.sh.in \
-eix-installed.in \
-eix-installed-after.in \
-eix-layman.in \
-eix-remote.in \
-eix-sync.in \
-eix-etcat \
+eix-etcat.sh.in \
+eix-functions.sh.sh.in \
+eix-installed-after.sh.in \
+eix-installed.sh.in \
+eix-layman.sh.in \
+eix-remote.sh.in \
+eix-sync.sh.in \
 eix-test-obsolete.in \
 eixrc/00-eixrc.in \
 cache/generate_cachemap.sh
@@ -623,29 +614,8 @@ install-exec-hook:
 cache/cache_map.cc: $(srcdir)/cache/generate_cachemap.sh
 	$(AM_V_GEN)"$(srcdir)/cache/generate_cachemap.sh" > "$@"
 
-eix-sync.sh:
-	$(AM_V_GEN)$(LN_S) eix-sync.in "$(srcdir)/$@"
-
-eix-test-obsolete.sh:
-	$(AM_V_GEN)$(LN_S) eix-test-obsolete.in "$(srcdir)/$@"
-
-eix-layman.sh:
-	$(AM_V_GEN)$(LN_S) eix-layman.in "$(srcdir)/$@"
-
-eix-installed.sh:
-	$(AM_V_GEN)$(LN_S) eix-installed.in "$(srcdir)/$@"
-
-eix-installed-after.sh:
-	$(AM_V_GEN)$(LN_S) eix-installed-after.in "$(srcdir)/$@"
-
-eix-remote.sh:
-	$(AM_V_GEN)$(LN_S) eix-remote.in "$(srcdir)/$@"
-
-eix-etcat.sh:
-	$(AM_V_GEN)$(LN_S) eix-etcat "$(srcdir)/$@"
-
-SUFFIXES = .in
-.in:
+SUFFIXES = .sh.in
+.sh.in:
 	$(AM_V_GEN)$(SED) \
 		-e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
 		-e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
@@ -656,14 +626,14 @@ SUFFIXES = .in
 		-e "s,\@EIX_REMOTEARCHIVE2\@,$(EIX_REMOTEARCHIVE2),g" \
 		-e "s,\@PACKAGE_BUGREPORT\@,$(PACKAGE_BUGREPORT),g" \
 		-e "s,\@PACKAGE_URL\@,$(PACKAGE_URL),g" \
-		-e "s,\@LEVENSHTEIN_DISTANCE\@,$(LEVENSHTEIN_DISTANCE),g" \
+		-e "s,\@LEVENSHTEIN_DISTANCE_DEFAULT\@,$(LEVENSHTEIN_DISTANCE_DEFAULT),g" \
 		-e "s,\@PORTDIR_CACHE_METHOD\@,$(PORTDIR_CACHE_METHOD),g" \
 		-e "s,\@BINDIR\@,$(bindir),g" \
 		-e "s,\@SYSCONFDIR\@,$(sysconfdir),g" \
 		-e "s,\@DEFAULT_REMOTE_PATH1\@,$(DEFAULT_REMOTE_PATH1),g" \
 		-e "s,\@DEFAULT_REMOTE_PATH2\@,$(DEFAULT_REMOTE_PATH2),g" \
 		-e "s,/dev/null,$(DEV_NULL),g" \
-		-e "s,\./eix-functions\.sh\.in,'$(bindir)/eix-functions.sh',g" \
+		-e "s,\./eix-functions\.sh\.sh\.in,'$(bindir)/eix-functions.sh',g" \
 		-e "s,\./eix-drop-permissions,'$(bindir)/eix-drop-permissions',g" \
 		-e "s,\./eix-remote.in,'$(bindir)/eix-remote',g" \
 		-e 's,^#!/usr/bin/env sh$$,#!$(SH_SHEBANG),g' \
