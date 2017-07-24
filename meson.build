@@ -75,6 +75,7 @@ result += [ 'strong-warnings=' + strong_warnings.to_string() ]
 
 
 cxx = meson.get_compiler('cpp')
+cxx_id = cxx.get_id()
 sh = find_program('sh')
 sed = find_program('sed')
 incdir = include_directories('src')
@@ -202,15 +203,19 @@ if strong_optimization
 		'-flto-odr-type-merging',
 		'-fwhole-program',
 		'-fno-fat-lto-objects',
-		'-emit-llvm',
 	]
+	if cxx_id == 'clang'
+		ldcxxflags_opt = [
+			'-emit-llvm',
+		]
+	endif
 	cxxflags_opt += [
 		'-fweb',
-		'-fgraphite',
-		'-fgraphite-identity',
-		'-floop-interchange',
-		'-floop-strip-mine',
-		'-floop-block',
+		# '-fgraphite',
+		# '-fgraphite-identity',
+		# '-floop-interchange',
+		# '-floop-strip-mine',
+		# '-floop-block',
 		'-fno-enforce-eh-specs',
 		'-ftree-vectorize',
 		'-fvect-cost-model',

@@ -373,11 +373,6 @@ AS_CASE([" $CXXFLAGS $my_cxxadd "],
 AS_IF([$strong_optimization],
 	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_FALSE], [ \
 			-fweb \
-			-fgraphite \
-			-fgraphite-identity \
-			-floop-interchange \
-			-floop-strip-mine \
-			-floop-block \
 			-fno-enforce-eh-specs \
 			$fwhole_program \
 			-ftree-vectorize \
@@ -385,6 +380,12 @@ AS_IF([$strong_optimization],
 			-fno-rtti \
 			-fno-threadsafe-statics \
 		], [$my_cxxfatal], [$CPPFLAGS], [:])
+dnl We do not use graphite flags since they breaks in too many compilers:
+dnl			-fgraphite \
+dnl			-fgraphite-identity \
+dnl			-floop-interchange \
+dnl			-floop-strip-mine \
+dnl			-floop-block \
 	AS_IF([$strong_security],
 		[],
 		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \

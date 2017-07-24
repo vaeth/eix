@@ -55,7 +55,7 @@ static void print_help() {
 /**
 Local options for argument reading
 **/
-static struct LocalOptions {
+static struct {
 	bool
 		be_quiet,
 		no_warn,
