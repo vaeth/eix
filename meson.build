@@ -451,44 +451,7 @@ nls = get_option('nls')
 result += [ 'nls=' + nls.to_string() ]
 manpages = [ 'en' ]
 if nls
-	langs = []
-	test_linguas='''case " ${LINGUAS-*} " in
-*" $1 "*|*' * '*) exit 1;;
-esac
-'''
-	check_langs = [
-		['de', true],
-		['en@quot', false],
-		['en@boldquot', false],
-		['ru', true],
-	]
-	foreach p : check_langs
-		l = p.get(0)
-		r = run_command(sh, '-c', test_linguas, 'sh', l)
-		if r.returncode() != 0
-			langs += l
-			if p.get(1)
-				manpages += l
-			endif
-		endif
-	endforeach
-	xgettext_options = [
-		'--keyword=_',
-		'--keyword=N_:1,2',
-		'--keyword=P_:1c,2',
-		'--keyword=NP_:1c,2,3',
-		'--keyword=pgettext:1c,2',
-		'--keyword=npgettext:1c,2,3',
-		'--keyword=eval_pgettext:1c,2',
-		'--keyword=eval_npgettext:1c,2,3',
-		'--add-location=file --no-wrap',
-		'--check=space-ellipsis',
-	]
-	i18n = import('i18n')
-	i18n.gettext(package,
-		languages : langs,
-		args : xgettext_options,
-	)
+	subdir('po')
 endif
 subst.set('USE_NLS', nls ? 'yes' : 'no')
 subst.set('TEXTDOMAIN', package)
@@ -1517,17 +1480,18 @@ foreach file : zsh_completions
 endforeach
 
 if extra_doc
-	foreach file : [
-		'eix-db.txt',
-		'eix-xml.txt',
-		'eix-xml.xsd',
+	foreach p : [
+		[ 'eix-db.txt', docdir ],
+		[ 'eix-xml.txt', docdir ],
+		[ 'eix-xml.xsd', htmldir ],
 	]
+		file = p.get(0)
 		c = configure_file(
 			input : files(join_paths('doc', file + '.in')),
 			output : file,
 			configuration : subst,
 		)
-		install_data(c, install_dir : docdir)
+		install_data(c, install_dir : p.get(1))
 	endforeach
 	docinput = join_paths(sourcedir, 'doc')
 	rst2html = files(join_paths('doc', 'call_rst2html.sh'))
