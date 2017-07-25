@@ -419,7 +419,6 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wpedantic \
 			-pedantic \
 			-Wall \
-			-Weverything \
 			-Wextra \
 			-Wformat=2 \
 			-Wunused-variable \
@@ -488,6 +487,7 @@ dnl			-Wno-unknown-warning-option \
 dnl Output is too confusing:
 dnl			-fmem-report \
 dnl Too many useless warnings or only for C:
+dnl			-Weverything \
 dnl			-Wtraditional \
 dnl			-Wc++-compat \
 dnl			-Wstrict-prototypes \

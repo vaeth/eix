@@ -61,7 +61,6 @@ if strong_security and not security
 endif
 
 result = [ 'Passed options:' ]
-result += [ 'new-dialect=' + new_dialect.to_string() ]
 result += [ 'debugging=' + debugging.to_string() ]
 result += [ 'debug-format=' + debug_format.to_string() ]
 result += [ 'paranoic-asserts=' + paranoic_asserts.to_string() + paranoic_asserts_msg ]
@@ -73,9 +72,9 @@ result += [ 'strong-optimization=' + strong_optimization.to_string() + strong_op
 result += [ 'warnings=' + warnings.to_string() + warnings_msg ]
 result += [ 'strong-warnings=' + strong_warnings.to_string() ]
 
-
 cxx = meson.get_compiler('cpp')
 cxx_id = cxx.get_id()
+cross = meson.is_cross_build()
 sh = find_program('sh')
 sed = find_program('sed')
 incdir = include_directories('src')
@@ -105,54 +104,158 @@ else
 	htmldir = join_paths(docdir, 'html')
 endif
 
+ldflags_add = []
+cxxflags_add = []
+
+flto = false
+r = run_command(sh, '-c', '''case " ${CXXFLAGS} ${LDFLAGS} " in
+'-flto '*|'flto='*) exit 1;;
+esac
+''')
+if r.returncode() != 0
+	flto = true
+endif
+
+# Explanations:
+# The mere inclusion of <map> causes errors on some clang + -std= combinations
+# Similarly, the is_function is sometimes not resolved correctly.
+# Do further some stress test with vectors and strings
+stresstest = '''#include <map>
+#include <unistd.h>
+#include <cstring>
+#include <string>
+#include <vector>
+int my_func();
+int my_func() {
+	std::vector<const char*> a(1, "a"); int my_a[1000];
+	for (std::vector<const char*>::size_type j = 999; j < 999 + a.size(); ++j)
+		my_a[j] = 0;
+	return (strchr(a[0], *a[0]) == *(a.begin())) ? my_a[999] : 1;
+}
+#ifdef __cplusplus
+#if __cplusplus >= 201103L
+#include <type_traits>
+void func_noexcept() noexcept;
+void func_noexcept() noexcept {}
+#define C11TESTCALL 1
+#endif
+#endif
+int main() {
+#ifdef C11TESTCALL
+	if(!std::is_function<decltype(func_noexcept)>::value) {
+		return 1;
+	}
+#endif
+	return my_func();
+}
+'''
+
 flags_fatal = []
-foreach arg : [
+foreach o : [
 	'-Werror',
 	'-Werror=unknown-warning-option',
 	'-Wunknown-warning-option',
 	'-Wl,--fatal-warnings',
-]
-	if cxx.has_argument(arg)
-		flags_fatal += [ arg ]
-	endif
-endforeach
-
-attr_args = flags_fatal
-foreach arg : [
 	'-Wattributes',
 ]
-	if cxx.has_argument(arg)
-		attr_args += [ arg ]
+	t = flags_fatal
+	t += [ o ]
+	if cxx.links(stresstest, args : t)
+		flags_fatal += [ o ]
 	endif
 endforeach
 
-dialect = ''
-if new_dialect
-	dialect = cxx.first_supported_argument(
-		'-std=gnu++17',
-		'-std=c++17',
-		'-std=gnu++1z',
-		'-std=c++1z',
-		'-std=gnu++14',
-		'-std=c++14',
-		'-std=gnu++1y',
-		'-std=c++1y',
-		'-std=gnu++11',
-		'-std=c++11',
-	)
-	if dialect != ''
-		add_global_arguments(dialect, language : 'cpp')
-		add_global_link_arguments(dialect, language : 'cpp')
+if strong_optimization
+	flto_test = []
+	if cxx_id == 'clang'
+		flto_test = [
+			'-emit-llvm',
+		]
 	endif
+	flto_test += [
+		'-use-linker-plugin',
+		'-flto',
+		'-flto-partition=none',
+		'-flto-odr-type-merging',
+		'-fwhole-program',
+		'-fno-fat-lto-objects',
+	]
+	flto_flags = []
+	foreach o : flto_test
+		t = flags_fatal
+		t += flto_flags
+		t += [ o ]
+		if not flto or o != '-flto'
+			if cross
+				s = cxx.links(stresstest, args : t)
+			else
+				s = cxx.run(stresstest, args : t)
+				s = (s.compiled() and s.returncode() == 0)
+			endif
+			if s
+				flto_flags += [ o ]
+				if not flto and o == '-flto'
+					flto = true
+				endif
+			endif
+		endif
+	endforeach
+	if flto
+		foreach o : flto_flags
+			message('FLAGS: ' + o)
+			cxxflags_add += [ o ]
+			add_global_arguments(o, language : 'cpp')
+			ldflags_add += [ o ]
+			add_global_link_arguments(o, language : 'cpp')
+		endforeach
+	endif
+endif
+
+dialect = 'false'
+if new_dialect
+	foreach d : [
+		'gnu++17',
+		'c++17',
+		'gnu++1z',
+		'c++1z',
+		'gnu++14',
+		'c++14',
+		'gnu++1y',
+		'c++1y',
+		'gnu++11',
+		'c++11',
+	]
+		if dialect == 'false'
+			o = '-std=' + d
+			t = flags_fatal
+			t += [ o ]
+			if cxx.links(stresstest, args : t)
+				dialect = d
+				message('FLAGS: ' + o)
+				cxxflags_add += [ o ]
+				add_global_arguments(o, language : 'cpp')
+				if flto
+					ldflags_add += [ o ]
+					add_global_link_arguments(o, language : 'cpp')
+				endif
+				continue = false
+			endif
+		endif
+	endforeach
+	result += [ 'new-dialect=' + 'true -> ' + dialect ]
+else
+	result += [ 'new-dialect=false' ]
 endif
 
 ldflags_opt = []
 cxxflags_opt = []
 ldcxxflags_opt = []
+ldcxxflags_oneof = []
 if debugging
 	ldcxxflags_opt += [
 		'-g',
-		'-ggdb3']
+		'-ggdb3',
+	]
 endif
 if optimization
 	cxxflags_opt += [
@@ -196,19 +299,6 @@ if optimization
 	]
 endif
 if strong_optimization
-	ldcxxflags_opt = [
-		'-use-linker-plugin',
-		'-flto',
-		'-flto-partition=none',
-		'-flto-odr-type-merging',
-		'-fwhole-program',
-		'-fno-fat-lto-objects',
-	]
-	if cxx_id == 'clang'
-		ldcxxflags_opt = [
-			'-emit-llvm',
-		]
-	endif
 	cxxflags_opt += [
 		'-fweb',
 		# '-fgraphite',
@@ -256,7 +346,6 @@ if warnings
 		'-Wpedantic',
 		'-pedantic',
 		'-Wall',
-		'-Weverything',
 		'-Wextra',
 		'-Wformat=2',
 		'-Wunused-variable',
@@ -317,6 +406,7 @@ if warnings
 		'-Wnull-dereference',
 		'-Wduplicated-cond',
 		'-Wno-c++1z-extensions',
+		# '-Weverything',
 		# '-Wno-unknown-warning-option',
 		# '-fmem-report',
 		# '-Wtraditional',
@@ -352,23 +442,32 @@ if strong_warnings
 	]
 endif
 if security
-	stack_protector = cxx.first_supported_argument(
-		'-fstack-protector-strong',
-		'-fstack-protector-all',
-		'-fstack-protector',
-	)
-	if stack_protector != ''
-		add_global_arguments(stack_protector, language : 'cpp')
-		add_global_link_arguments(stack_protector, language : 'cpp')
+	if strong_security
+		ldcxxflags_oneof += [
+			[
+				'-fstack-protector-strong',
+				'-fstack-protector-all',
+				'-fstack-protector',
+			]
+		]
+	else
+		ldcxxflags_oneof += [
+			[
+				'-fstack-protector-all',
+				'-fstack-protector-strong',
+				'-fstack-protector',
+			]
+		]
 	endif
-	stack_check = cxx.first_supported_argument(
-		'-fstack-check',
-		'-fstack-check=specific',
-	)
-	if stack_check != ''
-		add_global_arguments(stack_check, language : 'cpp')
-		add_global_link_arguments(stack_check, language : 'cpp')
-	endif
+	ldcxxflags_oneof += [
+		[
+			'-fstack-check=specific',
+			'-fstack-check',
+		]
+	]
+	cxxflags_opt += [
+		'-D_FORTIFY_SOURCE=2',
+	]
 	ldflags_opt += [
 		'-Wl,-z,now',
 		'-Wl,-z,relro',
@@ -407,19 +506,64 @@ if strong_security
 	]
 endif
 
-foreach arg : ldflags_opt
-	if cxx.has_argument(arg)
-		add_global_link_arguments(arg, language : 'cpp')
+foreach o : ldflags_opt
+	r = false
+	t = flags_fatal
+	t += [ o ]
+	if cxx.links(stresstest, args : t)
+		r = true
+		ldflags_add += [ o ]
+		add_global_link_arguments(o, language : 'cpp')
 	endif
+	message('FLAGS: ' + o + (r ? '' : ' NO'))
 endforeach
 
-# We currently hack: Add to cxxflags to ldflags if argument is known
-ldcxxflags_opt += cxxflags_opt
-foreach arg : ldcxxflags_opt
-	if cxx.has_argument(arg)
-		add_global_arguments(arg, language : 'cpp')
-		add_global_link_arguments(arg, language : 'cpp')
+foreach o : ldcxxflags_opt
+	r = false
+	t = flags_fatal
+	t += [ o ]
+	if cxx.links(stresstest, args : t)
+		r = true
+		cxxflags_add += [ o ]
+		add_global_arguments(o, language : 'cpp')
+		ldflags_add += [ o ]
+		add_global_link_arguments(o, language : 'cpp')
 	endif
+	message('FLAGS: ' + o + (r ? '' : ' NO'))
+endforeach
+
+foreach c : ldcxxflags_oneof
+	continue = true
+	foreach o : c
+		if continue
+			t = flags_fatal
+			t += [ o ]
+			if cxx.links(stresstest, args : t)
+				message('FLAGS: ' + o)
+				cxxflags_add += [ o ]
+				add_global_arguments(o, language : 'cpp')
+				ldflags_add += [ o ]
+				add_global_link_arguments(o, language : 'cpp')
+				continue = false
+			endif
+		endif
+	endforeach
+endforeach
+
+foreach o : cxxflags_opt
+	r = false
+	t = flags_fatal
+	t += [ o ]
+	if cxx.links(stresstest, args : t)
+		r = true
+		cxxflags_add += [ o ]
+		add_global_arguments(o, language : 'cpp')
+		if flto
+			ldflags_add += [ o ]
+			add_global_link_arguments(o, language : 'cpp')
+		endif
+	endif
+	message('FLAGS: ' + o + (r ? '' : ' NO'))
 endforeach
 
 conf = configuration_data()
@@ -610,7 +754,7 @@ int main() {
 	dummy();
 	return 0;
 }
-''', args : attr_args)
+''', args : flags_fatal)
 message('[[noreturn]]: ' + c11attr_noreturn.to_string())
 conf.set('HAVE_C11ATTRIBUTE_NORETURN', c11attr_noreturn,
 	description : 'Define if [[noreturn]] can be used')
@@ -625,7 +769,7 @@ int main() {
 	dummy();
 	return 0;
 }
-''', args : attr_args)
+''', args : flags_fatal)
 message('__attribute__ ((noreturn)): ' + attribute_noreturn.to_string())
 conf.set('HAVE_C11ATTRIBUTE_NORETURN', attribute_noreturn,
 	description : 'Define if __attribute__ ((noreturn)) can be used')
@@ -641,7 +785,7 @@ int main() {
 			return i + 1;
 	}
 }
-''', args : attr_args)
+''', args : flags_fatal)
 message('[[fallthrough]]: ' + attr_fallthrough.to_string())
 conf.set('HAVE_ATTRIBUTE_FALLTHROUGH', attr_fallthrough,
 	description : 'Define if [[fallthrough]] can be used')
@@ -657,7 +801,7 @@ int main() {
 			return i + 1;
 	}
 }
-''', args : attr_args)
+''', args : flags_fatal)
 message('[[gnu::fallthrough]]: ' + attr_gnufallthrough.to_string())
 conf.set('HAVE_ATTRIBUTE_GNUFALLTHROUGH', attr_gnufallthrough,
 	description : 'Define if [[gnu::fallthrough]] can be used')
@@ -673,7 +817,7 @@ int main() {
 			return i + 1;
 	}
 }
-''', args : attr_args)
+''', args : flags_fatal)
 message('__attribute__ ((fallthrough)) ' + attr_afallthrough.to_string())
 conf.set('HAVE_ATTRIBUTE_AFALLTHROUGH', attr_afallthrough,
 	description : 'Define if __attribute__ ((fallthrough)) can be used')
@@ -693,7 +837,7 @@ int main() {
 	signal(SIGTERM, my_sig_handler);
 	return 0;
 }
-''', args : attr_args)
+''', args : flags_fatal)
 message('__attribute__ ((signal)) ' + attr_signal.to_string())
 conf.set('HAVE_ATTRIBUTE_SIGNAL', attr_signal,
 	description : 'Define if __attribute__ ((signal)) can be used')
@@ -708,7 +852,7 @@ int a(int i) { b x; return x.c(i); }
 int main() {
 	return !((a(4) == 4) && (a(5) == 5));
 }
-''', args : attr_args)
+''', args : flags_fatal)
 message('__attribute__ ((const)) ' + attr_const.to_string())
 conf.set('HAVE_ATTRIBUTE_CONST', attr_const,
 	description : 'Define if __attribute__ ((const)) can be used')
@@ -723,7 +867,7 @@ int a(int i) { b x; return x.c(&i); }
 int main() {
 	return !((a(4) == 4) && (a(5) == 5));
 }
-''', args : attr_args)
+''', args : flags_fatal)
 message('__attribute__ ((pure)) ' + attr_pure.to_string())
 conf.set('HAVE_ATTRIBUTE_PURE', attr_pure,
 	description : 'Define if __attribute__ ((pure)) can be used')
@@ -749,7 +893,7 @@ int main() {
 	int i = 4, j = 5;
 	return !((a(&i) == 4) && (a(&j) == 5));
 }
-''', args : attr_args)
+''', args : flags_fatal)
 message('__attribute__ ((nonnull)) ' + attr_nonnull_.to_string())
 conf.set('HAVE_ATTRIBUTE_NONNULL_', attr_nonnull_,
 	description : 'Define if __attribute__ ((nonnull)) can be used')
@@ -773,7 +917,7 @@ int main() {
 	b x;
 	return !((x.d(&i, 0, &i) == 2) && (x.d(&i, 0, &i) == 2) && (a(&i, 0, &i) == 4));
 }
-''', args : attr_args)
+''', args : flags_fatal)
 message('__attribute__ ((nonnull (list))) ' + attr_nonnull.to_string())
 conf.set('HAVE_ATTRIBUTE_NONNULL', attr_nonnull,
 	description : 'Define if __attribute__ ((nonnull (list))) can be used')
@@ -1563,4 +1707,10 @@ foreach l : inst_link
 		l.get(0), join_paths(bindir, l.get(1)), bindir)
 endforeach
 
-message('\n-D'.join(result))
+message('\n-D'.join(result) + '\n\n' +
+	'Added CXXFLAGS:\n' + ' '.join(cxxflags_add) + '\n\n' +
+	'Added LDFLAGS:\n' + ' '.join(ldflags_add) + '\n')
+
+# TODO:
+# Insert flags _in front_ of user-specified CXXFLAGS/LDFLAGS.
+# Do not add flags if they are already in CXXFLAGS/LDFLAGS.

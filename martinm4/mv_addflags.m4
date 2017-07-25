@@ -47,6 +47,7 @@ dnl It should also use a larger local array to test the stack.
 dnl The unistd.h and string are here to trigger clang/gcc/glibc incompatibily,
 dnl see https://bugs.gentoo.org/show_bug.cgi?id=510102
 						[AC_LANG_PROGRAM([[
+#include <map>
 #include <unistd.h>
 #include <cstring>
 #include <string>
@@ -60,15 +61,13 @@ return (strchr(a[0], *a[0]) == *(a.begin())) ? my_a[999] : 1; }
 #include <type_traits>
 void func_noexcept() noexcept;
 void func_noexcept() noexcept {}
-#define C11TESTCALL if(!std::is_function<decltype(func_noexcept)>::value) { return 1; }
-#else
-#define C11TESTCALL
+#define C11TESTCALL 1
 #endif
-#else
-#define C11TESTCALL
 #endif
 						]], [[
-C11TESTCALL
+#ifdef C11TESTCALL
+if(!std::is_function<decltype(func_noexcept)>::value) { return 1; }
+#endif
 return my_func();
 						]])],
 						[AC_MSG_RESULT([yes])
