@@ -1694,6 +1694,7 @@ foreach l : manpages
 	if l != 'en'
 		mansubdir = join_paths(mandir, l)
 	endif
+	mansubdir = join_paths(mansubdir, 'man1')
 	install_data(manpagefile, install_dir : mansubdir)
 endforeach
 
