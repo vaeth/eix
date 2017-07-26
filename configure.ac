@@ -331,12 +331,12 @@ AS_IF([$optimization],
 		], [$my_ldfatal], [], [:])])
 AS_IF([$strong_optimization],
 	[AS_VAR_SET([flto], ["
-		-use-linker-plugin \
 		-flto \
 		-flto-partition=none \
 		-flto-odr-type-merging \
-		-emit-llvm \
 		"])
+#		-use-linker-plugin \
+#		-emit-llvm \
 # We first modify the LDFLAGS: This is important because of -flto:
 # Without -flto in LDFLAGS, -flto in CXXFLAGS might not fail even if it
 # should produce broken code.
@@ -421,15 +421,12 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wall \
 			-Wextra \
 			-Wformat=2 \
+			-Wunused \
 			-Wunused-variable \
 			-Wunused-parameter \
-			-Wstring-plus-int \
-			-WNSObject-attribute \
 			-Winit-self \
 			-Wmissing-include-dirs \
 			-Wswitch-default \
-			-Wunused \
-			-Wunused-parameter \
 			-Wstrict-aliasing=1 \
 			-Wstrict-overflow=5 \
 			-Wfloat-equal \

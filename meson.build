@@ -168,12 +168,15 @@ endforeach
 if strong_optimization
 	flto_test = []
 	if cxx_id == 'clang'
-		flto_test = [
+		flto_test += [
 			'-emit-llvm',
+		]
+	else
+		flto_test += [
+			'-use-linker-plugin',
 		]
 	endif
 	flto_test += [
-		'-use-linker-plugin',
 		'-flto',
 		'-flto-partition=none',
 		'-flto-odr-type-merging',
@@ -348,15 +351,12 @@ if warnings
 		'-Wall',
 		'-Wextra',
 		'-Wformat=2',
+		'-Wunused',
 		'-Wunused-variable',
 		'-Wunused-parameter',
-		'-Wstring-plus-int',
-		'-WNSObject-attribute',
 		'-Winit-self',
 		'-Wmissing-include-dirs',
 		'-Wswitch-default',
-		'-Wunused',
-		'-Wunused-parameter',
 		'-Wstrict-aliasing=1',
 		'-Wstrict-overflow=5',
 		'-Wfloat-equal',

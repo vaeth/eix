@@ -305,7 +305,7 @@ nodist_extra_output_only_src =
 # The update-tool for our database
 update_only_ldadd = $(SQLITE_LIBS)
 update_only_src = eix-update.cc $(percentage_src) $(cache_src)
-nodist_update_only_src = $(nodist_cache_src) $(nodist_percentage_src) 
+nodist_update_only_src = $(nodist_cache_src) $(nodist_percentage_src)
 extra_update_only_src =
 nodist_extra_update_only_src =
 
@@ -614,9 +614,7 @@ install-exec-hook:
 cache/cache_map.cc: $(srcdir)/cache/generate_cachemap.sh
 	$(AM_V_GEN)"$(srcdir)/cache/generate_cachemap.sh" > "$@"
 
-SUFFIXES = .sh.in
-.sh.in:
-	$(AM_V_GEN)$(SED) \
+SED_IN = \
 		-e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
 		-e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
 		-e "s,\@EIX_REMOTECACHEFILE1\@,$(EIX_REMOTECACHEFILE1),g" \
@@ -636,11 +634,38 @@ SUFFIXES = .sh.in
 		-e "s,\./eix-functions\.sh\.sh\.in,'$(bindir)/eix-functions.sh',g" \
 		-e "s,\./eix-drop-permissions,'$(bindir)/eix-drop-permissions',g" \
 		-e "s,\./eix-remote.in,'$(bindir)/eix-remote',g" \
-		-e 's,^#!/usr/bin/env sh$$,#!$(SH_SHEBANG),g' \
+		-e 's,!/usr/bin/env sh$$,!$(SH_SHEBANG),g' \
 		-e "s,\@TEXTDOMAIN\@,$(PACKAGE),g" \
 		-e "s,\@TEXTDOMAINDIR\@,$(localedir),g" \
-		-e "s,\@USE_NLS\@,$(USE_NLS),g" \
-		"$<" > "$@"
+		-e "s,\@USE_NLS\@,$(USE_NLS),g"
+
+eix-etcat: eix-etcat.sh.in
+	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
+
+eix-functions.sh: eix-functions.sh.sh.in
+	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
+
+eix-installed-after: eix-installed-after.sh.in
+	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
+
+eix-installed: eix-installed.sh.in
+	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
+
+eix-layman: eix-layman.sh.in
+	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
+
+eix-remote: eix-remote.sh.in
+	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
+
+eix-sync: eix-sync.sh.in
+	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
+
+eix-test-obsolete: eix-test-obsolete.sh.in
+	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
+
+SUFFIXES = .in
+.in:
+	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
 
 # Enable us to 'make clean' in src/
 clean-local:
