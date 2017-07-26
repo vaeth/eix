@@ -1708,6 +1708,19 @@ foreach l : inst_link
 		l.get(0), join_paths(bindir, l.get(1)), bindir)
 endforeach
 
+install_in = [
+	[ join_paths('src', 'eixrc'), '00-eixrc', join_paths(sysconfdir, 'eixrc') ],
+]
+foreach p : install_in
+	file = p.get(1)
+	c = configure_file(
+		input : files(join_paths(p.get(0), file + '.in')),
+		output : file,
+		configuration : subst,
+	)
+	install_data(c, install_dir : p.get(2))
+endforeach
+
 message('\n-D'.join(result) + '\n\n' +
 	'Added CXXFLAGS:\n' + ' '.join(cxxflags_add) + '\n\n' +
 	'Added LDFLAGS:\n' + ' '.join(ldflags_add) + '\n')
