@@ -46,7 +46,6 @@
 /src/eix-*
 !/src/eix-*.*
 !/src/eix-etcat
-/src/eix-*.sh
 /src/functions-eix.sh
 
 /src/eixrc/eixrc

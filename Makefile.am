@@ -34,6 +34,8 @@ CPPLINT.cfg \
 doxygen.cfg.in \
 meson.build \
 meson_options.txt \
+po/meson.build \
+po/Rules-clean \
 tmpfiles.d/eix.conf
 
 ACLOCAL_AMFLAGS = -I m4 -I martinm4

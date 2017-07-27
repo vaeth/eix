@@ -353,7 +353,7 @@ eix-installed.sh.in \
 eix-layman.sh.in \
 eix-remote.sh.in \
 eix-sync.sh.in \
-eix-test-obsolete.in \
+eix-test-obsolete.sh.in \
 eixrc/00-eixrc.in \
 cache/generate_cachemap.sh
 
