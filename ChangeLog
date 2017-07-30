@@ -4,6 +4,9 @@
 	Martin Väth <martin at mvath.de>:
 	- Add support for meson/ninja build system (fast, but less compatible).
 	  Probably autotools and meson will both continue to be supported.
+	- Make new dialect the default
+	- Pass flags to disable dead code. Use --disable-dead-code-elimination
+	  (with meson -Ddead-code-elimination=false) to disable this feature.
 	- Fix return value in _eix completion. Thanks to
 	  Mikael Magnusson <mikachu at gmail.com>
 	- Fix option and description typos in configure.ac

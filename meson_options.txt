@@ -1,7 +1,9 @@
 option('nls', type : 'boolean', value : true,
 	description : 'use native language support')
 option('new-dialect', type : 'boolean', value : true,
-	description : 'enable most current C++ dialect; provides optimitations')
+	description : 'enable most current C++ dialect; provides optimizations')
+option('dead-code', type : 'boolean', value : true,
+	description : 'use dead-code elimination options; disable this only if compilation fails')
 option('debugging', type : 'boolean', value : false,
 	description : 'activate paranoic asserts and flags for debugging')
 option('debug-format', type : 'boolean', value : true,

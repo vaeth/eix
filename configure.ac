@@ -98,13 +98,21 @@ AC_ARG_ENABLE([debug-format],
 		[AS_VAR_SET([debug_format], [true])
 		AS_VAR_SET([cmt_debug_format], ["default"])])])
 
-AC_ARG_ENABLE([new_dialect],
+AC_ARG_ENABLE([new-dialect],
 	[AS_HELP_STRING([--enable-new-dialect],
 		[enable most current C++ dialect; provides optimizations])],
 	[MV_ENABLE([new_dialect])
 	AS_VAR_SET([cmt_new_dialect], ["on request"])],
-	[AS_VAR_SET([new_dialect], [false])
+	[AS_VAR_SET([new_dialect], [:])
 	AS_VAR_SET([cmt_new_dialect], ["default"])])
+
+AC_ARG_ENABLE([dead-code],
+	[AS_HELP_STRING([--disable-dead-code-eliminitation],
+		[disable dead code elimination options; disable this only if compilation fails])],
+	[MV_ENABLE([dead_code])
+	AS_VAR_SET([cmt_dead_code], ["on request"])],
+	[AS_VAR_SET([dead_code], [:])
+	AS_VAR_SET([cmt_dead_code], ["default"])])
 
 AC_ARG_ENABLE([security],
 	[AS_HELP_STRING([--enable-security],
@@ -182,6 +190,12 @@ AS_IF([$debugging],
 	[AS_VAR_SET([optimization], [false])
 	AS_VAR_SET([cmt_optimization], ["disabled by debugging"])])
 MV_MSG_RESULT_BIN([$optimization], [$cmt_optimization])
+
+AC_MSG_CHECKING([whether dead code elimination options should be used])
+AS_IF([$debugging],
+	[AS_VAR_SET([dead_code], [false])
+	AS_VAR_SET([cmt_dead_code], ["disabled by debugging"])])
+MV_MSG_RESULT_BIN([$dead_code], [$cmt_dead_code])
 
 AC_MSG_CHECKING([whether most current C++ dialect options should be used])
 AS_IF([$optimization],
@@ -280,8 +294,19 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
 	AS_VAR_SET([add_incopt], [])])
 AS_VAR_COPY([CXXFLAGS], [my_cxxflags])])
 
+AS_IF([$dead_code],
+	[AS_VAR_SET([dead_code], [false])
+	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
+			-Wl,--gc-sections \
+		], [$my_ldfatal], [], [AS_VAR_SET([dead_code], [:])])])
+AS_IF([$dead_code],
+	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+		-fdata-sections \
+		-ffunction-sections \
+		], [$my_cxxfatal], [], [:])])
+
 AS_IF([$debugging],
-	[MV_ADDFLAGS([my_ldadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+	[MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-g \
 			-ggdb3 \
 		], [$my_ldfatal], [], [:])

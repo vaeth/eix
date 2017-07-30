@@ -9,6 +9,7 @@ project('eix', 'cpp',
 )
 
 new_dialect = get_option('new-dialect')
+dead_code = get_option('dead-code')
 debugging = get_option('debugging')
 debug_format = get_option('debug-format')
 paranoic_asserts = get_option('paranoic-asserts')
@@ -20,6 +21,7 @@ strong_optimization = get_option('strong-optimization')
 warnings = get_option('warnings')
 strong_warnings = get_option('strong-warnings')
 
+dead_code_msg = ''
 optimization_msg = ''
 strong_optimization_msg = ''
 paranoic_asserts_msg = ''
@@ -27,6 +29,10 @@ warnings_msg = ''
 security_msg = ''
 strong_security_msg = ''
 
+if debugging
+	dead_code = false
+	dead_code_msg = ' (disabled by debugging)'
+endif
 if debugging and not paranoic_asserts
 	paranoic_asserts = true
 	paranoic_asserts_msg = ' (forced by debugging)'
@@ -250,10 +256,32 @@ else
 	result += [ 'new-dialect=false' ]
 endif
 
+ldflags_force = []
 ldflags_opt = []
 cxxflags_opt = []
 ldcxxflags_opt = []
 ldcxxflags_oneof = []
+
+if dead_code
+	o = '-Wl,--gc-sections'
+	t = flags_fatal
+	t += [ o ]
+	if cxx.links(stresstest,  args : t)
+		r = true
+		ldflags_force += [ o ]
+		cxxflags_opt += [
+			'-fdata-sections',
+			'-ffunction-sections',
+		]
+	else
+		r = false
+		dead_code = false
+		dead_code_msg = ' (not supported)'
+	endif
+	message('FLAGS: ' + o + (r ? '' : ' NO'))
+endif
+result += [ 'dead-code=' + dead_code.to_string() + dead_code_msg ]
+
 if debugging
 	ldcxxflags_opt += [
 		'-g',
@@ -441,6 +469,7 @@ if strong_warnings
 		'-Wmissing-noreturn',
 	]
 endif
+
 if security
 	if strong_security
 		ldcxxflags_oneof += [
@@ -505,6 +534,11 @@ if strong_security
 		'-Wchkp',
 	]
 endif
+
+foreach o : ldflags_force
+	ldflags_add += [ o ]
+	add_global_link_arguments(o, language : 'cpp')
+endforeach
 
 foreach o : ldflags_opt
 	r = false
