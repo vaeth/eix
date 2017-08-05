@@ -1325,48 +1325,79 @@ configure_file(
 	configuration : conf,
 )
 
-header_src = files(
+header_lib = [ static_library('header',
 	join_paths('src', 'database', 'io.cc'),
 	join_paths('src', 'database', 'io_header.cc'),
 	join_paths('src', 'database', 'header.cc'),
-)
-database_src = header_src
-database_src += files(
+	include_directories : incdir,
+) ]
+
+database_lib = [ static_library('database',
 	join_paths('src', 'database', 'header_portage.cc'),
 	join_paths('src', 'database', 'io_portage.cc'),
 	join_paths('src', 'database', 'package_reader.cc'),
-)
-stringutils_src = files(
+	include_directories : incdir,
+) ]
+database_lib += header_lib
+
+stringutils_lib = [ static_library('stringutils',
 	join_paths('src', 'eixTk', 'compare.cc'),
 	join_paths('src', 'eixTk', 'formated.cc'),
 	join_paths('src', 'eixTk', 'stringutils.cc'),
-)
-sysutils_src = files(
+	include_directories : incdir,
+) ]
+
+sysutils_lib = [ static_library('sysutils',
 	join_paths('src', 'eixTk', 'sysutils.cc'),
-)
-utils_src = files(
+	include_directories : incdir,
+) ]
+
+filenames_lib = [ static_library('filenames',
 	join_paths('src', 'eixTk', 'filenames.cc'),
+	include_directories : incdir,
+) ]
+
+utils_lib = [ static_library('utils',
 	join_paths('src', 'eixTk', 'utils.cc'),
-)
-varsreader_src = utils_src
-varsreader_src += files(
+	include_directories : incdir,
+) ]
+
+varsreader_lib = [ static_library('varsreader',
 	join_paths('src', 'eixTk', 'varsreader.cc'),
-)
-masklist_src = files(
+	include_directories : incdir,
+) ]
+varsreader_lib += filenames_lib
+varsreader_lib += utils_lib
+
+parseerror_lib = [ static_library('parseerror',
+	join_paths('src', 'eixTk', 'parseerror.cc'),
+	include_directories : incdir,
+) ]
+
+masklist_lib = [ static_library('masklist',
 	join_paths('src', 'eixTk', 'stringlist.cc'),
 	join_paths('src', 'portage', 'mask.cc'),
 	join_paths('src', 'portage', 'mask_list.cc'),
-)
-eixtk_src = stringutils_src
-eixtk_src += files(
-	join_paths('src', 'eixTk', 'ansicolor.cc'),
+	include_directories : incdir,
+) ]
+
+argsreader_lib = [ static_library('argsreader',
 	join_paths('src', 'eixTk', 'argsreader.cc'),
-	join_paths('src', 'eixTk', 'parseerror.cc'),
+	include_directories : incdir,
+) ]
+
+eixtk_lib = [ static_library('eixtk',
+	join_paths('src', 'eixTk', 'ansicolor.cc'),
 	join_paths('src', 'eixTk', 'regexp.cc'),
-)
-eixtk_src += sysutils_src
-eixtk_src += varsreader_src
-eixrc_src = files(
+	include_directories : incdir,
+) ]
+eixtk_lib += argsreader_lib
+eixtk_lib += parseerror_lib
+eixtk_lib += stringutils_lib
+eixtk_lib += sysutils_lib
+eixtk_lib += varsreader_lib
+
+eixrc_lib = [ static_library('eixrc',
 	join_paths('src', 'eixrc', 'eixrc.cc'),
 	join_paths('src', 'eixrc', 'global.cc'),
 	join_paths('src', 'eixrc', 'global1.cc'),
@@ -1375,45 +1406,59 @@ eixrc_src = files(
 	join_paths('src', 'eixrc', 'global4.cc'),
 	join_paths('src', 'eixrc', 'global5.cc'),
 	join_paths('src', 'eixrc', 'global6.cc'),
-)
-depend_src = files(
+	include_directories : incdir,
+) ]
+
+depend_lib = [ static_library('depend',
 	join_paths('src', 'portage', 'depend.cc'),
-)
-overlay_src = files(
+	include_directories : incdir,
+) ]
+
+overlay_lib = [ static_library('overlay',
 	join_paths('src', 'portage', 'overlay.cc'),
-)
-portage_src = files(
+	include_directories : incdir,
+) ]
+
+basicversion_lib = [ static_library('basicversion',
+	join_paths('src', 'portage', 'basicversion.cc'),
+	include_directories : incdir,
+) ]
+
+version_lib = [ static_library('version',
+	join_paths('src', 'portage', 'extendedversion.cc'),
+	join_paths('src', 'portage', 'keywords.cc'),
+	join_paths('src', 'portage', 'package.cc'),
+	join_paths('src', 'portage', 'version.cc'),
+	include_directories : incdir,
+) ]
+version_lib += basicversion_lib
+
+portage_lib = [ static_library('portage',
 	join_paths('src', 'portage', 'conf', 'portagesettings.cc'),
 	join_paths('src', 'portage', 'conf', 'cascadingprofile.cc'),
-)
-portage_src += masklist_src
-portage_src += depend_src
-portage_src += files(
-	join_paths('src', 'portage', 'basicversion.cc'),
 	join_paths('src', 'portage', 'eapi.cc'),
-	join_paths('src', 'portage', 'extendedversion.cc'),
 	join_paths('src', 'portage', 'extendedversion_bin.cc'),
 	join_paths('src', 'portage', 'instversion.cc'),
-	join_paths('src', 'portage', 'package.cc'),
 	join_paths('src', 'portage', 'package_best.cc'),
 	join_paths('src', 'portage', 'packagesets.cc'),
 	join_paths('src', 'portage', 'vardbpkg.cc'),
 	join_paths('src', 'portage', 'packagetree.cc'),
-	join_paths('src', 'portage', 'keywords.cc'),
 	join_paths('src', 'portage', 'overlay_bin.cc'),
-)
-portage_src += overlay_src
-portage_src += files(
 	join_paths('src', 'portage', 'set_stability.cc'),
-	join_paths('src', 'portage', 'version.cc'),
-)
+	include_directories : incdir,
+) ]
+portage_lib += masklist_lib
+portage_lib += depend_lib
+portage_lib += version_lib
+portage_lib += overlay_lib
+
 gencache_src = custom_target('cache_map',
 	input : files(join_paths('src', 'cache', 'generate_cachemap.sh')),
 	output : [ 'cache_map.cc' ],
 	command : [ sh, '@INPUT@' ],
 	capture : true,
 )
-cache_src = files(
+cache_lib = [ static_library('cache',
 	join_paths('src', 'cache', 'cachetable.cc'),
 	join_paths('src', 'cache', 'common', 'assign_reader.cc'),
 	join_paths('src', 'cache', 'common', 'ebuild_exec.cc'),
@@ -1425,116 +1470,115 @@ cache_src = files(
 	join_paths('src', 'cache', 'parse', 'parse.cc'),
 	join_paths('src', 'cache', 'sqlite', 'sqlite.cc'),
 	join_paths('src', 'eixTk', 'md5.cc'),
-)
-cache_src += [
-	gencache_src
-]
-cli_src = files(
+	gencache_src,
+	include_directories : incdir,
+) ]
+
+cli_lib = [ static_library('cli',
 	join_paths('src', 'various', 'cli.cc'),
-)
-drop_permissions_src = files(
+	include_directories : incdir,
+) ]
+
+drop_permissions_lib = [ static_library('drop_permissions',
 	join_paths('src', 'various', 'drop_permissions.cc'),
-)
-percentage_src = files(
+	include_directories : incdir,
+) ]
+
+percentage_lib = [ static_library('percentage',
 	join_paths('src', 'eixTk', 'percentage.cc'),
 	join_paths('src', 'eixTk', 'statusline.cc'),
-)
-printxml_src = files(
+	include_directories : incdir,
+) ]
+
+printxml_lib = [ static_library('printxml',
 	join_paths('src', 'output', 'print-xml.cc'),
-)
-outputstring_src = files(
+	include_directories : incdir,
+) ]
+
+outputstring_lib = [ static_library('outputstring',
 	join_paths('src', 'eixTk', 'outputstring.cc'),
 	join_paths('src', 'eixTk', 'stringlist_output.cc'),
-)
-output_src = outputstring_src
-output_src += files(
+	include_directories : incdir,
+) ]
+
+output_lib = [ static_library('output',
 	join_paths('src', 'portage', 'version_output.cc'),
 	join_paths('src', 'output', 'formatstring.cc'),
 	join_paths('src', 'output', 'formatstring-print.cc'),
-)
-search_src = files(
+	include_directories : incdir,
+) ]
+output_lib += outputstring_lib
+
+search_lib = [ static_library('search',
 	join_paths('src', 'search', 'levenshtein.cc'),
 	join_paths('src', 'search', 'algorithms.cc'),
 	join_paths('src', 'search', 'matchtree.cc'),
 	join_paths('src', 'search', 'packagetest.cc'),
 	join_paths('src', 'search', 'packagetest_default.cc'),
 	join_paths('src', 'search', 'nowarn.cc'),
-)
-common_src = drop_permissions_src
-common_src += eixtk_src
-common_src += database_src
-common_src += portage_src
-common_src += eixrc_src
-common_src += files(
+	include_directories : incdir,
+) ]
+
+common_lib = [ static_library('common',
 	join_paths('src', 'eixrc', 'eixrc_portage.cc'),
-)
-eix_only_src = files(
+	include_directories : incdir,
+) ]
+common_lib += drop_permissions_lib
+common_lib += eixtk_lib
+common_lib += database_lib
+common_lib += portage_lib
+common_lib += eixrc_lib
+
+eix_only_lib = [ static_library('eix',
 	join_paths('src', 'eix.cc'),
-)
-eix_only_src += cli_src
-eix_only_src += printxml_src
-eix_only_src += search_src
-eix_only_src += files(
 	join_paths('src', 'eixTk', 'ansicolor_print.cc'),
-)
-diff_only_src = files(
+	include_directories : incdir,
+) ]
+eix_only_lib += cli_lib
+eix_only_lib += printxml_lib
+eix_only_lib += search_lib
+
+diff_only_lib = [ static_library('diff',
 	join_paths('src', 'eix-diff.cc'),
-)
-output_only_src = output_src
-update_only_src = files(
+	include_directories : incdir,
+) ]
+
+update_only_lib = [ static_library('update',
 	join_paths('src', 'eix-update.cc'),
-)
-update_only_src += percentage_src
-update_only_src += cache_src
-masked_packages_src = files(
-	join_paths('src', 'eixTk', 'parseerror.cc'),
-)
-masked_packages_src += stringutils_src
-masked_packages_src += files(
-	join_paths('src', 'eixTk', 'utils.cc'),
-	join_paths('src', 'portage', 'basicversion.cc'),
-	join_paths('src', 'portage', 'extendedversion.cc'),
-	join_paths('src', 'portage', 'keywords.cc'),
-	join_paths('src', 'portage', 'version.cc'),
-	join_paths('src', 'portage', 'package.cc'),
-)
-masked_packages_src += masklist_src
-masked_packages_src += files(
-	join_paths('src', 'eixTk', 'argsreader.cc'),
+	include_directories : incdir,
+) ]
+update_only_lib += percentage_lib
+update_only_lib += cache_lib
+
+masked_packages_lib = [ static_library('masked_packages',
 	join_paths('src', 'masked-packages.cc'),
-	join_paths('src', 'main', 'main_masked_packages.cc'),
-)
-versionsort_src = stringutils_src
-versionsort_src += files(
-	join_paths('src', 'portage', 'basicversion.cc'),
+	include_directories : incdir,
+) ]
+masked_packages_lib += parseerror_lib
+
+versionsort_lib = [ static_library('versionsort',
 	join_paths('src', 'versionsort.cc'),
-	join_paths('src', 'main', 'main_versionsort.cc'),
-)
-eix_header_src = stringutils_src
-eix_header_src += utils_src
-eix_header_src += header_src
-eix_header_src += depend_src
-eix_header_src += overlay_src
-eix_header_src += sysutils_src
-eix_header_src += files(
+	include_directories : incdir,
+) ]
+
+eix_header_lib = [ static_library('eix_header',
 	join_paths('src', 'eix-header.cc'),
-	join_paths('src', 'main', 'main_overlay.cc'),
-)
-eix_drop_permissions_src = stringutils_src
-eix_drop_permissions_src += eixrc_src
-eix_drop_permissions_src += drop_permissions_src
-eix_drop_permissions_src += sysutils_src
-eix_drop_permissions_src += varsreader_src
-eix_drop_permissions_src += files(
+	include_directories : incdir,
+) ]
+
+eix_drop_permissions_lib = [ static_library('eix_drop_permissions',
 	join_paths('src', 'eix-drop-permissions.cc'),
-	join_paths('src', 'main', 'main_drop_permissions.cc'),
-)
+	include_directories : incdir,
+) ]
+
 main_output_src = files(
 	join_paths('src', 'main', 'main_output.cc'),
 )
+
 main_eix_src = files(
 	join_paths('src', 'main', 'main_eix.cc'),
 )
+
 main_diff_src = files(
 	join_paths('src', 'main', 'main_diff.cc'),
 )
@@ -1552,27 +1596,60 @@ endif
 result += [ 'separate-tools=' + separate_tools.to_string() ]
 result += [ 'separate-binaries=' + separate_binaries.to_string() ]
 result += [ 'separate-update=' + separate_update.to_string() + separate_update_msg ]
+main_all_link_with = []
+eix_update_link_with = []
 if separate_tools
-	executable('masked-packages', masked_packages_src,
+	masked_packages_link_with = masked_packages_lib
+	masked_packages_link_with += argsreader_lib
+	masked_packages_link_with += utils_lib
+	masked_packages_link_with += version_lib
+	masked_packages_link_with += stringutils_lib
+	masked_packages_link_with += masklist_lib
+	executable('masked-packages',
+		join_paths('src', 'main', 'main_masked_packages.cc'),
+		link_with : masked_packages_link_with,
 		include_directories : incdir,
 		install : true,
 	)
-	executable('versionsort', versionsort_src,
+	versionsort_link_with = versionsort_lib
+	versionsort_link_with += basicversion_lib
+	versionsort_link_with += stringutils_lib
+	executable('versionsort',
+		join_paths('src', 'main', 'main_versionsort.cc'),
+		link_with : versionsort_link_with,
 		include_directories : incdir,
 		install : true,
 	)
-	executable('eix-header', eix_header_src,
+	eix_header_link_with = eix_header_lib
+	eix_header_link_with += stringutils_lib
+	eix_header_link_with += filenames_lib
+	eix_header_link_with += utils_lib
+	eix_header_link_with += header_lib
+	eix_header_link_with += depend_lib
+	eix_header_link_with += overlay_lib
+	eix_header_link_with += sysutils_lib
+	executable('eix-header',
+		join_paths('src', 'main', 'main_overlay.cc'),
+		link_with : eix_header_link_with,
 		include_directories : incdir,
 		install : true,
 	)
-	executable('eix-drop-permissions', eix_drop_permissions_src,
+	eix_drop_permissions_link_with = eix_drop_permissions_lib
+	eix_drop_permissions_link_with += stringutils_lib
+	eix_drop_permissions_link_with += eixrc_lib
+	eix_drop_permissions_link_with += drop_permissions_lib
+	eix_drop_permissions_link_with += sysutils_lib
+	eix_drop_permissions_link_with += varsreader_lib
+	executable('eix-drop-permissions',
+		join_paths('src', 'main', 'main_drop_permissions.cc'),
+		link_with : eix_drop_permissions_link_with,
 		include_directories : incdir,
 		install : true,
 	)
 	main_all_src = files(
 		join_paths('src', 'main', 'main_all.cc'),
 	)
-	main_update_src = files(
+	eix_update_src = files(
 		join_paths('src', 'main', 'main_update.cc'),
 	)
 else
@@ -1583,30 +1660,32 @@ else
 		'eix-drop-permissions',
 	]
 	main_all_src = files(
-		join_paths('src', 'masked-packages.cc'),
-		join_paths('src', 'versionsort.cc'),
-		join_paths('src', 'eix-header.cc'),
-		join_paths('src', 'eix-drop-permissions.cc'),
 		join_paths('src', 'main', 'main_all_tools.cc'),
 	)
-	main_update_src = files(
-		join_paths('src', 'masked-packages.cc'),
-		join_paths('src', 'versionsort.cc'),
-		join_paths('src', 'eix-header.cc'),
-		join_paths('src', 'eix-drop-permissions.cc'),
+	main_all_link_with += masked_packages_lib
+	main_all_link_with += versionsort_lib
+	main_all_link_with += masked_packages_lib
+	main_all_link_with += versionsort_lib
+	main_all_link_with += eix_header_lib
+	main_all_link_with += eix_drop_permissions_lib
+	eix_update_src = files(
 		join_paths('src', 'main', 'main_update_tools.cc'),
 	)
+	eix_update_link_with += masked_packages_lib
+	eix_update_link_with += versionsort_lib
+	eix_update_link_with += eix_header_lib
+	eix_update_link_with += eix_drop_permissions_lib
 endif
-eix_update_src = common_src
-eix_update_src += update_only_src
-eix_update_src += main_update_src
+eix_update_link_with += update_only_lib
+eix_update_link_with += common_lib
 eix_dep = sqlite_dep
 eix_update_link = 'eix'
 if separate_binaries or separate_update
 	eix_update_link = 'eix'
 	executable('eix-update', eix_update_src,
-		include_directories : incdir,
 		dependencies : eix_dep,
+		link_with : eix_update_link_with,
+		include_directories : incdir,
 		install : true,
 	)
 	eix_dep = []
@@ -1616,16 +1695,15 @@ foreach l : inst_link_tools
 		[ eix_update_link, l ],
 	]
 endforeach
+eix_link_with = eix_only_lib
+eix_link_with += main_all_link_with
 if separate_binaries
-	eix_src = common_src
-	eix_src += eix_only_src
-	eix_src += output_only_src
-	eix_src += main_eix_src
-	eix_diff_src = common_src
-	eix_diff_src += diff_only_src
-	eix_diff_src += output_only_src
-	eix_diff_src += main_diff_src
-	executable('eix-diff', eix_diff_src,
+	eix_src = main_eix_src
+	eix_diff_link_with = diff_only_lib
+	eix_diff_link_with += output_lib
+	eix_diff_link_with += common_lib
+	executable('eix-diff', main_diff_src,
+		link_with : eix_diff_link_with,
 		include_directories : incdir,
 		install : true,
 	)
@@ -1633,27 +1711,23 @@ else
 	inst_link += [
 		[ 'eix', 'eix-diff' ],
 	]
+	eix_link_with += diff_only_lib
 	if separate_update
-		eix_src = common_src
-		eix_src += eix_only_src
-		eix_src += diff_only_src
-		eix_src += output_only_src
-		eix_src += main_output_src
+		eix_src = main_output_src
 	else
+		eix_src = main_all_src
 		inst_link += [
-			[ 'eix', 'eix-update' ]
+			[ 'eix', 'eix-update' ],
 		]
-		eix_src = common_src
-		eix_src += output_only_src
-		eix_src += eix_only_src
-		eix_src += diff_only_src
-		eix_src += update_only_src
-		eix_src += main_all_src
+		eix_link_with += update_only_lib
 	endif
 endif
+eix_link_with += output_lib
+eix_link_with += common_lib
 executable('eix', eix_src,
-	include_directories : incdir,
 	dependencies : eix_dep,
+	link_with : eix_link_with,
+	include_directories : incdir,
 	install : true,
 )
 
