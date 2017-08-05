@@ -664,11 +664,32 @@ foreach p : check_headers
 		description : 'Define if ' + h + ' can be included')
 endforeach
 
-cheaders = '''
+cdefines = ''
+
+minix = cxx.has_header('minix/config.h')
+conf.set('_MINIX', minix ? '1' : false,
+	description : 'Define to 1 if on MINIX')
+conf.set('_POSIX_SOURCE', minix ? '1' : false,
+	description : 'Define to 1 if needed, e.g. for stat')
+conf.set('_POSIX_1_SOURCE', minix ? '2' : false,
+	description : 'Define to 2 if needed for POSIX.1 features')
+if minix
+	cdefines += '''
+#define _MINIX 1
+#define _POSIX_SOURCE 1
+#define _POSIX_1_SOURCE 2
+'''
+	message('Support Minix')
+else
+	message('Minix: NO')
+endif
+
+cheaders = cdefines + '''
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 '''
 if conf.get('HAVE_SYS_FILE_H')
@@ -680,6 +701,35 @@ endif
 if conf.get('HAVE_GRP_H')
 	cheaders += '#include <grp.h>\n'
 endif
+cheaders += '''
+#include <cstdlib>
+#include <cstring>
+'''
+
+cextensions = '''
+#define __EXTENSIONS__ 1
+#define _ALL_SOURCE 1
+#define _GNU_SOURCE 1
+#define _POSIX_PTHREAD_SEMANTICS 1
+#define _TANDEM_SOURCE 1
+'''
+extensions = cxx.links(cextensions + cheaders + '''
+int main() { return 0; }
+''', args : flags_fatal)
+if extensions
+	cheaders = cextensions + cheaders
+	message('Support Extensions')
+else
+	message('Extensions: NO')
+endif
+conf.set('__EXTENSIONS__', extensions ? '1' : false,
+	description : 'Define to 1 to enable general extensions on Solaris')
+conf.set('_ALL_SOURCE', extensions ? '1' : false,
+	description : 'Define to 1 to enable GNU extensions')
+conf.set('_POSIX_PTHREAD_SEMANTICS', extensions ? '1' : false,
+	description : 'Define to 1 to enable threading extensions on Solaris')
+conf.set('_TANDEM_SOURCE', extensions ? '1' : false,
+	description : 'Define to 1 to enable extensions on HP NonStop')
 
 check_functions = [
 	['HAVE_ATOI', 'atoi'],
@@ -709,7 +759,7 @@ check_functions = [
 ]
 foreach p : check_functions
 	f = p.get(1)
-	conf.set(p.get(0), cxx.has_function(f), prefix : cheaders,
+	conf.set(p.get(0), cxx.has_function(f, prefix : cheaders),
 		description : 'Define if ' + f + '() is available')
 endforeach
 
