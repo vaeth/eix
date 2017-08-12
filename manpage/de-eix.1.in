@@ -18,6 +18,8 @@
 
 .B eix-sync
 
+.B eix-postsync
+
 .B eix-test-obsolete
 
 .B eix-remote
@@ -59,6 +61,15 @@ B<eix-sync> kann den Portage/Overlay-Baum syncen und vergleicht ihn mit dem alte
 Mehr über B<eix-sync> erfahren Sie durch den Aufruf B<eix-sync -h> und in der untenstehenden
 Beschreibung von I<@SYSCONFDIR@/eix-sync.conf>.
 Beachten Sie, dass der Inhalt dieser Datei auch in der Variablen B<EIX_SYNC_CONF> gespeichert werden kann.
+
+B<eix-postsync> ist eine einfache Alternative zu B<eix-sync>.
+Es ist ähnlich wie B<eix-update>, erzeugt aber zuvor ein Backup der Cache-Datei,
+so dass B<eix-diff> benutzt werden kann, um die Unterschiede zum vorherigen
+Syncen zu zeigen.
+Um B<eix-postsync> mit >=portage-2.3.7 zu benutzen, kann man das Verzeichnis
+/etc/portage/postsync.d/ erzeugen und dort einen Symlink auf B<eix-postsync> zu platzieren.
+Der Hauptnachteil gegenüber B<eix-sync> ist, dass B<eix-diff> im Falle inkompatibler
+eix-Upgrades fehlschlagen kann.
 
 B<eix-test-obsolete> ist ein Skript, das B<eix> mehrmals aufruft, um die Ausgabe von B<eix -tTc> besser organisiert auszugeben.
 

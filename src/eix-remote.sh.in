@@ -38,7 +38,7 @@ do	case $opt in
 done
 if $drop_permissions
 then	prg=./eix-drop-permissions
-	me=./eix-remote.in
+	me=./eix-remote.sh.in
 	exec "$prg" -- "$me" -K ${1+"$@"}
 	die "`eval_gettext 'failed to execute ${prg}'`"
 fi

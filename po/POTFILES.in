@@ -5,6 +5,7 @@ src/eix-functions.sh.sh.in
 src/eix-installed.sh.in
 src/eix-installed-after.sh.in
 src/eix-layman.sh.in
+src/eix-postsync.sh.in
 src/eix-remote.sh.in
 src/eix-sync.sh.in
 src/eix-test-obsolete.sh.in

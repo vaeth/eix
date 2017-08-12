@@ -2,6 +2,10 @@
 
 *eix-0.32.11
 	Martin Väth <martin at mvath.de>:
+	- Provide eix-postsync as a simple eix-sync alternative.
+	  To use it with >=portage-2.3.7 create /etc/portage/postsync.d/ and
+	  ln -s /usr/bin/eix-postsync /etc/portage/postsync.d/50-eix-postsync
+	  After syncing, call eix-diff manually if required
 	- Add support for meson/ninja build system (fast, but less compatible).
 	  Probably autotools and meson will both continue to be supported.
 	- Make new dialect the default

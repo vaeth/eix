@@ -1737,6 +1737,7 @@ bin_scripts = [
 	'eix-installed',
 	'eix-installed-after',
 	'eix-layman',
+	'eix-postsync',
 	'eix-remote',
 	'eix-sync',
 	'eix-test-obsolete',
@@ -1746,7 +1747,8 @@ sed_args = [
 	'-e', 's,/dev/null,@DEV_NULL@,g',
 	'-e', 's,\./eix-functions\.sh\.sh\.in,\'@BINDIR@/eix-functions.sh\',g',
 	'-e', 's,\./eix-drop-permissions,\'@BINDIR@/eix-drop-permissions\',g',
-	'-e', 's,\./eix-remote.in,\'@BINDIR@/eix-remote\',g',
+	'-e', 's,\./eix-postsync\.sh\.in,\'@BINDIR@/eix-postsync\',g',
+	'-e', 's,\./eix-remote\.sh\.in,\'@BINDIR@/eix-remote\',g',
 	'-e', 's,^#!/usr/bin/env sh$,#!@SH_SHEBANG@,g',
 	'--',
 ]

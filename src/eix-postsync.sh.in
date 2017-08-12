@@ -1,0 +1,41 @@
+#!/usr/bin/env sh
+# This script is part of the eix project and distributed under the
+# terms of the GNU General Public License v2.
+#
+# Author and Copyright (c):
+#   Martin V\"ath <martin@mvath.de>
+#
+set -u
+[ -z "${EIX_SYNC_RUNNING:++}" ] || exit 0
+if [ "${1-}" != '--self' ]
+then	prg=./eix-drop-permissions
+	me=./eix-postsync.sh.in
+	exec "$prg" -- "$me" '--self' ${1+"$@"}
+	exit
+fi
+shift
+if eix_funcs=`./eix-functions.sh.sh.in 2>/dev/null`
+then	eval "$eix_funcs"
+else	echo "${0##*/}: cannot find eix-functions.sh" >&2
+	exit 1
+fi
+ReadFunctions
+ReadVar eixcache EIX_CACHEFILE
+ReadVar eixprevious EIX_PREVIOUS
+CopyToPrevious() {
+	StatusInfo "`eval_pgettext 'eix-sync' \
+			'Copying old database to ${eixprevious}'`" \
+		"`eval_pgettext 'Statusline eix-sync' \
+		'Copying old database to ${eixprevious}'`"
+	cp -p -- "$eixcache" "$eixprevious" || \
+		die "`eval_pgettext 'eix-sync' \
+			'Could not copy database to ${eixprevious}'`"
+}
+EixUpdate() {
+	StatusInfo "`eval_pgettext 'eix-sync' 'Running eix-update'`" \
+		 "`eval_pgettext 'Statusline eix-sync' 'Running eix-update'`"
+	eix-update || die "`eval_pgettext 'eix-sync' 'eix-update failed'`"
+}
+CopyToPrevious
+EixUpdate
+Exit 0

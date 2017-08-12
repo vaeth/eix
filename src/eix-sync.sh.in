@@ -11,6 +11,8 @@
 set -u
 
 time_begin=`date '+%s' 2>/dev/null` || time_begin=
+EIX_SYNC_RUNNING=true
+export EIX_SYNC_RUNNING
 
 if eix_funcs=`./eix-functions.sh.sh.in 2>/dev/null`
 then	eval "$eix_funcs"

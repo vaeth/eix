@@ -316,6 +316,7 @@ eix-functions.sh \
 eix-installed \
 eix-installed-after \
 eix-layman \
+eix-postsync \
 eix-remote \
 eix-sync \
 eix-test-obsolete
@@ -351,6 +352,7 @@ eix-functions.sh.sh.in \
 eix-installed-after.sh.in \
 eix-installed.sh.in \
 eix-layman.sh.in \
+eix-postsync.sh.in \
 eix-remote.sh.in \
 eix-sync.sh.in \
 eix-test-obsolete.sh.in \
@@ -633,7 +635,8 @@ SED_IN = \
 		-e "s,/dev/null,$(DEV_NULL),g" \
 		-e "s,\./eix-functions\.sh\.sh\.in,'$(bindir)/eix-functions.sh',g" \
 		-e "s,\./eix-drop-permissions,'$(bindir)/eix-drop-permissions',g" \
-		-e "s,\./eix-remote.in,'$(bindir)/eix-remote',g" \
+		-e "s,\./eix-postsync\.sh\.in,'$(bindir)/eix-postsync',g" \
+		-e "s,\./eix-remote\.sh\.in,'$(bindir)/eix-remote',g" \
 		-e 's,!/usr/bin/env sh$$,!$(SH_SHEBANG),g' \
 		-e "s,\@TEXTDOMAIN\@,$(PACKAGE),g" \
 		-e "s,\@TEXTDOMAINDIR\@,$(localedir),g" \
@@ -652,6 +655,9 @@ eix-installed: eix-installed.sh.in
 	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
 
 eix-layman: eix-layman.sh.in
+	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
+
+eix-postsync: eix-postsync.sh.in
 	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
 
 eix-remote: eix-remote.sh.in
