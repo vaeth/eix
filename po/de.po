@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2017-07-23 20:21+0200\n"
-"PO-Revision-Date: 2017-07-12 06:14+0200\n"
+"POT-Creation-Date: 2017-08-12 20:50+0200\n"
+"PO-Revision-Date: 2017-08-12 21:11+0200\n"
 "Last-Translator: Martin Väth <martin@mvath.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -344,6 +344,40 @@ msgstr ""
 msgctxt "Statusline eix-layman"
 msgid "Analyzing"
 msgstr "Analyse"
+
+#: src/eix-postsync.sh.in src/eix-sync.sh.in
+#, sh-format
+msgctxt "eix-sync"
+msgid "Copying old database to ${eixprevious}"
+msgstr "Kopiere alte Datenbank nach ${eixprevious}"
+
+# Statusline should not contain utf8
+#: src/eix-postsync.sh.in src/eix-sync.sh.in
+#, sh-format
+msgctxt "Statusline eix-sync"
+msgid "Copying old database to ${eixprevious}"
+msgstr "Kopiere alte Datenbank nach ${eixprevious}"
+
+#: src/eix-postsync.sh.in src/eix-sync.sh.in
+#, sh-format
+msgctxt "eix-sync"
+msgid "Could not copy database to ${eixprevious}"
+msgstr "Konnte die Datenbank nicht nach ${eixprevious} kopieren"
+
+#: src/eix-postsync.sh.in
+msgctxt "eix-sync"
+msgid "Running eix-update"
+msgstr "Starte eix-update"
+
+#: src/eix-postsync.sh.in
+msgctxt "Statusline eix-sync"
+msgid "Running eix-update"
+msgstr "Starte eix-update"
+
+#: src/eix-postsync.sh.in
+msgctxt "eix-sync"
+msgid "eix-update failed"
+msgstr "eix-update schlug fehl"
 
 #: src/eix-remote.sh.in
 #, sh-format
@@ -1011,25 +1045,6 @@ msgstr "Kopiere alten ${eixcache} Cache in temporäre Datei"
 msgctxt "eix-sync"
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Konnte die Datenbank nicht in temporäre Datei ${tmpfile} kopieren"
-
-#: src/eix-sync.sh.in
-#, sh-format
-msgctxt "eix-sync"
-msgid "Copying old database to ${eixprevious}"
-msgstr "Kopiere alte Datenbank nach ${eixprevious}"
-
-# Statusline should not contain utf8
-#: src/eix-sync.sh.in
-#, sh-format
-msgctxt "Statusline eix-sync"
-msgid "Copying old database to ${eixprevious}"
-msgstr "Kopiere alte Datenbank nach ${eixprevious}"
-
-#: src/eix-sync.sh.in
-#, sh-format
-msgctxt "eix-sync"
-msgid "Could not copy database to ${eixprevious}"
-msgstr "Konnte die Datenbank nicht nach ${eixprevious} kopieren"
 
 #: src/eix-sync.sh.in
 #, sh-format

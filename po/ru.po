@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2017-07-23 20:21+0200\n"
-"PO-Revision-Date: 2017-07-12 06:16+0200\n"
+"POT-Creation-Date: 2017-08-12 20:50+0200\n"
+"PO-Revision-Date: 2017-08-12 21:10+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: ru\n"
@@ -360,6 +360,44 @@ msgstr ""
 msgctxt "Statusline eix-layman"
 msgid "Analyzing"
 msgstr ""
+
+#: src/eix-postsync.sh.in src/eix-sync.sh.in
+#, sh-format
+msgctxt "eix-sync"
+msgid "Copying old database to ${eixprevious}"
+msgstr "Копирую старую базу данных в ${eixprevious}"
+
+# Statusline should not contain utf8
+# msgstr 'Копирую старую базу данных в ${eixprevious}'
+#: src/eix-postsync.sh.in src/eix-sync.sh.in
+#, sh-format
+msgctxt "Statusline eix-sync"
+msgid "Copying old database to ${eixprevious}"
+msgstr ""
+
+#: src/eix-postsync.sh.in src/eix-sync.sh.in
+#, sh-format
+msgctxt "eix-sync"
+msgid "Could not copy database to ${eixprevious}"
+msgstr "Невозможно скопировать базу данных в ${eixprevious}"
+
+# fuzzy
+#: src/eix-postsync.sh.in
+msgctxt "eix-sync"
+msgid "Running eix-update"
+msgstr "Запуск eix-update"
+
+# fuzzy
+#: src/eix-postsync.sh.in
+msgctxt "Statusline eix-sync"
+msgid "Running eix-update"
+msgstr "Запуск eix-update"
+
+# fuzzy
+#: src/eix-postsync.sh.in
+msgctxt "eix-sync"
+msgid "eix-update failed"
+msgstr "ошибка eix-update"
 
 #: src/eix-remote.sh.in
 #, sh-format
@@ -1028,26 +1066,6 @@ msgstr ""
 msgctxt "eix-sync"
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Невозможно скопировать базу данных во временный файл ${tmpfile}"
-
-#: src/eix-sync.sh.in
-#, sh-format
-msgctxt "eix-sync"
-msgid "Copying old database to ${eixprevious}"
-msgstr "Копирую старую базу данных в ${eixprevious}"
-
-# Statusline should not contain utf8
-# msgstr 'Копирую старую базу данных в ${eixprevious}'
-#: src/eix-sync.sh.in
-#, sh-format
-msgctxt "Statusline eix-sync"
-msgid "Copying old database to ${eixprevious}"
-msgstr ""
-
-#: src/eix-sync.sh.in
-#, sh-format
-msgctxt "eix-sync"
-msgid "Could not copy database to ${eixprevious}"
-msgstr "Невозможно скопировать базу данных в ${eixprevious}"
 
 # fuzzy
 # sh-format

@@ -1,6 +1,6 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.32.11
+*eix-0.33.0
 	Martin Väth <martin at mvath.de>:
 	- Provide eix-postsync as a simple eix-sync alternative.
 	  To use it with >=portage-2.3.7 create /etc/portage/postsync.d/ and
