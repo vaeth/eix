@@ -10,6 +10,7 @@
 #include "portage/overlay.h"
 #include <config.h>
 
+#include <algorithm>
 #include <string>
 
 #include "eixTk/assert.h"
@@ -27,6 +28,28 @@ static WordMap *path_label_hash = NULLPTR;
 void OverlayIdent::init_static() {
 	eix_assert_static(path_label_hash == NULLPTR);
 	path_label_hash = new WordMap;
+}
+
+eix::SignedBool OverlayIdent::compare(const OverlayIdent& left, const OverlayIdent& right) {
+	if(left.priority < right.priority) {
+		return -1;
+	}
+	if(left.priority > right.priority) {
+		return 1;
+	}
+	if(left.label < right.label) {
+		return -1;
+	}
+	if(left.label > right.label) {
+		return 1;
+	}
+	if(left.path < right.path) {
+		return -1;
+	}
+	if(left.path > right.path) {
+		return 1;
+	}
+	return 0;
 }
 
 void OverlayIdent::readLabel_internal(const char *patharg) {
@@ -172,4 +195,13 @@ void RepoList::clear() {
 	trust_cache = true;
 	super::clear();
 	cache.clear();
+}
+
+void RepoList::sort() {
+	OverlayVec::iterator it(super::begin());
+	if(unlikely(it == super::end())) {
+		return;
+	}
+	++it;
+	std::sort(it, super::end());
 }

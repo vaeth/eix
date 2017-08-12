@@ -240,7 +240,7 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 			}
 		}
 		const string *main_repo(NULLPTR);
-		OverlayIdent::Priority priority(0);
+		OverlayIdent::Priority priority(-1000);
 		string& portdirref((*this)["PORTDIR"]);
 		if(likely(have_repos)) {
 			if(portdirref.empty()) {
@@ -288,6 +288,7 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 				if(unlikely(label == main_repo_check)) {
 					continue;
 				}
+				priority = 0;
 				const string *prio(reposfile.find(string("priority:") + label));
 				if(prio != NULLPTR) {
 					priority = my_atos(prio->c_str());
@@ -295,6 +296,7 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 				add_repo(it->second, true, label.c_str(), priority, false);
 			}
 		}
+		repos.sort();
 		for(RepoList::const_iterator it(repos.second());
 			likely(it != repos.end()); ++it) {
 			overlayvec.push_back(it->path);
@@ -748,7 +750,7 @@ void PortageSettings::pushback_categories(WordVec *vec) {
 void PortageSettings::addOverlayProfiles(CascadingProfile *p) const {
 	RepoList::size_type j(1);
 	for(RepoList::const_iterator i(repos.second()); likely(i != repos.end()); ++i, ++j) {
-		if(!i->know_path) {
+		if(!(i->know_path)) {
 			continue;
 		}
 		string path(m_eprefixaccessoverlays);

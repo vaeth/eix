@@ -177,7 +177,6 @@ bool CascadingProfile::readremoveFiles() {
 		if(handler == NULLPTR) {
 			continue;
 		}
-
 		OverlayIdent& overlay(m_portagesettings->repos[file->repo_num()]);
 		overlay.readLabel();
 		if((this->*handler)(file->name(),

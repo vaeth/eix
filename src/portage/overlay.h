@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "eixTk/attribute.h"
+#include "eixTk/eixint.h"
 #include "eixTk/inttypes.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/null.h"
@@ -50,6 +51,7 @@ class OverlayIdent {
 				readLabel_internal(patharg);
 			}
 		}
+
 		void readLabel() {
 			readLabel(NULLPTR);
 		}
@@ -59,12 +61,44 @@ class OverlayIdent {
 			know_label = true;
 		}
 
+		static eix::SignedBool compare(const OverlayIdent& left, const OverlayIdent& right);
+
 		std::string human_readable() const;
 
 		std::string name() const;
 
 		static void init_static();
 };
+
+inline static bool operator<(const OverlayIdent& left, const OverlayIdent& right);
+inline static bool operator<(const OverlayIdent& left, const OverlayIdent& right) {
+	return (OverlayIdent::compare(left, right) < 0);
+}
+
+inline static bool operator>(const OverlayIdent& left, const OverlayIdent& right);
+inline static bool operator>(const OverlayIdent& left, const OverlayIdent& right) {
+	return (OverlayIdent::compare(left, right) > 0);
+}
+
+inline static bool operator==(const OverlayIdent& left, const OverlayIdent& right);
+inline static bool operator==(const OverlayIdent& left, const OverlayIdent& right) {
+	return (OverlayIdent::compare(left, right) == 0);
+}
+
+inline static bool operator!=(const OverlayIdent& left, const OverlayIdent& right);
+inline static bool operator!=(const OverlayIdent& left, const OverlayIdent& right) {
+	return (OverlayIdent::compare(left, right) != 0);
+}
+
+inline static bool operator>=(const OverlayIdent& left, const OverlayIdent& right);
+inline static bool operator>=(const OverlayIdent& left, const OverlayIdent& right) {
+	return (OverlayIdent::compare(left, right) >= 0);
+}
+
+inline static bool operator<=(const OverlayIdent& left, const OverlayIdent& right);
+inline static bool operator<=(const OverlayIdent& left, const OverlayIdent& right) {
+	return (OverlayIdent::compare(left, right) <= 0);
+}
 
 typedef std::vector<OverlayIdent> OverlayVec;
 
@@ -82,9 +116,11 @@ class RepoList : public OverlayVec {
 		const char *get_path(const std::string& label);
 
 		ATTRIBUTE_NONNULL_ RepoList::iterator find_filename(const char *search, bool parent_ok, bool resolve_mask);
+
 		ATTRIBUTE_NONNULL_ RepoList::iterator find_filename(const char *search, bool parent_ok) {
 			return find_filename(search, parent_ok, true);
 		}
+
 		ATTRIBUTE_NONNULL_ RepoList::iterator find_filename(const char *search) {
 			return find_filename(search, false);
 		}
@@ -100,11 +136,14 @@ class RepoList : public OverlayVec {
 		}
 
 		void push_back(const OverlayIdent& s, bool no_path_dupes);
+
 		void push_back(const OverlayIdent& s) {
 			push_back(s, false);
 		}
 
 		void clear();
+
+		void sort();
 };
 
 #endif  // SRC_PORTAGE_OVERLAY_H_
