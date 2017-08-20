@@ -6,6 +6,7 @@
 	  To use it with >=portage-2.3.7 create /etc/portage/postsync.d/ and
 	  ln -s /usr/bin/eix-postsync /etc/portage/postsync.d/50-eix-postsync
 	  After syncing, call eix-diff manually if required
+	- Provide a wrapper for eix-function.sh
 	- Add support for meson/ninja build system (fast, but less compatible).
 	  Probably autotools and meson will both continue to be supported.
 	- Make new dialect the default

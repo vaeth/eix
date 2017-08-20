@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2017-08-12 20:50+0200\n"
+"POT-Creation-Date: 2017-08-20 18:09+0200\n"
 "PO-Revision-Date: 2017-08-12 21:11+0200\n"
 "Last-Translator: Martin Väth <martin@mvath.de>\n"
 "Language-Team: German\n"
@@ -21,62 +21,62 @@ msgstr ""
 "X-Generator: Poedit 1.5.5\n"
 
 # Statusline should not contain utf8
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgctxt "Statusline eix-functions"
 msgid "Finished"
 msgstr "Fertig"
 
 # Statusline should not contain utf8
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgctxt "Statusline eix-functions"
 msgid "Failure"
 msgstr "Fehlschlag"
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 #, sh-format
 msgid "Problems running ${eixf_cmd}"
 msgstr "Probleme mit ${eixf_cmd}"
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgid "push.sh from https://github.com/vaeth/push/ is needed"
 msgstr "push.sh aus https://github.com/vaeth/push/ wird benötigt"
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgid "Installation of https://github.com/vaeth/quoter/ is needed"
 msgstr "Installation von https://github.com/vaeth/quoter/ wird benötigt"
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgid "quoter_pipe.sh from https://github.com/vaeth/quoter/ is needed"
 msgstr "quoter_pipe.sh aus https://github.com/vaeth/quoter/ wird benötigt"
 
 # Statusline should not contain utf8
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgctxt "Statusline eix-functions"
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-functions.sh.sh.in src/eix-remote.sh.in
+#: src/eix-functions.sh.in src/eix-remote.sh.in
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 #, sh-format
 msgid "${eixf_patha} cannot be found in PATH"
 msgstr "${eixf_patha} konnte im PATH nicht gefunden werden"
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgid "found no free temporary name after 10000 attempts"
 msgstr "Keinen möglichen temporären Namen nach 10000 Versuchen gefunden"
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgid "cannot create temporary directory"
 msgstr "Kein temporäres Verzeichnis erzeugbar"
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgid "cannot create temporary file"
 msgstr "Keine temporäre Datei erzeugbar"
 

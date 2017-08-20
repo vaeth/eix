@@ -14,7 +14,7 @@ then	prg=./eix-drop-permissions
 	exit
 fi
 shift
-if eix_funcs=`./eix-functions.sh.sh.in 2>/dev/null`
+if eix_funcs=`./eix-functions.sh.in 2>/dev/null`
 then	eval "$eix_funcs"
 else	echo "${0##*/}: cannot find eix-functions.sh" >&2
 	exit 1

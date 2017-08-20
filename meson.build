@@ -1,5 +1,5 @@
 project('eix', 'cpp',
-	version : '0.33.0',
+	version : '0.32.11',
 	license : 'GPLv2',
 	default_options : [
 		'prefix=/usr',
@@ -83,6 +83,7 @@ cxx_id = cxx.get_id()
 cross = meson.is_cross_build()
 sh = find_program('sh')
 sed = find_program('sed')
+echo = find_program('echo')
 incdir = include_directories('src')
 
 builddir = meson.current_build_dir()
@@ -1733,7 +1734,7 @@ executable('eix', eix_src,
 
 bin_scripts = [
 	'eix-etcat',
-	'eix-functions.sh',
+	'eix-functions',
 	'eix-installed',
 	'eix-installed-after',
 	'eix-layman',
@@ -1745,13 +1746,15 @@ bin_scripts = [
 
 sed_args = [
 	'-e', 's,/dev/null,@DEV_NULL@,g',
-	'-e', 's,\./eix-functions\.sh\.sh\.in,\'@BINDIR@/eix-functions.sh\',g',
+	'-e', 's,\./eix-functions\.sh\.in,\'@BINDIR@/eix-functions.sh\',g',
 	'-e', 's,\./eix-drop-permissions,\'@BINDIR@/eix-drop-permissions\',g',
 	'-e', 's,\./eix-postsync\.sh\.in,\'@BINDIR@/eix-postsync\',g',
 	'-e', 's,\./eix-remote\.sh\.in,\'@BINDIR@/eix-remote\',g',
 	'-e', 's,^#!/usr/bin/env sh$,#!@SH_SHEBANG@,g',
 	'--',
 ]
+eixdatadir = join_paths(datadir, 'eix')
+eixdatafile = join_paths(eixdatadir, 'eix-functions')
 foreach file : bin_scripts
 	file_sed = file + '.sh.subst'
 	path_in = files(join_paths('src', file + '.sh.in'))
@@ -1767,8 +1770,19 @@ foreach file : bin_scripts
 		output : file,
 		configuration : subst,
 	)
-	install_data(c, install_dir : bindir)
+	if file != 'eix-functions'
+		install_data(c, install_dir : bindir)
+	else
+		install_data(c, install_dir : eixdatadir,
+			install_mode : 'rw-r--r--')
+	endif
 endforeach
+c = configure_file(
+	output : 'eix-functions.sh',
+	command : [ echo, '#!' + eprefix_default + '/bin/cat ' + eixdatafile ],
+	capture : true,
+)
+install_data(c, install_dir : bindir, install_mode : 'rwxr-xr-x')
 
 foreach file : zsh_completions
 	file_sed = file + '.subst'

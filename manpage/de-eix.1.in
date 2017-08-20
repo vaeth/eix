@@ -99,7 +99,7 @@ genutzt werden kann:
 
 B<eix-functions.sh> gibt Hilfsfunktionen aus, die von B<eix-sync>, B<eix-remote>, und B<eix-layman>
 benutzt werden und die in ähnlichen Skripten benutzt werden können.
-Man kann entweder die Ausgabe des Programms mit "eval" verarbeiten oder das Programm sourcen.
+Man sollte die Ausgabe des Programms mit "eval" verarbeiten.
 Beachten Sie, dass unmittelbar danach normalerweise zur Initialisierung
 B<ReadFunctions> aufgerufen werden muss.
 

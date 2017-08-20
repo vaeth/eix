@@ -14,7 +14,7 @@ time_begin=`date '+%s' 2>/dev/null` || time_begin=
 EIX_SYNC_RUNNING=true
 export EIX_SYNC_RUNNING
 
-if eix_funcs=`./eix-functions.sh.sh.in 2>/dev/null`
+if eix_funcs=`./eix-functions.sh.in 2>/dev/null`
 then	eval "$eix_funcs"
 else	echo "${0##*/}: cannot find eix-functions.sh" >&2
 	exit 1

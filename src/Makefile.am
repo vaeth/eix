@@ -9,6 +9,8 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
 localedir = $(datadir)/locale
+eixdatadir = $(datadir)/eix
+
 AM_CXXFLAGS = \
 -DSYSCONFDIR=\"$(sysconfdir)\" \
 -DLOCALEDIR=\"$(localedir)\" \
@@ -16,6 +18,9 @@ $(SQLITE_CFLAGS)
 
 nobase_nodist_sysconf_DATA = \
 eixrc/00-eixrc
+
+nodist_eixdata_DATA = \
+eix-functions
 
 header_src = \
 database/io.cc \
@@ -328,6 +333,7 @@ tags \
 $(nobase_nodist_sysconf_DATA) \
 $(nodist_sysconf_DATA) \
 $(nodist_bin_SCRIPTS) \
+$(nodist_eixdata_DATA) \
 $(nodist_eix_only_src) \
 $(nodist_extra_eix_only_src) \
 $(nodist_diff_only_src) \
@@ -348,7 +354,7 @@ versionsort$(EXEEXT)
 # Files we need for generation in the tarball which are not canonical
 EXTRA_DIST = \
 eix-etcat.sh.in \
-eix-functions.sh.sh.in \
+eix-functions.sh.in \
 eix-installed-after.sh.in \
 eix-installed.sh.in \
 eix-layman.sh.in \
@@ -633,7 +639,7 @@ SED_IN = \
 		-e "s,\@DEFAULT_REMOTE_PATH1\@,$(DEFAULT_REMOTE_PATH1),g" \
 		-e "s,\@DEFAULT_REMOTE_PATH2\@,$(DEFAULT_REMOTE_PATH2),g" \
 		-e "s,/dev/null,$(DEV_NULL),g" \
-		-e "s,\./eix-functions\.sh\.sh\.in,'$(bindir)/eix-functions.sh',g" \
+		-e "s,\./eix-functions\.sh\.in,'$(bindir)/eix-functions.sh',g" \
 		-e "s,\./eix-drop-permissions,'$(bindir)/eix-drop-permissions',g" \
 		-e "s,\./eix-postsync\.sh\.in,'$(bindir)/eix-postsync',g" \
 		-e "s,\./eix-remote\.sh\.in,'$(bindir)/eix-remote',g" \
@@ -645,7 +651,7 @@ SED_IN = \
 eix-etcat: eix-etcat.sh.in
 	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
 
-eix-functions.sh: eix-functions.sh.sh.in
+eix-functions: eix-functions.sh.in
 	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
 
 eix-installed-after: eix-installed-after.sh.in
@@ -669,10 +675,13 @@ eix-sync: eix-sync.sh.in
 eix-test-obsolete: eix-test-obsolete.sh.in
 	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
 
+eix-functions.sh:
+	$(AM_V_GEN)echo '#!@EPREFIX_DEFAULT@/bin/cat $(eixdatadir)/eix-functions' > "$@"
+
 SUFFIXES = .in
 .in:
 	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
 
 # Enable us to 'make clean' in src/
 clean-local:
-	$(AM_V_at)find "$(top_srcdir)" -name '*.rpo' -exec $(RM) -v -- '{}' '+'
+	$(AM_V_at)find "$(top_srcdir)" -name '*.rpo' -exec $(RM) -vf -- '{}' '+'

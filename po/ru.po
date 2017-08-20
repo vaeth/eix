@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2017-08-12 20:50+0200\n"
+"POT-Creation-Date: 2017-08-20 18:09+0200\n"
 "PO-Revision-Date: 2017-08-12 21:10+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -28,64 +28,64 @@ msgstr ""
 
 # Statusline should not contain utf8
 # msgstr 'Готово'
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgctxt "Statusline eix-functions"
 msgid "Finished"
 msgstr ""
 
 # Statusline should not contain utf8
 # msgstr 'Ошибка'
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgctxt "Statusline eix-functions"
 msgid "Failure"
 msgstr ""
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 #, sh-format
 msgid "Problems running ${eixf_cmd}"
 msgstr "Проблема при запуске ${eixf_cmd}"
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgid "push.sh from https://github.com/vaeth/push/ is needed"
 msgstr ""
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgid "Installation of https://github.com/vaeth/quoter/ is needed"
 msgstr ""
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgid "quoter_pipe.sh from https://github.com/vaeth/quoter/ is needed"
 msgstr ""
 
 # Statusline should not contain utf8
 # msgstr 'Запускаю eix-update'
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgctxt "Statusline eix-functions"
 msgid "Calling eix-update"
 msgstr ""
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgid "Calling eix-update"
 msgstr "Запускаю eix-update"
 
-#: src/eix-functions.sh.sh.in src/eix-remote.sh.in
+#: src/eix-functions.sh.in src/eix-remote.sh.in
 msgid "eix-update failed"
 msgstr "ошибка eix-update"
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 #, sh-format
 msgid "${eixf_patha} cannot be found in PATH"
 msgstr "${eixf_patha} не найден в PATH"
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgid "found no free temporary name after 10000 attempts"
 msgstr "невозможно найти свободное временное имя после 10000 попыток"
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgid "cannot create temporary directory"
 msgstr "невозможно создать временный каталог"
 
-#: src/eix-functions.sh.sh.in
+#: src/eix-functions.sh.in
 msgid "cannot create temporary file"
 msgstr "невозможно создать временный каталог"
 

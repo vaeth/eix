@@ -96,7 +96,7 @@ B<eix-layman> также является примером использова�
 
 B<eix-functions.sh> outputs helper functions used by B<eix-sync>, B<eix-remote>, and B<eix-layman>.
 You might want to use them for your own similar scripts.
-You can either "eval" the output of this program or source it.
+You can either "eval" the output of this program.
 Note that after this, you should usually call B<ReadFunctions> for
 initialisation.
 

@@ -1,7 +1,7 @@
 # List of source files which (possibly) contain translatable strings.
 # Shell type source files
 src/eix-etcat.sh.in
-src/eix-functions.sh.sh.in
+src/eix-functions.sh.in
 src/eix-installed.sh.in
 src/eix-installed-after.sh.in
 src/eix-layman.sh.in
