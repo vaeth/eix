@@ -12,7 +12,6 @@
 
 #include <cstdlib>
 
-#include <map>
 #include <string>
 #include <vector>
 
@@ -24,20 +23,20 @@
 #include "eixTk/regexp.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
+#include "eixTk/unordered_map.h"
 #include "eixrc/eixrc.h"
 #include "eixrc/global.h"
 #include "search/algorithms.h"
 #include "search/nowarn.h"
 
-using std::map;
 using std::string;
 using std::vector;
 
 static void init_match_field_map();
 static void init_match_algorithm_map();
 
-typedef map<string, PackageTest::MatchField> MatchFieldMap;
-typedef map<string, PackageTest::MatchAlgorithm> MatchAlgorithmMap;
+typedef UNORDERED_MAP<string, PackageTest::MatchField> MatchFieldMap;
+typedef UNORDERED_MAP<string, PackageTest::MatchAlgorithm> MatchAlgorithmMap;
 
 static MatchFieldMap *static_match_field_map = NULLPTR;
 static MatchAlgorithmMap *static_match_algorithm_map = NULLPTR;

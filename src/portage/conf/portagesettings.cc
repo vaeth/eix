@@ -14,7 +14,6 @@
 #include <cstring>
 
 #include <algorithm>
-#include <map>
 #include <string>
 #include <vector>
 
@@ -32,6 +31,7 @@
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/sysutils.h"
+#include "eixTk/unordered_map.h"
 #include "eixTk/utils.h"
 #include "eixTk/varsreader.h"
 #include "eixrc/eixrc.h"
@@ -45,7 +45,6 @@
 #include "portage/packagesets.h"
 #include "portage/version.h"
 
-using std::map;
 using std::string;
 using std::vector;
 
@@ -840,7 +839,7 @@ inline static void increase(char *s) {
 **/
 bool PortageUserConfig::CheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const {
 	bool rvalue(false);
-	map<Version*, char> counter;
+	UNORDERED_MAP<Version*, char> counter;
 	MaskList<KeywordMask>::Get *keyword_masks(list->get(p));
 	if(keyword_masks != NULLPTR) {
 		for(MaskList<KeywordMask>::Get::const_iterator it(keyword_masks->begin());
@@ -1041,7 +1040,7 @@ bool PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 	}
 	m_settings->get_effective_keywords_userprofile(p);
 
-	map<Version*, WordVec> sorted_by_versions;
+	UNORDERED_MAP<Version*, WordVec> sorted_by_versions;
 
 	const MaskList<KeywordMask>::Get *keyword_masks(m_accept_keywords.get(p));
 	if(keyword_masks != NULLPTR) {

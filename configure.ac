@@ -608,13 +608,13 @@ AS_IF([$strong_security],
 			-fsanitize=bounds-strict
 			-fsanitize=alignment
 			-fsanitize=object-size
-			-fsanitize=vptr
 			-mmpx
 			-fcheck-pointer-bounds
 			-Wchkp
 		"])
 	# The following -fsanitize do not work properly
 	# -fsanitize=threads
+	# -fsanitize=vptr
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			$my_sanitize \
 		], [$my_ldfatal], [], [:])

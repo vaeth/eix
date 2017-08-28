@@ -13,7 +13,6 @@
 #include <config.h>
 
 #include <list>
-#include <map>
 #include <string>
 #include <vector>
 
@@ -25,6 +24,7 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/ptr_container.h"
+#include "eixTk/unordered_map.h"
 #include "portage/basicversion.h"
 #include "portage/extendedversion.h"
 #include "portage/instversion.h"
@@ -514,7 +514,7 @@ class Package : public eix::ptr_container<std::list<Version *> > {
 };
 
 class PackageSave {
-		typedef std::map<const Version*, KeywordSave> DataType;
+		typedef UNORDERED_MAP<const Version*, KeywordSave> DataType;
 		DataType data;
 
 	public:

@@ -15,7 +15,6 @@
 #include <cstring>
 
 #include <algorithm>
-#include <map>
 #include <string>
 #include <vector>
 
@@ -37,6 +36,7 @@
 #include "eixTk/ptr_container.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
+#include "eixTk/unordered_map.h"
 #include "eixTk/utils.h"
 #include "eixrc/eixrc.h"
 #include "eixrc/global.h"
@@ -63,7 +63,6 @@
 
 template<typename m_Type> class MaskList;
 
-using std::map;
 using std::string;
 using std::vector;
 
@@ -1218,8 +1217,8 @@ static void print_unused(const string& filename, const string& excludefiles, con
 }
 
 static void print_removed(const string& dirname, const string& excludefiles, const PackageList& packagelist) {
-	/* For faster testing, we build a category->name set */
-	typedef map<string, WordSet> CatName;
+	/* For faster testing, we build a category->name map */
+	typedef UNORDERED_MAP<string, WordSet> CatName;
 	CatName cat_name;
 	for(PackageList::const_iterator pit(packagelist.begin());
 		likely(pit != packagelist.end()); ++pit) {

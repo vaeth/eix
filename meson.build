@@ -532,7 +532,7 @@ if strong_security
 		'-fsanitize=bounds-strict',
 		'-fsanitize=alignment',
 		'-fsanitize=object-size',
-		'-fsanitize=vptr',
+		# '-fsanitize=vptr',
 		'-mmpx',
 		'-fcheck-pointer-bounds',
 		'-Wchkp',

@@ -12,11 +12,11 @@
 
 #include <config.h>
 
-#include <map>
 #include <string>
 
 #include "eixTk/attribute.h"
 #include "eixTk/regexp.h"
+#include "eixTk/unordered_map.h"
 #include "search/levenshtein.h"
 
 class Package;
@@ -119,7 +119,8 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 		access from the static FuzzyAlgorithm::compare.
 		I really don't know how to do this ..
 		**/
-		static std::map<std::string, Levenshtein> *levenshtein_map;
+		typedef UNORDERED_MAP<std::string, Levenshtein> LevenshteinMap;
+		static LevenshteinMap *levenshtein_map;
 
 		bool can_simplify() {
 			return false;

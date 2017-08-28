@@ -10,7 +10,6 @@
 #include "portage/mask_list.h"
 #include <config.h>
 
-#include <map>
 #include <string>
 
 #include "eixTk/likely.h"
@@ -19,6 +18,7 @@
 #include "eixTk/stringlist.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
+#include "eixTk/unordered_map.h"
 #include "eixTk/utils.h"
 #include "portage/basicversion.h"
 #include "portage/keywords.h"
@@ -27,7 +27,6 @@
 
 class Version;
 
-using std::map;
 using std::string;
 
 template<> bool MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines, const ParseError *parse_error) {
@@ -310,7 +309,7 @@ void PreList::finalize() {
 
 	// We first build a map of the result and
 	// set the duplicate names to removed.
-	typedef map<string, PreListEntry> Res;
+	typedef UNORDERED_MAP<string, PreListEntry> Res;
 	Res result;
 	for(Order::const_iterator it(order.begin());
 		likely(it != order.end()); ++it) {

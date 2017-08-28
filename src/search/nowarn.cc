@@ -8,7 +8,6 @@
 #include "search/nowarn.h"
 #include <config.h>
 
-#include <map>
 #include <set>
 #include <string>
 #include <utility>
@@ -19,6 +18,7 @@
 #include "eixTk/null.h"
 #include "eixTk/parseerror.h"
 #include "eixTk/stringtypes.h"
+#include "eixTk/unordered_map.h"
 #include "portage/basicversion.h"
 #include "portage/conf/portagesettings.h"
 #include "portage/keywords.h"
@@ -27,14 +27,13 @@
 #include "portage/packagesets.h"
 #include "search/packagetest.h"
 
-using std::map;
 using std::pair;
 using std::set;
 using std::string;
 
 class NowarnKeywords {
 	private:
-		typedef map<string, NowarnFlags> NameMap;
+		typedef UNORDERED_MAP<string, NowarnFlags> NameMap;
 		NameMap name_map;
 
 	public:

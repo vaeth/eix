@@ -15,7 +15,6 @@
 #ifdef WITH_SQLITE
 #include <sqlite3.h>
 
-#include <map>
 #include <string>
 
 #include "eixTk/attribute.h"
@@ -28,13 +27,13 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringutils.h"
+#include "eixTk/unordered_map.h"
 #include "portage/basicversion.h"
 #include "portage/depend.h"
 #include "portage/package.h"
 #include "portage/packagetree.h"
 #include "portage/version.h"
 
-using std::map;
 using std::string;
 
 /* Path to portage cache */
@@ -89,7 +88,7 @@ the constructor, all functions should be const or static.
 **/
 
 typedef SqliteCache::TrueIndexMap::size_type TrueIndexRes;
-typedef map<string, TrueIndexRes> TrueIndexMapper;
+typedef UNORDERED_MAP<string, TrueIndexRes> TrueIndexMapper;
 
 class TrueIndex : public TrueIndexMapper {
 	public:

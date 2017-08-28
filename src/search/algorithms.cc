@@ -14,7 +14,6 @@
 
 #include <cstring>
 
-#include <map>
 #include <string>
 
 #include "eixTk/assert.h"
@@ -33,11 +32,9 @@ fnmatch(3) tells that this is a GNU extension.
 #define FNMATCH_FLAGS 0
 #endif
 
-using std::map;
 using std::string;
 
-typedef map<string, Levenshtein> LevenshteinMap;
-LevenshteinMap *FuzzyAlgorithm::levenshtein_map = NULLPTR;
+FuzzyAlgorithm::LevenshteinMap *FuzzyAlgorithm::levenshtein_map = NULLPTR;
 
 bool BaseAlgorithm::operator()(const char *s, Package *p, bool simplify) {
 	if(can_simplify() && unlikely(!have_simplified) && likely(simplify)) {

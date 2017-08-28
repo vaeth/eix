@@ -14,7 +14,6 @@
 
 #include <sys/types.h>
 
-#include <map>
 #include <stack>
 #include <string>
 #include <vector>
@@ -24,6 +23,7 @@
 #include "eixTk/attribute.h"
 #include "eixTk/null.h"
 #include "eixTk/outputstring.h"
+#include "eixTk/unordered_map.h"
 #include "portage/extendedversion.h"
 #include "portage/package.h"
 #include "portage/set_stability.h"
@@ -175,7 +175,7 @@ class VarParserCacheNode {
 		}
 };
 
-typedef std::map<std::string, VarParserCacheNode> VarParserCacheMap;
+typedef UNORDERED_MAP<std::string, VarParserCacheNode> VarParserCacheMap;
 
 class VarParserCache : public VarParserCacheMap {
 	public:
@@ -201,7 +201,7 @@ class PrintFormat {
 
 		static std::string::size_type currcolumn;
 
-		mutable std::map<std::string, OutputString> user_variables;
+		mutable UNORDERED_MAP<std::string, OutputString> user_variables;
 		/* Looping over variables is a bit tricky:
 		   We store the parsed thing in VarParserCache.
 		   Additionally, we store there whether we currently loop

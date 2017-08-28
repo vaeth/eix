@@ -25,6 +25,7 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
+#include "eixTk/unordered_map.h"
 
 // check_includes: include "eixTk/stringutils.h"
 
@@ -540,5 +541,20 @@ template<typename T, typename Y> inline static void make_vector(std::vector<T> *
 		the_list->push_back(it->first);
 	}
 }
+
+#ifdef HAVE_UNORDERED_MAP
+/**
+Make a vector from map->first
+**/
+template<typename T, typename Y> inline static void make_vector(std::vector<T> *the_list, const UNORDERED_MAP<T, Y>& the_map) {
+	the_list->clear();
+	the_list->reserve(the_map.size());
+	for(typename UNORDERED_MAP<T, Y>::const_iterator it(the_map.begin()),
+			it_end(the_map.end());
+		likely(it != it_end); ++it) {
+		the_list->push_back(it->first);
+	}
+}
+#endif  // HAVE_UNORDERED_MAP
 
 #endif  // SRC_EIXTK_STRINGUTILS_H_

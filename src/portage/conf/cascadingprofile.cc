@@ -12,7 +12,6 @@
 
 #include <cstring>
 
-#include <map>
 #include <string>
 #include <utility>
 
@@ -27,6 +26,7 @@
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/sysutils.h"
+#include "eixTk/unordered_map.h"
 #include "eixTk/utils.h"
 #include "portage/conf/portagesettings.h"
 #include "portage/mask.h"
@@ -36,7 +36,6 @@
 #define PROFILE_LINK1 "/etc/make.profile"
 #define PROFILE_LINK2 "/etc/portage/make.profile"
 
-using std::map;
 using std::pair;
 using std::string;
 
@@ -126,7 +125,7 @@ bool CascadingProfile::addProfile(const char *profile, WordUnorderedSet *sourced
 
 class ProfileFilenames {
 		typedef CascadingProfile::Handler Handler;
-		typedef map<string, Handler> NameMap;
+		typedef UNORDERED_MAP<string, Handler> NameMap;
 		NameMap name_map;
 
 	public:

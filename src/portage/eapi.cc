@@ -8,18 +8,17 @@
 #include "portage/eapi.h"
 #include <config.h>
 
-#include <map>
 #include <string>
 
 #include "eixTk/assert.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
+#include "eixTk/unordered_map.h"
 
-using std::map;
 using std::string;
 
-typedef map<string, Eapi::EapiIndex> EapiMap;
+typedef UNORDERED_MAP<string, Eapi::EapiIndex> EapiMap;
 static WordVec *eapi_vec(NULLPTR);
 static EapiMap *eapi_map(NULLPTR);
 

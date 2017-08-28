@@ -29,6 +29,7 @@
 #include "eixTk/outputstring.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/sysutils.h"
+#include "eixTk/unordered_map.h"
 #include "eixrc/eixrc.h"
 #include "output/formatstring.h"
 #include "portage/conf/portagesettings.h"
@@ -342,10 +343,10 @@ class Scanner {
 		typedef void (PrintFormat::*ColonOther)(OutputString *s, Package *pkg, const string& after_colon) const;
 
 	protected:
-		map<string, Diff> diff;
-		map<string, pair<Plain, Prop> > plain;
-		map<string, ColonVar> colon_var;
-		map<string, ColonOther> colon_other;
+		UNORDERED_MAP<string, Diff> diff;
+		UNORDERED_MAP<string, pair<Plain, Prop> > plain;
+		UNORDERED_MAP<string, ColonVar> colon_var;
+		UNORDERED_MAP<string, ColonOther> colon_other;
 
 		ATTRIBUTE_NONNULL_ void prop_diff(const char *s, Diff diffprop) {
 			diff[s] = diffprop;
@@ -525,12 +526,12 @@ class Scanner {
 		}
 
 		ATTRIBUTE_PURE Diff get_diff(const string& s) const {
-			map<string, Diff>::const_iterator it(diff.find(s));
+			UNORDERED_MAP<string, Diff>::const_iterator it(diff.find(s));
 			return ((it == diff.end()) ? DIFF_NONE : it->second);
 		}
 
 		ATTRIBUTE_NONNULL_ ColonVar get_colon_var(const string& s, Prop *p) const {
-			map<string, ColonVar>::const_iterator it(colon_var.find(s));
+			UNORDERED_MAP<string, ColonVar>::const_iterator it(colon_var.find(s));
 			if(it == colon_var.end()) {
 				return NULLPTR;
 			}
@@ -539,7 +540,7 @@ class Scanner {
 		}
 
 		ATTRIBUTE_NONNULL_ ColonOther get_colon_other(const string& s, Prop *p) const {
-			map<string, ColonOther>::const_iterator it(colon_other.find(s));
+			UNORDERED_MAP<string, ColonOther>::const_iterator it(colon_other.find(s));
 			if(it == colon_other.end()) {
 				return NULLPTR;
 			}
@@ -548,7 +549,7 @@ class Scanner {
 		}
 
 		ATTRIBUTE_NONNULL_ Plain get_plain(const string& s, Prop *p) const {
-			map<string, pair<Plain, Prop> >::const_iterator it(plain.find(s));
+			UNORDERED_MAP<string, pair<Plain, Prop> >::const_iterator it(plain.find(s));
 			if(it == plain.end()) {
 				return NULLPTR;
 			}

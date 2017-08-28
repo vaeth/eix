@@ -12,7 +12,6 @@
 
 #include <cstdio>
 
-#include <map>
 #include <string>
 
 #include "eixTk/assert.h"
@@ -25,8 +24,8 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringutils.h"
+#include "eixTk/unordered_map.h"
 
-using std::map;
 using std::string;
 
 typedef uint8_t ColorType;
@@ -38,7 +37,7 @@ unsigned int AnsiColor::colorscheme = 0;
 
 const char *AnsiColor::reset_string = "\x1B[0m";
 
-typedef map<string, ColorType> ColorMap;
+typedef UNORDERED_MAP<string, ColorType> ColorMap;
 
 static ColorMap *static_color_map = NULLPTR;
 

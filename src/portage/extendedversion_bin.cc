@@ -12,7 +12,6 @@
 
 #include <cstring>
 
-#include <map>
 #include <string>
 
 #include "eixTk/assert.h"
@@ -22,15 +21,15 @@
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/sysutils.h"
+#include "eixTk/unordered_map.h"
 #include "eixTk/utils.h"
 #include "portage/conf/portagesettings.h"
 #include "portage/package.h"
 
 using std::equal;
-using std::map;
 using std::string;
 
-class RestrictMap : public map<string, ExtendedVersion::Restrict> {
+class RestrictMap : public UNORDERED_MAP<string, ExtendedVersion::Restrict> {
 	private:
 		ATTRIBUTE_NONNULL_ void mapinit(const char *s, ExtendedVersion::Restrict r) {
 			(*this)[s] = r;
@@ -52,15 +51,16 @@ class RestrictMap : public map<string, ExtendedVersion::Restrict> {
 
 		ATTRIBUTE_PURE ExtendedVersion::Restrict getRestrict(const string& s) const {
 			RestrictMap::const_iterator i(find(s));
-			if(i != end())
+			if(i != end()) {
 				return i->second;
+			}
 			return ExtendedVersion::RESTRICT_NONE;
 		}
 };
 
 static RestrictMap *restrict_map = NULLPTR;
 
-class PropertiesMap : public map<string, ExtendedVersion::Properties> {
+class PropertiesMap : public UNORDERED_MAP<string, ExtendedVersion::Properties> {
 	private:
 		ATTRIBUTE_NONNULL_ void mapinit(const char *s, ExtendedVersion::Properties p) {
 			(*this)[s] = p;
