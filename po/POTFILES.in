@@ -93,6 +93,8 @@ src/eixTk/stringutils.cc
 src/eixTk/stringutils.h
 src/eixTk/sysutils.cc
 src/eixTk/sysutils.h
+src/eixTk/unordered_map.h
+src/eixTk/unordered_set.h
 src/eixTk/utils.cc
 src/eixTk/utils.h
 src/eixTk/varsreader.cc

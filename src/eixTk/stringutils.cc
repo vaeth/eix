@@ -411,7 +411,7 @@ bool resolve_plus_minus(WordSet *s, const WordVec& l, const WordSet *warnignore)
 				continue;
 			}
 			if(warnignore != NULLPTR) {
-				if(warnignore->find(key) == warnignore->end()) {
+				if(warnignore->count(key) != 0) {
 					minuskeyword = true;
 				}
 			} else {

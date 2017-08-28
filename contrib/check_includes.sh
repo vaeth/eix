@@ -126,7 +126,7 @@ GrepAllWith -e 'ATTRIBUTE_NONNULL_(' -e '^ATTRIBUTE_NONNULL\([^(_]\|$\)' -e '[^_
 GrepHWithout '#include <config\.h>'
 GrepCCWithout '#include <config\.h>'
 Check '"eixTk/assert\.h"' -e 'eix_assert'
-Check '"eixTk/stringtypes\.h"' -e 'WordVec' -e 'WordSet' -e 'WordMap' -e 'WordList' -e 'LineVec' -e 'WordSize'
+Check '"eixTk/stringtypes\.h"' -e 'WordVec' -e 'WordSet' -e 'WordMap' -e 'WordUnorderedSet' -e 'WordUnorderedMap' -e 'WordList' -e 'LineVec' -e 'WordSize'
 Check '"eixTk/dialect\.h"' -e 'CONSTEXPR' -e 'ASSIGN_DELETE' -e 'OVERRIDE[^_A-Z]' -e 'NOEXCEPT'
 Check '"eixTk/diagnostics\.h"' -e DIAG_OFF -e DIAG_ON
 Check '"eixTk/eixarray\.h"' -e 'eix::array'
@@ -138,6 +138,8 @@ Check '"eixTk/likely\.h"' -e 'likely('
 Check '"eixTk/null\.h"' -e 'NULLPTR'
 Check '"eixTk/auto_array\.h"' -e 'auto_array'
 Check '"eixTk/forward_list\.h"' -e 'forward_list'
+Check '"eixTk/unordered_map\.h"' -e 'UNORDERED_MAP'
+Check '"eixTk/unordered_set\.h"' -e 'UNORDERED_SET'
 Check '"eixTk/ptr_container\.h"' -e 'ptr_container' -e 'ptr_forward_container'
 Check '"eixTk/stringutils\.h"' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e isdigit -e isalpha -e isalnum -e is_numeric -e tolower -e toupper -e to_lower -e trim -e StringHash -e escape_string -e localeC -e match_list -e slot_subslot -e casecontains -e caseequal -e my_atou -e my_atos
 Check '"eixTk/attribute\.h"' -e 'ATTRIBUTE_'

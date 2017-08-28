@@ -592,7 +592,7 @@ void PortageSettings::read_local_sets(const WordVec& dir_list) {
 	/**
 	all_set_names is used as a cache to find duplicate set names faster
 	**/
-	WordSet all_set_names;
+	WordUnorderedSet all_set_names;
 	for(WordVec::size_type i(0); likely(i != dir_list.size()); ++i) {
 		WordVec temporary_set_names;
 		pushback_files(dir_list[i], &temporary_set_names, sets_exclude, 0, true, false);
@@ -600,8 +600,9 @@ void PortageSettings::read_local_sets(const WordVec& dir_list) {
 		// Avoid duplicate sets
 		for(WordVec::const_iterator it(temporary_set_names.begin());
 			likely(it != temporary_set_names.end()); ++it) {
-			if(all_set_names.find(*it) != all_set_names.end())
+			if(all_set_names.count(*it) != 0) {
 				continue;
+			}
 			all_set_names.insert(*it);
 			set_names.push_back(*it);
 		}
@@ -920,7 +921,7 @@ static ArchUsed apply_keyword(const string& key, const WordSet& keywords_set, Ke
 		*redundant |= (check & Keywords::RED_STRANGE);
 		return ARCH_NOTHING;
 	}
-	if((keywords_set.find(key) == keywords_set.end()) &&
+	if((keywords_set.count(key) == 0) &&
 		((key[0] == '*') || (keywords_set.find("*") == keywords_set.end())) &&
 		((key[0] != '~') || (keywords_set.find("~*") == keywords_set.end()))) {
 		// Not found:
@@ -957,26 +958,32 @@ static ArchUsed apply_keyword(const string& key, const WordSet& keywords_set, Ke
 		}
 
 		// Is the "blank" keyword in arch_set (possibly with -/~)?
-		if(arch_set->find(*s) != arch_set->end())
+		if(arch_set->count(*s) != 0) {
 			return ARCH_NOTHING;
-		if(arch_set->find(string("~") + *s) != arch_set->end())
+		}
+		if(arch_set->count(string("~") + *s) != 0) {
 			return ARCH_NOTHING;
-		if(arch_set->find(string("-") + *s) != arch_set->end())
+		}
+		if(arch_set->count(string("-") + *s) != 0) {
 			return ARCH_NOTHING;
+		}
 
 		// Is the "blank" keyword in KEYWORDS (possibly with -/~)?
 		// (We can avoid the test which already has failed...)
 		if(have_searched != '\0') {
-			if(keywords_set.find(*s) != keywords_set.end())
+			if(keywords_set.count(*s) != 0) {
 				return ARCH_NOTHING;
+			}
 		}
 		if(have_searched != '~') {
-			if(keywords_set.find(string("~") + *s) != keywords_set.end())
+			if(keywords_set.count(string("~") + *s) != 0) {
 				return ARCH_NOTHING;
+			}
 		}
 		if(have_searched != '-') {
-			if(keywords_set.find(string("-") + *s) != keywords_set.end())
+			if(keywords_set.count(string("-") + *s) != 0) {
 				return ARCH_NOTHING;
+			}
 		}
 
 		// None of the above tests succeeded, so have a strange key:
@@ -991,28 +998,36 @@ static ArchUsed apply_keyword(const string& key, const WordSet& keywords_set, Ke
 	if(key[0] == '~') {
 		// Usually, we have ARCH_UNSTABLE, but there are exceptions.
 		// First, test special case:
-		if(key == "~*")
+		if(key == "~*") {
 			return ARCH_ALIENUNSTABLE;
+		}
 		// We have an ARCH_UNSTABLE if key is in arch (with or without ~)
-		if(arch_set->find(key) != arch_set->end())
+		if(arch_set->count(key) != 0) {
 			return ARCH_UNSTABLE;
-		if(arch_set->find(key.substr(1)) != arch_set->end())
+		}
+		if(arch_set->count(key.substr(1)) != 0) {
 			return ARCH_UNSTABLE;
+		}
 		return ARCH_ALIENUNSTABLE;
 	}
 	// Usually, we have ARCH_STABLE, but there are exceptions.
 	// First, test special cases:
-	if(key[0] == '-')
+	if(key[0] == '-') {
 		return ARCH_MINUSASTERISK;
-	if(key == "*")
+	}
+	if(key == "*") {
 		return ARCH_ALIENSTABLE;
-	if(key == "**")
+	}
+	if(key == "**") {
 		return ARCH_EVERYTHING;
+	}
 	// We have an ARCH_STABLE if key is in arch (with or without ~)
-	if(arch_set->find(key) != arch_set->end())
+	if(arch_set->count(key) != 0) {
 		return ARCH_STABLE;
-	if(arch_set->find(string("~") + key) != arch_set->end())
+	}
+	if(arch_set->count(string("~") + key) != 0) {
 		return ARCH_STABLE;
+	}
 	return ARCH_ALIENSTABLE;
 }
 

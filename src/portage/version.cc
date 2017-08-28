@@ -194,7 +194,7 @@ void Version::add_reason(const StringList& reason) {
 	if(reason.empty()) {
 		return;
 	}
-	if(reasons.find(reason) != reasons.end()) {
+	if(reasons.count(reason) != 0) {
 		return;
 	}
 	reasons.insert(reason);

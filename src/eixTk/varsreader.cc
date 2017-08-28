@@ -18,7 +18,6 @@
 
 #include <cstring>
 
-#include <set>
 #include <string>
 #include <utility>
 #include <vector>
@@ -108,7 +107,6 @@ Reset value pointer
 #define VALUE_CLEAR value.clear()
 
 using std::pair;
-using std::set;
 using std::string;
 using std::vector;
 
@@ -1051,7 +1049,7 @@ bool VarsReader::readmem(const char *buffer, const char *buffer_end, string *err
 	return false;
 }
 
-bool VarsReader::read(const char *filename, string *errtext, bool noexist_ok, set<string> *sourced, bool nodir) {
+bool VarsReader::read(const char *filename, string *errtext, bool noexist_ok, WordUnorderedSet *sourced, bool nodir) {
 	if((!nodir) && ((parse_flags & RECURSE) != NONE)) {
 		string dir(filename);
 		dir.append(1, '/');
@@ -1107,10 +1105,10 @@ GCC_DIAG_ON(old-style-cast)
 	string truename(normalize_path(filename));
 	bool topcall(sourced == NULLPTR);
 	if(likely(topcall)) {
-		sourced_files = new WordSet;
+		sourced_files = new WordUnorderedSet;
 	} else {
 		sourced_files = sourced;
-		if(sourced->find(truename) != sourced->end()) {
+		if(sourced->count(truename) != 0) {
 			if(errtext != NULLPTR) {
 				*errtext = eix::format(_("recursively sourced file %s")) % truename;
 			}

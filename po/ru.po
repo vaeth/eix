@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2017-08-20 18:09+0200\n"
-"PO-Revision-Date: 2017-08-12 21:10+0200\n"
+"POT-Creation-Date: 2017-08-28 18:12+0200\n"
+"PO-Revision-Date: 2017-08-28 18:20+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: ru\n"
@@ -7237,9 +7237,11 @@ msgstr ""
 msgid "garbage (%s) at end of version \"%s\""
 msgstr "мусор (%s) в конце версии «%s»"
 
+# fuzzy
 #: src/portage/conf/cascadingprofile.cc
-msgid "Recursion level for cascading profiles exceeded; stopping reading parents"
+msgid "Recursion in cascading profile"
 msgstr "Превышен уровень рекурсии для каскадных профилей: прекращаю чтение родителей"
+
 
 #: src/portage/conf/cascadingprofile.cc
 #, c-format

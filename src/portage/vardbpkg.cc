@@ -264,7 +264,7 @@ bool VarDbPkg::readUse(const Package& p, InstVersion *v) const {
 
 	for(WordVec::iterator it(alluse.begin());
 		likely(it != alluse.end()); ++it) {
-		if(iuse_set.find(*it) != iuse_set.end()) {
+		if(iuse_set.count(*it) != 0) {
 			v->usedUse.insert(*it);
 		}
 	}

@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.33.1
+	Martin Väth <martin at mvath.de>:
+	- Fix meson tests which require dialect arg
+	- Use unordered_{set,map} if available
+	- Prefer count() != 0 over find() != end()
+
 *eix-0.33.0
 	Martin Väth <martin at mvath.de>:
 	- Provide eix-postsync as a simple eix-sync alternative.

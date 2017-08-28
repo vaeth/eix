@@ -84,7 +84,7 @@ class CascadingProfile {
 		/**
 		Add all files from profile and its parents to m_profile_files
 		**/
-		ATTRIBUTE_NONNULL((2)) bool addProfile(const char *profile, WordSet *sourced_files);
+		ATTRIBUTE_NONNULL((2)) bool addProfile(const char *profile, WordUnorderedSet *sourced_files);
 		ATTRIBUTE_NONNULL_ bool addProfile(const char *profile) {
 			return addProfile(profile, NULLPTR);
 		}

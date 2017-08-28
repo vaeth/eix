@@ -3,8 +3,6 @@
 // terms of the GNU General Public License v2.
 //
 // Copyright (c)
-//   Wolfgang Frisch <xororand@users.sourceforge.net>
-//   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
 #ifndef SRC_EIXTK_FORWARD_LIST_H_

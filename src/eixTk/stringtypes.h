@@ -17,9 +17,14 @@
 #include <string>
 #include <vector>
 
+#include <eixTk/unordered_set.h>
+#include <eixTk/unordered_map.h>
+
 typedef std::vector<std::string> WordVec;
 typedef std::set<std::string> WordSet;
 typedef std::map<std::string, std::string> WordMap;
+typedef UNORDERED_SET<std::string> WordUnorderedSet;
+typedef UNORDERED_MAP<std::string, std::string> WordUnorderedMap;
 typedef std::string::size_type WordSize;
 typedef WordVec LineVec;
 

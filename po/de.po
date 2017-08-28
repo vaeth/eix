@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2017-08-20 18:09+0200\n"
-"PO-Revision-Date: 2017-08-12 21:11+0200\n"
+"POT-Creation-Date: 2017-08-28 18:12+0200\n"
+"PO-Revision-Date: 2017-08-28 18:21+0200\n"
 "Last-Translator: Martin Väth <martin@mvath.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -8355,10 +8355,8 @@ msgid "garbage (%s) at end of version \"%s\""
 msgstr "Zusatzsymbole (%s) nach Versionsnummer „%s“"
 
 #: src/portage/conf/cascadingprofile.cc
-msgid "Recursion level for cascading profiles exceeded; stopping reading parents"
-msgstr ""
-"Rekursionslevel für kaskadierende Profile überschritten;\n"
-"weitere Eltern-Verzeichnisse werden ignoriert."
+msgid "Recursion in cascading profile"
+msgstr "Rekursion in kaskadierendem Profile"
 
 #: src/portage/conf/cascadingprofile.cc
 #, c-format

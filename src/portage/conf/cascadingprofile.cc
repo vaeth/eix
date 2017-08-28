@@ -50,7 +50,7 @@ static CONSTEXPR const char *const profile_exclude[] = { "parent", "..", "." , N
 /**
 Add all files from profile and its parents to m_profile_files
 **/
-bool CascadingProfile::addProfile(const char *profile, WordSet *sourced_files) {
+bool CascadingProfile::addProfile(const char *profile, WordUnorderedSet *sourced_files) {
 	string truename(normalize_path(profile, true, true));
 	if(unlikely(print_profile_paths)) {
 		if(likely(is_dir(truename.c_str()))) {
@@ -67,9 +67,9 @@ bool CascadingProfile::addProfile(const char *profile, WordSet *sourced_files) {
 	}
 	bool topcall(sourced_files == NULLPTR);
 	if(unlikely(topcall)) {
-		sourced_files = new WordSet;
-	} else if(sourced_files->find(truename) != sourced_files->end()) {
-		eix::say_error(_("Recursion level for cascading profiles exceeded; stopping reading parents"));
+		sourced_files = new WordUnorderedSet;
+	} else if(sourced_files->count(truename) != 0) {
+		eix::say_error(_("Recursion in cascading profile"));
 		return false;
 	}
 	sourced_files->insert(truename);

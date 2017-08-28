@@ -53,7 +53,9 @@ eixTk/likely.h \
 eixTk/null.h \
 eixTk/stringtypes.h \
 eixTk/stringutils.cc \
-eixTk/stringutils.h
+eixTk/stringutils.h \
+eixTk/unordered_map.h \
+eixTk/unordered_set.h
 
 sysutils_src = \
 eixTk/sysutils.cc \

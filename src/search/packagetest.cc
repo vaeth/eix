@@ -312,7 +312,7 @@ bool PackageTest::stringMatch(Package *pkg) const {
 					if(!(*algorithm)(uit->c_str(), NULLPTR)) {
 						continue;
 					}
-					if((it->usedUse).find(*uit) == (it->usedUse).end()) {
+					if((it->usedUse).count(*uit) == 0) {
 						return true;
 					}
 				}
@@ -562,7 +562,7 @@ bool PackageTest::match(PackageReader *pkg) const {
 		get_p(&p, pkg);
 		bool have(false);
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
-			if(unlikely(overlay_list->find(it->overlay_key) == overlay_list->end())) {
+			if(unlikely(overlay_list->count(it->overlay_key) == 0)) {
 				continue;
 			}
 			have = true;
@@ -577,7 +577,7 @@ bool PackageTest::match(PackageReader *pkg) const {
 		// --only-in-overlay
 		get_p(&p, pkg);
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
-			if(likely(overlay_only_list->find(it->overlay_key) == overlay_only_list->end())) {
+			if(likely(overlay_only_list->count(it->overlay_key) == 0)) {
 				return false;
 			}
 		}
@@ -620,7 +620,7 @@ bool PackageTest::match(PackageReader *pkg) const {
 		bool get_installed(true);
 		InstVec *installed_versions(NULLPTR);
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
-			if(in_overlay_inst_list->find(it->overlay_key) == in_overlay_inst_list->end()) {
+			if(in_overlay_inst_list->count(it->overlay_key) == 0) {
 				continue;
 			}
 			if(get_installed) {
@@ -655,7 +655,7 @@ bool PackageTest::match(PackageReader *pkg) const {
 				if(from_overlay_inst_list == NULLPTR) {
 					continue;
 				}
-				if(from_overlay_inst_list->find(it->overlay_key) == from_overlay_inst_list->end()) {
+				if(from_overlay_inst_list->count(it->overlay_key) == 0) {
 					continue;
 				}
 				have = true;

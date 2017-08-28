@@ -196,8 +196,9 @@ void EixRc::read() {
 
 const string& EixRc::operator[](const string& key) {
 	my_map::const_iterator it(main_map.find(key));
-	if(it != main_map.end())
+	if(it != main_map.end()) {
 		return it->second;
+	}
 	add_later_variable(key);
 	return main_map[key];
 }
@@ -230,7 +231,7 @@ void EixRc::resolve_delayed(const string& key, set<string> *has_delayed) {
 
 string *EixRc::resolve_delayed_recurse(const string& key, set<string> *visited, set<string> *has_delayed, const char **errtext, string *errvar) {
 	string *value(&(main_map[key]));
-	if(has_delayed->find(key) == has_delayed->end()) {
+	if(has_delayed->count(key) == 0) {
 		modify_value(value, key);
 		return value;
 	}
@@ -267,7 +268,7 @@ string *EixRc::resolve_delayed_recurse(const string& key, set<string> *visited, 
 			default:
 				break;
 		}
-		if(unlikely(visited->find(key) != visited->end())) {
+		if(unlikely(visited->count(key) != 0)) {
 			*errtext = _("self-reference");
 			*errvar = key;
 			return NULLPTR;
@@ -499,8 +500,9 @@ void EixRc::join_key(const string& key, set<string> *has_delayed, bool add_top_t
 	modify_value(val, key);
 
 	if(unlikely(add_top_to_defaults)) {
-		if(unlikely((exclude_defaults == NULLPTR) || (exclude_defaults->find(key) == exclude_defaults->end())))
+		if(unlikely((exclude_defaults == NULLPTR) || (exclude_defaults->count(key) == 0))) {
 			defaults.push_back(EixRcOption(key, *val));
+		}
 	}
 	join_key_rec(key, *val, has_delayed, exclude_defaults);
 }
@@ -543,7 +545,7 @@ void EixRc::join_key_rec(const string& key, const string& val, set<string> *has_
 }
 
 void EixRc::join_key_if_new(const string& key, set<string> *has_delayed, const set<string> *exclude_defaults) {
-	if(unlikely(main_map.find(key) == main_map.end())) {
+	if(unlikely(main_map.count(key) == 0)) {
 		join_key(key, has_delayed, true, exclude_defaults);
 	}
 }
@@ -674,7 +676,7 @@ EixRc::DelayedType EixRc::find_next_delayed(const string& str, string::size_type
 
 void EixRc::modify_value(string *value, const string& key) {
 	if(*value == "/") {
-		if(prefix_keys.find(key) != prefix_keys.end()) {
+		if(prefix_keys.count(key) != 0) {
 			value->clear();
 		}
 	}

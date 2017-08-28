@@ -41,7 +41,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.33.0], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
+AC_INIT([eix], [0.33.1], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
 AC_PREREQ([2.64])
 
 m4_ifdef([AC_CONFIG_MACRO_DIR],
@@ -1360,6 +1360,34 @@ return (*(a.begin()) == 5) ? 0 : 1;
 		[MV_MSG_RESULT([yes])
 		AC_DEFINE([HAVE_FORWARD_LIST], [1],
 			[Define if STL has forward_list])],
+		[MV_MSG_RESULT([no])])
+
+# Check if unordered_set can be used
+AC_MSG_CHECKING([whether unordered_set can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+#include <unordered_set>
+	]], [[
+std::unordered_set<int> a;
+a.insert(5);
+return (a.count(5) == 1) ? 0 : 1;
+		]])],
+		[MV_MSG_RESULT([yes])
+		AC_DEFINE([HAVE_UNORDERED_SET], [1],
+			[Define if STL has unordered_set])],
+		[MV_MSG_RESULT([no])])
+
+# Check if unordered_map can be used
+AC_MSG_CHECKING([whether unordered_map can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+#include <unordered_map>
+	]], [[
+std::unordered_map<int, int> a;
+a[5] = 4;
+return (a[5] == 4) ? 0 : 1;
+		]])],
+		[MV_MSG_RESULT([yes])
+		AC_DEFINE([HAVE_UNORDERED_MAP], [1],
+			[Define if STL has unordered_map])],
 		[MV_MSG_RESULT([no])])
 
 # reset the CXXFLAGS, LDFLAGS for the normal tests

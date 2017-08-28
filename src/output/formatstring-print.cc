@@ -134,7 +134,7 @@ void PrintFormat::get_inst_use(OutputString *s, const Package& package, InstVers
 	for(WordVec::iterator it(i->inst_iuse.begin());
 		likely(it != i->inst_iuse.end()); ++it) {
 		string *value(&(*it));
-		bool is_unset(i->usedUse.find(*value) == i->usedUse.end());
+		bool is_unset(i->usedUse.count(*value) == 0);
 		OutputString *curr(s);
 		bool unset_list(false);
 		if(is_unset && !alpha_use) {

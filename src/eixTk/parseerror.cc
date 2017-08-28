@@ -37,7 +37,7 @@ void ParseError::output(const string& file, const LineVec::size_type line_nr, co
 		printed = new set<string>;
 	}
 	string cache(eix::format("%s\a%s\v%s") % file % line_nr % errtext);
-	if(printed->find(cache) != printed->end()) {
+	if(printed->count(cache) != 0) {
 		return;
 	}
 	printed->insert(cache);

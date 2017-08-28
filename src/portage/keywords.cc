@@ -67,7 +67,7 @@ KeywordsFlags::KeyType KeywordsFlags::get_keyflags(const WordSet& accepted_keywo
 				m |= KEY_MINUSASTERISK;
 			} else if(*it == "-~*") {
 				m |= KEY_MINUSUNSTABLE;
-			} else if(accepted_keywords.find(it->substr(1)) != accepted_keywords.end()) {
+			} else if(accepted_keywords.count(it->substr(1)) != 0) {
 				m |= KEY_MINUSKEYWORD;
 			}
 			continue;
@@ -81,7 +81,7 @@ KeywordsFlags::KeyType KeywordsFlags::get_keyflags(const WordSet& accepted_keywo
 			continue;
 		}
 		bool found(false);
-		if(accepted_keywords.find(*it) != accepted_keywords.end()) {
+		if(accepted_keywords.count(*it) != 0) {
 			found = true;
 			m |= (KEY_STABLE | KEY_SOMESTABLE);
 		}
@@ -94,7 +94,7 @@ KeywordsFlags::KeyType KeywordsFlags::get_keyflags(const WordSet& accepted_keywo
 					!= accepted_keywords.end()) {
 					m |= KEY_STABLE;
 				}
-			} else if(accepted_keywords.find(it->substr(1)) != accepted_keywords.end()) {
+			} else if(accepted_keywords.count(it->substr(1)) != 0) {
 				m |= KEY_ARCHUNSTABLE;
 			} else {
 				m |= KEY_ALIENUNSTABLE;
@@ -106,16 +106,16 @@ KeywordsFlags::KeyType KeywordsFlags::get_keyflags(const WordSet& accepted_keywo
 	if(m & KEY_STABLE) {
 		return m;
 	}
-	if(accepted_keywords.find("**") != accepted_keywords.end()) {
+	if(accepted_keywords.count("**") != 0) {
 		return (m | KEY_STABLE);
 	}
 	if(m & KEY_SOMESTABLE) {
-		if(accepted_keywords.find("*") != accepted_keywords.end()) {
+		if(accepted_keywords.count("*") != 0) {
 			return (m | KEY_STABLE);
 		}
 	}
 	if(m & KEY_TILDESTARMATCH) {
-		if(accepted_keywords.find("~*") != accepted_keywords.end()) {
+		if(accepted_keywords.count("~*") != 0) {
 			return (m | KEY_STABLE);
 		}
 	}

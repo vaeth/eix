@@ -157,7 +157,7 @@ void PrintXml::package(Package *pkg) {
 		// see https://bugs.gentoo.org/show_bug.cgi?id=354071
 		for(Package::reverse_iterator ver(pkg->rbegin());
 			likely(ver != pkg->rend()); ++ver) {
-			if(know_inst.find(**ver) == know_inst.end()) {
+			if(know_inst.count(**ver) == 0) {
 				know_inst.insert(**ver);
 				have_inst.insert(*ver);
 			}
@@ -167,7 +167,7 @@ void PrintXml::package(Package *pkg) {
 	for(Package::const_iterator ver(pkg->begin()); likely(ver != pkg->end()); ++ver) {
 		bool versionInstalled(false);
 		InstVersion *installedVersion(NULLPTR);
-		if(have_inst.find(*ver) != have_inst.end()) {
+		if(have_inst.count(*ver) != 0) {
 			if(var_db_pkg->isInstalled(*pkg, *ver, &installedVersion)) {
 				versionInstalled = true;
 				var_db_pkg->readInstDate(*pkg, installedVersion);
@@ -320,7 +320,7 @@ void PrintXml::package(Package *pkg) {
 			WordVec inst_iuse(installedVersion->inst_iuse);
 			WordSet usedUse(installedVersion->usedUse);
 			for(WordVec::const_iterator iu(inst_iuse.begin()); likely(iu != inst_iuse.end()); iu++) {
-				if(usedUse.find(*iu) == usedUse.end()) {
+				if(usedUse.count(*iu) == 0) {
 					if(!iuse_disabled.empty()) {
 						iuse_disabled.append(1, ' ');
 					}

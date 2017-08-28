@@ -85,7 +85,7 @@ template<typename m_Type> class MaskList {
 		}
 
 		bool match_full(const std::string& full) const {
-			if(exact_name.find(full) != exact_name.end()) {
+			if(exact_name.count(full) != 0) {
 				return true;
 			}
 			for(full_const_iterator it(full_name.begin());

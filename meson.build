@@ -1,5 +1,5 @@
 project('eix', 'cpp',
-	version : '0.32.11',
+	version : '0.33.1',
 	license : 'GPLv2',
 	default_options : [
 		'prefix=/usr',
@@ -221,6 +221,7 @@ if strong_optimization
 	endif
 endif
 
+flags_dialect = []
 dialect = 'false'
 if new_dialect
 	foreach d : [
@@ -242,6 +243,8 @@ if new_dialect
 			if cxx.links(stresstest, args : t)
 				dialect = d
 				message('FLAGS: ' + o)
+				flags_dialect += [ o ]
+				flags_fatal += [ o ]
 				cxxflags_add += [ o ]
 				add_global_arguments(o, language : 'cpp')
 				if flto
@@ -267,7 +270,7 @@ if dead_code
 	o = '-Wl,--gc-sections'
 	t = flags_fatal
 	t += [ o ]
-	if cxx.links(stresstest,  args : t)
+	if cxx.links(stresstest, args : t)
 		r = true
 		ldflags_force += [ o ]
 		cxxflags_opt += [
@@ -776,7 +779,7 @@ foreach p : [
 ]
 	program = 'int main() {\n'
 	program += 'return !' + p.get(0) + '(' + p.get(2) + ');\n}'
-	broken = not cxx.links(cheaders + program)
+	broken = not cxx.links(cheaders + program, args : flags_dialect)
 	conf.set('NEED_' + p.get(0).to_upper() + '_PROTO', broken,
 		description : 'Define if ' + p.get(0) + ' needs a prototype')
 	if broken
@@ -801,7 +804,7 @@ if(!((__builtin_expect(one, 0)) && (__builtin_expect(one, 1)) &&
 	(!__builtin_expect(zero, 0)) && (!__builtin_expect(zero, 1))))
 	return 1;
 }
-''')
+''', args : flags_dialect)
 message('__builtin_expect: ' + builtin_expect.to_string())
 conf.set('HAVE___BUILTIN_EXPECT', builtin_expect,
 	description : 'Define if __builtin_expect can be used')
@@ -824,7 +827,7 @@ GCC_DIAG_OFF(old-style-cast)
 return ((int)i);
 GCC_DIAG_ON(old-style-cast)
 }
-''')
+''', args : flags_dialect)
 message('_Pragma GCC diagnostic: ' + pragma_diagnostic.to_string())
 conf.set('FULL_GCC_DIAG_PRAGMA', pragma_diagnostic,
 	description : 'Define if _Pragma GCC diagnostic can be used everywhere')
@@ -1013,7 +1016,7 @@ int main() {
 	const char *b(nullptr);
 	return !((a == b) && (b == nullptr));
 }
-''')
+''', args : flags_dialect)
 message('nullptr: ' + nullptr.to_string())
 conf.set('HAVE_NULLPTR', nullptr,
 	description : 'Define if C++ dialect has nullptr type')
@@ -1027,7 +1030,7 @@ const int T::a;
 int main() {
 	return (T::a != 5);
 }
-''')
+''', args : flags_dialect)
 message('constexpr: ' + constexpr.to_string())
 conf.set('HAVE_CONSTEXPR', constexpr,
 	description : 'Define if C++ dialect has constexpr modifier')
@@ -1046,7 +1049,7 @@ int main() {
 	T *b(&a);
 	return b->foo();
 }
-''')
+''', args : flags_dialect)
 message('override: ' + override.to_string())
 conf.set('HAVE_OVERRIDE', override,
 	description : 'Define if C++ dialect has override modifier')
@@ -1064,7 +1067,7 @@ int main() {
 	T a;
 	return 0;
 }
-''')
+''', args : flags_dialect)
 message('delete: ' + delete.to_string())
 conf.set('HAVE_DELETE', delete,
 	description : 'Define if C++ dialect supports assigning delete')
@@ -1079,7 +1082,7 @@ public:
 int main() {
 	return T().s;
 }
-''')
+''', args : flags_dialect)
 message('noexcept: ' + noexcept.to_string())
 conf.set('HAVE_NOEXCEPT', noexcept,
 	description : 'Define if C++ dialect has noexcept')
@@ -1100,7 +1103,7 @@ int main() {
 	b = std::move(c);
 	return b.ret();
 }
-''')
+''', args : flags_dialect)
 message('move constructor: ' + have_move.to_string())
 conf.set('HAVE_MOVE', have_move,
 	description : 'Define if C++ dialect supports assigning default move constructor')
@@ -1112,7 +1115,7 @@ int main() {
 	a.fill(4);
 	return (a[4] == 4) ? 0 : 1;
 }
-''')
+''', args : flags_dialect)
 message('array class: ' + have_array_class.to_string())
 conf.set('HAVE_ARRAY_CLASS', have_array_class,
 	description : 'Define if STL has array class')
@@ -1124,10 +1127,34 @@ int main() {
 	a.insert_after(a.before_begin(), 5);
 	return (*(a.begin()) == 5) ? 0 : 1;
 }
-''')
+''', args : flags_dialect)
 message('forward_list: ' + have_forward_list.to_string())
 conf.set('HAVE_FORWARD_LIST', have_forward_list,
 	description : 'Define if STL has forward_list')
+
+have_unordered_set = cxx.links('''
+#include <unordered_set>
+int main() {
+	std::unordered_set<int> a;
+	a.insert(5);
+	return (a.count(5) == 1) ? 0 : 1;
+}
+''', args : flags_dialect)
+message('unordered_set: ' + have_unordered_set.to_string())
+conf.set('HAVE_UNORDERED_SET', have_unordered_set,
+	description : 'Define if STL has unordered_set')
+
+have_unordered_map = cxx.links('''
+#include <unordered_map>
+int main() {
+	std::unordered_map<int, int> a;
+	a[5] = 4;
+	return (a[5] == 4) ? 0 : 1;
+}
+''', args : flags_dialect)
+message('unordered_map: ' + have_unordered_map.to_string())
+conf.set('HAVE_UNORDERED_MAP', have_unordered_map,
+	description : 'Define if STL has unordered_map')
 
 sqlite_dep = []
 with_sqlite = false

@@ -83,8 +83,8 @@ class VarsReader {
 		Read file.
 		@return true if the file was successfully read.
 		**/
-		ATTRIBUTE_NONNULL((2)) bool read(const char *filename, std::string *errtext, bool noexist_ok, WordSet *sourced, bool nodir);
-		ATTRIBUTE_NONNULL((2)) bool read(const char *filename, std::string *errtext, bool noexist_ok, WordSet *sourced) {
+		ATTRIBUTE_NONNULL((2)) bool read(const char *filename, std::string *errtext, bool noexist_ok, WordUnorderedSet *sourced, bool nodir);
+		ATTRIBUTE_NONNULL((2)) bool read(const char *filename, std::string *errtext, bool noexist_ok, WordUnorderedSet *sourced) {
 			return read(filename, errtext, noexist_ok, sourced, false);
 		}
 		ATTRIBUTE_NONNULL((2)) bool read(const char *filename, std::string *errtext, bool noexist_ok) {
@@ -397,7 +397,7 @@ class VarsReader {
 		Flags parse_flags;
 
 	protected:
-		WordSet *sourced_files;
+		WordUnorderedSet *sourced_files;
 
 		std::string m_errtext;
 

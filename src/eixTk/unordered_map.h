@@ -1,0 +1,21 @@
+// vim:set noet cinoptions= sw=4 ts=4:
+// This file is part of the eix project and distributed under the
+// terms of the GNU General Public License v2.
+//
+// Copyright (c)
+//   Martin Väth <martin@mvath.de>
+
+#ifndef SRC_EIXTK_UNORDERED_MAP_H_
+#define SRC_EIXTK_UNORDERED_MAP_H_ 1
+
+#include <config.h>
+
+#ifdef HAVE_UNORDERED_MAP
+#include <unordered_map>
+#define UNORDERED_MAP std::unordered_map
+#else
+#include <map>
+#define UNORDERED_MAP std::map
+#endif
+
+#endif  // SRC_EIXTK_UNORDERED_MAP_H_

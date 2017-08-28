@@ -1173,7 +1173,7 @@ static void print_unused(const string& filename, const string& excludefiles, con
 		string errtext;
 		KeywordMask m;
 		if(n == string::npos) {
-			if(unlikely(excludes.find(*i) != excludes.end())) {
+			if(unlikely(excludes.count(*i) != 0)) {
 				continue;
 			}
 			if(unlikely(test_empty)) {
@@ -1183,7 +1183,7 @@ static void print_unused(const string& filename, const string& excludefiles, con
 			r = m.parseMask(i->c_str(), &errtext, false);
 		} else {
 			string it(*i, 0, n);
-			if(excludes.find(it) != excludes.end()) {
+			if(excludes.count(it) != 0) {
 				continue;
 			}
 			r = m.parseMask(it.c_str(), &errtext, false);
@@ -1248,7 +1248,7 @@ static void print_removed(const string& dirname, const string& excludefiles, con
 			if(unlikely(!ExplodeAtom::split_name(&curr_name, nit->c_str()))) {
 				continue;
 			}
-			if(unlikely((ns == NULLPTR) || (ns->find(curr_name) == ns->end()))) {
+			if(unlikely((ns == NULLPTR) || (ns->count(curr_name) == 0))) {
 				if(unlikely(!know_excludes)) {
 					know_excludes = true;
 					WordVec excludelist;
@@ -1260,9 +1260,9 @@ static void print_removed(const string& dirname, const string& excludefiles, con
 						join_and_split(&excludes, excl);
 					}
 				}
-				if(likely(excludes.find(curr_name) == excludes.end())) {
+				if(likely(excludes.count(curr_name) == 0)) {
 					string fullname(cat_slash + curr_name);
-					if(excludes.find(fullname) == excludes.end()) {
+					if(excludes.count(fullname) == 0) {
 						failure.push_back(cat_slash + curr_name);
 					}
 				}
