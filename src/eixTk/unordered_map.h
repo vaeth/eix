@@ -10,6 +10,8 @@
 
 #include <config.h>
 
+// check_includes: #include "eixTk/unordered_map.h" std::map<int, int>
+
 #ifdef HAVE_UNORDERED_MAP
 #include <unordered_map>
 #define UNORDERED_MAP std::unordered_map

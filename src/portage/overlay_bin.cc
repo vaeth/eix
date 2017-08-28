@@ -14,6 +14,7 @@
 #include <string>
 
 #include "eixTk/assert.h"
+#include "eixTk/eixint.h"
 #include "eixTk/filenames.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -23,11 +24,11 @@
 
 using std::string;
 
-static WordMap *path_label_hash = NULLPTR;
+static WordUnorderedMap *path_label_hash = NULLPTR;
 
 void OverlayIdent::init_static() {
 	eix_assert_static(path_label_hash == NULLPTR);
-	path_label_hash = new WordMap;
+	path_label_hash = new WordUnorderedMap;
 }
 
 eix::SignedBool OverlayIdent::compare(const OverlayIdent& left, const OverlayIdent& right) {
@@ -66,7 +67,7 @@ void OverlayIdent::readLabel_internal(const char *patharg) {
 		my_path = patharg;
 	}
 	eix_assert_static(path_label_hash != NULLPTR);
-	WordMap::const_iterator f(path_label_hash->find(my_path));
+	WordUnorderedMap::const_iterator f(path_label_hash->find(my_path));
 	if(f != path_label_hash->end()) {
 		label = f->second;
 		return;
@@ -104,7 +105,7 @@ string OverlayIdent::name() const {
 }
 
 const char *RepoList::get_path(const string& label) {
-	WordMap::iterator f(cache.find(label));
+	WordUnorderedMap::iterator f(cache.find(label));
 	if(likely(f != cache.end())) {
 		return f->second.c_str();
 	}

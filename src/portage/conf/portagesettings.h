@@ -12,7 +12,6 @@
 
 #include <config.h>
 
-#include <map>
 #include <string>
 #include <vector>
 
@@ -156,12 +155,10 @@ class PortageUserConfig {
 Holds Portage's settings, e.g. masks, categories, overlay paths.
 Reads needed files if content is requested .. so don't worry about initialization :)
 **/
-class PortageSettings : public std::map<std::string, std::string> {
+class PortageSettings : public WordIterateMap {
 	private:
 		friend class CascadingProfile;
 		friend class PortageUserConfig;
-
-		typedef WordMap my_map;
 
 		EixRc *settings_rc;
 		const ParseError *parse_error;
@@ -189,7 +186,7 @@ class PortageSettings : public std::map<std::string, std::string> {
 		mutable MaskList<Mask> upgrade_policy_exceptions;
 
 		mutable bool know_expands;
-		mutable my_map expand_vars;
+		mutable WordIterateMap expand_vars;
 
 		bool know_world_sets;
 		WordVec world_sets;
@@ -242,10 +239,10 @@ class PortageSettings : public std::map<std::string, std::string> {
 #ifndef HAVE_SETENV
 		bool export_portdir_overlay;
 #endif
-		using my_map::find;
-		using my_map::erase;
-		using my_map::end;
-		using my_map::operator[];
+		using WordIterateMap::find;
+		using WordIterateMap::erase;
+		using WordIterateMap::end;
+		using WordIterateMap::operator[];
 
 		ATTRIBUTE_PURE const std::string& operator[](const std::string& var) const;
 

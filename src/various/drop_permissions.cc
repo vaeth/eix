@@ -117,7 +117,7 @@ static bool drop_permissions(EixRc *eix) {
 #endif
 	if(set_gid) {
 #if defined(HAVE_SETGID) && !defined(BROKEN_SETGID)
-		{
+		{  // NOLINT(whitespace/braces)
 #if defined(HAVE_GETGID) && !defined(BROKEN_GETGID)
 			bool forcing_success(force_success || (getgid() == gid));
 #endif
@@ -130,7 +130,7 @@ static bool drop_permissions(EixRc *eix) {
 		}
 #endif
 #if defined(HAVE_SETEGID) && !defined(BROKEN_SETEGID)
-		{
+		{  // NOLINT(whitespace/braces)
 #if defined(HAVE_GETEGID) && !defined(BROKEN_GETEGID)
 			bool forcing_success(force_success || (getegid() == gid));
 #endif
@@ -155,7 +155,7 @@ static bool drop_permissions(EixRc *eix) {
 	}
 	if(set_uid) {
 #if defined(HAVE_SETUID) && !defined(BROKEN_SETUID)
-		{
+		{  // NOLINT(whitespace/braces)
 #if defined(HAVE_GETUID) && !defined(BROKEN_GETUID)
 			bool forcing_success(force_success || (getuid() == uid));
 #endif
@@ -168,7 +168,7 @@ static bool drop_permissions(EixRc *eix) {
 		}
 #endif
 #if defined(HAVE_SETEUID) && !defined(BROKEN_SETEUID)
-		{
+		{  // NOLINT(whitespace/braces)
 #if defined(HAVE_GETEUID) && !defined(BROKEN_GETEUID)
 			bool forcing_success(force_success || (geteuid() == uid));
 #endif

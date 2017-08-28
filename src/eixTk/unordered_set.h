@@ -10,6 +10,8 @@
 
 #include <config.h>
 
+// check_includes: #include "eixTk/unordered_set.h" std::set<int>
+
 #ifdef HAVE_UNORDERED_SET
 #include <unordered_set>
 #define UNORDERED_SET std::unordered_set

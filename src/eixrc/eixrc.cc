@@ -14,8 +14,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <map>
-#include <set>
 #include <string>
 #include <vector>
 
@@ -26,6 +24,7 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "eixTk/sysutils.h"
 #include "eixTk/varsreader.h"
@@ -38,8 +37,6 @@
 
 #define EIX_USERRC   "/.eixrc"
 
-using std::map;
-using std::set;
 using std::string;
 using std::vector;
 
@@ -49,7 +46,7 @@ const EixRc::DelayvarFlags
 	EixRc::DELAYVAR_ESCAPE,
 	EixRc::DELAYVAR_APPEND;
 
-ATTRIBUTE_NONNULL_ static void override_by_env(map<string, string> *m);
+ATTRIBUTE_NONNULL_ static void override_by_env(WordIterateMap *m);
 
 eix::SignedBool EixRc::getBoolText(const string& key, const char *text) {
 	const string& s((*this)[key]);
@@ -143,7 +140,7 @@ LocalMode EixRc::getLocalMode(const string& key) {
 }
 
 const char *EixRc::cstr(const string& key) const {
-	my_map::const_iterator s(main_map.find(key));
+	WordUnorderedMap::const_iterator s(main_map.find(key));
 	if(s == main_map.end()) {
 		return NULLPTR;
 	}
@@ -180,7 +177,7 @@ void EixRc::read() {
 	}
 	modify_value(&m_eprefixconf, name);
 
-	set<string> has_delayed;
+	WordUnorderedSet has_delayed;
 
 	// First, we create defaults and main_map with all variables
 	// (including all values required by delayed references).
@@ -195,7 +192,7 @@ void EixRc::read() {
 }
 
 const string& EixRc::operator[](const string& key) {
-	my_map::const_iterator it(main_map.find(key));
+	WordUnorderedMap::const_iterator it(main_map.find(key));
 	if(it != main_map.end()) {
 		return it->second;
 	}
@@ -211,13 +208,13 @@ Of course, it will be resolved for delayed substitutions,
 and delayed references are also be added similarly.
 **/
 void EixRc::add_later_variable(const string& key) {
-	set<string> has_delayed;
+	WordUnorderedSet has_delayed;
 	join_key(key, &has_delayed, true, NULLPTR);
 	resolve_delayed(key, &has_delayed);
 }
 
-void EixRc::resolve_delayed(const string& key, set<string> *has_delayed) {
-	set<string> visited;
+void EixRc::resolve_delayed(const string& key, WordUnorderedSet *has_delayed) {
+	WordUnorderedSet visited;
 	const char *errtext;
 	string errvar;
 	if(unlikely(resolve_delayed_recurse(key, &visited, has_delayed,
@@ -229,7 +226,7 @@ void EixRc::resolve_delayed(const string& key, set<string> *has_delayed) {
 	}
 }
 
-string *EixRc::resolve_delayed_recurse(const string& key, set<string> *visited, set<string> *has_delayed, const char **errtext, string *errvar) {
+string *EixRc::resolve_delayed_recurse(const string& key, WordUnorderedSet *visited, WordUnorderedSet *has_delayed, const char **errtext, string *errvar) {
 	string *value(&(main_map[key]));
 	if(has_delayed->count(key) == 0) {
 		modify_value(value, key);
@@ -380,8 +377,8 @@ string *EixRc::resolve_delayed_recurse(const string& key, set<string> *visited, 
 	}
 }
 
-static void override_by_env(map<string, string> *m) {
-	for(map<string, string>::iterator it(m->begin()); likely(it != m->end()); ++it) {
+static void override_by_env(WordIterateMap *m) {
+	for(WordIterateMap::iterator it(m->begin()); likely(it != m->end()); ++it) {
 		char *val(std::getenv((it->first).c_str()));
 		if(unlikely(val != NULLPTR))
 			it->second = string(val);
@@ -393,7 +390,7 @@ Create defaults and the main_map with all variables
 (including all values required by delayed references).
 @arg has_delayed is initialized to corresponding keys
 **/
-void EixRc::read_undelayed(set<string> *has_delayed) {
+void EixRc::read_undelayed(WordUnorderedSet *has_delayed) {
 	// Initialize with the default variables
 	for(default_index i(0); likely(i < defaults.size()); ++i)
 		filevarmap[defaults[i].key] = defaults[i].value;
@@ -457,7 +454,7 @@ void EixRc::read_undelayed(set<string> *has_delayed) {
 	}
 
 	// Set new values as default and for printing with --dump.
-	set<string> original_defaults;
+	WordUnorderedSet original_defaults;
 	for(vector<EixRcOption>::iterator it(defaults.begin());
 		likely(it != defaults.end()); ++it) {
 		string *value(&filevarmap[it->key]);
@@ -465,11 +462,9 @@ void EixRc::read_undelayed(set<string> *has_delayed) {
 		it->local_value = *value;
 		original_defaults.insert(it->key);
 	}
-	// Since join_key_if_new modifies the defaults vector, our loop
-	// must go over a copy of the keys and not over the defaults vector.
-	for(set<string>::const_iterator it(original_defaults.begin());
-		likely(it != original_defaults.end()); ++it) {
-		join_key(*it, has_delayed, false, &original_defaults);
+	for(vector<EixRcOption>::iterator it(defaults.begin());
+		likely(it != defaults.end()); ++it) {
+		join_key(it->key, has_delayed, false, &original_defaults);
 	}
 }
 
@@ -477,9 +472,9 @@ void EixRc::read_undelayed(set<string> *has_delayed) {
 Recursively eval and join key and its delayed references to
 main_map and default; set has_delayed if appropriate
 **/
-void EixRc::join_key(const string& key, set<string> *has_delayed, bool add_top_to_defaults, const set<string> *exclude_defaults) {
+void EixRc::join_key(const string& key, WordUnorderedSet *has_delayed, bool add_top_to_defaults, const WordUnorderedSet *exclude_defaults) {
 	string *val(&main_map[key]);
-	my_map::const_iterator f(filevarmap.find(key));
+	WordIterateMap::const_iterator f(filevarmap.find(key));
 	if(unlikely(f != filevarmap.end())) {
 	/*
 	Note that if a variable is defined in a file and in ENV,
@@ -507,7 +502,7 @@ void EixRc::join_key(const string& key, set<string> *has_delayed, bool add_top_t
 	join_key_rec(key, *val, has_delayed, exclude_defaults);
 }
 
-void EixRc::join_key_rec(const string& key, const string& val, set<string> *has_delayed, const set<string> *exclude_defaults) {
+void EixRc::join_key_rec(const string& key, const string& val, WordUnorderedSet *has_delayed, const WordUnorderedSet *exclude_defaults) {
 	string::size_type pos(0);
 	string::size_type length;
 	for(;; pos += length) {
@@ -544,7 +539,7 @@ void EixRc::join_key_rec(const string& key, const string& val, set<string> *has_
 	}
 }
 
-void EixRc::join_key_if_new(const string& key, set<string> *has_delayed, const set<string> *exclude_defaults) {
+void EixRc::join_key_if_new(const string& key, WordUnorderedSet *has_delayed, const WordUnorderedSet *exclude_defaults) {
 	if(unlikely(main_map.count(key) == 0)) {
 		join_key(key, has_delayed, true, exclude_defaults);
 	}

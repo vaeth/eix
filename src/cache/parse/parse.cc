@@ -192,7 +192,7 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 		if(!read_onetime_info) {
 			flags |= VarsReader::ONLY_KEYWORDS_SLOT;
 		}
-		WordMap env;
+		WordIterateMap env;
 		if(!nosubst) {
 			flags |= VarsReader::INTO_MAP | VarsReader::SUBST_VARS;
 			env_add_package(&env, *pkg, *version, dirpath, fullpath);

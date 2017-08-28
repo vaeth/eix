@@ -105,7 +105,7 @@ typedef std::vector<OverlayIdent> OverlayVec;
 class RepoList : public OverlayVec {
 	private:
 		bool trust_cache;
-		WordMap cache;
+		WordUnorderedMap cache;
 
 	public:
 		typedef OverlayVec super;

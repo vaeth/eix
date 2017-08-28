@@ -8,34 +8,31 @@
 #include "eixrc/eixrc.h"
 #include <config.h>
 
-#include <map>
-#include <set>
 #include <string>
 
 #include "eixTk/formated.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/parseerror.h"
+#include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
 #include "portage/conf/portagesettings.h"
 
-using std::map;
-using std::set;
 using std::string;
 
 void EixRc::known_vars() {
-	set<string> vars;
-	for(map<string, string>::const_iterator it(main_map.begin());
+	WordSet vars;
+	for(WordUnorderedMap::const_iterator it(main_map.begin());
 		it != main_map.end(); ++it) {
 		vars.insert(it->first);
 	}
 	ParseError parse_error(true);
 	PortageSettings ps(this, &parse_error, false, true);
-	for(map<string, string>::const_iterator it(ps.begin());
+	for(WordIterateMap::const_iterator it(ps.begin());
 		it != ps.end(); ++it) {
 		vars.insert(it->first);
 	}
-	for(set<string>::const_iterator it(vars.begin());
+	for(WordSet::const_iterator it(vars.begin());
 		it != vars.end(); ++it) {
 		eix::say() % *it;
 	}

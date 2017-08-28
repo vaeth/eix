@@ -49,7 +49,7 @@ class AssignReader : public BasicReader {
 		ATTRIBUTE_NONNULL_ bool get_map(const std::string &file);
 
 		std::string *currfile;
-		WordMap *cf;
+		WordUnorderedMap *cf;
 		bool currstate;
 };
 

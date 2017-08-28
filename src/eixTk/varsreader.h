@@ -14,7 +14,6 @@
 
 #include <sys/types.h>
 
-#include <map>
 #include <string>
 
 #include "eixTk/attribute.h"
@@ -31,9 +30,8 @@ The deconstructor deinits it.
 **/
 class VarsReader {
 	public:
-		typedef std::map<std::string, std::string> my_map;
-		typedef my_map::const_iterator const_iterator;
-		typedef my_map::iterator iterator;
+		typedef WordIterateMap::const_iterator const_iterator;
+		typedef WordIterateMap::iterator iterator;
 		typedef uint16_t Flags;
 		static CONSTEXPR const Flags
 			NONE                 = 0x0000U,  ///< Flag: No flags set; normal behavior.
@@ -41,7 +39,7 @@ class VarsReader {
 			KEYWORDS_READ        = 0x0002U,  ///< Flag: Have already read "KEYWORDS" once.
 			SLOT_READ            = 0x0004U,  ///< Flag: Have already read "SLOT" once.
 			SUBST_VARS           = 0x0008U,  ///< Flag: Allow references to variable in declarations of a variable. i.e.  USE="$USE -kde"
-			INTO_MAP             = 0x0010U,  ///< Flag: Init but don't parse .. you must first supply a pointer to my_map with useMap (...)
+			INTO_MAP             = 0x0010U,  ///< Flag: Init but don't parse .. you must first supply a pointer to WordIterateMap with useMap (...)
 			APPEND_VALUES        = 0x0020U,  ///< Flag: Respect IncrementalKeys
 			ALLOW_SOURCE         = 0x0040U,  ///< Flag: Allow "source"/"." command.
 			ALLOW_SOURCE_VARNAME = 0x0080U|ALLOW_SOURCE,  ///< Flag: Allow "source"/"." but Prefix is only a varname which might be modified during sourcing.
@@ -61,7 +59,7 @@ class VarsReader {
 			}
 			parse_flags = flags;
 			if((parse_flags & INTO_MAP) == NONE) {
-				vars = new my_map;
+				vars = new WordIterateMap;
 			}
 		}
 
@@ -94,7 +92,7 @@ class VarsReader {
 		/**
 		Use a supplied map for variables.
 		**/
-		ATTRIBUTE_NONNULL_ void useMap(my_map *vars_map) {
+		ATTRIBUTE_NONNULL_ void useMap(WordIterateMap *vars_map) {
 			vars = vars_map;
 		}
 
@@ -410,7 +408,7 @@ class VarsReader {
 		/**
 		Mapping of key to value
 		**/
-		my_map *vars;
+		WordIterateMap *vars;
 
 		/**
 		Prefix resp. varname used for sourcing

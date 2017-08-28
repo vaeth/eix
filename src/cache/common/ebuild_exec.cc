@@ -194,7 +194,7 @@ void EbuildExec::calc_environment(const char *name, const string& dir, const Pac
 #endif
 		return;
 	}
-	WordMap env;
+	WordIterateMap env;
 #ifndef HAVE_SETENV
 	if(!use_ebuild_sh) {
 		for(char **e(environ); likely(*e != NULLPTR); ++e) {
@@ -237,7 +237,7 @@ void EbuildExec::calc_environment(const char *name, const string& dir, const Pac
 	}
 	env["PORTDIR_OVERLAY"] = (*(base->portagesettings))["PORTDIR_OVERLAY"].c_str();
 	if(settings->tmpdir.empty()) {
-		WordMap::iterator i(env.find("TMPDIR"));
+		WordIterateMap::iterator i(env.find("TMPDIR"));
 		if(i != env.end()) {
 			env.erase(i);
 		}
@@ -250,7 +250,7 @@ void EbuildExec::calc_environment(const char *name, const string& dir, const Pac
 	WordVec::size_type i(0);
 	if(!env.empty()) {
 		envstrings = new WordVec(env.size());
-		for(WordMap::const_iterator it(env.begin());
+		for(WordIterateMap::const_iterator it(env.begin());
 			likely(it != env.end()); ++it) {
 			(*envstrings)[i] = ((it->first) + '=' + (it->second));
 			c_env[i] = (*envstrings)[i].c_str();

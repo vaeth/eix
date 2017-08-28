@@ -10,7 +10,6 @@
 #include "eixTk/parseerror.h"
 #include <config.h>
 
-#include <set>
 #include <string>
 
 #include "eixTk/formated.h"
@@ -21,9 +20,8 @@
 #include "eixTk/stringutils.h"
 
 using std::string;
-using std::set;
 
-static set<string> *printed = NULLPTR;
+static WordUnorderedSet *printed = NULLPTR;
 
 /**
 Provide a common look for error-messages for parse-errors in
@@ -34,7 +32,7 @@ void ParseError::output(const string& file, const LineVec::size_type line_nr, co
 		return;
 	}
 	if(printed == NULLPTR) {
-		printed = new set<string>;
+		printed = new WordUnorderedSet;
 	}
 	string cache(eix::format("%s\a%s\v%s") % file % line_nr % errtext);
 	if(printed->count(cache) != 0) {

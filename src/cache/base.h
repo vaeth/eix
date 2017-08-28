@@ -196,7 +196,7 @@ class BasicCache {
 		bool have_prefix;
 		ExtendedVersion::Overlay m_overlay_key;
 		ErrorCallback m_error_callback;
-		ATTRIBUTE_NONNULL_ void env_add_package(WordMap *env, const Package& package, const Version& version, const std::string& ebuild_dir, const char *ebuild_full) const;
+		ATTRIBUTE_NONNULL_ void env_add_package(WordIterateMap *env, const Package& package, const Version& version, const std::string& ebuild_dir, const char *ebuild_full) const;
 
 	public:
 		PortageSettings *portagesettings;

@@ -126,7 +126,7 @@ GrepAllWith -e 'ATTRIBUTE_NONNULL_(' -e '^ATTRIBUTE_NONNULL\([^(_]\|$\)' -e '[^_
 GrepHWithout '#include <config\.h>'
 GrepCCWithout '#include <config\.h>'
 Check '"eixTk/assert\.h"' -e 'eix_assert'
-Check '"eixTk/stringtypes\.h"' -e 'WordVec' -e 'WordSet' -e 'WordMap' -e 'WordUnorderedSet' -e 'WordUnorderedMap' -e 'WordList' -e 'LineVec' -e 'WordSize'
+Check '"eixTk/stringtypes\.h"' -e 'WordVec' -e 'WordSet' -e 'WordMap' -e 'WordUnorderedSet' -e 'WordUnorderedMap' -e 'WordIterateMap' -e 'WordList' -e 'LineVec' -e 'WordSize'
 Check '"eixTk/dialect\.h"' -e 'CONSTEXPR' -e 'ASSIGN_DELETE' -e 'OVERRIDE[^_A-Z]' -e 'NOEXCEPT'
 Check '"eixTk/diagnostics\.h"' -e DIAG_OFF -e DIAG_ON
 Check '"eixTk/eixarray\.h"' -e 'eix::array'

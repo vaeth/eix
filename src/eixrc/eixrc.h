@@ -14,8 +14,6 @@
 
 #include <cstdio>
 
-#include <map>
-#include <set>
 #include <string>
 #include <utility>
 #include <vector>
@@ -24,6 +22,7 @@
 #include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/inttypes.h"
+#include "eixTk/stringtypes.h"
 #include "portage/keywords.h"
 #include "search/redundancy.h"
 
@@ -95,12 +94,11 @@ class EixRc {
 		const std::string& operator[](const std::string& key);
 
 	private:
-		typedef std::map<std::string, std::string> my_map;
 		std::string varprefix;
-		my_map main_map;
-		my_map filevarmap;
+		WordUnorderedMap main_map;
+		WordIterateMap filevarmap;
 		std::vector<EixRcOption> defaults;
-		std::set<std::string> prefix_keys;
+		WordUnorderedSet prefix_keys;
 
 		enum DelayedType { DelayedNotFound, DelayedVariable, DelayedIfTrue, DelayedIfFalse, DelayedIfNonempty, DelayedIfEmpty, DelayedElse, DelayedFi, DelayedQuote };
 
@@ -118,22 +116,22 @@ class EixRc {
 		**/
 		void add_later_variable(const std::string& key);
 
-		ATTRIBUTE_NONNULL_ void resolve_delayed(const std::string& key, std::set<std::string> *has_delayed);
-		ATTRIBUTE_NONNULL_ std::string *resolve_delayed_recurse(const std::string& key, std::set<std::string> *visited, std::set<std::string> *has_delayed, const char **errtext, std::string *errvar);
+		ATTRIBUTE_NONNULL_ void resolve_delayed(const std::string& key, WordUnorderedSet *has_delayed);
+		ATTRIBUTE_NONNULL_ std::string *resolve_delayed_recurse(const std::string& key, WordUnorderedSet *visited, WordUnorderedSet *has_delayed, const char **errtext, std::string *errvar);
 
 		/**
 		Create defaults and main_map with all variables
 		(including all values required by delayed references).
 		@arg has_delayed is initialized to corresponding keys
 		**/
-		ATTRIBUTE_NONNULL_ void read_undelayed(std::set<std::string> *has_delayed);
+		ATTRIBUTE_NONNULL_ void read_undelayed(WordUnorderedSet *has_delayed);
 		/**
 		Recursively join key and its delayed references to
 		main_map and default; set has_delayed if appropriate
 		**/
-		ATTRIBUTE_NONNULL((3)) void join_key(const std::string& key, std::set<std::string> *has_delayed, bool add_top_to_defaults, const std::set<std::string> *exclude_defaults);
-		ATTRIBUTE_NONNULL((4)) void join_key_rec(const std::string& key, const std::string& val, std::set<std::string> *has_delayed, const std::set<std::string> *exclude_defaults);
-		ATTRIBUTE_NONNULL((3)) void join_key_if_new(const std::string& key, std::set<std::string> *has_delayed, const std::set<std::string> *exclude_defaults);
+		ATTRIBUTE_NONNULL((3)) void join_key(const std::string& key, WordUnorderedSet *has_delayed, bool add_top_to_defaults, const WordUnorderedSet *exclude_defaults);
+		ATTRIBUTE_NONNULL((4)) void join_key_rec(const std::string& key, const std::string& val, WordUnorderedSet *has_delayed, const WordUnorderedSet *exclude_defaults);
+		ATTRIBUTE_NONNULL((3)) void join_key_if_new(const std::string& key, WordUnorderedSet *has_delayed, const WordUnorderedSet *exclude_defaults);
 
 		typedef uint8_t DelayvarFlags;
 		static CONSTEXPR const DelayvarFlags

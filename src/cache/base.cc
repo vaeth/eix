@@ -66,7 +66,7 @@ string BasicCache::getPathHumanReadable() const {
 	return ret;
 }
 
-void BasicCache::env_add_package(WordMap *env, const Package& package, const Version& version, const string& ebuild_dir, const char *ebuild_full) const {
+void BasicCache::env_add_package(WordIterateMap *env, const Package& package, const Version& version, const string& ebuild_dir, const char *ebuild_full) const {
 	string full(version.getFull());
 	string eroot;
 

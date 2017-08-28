@@ -35,7 +35,7 @@ using std::ifstream;
 bool AssignReader::get_map(const string &file) {
 	if(currfile == NULLPTR) {
 		currfile = new string(file);
-		cf = new WordMap;
+		cf = new WordUnorderedMap;
 	} else {
 		if(*currfile == file) {
 			return currstate;
@@ -66,7 +66,7 @@ const char *AssignReader::get_md5sum(const string &filename) {
 	if(unlikely(!get_map(filename))) {
 		return NULLPTR;
 	}
-	WordMap::const_iterator md5(cf->find("_md5_"));
+	WordUnorderedMap::const_iterator md5(cf->find("_md5_"));
 	if(md5 == cf->end()) {
 		return NULLPTR;
 	}
@@ -77,7 +77,7 @@ bool AssignReader::get_mtime(std::time_t *t, const string &filename) {
 	if(unlikely(!get_map(filename))) {
 		return false;
 	}
-	WordMap::const_iterator mt(cf->find("_mtime_"));
+	WordUnorderedMap::const_iterator mt(cf->find("_mtime_"));
 	if(mt == cf->end()) {
 		return false;
 	}
