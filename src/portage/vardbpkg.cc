@@ -407,7 +407,7 @@ void VarDbPkg::readCategory(const char *category) {
 			eix::say_error() % errtext;
 		}
 		if(likely(r != BasicVersion::parsedError)) {
-			(*category_installed)[curr_name].push_back(instver);
+			(*category_installed)[curr_name].PUSH_BACK_MOVE(instver);
 		}
 	}
 	closedir(dir_category);

@@ -15,6 +15,7 @@
 
 #include "eixTk/attribute.h"
 #include "eixTk/diagnostics.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -30,7 +31,7 @@ GCC_DIAG_ON(sign-conversion)
 	eix::TinyUnsigned paramarg_remain(0);
 	for(int i(1); likely(i < argc) ; ++i) {
 		if(seen_escape || paramarg_remain) {
-			push_back(Parameter(argv[i]));
+			EMPLACE_BACK(Parameter, (argv[i]));
 			if(paramarg_remain != 0) {
 				--paramarg_remain;
 			}
@@ -39,13 +40,13 @@ GCC_DIAG_ON(sign-conversion)
 
 		const char *ptr(argv[i]);
 		if(*ptr != '-') {
-			push_back(Parameter(ptr));
+			EMPLACE_BACK(Parameter, (ptr));
 			continue;
 		}
 		int opt;
 		switch(*++ptr) {
 			case '\0':
-				push_back(Parameter("-"));
+				EMPLACE_BACK(Parameter, ("-"));
 				continue;
 			case '-':
 				/* something that begins with -- */
@@ -56,12 +57,12 @@ GCC_DIAG_ON(sign-conversion)
 						continue;
 					case '-':
 						/* something ---escaped */
-						push_back(Parameter(ptr));
+						EMPLACE_BACK(Parameter, (ptr));
 						continue;
 					default:
 						/* some longopt */
 						opt = lookup_longopt(ptr, opt_table);
-						push_back(Parameter(opt));
+						EMPLACE_BACK(Parameter, (opt));
 						paramarg_remain = numargs(opt, opt_table);
 				}
 				break;
@@ -69,12 +70,12 @@ GCC_DIAG_ON(sign-conversion)
 				/* some shortopts */
 				for(char c(*ptr); likely(c != '\0'); c = *++ptr) {
 					if(paramarg_remain) {
-						push_back(Parameter(ptr));
+						EMPLACE_BACK(Parameter, (ptr));
 						--paramarg_remain;
 						break;
 					}
 					opt = lookup_shortopt(c, opt_table);
-					push_back(Parameter(opt));
+					EMPLACE_BACK(Parameter, (opt));
 					paramarg_remain = numargs(opt, opt_table);
 				}
 		}
@@ -264,7 +265,7 @@ void ArgumentReader::foldAndRemove(const OptionList& opt_table) {
 						break;
 					}
 					// if((c->type == Option::PAIRLIST) || (c->type == Option::PAIRLIST_OPTIONAL))
-					c->u.prlist->push_back(ArgPair(remember, second));
+					c->u.prlist->EMPLACE_BACK(ArgPair, (remember, second));
 					break;
 			default:  // KEEP
 					++it;

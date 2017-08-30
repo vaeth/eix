@@ -213,59 +213,59 @@ void PrintXml::package(Package *pkg) {
 		WordVec mask_text, unmask_text;
 		if(wasmask.isHardMasked()) {
 			if(currmask.isProfileMask()) {
-				mask_text.push_back("profile");
+				mask_text.PUSH_BACK("profile");
 			} else if(currmask.isPackageMask()) {
-				mask_text.push_back("hard");
+				mask_text.PUSH_BACK("hard");
 			} else if(wasmask.isProfileMask()) {
-				mask_text.push_back("profile");
-				unmask_text.push_back("package_unmask");
+				mask_text.PUSH_BACK("profile");
+				unmask_text.PUSH_BACK("package_unmask");
 			} else {
-				mask_text.push_back("hard");
-				unmask_text.push_back("package_unmask");
+				mask_text.PUSH_BACK("hard");
+				unmask_text.PUSH_BACK("package_unmask");
 			}
 		} else if(currmask.isHardMasked()) {
-			mask_text.push_back("package_mask");
+			mask_text.PUSH_BACK("package_mask");
 		}
 
 		if(currkey.isStable()) {
 			if(waskey.isStable()) {
 				//
 			} else if(waskey.isUnstable()) {
-				mask_text.push_back("keyword");
-				unmask_text.push_back("package_keywords");
+				mask_text.PUSH_BACK("keyword");
+				unmask_text.PUSH_BACK("package_keywords");
 			} else if(waskey.isMinusKeyword()) {
-				mask_text.push_back("minus_keyword");
-				unmask_text.push_back("package_keywords");
+				mask_text.PUSH_BACK("minus_keyword");
+				unmask_text.PUSH_BACK("package_keywords");
 			} else if(waskey.isAlienStable()) {
-				mask_text.push_back("alien_stable");
-				unmask_text.push_back("package_keywords");
+				mask_text.PUSH_BACK("alien_stable");
+				unmask_text.PUSH_BACK("package_keywords");
 			} else if(waskey.isAlienUnstable()) {
-				mask_text.push_back("alien_unstable");
-				unmask_text.push_back("package_keywords");
+				mask_text.PUSH_BACK("alien_unstable");
+				unmask_text.PUSH_BACK("package_keywords");
 			} else if(waskey.isMinusUnstable()) {
-				mask_text.push_back("minus_unstable");
-				unmask_text.push_back("package_keywords");
+				mask_text.PUSH_BACK("minus_unstable");
+				unmask_text.PUSH_BACK("package_keywords");
 			} else if(waskey.isMinusAsterisk()) {
-				mask_text.push_back("minus_asterisk");
-				unmask_text.push_back("package_keywords");
+				mask_text.PUSH_BACK("minus_asterisk");
+				unmask_text.PUSH_BACK("package_keywords");
 			} else {
-				mask_text.push_back("missing_keyword");
-				unmask_text.push_back("package_keywords");
+				mask_text.PUSH_BACK("missing_keyword");
+				unmask_text.PUSH_BACK("package_keywords");
 			}
 		} else if(currkey.isUnstable()) {
-			mask_text.push_back("keyword");
+			mask_text.PUSH_BACK("keyword");
 		} else if(currkey.isMinusKeyword()) {
-			mask_text.push_back("minus_keyword");
+			mask_text.PUSH_BACK("minus_keyword");
 		} else if(currkey.isAlienStable()) {
-			mask_text.push_back("alien_stable");
+			mask_text.PUSH_BACK("alien_stable");
 		} else if(currkey.isAlienUnstable()) {
-			mask_text.push_back("alien_unstable");
+			mask_text.PUSH_BACK("alien_unstable");
 		} else if(currkey.isMinusUnstable()) {
-			mask_text.push_back("minus_unstable");
+			mask_text.PUSH_BACK("minus_unstable");
 		} else if(currkey.isMinusAsterisk()) {
-			mask_text.push_back("minus_asterisk");
+			mask_text.PUSH_BACK("minus_asterisk");
 		} else {
-			mask_text.push_back("missing_keyword");
+			mask_text.PUSH_BACK("missing_keyword");
 		}
 
 		for(WordVec::const_iterator it(mask_text.begin());

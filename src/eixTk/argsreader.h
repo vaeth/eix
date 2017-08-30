@@ -96,8 +96,7 @@ class Option {
 	} u;
 };
 
-class OptionList : public std::vector<Option> {
-};
+typedef std::vector<Option> OptionList;
 
 /**
 Represents a parameter

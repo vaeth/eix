@@ -17,9 +17,7 @@
 #include "database/header.h"
 #include "eixTk/attribute.h"
 #include "eixTk/diagnostics.h"
-#ifdef HAVE_MOVE
 #include "eixTk/dialect.h"
-#endif
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -43,6 +41,9 @@ class File {
 	private:
 		FILE *fp;
 		bool seek(eix::OffsetType offset, int whence, std::string *errtext);
+
+		File(const File& s) ASSIGN_DELETE;
+		File& operator=(const File& s) ASSIGN_DELETE;
 
 	public:
 		File() : fp(NULLPTR) {

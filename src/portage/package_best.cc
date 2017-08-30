@@ -15,6 +15,7 @@
 #include <set>
 #include <string>
 
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -50,7 +51,7 @@ void SlotList::push_back_largest(Version *version) {
 			return;
 		}
 	}
-	push_back(SlotVersions(name, version));
+	EMPLACE_BACK(SlotVersions, (name, version));
 }
 
 const VersionList *SlotList::operator[](const char *s) const {

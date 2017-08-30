@@ -25,6 +25,7 @@
 #include "eixTk/argsreader.h"
 #include "eixTk/attribute.h"
 #include "eixTk/diagnostics.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
@@ -335,163 +336,163 @@ class EixOptionList : public OptionList {
 
 EixOptionList::EixOptionList() {
 	// Global options
-	push_back(Option("ansi",          O_ANSI,  Option::BOOLEAN_T,     &rc_options.ansi));
-	push_back(Option("256",           O_P256,  Option::BOOLEAN_T,     &rc_options.palette256));
-	push_back(Option("256d",          O_P256D, Option::BOOLEAN_T,     &rc_options.palette256d));
-	push_back(Option("256d0",         O_P256D0, Option::BOOLEAN_T,    &rc_options.palette256d0));
-	push_back(Option("256d1",         O_P256D1, Option::BOOLEAN_T,    &rc_options.palette256d1));
-	push_back(Option("256l",          O_P256L, Option::BOOLEAN_T,     &rc_options.palette256l));
-	push_back(Option("256l0",         O_P256L0, Option::BOOLEAN_T,    &rc_options.palette256l0));
-	push_back(Option("256l1",         O_P256L1, Option::BOOLEAN_T,    &rc_options.palette256l1));
-	push_back(Option("256b",          O_P256B, Option::BOOLEAN_T,     &rc_options.palette256b));
-	push_back(Option("quiet",         'q',     Option::BOOLEAN,       &rc_options.be_quiet));
-	push_back(Option("nowarn",        O_NOWARN, Option::BOOLEAN,      &rc_options.no_warn));
-	push_back(Option("quick",         'Q',     Option::BOOLEAN,       &rc_options.quick));
-	push_back(Option("care",          O_CARE,  Option::BOOLEAN_T,     &rc_options.care));
-	push_back(Option("deps-installed", O_DEPS_INSTALLED, Option::BOOLEAN_T, &rc_options.deps_installed));
+	EMPLACE_BACK(Option, ("ansi",          O_ANSI,  Option::BOOLEAN_T,     &rc_options.ansi));
+	EMPLACE_BACK(Option, ("256",           O_P256,  Option::BOOLEAN_T,     &rc_options.palette256));
+	EMPLACE_BACK(Option, ("256d",          O_P256D, Option::BOOLEAN_T,     &rc_options.palette256d));
+	EMPLACE_BACK(Option, ("256d0",         O_P256D0, Option::BOOLEAN_T,    &rc_options.palette256d0));
+	EMPLACE_BACK(Option, ("256d1",         O_P256D1, Option::BOOLEAN_T,    &rc_options.palette256d1));
+	EMPLACE_BACK(Option, ("256l",          O_P256L, Option::BOOLEAN_T,     &rc_options.palette256l));
+	EMPLACE_BACK(Option, ("256l0",         O_P256L0, Option::BOOLEAN_T,    &rc_options.palette256l0));
+	EMPLACE_BACK(Option, ("256l1",         O_P256L1, Option::BOOLEAN_T,    &rc_options.palette256l1));
+	EMPLACE_BACK(Option, ("256b",          O_P256B, Option::BOOLEAN_T,     &rc_options.palette256b));
+	EMPLACE_BACK(Option, ("quiet",         'q',     Option::BOOLEAN,       &rc_options.be_quiet));
+	EMPLACE_BACK(Option, ("nowarn",        O_NOWARN, Option::BOOLEAN,      &rc_options.no_warn));
+	EMPLACE_BACK(Option, ("quick",         'Q',     Option::BOOLEAN,       &rc_options.quick));
+	EMPLACE_BACK(Option, ("care",          O_CARE,  Option::BOOLEAN_T,     &rc_options.care));
+	EMPLACE_BACK(Option, ("deps-installed", O_DEPS_INSTALLED, Option::BOOLEAN_T, &rc_options.deps_installed));
 
-	push_back(Option("nocolor",       'n',     Option::BOOLEAN_T,     &format->no_color));
-	push_back(Option("force-color",   'F',     Option::BOOLEAN_F,     &format->no_color));
-	push_back(Option("versionlines",  'l',     Option::BOOLEAN,       &format->style_version_lines));
-	push_back(Option("versionsort",   'x',     Option::BOOLEAN,       &format->slot_sorted));
-	push_back(Option("pure-packages", '*',     Option::BOOLEAN,       &rc_options.pure_packages));
-	push_back(Option("only-names",    '#',     Option::BOOLEAN,       &rc_options.only_names));
-	push_back(Option("brief",         '0',     Option::BOOLEAN,       &rc_options.brief));
-	push_back(Option("brief2",       O_BRIEF2, Option::BOOLEAN,       &rc_options.brief2));
+	EMPLACE_BACK(Option, ("nocolor",       'n',     Option::BOOLEAN_T,     &format->no_color));
+	EMPLACE_BACK(Option, ("force-color",   'F',     Option::BOOLEAN_F,     &format->no_color));
+	EMPLACE_BACK(Option, ("versionlines",  'l',     Option::BOOLEAN,       &format->style_version_lines));
+	EMPLACE_BACK(Option, ("versionsort",   'x',     Option::BOOLEAN,       &format->slot_sorted));
+	EMPLACE_BACK(Option, ("pure-packages", '*',     Option::BOOLEAN,       &rc_options.pure_packages));
+	EMPLACE_BACK(Option, ("only-names",    '#',     Option::BOOLEAN,       &rc_options.only_names));
+	EMPLACE_BACK(Option, ("brief",         '0',     Option::BOOLEAN,       &rc_options.brief));
+	EMPLACE_BACK(Option, ("brief2",       O_BRIEF2, Option::BOOLEAN,       &rc_options.brief2));
 
-	push_back(Option("verbose",       'v',     Option::BOOLEAN_T,     &rc_options.verbose_output));
-	push_back(Option("compact",       'c',     Option::BOOLEAN_T,     &rc_options.compact_output));
-	push_back(Option("normal",        'N',     Option::BOOLEAN_T,     &rc_options.normal_output));
-	push_back(Option("xml",           O_XML,   Option::BOOLEAN,       &rc_options.xml));
-	push_back(Option("help",          'h',     Option::BOOLEAN_T,     &rc_options.show_help));
-	push_back(Option("version",       'V',     Option::BOOLEAN_T,     &rc_options.show_version));
-	push_back(Option("dump",          O_DUMP,  Option::BOOLEAN_T,     &rc_options.dump_eixrc));
-	push_back(Option("dump-defaults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &rc_options.dump_defaults));
-	push_back(Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &rc_options.known_vars));
-	push_back(Option("test-non-matching", 't', Option::BOOLEAN_T,     &rc_options.test_unused));
-	push_back(Option("debug",         O_DEBUG, Option::BOOLEAN_T,     &rc_options.do_debug));
+	EMPLACE_BACK(Option, ("verbose",       'v',     Option::BOOLEAN_T,     &rc_options.verbose_output));
+	EMPLACE_BACK(Option, ("compact",       'c',     Option::BOOLEAN_T,     &rc_options.compact_output));
+	EMPLACE_BACK(Option, ("normal",        'N',     Option::BOOLEAN_T,     &rc_options.normal_output));
+	EMPLACE_BACK(Option, ("xml",           O_XML,   Option::BOOLEAN,       &rc_options.xml));
+	EMPLACE_BACK(Option, ("help",          'h',     Option::BOOLEAN_T,     &rc_options.show_help));
+	EMPLACE_BACK(Option, ("version",       'V',     Option::BOOLEAN_T,     &rc_options.show_version));
+	EMPLACE_BACK(Option, ("dump",          O_DUMP,  Option::BOOLEAN_T,     &rc_options.dump_eixrc));
+	EMPLACE_BACK(Option, ("dump-defaults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &rc_options.dump_defaults));
+	EMPLACE_BACK(Option, ("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &rc_options.known_vars));
+	EMPLACE_BACK(Option, ("test-non-matching", 't', Option::BOOLEAN_T,     &rc_options.test_unused));
+	EMPLACE_BACK(Option, ("debug",         O_DEBUG, Option::BOOLEAN_T,     &rc_options.do_debug));
 
-	push_back(Option("print-all-eapis",     O_HASH_EAPI,     Option::BOOLEAN_T, &rc_options.hash_eapi));
-	push_back(Option("print-all-useflags",  O_HASH_IUSE,     Option::BOOLEAN_T, &rc_options.hash_iuse));
-	push_back(Option("print-all-keywords",  O_HASH_KEYWORDS, Option::BOOLEAN_T, &rc_options.hash_keywords));
-	push_back(Option("print-all-slots",     O_HASH_SLOT,     Option::BOOLEAN_T, &rc_options.hash_slot));
-	push_back(Option("print-all-licenses",  O_HASH_LICENSE,  Option::BOOLEAN_T, &rc_options.hash_license));
-	push_back(Option("print-all-depends",   O_HASH_DEPEND,   Option::BOOLEAN_T, &rc_options.hash_depend));
-	push_back(Option("print-world-sets",    O_WORLD_SETS,    Option::BOOLEAN_T, &rc_options.world_sets));
-	push_back(Option("print-profile-paths", O_PROFILE_PATHS, Option::BOOLEAN_T, &rc_options.print_profile_paths));
+	EMPLACE_BACK(Option, ("print-all-eapis",     O_HASH_EAPI,     Option::BOOLEAN_T, &rc_options.hash_eapi));
+	EMPLACE_BACK(Option, ("print-all-useflags",  O_HASH_IUSE,     Option::BOOLEAN_T, &rc_options.hash_iuse));
+	EMPLACE_BACK(Option, ("print-all-keywords",  O_HASH_KEYWORDS, Option::BOOLEAN_T, &rc_options.hash_keywords));
+	EMPLACE_BACK(Option, ("print-all-slots",     O_HASH_SLOT,     Option::BOOLEAN_T, &rc_options.hash_slot));
+	EMPLACE_BACK(Option, ("print-all-licenses",  O_HASH_LICENSE,  Option::BOOLEAN_T, &rc_options.hash_license));
+	EMPLACE_BACK(Option, ("print-all-depends",   O_HASH_DEPEND,   Option::BOOLEAN_T, &rc_options.hash_depend));
+	EMPLACE_BACK(Option, ("print-world-sets",    O_WORLD_SETS,    Option::BOOLEAN_T, &rc_options.world_sets));
+	EMPLACE_BACK(Option, ("print-profile-paths", O_PROFILE_PATHS, Option::BOOLEAN_T, &rc_options.print_profile_paths));
 
-	push_back(Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage));
+	EMPLACE_BACK(Option, ("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage));
 
-	push_back(Option("print",               O_PRINT_VAR,    Option::STRING,     &var_to_print));
+	EMPLACE_BACK(Option, ("print",               O_PRINT_VAR,    Option::STRING,     &var_to_print));
 
-	push_back(Option("format",         O_FMT,         Option::STRING,   &formatstring));
+	EMPLACE_BACK(Option, ("format",         O_FMT,         Option::STRING,   &formatstring));
 
-	push_back(Option("cache-file",     O_EIX_CACHEFILE, Option::STRING, &eix_cachefile));
-	push_back(Option("remote",         'R', Option::BOOLEAN, &rc_options.remote));
-	push_back(Option("remote2",        'Z', Option::BOOLEAN, &rc_options.remote2));
+	EMPLACE_BACK(Option, ("cache-file",     O_EIX_CACHEFILE, Option::STRING, &eix_cachefile));
+	EMPLACE_BACK(Option, ("remote",         'R', Option::BOOLEAN, &rc_options.remote));
+	EMPLACE_BACK(Option, ("remote2",        'Z', Option::BOOLEAN, &rc_options.remote2));
 
 	// Options for criteria
-	push_back(Option("installed",     'I'));
-	push_back(Option("multi-installed", 'i'));
-	push_back(Option("slotted",       '1'));
-	push_back(Option("slots",         '2'));
-	push_back(Option("upgrade",       'u'));
-	push_back(Option("upgrade+",      O_UPGRADE_LOCAL));
-	push_back(Option("upgrade-",      O_UPGRADE_NONLOCAL));
-	push_back(Option("stable",        O_STABLE_DEFAULT));
-	push_back(Option("testing",       O_TESTING_DEFAULT));
-	push_back(Option("non-masked",    O_NONMASKED_DEFAULT));
-	push_back(Option("binary",        O_BINARY));
-	push_back(Option("multi-binary" , O_MULTIBINARY,              Option::KEEP_STRING_OPTIONAL));
-	push_back(Option("world-file",    O_WORLD_FILE));
-	push_back(Option("world-set",     O_WORLD_SET));
-	push_back(Option("world",         O_WORLD_ALL));
-	push_back(Option("selected-file", O_SELECTED_FILE));
-	push_back(Option("selected-set",  O_SELECTED_SET));
-	push_back(Option("selected",      O_SELECTED_ALL));
-	push_back(Option("system",        O_SYSTEM_DEFAULT));
-	push_back(Option("profile",       O_PROFILE_DEFAULT));
-	push_back(Option("stable+",       O_STABLE_LOCAL));
-	push_back(Option("testing+",      O_TESTING_LOCAL));
-	push_back(Option("non-masked+",   O_NONMASKED_LOCAL));
-	push_back(Option("system+",       O_SYSTEM_LOCAL));
-	push_back(Option("profile+",      O_PROFILE_LOCAL));
-	push_back(Option("stable-",       O_STABLE_NONLOCAL));
-	push_back(Option("testing-",      O_TESTING_NONLOCAL));
-	push_back(Option("non-masked-",   O_NONMASKED_NONLOCAL));
-	push_back(Option("system-",       O_SYSTEM_NONLOCAL));
-	push_back(Option("profile-",      O_PROFILE_NONLOCAL));
-	push_back(Option("installed-unstable", O_INSTALLED_UNSTABLE));
-	push_back(Option("installed-testing",  O_INSTALLED_TESTING));
-	push_back(Option("installed-masked",   O_INSTALLED_MASKED));
-	push_back(Option("overlay",              'O'));
-	push_back(Option("installed-overlay",    'J'));
-	push_back(Option("installed-from-overlay", O_FROM_OVERLAY,    Option::KEEP_STRING_OPTIONAL));
-	push_back(Option("nonvirtual",           O_NONVIRTUAL));
-	push_back(Option("virtual",              O_VIRTUAL));
-	push_back(Option("in-overlay",           O_OVERLAY,           Option::KEEP_STRING_OPTIONAL));
-	push_back(Option("only-in-overlay",      O_ONLY_OVERLAY,      Option::KEEP_STRING_OPTIONAL));
-	push_back(Option("installed-in-some-overlay", O_INSTALLED_SOME));
-	push_back(Option("installed-in-overlay", O_INSTALLED_OVERLAY, Option::KEEP_STRING_OPTIONAL));
-	push_back(Option("restrict-fetch",         O_RESTRICT_FETCH));
-	push_back(Option("restrict-mirror",        O_RESTRICT_MIRROR));
-	push_back(Option("restrict-primaryuri",    O_RESTRICT_PRIMARYURI));
-	push_back(Option("restrict-binchecks",     O_RESTRICT_BINCHECKS));
-	push_back(Option("restrict-strip",         O_RESTRICT_STRIP));
-	push_back(Option("restrict-test",          O_RESTRICT_TEST));
-	push_back(Option("restrict-userpriv",      O_RESTRICT_USERPRIV));
-	push_back(Option("restrict-installsources", O_RESTRICT_INSTALLSOURCES));
-	push_back(Option("restrict-bindist",       O_RESTRICT_BINDIST));
-	push_back(Option("restrict-parallel",      O_RESTRICT_PARALLEL));
-	push_back(Option("properties-interactive", O_PROPERTIES_INTERACTIVE));
-	push_back(Option("properties-live",        O_PROPERTIES_LIVE));
-	push_back(Option("properties-virtual",     O_PROPERTIES_VIRTUAL));
-	push_back(Option("properties-set",         O_PROPERTIES_SET));
-	push_back(Option("dup-packages",  'd'));
-	push_back(Option("dup-versions",  'D'));
-	push_back(Option("test-obsolete", 'T'));
-	push_back(Option("pipe",          '|'));
-	push_back(Option("pipe-mask",     O_PIPE_MASK));
+	EMPLACE_BACK(Option, ("installed",     'I'));
+	EMPLACE_BACK(Option, ("multi-installed", 'i'));
+	EMPLACE_BACK(Option, ("slotted",       '1'));
+	EMPLACE_BACK(Option, ("slots",         '2'));
+	EMPLACE_BACK(Option, ("upgrade",       'u'));
+	EMPLACE_BACK(Option, ("upgrade+",      O_UPGRADE_LOCAL));
+	EMPLACE_BACK(Option, ("upgrade-",      O_UPGRADE_NONLOCAL));
+	EMPLACE_BACK(Option, ("stable",        O_STABLE_DEFAULT));
+	EMPLACE_BACK(Option, ("testing",       O_TESTING_DEFAULT));
+	EMPLACE_BACK(Option, ("non-masked",    O_NONMASKED_DEFAULT));
+	EMPLACE_BACK(Option, ("binary",        O_BINARY));
+	EMPLACE_BACK(Option, ("multi-binary" , O_MULTIBINARY,              Option::KEEP_STRING_OPTIONAL));
+	EMPLACE_BACK(Option, ("world-file",    O_WORLD_FILE));
+	EMPLACE_BACK(Option, ("world-set",     O_WORLD_SET));
+	EMPLACE_BACK(Option, ("world",         O_WORLD_ALL));
+	EMPLACE_BACK(Option, ("selected-file", O_SELECTED_FILE));
+	EMPLACE_BACK(Option, ("selected-set",  O_SELECTED_SET));
+	EMPLACE_BACK(Option, ("selected",      O_SELECTED_ALL));
+	EMPLACE_BACK(Option, ("system",        O_SYSTEM_DEFAULT));
+	EMPLACE_BACK(Option, ("profile",       O_PROFILE_DEFAULT));
+	EMPLACE_BACK(Option, ("stable+",       O_STABLE_LOCAL));
+	EMPLACE_BACK(Option, ("testing+",      O_TESTING_LOCAL));
+	EMPLACE_BACK(Option, ("non-masked+",   O_NONMASKED_LOCAL));
+	EMPLACE_BACK(Option, ("system+",       O_SYSTEM_LOCAL));
+	EMPLACE_BACK(Option, ("profile+",      O_PROFILE_LOCAL));
+	EMPLACE_BACK(Option, ("stable-",       O_STABLE_NONLOCAL));
+	EMPLACE_BACK(Option, ("testing-",      O_TESTING_NONLOCAL));
+	EMPLACE_BACK(Option, ("non-masked-",   O_NONMASKED_NONLOCAL));
+	EMPLACE_BACK(Option, ("system-",       O_SYSTEM_NONLOCAL));
+	EMPLACE_BACK(Option, ("profile-",      O_PROFILE_NONLOCAL));
+	EMPLACE_BACK(Option, ("installed-unstable", O_INSTALLED_UNSTABLE));
+	EMPLACE_BACK(Option, ("installed-testing",  O_INSTALLED_TESTING));
+	EMPLACE_BACK(Option, ("installed-masked",   O_INSTALLED_MASKED));
+	EMPLACE_BACK(Option, ("overlay",              'O'));
+	EMPLACE_BACK(Option, ("installed-overlay",    'J'));
+	EMPLACE_BACK(Option, ("installed-from-overlay", O_FROM_OVERLAY,    Option::KEEP_STRING_OPTIONAL));
+	EMPLACE_BACK(Option, ("nonvirtual",           O_NONVIRTUAL));
+	EMPLACE_BACK(Option, ("virtual",              O_VIRTUAL));
+	EMPLACE_BACK(Option, ("in-overlay",           O_OVERLAY,           Option::KEEP_STRING_OPTIONAL));
+	EMPLACE_BACK(Option, ("only-in-overlay",      O_ONLY_OVERLAY,      Option::KEEP_STRING_OPTIONAL));
+	EMPLACE_BACK(Option, ("installed-in-some-overlay", O_INSTALLED_SOME));
+	EMPLACE_BACK(Option, ("installed-in-overlay", O_INSTALLED_OVERLAY, Option::KEEP_STRING_OPTIONAL));
+	EMPLACE_BACK(Option, ("restrict-fetch",         O_RESTRICT_FETCH));
+	EMPLACE_BACK(Option, ("restrict-mirror",        O_RESTRICT_MIRROR));
+	EMPLACE_BACK(Option, ("restrict-primaryuri",    O_RESTRICT_PRIMARYURI));
+	EMPLACE_BACK(Option, ("restrict-binchecks",     O_RESTRICT_BINCHECKS));
+	EMPLACE_BACK(Option, ("restrict-strip",         O_RESTRICT_STRIP));
+	EMPLACE_BACK(Option, ("restrict-test",          O_RESTRICT_TEST));
+	EMPLACE_BACK(Option, ("restrict-userpriv",      O_RESTRICT_USERPRIV));
+	EMPLACE_BACK(Option, ("restrict-installsources", O_RESTRICT_INSTALLSOURCES));
+	EMPLACE_BACK(Option, ("restrict-bindist",       O_RESTRICT_BINDIST));
+	EMPLACE_BACK(Option, ("restrict-parallel",      O_RESTRICT_PARALLEL));
+	EMPLACE_BACK(Option, ("properties-interactive", O_PROPERTIES_INTERACTIVE));
+	EMPLACE_BACK(Option, ("properties-live",        O_PROPERTIES_LIVE));
+	EMPLACE_BACK(Option, ("properties-virtual",     O_PROPERTIES_VIRTUAL));
+	EMPLACE_BACK(Option, ("properties-set",         O_PROPERTIES_SET));
+	EMPLACE_BACK(Option, ("dup-packages",  'd'));
+	EMPLACE_BACK(Option, ("dup-versions",  'D'));
+	EMPLACE_BACK(Option, ("test-obsolete", 'T'));
+	EMPLACE_BACK(Option, ("pipe",          '|'));
+	EMPLACE_BACK(Option, ("pipe-mask",     O_PIPE_MASK));
 
 	// Algorithms for a criterion
-	push_back(Option("fuzzy",         'f'));
-	push_back(Option("regex",         'r'));
-	push_back(Option("exact",         'e'));
-	push_back(Option("pattern",       'p'));
-	push_back(Option("begin",         'b'));
-	push_back(Option("substring",     'z'));
-	push_back(Option("end",           O_END_ALGO));
+	EMPLACE_BACK(Option, ("fuzzy",         'f'));
+	EMPLACE_BACK(Option, ("regex",         'r'));
+	EMPLACE_BACK(Option, ("exact",         'e'));
+	EMPLACE_BACK(Option, ("pattern",       'p'));
+	EMPLACE_BACK(Option, ("begin",         'b'));
+	EMPLACE_BACK(Option, ("substring",     'z'));
+	EMPLACE_BACK(Option, ("end",           O_END_ALGO));
 
 	// What to match in this criterion
-	push_back(Option("any",           'y'));
-	push_back(Option("name",          's'));
-	push_back(Option("eapi",          O_SEARCH_EAPI));
-	push_back(Option("installed-eapi", O_SEARCH_INST_EAPI));
-	push_back(Option("slot",          O_SEARCH_SLOT));
-	push_back(Option("fullslot",      O_SEARCH_FULLSLOT));
-	push_back(Option("installed-slot", O_SEARCH_INST_SLOT));
-	push_back(Option("installed-fullslot", O_SEARCH_INST_FULLSLOT));
-	push_back(Option("category",      'C'));
-	push_back(Option("category-name", 'A'));
-	push_back(Option("description",   'S'));
-	push_back(Option("license",       'L'));
-	push_back(Option("homepage",      'H'));
-	push_back(Option("deps",          O_DEPS));
-	push_back(Option("depend",        O_DEPEND));
-	push_back(Option("rdepend",       O_RDEPEND));
-	push_back(Option("pdepend",       O_PDEPEND));
-	push_back(Option("hdepend",       O_HDEPEND));
-	push_back(Option("set",           O_SEARCH_SET));
-	push_back(Option("use",           'U'));
-	push_back(Option("installed-with-use",    O_INSTALLED_WITH_USE));
-	push_back(Option("installed-without-use", O_INSTALLED_WITHOUT_USE));
+	EMPLACE_BACK(Option, ("any",           'y'));
+	EMPLACE_BACK(Option, ("name",          's'));
+	EMPLACE_BACK(Option, ("eapi",          O_SEARCH_EAPI));
+	EMPLACE_BACK(Option, ("installed-eapi", O_SEARCH_INST_EAPI));
+	EMPLACE_BACK(Option, ("slot",          O_SEARCH_SLOT));
+	EMPLACE_BACK(Option, ("fullslot",      O_SEARCH_FULLSLOT));
+	EMPLACE_BACK(Option, ("installed-slot", O_SEARCH_INST_SLOT));
+	EMPLACE_BACK(Option, ("installed-fullslot", O_SEARCH_INST_FULLSLOT));
+	EMPLACE_BACK(Option, ("category",      'C'));
+	EMPLACE_BACK(Option, ("category-name", 'A'));
+	EMPLACE_BACK(Option, ("description",   'S'));
+	EMPLACE_BACK(Option, ("license",       'L'));
+	EMPLACE_BACK(Option, ("homepage",      'H'));
+	EMPLACE_BACK(Option, ("deps",          O_DEPS));
+	EMPLACE_BACK(Option, ("depend",        O_DEPEND));
+	EMPLACE_BACK(Option, ("rdepend",       O_RDEPEND));
+	EMPLACE_BACK(Option, ("pdepend",       O_PDEPEND));
+	EMPLACE_BACK(Option, ("hdepend",       O_HDEPEND));
+	EMPLACE_BACK(Option, ("set",           O_SEARCH_SET));
+	EMPLACE_BACK(Option, ("use",           'U'));
+	EMPLACE_BACK(Option, ("installed-with-use",    O_INSTALLED_WITH_USE));
+	EMPLACE_BACK(Option, ("installed-without-use", O_INSTALLED_WITHOUT_USE));
 
 	// What to do with the next one
-	push_back(Option("not",           '!'));
-	push_back(Option("or",            'o'));
-	push_back(Option("and",           'a'));
-	push_back(Option("open",          '('));
-	push_back(Option("close",         ')'));
+	EMPLACE_BACK(Option, ("not",           '!'));
+	EMPLACE_BACK(Option, ("or",            'o'));
+	EMPLACE_BACK(Option, ("and",           'a'));
+	EMPLACE_BACK(Option, ("open",          '('));
+	EMPLACE_BACK(Option, ("close",         ')'));
 }
 
 /**
@@ -1262,7 +1263,7 @@ static void print_removed(const string& dirname, const string& excludefiles, con
 				if(likely(excludes.count(curr_name) == 0)) {
 					string fullname(cat_slash + curr_name);
 					if(excludes.count(fullname) == 0) {
-						failure.push_back(cat_slash + curr_name);
+						failure.PUSH_BACK_MOVE(fullname);
 					}
 				}
 			}

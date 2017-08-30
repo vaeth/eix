@@ -17,6 +17,7 @@
 #include <string>
 
 #include "eixTk/compare.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -160,7 +161,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 	string::size_type pos(0);
 	string::size_type endpos(str.find_first_not_of("0123456789", pos));
 	if(unlikely((endpos == pos) || (pos == str.size()))) {
-		m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
+		m_parts.EMPLACE_BACK(BasicPart, (BasicPart::garbage, str, pos));
 		if(errtext != NULLPTR) {
 			*errtext = eix::format(_(
 			"malformed (first primary at position %s) version string \"%s\""))
@@ -168,7 +169,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 		}
 		return parsedError;
 	}
-	m_parts.push_back(BasicPart(BasicPart::first, str, pos, endpos - pos));
+	m_parts.EMPLACE_BACK(BasicPart, (BasicPart::first, str, pos, endpos - pos));
 
 	if(endpos == string::npos) {
 		return parsedOK;
@@ -179,7 +180,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 	while(str[pos] == '.') {
 		endpos = str.find_first_not_of("0123456789", ++pos);
 		if(unlikely((endpos == pos) || (pos == str.size()))) {
-			m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
+			m_parts.EMPLACE_BACK(BasicPart, (BasicPart::garbage, str, pos));
 			if(errtext != NULLPTR) {
 				*errtext = eix::format(_(
 				"malformed (primary at position %s) version string \"%s\""))
@@ -187,7 +188,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 			}
 			return parsedError;
 		}
-		m_parts.push_back(BasicPart(BasicPart::primary, str, pos, endpos - pos));
+		m_parts.EMPLACE_BACK(BasicPart, (BasicPart::primary, str, pos, endpos - pos));
 
 		if(endpos == string::npos) {
 			return parsedOK;
@@ -197,7 +198,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 	}
 
 	if(my_isalpha(str[pos])) {
-		m_parts.push_back(BasicPart(BasicPart::character, str[pos++]));
+		m_parts.EMPLACE_BACK(BasicPart, (BasicPart::character, str[pos++]));
 	}
 
 	if(pos == str.size()) {
@@ -223,7 +224,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 			++pos;
 			suffix = BasicPart::patch;
 		} else {
-			m_parts.push_back(BasicPart(BasicPart::garbage, str, pos-1));
+			m_parts.EMPLACE_BACK(BasicPart, (BasicPart::garbage, str, pos-1));
 			if(errtext != NULLPTR) {
 				*errtext = eix::format(_(
 				"malformed (suffix at position %s) version string \"%s\""))
@@ -233,7 +234,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 		}
 
 		endpos = str.find_first_not_of("0123456789", pos);
-		m_parts.push_back(BasicPart(suffix, str, pos, endpos - pos));
+		m_parts.EMPLACE_BACK(BasicPart, (suffix, str, pos, endpos - pos));
 
 		if(endpos == string::npos) {
 			return parsedOK;
@@ -245,7 +246,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 	// get optional gentoo revision
 	if(str.compare(pos, 2, "-r") == 0) {
 		endpos = str.find_first_not_of("0123456789", pos+=2);
-		m_parts.push_back(BasicPart(BasicPart::revision, str, pos, endpos - pos));
+		m_parts.EMPLACE_BACK(BasicPart, (BasicPart::revision, str, pos, endpos - pos));
 
 		if(endpos == string::npos) {
 			return parsedOK;
@@ -256,7 +257,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 			// inter-revision used by prefixed portage.
 			// for example foo-1.2-r02.2
 			endpos = str.find_first_not_of("0123456789", ++pos);
-			m_parts.push_back(BasicPart(BasicPart::inter_rev, str, pos, endpos - pos));
+			m_parts.EMPLACE_BACK(BasicPart, (BasicPart::inter_rev, str, pos, endpos - pos));
 			if(endpos == string::npos)
 				return parsedOK;
 			pos = endpos;
@@ -264,7 +265,7 @@ BasicVersion::ParseResult BasicVersion::parseVersion(const string& str, string *
 	}
 
 	if(accept_garbage >= 0) {
-		m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
+		m_parts.EMPLACE_BACK(BasicPart, (BasicPart::garbage, str, pos));
 	}
 	if(errtext != NULLPTR) {
 		*errtext = eix::format(accept_garbage ?

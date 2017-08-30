@@ -139,6 +139,9 @@
 /* Define if C++ dialect supports assigning delete */
 #undef HAVE_DELETE
 
+/* Define if STL has emplace_back */
+#undef HAVE_EMPLACE_BACK
+
 /* Define to 1 if you have the `fileno' function. */
 #undef HAVE_FILENO
 

@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "eixTk/attribute.h"
+#include "eixTk/dialect.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "portage/mask.h"
@@ -165,7 +166,7 @@ class CascadingProfile {
 		Put file into m_profile_files
 		**/
 		void listaddFile(const std::string& file, OverlayVec::size_type i, bool only_repo) {
-			m_profile_files.push_back(ProfileFile(file, i, only_repo));
+			m_profile_files.EMPLACE_BACK(ProfileFile, (file, i, only_repo));
 		}
 
 		/**

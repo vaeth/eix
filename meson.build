@@ -1156,6 +1156,21 @@ message('unordered_map: ' + have_unordered_map.to_string())
 conf.set('HAVE_UNORDERED_MAP', have_unordered_map,
 	description : 'Define if STL has unordered_map')
 
+have_emplace_back = cxx.links('''
+#include <utility>
+#include <vector>
+int main() {
+	typedef std::pair<int, int> mypair;
+	std::vector<mypair> a;
+	a.push_back(mypair(4, 4));
+	a.emplace_back(5, 5);
+	return (a.size() == 2) ? 0 : 1;
+}
+''', args : flags_dialect)
+message('emplace_back: ' + have_emplace_back.to_string())
+conf.set('HAVE_EMPLACE_BACK', have_emplace_back,
+	description : 'Define if STL has emplace_back')
+
 sqlite_dep = []
 with_sqlite = false
 want_sqlite = get_option('sqlite')

@@ -120,7 +120,7 @@ int run_eix_header(int argc, char *argv[]) {
 				default:
 					break;
 			}
-			options.push_back(OverlayOption(opt));
+			options.EMPLACE_BACK(OverlayOption, (opt));
 			if(curr == len) {
 				opt = 0;
 				break;
@@ -148,7 +148,7 @@ int run_eix_header(int argc, char *argv[]) {
 		} else {
 			arg = &(argv[0][curr]);
 		}
-		options.push_back(OverlayOption(opt, arg));
+		options.EMPLACE_BACK(OverlayOption, (opt, arg));
 	}
 
 	string result;

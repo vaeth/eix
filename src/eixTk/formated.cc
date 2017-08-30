@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/dialect.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -118,7 +119,7 @@ void format::init() {
 		} else {
 			wanted[argnum] |= typ;
 		}
-		manip.push_back(FormatManip(start, argnum, typ));
+		manip.EMPLACE_BACK(FormatManip, (start, argnum, typ));
 		m_text.erase(start, len);
 		i = start;
 		if(i == m_text.size()) {

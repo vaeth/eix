@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/parseerror.h"
@@ -258,7 +259,7 @@ bool PreList::add_splitted(const LineVec& line, FilenameIndex file, LineNumber n
 	Have::iterator it(have.find(line));
 	if(it == have.end()) {
 		have[line] = order.size();
-		order.push_back(PreListOrderEntry(line, file, number));
+		order.EMPLACE_BACK(PreListOrderEntry, (line, file, number));
 		return true;
 	}
 	PreListOrderEntry& e(order[it->second]);

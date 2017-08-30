@@ -210,7 +210,7 @@ static void parse_termdark(DarkModes *modes, WordVec *regexp, const string& term
 			return;
 		}
 	}
-	modes->push_back(Darkmode(true, true));
+	modes->EMPLACE_BACK(Darkmode, (true, true));
 }
 
 void PrintFormat::setupResources(EixRc *rc) {

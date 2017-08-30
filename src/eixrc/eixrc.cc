@@ -496,7 +496,7 @@ void EixRc::join_key(const string& key, WordUnorderedSet *has_delayed, bool add_
 
 	if(unlikely(add_top_to_defaults)) {
 		if(unlikely((exclude_defaults == NULLPTR) || (exclude_defaults->count(key) == 0))) {
-			defaults.push_back(EixRcOption(key, *val));
+			defaults.EMPLACE_BACK(EixRcOption, (key, *val));
 		}
 	}
 	join_key_rec(key, *val, has_delayed, exclude_defaults);
@@ -689,7 +689,7 @@ void EixRc::addDefault(EixRcOption option) {
 		prefix_keys.insert(option.key);
 	}
 	modify_value(&(option.value), option.key);
-	defaults.push_back(option);
+	defaults.PUSH_BACK_MOVE(option);
 }
 
 bool EixRc::istrue(const char *s) {

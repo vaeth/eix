@@ -478,7 +478,7 @@ void PortageSettings::read_world_sets(const char *file) {
 		if(s.empty()) {
 			continue;
 		}
-		the_sets.push_back(s);
+		the_sets.PUSH_BACK_MOVE(s);
 	}
 	store_world_sets(&the_sets, true);
 }

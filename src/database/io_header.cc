@@ -111,7 +111,7 @@ GCC_DIAG_ON(sign-conversion)
 		if(unlikely(!read_string(&s, errtext))) {
 			return false;
 		}
-		hdr->world_sets.push_back(s);
+		hdr->world_sets.PUSH_BACK_MOVE(s);
 	}
 
 	DBHeader::SaveBitmask save_bitmask;

@@ -118,7 +118,7 @@ bool Database::read_version(Version *v, const DBHeader& hdr, string *errtext) {
 		if(unlikely(!read_Part(&b, errtext))) {
 			return false;
 		}
-		v->m_parts.push_back(b);
+		v->m_parts.PUSH_BACK_MOVE(b);
 	}
 
 	string fullslot;

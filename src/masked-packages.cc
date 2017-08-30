@@ -17,6 +17,7 @@
 
 #include "eixTk/argsreader.h"
 #include "eixTk/attribute.h"
+#include "eixTk/dialect.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -71,12 +72,12 @@ class MaskedOptionList : public OptionList {
 };
 
 MaskedOptionList::MaskedOptionList() {
-	push_back(Option("help",      'h', Option::BOOLEAN, &rc_options.help));
-	push_back(Option("quiet",     'q', Option::BOOLEAN, &rc_options.be_quiet));
-	push_back(Option("nowarn",    'Q', Option::BOOLEAN, &rc_options.no_warn));
-	push_back(Option("file",      'f', Option::KEEP_STRING_OPTIONAL));
-	push_back(Option("read-file", 'F', Option::KEEP_STRING_OPTIONAL));
-	push_back(Option("mask",      'm', Option::KEEP_STRING));
+	EMPLACE_BACK(Option, ("help",      'h', Option::BOOLEAN, &rc_options.help));
+	EMPLACE_BACK(Option, ("quiet",     'q', Option::BOOLEAN, &rc_options.be_quiet));
+	EMPLACE_BACK(Option, ("nowarn",    'Q', Option::BOOLEAN, &rc_options.no_warn));
+	EMPLACE_BACK(Option, ("file",      'f', Option::KEEP_STRING_OPTIONAL));
+	EMPLACE_BACK(Option, ("read-file", 'F', Option::KEEP_STRING_OPTIONAL));
+	EMPLACE_BACK(Option, ("mask",      'm', Option::KEEP_STRING));
 }
 
 ATTRIBUTE_NONNULL((1)) static void read_stdin(LineVec *lines, string *name);
@@ -102,7 +103,7 @@ static void read_stdin(LineVec *lines, string *name) {
 			line.erase(x);
 		}
 		trim(&line);
-		lines->push_back(line);
+		lines->PUSH_BACK_MOVE(line);
 	}
 	if(stdin_count++ == 0) {
 		if(name != NULLPTR) {

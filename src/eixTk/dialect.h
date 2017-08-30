@@ -39,4 +39,19 @@
 #define NOEXCEPT
 #endif
 
+#ifdef HAVE_EMPLACE_BACK
+#define PUSH_BACK emplace_back
+#define EMPLACE_BACK(a, b) emplace_back b
+#else
+#define PUSH_BACK push_back
+#define EMPLACE_BACK(a, b) push_back(a b)
+#endif
+
+#ifdef HAVE_MOVE
+#include <utility>
+#define PUSH_BACK_MOVE(a) PUSH_BACK(std::move(a))
+#else
+#define PUSH_BACK_MOVE(a) PUSH_BACK(a)
+#endif
+
 #endif  // SRC_EIXTK_DIALECT_H_

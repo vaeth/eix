@@ -1390,6 +1390,23 @@ return (a[5] == 4) ? 0 : 1;
 			[Define if STL has unordered_map])],
 		[MV_MSG_RESULT([no])])
 
+# Check if emplace_back can be used
+AC_MSG_CHECKING([whether emplace_back can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+#include <utility>
+#include <vector>
+	]], [[
+typedef std::pair<int, int> mypair;
+std::vector<mypair> a;
+a.push_back(mypair(4, 4));
+a.emplace_back(5, 5);
+return (a.size() == 2) ? 0 : 1;
+		]])],
+		[MV_MSG_RESULT([yes])
+		AC_DEFINE([HAVE_EMPLACE_BACK], [1],
+			[Define if STL has emplace_back])],
+		[MV_MSG_RESULT([no])])
+
 # reset the CXXFLAGS, LDFLAGS for the normal tests
 AS_VAR_COPY([CXXFLAGS], [my_cxxflags])
 AS_VAR_COPY([LDFLAGS], [my_ldflags])

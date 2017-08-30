@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "eixTk/attribute.h"
+#include "eixTk/dialect.h"
 #include "eixTk/forward_list.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -313,7 +314,7 @@ class PreList : public std::vector<PreListEntry> {
 
 		FilenameIndex push_name(const std::string& filename, const char *reponame, bool only_repo) {
 			FilenameIndex i(filenames.size());
-			filenames.push_back(PreListFilename(filename, reponame, only_repo));
+			filenames.EMPLACE_BACK(PreListFilename, (filename, reponame, only_repo));
 			return i;
 		}
 

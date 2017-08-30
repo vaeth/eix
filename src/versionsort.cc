@@ -142,7 +142,7 @@ int run_versionsort(int argc, char *argv[]) {
 		get_version(&curr_version, argv[i]);
 		BasicVersion b;
 		parse_version(&b, curr_version);
-		versions.push_back(b);
+		versions.PUSH_BACK_MOVE(b);
 	}
 	sort(versions.begin(), versions.end());
 	for(Versions::const_iterator it(versions.begin());

@@ -16,6 +16,7 @@
 #include "database/header.h"
 #include "eixTk/argsreader.h"
 #include "eixTk/attribute.h"
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
@@ -271,7 +272,7 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 						test->FromOverlayInstList(),
 						arg->m_argument,
 						(*portagesettings)["PORTDIR"].c_str());
-					test->FromForeignOverlayInstList()->push_back(arg->m_argument);
+					test->FromForeignOverlayInstList()->PUSH_BACK(arg->m_argument);
 					break;
 				}
 				ATTRIBUTE_FALLTHROUGH
@@ -280,7 +281,7 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 					test->FromOverlayInstList(),
 					"",
 					(*portagesettings)["PORTDIR"].c_str());
-				test->FromForeignOverlayInstList()->push_back("");
+				test->FromForeignOverlayInstList()->PUSH_BACK("");
 				break;
 			case 'd': USE_TEST;
 				test->DuplPackages(eixrc->getBool("DUP_PACKAGES_ONLY_OVERLAYS"));

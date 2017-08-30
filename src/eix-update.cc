@@ -23,6 +23,7 @@
 #include "database/io.h"
 #include "eixTk/attribute.h"
 #include "eixTk/argsreader.h"
+#include "eixTk/dialect.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -181,24 +182,24 @@ class EixUpdateOptionList : public OptionList {
 };
 
 EixUpdateOptionList::EixUpdateOptionList() {
-	push_back(Option("quiet",          'q',     Option::BOOLEAN,    &quiet));
-	push_back(Option("dump",            O_DUMP, Option::BOOLEAN_T,  &dump_eixrc));
-	push_back(Option("dump-defaults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &dump_defaults));
-	push_back(Option("print",        O_PRINT_VAR,  Option::STRING,    &var_to_print));
-	push_back(Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &known_vars));
-	push_back(Option("help",           'h',     Option::BOOLEAN_T,  &show_help));
-	push_back(Option("version",        'V',     Option::BOOLEAN_T,  &show_version));
-	push_back(Option("nostatus",       'H',     Option::BOOLEAN_F,  &use_status));
-	push_back(Option("nocolor",        'n',     Option::BOOLEAN_F,  &use_percentage));
-	push_back(Option("force-color",    'F',     Option::BOOLEAN_T,  &use_percentage));
-	push_back(Option("force-status", O_FORCE_STATUS, Option::BOOLEAN_T, &use_status));
-	push_back(Option("verbose",        'v',     Option::BOOLEAN_T,  &verbose));
+	EMPLACE_BACK(Option, ("quiet",          'q',     Option::BOOLEAN,    &quiet));
+	EMPLACE_BACK(Option, ("dump",            O_DUMP, Option::BOOLEAN_T,  &dump_eixrc));
+	EMPLACE_BACK(Option, ("dump-defaults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &dump_defaults));
+	EMPLACE_BACK(Option, ("print",        O_PRINT_VAR,  Option::STRING,    &var_to_print));
+	EMPLACE_BACK(Option, ("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &known_vars));
+	EMPLACE_BACK(Option, ("help",           'h',     Option::BOOLEAN_T,  &show_help));
+	EMPLACE_BACK(Option, ("version",        'V',     Option::BOOLEAN_T,  &show_version));
+	EMPLACE_BACK(Option, ("nostatus",       'H',     Option::BOOLEAN_F,  &use_status));
+	EMPLACE_BACK(Option, ("nocolor",        'n',     Option::BOOLEAN_F,  &use_percentage));
+	EMPLACE_BACK(Option, ("force-color",    'F',     Option::BOOLEAN_T,  &use_percentage));
+	EMPLACE_BACK(Option, ("force-status", O_FORCE_STATUS, Option::BOOLEAN_T, &use_status));
+	EMPLACE_BACK(Option, ("verbose",        'v',     Option::BOOLEAN_T,  &verbose));
 
-	push_back(Option("exclude-overlay", 'x',    Option::STRINGLIST, exclude_args));
-	push_back(Option("add-overlay",    'a',     Option::STRINGLIST, add_args));
-	push_back(Option("override-method", 'm',    Option::PAIRLIST,   method_args));
-	push_back(Option("repo-name",      'r',     Option::PAIRLIST,   repo_args));
-	push_back(Option("output",         'o',     Option::STRING,     &outputname));
+	EMPLACE_BACK(Option, ("exclude-overlay", 'x',    Option::STRINGLIST, exclude_args));
+	EMPLACE_BACK(Option, ("add-overlay",    'a',     Option::STRINGLIST, add_args));
+	EMPLACE_BACK(Option, ("override-method", 'm',    Option::PAIRLIST,   method_args));
+	EMPLACE_BACK(Option, ("repo-name",      'r',     Option::PAIRLIST,   repo_args));
+	EMPLACE_BACK(Option, ("output",         'o',     Option::STRING,     &outputname));
 }
 
 static PercentStatus *reading_percent_status;
@@ -207,7 +208,7 @@ static PercentStatus *reading_percent_status;
 static void add_pathnames(PathVec *add_list, const WordVec& to_add, bool must_resolve) {
 	for(WordVec::const_iterator it(to_add.begin());
 		unlikely(it != to_add.end()); ++it)
-		add_list->push_back(Pathname(*it, must_resolve));
+		add_list->EMPLACE_BACK(Pathname, (*it, must_resolve));
 }
 
 static void add_override(Overrides *override_list, EixRc *eixrc, const char *s) {
@@ -220,7 +221,7 @@ static void add_override(Overrides *override_list, EixRc *eixrc, const char *s) 
 	for(WordVec::iterator it(v.begin()); unlikely(it != v.end()); ++it) {
 		Override o(Pathname(*it, true));
 		o.method = *(++it);
-		override_list->push_back(o);
+		override_list->PUSH_BACK_MOVE(o);
 	}
 }
 
@@ -234,7 +235,7 @@ static void add_reponames(RepoNames *repo_names, EixRc *eixrc, const char *s) {
 	for(WordVec::const_iterator it(v.begin()); unlikely(it != v.end()); ++it) {
 		RepoName r(Pathname(*it, true));
 		r.repo_name = *(++it);
-		repo_names->push_back(r);
+		repo_names->PUSH_BACK_MOVE(r);
 	}
 }
 
@@ -259,10 +260,10 @@ static void add_virtuals(Overrides *override_list, PathVec *add, RepoNames *repo
 		if(!is_virtual(overlay.c_str()))
 			continue;
 		Pathname name(overlay, false);
-		add->push_back(name);
 		escape_string(&overlay, ":");
-		override_list->push_back(Override(name, string("eix*::") + overlay));
-		repo_names->push_back(RepoName(name, ov.label));
+		override_list->EMPLACE_BACK(Override, (name, string("eix*::") + overlay));
+		repo_names->EMPLACE_BACK(RepoName, (name, ov.label));
+		add->PUSH_BACK_MOVE(name);
 	}
 }
 
@@ -421,19 +422,19 @@ int run_eix_update(int argc, char *argv[]) {
 		/* Modify default (overlay/method/...) lists, using command line args */
 		for(ExcludeArgs::iterator it(exclude_args->begin());
 			unlikely(it != exclude_args->end()); ++it)
-			excluded_list.push_back(Pathname(*it, true));
+			excluded_list.EMPLACE_BACK(Pathname, (*it, true));
 		for(AddArgs::iterator it(add_args->begin());
 			unlikely(it != add_args->end()); ++it)
-			add_list.push_back(Pathname(*it, true));
+			add_list.EMPLACE_BACK(Pathname, (*it, true));
 		for(MethodArgs::iterator it(method_args->begin());
 			unlikely(it != method_args->end()); ++it)
-			override_list.push_back(Override(Pathname(it->first, true), it->second));
+			override_list.EMPLACE_BACK(Override, (Pathname(it->first, true), it->second));
 
 		/* For REPO_NAMES it is quite the opposite: */
 
 		for(RepoArgs::iterator it(repo_args->begin());
 			unlikely(it != repo_args->end()); ++it)
-			repo_names.push_back(RepoName(Pathname(it->first, false), it->second));
+			repo_names.EMPLACE_BACK(RepoName, (Pathname(it->first, false), it->second));
 
 		add_reponames(&repo_names, &eixrc, "REPO_NAMES");
 
@@ -448,13 +449,14 @@ int run_eix_update(int argc, char *argv[]) {
 			string add_name(it->resolve(&portage_settings));
 		// Let exclude override added names
 			if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
-				add_name.c_str(), true) == excluded_overlays.end())
-				add_overlays.push_back(add_name);
+				add_name.c_str(), true) == excluded_overlays.end()) {
+				add_overlays.PUSH_BACK_MOVE(add_name);
+			}
 		}
 
 		for(Overrides::iterator it(override_list.begin());
 			unlikely(it != override_list.end()); ++it) {
-			override_vector.push_back(OverridePair((it->name).resolve(&portage_settings), it->method));
+			override_vector.EMPLACE_BACK(OverridePair, ((it->name).resolve(&portage_settings), it->method));
 		}
 	}
 
