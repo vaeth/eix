@@ -49,6 +49,8 @@ eixTk/eixint.h \
 eixTk/formated.cc \
 eixTk/formated.h \
 eixTk/i18n.h \
+eixTk/iterate_map.h \
+eixTk/iterate_set.h \
 eixTk/likely.h \
 eixTk/null.h \
 eixTk/stringtypes.h \

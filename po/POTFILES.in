@@ -69,6 +69,8 @@ src/eixTk/formated.h
 src/eixTk/forward_list.h
 src/eixTk/i18n.h
 src/eixTk/inttypes.h
+src/eixTk/iterate_map.h
+src/eixTk/iterate_set.h
 src/eixTk/likely.h
 src/eixTk/md5.cc
 src/eixTk/md5.h

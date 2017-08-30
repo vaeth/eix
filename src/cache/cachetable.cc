@@ -23,18 +23,16 @@
 
 using std::string;
 
-bool CacheTable::addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const string& cache_name, const WordMap *overriding, string *errtext) {
+bool CacheTable::addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const string& cache_name, const OverrideVector *override_vector, string *errtext) {
 	for(CacheTable::iterator it(begin()); likely(it != end()); ++it) {
 		if(same_filenames(directory, (it->getPath()).c_str())) {
 			return true;
 		}
 	}
 	const char *cache_method(cache_name.c_str());
-	if(unlikely(overriding != NULLPTR)) {
-		// If we would look for identical names, we could use the much faster
-		// WordMap::const_iterator found = overriding->find(directory);
-		for(WordMap::const_reverse_iterator it(overriding->rbegin());
-			unlikely(it != overriding->rend()); ++it) {
+	if(unlikely(override_vector != NULLPTR)) {
+		for(OverrideVector::const_reverse_iterator it(override_vector->rbegin());
+			unlikely(it != override_vector->rend()); ++it) {
 			if(same_filenames((it->first).c_str(), directory, true)) {
 				cache_method = (it->second).c_str();
 				break;

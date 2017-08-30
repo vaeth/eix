@@ -80,12 +80,6 @@ inline static bool pushback_files(const std::string& dir_path, WordVec *into, co
 }
 
 /**
-Cycle through map using it, until it is it_end, append all values from it
-to the value with the same key in append_to.
-**/
-ATTRIBUTE_NONNULL_ void join_map(WordMap *append_to, WordMap::const_iterator it, WordMap::const_iterator it_end);
-
-/**
 Print version of eix to stdout.
 **/
 ATTRIBUTE_NORETURN void dump_version();

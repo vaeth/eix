@@ -245,22 +245,6 @@ bool pushback_files(const string& dir_path, WordVec *into, const char *const exc
 	return true;
 }
 
-/**
-Cycle through map using it, until it is it_end, append all values from it
-to the value with the same key in append_to.
-**/
-void join_map(WordMap *append_to, WordMap::const_iterator it, WordMap::const_iterator it_end) {
-	for(; likely(it != it_end); ++it) {
-		string& to((*append_to)[it->first]);
-		if(to.empty()) {
-			to = it->second;
-		} else {
-			to.append(1, ' ');
-			to.append(it->second);
-		}
-	}
-}
-
 void dump_version() {
 	eix::say() % PACKAGE_VERSION;
 	std::exit(EXIT_SUCCESS);

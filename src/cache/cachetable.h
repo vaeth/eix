@@ -13,14 +13,16 @@
 #include <config.h>
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "cache/base.h"
 #include "eixTk/attribute.h"
 #include "eixTk/ptr_container.h"
-#include "eixTk/stringtypes.h"
 
 typedef eix::ptr_container<std::vector<BasicCache *> > CacheTableList;
+typedef std::pair<std::string, std::string> OverridePair;
+typedef std::vector<OverridePair> OverrideVector;
 
 class CacheTable : public CacheTableList {
 	private:
@@ -34,7 +36,7 @@ class CacheTable : public CacheTableList {
 			delete_and_clear();
 		}
 
-		ATTRIBUTE_NONNULL((4)) bool addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const std::string& cache_name, const WordMap *overriding, std::string *errtext);
+		ATTRIBUTE_NONNULL((4)) bool addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const std::string& cache_name, const OverrideVector *override_vector, std::string *errtext);
 };
 
 #endif  // SRC_CACHE_CACHETABLE_H_

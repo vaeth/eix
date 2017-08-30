@@ -400,65 +400,63 @@ int run_eix_update(int argc, char *argv[]) {
 	PortageSettings portage_settings(&eixrc, &parse_error, false, true);
 
 	/* Build default (overlay/method/...) lists, using environment vars */
-	Overrides override_list;
-	add_override(&override_list, &eixrc, "CACHE_METHOD");
-	PathVec excluded_list;
-	add_pathnames(&excluded_list, split_string(eixrc["EXCLUDE_OVERLAY"], true), true);
-	PathVec add_list;
-	add_pathnames(&add_list, split_string(eixrc["ADD_OVERLAY"], true), true);
-
-	RepoNames repo_names;
-
-	if(unlikely(eixrc.getBool("KEEP_VIRTUALS"))) {
-		add_virtuals(&override_list, &add_list, &repo_names, eix_cachefile, eixrc["EPREFIX_VIRTUAL"]);
-	}
-
-	add_override(&override_list, &eixrc, "OVERRIDE_CACHE_METHOD");
-
-	/* Modify default (overlay/method/...) lists, using command line args */
-	for(ExcludeArgs::iterator it(exclude_args->begin());
-		unlikely(it != exclude_args->end()); ++it)
-		excluded_list.push_back(Pathname(*it, true));
-	for(AddArgs::iterator it(add_args->begin());
-		unlikely(it != add_args->end()); ++it)
-		add_list.push_back(Pathname(*it, true));
-	for(MethodArgs::iterator it(method_args->begin());
-		unlikely(it != method_args->end()); ++it)
-		override_list.push_back(Override(Pathname(it->first, true), it->second));
-
-	/* For REPO_NAMES it is quite the opposite: */
-
-	for(RepoArgs::iterator it(repo_args->begin());
-		unlikely(it != repo_args->end()); ++it)
-		repo_names.push_back(RepoName(Pathname(it->first, false), it->second));
-
-	add_reponames(&repo_names, &eixrc, "REPO_NAMES");
-
-	/* Normalize names: */
-
 	WordVec excluded_overlays;
-	for(PathVec::iterator it(excluded_list.begin());
-		unlikely(it != excluded_list.end()); ++it)
-		excluded_overlays.push_back(it->resolve(&portage_settings));
-	excluded_list.clear();
-
 	WordVec add_overlays;
-	for(PathVec::iterator it(add_list.begin());
-		unlikely(it != add_list.end()); ++it) {
-		string add_name(it->resolve(&portage_settings));
-		// Let exclude override added names
-		if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
-			add_name.c_str(), true) == excluded_overlays.end())
-			add_overlays.push_back(add_name);
-	}
-	add_list.clear();
+	OverrideVector override_vector;
+	RepoNames repo_names;
+	{
+		Overrides override_list;
+		add_override(&override_list, &eixrc, "CACHE_METHOD");
+		PathVec excluded_list;
+		add_pathnames(&excluded_list, split_string(eixrc["EXCLUDE_OVERLAY"], true), true);
+		PathVec add_list;
+		add_pathnames(&add_list, split_string(eixrc["ADD_OVERLAY"], true), true);
 
-	WordMap override_map;
-	for(Overrides::iterator it(override_list.begin());
-		unlikely(it != override_list.end()); ++it) {
-		override_map[(it->name).resolve(&portage_settings)] = it->method;
+		if(unlikely(eixrc.getBool("KEEP_VIRTUALS"))) {
+			add_virtuals(&override_list, &add_list, &repo_names, eix_cachefile, eixrc["EPREFIX_VIRTUAL"]);
+		}
+
+		add_override(&override_list, &eixrc, "OVERRIDE_CACHE_METHOD");
+
+		/* Modify default (overlay/method/...) lists, using command line args */
+		for(ExcludeArgs::iterator it(exclude_args->begin());
+			unlikely(it != exclude_args->end()); ++it)
+			excluded_list.push_back(Pathname(*it, true));
+		for(AddArgs::iterator it(add_args->begin());
+			unlikely(it != add_args->end()); ++it)
+			add_list.push_back(Pathname(*it, true));
+		for(MethodArgs::iterator it(method_args->begin());
+			unlikely(it != method_args->end()); ++it)
+			override_list.push_back(Override(Pathname(it->first, true), it->second));
+
+		/* For REPO_NAMES it is quite the opposite: */
+
+		for(RepoArgs::iterator it(repo_args->begin());
+			unlikely(it != repo_args->end()); ++it)
+			repo_names.push_back(RepoName(Pathname(it->first, false), it->second));
+
+		add_reponames(&repo_names, &eixrc, "REPO_NAMES");
+
+		/* Normalize names: */
+
+		for(PathVec::iterator it(excluded_list.begin());
+			unlikely(it != excluded_list.end()); ++it)
+			excluded_overlays.push_back(it->resolve(&portage_settings));
+
+		for(PathVec::iterator it(add_list.begin());
+			unlikely(it != add_list.end()); ++it) {
+			string add_name(it->resolve(&portage_settings));
+		// Let exclude override added names
+			if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
+				add_name.c_str(), true) == excluded_overlays.end())
+				add_overlays.push_back(add_name);
+		}
+
+		for(Overrides::iterator it(override_list.begin());
+			unlikely(it != override_list.end()); ++it) {
+			override_vector.push_back(OverridePair((it->name).resolve(&portage_settings), it->method));
+		}
 	}
-	override_list.clear();
 
 	/* Calculate new PORTDIR_OVERLAY for export */
 
@@ -497,7 +495,7 @@ int run_eix_update(int argc, char *argv[]) {
 
 	/* Create CacheTable and fill with PORTDIR and PORTDIR_OVERLAY. */
 	CacheTable table(eixrc["CACHE_METHOD_PARSE"]); {
-		WordMap *override_ptr(override_map.size() ? &override_map : NULLPTR);
+		OverrideVector *override_ptr(override_vector.size() ? &override_vector : NULLPTR);
 		if(likely(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 				portage_settings["PORTDIR"].c_str(), true) == excluded_overlays.end())) {
 			string errtext;

@@ -1218,7 +1218,7 @@ static void print_unused(const string& filename, const string& excludefiles, con
 
 static void print_removed(const string& dirname, const string& excludefiles, const PackageList& packagelist) {
 	/* For faster testing, we build a category->name map */
-	typedef UNORDERED_MAP<string, WordSet> CatName;
+	typedef UNORDERED_MAP<string, WordUnorderedSet> CatName;
 	CatName cat_name;
 	for(PackageList::const_iterator pit(packagelist.begin());
 		likely(pit != packagelist.end()); ++pit) {
@@ -1240,7 +1240,7 @@ static void print_removed(const string& dirname, const string& excludefiles, con
 		cat_slash.append(1, '/');
 		pushback_files(dirname + cat_slash, &names, NULLPTR, 2, true, false);
 		CatName::const_iterator cat(cat_name.find(*cit));
-		const WordSet *ns((cat == cat_name.end()) ? NULLPTR : &(cat->second));
+		const WordIterateSet *ns((cat == cat_name.end()) ? NULLPTR : &(cat->second));
 		for(WordVec::const_iterator nit(names.begin());
 			likely(nit != names.end()); ++nit) {
 			string curr_name;
