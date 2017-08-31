@@ -142,7 +142,7 @@ static void print_help() {
 "further information.")) % program_name % EIX_CACHEFILE;
 }
 
-enum cli_options {
+enum update_options {
 	O_DUMP = 260,
 	O_DUMP_DEFAULTS,
 	O_KNOWN_VARS,

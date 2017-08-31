@@ -100,7 +100,7 @@ bool cli_show_help(false),
 
 const char *var_to_print(NULLPTR);
 
-enum cli_options {
+enum diff_options {
 	O_DUMP = 300,
 	O_DUMP_DEFAULTS,
 	O_KNOWN_VARS,
