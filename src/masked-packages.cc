@@ -103,7 +103,7 @@ static void read_stdin(LineVec *lines, string *name) {
 			line.erase(x);
 		}
 		trim(&line);
-		lines->PUSH_BACK_MOVE(line);
+		lines->PUSH_BACK(MOVE(line));
 	}
 	if(stdin_count++ == 0) {
 		if(name != NULLPTR) {
@@ -171,7 +171,7 @@ static void read_args(MaskList<Mask> *mask_list, WordVec *args, const ArgumentRe
 				add_words(args, opt_arg(&arg, ar));
 				break;
 			default:
-				args->push_back(arg->m_argument);
+				args->PUSH_BACK(arg->m_argument);
 				break;
 		}
 	}

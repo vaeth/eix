@@ -10,6 +10,8 @@
 
 #include <algorithm>
 
+#include "eixTk/dialect.h"
+
 /**
 @return true if something has changed
 **/
@@ -31,7 +33,7 @@ bool SetsList::add(SetsIndex i) {
 	if(has(i)) {
 		return false;
 	}
-	push_back(i);
+	PUSH_BACK(MOVE(i));
 	return true;
 }
 

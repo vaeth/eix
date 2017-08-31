@@ -10,6 +10,7 @@
 #include "portage/package.h"
 #include <config.h>
 
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "portage/basicversion.h"
 #include "portage/extendedversion.h"
@@ -82,7 +83,7 @@ void Package::addVersionStart(Version *version) {
 	if(unlikely(have_inserted)) {
 		return;
 	}
-	push_back(version);
+	PUSH_BACK(MOVE(version));
 }
 
 void Package::collect_iuse(Version *version) {

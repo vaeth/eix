@@ -10,6 +10,7 @@
 
 #include <string>
 
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
@@ -30,13 +31,13 @@ void StringListContent::finalize() {
 		for(; likely(it != m_list.end()); ++it) {
 			for(WordVec::const_iterator r(it); unlikely(r->empty()); ) {
 				if(unlikely((++r) == m_list.end())) {
-					m_list = cp;
+					m_list = MOVE(cp);
 					return;
 				}
 			}
-			cp.push_back(*it);
+			cp.PUSH_BACK(MOVE(*it));
 		}
-		m_list = cp;
+		m_list = MOVE(cp);
 	}
 }
 
@@ -91,3 +92,15 @@ void StringList::push_back(const std::string& s) {
 	}
 	ptr->push_back(s);
 }
+
+#ifdef HAVE_MOVE
+void StringList::push_back(std::string&& s) {
+	if(ptr == NULLPTR) {
+		ptr = new StringListContent;
+#ifdef STRINGLIST_FREE
+		ptr->usage = 1;
+#endif
+	}
+	ptr->push_back(s);
+}
+#endif

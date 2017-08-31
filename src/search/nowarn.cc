@@ -14,6 +14,7 @@
 
 #include "eixTk/assert.h"
 #include "eixTk/attribute.h"
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/parseerror.h"
@@ -33,16 +34,17 @@ using std::string;
 
 class NowarnKeywords {
 	private:
+		typedef pair<string, NowarnFlags> NameMapPair;
 		typedef UNORDERED_MAP<string, NowarnFlags> NameMap;
 		NameMap name_map;
 
 	public:
 		ATTRIBUTE_NONNULL_ void init_red(const char *s, Keywords::Redundant red) {
-			name_map.insert(pair<string, NowarnFlags>(s, NowarnFlags(red)));
+			name_map.EMPLACE(NameMapPair, (s, NowarnFlags(red)));
 		}
 
 		void init_ins(const std::string& s, PackageTest::TestInstalled ins) {
-			name_map.insert(pair<string, NowarnFlags>(s, NowarnFlags(Keywords::RED_NOTHING, ins)));
+			name_map.EMPLACE(NameMapPair, (s, NowarnFlags(Keywords::RED_NOTHING, ins)));
 		}
 
 		void apply(const std::string& s, NowarnFlags *f) const {
@@ -132,7 +134,7 @@ void NowarnMaskList::apply(Package *p, Keywords::Redundant *r, PackageTest::Test
 		}
 		for(Version::SetsIndizes::const_iterator sit(v->sets_indizes.begin());
 			unlikely(sit != v->sets_indizes.end()); ++sit) {
-			my_sets.insert(*sit);
+			my_sets.INSERT(*sit);
 		}
 	}
 	if(unlikely(!my_sets.empty())) {

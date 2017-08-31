@@ -13,6 +13,7 @@
 #include <set>
 #include <string>
 
+#include "eixTk/dialect.h"
 #include "eixTk/filenames.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -70,7 +71,7 @@ const OverlayIdent& DBHeader::getOverlay(ExtendedVersion::Overlay key) const {
 Add overlay to directory-table and return key
 **/
 ExtendedVersion::Overlay DBHeader::addOverlay(const OverlayIdent& overlay) {
-	overlays.push_back(overlay);
+	overlays.PUSH_BACK(overlay);
 	return countOverlays() - 1;
 }
 
@@ -133,7 +134,7 @@ bool DBHeader::find_overlay(ExtendedVersion::Overlay *num, const char *name, con
 void DBHeader::get_overlay_vector(set<ExtendedVersion::Overlay> *overlayset, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const {
 	for(ExtendedVersion::Overlay curr(minimal);
 		find_overlay(&curr, name, portdir, curr, testmode); ++curr) {
-		overlayset->insert(curr);
+		overlayset->INSERT(curr);
 	}
 }
 

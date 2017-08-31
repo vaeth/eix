@@ -23,6 +23,7 @@
 #include <string>
 
 #include "eixTk/attribute.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -71,7 +72,7 @@ bool scandir_cc(const string& dir, WordVec *namelist, select_dirent select, bool
 			const char *name(d->d_name);
 			// Omit "." and ".." since we must not rely on their existence anyway
 			if(likely(std::strcmp(name, ".") && std::strcmp(name, "..") && (*select)(d))) {
-				namelist->push_back(name);
+				namelist->PUSH_BACK(MOVE(name));
 			}
 		}
 	}
@@ -110,7 +111,7 @@ static bool pushback_lines_file(const char *file, LineVec *v, bool keep_empty, e
 		trim(&line);
 
 		if(keep_empty || (!line.empty())) {
-			v->push_back(line);
+			v->PUSH_BACK(MOVE(line));
 		}
 	}
 	if(likely(ifstr.eof())) {  // if we have eof, everything went well
@@ -234,12 +235,12 @@ bool pushback_files(const string& dir_path, WordVec *into, const char *const exc
 	if(!scandir_cc(dir_path, &namelist, pushback_files_selector)) {
 		return false;
 	}
-	for(WordVec::const_iterator it(namelist.begin());
+	for(WordVec::iterator it(namelist.begin());
 		likely(it != namelist.end()); ++it) {
 		if(full_path) {
-			into->push_back(dir_path + (*it));
+			into->PUSH_BACK(dir_path + (*it));
 		} else {
-			into->push_back(*it);
+			into->PUSH_BACK(MOVE(*it));
 		}
 	}
 	return true;

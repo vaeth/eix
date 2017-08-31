@@ -39,7 +39,7 @@ void Eapi::assign(const std::string& str) {
 		return;
 	}
 	(*eapi_map)[str] = eapi_index = eapi_vec->size();
-	eapi_vec->push_back(str);
+	eapi_vec->PUSH_BACK(str);
 }
 
 string Eapi::get() const {

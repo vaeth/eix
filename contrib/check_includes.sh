@@ -127,7 +127,7 @@ GrepHWithout '#include <config\.h>'
 GrepCCWithout '#include <config\.h>'
 Check '"eixTk/assert\.h"' -e 'eix_assert'
 Check '"eixTk/stringtypes\.h"' -e 'WordVec' -e 'WordSet' -e 'WordUnorderedSet' -e 'WordUnorderedMap' -e 'WordIterateSet' -e 'WordIterateMap' -e 'WordList' -e 'LineVec' -e 'WordSize'
-Check '"eixTk/dialect\.h"' -e 'CONSTEXPR' -e 'ASSIGN_DELETE' -e 'OVERRIDE[^_A-Z]' -e 'NOEXCEPT' -e 'EMPLACE_BACK' -e 'PUSH_BACK'
+Check '"eixTk/dialect\.h"' -e 'CONSTEXPR' -e 'ASSIGN_DELETE' -e 'OVERRIDE[^_A-Z]' -e 'NOEXCEPT' -e 'EMPLACE_BACK' -e 'PUSH_BACK' -e 'INSERT' -e 'PUSH' -e 'MOVE'
 Check '"eixTk/diagnostics\.h"' -e DIAG_OFF -e DIAG_ON
 Check '"eixTk/eixarray\.h"' -e 'eix::array'
 Check '"eixTk/eixint\.h"' -e OffsetType -e UChar -e UNumber -e Treesize -e Catsize -e Versize -e SignedBool -e TinySigned -e TinyUnsigned

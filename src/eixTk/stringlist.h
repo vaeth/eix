@@ -59,8 +59,14 @@ class StringListContent {
 		}
 
 		void push_back(const std::string& s) {
-			m_list.push_back(s);
+			m_list.PUSH_BACK(s);
 		}
+
+#ifdef HAVE_MOVE
+		void push_back(std::string&& s) {
+			m_list.PUSH_BACK(s);
+		}
+#endif
 
 		ATTRIBUTE_NONNULL_ void append_to_string(OutputString *s, const OutputString& skip) const;
 
@@ -138,6 +144,9 @@ class StringList {
 		}
 
 		void push_back(const std::string& s);
+#ifdef HAVE_MOVE
+		void push_back(std::string&& s);
+#endif
 
 		ATTRIBUTE_NONNULL_ void append_to_string(OutputString *s, const OutputString& skip) const {
 			if(ptr != NULLPTR) {

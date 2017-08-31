@@ -22,10 +22,12 @@
 #include <vector>
 
 #include "eixTk/attribute.h"
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/unordered_map.h"
+#include "eixTk/unordered_set.h"
 
 // check_includes: include "eixTk/stringutils.h"
 
@@ -197,12 +199,17 @@ Split a string into multiple strings.
 **/
 ATTRIBUTE_NONNULL_ void split_string(WordVec *vec, const std::string& str, bool handle_escape, const char *at, bool ignore_empty);
 ATTRIBUTE_NONNULL_ void split_string(WordSet *vec, const std::string& str, bool handle_escape, const char *at, bool ignore_empty);
+ATTRIBUTE_NONNULL_ void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape, const char *at, bool ignore_empty);
 ATTRIBUTE_NONNULL_ inline static void split_string(WordVec *vec, const std::string& str, bool handle_escape, const char *at);
 inline static void split_string(WordVec *vec, const std::string& str, bool handle_escape, const char *at) {
 	split_string(vec, str, handle_escape, at, true);
 }
 ATTRIBUTE_NONNULL_ inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape, const char *at);
 inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape, const char *at) {
+	split_string(vec, str, handle_escape, at, true);
+}
+ATTRIBUTE_NONNULL_ inline static void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape, const char *at);
+inline static void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape, const char *at) {
 	split_string(vec, str, handle_escape, at, true);
 }
 ATTRIBUTE_NONNULL_ inline static void split_string(WordVec *vec, const std::string& str, bool handle_escape);
@@ -213,12 +220,20 @@ ATTRIBUTE_NONNULL_ inline static void split_string(WordSet *vec, const std::stri
 inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape) {
 	split_string(vec, str, handle_escape, spaces);
 }
+ATTRIBUTE_NONNULL_ inline static void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape);
+inline static void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape) {
+	split_string(vec, str, handle_escape, spaces);
+}
 ATTRIBUTE_NONNULL_ inline static void split_string(WordVec *vec, const std::string& str);
 inline static void split_string(WordVec *vec, const std::string& str) {
 	split_string(vec, str, false);
 }
 ATTRIBUTE_NONNULL_ inline static void split_string(WordSet *vec, const std::string& str);
 inline static void split_string(WordSet *vec, const std::string& str) {
+	split_string(vec, str, false);
+}
+ATTRIBUTE_NONNULL_ inline static void split_string(WordUnorderedSet *vec, const std::string& str);
+inline static void split_string(WordUnorderedSet *vec, const std::string& str) {
 	split_string(vec, str, false);
 }
 
@@ -258,14 +273,30 @@ inline static WordVec split_string(const std::string& str) {
 }
 
 /**
-Push back to a vector
+Push back to a vector, preserving rvalue references if necessary
 **/
 template<typename T> ATTRIBUTE_NONNULL_ inline static void push_back(std::vector<T> *v, const T& e);
+#ifdef HAVE_MOVE
+template<typename T> ATTRIBUTE_NONNULL_ inline static void push_back(std::vector<T> *v, T&& e);
+#endif
 
 /**
 Push back (=insert) to a set
 **/
 template<typename T> ATTRIBUTE_NONNULL_ inline static void push_back(std::set<T> *s, const T& e);
+#ifdef HAVE_MOVE
+template<typename T> ATTRIBUTE_NONNULL_ inline static void push_back(std::set<T> *s, T&& e);
+#endif
+
+#ifdef HAVe_UNORDERED_SET
+/**
+Push back (=insert) to an unordered_set
+**/
+template<typename T> ATTRIBUTE_NONNULL_ inline static void push_back(UNORDERED_SET<T> *s, const T& e);
+#ifdef HAVE_MOVE
+template<typename T> ATTRIBUTE_NONNULL_ inline static void push_back(UNORDERED_SET<T> *s, T&& e);
+#endif
+#endif  // HAVE_UNORDERED_SET
 
 /**
 Join a string-vector or string-set
@@ -275,11 +306,6 @@ template<typename T> inline static std::string join_to_string(T vec, const std::
 template<typename T> inline static std::string join_to_string(T vec) {
 	return join_to_string(vec, " ");
 }
-
-/**
-Add items from s to the end of d
-**/
-template<typename T> ATTRIBUTE_NONNULL_ inline static void push_backs(std::vector<T> *d, const std::vector<T>& s);
 
 /**
 Join a string-vector
@@ -351,21 +377,6 @@ ATTRIBUTE_NONNULL_ inline static bool resolve_plus_minus(WordSet *s, const std::
 inline static bool resolve_plus_minus(WordSet *s, const std::string& str) {
 	return resolve_plus_minus(s, str, NULLPTR);
 }
-
-/**
-Insert a whole vector to a set
-**/
-template<typename T> ATTRIBUTE_NONNULL_ inline static void insert_list(std::set<T> *the_set, const std::vector<T>& the_list);
-
-/**
-Make a set from a vector
-**/
-template<typename T> ATTRIBUTE_NONNULL_ inline static void make_set(std::set<T> *the_set, const std::vector<T>& the_list);
-
-/**
-Make a vector from a set
-**/
-template<typename T> ATTRIBUTE_NONNULL_ inline static void make_vector(std::vector<T> *the_list, const std::set<T>& the_set);
 
 /**
 Match str against a null-terminated list of patterns
@@ -469,15 +480,39 @@ class StringHash : public WordVec {
 Push back to a vector
 **/
 template<typename T> inline static void push_back(std::vector<T> *v, const T& e) {
-	v->push_back(e);
+	v->PUSH_BACK(e);
 }
+#ifdef HAVE_MOVE
+template<typename T> inline static void push_back(std::vector<T> *v, T&& e) {
+	v->PUSH_BACK(e);
+}
+#endif
 
 /**
 Push back (=insert) to a set
 **/
 template<typename T> inline static void push_back(std::set<T> *s, const T& e) {
-	s->insert(e);
+	s->INSERT(e);
 }
+#ifdef HAVE_MOVE
+template<typename T> inline static void push_back(std::set<T> *s, T&& e) {
+	s->INSERT(e);
+}
+#endif
+
+/**
+Push back (=insert) to an unordered_set
+**/
+#ifdef HAVE_UNORDERED_SET
+template<typename T> inline static void push_back(UNORDERED_SET<T> *s, const T& e) {
+	s->INSERT(e);
+}
+#ifdef HAVE_MOVE
+template<typename T> inline static void push_back(UNORDERED_SET<T> *s, T&& e) {
+	s->INSERT(e);
+}
+#endif
+#endif  // HAVE_UNORDERED_SET
 
 /**
 Join a string-vector or string-set
@@ -496,37 +531,6 @@ template<typename Td, typename Ts> inline static void join_and_split(Td vec, con
 	std::string t;
 	join_to_string(&t, s, glue);
 	split_string(vec, t, handle_escape, at, ignore_empty);
-}
-
-/**
-Add items from s to the end of d
-**/
-template<typename T> inline static void push_backs(std::vector<T> *d, const std::vector<T>& s) {
-	d->insert(d->end(), s.begin(), s.end());
-}
-
-/**
-Insert a whole vector to a set
-**/
-template<typename T> inline static void insert_list(std::set<T> *the_set, const std::vector<T>& the_list) {
-	the_set->insert(the_list.begin(), the_list.end());
-}
-
-/**
-Make a set from a vector
-**/
-template<typename T> inline static void make_set(std::set<T> *the_set, const std::vector<T>& the_list) {
-	the_set->clear();
-	insert_list(the_set, the_list);
-}
-
-/**
-Make a vector from a set
-**/
-template<typename T> inline static void make_vector(std::vector<T> *the_list, const std::set<T>& the_set) {
-	the_list->clear();
-	the_list->reserve(the_set.size());
-	the_list->insert(the_list->end(), the_set.begin(), the_set.end());
 }
 
 /**

@@ -298,7 +298,7 @@ class DiffReaders {
 
 		void handle_old_package() {
 			if(m_separate_deleted) {
-				lost_list.push_back(old_pkg);
+				lost_list.PUSH_BACK(old_pkg);
 			} else {
 				lost_package(old_pkg);
 				delete old_pkg;
@@ -307,7 +307,7 @@ class DiffReaders {
 
 		void handle_new_package() {
 			if(m_separate_deleted) {
-				found_list.push_back(new_pkg);
+				found_list.PUSH_BACK(new_pkg);
 			} else {
 				found_package(new_pkg);
 				delete new_pkg;

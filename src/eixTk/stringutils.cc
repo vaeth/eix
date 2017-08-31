@@ -23,6 +23,7 @@
 
 #include "eixTk/attribute.h"
 #include "eixTk/diagnostics.h"
+#include "eixTk/dialect.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -300,7 +301,7 @@ template<typename T> inline static void split_string_template(T *vec, const stri
 			string r(str, last_pos, pos - last_pos);
 			erase_escapes(&r, at);
 			if(likely((!r.empty()) || !ignore_empty)) {
-				push_back(vec, r);
+				push_back(vec, MOVE(r));
 			}
 		} else if(likely((pos > last_pos) || !ignore_empty)) {
 			push_back(vec, str.substr(last_pos, pos - last_pos));
@@ -311,7 +312,7 @@ template<typename T> inline static void split_string_template(T *vec, const stri
 		string r(str, last_pos);
 		erase_escapes(&r, at);
 		if(likely((!r.empty()) || !ignore_empty)) {
-			push_back(vec, r);
+			push_back(vec, MOVE(r));
 		}
 	} else if(likely((str.size() > last_pos) || !ignore_empty)) {
 		push_back(vec, str.substr(last_pos));
@@ -324,6 +325,10 @@ void split_string(WordVec *vec, const string& str, bool handle_escape, const cha
 
 void split_string(WordSet *vec, const string& str, bool handle_escape, const char *at, bool ignore_empty) {
 	split_string_template<WordSet>(vec, str, handle_escape, at, ignore_empty);
+}
+
+void split_string(WordUnorderedSet *vec, const string& str, bool handle_escape, const char *at, bool ignore_empty) {
+	split_string_template<WordUnorderedSet>(vec, str, handle_escape, at, ignore_empty);
 }
 
 WordVec split_string(const string& str, bool handle_escape, const char *at, bool ignore_empty) {
@@ -388,7 +393,7 @@ bool resolve_plus_minus(WordSet *s, const WordVec& l, const WordSet *warnignore)
 		}
 		if(unlikely((*it)[0] == '+')) {
 			eix::say_error(_("flags should not start with a '+': %s")) % (*it);
-			s->insert(it->substr(1));
+			s->INSERT(it->substr(1));
 			continue;
 		}
 		if(unlikely((*it)[0] == '-')) {
@@ -397,12 +402,12 @@ bool resolve_plus_minus(WordSet *s, const WordVec& l, const WordSet *warnignore)
 				continue;
 			}
 			if(*it == "-~*") {
-				WordVec v;
-				make_vector(&v, *s);
-				for(WordVec::const_iterator i(v.begin());
-					unlikely(i != v.end()); ++i) {
+				for(WordSet::iterator i(s->begin());
+					unlikely(i != s->end()); ) {
 					if((i->size() >=2) && ((*i)[0] == '~')) {
-						s->erase(*i);
+						s->erase(i++);
+					} else {
+						++i;
 					}
 				}
 			}
@@ -418,7 +423,7 @@ bool resolve_plus_minus(WordSet *s, const WordVec& l, const WordSet *warnignore)
 				minuskeyword = true;
 			}
 		}
-		s->insert(*it);
+		s->INSERT(*it);
 	}
 	return minuskeyword;
 }
@@ -428,7 +433,7 @@ void StringHash::store_string(const string& s) {
 		eix::say_error(_("internal error: storing required after finalizing"));
 		std::exit(EXIT_FAILURE);
 	}
-	push_back(s);
+	PUSH_BACK(s);
 }
 
 void StringHash::hash_string(const string& s) {
@@ -493,18 +498,18 @@ void StringHash::output_depends() const {
 	for(WordVec::const_iterator i(begin()); likely(i != end()); ++i) {
 		string::size_type q(i->find('"'));
 		if(q == string::npos) {
-			out.insert(*i);
+			out.INSERT(*i);
 			continue;
 		}
 		if(q == 0) {
 			if(i->length() != 1) {
-				out.insert(string(*i, 1));
+				out.EMPLACE(string, (*i, 1));
 			}
 			continue;
 		}
-		out.insert(string(*i, 0, q));
+		out.EMPLACE(string, (*i, 0, q));
 		if(++q != i->length()) {
-			out.insert(string(*i, q));
+			out.EMPLACE(string, (*i, q));
 		}
 	}
 	for(WordSet::const_iterator i(out.begin()); likely(i != out.end()); ++i) {

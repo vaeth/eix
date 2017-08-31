@@ -58,7 +58,7 @@ template<> bool MaskList<Mask>::add_file(const char *file, Mask::Type mask_type,
 				if(comments == NULLPTR) {
 					comments = new StringList;
 				}
-				comments->push_back(line);
+				comments->push_back(MOVE(line));
 				continue;
 			}
 		}
@@ -236,8 +236,8 @@ bool PreList::add_line(const std::string& line, FilenameIndex file, LineNumber n
 					}
 				}
 			}
-			l.push_back(*unique);
-			l.push_back(line);
+			l.PUSH_BACK(*unique);
+			l.PUSH_BACK(line);
 			add_splitted(l, file, number);
 			return false;
 		}
@@ -333,14 +333,14 @@ void PreList::finalize() {
 		e->locally_double = it->locally_double;
 		e->name = *curr;
 		for(++curr; curr != it->end(); ++curr) {
-			e->args.push_back(*curr);
+			e->args.PUSH_BACK(*curr);
 		}
 	}
 
 	// Now we sort the result according to the order.
 	for(Order::const_iterator it(order.begin()); likely(it != order.end()); ++it) {
 		if(likely(!it->removed)) {
-			push_back(result[(*it)[0]]);
+			PUSH_BACK(result[(*it)[0]]);
 		}
 	}
 
@@ -385,7 +385,7 @@ void PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines
 			if(comments == NULLPTR) {
 				comments = new StringList;
 			}
-			comments->push_back(line);
+			comments->push_back(MOVE(line));
 			continue;
 		}
 		finishcomment = true;

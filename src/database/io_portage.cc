@@ -14,6 +14,7 @@
 #include "database/package_reader.h"
 #include "eixTk/auto_array.h"
 #include "eixTk/diagnostics.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -118,7 +119,7 @@ bool Database::read_version(Version *v, const DBHeader& hdr, string *errtext) {
 		if(unlikely(!read_Part(&b, errtext))) {
 			return false;
 		}
-		v->m_parts.PUSH_BACK_MOVE(b);
+		v->m_parts.PUSH_BACK(MOVE(b));
 	}
 
 	string fullslot;

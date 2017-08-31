@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "eixTk/assert.h"
+#include "eixTk/dialect.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -163,8 +164,8 @@ class MatcherField {
 					default_value = PackageTest::name2field(regex, true);
 					return;
 				}
-				match.push_back(new Regex(regex.c_str()));
-				fields.push_back(PackageTest::name2field(*it, true));
+				match.PUSH_BACK(new Regex(regex.c_str()));
+				fields.PUSH_BACK(PackageTest::name2field(*it, true));
 			}
 			default_value = PackageTest::NAME;
 		}
@@ -298,11 +299,11 @@ class MatcherAlgorithm {
 						eix::say_error(_("closing ')' missing in \"%s\" in DEFAULT_MATCH_ALGORITHM")) % expression;
 					}
 				}
-				or_list.push_back(or_field);
-				and_list.push_back(and_field);
-				not_list.push_back(not_field);
-				match.push_back(new Regex(regex));
-				algorithms.push_back(PackageTest::name2algorithm(*it));
+				or_list.PUSH_BACK(or_field);
+				and_list.PUSH_BACK(and_field);
+				not_list.PUSH_BACK(not_field);
+				match.PUSH_BACK(new Regex(regex));
+				algorithms.PUSH_BACK(PackageTest::name2algorithm(*it));
 			}
 			default_value = PackageTest::ALGO_REGEX;
 		}

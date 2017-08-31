@@ -235,7 +235,7 @@ void ArgumentReader::foldAndRemove(const OptionList& opt_table) {
 						break;
 					}
 					if((c->type == Option::STRINGLIST) || (c->type == Option::STRINGLIST_OPTIONAL)) {
-						c->u.strlist->push_back(remember);
+						c->u.strlist->PUSH_BACK(remember);
 						break;
 					}
 					if((c->type == Option::STRING) || (c->type == Option::STRING_OPTIONAL)) {

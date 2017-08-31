@@ -107,7 +107,7 @@ template<typename m_Type> class MaskList {
 				*l = new Get;
 			}
 			for(m_const_iterator m(r.begin()); likely(m != r.end()); ++m) {
-				(*l)->push_back(&*m);
+				(*l)->PUSH_BACK(&*m);
 			}
 		}
 
@@ -283,7 +283,7 @@ class PreList : public std::vector<PreListEntry> {
 		using super::clear;
 
 	private:
-		using super::push_back;
+		using super::PUSH_BACK;
 
 		typedef std::vector<PreListOrderEntry> Order;
 		Order order;

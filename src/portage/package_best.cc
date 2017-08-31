@@ -12,6 +12,7 @@
 
 #include <cstring>
 
+#include <algorithm>
 #include <set>
 #include <string>
 
@@ -47,7 +48,7 @@ void SlotList::push_back_largest(Version *version) {
 	const char *name((version->slotname).c_str());
 	for(iterator it(begin()); likely(it != end()); ++it) {
 		if(unlikely(std::strcmp(name, it->slotname()) == 0)) {
-			(it->version_list()).push_back(version);
+			(it->version_list()).PUSH_BACK(version);
 			return;
 		}
 	}
@@ -105,7 +106,7 @@ void Package::best_slots(Package::VerVec *l, bool allow_unstable) const {
 		likely(sit != slotlist().end()); ++sit) {
 		Version *p((sit->const_version_list()).best(allow_unstable));
 		if(p != NULLPTR) {
-			l->push_back(p);
+			l->PUSH_BACK(p);
 		}
 	}
 }
@@ -126,7 +127,7 @@ void Package::best_slots_upgrade(Package::VerVec *versions, VarDbPkg *v, const P
 		if(guess_slotname(&(*it), v)) {
 			Version *bv(best_slot((it->slotname).c_str(), allow_unstable));
 			if((bv != NULLPTR) && (*bv != *it)) {
-				versionset.insert(bv);
+				versionset.INSERT(MOVE(bv));
 			}
 		} else {
 			// Perhaps the slot was removed:
@@ -140,24 +141,17 @@ void Package::best_slots_upgrade(Package::VerVec *versions, VarDbPkg *v, const P
 	if(need_best) {
 		Version *bv(best(allow_unstable));
 		if(bv != NULLPTR) {
-			versionset.insert(bv);
+			versionset.INSERT(MOVE(bv));
 		}
 	}
 	if(versionset.empty()) {
 		return;
 	}
 	// Return only uninstalled versions:
-	for(VerSet::const_iterator it(versionset.begin());
+	for(VerSet::iterator it(versionset.begin());
 		likely(it != versionset.end()); ++it) {
-		bool found(false);
-		for(InstVec::const_iterator insit(ins->begin()); likely(insit != ins->end()); ++insit) {
-			if(*insit == **it) {
-				found = true;
-				break;
-			}
-		}
-		if(!found) {
-			versions->push_back(*it);
+		if(std::find(ins->begin(), ins->end(), **it) == ins->end()) {
+			versions->PUSH_BACK(MOVE(*it));
 		}
 	}
 }

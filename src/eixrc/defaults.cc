@@ -7,7 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
-// check_includes: #include <config.h> include "eixTk/i18n.h" include <cstdlib>
+// check_includes: #include <config.h> include <cstdlib> include "eixTk/i18n.h" include "eixTk/dialect.h"
 
 #if (DEFAULT_PART == 1)
 

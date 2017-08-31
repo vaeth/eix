@@ -147,7 +147,9 @@ class Database : public File {
 		bool write_hash_words(const StringHash& hash, const WordVec& words, std::string *errtext);
 
 		bool write_hash_words(const StringHash& hash, const std::string& words, std::string *errtext) {
-			return write_hash_words(hash, split_string(words), errtext);
+			WordVec word_vec;
+			split_string(&word_vec, words);
+			return write_hash_words(hash, word_vec, errtext);
 		}
 
 		ATTRIBUTE_NONNULL((3)) bool read_hash_words(const StringHash& hash, WordVec *s, std::string *errtext);

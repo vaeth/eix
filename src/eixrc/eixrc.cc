@@ -270,7 +270,7 @@ string *EixRc::resolve_delayed_recurse(const string& key, WordUnorderedSet *visi
 			*errvar = key;
 			return NULLPTR;
 		}
-		visited->insert(key);
+		visited->INSERT(key);
 		const string *s(resolve_delayed_recurse(
 			(((varflags & DELAYVAR_STAR) != DELAYVAR_NONE) ?
 				(varprefix + varname) : varname),
@@ -460,7 +460,7 @@ void EixRc::read_undelayed(WordUnorderedSet *has_delayed) {
 		string *value(&filevarmap[it->key]);
 		modify_value(value, it->key);
 		it->local_value = *value;
-		original_defaults.insert(it->key);
+		original_defaults.INSERT(it->key);
 	}
 	for(vector<EixRcOption>::iterator it(defaults.begin());
 		likely(it != defaults.end()); ++it) {
@@ -516,10 +516,10 @@ void EixRc::join_key_rec(const string& key, const string& val, WordUnorderedSet 
 			case DelayedIfFalse:
 				break;
 			default:
-				has_delayed->insert(key);
+				has_delayed->INSERT(key);
 				continue;
 		}
-		has_delayed->insert(key);
+		has_delayed->INSERT(key);
 		if(unlikely((varflags & DELAYVAR_STAR) != DELAYVAR_NONE)) {
 			static CONSTEXPR const char *prefixlist[] = {
 				EIX_VARS_PREFIX,
@@ -686,10 +686,10 @@ void EixRc::clear() {
 
 void EixRc::addDefault(EixRcOption option) {
 	if(unlikely(option.type == EixRcOption::PREFIXSTRING)) {
-		prefix_keys.insert(option.key);
+		prefix_keys.INSERT(option.key);
 	}
 	modify_value(&(option.value), option.key);
-	defaults.PUSH_BACK_MOVE(option);
+	defaults.PUSH_BACK(MOVE(option));
 }
 
 bool EixRc::istrue(const char *s) {
@@ -724,10 +724,10 @@ bool EixRc::istrue(const char *s) {
 
 void EixRc::getRedundantFlags(const string& key, Keywords::Redundant type, RedPair *p) {
 	const string& value((*this)[key]);
-	vector<string> a;
+	WordVec a;
 	split_string(&a, value);
 
-	for(vector<string>::iterator it(a.begin()); likely(it != a.end()); ) {
+	for(WordVec::iterator it(a.begin()); likely(it != a.end()); ) {
 		// a dummy loop for break on error
 		if(unlikely(!getRedundantFlagAtom(it->c_str(), type, &(p->first)))) {
 			break;

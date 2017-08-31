@@ -219,14 +219,14 @@ void EbuildExec::calc_environment(const char *name, const string& dir, const Pac
 		env["PORTAGE_PYM_PATH"] = settings->portage_pym_path;
 		env["PORTAGE_REPO_NAME"] = base->getOverlayName();
 		WordVec eclasses;
-		eclasses.push_back(base->getPrefixedPath());
+		eclasses.PUSH_BACK(base->getPrefixedPath());
 		RepoList& repos(base->portagesettings->repos);
-		// eclasses.push_back((*(base->portagesettings))["PORTDIR"]);
+		// eclasses.PUSH_BACK((*(base->portagesettings))["PORTDIR"]);
 		// for(RepoList::const_iterator it(repos.second());
 		for(RepoList::const_iterator it(repos.begin());
 			likely(it != repos.end()); ++it) {
 			if(likely(it->path != eclasses[0])) {
-				eclasses.push_back(it->path);
+				eclasses.PUSH_BACK(it->path);
 			}
 		}
 		for(WordVec::iterator it(eclasses.begin());

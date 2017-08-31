@@ -225,7 +225,7 @@ class Version : public ExtendedVersion, public Keywords {
 
 		void add_to_set(SetsIndex m_set) {
 			if(!is_in_set(m_set)) {
-				sets_indizes.push_back(m_set);
+				sets_indizes.PUSH_BACK(MOVE(m_set));
 			}
 		}
 

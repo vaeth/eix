@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "eixTk/dialect.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -38,7 +39,7 @@ void ParseError::output(const string& file, const LineVec::size_type line_nr, co
 	if(printed->count(cache) != 0) {
 		return;
 	}
-	printed->insert(cache);
+	printed->INSERT(MOVE(cache));
 	eix::say_error(_("-- invalid line %s in %s: \"%s\""))
 		% line_nr % file % line;
 

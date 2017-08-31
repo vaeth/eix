@@ -52,7 +52,7 @@ static string *emptystring = NULLPTR;
 
 typedef char ArchUsed;
 
-ATTRIBUTE_NONNULL_ static ArchUsed apply_keyword(const string& key, const WordSet& keywords_set, KeywordsFlags kf, const WordSet *arch_set, Keywords::Redundant *redundant, Keywords::Redundant check, bool shortcut);
+ATTRIBUTE_NONNULL_ static ArchUsed apply_keyword(const string& key, const WordUnorderedSet& keywords_set, KeywordsFlags kf, const WordSet *arch_set, Keywords::Redundant *redundant, Keywords::Redundant check, bool shortcut);
 ATTRIBUTE_NONNULL_ inline static void increase(char *s);
 
 const string& PortageSettings::operator[](const string& var) const {
@@ -88,7 +88,7 @@ bool PortageSettings::grab_setmasks(const char *file, SetsIndex i, WordVec *cont
 		}
 		if(likely(r != BasicVersion::parsedError)) {
 			if(m.is_set()) {
-				contains_set->push_back(m.getName());
+				contains_set->PUSH_BACK(m.getName());
 			} else {
 				m_package_sets.add(m);
 			}
@@ -298,7 +298,7 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 		repos.sort();
 		for(RepoList::const_iterator it(repos.second());
 			likely(it != repos.end()); ++it) {
-			overlayvec.push_back(it->path);
+			overlayvec.PUSH_BACK(it->path);
 		}
 		ref.clear();
 		join_to_string(&ref, overlayvec, "\n");
@@ -378,16 +378,16 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 	split_string(&m_accepted_keywords, (*this)["ACCEPT_KEYWORDS"]);
 	m_accepted_keywords_set = m_arch_set;
 	resolve_plus_minus(&m_accepted_keywords_set, m_accepted_keywords);
-	make_vector<string>(&m_accepted_keywords, m_accepted_keywords_set);
+	m_accepted_keywords = WordVec(m_accepted_keywords_set.begin(), m_accepted_keywords_set.end());
 	eix::SignedBool as_arch(eixrc->getBoolText("ACCEPT_KEYWORDS_AS_ARCH", "full"));
 	if(as_arch != 0) {
 		m_plain_accepted_keywords_set.clear();
 		for(WordSet::const_iterator it(m_accepted_keywords_set.begin());
 			unlikely(it != m_accepted_keywords_set.end()); ++it) {
 			if(std::strchr("-~", (*it)[0]) == NULLPTR) {
-				m_plain_accepted_keywords_set.insert(*it);
+				m_plain_accepted_keywords_set.INSERT(*it);
 			} else {
-				m_plain_accepted_keywords_set.insert(it->substr(1));
+				m_plain_accepted_keywords_set.INSERT(it->substr(1));
 			}
 		}
 		m_local_arch_set = &m_plain_accepted_keywords_set;
@@ -404,7 +404,7 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 		for(WordSet::const_iterator it(m_arch_set.begin());
 			unlikely(it != m_arch_set.end()); ++it) {
 			if(std::strchr("-~", (*it)[0]) == NULLPTR) {
-				archset.insert(string("~") + *it);
+				archset.INSERT(string("~") + *it);
 			}
 		}
 		join_to_string(&m_raised_arch, archset);
@@ -478,7 +478,7 @@ void PortageSettings::read_world_sets(const char *file) {
 		if(s.empty()) {
 			continue;
 		}
-		the_sets.PUSH_BACK_MOVE(s);
+		the_sets.PUSH_BACK(MOVE(s));
 	}
 	store_world_sets(&the_sets, true);
 }
@@ -560,15 +560,15 @@ void PortageSettings::get_setnames(WordSet *names, const Package *p, bool also_n
 	for(Package::const_iterator it(p->begin()); likely(it != p->end()); ++it) {
 		for(Version::SetsIndizes::const_iterator sit(it->sets_indizes.begin());
 			likely(sit != it->sets_indizes.end()); ++sit) {
-			names->insert(set_names[*sit]);
+			names->INSERT(set_names[*sit]);
 		}
 	}
 	if(also_nonlocal) {
 		if(unlikely(p->is_system_package())) {
-			names->insert("system");
+			names->INSERT("system");
 		}
 		if(unlikely(p->is_profile_package())) {
-			names->insert("profile");
+			names->INSERT("profile");
 		}
 	}
 }
@@ -602,8 +602,8 @@ void PortageSettings::read_local_sets(const WordVec& dir_list) {
 			if(all_set_names.count(*it) != 0) {
 				continue;
 			}
-			all_set_names.insert(*it);
-			set_names.push_back(*it);
+			all_set_names.INSERT(*it);
+			set_names.PUSH_BACK(MOVE(*it));
 		}
 		dir_size[i] = set_names.size() - s;
 	}
@@ -915,14 +915,14 @@ static CONSTEXPR const ArchUsed
 	ARCH_EVERYTHING     = 5,
 	ARCH_MINUSASTERISK  = 6;  // -* always matches -T WEAKER because it is higher than arch_needed default
 
-static ArchUsed apply_keyword(const string& key, const WordSet& keywords_set, KeywordsFlags kf, const WordSet *arch_set, Keywords::Redundant *redundant, Keywords::Redundant check, bool shortcut) {
+static ArchUsed apply_keyword(const string& key, const WordUnorderedSet& keywords_set, KeywordsFlags kf, const WordSet *arch_set, Keywords::Redundant *redundant, Keywords::Redundant check, bool shortcut) {
 	if(key[0] == '-') {
 		*redundant |= (check & Keywords::RED_STRANGE);
 		return ARCH_NOTHING;
 	}
 	if((keywords_set.count(key) == 0) &&
-		((key[0] == '*') || (keywords_set.find("*") == keywords_set.end())) &&
-		((key[0] != '~') || (keywords_set.find("~*") == keywords_set.end()))) {
+		((key[0] == '*') || (keywords_set.count("*") == 0)) &&
+		((key[0] != '~') || (keywords_set.count("~*") == 0))) {
 		// Not found:
 		if(key == "**")
 			return ARCH_EVERYTHING;
@@ -1088,7 +1088,7 @@ bool PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			// We must recalculate:
 			WordSet s;
 			resolve_plus_minus(&s, kv);
-			make_vector(&kv, s);
+			kv = WordVec(s.begin(), s.end());
 			kf.set_keyflags(it->get_keyflags(s));
 			kvsize = kv.size();
 		}
@@ -1117,7 +1117,7 @@ bool PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 						}
 					}
 				}
-				push_backs(&kv, kvfile);
+				kv.insert(kv.end(), kvfile.begin(), kvfile.end());
 			} else if((check & (Keywords::RED_ALL_KEYWORDS &
 				~(Keywords::RED_DOUBLE_LINE | Keywords::RED_IN_KEYWORDS)))
 				== Keywords::RED_NOTHING) {
@@ -1128,15 +1128,13 @@ bool PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 		// Keywords were added or we must check for redundancy?
 		if(calc_lkw) {
 			// Create keywords_set of KEYWORDS from the ebuild
-			WordSet keywords_set;
-			make_set<string>(&keywords_set, split_string(it->get_effective_keywords()));
+			WordUnorderedSet keywords_set;
+			split_string(&keywords_set, it->get_effective_keywords());
 
 			// Create kv_set (of now active keywords), possibly testing for double keywords and -*
 			WordSet kv_set;
 			if(check & Keywords::RED_DOUBLE) {
-				WordSet sorted;
-				make_set<string>(&sorted, kv);
-				if(kv.size() != sorted.size()) {
+				if(kv.size() != WordUnorderedSet(kv.begin(), kv.end()).size()) {
 					redundant |= Keywords::RED_DOUBLE;
 				}
 				if(resolve_plus_minus(&kv_set, kv, &(m_settings->m_accepted_keywords_set))) {

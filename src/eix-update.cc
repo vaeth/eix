@@ -221,7 +221,7 @@ static void add_override(Overrides *override_list, EixRc *eixrc, const char *s) 
 	for(WordVec::iterator it(v.begin()); unlikely(it != v.end()); ++it) {
 		Override o(Pathname(*it, true));
 		o.method = *(++it);
-		override_list->PUSH_BACK_MOVE(o);
+		override_list->PUSH_BACK(MOVE(o));
 	}
 }
 
@@ -235,7 +235,7 @@ static void add_reponames(RepoNames *repo_names, EixRc *eixrc, const char *s) {
 	for(WordVec::const_iterator it(v.begin()); unlikely(it != v.end()); ++it) {
 		RepoName r(Pathname(*it, true));
 		r.repo_name = *(++it);
-		repo_names->PUSH_BACK_MOVE(r);
+		repo_names->PUSH_BACK(MOVE(r));
 	}
 }
 
@@ -263,7 +263,7 @@ static void add_virtuals(Overrides *override_list, PathVec *add, RepoNames *repo
 		escape_string(&overlay, ":");
 		override_list->EMPLACE_BACK(Override, (name, string("eix*::") + overlay));
 		repo_names->EMPLACE_BACK(RepoName, (name, ov.label));
-		add->PUSH_BACK_MOVE(name);
+		add->PUSH_BACK(MOVE(name));
 	}
 }
 
@@ -442,7 +442,7 @@ int run_eix_update(int argc, char *argv[]) {
 
 		for(PathVec::iterator it(excluded_list.begin());
 			unlikely(it != excluded_list.end()); ++it)
-			excluded_overlays.push_back(it->resolve(&portage_settings));
+			excluded_overlays.PUSH_BACK(it->resolve(&portage_settings));
 
 		for(PathVec::iterator it(add_list.begin());
 			unlikely(it != add_list.end()); ++it) {
@@ -450,7 +450,7 @@ int run_eix_update(int argc, char *argv[]) {
 		// Let exclude override added names
 			if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 				add_name.c_str(), true) == excluded_overlays.end()) {
-				add_overlays.PUSH_BACK_MOVE(add_name);
+				add_overlays.PUSH_BACK(MOVE(add_name));
 			}
 		}
 
@@ -471,7 +471,7 @@ int run_eix_update(int argc, char *argv[]) {
 			unlikely(it != add_overlays.end()); ++it) {
 			if(find_filenames(overlayvec.begin(), overlayvec.end(),
 				it->c_str(), false, true) == overlayvec.end()) {
-				overlayvec.push_back(*it);
+				overlayvec.PUSH_BACK(*it);
 				modified = true;
 			}
 		}

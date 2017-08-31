@@ -19,6 +19,7 @@
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/sysutils.h"
+#include "eixTk/unordered_set.h"
 #include "eixrc/eixrc.h"
 #include "output/formatstring.h"
 #include "portage/basicversion.h"
@@ -121,8 +122,9 @@ static void print_iuse(const IUseSet::IUseStd& s, IUse::Flags wanted, const char
 }
 
 void PrintXml::package(Package *pkg) {
-	if(unlikely(!started))
+	if(unlikely(!started)) {
 		start();
+	}
 	if(unlikely(curcat != pkg->category)) {
 		if(!curcat.empty()) {
 			eix::say("\t</category>");
@@ -137,7 +139,7 @@ void PrintXml::package(Package *pkg) {
 	say_xml_element("\t\t\t", "homepage", pkg->homepage);
 	say_xml_element("\t\t\t", "licenses", pkg->licenses);
 
-	set<const Version*> have_inst;
+	UNORDERED_SET<const Version*> have_inst;
 	if((likely(var_db_pkg != NULLPTR)) && var_db_pkg->isInstalled(*pkg)) {
 		set<BasicVersion> know_inst;
 		// First we check which versions are installed with correct overlays.
@@ -146,8 +148,8 @@ void PrintXml::package(Package *pkg) {
 			for(Package::const_iterator ver(pkg->begin());
 				likely(ver != pkg->end()); ++ver) {
 				if(var_db_pkg->isInstalledVersion(*pkg, *ver, *hdr) > 0) {
-					know_inst.insert(**ver);
-					have_inst.insert(*ver);
+					know_inst.INSERT(**ver);
+					have_inst.INSERT(*ver);
 				}
 			}
 		}
@@ -158,8 +160,8 @@ void PrintXml::package(Package *pkg) {
 		for(Package::reverse_iterator ver(pkg->rbegin());
 			likely(ver != pkg->rend()); ++ver) {
 			if(know_inst.count(**ver) == 0) {
-				know_inst.insert(**ver);
-				have_inst.insert(*ver);
+				know_inst.INSERT(**ver);
+				have_inst.INSERT(*ver);
 			}
 		}
 	}

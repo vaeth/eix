@@ -14,6 +14,7 @@
 
 #include "cache/base.h"
 #include "cache/cache_map.h"
+#include "eixTk/dialect.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -48,6 +49,6 @@ bool CacheTable::addCache(const char *eprefixcache, const char *eprefixport, con
 	}
 
 	cache->setScheme(eprefixcache, eprefixport, directory);
-	push_back(cache);
+	PUSH_BACK(MOVE(cache));
 	return true;
 }

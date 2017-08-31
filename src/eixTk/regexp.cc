@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "eixTk/diagnostics.h"
+#include "eixTk/dialect.h"
 #include "eixTk/formated.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -109,7 +110,7 @@ RegexList::RegexList(const string& stringlist) {
 	split_string(&l, stringlist, true);
 	for(WordVec::const_iterator it(l.begin());
 		likely(it != l.end()); ++it) {
-		reglist.push_back(new Regex(it->c_str()));
+		reglist.PUSH_BACK(new Regex(it->c_str()));
 	}
 }
 

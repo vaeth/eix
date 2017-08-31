@@ -17,6 +17,7 @@
 #include "database/header.h"
 #include "database/io.h"
 #include "database/package_reader.h"
+#include "eixTk/dialect.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -87,7 +88,7 @@ bool EixCache::initialize(const string& name) {
 	if(all_eixcaches == NULLPTR) {
 		all_eixcaches = new CachesList;
 	}
-	all_eixcaches->push_back(this);
+	all_eixcaches->PUSH_BACK(this);
 	return (args.size() <= 3);
 }
 
@@ -230,7 +231,7 @@ bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Ca
 					sl->slavemode = true;
 				}
 				sl->err_msg.clear();
-				slaves.push_back(*sl);
+				slaves.PUSH_BACK(*sl);
 			}
 		}
 	}

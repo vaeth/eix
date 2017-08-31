@@ -17,6 +17,7 @@
 #include <string>
 
 #include "eixTk/diagnostics.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -318,7 +319,7 @@ bool Mask::test(const ExtendedVersion *ev) const {
 void Mask::match(Matches *m, Package *pkg) const {
 	for(Package::iterator it(pkg->begin()); likely(it != pkg->end()); ++it) {
 		if(test(*it)) {
-			m->push_back(*it);
+			m->PUSH_BACK(*it);
 		}
 	}
 }

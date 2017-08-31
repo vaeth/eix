@@ -13,7 +13,7 @@
 // define C++-11 dialect specific keywords (if available)
 // or poor man's substitutes
 
-// check_includes: include "eixTk/dialect.h"
+// check_includes: include "eixTk/dialect.h" std::pair<int, int>
 
 #ifdef HAVE_CONSTEXPR
 #define CONSTEXPR constexpr
@@ -47,11 +47,19 @@
 #define EMPLACE_BACK(a, b) push_back(a b)
 #endif
 
+#ifdef HAVE_EMPLACE
+#define INSERT emplace
+#define EMPLACE(a, b) emplace b
+#else
+#define INSERT insert
+#define EMPLACE(a, b) emplace(a b)
+#endif
+
 #ifdef HAVE_MOVE
 #include <utility>
-#define PUSH_BACK_MOVE(a) PUSH_BACK(std::move(a))
+#define MOVE(a) std::move(a)
 #else
-#define PUSH_BACK_MOVE(a) PUSH_BACK(a)
+#define MOVE(a) (a)
 #endif
 
 #endif  // SRC_EIXTK_DIALECT_H_

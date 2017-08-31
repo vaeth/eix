@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "eixTk/attribute.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -142,7 +143,7 @@ int run_versionsort(int argc, char *argv[]) {
 		get_version(&curr_version, argv[i]);
 		BasicVersion b;
 		parse_version(&b, curr_version);
-		versions.PUSH_BACK_MOVE(b);
+		versions.PUSH_BACK(MOVE(b));
 	}
 	sort(versions.begin(), versions.end());
 	for(Versions::const_iterator it(versions.begin());

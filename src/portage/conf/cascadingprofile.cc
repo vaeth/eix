@@ -71,7 +71,7 @@ bool CascadingProfile::addProfile(const char *profile, WordUnorderedSet *sourced
 		eix::say_error(_("Recursion in cascading profile"));
 		return false;
 	}
-	sourced_files->insert(truename);
+	sourced_files->INSERT(truename);
 	WordVec parents;
 	string currfile(truename);
 	currfile.append("parent");
@@ -126,11 +126,12 @@ bool CascadingProfile::addProfile(const char *profile, WordUnorderedSet *sourced
 class ProfileFilenames {
 		typedef CascadingProfile::Handler Handler;
 		typedef UNORDERED_MAP<string, Handler> NameMap;
+		typedef pair<string, Handler> NameMapPair;
 		NameMap name_map;
 
 	public:
 		void initstring(const std::string& s, Handler h) {
-			name_map.insert(pair<string, Handler>(s, h));
+			name_map.EMPLACE(NameMapPair, (s, h));
 		}
 
 		ATTRIBUTE_PURE Handler operator[](const std::string s) const {

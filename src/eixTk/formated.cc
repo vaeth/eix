@@ -112,7 +112,7 @@ void format::init() {
 		typ = ((c == 's') ? FormatManip::STRING : FormatManip::DIGIT);
 #endif
 		if(likely(argnum == wanted.size())) {
-			wanted.push_back(typ);
+			wanted.PUSH_BACK(typ);
 		} else if(argnum > wanted.size()) {
 			wanted.insert(wanted.end(), argnum - wanted.size() + 1, FormatManip::NONE);
 			wanted[argnum] = typ;

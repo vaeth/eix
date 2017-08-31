@@ -4,7 +4,7 @@
 	Martin Väth <martin at mvath.de>:
 	- Fix meson tests which require dialect arg
 	- Use unordered_{set,map} if available
-	- Use emplace_back if available
+	- Use emplace, emplace_back, std::move if available
 	- Prefer count() != 0 over find() != end()
 
 *eix-0.33.0

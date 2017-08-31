@@ -1171,6 +1171,21 @@ message('emplace_back: ' + have_emplace_back.to_string())
 conf.set('HAVE_EMPLACE_BACK', have_emplace_back,
 	description : 'Define if STL has emplace_back')
 
+have_emplace = cxx.links('''
+#include <set>
+#include <utility>
+int main() {
+	typedef std::pair<int, int> mypair;
+	std::set<mypair> a;
+	a.insert(mypair(4, 4));
+	a.emplace(5, 5);
+	return (a.size() == 2) ? 0 : 1;
+}
+''', args : flags_dialect)
+message('emplace: ' + have_emplace.to_string())
+conf.set('HAVE_EMPLACE', have_emplace,
+	description : 'Define if STL has emplace')
+
 sqlite_dep = []
 with_sqlite = false
 want_sqlite = get_option('sqlite')

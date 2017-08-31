@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <string>
 
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/stringutils.h"
@@ -58,10 +59,10 @@ inline static bool is_testing(const string& s) {
 
 KeywordsFlags::KeyType KeywordsFlags::get_keyflags(const WordSet& accepted_keywords, const string& keywords) {
 	KeyType m(KEY_EMPTY);
-	WordSet keywords_set;
-	make_set<string>(&keywords_set, split_string(keywords));
-	for(WordSet::const_iterator it(keywords_set.begin());
-		likely(it != keywords_set.end()); ++it) {
+	WordVec keywords_vec;
+	split_string(&keywords_vec, keywords);
+	for(WordVec::const_iterator it(keywords_vec.begin());
+		likely(it != keywords_vec.end()); ++it) {
 		if((*it)[0] == '-') {
 			if(*it == "-*") {
 				m |= KEY_MINUSASTERISK;
@@ -180,7 +181,7 @@ bool Keywords::modify_keywords(string *result, const string& original, const str
 		} else {
 			if(find(words.begin(), words.end(), *it) == words.end()) {
 				modified = true;
-				words.push_back(*it);
+				words.PUSH_BACK(MOVE(*it));
 			}
 		}
 	}

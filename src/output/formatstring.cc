@@ -191,13 +191,13 @@ class Darkmode {
 static void parse_termdark(DarkModes *modes, WordVec *regexp, const string& termdark) {
 	WordVec terms_dark;
 	split_string(&terms_dark, termdark, true);
-	for(WordVec::const_iterator it(terms_dark.begin());
+	for(WordVec::iterator it(terms_dark.begin());
 		likely(it != terms_dark.end()); ++it) {
-		const string *text(&(*it));
+		string *text(&(*it));
 		bool is_default(true);
 		if(likely(++it != terms_dark.end())) {
 			is_default = false;
-			regexp->push_back(*text);
+			regexp->PUSH_BACK(MOVE(*text));
 			text = &(*it);
 		}
 		Darkmode darkmode;
@@ -205,7 +205,7 @@ static void parse_termdark(DarkModes *modes, WordVec *regexp, const string& term
 			eix::say_error(_("DARK_TERM has illegal format: %s")) % termdark;
 			std::exit(EXIT_FAILURE);
 		}
-		modes->push_back(darkmode);
+		modes->PUSH_BACK(MOVE(darkmode));
 		if(is_default) {
 			return;
 		}

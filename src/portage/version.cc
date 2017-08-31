@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringlist.h"
@@ -150,7 +151,7 @@ void IUseSet::insert(const IUse& iuse) {
 		return;
 	}
 	m_iuse.erase(it);
-	m_iuse.insert(IUse(iuse.name(), newflags));
+	m_iuse.EMPLACE(IUse, (iuse.name(), newflags));
 }
 
 const Version::EffectiveState
@@ -197,5 +198,5 @@ void Version::add_reason(const StringList& reason) {
 	if(reasons.count(reason) != 0) {
 		return;
 	}
-	reasons.insert(reason);
+	reasons.INSERT(reason);
 }

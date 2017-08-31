@@ -854,13 +854,13 @@ int run_eix(int argc, char** argv) {
 		bool add_rest(false);
 		while(likely(reader.next())) {
 			if(unlikely(add_rest)) {
-				all_packages.push_back(reader.release());
+				all_packages.PUSH_BACK(reader.release());
 			} else if(unlikely(matchtree->match(&reader))) {
 				Package *release(reader.release());
 				if(unlikely(release == NULLPTR)) {
 					break;
 				}
-				matches.push_back(release);
+				matches.PUSH_BACK(release);
 				if(unlikely(only_printed &&
 					(rc_options.brief ||
 						(rc_options.brief2 && (matches.size() > 1))))) {
@@ -871,7 +871,7 @@ int run_eix(int argc, char** argv) {
 					}
 				}
 				if(unlikely(rc_options.test_unused)) {
-					all_packages.push_back(release);
+					all_packages.PUSH_BACK(release);
 				}
 			} else {
 				if(unlikely(rc_options.test_unused)) {
@@ -879,7 +879,7 @@ int run_eix(int argc, char** argv) {
 					if(unlikely(release == NULLPTR)) {
 						break;
 					}
-					all_packages.push_back(release);
+					all_packages.PUSH_BACK(release);
 				} else if(unlikely(!reader.skip())) {
 					break;
 				}
@@ -1177,7 +1177,7 @@ static void print_unused(const string& filename, const string& excludefiles, con
 				continue;
 			}
 			if(unlikely(test_empty)) {
-				unused.push_back(*i);
+				unused.PUSH_BACK(MOVE(*i));
 				continue;
 			}
 			r = m.parseMask(i->c_str(), &errtext, false);
@@ -1201,7 +1201,7 @@ static void print_unused(const string& filename, const string& excludefiles, con
 		if(pi != packagelist.end()) {
 			continue;
 		}
-		unused.push_back(*i);
+		unused.PUSH_BACK(MOVE(*i));
 	}
 	if(unused.empty()) {
 		eix::say(test_empty ?
@@ -1223,7 +1223,7 @@ static void print_removed(const string& dirname, const string& excludefiles, con
 	CatName cat_name;
 	for(PackageList::const_iterator pit(packagelist.begin());
 		likely(pit != packagelist.end()); ++pit) {
-		cat_name[pit->category].insert(pit->name);
+		cat_name[pit->category].INSERT(pit->name);
 	}
 
 	/* This will contain categories/packages to be printed */
@@ -1263,7 +1263,7 @@ static void print_removed(const string& dirname, const string& excludefiles, con
 				if(likely(excludes.count(curr_name) == 0)) {
 					string fullname(cat_slash + curr_name);
 					if(excludes.count(fullname) == 0) {
-						failure.PUSH_BACK_MOVE(fullname);
+						failure.PUSH_BACK(MOVE(fullname));
 					}
 				}
 			}

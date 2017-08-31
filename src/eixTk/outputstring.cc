@@ -13,6 +13,7 @@
 #include <string>
 
 #include "eixTk/diagnostics.h"
+#include "eixTk/dialect.h"
 #include "eixTk/formated.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -99,9 +100,9 @@ void OutputString::append_column(string::size_type s) {
 			m_size = s;
 		}
 	} else {
-		m_insert.push_back(m_string.size());
-		m_insert.push_back(m_size);
-		m_insert.push_back(s);
+		m_insert.PUSH_BACK(m_string.size());
+		m_insert.PUSH_BACK(m_size);
+		m_insert.PUSH_BACK(MOVE(s));
 	}
 }
 
@@ -150,9 +151,9 @@ void OutputString::append_smart(char s) {
 			if(unlikely(absolute)) {
 				m_size += 8 - (m_size % 8);
 			} else {
-				m_insert.push_back(m_string.size());
-				m_insert.push_back(m_size);
-				m_insert.push_back(0);
+				m_insert.PUSH_BACK(m_string.size());
+				m_insert.PUSH_BACK(m_size);
+				m_insert.PUSH_BACK(0);
 			}
 			break;
 		default:
@@ -180,9 +181,9 @@ void OutputString::append_internal(const string& t, string::size_type ts, string
 				if(unlikely(a)) {
 					s += 8 - (s % 8);
 				} else {
-					m_insert.push_back(ts - 1);
-					m_insert.push_back(s);
-					m_insert.push_back(0);
+					m_insert.PUSH_BACK(ts - 1);
+					m_insert.PUSH_BACK(s);
+					m_insert.PUSH_BACK(0);
 				}
 			// case '\a':
 			// case '\b':
@@ -228,9 +229,9 @@ void OutputString::append(const OutputString& a) {
 	} else {
 		for(InsertType::const_iterator it(a.m_insert.begin());
 			unlikely(it != a.m_insert.end()); ++it) {
-			m_insert.push_back((*it) + m_string.size());
-			m_insert.push_back((*(++it)) + m_size);
-			m_insert.push_back(*(++it));
+			m_insert.PUSH_BACK((*it) + m_string.size());
+			m_insert.PUSH_BACK((*(++it)) + m_size);
+			m_insert.PUSH_BACK(*(++it));
 		}
 		m_size += a.m_size;
 	}

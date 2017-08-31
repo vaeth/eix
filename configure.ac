@@ -1407,6 +1407,23 @@ return (a.size() == 2) ? 0 : 1;
 			[Define if STL has emplace_back])],
 		[MV_MSG_RESULT([no])])
 
+# Check if emplace can be used
+AC_MSG_CHECKING([whether emplace can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+#include <set>
+#include <utility>
+	]], [[
+typedef std::pair<int, int> mypair;
+std::set<mypair> a;
+a.insert(mypair(4, 4));
+a.emplace(5, 5);
+return (a.size() == 2) ? 0 : 1;
+		]])],
+		[MV_MSG_RESULT([yes])
+		AC_DEFINE([HAVE_EMPLACE], [1],
+			[Define if STL has emplace])],
+		[MV_MSG_RESULT([no])])
+
 # reset the CXXFLAGS, LDFLAGS for the normal tests
 AS_VAR_COPY([CXXFLAGS], [my_cxxflags])
 AS_VAR_COPY([LDFLAGS], [my_ldflags])

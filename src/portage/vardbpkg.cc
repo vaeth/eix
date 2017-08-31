@@ -232,40 +232,45 @@ bool VarDbPkg::readUse(const Package& p, InstVersion *v) const {
 	v->know_use = true;
 	v->inst_iuse.clear();
 	v->usedUse.clear();
-	WordSet iuse_set;
-	WordVec alluse;
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
-	LineVec lines;
-	if(unlikely(!pushback_lines((dirname + "/IUSE").c_str(),
-		&lines, false, false, 1))) {
-		return false;
-	}
-	join_and_split(&(v->inst_iuse), lines);
+	WordVec& inst_iuse = v->inst_iuse;
+	WordVec alluse;
+	{
+		LineVec lines;
+		if(unlikely(!pushback_lines((dirname + "/IUSE").c_str(),
+			&lines, false, false, 1))) {
+			return false;
+		}
+		join_and_split(&inst_iuse, lines);
 
-	lines.clear();
-	if(unlikely(!pushback_lines((dirname + "/USE").c_str(),
-		&lines, false, false, 1))) {
-		return false;
+		lines.clear();
+		if(unlikely(!pushback_lines((dirname + "/USE").c_str(),
+			&lines, false, false, 1))) {
+			return false;
+		}
+		join_and_split(&alluse, lines);
 	}
-	join_and_split(&alluse, lines);
-	for(WordVec::iterator it(v->inst_iuse.begin());
-		it != v->inst_iuse.end(); ++it) {
-		while(((*it)[0] == '+') || ((*it)[0] == '-'))
+	for(WordVec::iterator it(inst_iuse.begin());
+		it != inst_iuse.end(); ++it) {
+		while(((*it)[0] == '+') || ((*it)[0] == '-')) {
 			it->erase(0, 1);
+		}
 	}
-	make_set<string>(&iuse_set, v->inst_iuse);
-	make_vector<string>(&(v->inst_iuse), iuse_set);
+	// Sort words and provide hash
+	WordSet iuse_set(inst_iuse.begin(), inst_iuse.end());
+	inst_iuse = WordVec(iuse_set.begin(), iuse_set.end());
 
 	for(WordVec::iterator it(alluse.begin());
 		it != alluse.end(); ++it) {
-		while(((*it)[0] == '+') || ((*it)[0] == '-'))
+		while(((*it)[0] == '+') || ((*it)[0] == '-')) {
 			it->erase(0, 1);
+		}
 	}
 
 	for(WordVec::iterator it(alluse.begin());
 		likely(it != alluse.end()); ++it) {
 		if(iuse_set.count(*it) != 0) {
-			v->usedUse.insert(*it);
+			v->usedUse.INSERT(MOVE(*it));
 		}
 	}
 	return true;
@@ -407,7 +412,7 @@ void VarDbPkg::readCategory(const char *category) {
 			eix::say_error() % errtext;
 		}
 		if(likely(r != BasicVersion::parsedError)) {
-			(*category_installed)[curr_name].PUSH_BACK_MOVE(instver);
+			(*category_installed)[curr_name].PUSH_BACK(MOVE(instver));
 		}
 	}
 	closedir(dir_category);

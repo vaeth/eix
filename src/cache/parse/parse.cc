@@ -19,6 +19,7 @@
 #include "cache/common/flat_reader.h"
 #include "cache/common/selectors.h"
 #include "cache/metadata/metadata.h"
+#include "eixTk/dialect.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -75,7 +76,7 @@ bool ParseCache::initialize(const string& name) {
 	while(++it_name != names.end()) {
 		MetadataCache *p(new MetadataCache);
 		if(p->initialize(*it_name)) {
-			further.push_back(p);
+			further.PUSH_BACK(MOVE(p));
 			continue;
 		}
 		delete p;
@@ -378,7 +379,7 @@ bool ParseCache::readCategoryPrepare(const char *cat_name) {
 	further_works.clear();
 	for(FurtherCaches::iterator it(further.begin());
 		likely(it != further.end()); ++it) {
-		further_works.push_back((*it)->readCategoryPrepare(cat_name));
+		further_works.PUSH_BACK((*it)->readCategoryPrepare(cat_name));
 	}
 	m_catpath = m_prefix + m_scheme + '/' + cat_name;
 	return scandir_cc(m_catpath, &m_packages, package_selector);

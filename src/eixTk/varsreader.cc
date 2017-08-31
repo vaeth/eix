@@ -1116,7 +1116,7 @@ GCC_DIAG_ON(old-style-cast)
 		}
 	}
 
-	sourced_files->insert(truename);
+	sourced_files->INSERT(truename);
 	bool ret = parse();
 GCC_DIAG_OFF(sign-conversion)
 	munmap(buffer, st.st_size);
@@ -1149,7 +1149,7 @@ bool VarsReader::parse() {
 		i != vars->end(); ++i) {
 		if((!i->second.empty()) &&
 			isIncremental(i->first.c_str())) {
-			incremental.push_back(*i);
+			incremental.PUSH_BACK(*i);
 			i->second.clear();
 		}
 	}

@@ -18,6 +18,7 @@
 #include "database/io.h"
 #include "eixTk/auto_array.h"
 #include "eixTk/diagnostics.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -111,7 +112,7 @@ GCC_DIAG_ON(sign-conversion)
 		if(unlikely(!read_string(&s, errtext))) {
 			return false;
 		}
-		hdr->world_sets.PUSH_BACK_MOVE(s);
+		hdr->world_sets.PUSH_BACK(MOVE(s));
 	}
 
 	DBHeader::SaveBitmask save_bitmask;
