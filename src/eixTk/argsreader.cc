@@ -182,11 +182,11 @@ void ArgumentReader::foldAndRemove(const OptionList& opt_table) {
 					} else {
 						*(c->u.boolean) = (!(*(c->u.boolean)));
 					}
-					it = erase(it);
+					erase(it++);
 					break;
 			case Option::INTEGER:
 					++*(c->u.integer);
-					it = erase(it);
+					erase(it++);
 					break;
 			case Option::KEEP_STRING_OPTIONAL:
 			case Option::KEEP_PAIR_OPTIONAL:
@@ -216,7 +216,7 @@ void ArgumentReader::foldAndRemove(const OptionList& opt_table) {
 					if(keep) {
 						++it;
 					} else {
-						it = erase(it);
+						erase(it++);
 					}
 					if(it == end()) {
 						if(!optional) {
@@ -228,7 +228,7 @@ void ArgumentReader::foldAndRemove(const OptionList& opt_table) {
 						if(keep) {
 							++it;
 						} else {
-							it = erase(it);
+							erase(it++);
 						}
 					}
 					if((c->type == Option::KEEP_STRING) || (c->type == Option::KEEP_STRING_OPTIONAL)) {
@@ -252,7 +252,7 @@ void ArgumentReader::foldAndRemove(const OptionList& opt_table) {
 						if(keep) {
 							++it;
 						} else {
-							it = erase(it);
+							erase(it++);
 						}
 					}
 					if(keep) {
