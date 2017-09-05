@@ -28,6 +28,7 @@ bash/eix \
 config/config.rpath \
 contrib/check_includes.sh \
 contrib/cpplint.sh \
+contrib/meson-flto-test.sh \
 .gitignore \
 autogen.sh \
 CPPLINT.cfg \
