@@ -22,23 +22,43 @@ RemoveTestdir() {
 	trap : EXIT HUP INT TERM
 	! $in_testdir || cd .. >/dev/null 2>&1 || {
 		trap - EXIT HUP INT TERM
-		Die "cannot change to testdir/.."
+		Die "cannot change to ./testdir/.."
 	}
 	in_testdir=false
 	! test -d testdir || rm -rf testdir
 	trap - EXIT HUP INT TERM
 	exit $exitstatus
 }
-trap RemoveTestdir EXIT HUP INT TERM
-test -d testdir || mkdir testdir || Die 'cannot create testdir'
-cd testdir || Die 'cannot change to testdir'
-in_testdir=:
+KeepTestdir() {
+	Echo '
+WARNING: keeping temporary directory ./testdir' >&2
+	trap - EXIT HUP INT TERM
+	exit $exitstatus
+}
+if [ $# -ne 0 ]
+then	trap KeepTestdir EXIT HUP INT TERM
+else	trap RemoveTestdir EXIT HUP INT TERM
+fi
+test -d testdir || mkdir testdir || Die 'cannot create ./testdir'
+# This race seems unavoidable. The worst which can happen is that we
+# remove testdir when we are inside of testdir (i.e. testdir remains).
+cd testdir && in_testdir=: || Die 'cannot change to ./testdir'
 
 Echo 'int dummy(int i);
+int maindummy(int i);
 int dummy(int i) {
-	return i;
-}' >sub.cc || Die 'failed to create sub.cc'
+	return maindummy(i + 1);
+}
+int backdummy(int i) {
+	return i - 2;
+}
+' >sub.cc || Die 'failed to create sub.cc'
 Echo 'int dummy(int i);
+int backdummy(int i);
+int mainmdummy(int i);
+int maindummy(int i) {
+	return backdummy(2 * i);
+}
 int main() {
 	return dummy(0);
 }' >main.cc || Die 'failed to create main.cc'
@@ -46,7 +66,7 @@ Echo "project('test', 'cpp')
 cxx = meson.get_compiler('cpp')
 cxx_id = cxx.get_id()
 stresstest = '''int main() {
-	return 0
+	return 0;
 }'''
 
 flags_fatal = []
@@ -96,7 +116,7 @@ executable('main', 'main.cc',
 	|| Die 'failed to create meson.build'
 meson builddir || Die 'failed to execute meson'
 
-ninja -C builddir || Die 'failed to compile static archives with -flto.
+ninja -v -C builddir || Die 'failed to compile static archives with -flto.
 
 A reason might be that you are missing the linker flto plugin.
 To establish the latter, something like
@@ -106,4 +126,3 @@ To establish the latter, something like
 might be required where you might have to replace * by your architecture
 or gcc-version, respectively.'
 
-RemoveTestdir

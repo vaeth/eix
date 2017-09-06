@@ -6,7 +6,12 @@
 /config/
 /m4/
 /eix-*/
-/builddir*/
+
+# meson directories:
+/*builddir*/
+
+# contrib/meson-flto-test.sh directory:
+/testdir/
 
 # autotools/doxygen files:
 /ABOUT-NLS
