@@ -328,6 +328,10 @@ AS_IF([$optimization],
 			-ftree-pre \
 			-ftree-partial-pre \
 			-fnothrow-opt \
+			-fno-unwind-tables \
+			-fno-asynchronous-unwind-tables \
+			-ffast-math \
+			-fno-math-errno \
 			-frename-registers \
 			-funsafe-loop-optimizations \
 			-fgcse-sm \
@@ -353,6 +357,7 @@ AS_IF([$optimization],
 			-Wl,--as-needed \
 			-Wl,--sort-common \
 			-Wl,-z,combreloc \
+			-Wl,--build-id=none \
 		], [$my_ldfatal], [], [:])])
 AS_IF([$strong_optimization],
 	[AS_VAR_SET([flto], ["
@@ -419,8 +424,6 @@ dnl			-floop-block \
 			-DG_DISABLE_ASSERT \
 		], [$my_cxxfatal], [$CPPFLAGS], [:])])])
 dnl We do not use:
-dnl Would not change anything:
-dnl			-ffast-math \
 dnl Too much memory/time for compilation:
 dnl			-fipa-pta
 dnl Default (e.g. with -O2):

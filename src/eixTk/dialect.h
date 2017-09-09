@@ -52,7 +52,7 @@
 #define EMPLACE(a, b) emplace b
 #else
 #define INSERT insert
-#define EMPLACE(a, b) emplace(a b)
+#define EMPLACE(a, b) insert(a b)
 #endif
 
 #ifdef HAVE_MOVE

@@ -281,7 +281,9 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 					test->FromOverlayInstList(),
 					"",
 					(*portagesettings)["PORTDIR"].c_str());
-				test->FromForeignOverlayInstList()->PUSH_BACK("");
+				// The following might give a memory leak with -flto for unknown reasons:
+				// test->FromForeignOverlayInstList()->PUSH_BACK("");
+				test->FromForeignOverlayInstList()->push_back("");
 				break;
 			case 'd': USE_TEST;
 				test->DuplPackages(eixrc->getBool("DUP_PACKAGES_ONLY_OVERLAYS"));

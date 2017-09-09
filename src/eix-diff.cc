@@ -121,19 +121,21 @@ class EixDiffOptionList : public OptionList {
 };
 
 EixDiffOptionList::EixDiffOptionList() {
-	EMPLACE_BACK(Option, ("help",         'h',    Option::BOOLEAN_T, &cli_show_help)); /* show a short help screen */
-	EMPLACE_BACK(Option, ("version",      'V',    Option::BOOLEAN_T, &cli_show_version));
-	EMPLACE_BACK(Option, ("dump",         O_DUMP, Option::BOOLEAN_T, &cli_dump_eixrc));
-	EMPLACE_BACK(Option, ("dump-defaults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &cli_dump_defaults));
-	EMPLACE_BACK(Option, ("print",        O_PRINT_VAR, Option::STRING, &var_to_print));
-	EMPLACE_BACK(Option, ("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &cli_known_vars));
-	EMPLACE_BACK(Option, ("nocolor",      'n',    Option::BOOLEAN_T, &(format_for_new->no_color)));
-	EMPLACE_BACK(Option, ("force-color",  'F',    Option::BOOLEAN_F, &(format_for_new->no_color)));
-	EMPLACE_BACK(Option, ("quick",        'Q',    Option::BOOLEAN,   &cli_quick));
-	EMPLACE_BACK(Option, ("care",         O_CARE, Option::BOOLEAN_T, &cli_care));
-	EMPLACE_BACK(Option, ("deps_installed", O_DEPS_INSTALLED, Option::BOOLEAN_T, &cli_deps_installed));
-	EMPLACE_BACK(Option, ("quiet",        'q',    Option::BOOLEAN,   &cli_quiet));
-	EMPLACE_BACK(Option, ("ansi",         O_ANSI, Option::BOOLEAN_T, &cli_ansi));
+	// The following gives a memory leak with -flto for unknown reasons:
+	// EMPLACE_BACK(Option, ("help",         'h',    Option::BOOLEAN_T, &cli_show_help)); /* show a short help screen */
+	push_back(Option("help",         'h',    Option::BOOLEAN_T, &cli_show_help)); /* show a short help screen */
+	push_back(Option("version",      'V',    Option::BOOLEAN_T, &cli_show_version));
+	push_back(Option("dump",         O_DUMP, Option::BOOLEAN_T, &cli_dump_eixrc));
+	push_back(Option("dump-defaults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &cli_dump_defaults));
+	push_back(Option("print",        O_PRINT_VAR, Option::STRING, &var_to_print));
+	push_back(Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &cli_known_vars));
+	push_back(Option("nocolor",      'n',    Option::BOOLEAN_T, &(format_for_new->no_color)));
+	push_back(Option("force-color",  'F',    Option::BOOLEAN_F, &(format_for_new->no_color)));
+	push_back(Option("quick",        'Q',    Option::BOOLEAN,   &cli_quick));
+	push_back(Option("care",         O_CARE, Option::BOOLEAN_T, &cli_care));
+	push_back(Option("deps_installed", O_DEPS_INSTALLED, Option::BOOLEAN_T, &cli_deps_installed));
+	push_back(Option("quiet",        'q',    Option::BOOLEAN,   &cli_quiet));
+	push_back(Option("ansi",         O_ANSI, Option::BOOLEAN_T, &cli_ansi));
 }
 
 static void init_db(const char *file, Database *db, DBHeader *header, PackageReader **reader, PortageSettings *ps) {

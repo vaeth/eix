@@ -28,7 +28,9 @@ void Eapi::init_static() {
 	eapi_map = new EapiMap;
 	eapi_vec = new WordVec;
 	(*eapi_map)["0"] = 0;
-	eapi_vec->PUSH_BACK("0");
+	// The following gives a memory leak with -flto for unknown reasons:
+	// eapi_vec->PUSH_BACK("0");
+	eapi_vec->push_back("0");
 }
 
 void Eapi::assign(const std::string& str) {

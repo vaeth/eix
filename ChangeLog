@@ -6,6 +6,7 @@
 	- Use unordered_{map,set} if available (presumably faster)
 	- Use emplace, emplace_back, std::move if available (faster)
 	- Prefer count() != 0 over find() != end() (presumably faster)
+	- Add memory saving flags
 
 *eix-0.33.0
 	Martin Väth <martin at mvath.de>:

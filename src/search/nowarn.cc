@@ -40,11 +40,15 @@ class NowarnKeywords {
 
 	public:
 		ATTRIBUTE_NONNULL_ void init_red(const char *s, Keywords::Redundant red) {
-			name_map.EMPLACE(NameMapPair, (s, NowarnFlags(red)));
+			// The following gives a memory leak with -flto for unknown reasons:
+			// name_map.EMPLACE(NameMapPair, (s, NowarnFlags(red)));
+			name_map.insert(NameMapPair(s, NowarnFlags(red)));
 		}
 
-		void init_ins(const std::string& s, PackageTest::TestInstalled ins) {
-			name_map.EMPLACE(NameMapPair, (s, NowarnFlags(Keywords::RED_NOTHING, ins)));
+		ATTRIBUTE_NONNULL_ void init_ins(const char *s, PackageTest::TestInstalled ins) {
+			// The following gives a memory leak with -flto for unknown reasons:
+			// name_map.EMPLACE(NameMapPair, (s, NowarnFlags(Keywords::RED_NOTHING, ins)));
+			name_map.insert(NameMapPair(s, NowarnFlags(Keywords::RED_NOTHING, ins)));
 		}
 
 		void apply(const std::string& s, NowarnFlags *f) const {

@@ -306,6 +306,10 @@ if optimization
 		'-ftree-pre',
 		'-ftree-partial-pre',
 		'-fnothrow-opt',
+		'-fno-unwind-tables',
+		'-fno-asynchronous-unwind-tables',
+		'-ffast-math',
+		'-fno-math-errno',
 		'-frename-registers',
 		'-funsafe-loop-optimizations',
 		'-fgcse-sm',
@@ -331,6 +335,7 @@ if optimization
 		'-Wl,--as-needed',
 		'-Wl,--sort-common',
 		'-Wl,-z,combreloc',
+		'-Wl,--build-id=none',
 	]
 endif
 if strong_optimization
