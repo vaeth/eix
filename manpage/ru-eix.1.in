@@ -63,14 +63,17 @@ B<eix-sync> умеет синхронизировать portage/оверлей-�
 Заметьте, что содержимое последнего также можно хранить в переменной
 B<EIX_SYNC_CONF>.
 
-B<eix-postsync> is simple alternative to B<eix-sync>.
+B<eix-postsync> is a simple alternative to B<eix-sync>.
 It is similar to B<eix-update>, but backups the cache before so that
 B<eix-diff> can be used to show the differences to the previous syncing.
-To execute B<eix-postsync> automatically after syncing with >=portage-2.3.7,
-you can create the directory /etc/portage/postsync.d/ and symlink
-B<eix-postsync> there.
-The main disadvantage over B<eix-sync> is that B<eix-diff> might fail in case
-of incompatible eix upgrades.
+To execute B<eix-postsync> automatically after B<emerge --sync>
+with >=portage-2.3.7, you can create the directory /etc/portage/postsync.d/
+and symlink B<eix-postsync> there.
+The main disadvantage of using B<emerge --sync> with that symlink (compared
+to B<eix-sync>) is that in the exceptional situation when a new upgrade
+of eix should no longer support the current database format then
+B<eix-diff> will not work for the first syncing after the upgrade
+(unless you manually called B<eix-update> before syncing).
 
 B<eix-test-obsolete> - сценарий, несколько раз вызывающий B<eix> для более структурированного вывода B<eix -tTc>.
 

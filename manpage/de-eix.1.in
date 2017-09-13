@@ -66,10 +66,13 @@ B<eix-postsync> ist eine einfache Alternative zu B<eix-sync>.
 Es ist ähnlich wie B<eix-update>, erzeugt aber zuvor ein Backup der Cache-Datei,
 so dass B<eix-diff> benutzt werden kann, um die Unterschiede zum vorherigen
 Syncen zu zeigen.
-Um B<eix-postsync> mit >=portage-2.3.7 zu benutzen, kann man das Verzeichnis
-/etc/portage/postsync.d/ erzeugen und dort einen Symlink auf B<eix-postsync> zu platzieren.
-Der Hauptnachteil gegenüber B<eix-sync> ist, dass B<eix-diff> im Falle inkompatibler
-eix-Upgrades fehlschlagen kann.
+Um B<eix-postsync> automatisch nach <emerge --sync> aufzurufen,
+kann man für >=portage-2.3.7 das Verzeichnis /etc/portage/postsync.d/ erzeugen
+und dort einen symbolischen Link auf B<eix-postsync> platzieren.
+Der Hauptnachteil von B<emerge --sync> mit diesem Link (im Vergleich zu B<eix-sync>)
+ist, dass für den Ausnahmefall, dass ein Upgrade von eix die alte Datenbank
+nicht mehr unterstützt, B<eix-diff> für das erste Syncen nach dem Upgrade
+nicht funktioniert (außer man ruft manuell B<eix-update> vor dem Syncen auf).
 
 B<eix-test-obsolete> ist ein Skript, das B<eix> mehrmals aufruft, um die Ausgabe von B<eix -tTc> besser organisiert auszugeben.
 
