@@ -609,8 +609,8 @@ foreach o : cxxflags_opt
 	message('FLAGS: ' + o + (r ? '' : ' NO'))
 endforeach
 
-conf = configuration_data()
-conf.set_quoted('PACKAGE_VERSION', version)
+vers = configuration_data()
+vers.set_quoted('PACKAGE_VERSION', version)
 subst = configuration_data()
 subst.set('PACKAGE_STRING', package + ' ' + version)
 subst.set('PACKAGE_BUGREPORT', 'https://github.com/vaeth/eix/issues/')
@@ -619,6 +619,7 @@ subst.set('PACKAGE_URL', 'https://github.com/vaeth/eix/')
 subst.set('BINDIR', bindir)
 
 subst.set('SYSCONFDIR', sysconfdir)
+conf = configuration_data()
 conf.set_quoted('SYSCONFDIR', sysconfdir,
 	description : 'Path to the configuration directory, usually /etc')
 
@@ -1386,6 +1387,11 @@ conf.set_quoted('LEVENSHTEIN_DISTANCE_DEFAULT', levenshtein_distance,
 configure_file(
 	output : 'config.h',
 	configuration : conf,
+)
+
+configure_file(
+	output : 'config_vers.h',
+	configuration : vers,
 )
 
 header_lib = [ static_library('header',

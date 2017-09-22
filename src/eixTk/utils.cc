@@ -9,6 +9,9 @@
 
 #include "eixTk/utils.h"
 #include <config.h>
+#ifndef PACKAGE_VERSION
+#include <config_vers.h>
+#endif
 
 #include <dirent.h>
 #include <sys/stat.h>
