@@ -3941,12 +3941,17 @@ The eix maintainer recommends to configure your package manager to export the
 desired B<EXTRA_ECONF> automatically when emerging eix.
 For portage, this can be done as follows. Put the line
 
-.B app-portage/eix eix-extra-econf
+.B app-portage/eix eix-extra-econf.conf
 
 into the file I</etc/portage/package.env> or into some file of that directory
 (creating this file/directory if it did not exist yet), and then create the
 file I</etc/portage/env/eix-extra-econf.conf> with the corresponding line
 B<EXTRA_ECONF=">I<...>B<">.
+
+Alternatively, install eix from the mv overlay.
+This also gives you the experimental option to build eix using the meson build system (instead of autotools).
+If this build system works on your system, this is recommended because it is faster and works nicer with ccache than autotools.
+At the time of writing this text, it is not possible to use meson with the ebuild from the main gentoo repository.
 .\" }}}
 
 .\" {{{ HISTORY

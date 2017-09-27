@@ -4042,12 +4042,17 @@ Der eix Maintainer empfiehlt die Konfiguration des Paketmanagers, um die
 gewünschte B<EXTRA_ECONF> automatisch beim Emerge von eix zu setzen.
 Für portage kann das wie folgt geschehen: Fügen Sie die Zeile
 
-.B app-portage/eix eix-extra-econf
+.B app-portage/eix eix-extra-econf.conf
 
 der Datei I</etc/portage/package.env> (oder einer Datei in diesem Verzeichnis) hinzu.
 (Erzeugen Sie dabei diese Datei bzw. Verzeichnis falls es noch nicht existiert).
 Erzeugen Sie dann die Datei I</etc/portage/env/eix-extra-econf.conf> mit der
 gewünschten Zeile B<EXTRA_ECONF=">I<...>B<">.
+
+Alternativ kann eix vom mv overlay installiert werden.
+Damit erhält man zusätzlich die experimentelle Möglichkeit, eix mit dem meson Build-System (statt autotools) zu bauen.
+Falls dies auf Ihrem System läuft, ist es vorzuziehen, da es schneller ist und besser mit ccache zusammenarbeitet.
+Aktuell (zum Zeitpunkt, wo dieser Text entsteht) ist es nicht möglich, eix mit dem Ebuild aus dem Gentoo Hauptbaum mit meson zu bauen.
 .\" }}}
 
 .\" {{{ GESCHICHTE
