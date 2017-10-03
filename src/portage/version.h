@@ -109,7 +109,7 @@ class IUseSet {
 /**
 Version expands the BasicVersion class by data relevant for versions in tree/overlays.
 **/
-class Version : public ExtendedVersion, public Keywords {
+class Version FINAL : public ExtendedVersion, public Keywords {
 	public:
 		typedef std::set<StringList> Reasons;
 

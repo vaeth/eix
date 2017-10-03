@@ -488,6 +488,9 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wsuggest-attribute=pure \
 			-Wsuggest-attribute=const \
 			-Wsuggest-attribute=noreturn \
+			-Wsuggest-final-type \
+			-Wsuggest-final-methods \
+			-Wsuggest-override \
 			-Wdelete-non-virtual-dtor \
 			$zero_as_null_pointer \
 			-Wint-to-pointer-cast \
@@ -497,12 +500,15 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wswitch-bool \
 			-Wlogical-not-parantheses \
 			-Wsizeof-array-argument \
+			-Walloc-zero \
 			-Wbool-compare \
+			-Wbool-operation \
 			-Wodr-type-mismatch \
 			-Wshift-negative-value \
 			-Wshift-overflow \
 			-Wshift-overflow=2 \
 			-Wnull-dereference \
+			-Wduplicated-branches \
 			-Wduplicated-cond \
 			-Wno-c++1z-extensions \
 		], [$my_cxxfatal], [], [:])
@@ -1252,6 +1258,22 @@ return b->foo();
 		[MV_MSG_RESULT([yes])
 		AC_DEFINE([HAVE_OVERRIDE], [1],
 			[Define if C++ dialect has override modifier])],
+		[MV_MSG_RESULT([no])])
+
+# Check if final can be used
+AC_MSG_CHECKING([whether final can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+class T final {
+public:
+	virtual int foo() final {return 0;}
+};
+	]], [[
+T b;
+return b.foo();
+		]])],
+		[MV_MSG_RESULT([yes])
+		AC_DEFINE([HAVE_FINAL], [1],
+			[Define if C++ dialect has final modifier])],
 		[MV_MSG_RESULT([no])])
 
 # Check if delete can be assigned

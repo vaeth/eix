@@ -29,7 +29,7 @@ class Depend;
 class Package;
 class Version;
 
-class MetadataCache : public BasicCache {
+class MetadataCache FINAL : public BasicCache {
 	private:
 		typedef enum {
 			PATH_METADATA,

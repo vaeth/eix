@@ -22,7 +22,7 @@ class Category;
 class PackageTree;
 class TrueIndex;
 
-class SqliteCache : public BasicCache {
+class SqliteCache FINAL : public BasicCache {
 		friend int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);
 
 	public:  // actually private, but this is too clumsy...

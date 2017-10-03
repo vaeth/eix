@@ -148,6 +148,9 @@
 /* Define to 1 if you have the `fileno' function. */
 #undef HAVE_FILENO
 
+/* Define if C++ dialect has final modifier */
+#undef HAVE_FINAL
+
 /* Define to 1 if you have the `flock' function. */
 #undef HAVE_FLOCK
 

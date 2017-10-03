@@ -17,6 +17,7 @@
 #include <string>
 
 #include "eixTk/attribute.h"
+#include "eixTk/diagnostics.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/sysutils.h"
@@ -31,6 +32,7 @@ class Version;
 /**
 Parent class of every cache that eix can use
 **/
+GCC_DIAG_OFF(suggest-final-methods)
 class BasicCache {
 		friend class AssignReader;
 		friend class FlatReader;
@@ -201,5 +203,6 @@ class BasicCache {
 	public:
 		PortageSettings *portagesettings;
 };
+GCC_DIAG_ON(suggest-final-methods)
 
 #endif  // SRC_CACHE_BASE_H_

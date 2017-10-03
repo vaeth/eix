@@ -407,7 +407,7 @@ int run_eix_update(int argc, char *argv[]) {
 	WordVec add_overlays;
 	OverrideVector override_vector;
 	RepoNames repo_names;
-	{
+	/**/ {
 		Overrides override_list;
 		add_override(&override_list, &eixrc, "CACHE_METHOD");
 		PathVec excluded_list;

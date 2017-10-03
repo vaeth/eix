@@ -427,6 +427,9 @@ if warnings
 		'-Wsuggest-attribute=pure',
 		'-Wsuggest-attribute=const',
 		'-Wsuggest-attribute=noreturn',
+		'-Wsuggest-final-type',
+		'-Wsuggest-final-methods',
+		'-Wsuggest-override',
 		'-Wdelete-non-virtual-dtor',
 		'-Wint-to-pointer-cast',
 		'-Wcomment',
@@ -435,12 +438,15 @@ if warnings
 		'-Wswitch-bool',
 		'-Wlogical-not-parantheses',
 		'-Wsizeof-array-argument',
+		'-Walloc-zero',
 		'-Wbool-compare',
+		'-Wbool-operation',
 		'-Wodr-type-mismatch',
 		'-Wshift-negative-value',
 		'-Wshift-overflow',
 		'-Wshift-overflow=2',
 		'-Wnull-dereference',
+		'-Wduplicated-branches',
 		'-Wduplicated-cond',
 		'-Wno-c++1z-extensions',
 		# '-Weverything',
@@ -1059,6 +1065,20 @@ int main() {
 message('override: ' + override.to_string())
 conf.set('HAVE_OVERRIDE', override,
 	description : 'Define if C++ dialect has override modifier')
+
+final = cxx.links('''
+class T final {
+public:
+	virtual int foo() final {return 0;}
+};
+int main() {
+	T b;
+	return b.foo();
+}
+''', args : flags_dialect)
+message('final: ' + final.to_string())
+conf.set('HAVE_FINAL', final,
+	description : 'Define if C++ dialect has final modifier')
 
 delete = cxx.links('''
 #include <utility>

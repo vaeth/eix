@@ -124,7 +124,7 @@ class DBHeader {
 			return ExtendedVersion::Overlay(overlays.size());
 		}
 
-		ATTRIBUTE_PURE bool isCurrent() const;
+		bool isCurrent() const;
 };
 
 #endif  // SRC_DATABASE_HEADER_H_

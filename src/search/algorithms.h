@@ -15,6 +15,7 @@
 #include <string>
 
 #include "eixTk/attribute.h"
+#include "eixTk/dialect.h"
 #include "eixTk/regexp.h"
 #include "eixTk/unordered_map.h"
 #include "search/levenshtein.h"
@@ -32,7 +33,7 @@ class BaseAlgorithm {
 		std::string search_string;
 		bool have_simplified;
 
-		virtual bool can_simplify() {
+		virtual bool can_simplify() const {
 			return true;
 		}
 
@@ -53,21 +54,21 @@ class BaseAlgorithm {
 /**
 Use regex to test strings for a match.
 **/
-class RegexAlgorithm : public BaseAlgorithm {
+class RegexAlgorithm FINAL : public BaseAlgorithm {
 	protected:
 		Regex re;
 
-		bool can_simplify() {
+		bool can_simplify() const OVERRIDE {
 			return false;
 		}
 
 	public:
-		void setString(const std::string& s) {
+		void setString(const std::string& s) OVERRIDE {
 			search_string = s;
 			re.compile(search_string.c_str(), REG_ICASE);
 		}
 
-		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, Package * /* p */) const {
+		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, Package * /* p */) const OVERRIDE {
 			return re.match(s);
 		}
 };
@@ -75,17 +76,17 @@ class RegexAlgorithm : public BaseAlgorithm {
 /**
 exact string matching
 **/
-class ExactAlgorithm : public BaseAlgorithm {
+class ExactAlgorithm FINAL : public BaseAlgorithm {
 	public:
-		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, Package * /* p */) const;
+		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, Package * /* p */) const OVERRIDE;
 };
 
 /**
 substring matching
 **/
-class SubstringAlgorithm : public BaseAlgorithm {
+class SubstringAlgorithm FINAL : public BaseAlgorithm {
 	public:
-		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, Package * /* p */) const {
+		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, Package * /* p */) const OVERRIDE {
 			return (std::string(s).find(search_string) != std::string::npos);
 		}
 };
@@ -93,24 +94,24 @@ class SubstringAlgorithm : public BaseAlgorithm {
 /**
 begin-of-string matching
 **/
-class BeginAlgorithm : public BaseAlgorithm {
+class BeginAlgorithm FINAL : public BaseAlgorithm {
 	public:
-		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, Package * /* p */) const;
+		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, Package * /* p */) const OVERRIDE;
 };
 
 /**
 end-of-string matching
 **/
-class EndAlgorithm : public BaseAlgorithm {
+class EndAlgorithm FINAL : public BaseAlgorithm {
 	public:
-		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, Package * /* p */) const;
+		ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE bool operator()(const char *s, Package * /* p */) const OVERRIDE;
 };
 
 /**
 Store distance to searchstring in Package and sort out packages with a
 higher distance than max_levenshteindistance.
 **/
-class FuzzyAlgorithm : public BaseAlgorithm {
+class FuzzyAlgorithm FINAL : public BaseAlgorithm {
 	protected:
 		Levenshtein max_levenshteindistance;
 
@@ -122,7 +123,7 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 		typedef UNORDERED_MAP<std::string, Levenshtein> LevenshteinMap;
 		static LevenshteinMap *levenshtein_map;
 
-		bool can_simplify() {
+		bool can_simplify() const OVERRIDE {
 			return false;
 		}
 
@@ -130,7 +131,7 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 		explicit FuzzyAlgorithm(Levenshtein max) : max_levenshteindistance(max) {
 		}
 
-		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, Package *p) const;
+		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, Package *p) const OVERRIDE;
 
 		ATTRIBUTE_NONNULL_ static bool compare(Package *p1, Package *p2);
 
@@ -144,14 +145,14 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 /**
 Use fnmatch to test if the package matches.
 **/
-class PatternAlgorithm : public BaseAlgorithm {
+class PatternAlgorithm FINAL : public BaseAlgorithm {
 	protected:
-		bool can_simplify() {
+		bool can_simplify() const OVERRIDE {
 			return false;
 		}
 
 	public:
-		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, Package * /* p */) const;
+		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, Package * /* p */) const OVERRIDE;
 };
 
 #endif  // SRC_SEARCH_ALGORITHMS_H_

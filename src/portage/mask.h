@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "eixTk/attribute.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/null.h"
 #include "eixTk/ptr_container.h"
@@ -154,7 +155,7 @@ class Mask : public BasicVersion {
 		}
 };
 
-class KeywordMask : public Mask {
+class KeywordMask FINAL : public Mask {
 	public:
 		std::string keywords;
 		bool locally_double;
@@ -171,7 +172,7 @@ class KeywordMask : public Mask {
 		}
 };
 
-class PKeywordMask : public Mask {
+class PKeywordMask FINAL : public Mask {
 	public:
 		std::string keywords;
 
@@ -185,7 +186,7 @@ class PKeywordMask : public Mask {
 		}
 };
 
-class SetMask : public Mask {
+class SetMask FINAL : public Mask {
 	public:
 		SetsIndex m_set;
 

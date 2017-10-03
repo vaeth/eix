@@ -235,7 +235,7 @@ bool VarDbPkg::readUse(const Package& p, InstVersion *v) const {
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
 	WordVec& inst_iuse = v->inst_iuse;
 	WordVec alluse;
-	{
+	/**/ {
 		LineVec lines;
 		if(unlikely(!pushback_lines((dirname + "/IUSE").c_str(),
 			&lines, false, false, 1))) {

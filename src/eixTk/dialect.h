@@ -27,6 +27,12 @@
 #define OVERRIDE
 #endif
 
+#ifdef HAVE_FINAL
+#define FINAL final
+#else
+#define FINAL
+#endif
+
 #ifdef HAVE_DELETE
 #define ASSIGN_DELETE = delete
 #else

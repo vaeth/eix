@@ -13,6 +13,7 @@
 #include <string>
 
 #include "eixTk/attribute.h"
+#include "eixTk/dialect.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "portage/keywords.h"
@@ -64,7 +65,7 @@ class NowarnFlags {
 };
 
 
-class NowarnMask : public Mask {
+class NowarnMask FINAL : public Mask {
 		friend class NowarnMaskList;
 
 	public:
@@ -81,14 +82,14 @@ class NowarnMask : public Mask {
 		static NowarnKeywords *nowarn_keywords;
 };
 
-class NowarnMaskList : public MaskList<NowarnMask> {
+class NowarnMaskList FINAL : public MaskList<NowarnMask> {
 		typedef MaskList<NowarnMask> super;
 
 	public:
 		void apply(Package *p, Keywords::Redundant *r, PackageTest::TestInstalled *i, PortageSettings *portagesettings) const;
 };
 
-class NowarnPreList : public PreList {
+class NowarnPreList FINAL : public PreList {
 		typedef PreList super;
 
 	public:

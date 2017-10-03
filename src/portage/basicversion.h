@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "eixTk/attribute.h"
+#include "eixTk/diagnostics.h"
 #include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 
@@ -92,7 +93,9 @@ class BasicVersion {
 			parsedGarbage
 		};
 
+GCC_DIAG_OFF(suggest-final-methods)
 		virtual ~BasicVersion() { }
+GCC_DIAG_ON(suggest-final-methods)
 
 		/**
 		Parse the version-string pointed to by str

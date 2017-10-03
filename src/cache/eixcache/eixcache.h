@@ -24,7 +24,7 @@ class DBHeader;
 class Package;
 class PackageTree;
 
-class EixCache : public BasicCache {
+class EixCache FINAL : public BasicCache {
 	private:
 		typedef eix::ptr_container<std::vector<EixCache *> > CachesList;
 		static CachesList *all_eixcaches;

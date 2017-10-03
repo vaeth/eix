@@ -6,7 +6,10 @@
 	- Use unordered_{map,set} if available (presumably faster)
 	- Use emplace, emplace_back, std::move if available (faster)
 	- Prefer count() != 0 over find() != end() (presumably faster)
+	- Use final and override where possible/useful; add diagnostics
 	- Add memory saving flags
+	- Remove an ATTRIBUTE_PURE which is suspicious to be related to
+	  https://github.com/vaeth/eix/issues/42
 	- Improve ccache usage (only for meson): Remove version from config.h
 	  (included everywhere) to increase hit rate for upgrades
 	- manpage: more verbose description of eix-postsync

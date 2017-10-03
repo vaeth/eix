@@ -27,7 +27,7 @@ class EbuildExec;
 class VarsReader;
 class Version;
 
-class ParseCache : public BasicCache {
+class ParseCache FINAL : public BasicCache {
 	private:
 		bool verbose;
 		typedef std::vector<BasicCache*> FurtherCaches;

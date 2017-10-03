@@ -15,6 +15,7 @@
 #include <ctime>
 
 #include "eixTk/attribute.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 #include "eixTk/stringtypes.h"
 #include "portage/basicversion.h"
@@ -24,7 +25,7 @@
 /**
 InstVersion expands the BasicVersion class by data relevant for vardbpkg
 **/
-class InstVersion : public ExtendedVersion, public Keywords {
+class InstVersion FINAL : public ExtendedVersion, public Keywords {
 	public:
 		/**
 		For versions in vardbpkg we might not yet know the slot.
