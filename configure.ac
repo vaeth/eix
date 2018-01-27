@@ -41,7 +41,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.33.1], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
+AC_INIT([eix], [0.33.2], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
 AC_PREREQ([2.64])
 
 m4_ifdef([AC_CONFIG_MACRO_DIR],
@@ -583,6 +583,7 @@ AS_IF([$security],
 				-pie \
 				], [$my_ldfatal], [], [:])])
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
+			-Wl,-z,retpolineplt \
 			-Wl,-z,now \
 			-Wl,-z,relro \
 			-Wl,-z,noexecstack \
@@ -591,6 +592,9 @@ AS_IF([$security],
 			$my_stackprotector \
 			], [$my_ldfatal], [], [break])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+			-mretpoline \
+			-mindirect-branch=thunk \
+			-mfunction-return=thunk \
 			-D_FORTIFY_SOURCE=2 \
 		], [$my_cxxfatal], [$CPPFLAGS], [:])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \

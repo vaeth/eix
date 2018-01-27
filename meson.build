@@ -1,5 +1,5 @@
 project('eix', 'cpp',
-	version : '0.33.1',
+	version : '0.33.2',
 	license : 'GPLv2',
 	default_options : [
 		'prefix=/usr',
@@ -510,9 +510,13 @@ if security
 		]
 	]
 	cxxflags_opt += [
+		'-mretpoline',
+		'-mindirect-branch=thunk',
+		'-mfunction-return=thunk',
 		'-D_FORTIFY_SOURCE=2',
 	]
 	ldflags_opt += [
+		'-Wl,-z,retpolineplt',
 		'-Wl,-z,now',
 		'-Wl,-z,relro',
 		'-Wl,-z,noexecstack',

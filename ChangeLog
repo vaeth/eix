@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.33.2
+	Martin Väth <martin at mvath.de>:
+	- Use all available compiler spectre protection with --enable-security.
+	  Some are overkill for some processors, but better avoid leaking data.
+
 *eix-0.33.1
 	Martin Väth <martin at mvath.de>:
 	- Fix meson tests which require dialect arg
