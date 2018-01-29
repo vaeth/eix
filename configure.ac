@@ -592,6 +592,7 @@ AS_IF([$security],
 			$my_stackprotector \
 			], [$my_ldfatal], [], [break])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+			-fno-plt \
 			-mretpoline \
 			-mindirect-branch=thunk \
 			-mfunction-return=thunk \

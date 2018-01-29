@@ -510,6 +510,7 @@ if security
 		]
 	]
 	cxxflags_opt += [
+		'-fno-plt',
 		'-mretpoline',
 		'-mindirect-branch=thunk',
 		'-mfunction-return=thunk',
