@@ -26,11 +26,15 @@ ATTRIBUTE_NONNULL_ EixRc& get_eixrc(const char *varprefix);
 **/
 ATTRIBUTE_PURE EixRc& get_eixrc();
 
+#ifdef JUMBO_BUILD
+ATTRIBUTE_NONNULL_ void fill_defaults(EixRc *eixrc);
+#else
 ATTRIBUTE_NONNULL_ void fill_defaults_part_1(EixRc *eixrc);
 ATTRIBUTE_NONNULL_ void fill_defaults_part_2(EixRc *eixrc);
 ATTRIBUTE_NONNULL_ void fill_defaults_part_3(EixRc *eixrc);
 ATTRIBUTE_NONNULL_ void fill_defaults_part_4(EixRc *eixrc);
 ATTRIBUTE_NONNULL_ void fill_defaults_part_5(EixRc *eixrc);
 ATTRIBUTE_NONNULL_ void fill_defaults_part_6(EixRc *eixrc);
+#endif
 
 #endif  // SRC_EIXRC_GLOBAL_H_

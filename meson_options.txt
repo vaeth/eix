@@ -1,3 +1,5 @@
+option('jumbo-build', type : 'boolean', value : true,
+	description : 'use jumbo build')
 option('nls', type : 'boolean', value : true,
 	description : 'use native language support')
 option('new-dialect', type : 'boolean', value : true,

@@ -30,6 +30,7 @@ Available options are
   -y  Use new c++ dialect
   -Y  Do not use new c++ dialect
   -jX Use -jX (currently $jarg)
+  -J Use --disable-jumbo-build
   -c OPT Add OPT to ./configure
   -M OPT Add OPT to meson
   -m  Use meson instead of autotools
@@ -122,9 +123,11 @@ debugging=false
 dialect=:
 nopie_security=:
 OPTIND=1
-while getopts 'mRq1234gGDnewWsSrOoCxXyYdM:c:j:hH' opt
+while getopts 'mJRq1234gGDnewWsSrOoCxXyYdM:c:j:hH' opt
 do	case $opt in
 	m)	meson=:;;
+	J)	meson_extra=$meson_extra' -Djumbo-build=false'
+		configure_extra=$configure_extra' --disable-jumbo-build';;
 	R)	remove_builddir=:;;
 	q)	quiet=:;;
 	1)	separate_all=false;;

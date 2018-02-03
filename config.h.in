@@ -316,6 +316,9 @@
 /* Define if __builtin_expect can be used */
 #undef HAVE___BUILTIN_EXPECT
 
+/* Define if jumbo build is wanted */
+#undef JUMBO_BUILD
+
 /* Default Levenshtein distance for matches (as string) */
 #undef LEVENSHTEIN_DISTANCE_DEFAULT
 

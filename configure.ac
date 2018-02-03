@@ -69,6 +69,21 @@ AM_SILENT_RULES([yes])
 AC_LANG([C++])
 AC_PROG_CXX()
 
+# jumbo build?
+AC_MSG_CHECKING([whether jumbo build should be used])
+AC_ARG_ENABLE([jumbo_build],
+	[AS_HELP_STRING([--disable-jumbo-build],
+		[disable jumbo build for low memory systems])],
+	[MV_ENABLE([jumbo-build])],
+	[AS_VAR_SET([jumbo_build], [true])])
+AM_CONDITIONAL([JUMBO_BUILD],
+	[$jumbo_build])
+AS_IF([$jumbo_build],
+	[AC_DEFINE([JUMBO_BUILD],
+		[1],
+		[Define if jumbo build is wanted])])
+MV_MSG_RESULT_BIN([$jumbo_build])
+
 # Now our flag mangling options:
 
 AC_ARG_ENABLE([debugging],

@@ -2,6 +2,14 @@
 
 *eix-0.33.2
 	Martin Väth <martin at mvath.de>:
+	- Bugfix: Fix typo in FORMATLINE_BEST (I18N_BESTVERSIONSSLOT) which
+	  prevented printing the text "Best versions/slot:" (or a translation)
+	  with eix -v
+	- Introduce jumbo build and use it by default: This avoids a splitting
+	  of defaults.cc into several compilation units which existed only for
+	  compile-time memory reasons.
+	  Use --disable-jumbo-build for compilation on low-memory systems.
+	  (The produced binary might be longer and slower.)
 	- Use all available compiler spectre protection with --enable-security.
 	  Some are overkill for some processors, but better avoid leaking data.
 

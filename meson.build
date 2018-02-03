@@ -8,6 +8,7 @@ project('eix', 'cpp',
 	meson_version : '>= 0.41', # support configure_file(capture : true)
 )
 
+jumbo_build = get_option('jumbo-build')
 new_dialect = get_option('new-dialect')
 dead_code = get_option('dead-code')
 debugging = get_option('debugging')
@@ -67,6 +68,7 @@ if strong_security and not security
 endif
 
 result = [ 'Passed options:' ]
+result += [ 'jumbo-build=' + jumbo_build.to_string() ]
 result += [ 'debugging=' + debugging.to_string() ]
 result += [ 'debug-format=' + debug_format.to_string() ]
 result += [ 'paranoic-asserts=' + paranoic_asserts.to_string() + paranoic_asserts_msg ]
@@ -638,6 +640,8 @@ subst.set('LOCALEDIR', localedir)
 conf.set_quoted('LOCALEDIR', localedir,
 	description : 'Path to the locale directory, usually /usr/share/locale')
 
+conf.set('JUMBO_BUILD', jumbo_build,
+	description : 'Define if jumbo build should be used')
 conf.set('EIX_PARANOIC_ASSERTS', paranoic_asserts,
 	description : 'Define if paranoic asserts should be used')
 conf.set('EIX_STATIC_ASSERTS', paranoic_asserts,
@@ -1491,6 +1495,14 @@ eixtk_lib += stringutils_lib
 eixtk_lib += sysutils_lib
 eixtk_lib += varsreader_lib
 
+if jumbo_build
+eixrc_lib = [ static_library('eixrc',
+	join_paths('src', 'eixrc', 'eixrc.cc'),
+	join_paths('src', 'eixrc', 'global.cc'),
+	join_paths('src', 'eixrc', 'globals.cc'),
+	include_directories : incdir,
+) ]
+else
 eixrc_lib = [ static_library('eixrc',
 	join_paths('src', 'eixrc', 'eixrc.cc'),
 	join_paths('src', 'eixrc', 'global.cc'),
@@ -1502,6 +1514,7 @@ eixrc_lib = [ static_library('eixrc',
 	join_paths('src', 'eixrc', 'global6.cc'),
 	include_directories : incdir,
 ) ]
+endif
 
 depend_lib = [ static_library('depend',
 	join_paths('src', 'portage', 'depend.cc'),

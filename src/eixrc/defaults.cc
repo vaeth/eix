@@ -9,7 +9,7 @@
 
 // check_includes: #include <config.h> include <cstdlib> include "eixTk/i18n.h" include "eixTk/dialect.h"
 
-#if (DEFAULT_PART == 1)
+#if defined(JUMBO_BUILD) || (DEFAULT_PART == 1)
 
 AddOption(STRING, "EIXRC",
 	"", P_("EIXRC",
@@ -536,7 +536,7 @@ AddOption(BOOLEAN, "RECURSIVE_SETS",
 	"Are packages/sets in included sets part of the parent set?"));
 #endif
 
-#if (DEFAULT_PART == 2)
+#if defined(JUMBO_BUILD) || (DEFAULT_PART == 2)
 
 AddOption(BOOLEAN, "UPGRADE_TO_HIGHEST_SLOT",
 	"true", P_("UPGRADE_TO_HIGHEST_SLOT",
@@ -1112,7 +1112,7 @@ AddOption(BOOLEAN, "SLOT_UPGRADE_FORBID",
 	"are treated as if UPGRADE_TO_HIGHEST_SLOT=false."));
 #endif
 
-#if (DEFAULT_PART == 3)
+#if defined(JUMBO_BUILD) || (DEFAULT_PART == 3)
 
 AddOption(BOOLEAN, "SLOT_UPGRADE_ALLOW",
 	"%{\\EIXCFGDIR}/package.slot_upgrade_allow", P_("SLOT_UPGRADE_ALLOW",
@@ -1605,7 +1605,7 @@ AddOption(STRING, "TAG_NEW",
 	"It defines the tag printed for new packages (eix-diff)."));
 #endif
 
-#if (DEFAULT_PART == 4)
+#if defined(JUMBO_BUILD) || (DEFAULT_PART == 4)
 
 AddOption(STRING, "TAG_BETTER",
 	"(%{DIFF_COLOR_BETTER})%{DIFF_CHAR_BETTER}(%{COLOR_RESET})", P_("TAG_BETTER",
@@ -2249,7 +2249,7 @@ AddOption(STRING, "IVERSIONS_VERBOSE",
 	"It defines the format for an installed version with most data and slot."));
 #endif
 
-#if (DEFAULT_PART == 5)
+#if defined(JUMBO_BUILD) || (DEFAULT_PART == 5)
 
 AddOption(STRING, "PVERSIONO_VERBOSE",
 	"%{PVERSIONO}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}%{OVERLAYVER}", P_("PVERSIONO_VERBOSE",
@@ -3153,7 +3153,7 @@ AddOption(STRING, "FORMATLINE_DESCRIPTION",
 AddOption(STRING, "FORMATLINE_BEST",
 	"%{!PRINT_ALWAYS}{havebest}%{}"
 		"\\C<%{I18N_COLUMN_TITLE}>"
-		"(%{COLOR_TITLE})%{I18N_BESTVERIONSSLOT}(%{COLOR_RESET})"
+		"(%{COLOR_TITLE})%{I18N_BESTVERSIONSSLOT}(%{COLOR_RESET})"
 		"%{?PRINT_ALWAYS}{havebest}%{}"
 		"\\C<%{I18N_COLUMN_CONTENT}>"
 		"<bestslotversions:VSORT>"
@@ -3193,7 +3193,7 @@ AddOption(STRING, "FORMATLINE_LICENSES",
 	"It defines the format for a line with the package licenses."));
 #endif
 
-#if (DEFAULT_PART == 6)
+#if defined(JUMBO_BUILD) || (DEFAULT_PART == 6)
 
 AddOption(STRING, "DIFF_FORMATLINE",
 	"%{FORMAT_OVERLAYKEY}"

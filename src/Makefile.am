@@ -103,18 +103,32 @@ $(varsreader_src)
 
 nodist_eixtk_src =
 
-eixrc_src = \
-eixrc/eixrc.cc \
-eixrc/eixrc.h \
-eixrc/global.cc \
-eixrc/global.h \
+jumbo_src = \
+eixrc/globals.cc
+
+split_src = \
 eixrc/global1.cc \
 eixrc/global2.cc \
 eixrc/global3.cc \
 eixrc/global4.cc \
 eixrc/global5.cc \
-eixrc/global6.cc \
-eixrc/globals.h
+eixrc/global6.cc
+
+if JUMBO_BUILD
+eixrc_jumbo_src = $(jumbo_src)
+extra_eixrc_src = $(split_src)
+else
+eixrc_jumbo_src = $(split_src)
+extra_eixrc_src = $(jumbo_src)
+endif
+
+eixrc_src = \
+eixrc/eixrc.cc \
+eixrc/eixrc.h \
+eixrc/global.cc \
+eixrc/global.h \
+eixrc/globals.h \
+$(eixrc_jumbo_src)
 
 nodist_eixrc_src =
 
@@ -275,6 +289,7 @@ $(nodist_eixrc_src)
 extra_common_src = \
 eixrc/def_i18n.cc \
 eixrc/defaults.cc \
+$(extra_eixrc_src) \
 main/main.cc \
 main/main_eix.cc \
 main/main_diff.cc \
@@ -570,6 +585,7 @@ eixrc/global3.cc: eixrc/defaults.cc
 eixrc/global4.cc: eixrc/defaults.cc
 eixrc/global5.cc: eixrc/defaults.cc
 eixrc/global6.cc: eixrc/defaults.cc eixrc/def_i18n.cc
+eixrc/globals.cc: eixrc/defaults.cc eixrc/def_i18n.cc
 
 uninstall-local:
 	$(AM_V_at)$(use_separate_tools) || \
