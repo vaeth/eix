@@ -41,7 +41,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.33.2], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
+AC_INIT([eix], [0.33.3], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
 AC_PREREQ([2.64])
 
 m4_ifdef([AC_CONFIG_MACRO_DIR],
@@ -1608,6 +1608,54 @@ AC_DEFINE_UNQUOTED([ARCH_DEFAULT],
 	["$ARCH_DEFAULT"],
 	[Default DEFAULT_ARCH])
 AC_SUBST([ARCH_DEFAULT])
+
+AC_MSG_CHECKING([EIX_USER default])
+AC_ARG_WITH([eix-user],
+	[AS_HELP_STRING([--with-eix-user=STR],
+		[default EIX_USER])],
+	[AS_VAR_COPY([EIX_USER], [withval])],
+	[AS_VAR_SET([EIX_USER], [portage])])
+MV_MSG_RESULT_VAR([EIX_USER])
+AC_DEFINE_UNQUOTED([EIX_USER],
+	["$EIX_USER"],
+	[Default EIX_USER])
+AC_SUBST([EIX_USER])
+
+AC_MSG_CHECKING([EIX_UID default])
+AC_ARG_WITH([eix-uid],
+	[AS_HELP_STRING([--with-eix-uid=STR],
+		[default EIX_UID])],
+	[AS_VAR_COPY([EIX_UID], [withval])],
+	[AS_VAR_SET([EIX_UID], [250])])
+MV_MSG_RESULT_VAR([EIX_UID])
+AC_DEFINE_UNQUOTED([EIX_UID],
+	["$EIX_UID"],
+	[Default EIX_UID])
+AC_SUBST([EIX_UID])
+
+AC_MSG_CHECKING([EIX_GROUP default])
+AC_ARG_WITH([eix-group],
+	[AS_HELP_STRING([--with-eix-group=STR],
+		[default EIX_GROUP])],
+	[AS_VAR_COPY([EIX_GROUP], [withval])],
+	[AS_VAR_SET([EIX_GROUP], [%{EIX_USER}])])
+MV_MSG_RESULT_VAR([EIX_GROUP])
+AC_DEFINE_UNQUOTED([EIX_GROUP],
+	["$EIX_GROUP"],
+	[Default EIX_GROUP])
+AC_SUBST([EIX_GROUP])
+
+AC_MSG_CHECKING([EIX_GID default])
+AC_ARG_WITH([eix-gid],
+	[AS_HELP_STRING([--with-eix-gid=STR],
+		[default EIX_GID])],
+	[AS_VAR_COPY([EIX_GID], [withval])],
+	[AS_VAR_SET([EIX_GID], [%{EIX_UID}])])
+MV_MSG_RESULT_VAR([EIX_GID])
+AC_DEFINE_UNQUOTED([EIX_GID],
+	["$EIX_GID"],
+	[Default EIX_GID])
+AC_SUBST([EIX_GID])
 
 AC_MSG_CHECKING([swap remote paths])
 AC_ARG_ENABLE([swap-remote],

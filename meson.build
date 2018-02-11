@@ -1,5 +1,5 @@
 project('eix', 'cpp',
-	version : '0.33.2',
+	version : '0.33.3',
 	license : 'GPLv2',
 	default_options : [
 		'prefix=/usr',
@@ -1300,6 +1300,26 @@ default_arch = get_option('default-arch')
 result += [ 'default-arch=' + default_arch ]
 conf.set_quoted('ARCH_DEFAULT', default_arch,
 	description : 'Default DEFAULT_ARCH')
+
+eix_user = get_option('eix-user')
+result += [ 'eix-user=' + eix_user ]
+conf.set_quoted('EIX_USER', eix_user,
+	description : 'Default EIX_USER')
+
+eix_uid = get_option('eix-uid')
+result += [ 'eix-uid=' + eix_uid ]
+conf.set_quoted('EIX_UID', eix_uid,
+	description : 'Default EIX_UID')
+
+eix_group = get_option('eix-group')
+result += [ 'eix-group=' + eix_group ]
+conf.set_quoted('EIX_GROUP', eix_group,
+	description : 'Default EIX_GROUP')
+
+eix_gid = get_option('eix-gid')
+result += [ 'eix-gid=' + eix_gid ]
+conf.set_quoted('EIX_GID', eix_gid,
+	description : 'Default EIX_GID')
 
 if get_option('swap-remote')
 	remote_file1 = get_option('remote-file2')

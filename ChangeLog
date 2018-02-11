@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.33.3
+	Martin Väth <martin at mvath.de>:
+	- add configure options --with-eix-{user,group,uid,gid}
+
 *eix-0.33.2
 	Martin Väth <martin at mvath.de>:
 	- Bugfix: Fix typo in FORMATLINE_BEST (I18N_BESTVERSIONSSLOT) which

@@ -58,6 +58,14 @@ option('portage-rootpath', type : 'string', value : '',
 	description : 'default PORTAGE_ROOTPATH')
 option('default-arch', type : 'string', value : '',
 	description : 'default DEFAULT_ARCH')
+option('eix-user', type : 'string', value : 'portage',
+	description : 'default EIX_USER')
+option('eix-uid', type : 'string', value : '250',
+	description : 'default EIX_UID')
+option('eix-group', type : 'string', value : '%{EIX_USER}',
+	description : 'default EIX_GROUP')
+option('eix-gid', type : 'string', value : '%{EIX_UID}',
+	description : 'default EIX_GID')
 option('always-accept-keywords', type : 'boolean', value : false,
 	description : 'default ALWAYS_ACCEPT_KEYWORDS')
 option('dep-default', type : 'boolean', value : false,

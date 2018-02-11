@@ -42,6 +42,12 @@
 /* Define if string format runtime tests should be used */
 #undef EIX_DEBUG_FORMAT
 
+/* Default EIX_GID */
+#undef EIX_GID
+
+/* Default EIX_GROUP */
+#undef EIX_GROUP
+
 /* Define if paranoic asserts should be used */
 #undef EIX_PARANOIC_ASSERT
 
@@ -65,6 +71,12 @@
 
 /* Define if asserts for static initializers should be used */
 #undef EIX_STATIC_ASSERT
+
+/* Default EIX_UID */
+#undef EIX_UID
+
+/* Default EIX_USER */
+#undef EIX_USER
 
 /* Define to 1 if translation of program messages to the user's native
    language is requested. */

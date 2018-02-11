@@ -228,17 +228,22 @@ AddOption(BOOLEAN, "CURRENT_WORLD",
 	"Prefer the current world file (if readable) over the data in the cachefile."));
 
 AddOption(STRING, "EIX_USER",
-	"portage", P_("EIX_USER",
+	EIX_USER, P_("EIX_USER",
 	"Attempt to change to this user if possible. See EIX_UID."));
 
 AddOption(STRING, "EIX_GROUP",
-	"%{EIX_USER}", P_("EIX_GROUP",
+	EIX_GROUP, P_("EIX_GROUP",
 	"Attempt to change to this group if possible. See EIX_GID."));
 
 AddOption(INTEGER, "EIX_UID",
-	"250", P_("EIX_UID",
+	EIX_UID, P_("EIX_UID",
 	"If EIX_USER is empty or nonexistent, use this user id.\n"
 	"In this case and if $EIX_UID <= 0, the user id is not changed."));
+
+AddOption(INTEGER, "EIX_GID",
+	EIX_GID, P_("EIX_GID",
+	"If EIX_GROUP is empty or nonexistent, use this group id.\n"
+	"In this case and if $EIX_GID <= 0, the group id is not changed."));
 
 AddOption(STRING, "REQUIRE_DROP",
 	"root", P_("REQUIRE_DROP",
@@ -248,11 +253,6 @@ AddOption(STRING, "REQUIRE_DROP",
 AddOption(BOOLEAN, "NODROP_FATAL",
 	"false", P_("NODROP_FATAL",
 	"If true, a negative result of REQUIRE_DROP raises an error."));
-
-AddOption(INTEGER, "EIX_GID",
-	"%{EIX_UID}", P_("EIX_GID",
-	"If EIX_GROUP is empty or nonexistent, use this group id.\n"
-	"In this case and if $EIX_GID <= 0, the group id is not changed."));
 
 AddOption(STRING, "PORTAGE_ROOTPATH",
 	PORTAGE_ROOTPATH_DEFAULT, P_("PORTAGE_ROOTPATH",
