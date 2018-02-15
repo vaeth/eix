@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2017-08-28 18:12+0200\n"
+"POT-Creation-Date: 2018-02-15 16:48+0100\n"
 "PO-Revision-Date: 2017-08-28 18:21+0200\n"
 "Last-Translator: Martin Väth <martin@mvath.de>\n"
 "Language-Team: German\n"
@@ -3127,6 +3127,15 @@ msgstr ""
 "In diesem Fall, und falls $EIX_UID <= 0, wird die UID nicht geändert."
 
 #: src/eixrc/defaults.cc
+msgctxt "EIX_GID"
+msgid ""
+"If EIX_GROUP is empty or nonexistent, use this group id.\n"
+"In this case and if $EIX_GID <= 0, the group id is not changed."
+msgstr ""
+"Falls EIX_GROUP leer ist oder nicht existiert, wird diese GID benutzt.\n"
+"In diesem Fall, und falls $EIX_GID <= 0, wird die GID nicht geändert."
+
+#: src/eixrc/defaults.cc
 msgctxt "REQUIRE_DROP"
 msgid ""
 "If true it is required that dropping of permission succeeds.\n"
@@ -3139,15 +3148,6 @@ msgstr ""
 msgctxt "NODROP_FATAL"
 msgid "If true, a negative result of REQUIRE_DROP raises an error."
 msgstr "Der Wert true bedeutet, dass REQUIRE_DROP einen Fehlerabbruch bewirkt."
-
-#: src/eixrc/defaults.cc
-msgctxt "EIX_GID"
-msgid ""
-"If EIX_GROUP is empty or nonexistent, use this group id.\n"
-"In this case and if $EIX_GID <= 0, the group id is not changed."
-msgstr ""
-"Falls EIX_GROUP leer ist oder nicht existiert, wird diese GID benutzt.\n"
-"In diesem Fall, und falls $EIX_GID <= 0, wird die GID nicht geändert."
 
 #: src/eixrc/defaults.cc
 msgctxt "PORTAGE_ROOTPATH"

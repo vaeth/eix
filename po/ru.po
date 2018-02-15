@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2017-08-28 18:12+0200\n"
+"POT-Creation-Date: 2018-02-15 16:48+0100\n"
 "PO-Revision-Date: 2017-08-28 18:20+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -3118,6 +3118,13 @@ msgid ""
 msgstr ""
 
 #: src/eixrc/defaults.cc
+msgctxt "EIX_GID"
+msgid ""
+"If EIX_GROUP is empty or nonexistent, use this group id.\n"
+"In this case and if $EIX_GID <= 0, the group id is not changed."
+msgstr ""
+
+#: src/eixrc/defaults.cc
 msgctxt "REQUIRE_DROP"
 msgid ""
 "If true it is required that dropping of permission succeeds.\n"
@@ -3127,13 +3134,6 @@ msgstr ""
 #: src/eixrc/defaults.cc
 msgctxt "NODROP_FATAL"
 msgid "If true, a negative result of REQUIRE_DROP raises an error."
-msgstr ""
-
-#: src/eixrc/defaults.cc
-msgctxt "EIX_GID"
-msgid ""
-"If EIX_GROUP is empty or nonexistent, use this group id.\n"
-"In this case and if $EIX_GID <= 0, the group id is not changed."
 msgstr ""
 
 #: src/eixrc/defaults.cc
@@ -7241,7 +7241,6 @@ msgstr "мусор (%s) в конце версии «%s»"
 #: src/portage/conf/cascadingprofile.cc
 msgid "Recursion in cascading profile"
 msgstr "Превышен уровень рекурсии для каскадных профилей: прекращаю чтение родителей"
-
 
 #: src/portage/conf/cascadingprofile.cc
 #, c-format
