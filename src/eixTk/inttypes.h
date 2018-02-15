@@ -11,16 +11,20 @@
 
 #include <config.h>
 
+// IWYU pragma: begin_exports
+
+#ifdef HAVE_CSTDINT
+#include <cstdint>
+#else
 #ifdef HAVE_TR1_CSTDINT
 #include <tr1/cstdint>  // NOLINT(build/c++tr1)
 #else
-#ifndef HAVE_CSTDINT
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif
-#else
-#include <cstdint>
 #endif
 #endif
+
+// IWYU pragma: end_exports
 
 #endif  // SRC_EIXTK_INTTYPES_H_

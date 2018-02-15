@@ -10,14 +10,14 @@
 #ifndef SRC_EIXTK_ASSERT_H_
 #define SRC_EIXTK_ASSERT_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 // check_includes: include "eixTk/assert.h"
 
 #ifndef NDEBUG
 
 #if defined(EIX_STATIC_ASSERT) || defined(EIX_PARANOIC_ASSERT)
-#include <cassert>
+#include <cassert>  // IWYU pragma: export
 #endif
 
 /**

@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "eixTk/utils.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 #ifndef PACKAGE_VERSION
 #include <config_vers.h>
 #endif

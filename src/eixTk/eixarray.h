@@ -8,12 +8,12 @@
 #ifndef SRC_EIXTK_EIXARRAY_H_
 #define SRC_EIXTK_EIXARRAY_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <sys/types.h>
 
 #ifdef HAVE_ARRAY_CLASS
-#include <array>
+#include <array>  // IWYU pragma: export
 #endif
 
 #include "eixTk/dialect.h"

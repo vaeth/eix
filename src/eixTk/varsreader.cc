@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "eixTk/varsreader.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <fcntl.h>
 #include <sys/mman.h>

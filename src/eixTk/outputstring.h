@@ -8,7 +8,7 @@
 #ifndef SRC_EIXTK_OUTPUTSTRING_H_
 #define SRC_EIXTK_OUTPUTSTRING_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <ostream>
 #include <string>

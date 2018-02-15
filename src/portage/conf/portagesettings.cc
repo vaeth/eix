@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "portage/conf/portagesettings.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <cstdlib>
 #include <cstring>

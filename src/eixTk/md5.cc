@@ -7,7 +7,7 @@
 
 // #define DEBUG_MD5
 #include "eixTk/md5.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <fcntl.h>
 #include <sys/mman.h>

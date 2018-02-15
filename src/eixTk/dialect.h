@@ -8,7 +8,7 @@
 #ifndef SRC_EIXTK_DIALECT_H_
 #define SRC_EIXTK_DIALECT_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 // define C++-11 dialect specific keywords (if available)
 // or poor man's substitutes

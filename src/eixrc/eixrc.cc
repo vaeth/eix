@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "eixrc/eixrc.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <cstdio>
 #include <cstdlib>

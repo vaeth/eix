@@ -8,7 +8,7 @@
 // #define DEBUG_MATCHTREE 1
 
 #include "search/matchtree.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #ifdef DEBUG_MATCHTREE
 #include <cstdlib>

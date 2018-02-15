@@ -2,7 +2,9 @@
 
 *eix-0.33.3
 	Martin Väth <martin at mvath.de>:
-	- add configure options --with-eix-{user,group,uid,gid}
+	- Add configure options --with-eix-{user,group,uid,gid}
+	- Add contrib/iwyu.sh experimentally
+	- Include README.md, eix.png into distribution
 
 *eix-0.33.2
 	Martin Väth <martin at mvath.de>:

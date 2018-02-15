@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "output/formatstring.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <sys/types.h>
 

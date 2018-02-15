@@ -10,7 +10,7 @@
 #ifndef SRC_EIXTK_ARGSREADER_H_
 #define SRC_EIXTK_ARGSREADER_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <utility>
 #include <vector>

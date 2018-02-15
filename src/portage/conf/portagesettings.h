@@ -10,7 +10,7 @@
 #ifndef SRC_PORTAGE_CONF_PORTAGESETTINGS_H_
 #define SRC_PORTAGE_CONF_PORTAGESETTINGS_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <string>
 #include <vector>

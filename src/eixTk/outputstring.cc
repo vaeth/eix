@@ -6,7 +6,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "eixTk/outputstring.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <cstring>
 

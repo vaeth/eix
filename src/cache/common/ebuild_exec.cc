@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "cache/common/ebuild_exec.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <unistd.h>
 #include <fcntl.h>

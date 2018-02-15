@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "portage/set_stability.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #ifndef ALWAYS_RECALCULATE_STABILITY
 #ifndef NDEBUG

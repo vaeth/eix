@@ -7,7 +7,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "output/print-xml.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <set>
 #include <string>

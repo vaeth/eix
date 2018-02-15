@@ -6,7 +6,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "portage/version.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include "eixTk/outputstring.h"
 #include "eixTk/stringlist.h"

@@ -8,7 +8,7 @@
 #ifndef SRC_CACHE_COMMON_READER_H_
 #define SRC_CACHE_COMMON_READER_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <ctime>
 

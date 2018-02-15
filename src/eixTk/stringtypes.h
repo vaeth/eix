@@ -8,18 +8,21 @@
 #ifndef SRC_EIXTK_STRINGTYPES_H_
 #define SRC_EIXTK_STRINGTYPES_H_
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 // check_includes: include "eixTk/stringtypes.h"
 
+// IWYU pragma: begin_exports
 #include <set>
 #include <string>
 #include <vector>
+// IWYU pragma: end_exports
 
 #include "eixTk/iterate_map.h"
 #include "eixTk/iterate_set.h"
 #include "eixTk/unordered_map.h"
 #include "eixTk/unordered_set.h"
+
 
 typedef std::vector<std::string> WordVec;
 typedef std::set<std::string> WordSet;

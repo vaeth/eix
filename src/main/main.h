@@ -10,7 +10,7 @@
 #ifndef SRC_MAIN_MAIN_H_
 #define SRC_MAIN_MAIN_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 extern const char *program_name;
 

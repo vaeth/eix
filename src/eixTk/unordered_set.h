@@ -8,10 +8,11 @@
 #ifndef SRC_EIXTK_UNORDERED_SET_H_
 #define SRC_EIXTK_UNORDERED_SET_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 // check_includes: #include "eixTk/unordered_set.h" std::set<int>
 
+// IWYU pragma: begin_exports
 #ifdef HAVE_UNORDERED_SET
 #include <unordered_set>
 #define UNORDERED_SET std::unordered_set
@@ -19,5 +20,6 @@
 #include <set>
 #define UNORDERED_SET std::set
 #endif
+// IWYU pragma: end_exports
 
 #endif  // SRC_EIXTK_UNORDERED_SET_H_

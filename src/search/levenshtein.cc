@@ -7,7 +7,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "search/levenshtein.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <sys/types.h>
 

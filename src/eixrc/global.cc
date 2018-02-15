@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "eixrc/global.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include "eixTk/assert.h"
 #include "eixTk/null.h"

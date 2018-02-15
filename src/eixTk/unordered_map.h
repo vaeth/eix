@@ -8,9 +8,11 @@
 #ifndef SRC_EIXTK_UNORDERED_MAP_H_
 #define SRC_EIXTK_UNORDERED_MAP_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 // check_includes: #include "eixTk/unordered_map.h" std::map<int, int>
+
+// IWYU pragma: begin_exports
 
 #ifdef HAVE_UNORDERED_MAP
 #include <unordered_map>
@@ -19,5 +21,7 @@
 #include <map>
 #define UNORDERED_MAP std::map
 #endif
+
+// IWYU pragma: end_exports
 
 #endif  // SRC_EIXTK_UNORDERED_MAP_H_

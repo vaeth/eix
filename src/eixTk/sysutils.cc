@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "eixTk/sysutils.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <grp.h>
 #include <pwd.h>

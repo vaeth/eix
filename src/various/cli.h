@@ -10,7 +10,7 @@
 #ifndef SRC_VARIOUS_CLI_H_
 #define SRC_VARIOUS_CLI_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include "eixTk/argsreader.h"
 #include "eixTk/attribute.h"

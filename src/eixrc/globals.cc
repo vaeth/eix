@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "eixrc/globals.h"
-#include <config.h>  // NOLINT(build/include_order)
+#include <config.h>  // IWYU pragma: keep  // NOLINT(build/include_order)
 
 void fill_defaults(EixRc *eixrc) {
 #include "eixrc/defaults.cc"  // NOLINT(build/include)

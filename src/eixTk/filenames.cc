@@ -6,7 +6,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "eixTk/filenames.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 // #define DEBUG_NORMALIZE_PATH
 

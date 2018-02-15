@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "database/header.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <set>
 #include <string>

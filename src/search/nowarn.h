@@ -8,7 +8,7 @@
 #ifndef SRC_SEARCH_NOWARN_H_
 #define SRC_SEARCH_NOWARN_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <string>
 

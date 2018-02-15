@@ -10,7 +10,7 @@
 // #define EIX_PARANOIC_ASSERT
 
 #include "output/formatstring-print.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <cstdlib>
 #include <cstring>

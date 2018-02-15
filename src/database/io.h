@@ -8,7 +8,7 @@
 #ifndef SRC_DATABASE_IO_H_
 #define SRC_DATABASE_IO_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <cstdio>
 

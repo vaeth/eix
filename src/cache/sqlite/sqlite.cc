@@ -10,7 +10,7 @@
 // #define SQLITE_ONLY_DEBUG
 
 #include "cache/sqlite/sqlite.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #ifdef WITH_SQLITE
 #include <sqlite3.h>

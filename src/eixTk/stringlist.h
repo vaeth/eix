@@ -8,7 +8,7 @@
 #ifndef SRC_EIXTK_STRINGLIST_H_
 #define SRC_EIXTK_STRINGLIST_H_
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 // Without STRINGLIST_FREE, stringlists cannot be completely destructed.
 // However, using STRINGLIST_FREE has a slight memory and code overhead.

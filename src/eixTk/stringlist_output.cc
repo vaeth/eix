@@ -6,7 +6,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "eixTk/stringlist.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include "eixTk/likely.h"
 #include "eixTk/outputstring.h"

@@ -9,7 +9,7 @@
 #ifndef SRC_EIXTK_FORMATED_H_
 #define SRC_EIXTK_FORMATED_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <cstdio>
 
@@ -86,8 +86,6 @@ Example usage:
   // problems while parsing /etc/make.conf in line 10, column 20 -- something bad happend
 \endcode
 **/
-
-class format;
 
 class FormatManip {
 	protected:

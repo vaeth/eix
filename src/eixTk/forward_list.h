@@ -8,7 +8,7 @@
 #ifndef SRC_EIXTK_FORWARD_LIST_H_
 #define SRC_EIXTK_FORWARD_LIST_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 // check_includes: include "eixTk/forward_list.h"
 

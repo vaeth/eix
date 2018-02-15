@@ -7,7 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <martin@mvath.de>
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #define EIX_BINARY 1
 #include "main/main.cc"  // NOLINT(build/include)

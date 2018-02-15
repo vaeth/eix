@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "database/package_reader.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include "database/io.h"
 #include "eixTk/attribute.h"

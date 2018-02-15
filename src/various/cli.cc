@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "various/cli.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <iostream>
 #include <string>

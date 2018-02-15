@@ -10,11 +10,11 @@
 #ifndef SRC_EIXTK_STRINGUTILS_H_
 #define SRC_EIXTK_STRINGUTILS_H_
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <locale>
 
-#include <cstdlib>
+#include <cstdlib>  // IWYU pragma: keep  // std::strtoll std::atoi etc.
 
 #include <map>
 #include <set>

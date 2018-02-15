@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "cache/common/selectors.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <dirent.h>
 

@@ -6,10 +6,10 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "various/drop_permissions.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <unistd.h>
-#include <sys/types.h>
+#include <sys/types.h>  // IWYU pragma: keep
 
 #ifdef HAVE_INTERIX_SECURITY_H
 #include <interix/security.h>
@@ -23,7 +23,9 @@
 
 #include "eixTk/eixint.h"
 #include "eixTk/i18n.h"
+#ifdef HAVE_SETUSER
 #include "eixTk/null.h"
+#endif
 #include "eixTk/sysutils.h"
 #include "eixrc/eixrc.h"
 

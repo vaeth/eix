@@ -10,7 +10,7 @@
 #ifndef SRC_EIXTK_SYSUTILS_H_
 #define SRC_EIXTK_SYSUTILS_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <sys/types.h>
 

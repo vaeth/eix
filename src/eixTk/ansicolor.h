@@ -10,15 +10,13 @@
 #ifndef SRC_EIXTK_ANSICOLOR_H_
 #define SRC_EIXTK_ANSICOLOR_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <ostream>
 #include <string>
 
 #include "eixTk/formated.h"
 #include "eixTk/inttypes.h"
-
-class AnsiColor;
 
 /**
 A class for using ANSI color codes and marker

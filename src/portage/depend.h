@@ -8,7 +8,7 @@
 #ifndef SRC_PORTAGE_DEPEND_H_
 #define SRC_PORTAGE_DEPEND_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <string>
 

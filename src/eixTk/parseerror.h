@@ -10,9 +10,10 @@
 #ifndef SRC_EIXTK_PARSEERROR_H_
 #define SRC_EIXTK_PARSEERROR_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <string>
+#include <iterator>
 
 #include "eixTk/diagnostics.h"
 #include "eixTk/stringtypes.h"

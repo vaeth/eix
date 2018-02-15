@@ -8,7 +8,7 @@
 #ifndef SRC_CACHE_EIXCACHE_EIXCACHE_H_
 #define SRC_CACHE_EIXCACHE_EIXCACHE_H_ 1
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <string>
 #include <vector>

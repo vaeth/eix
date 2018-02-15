@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "cache/common/assign_reader.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <cerrno>
 #include <cstring>

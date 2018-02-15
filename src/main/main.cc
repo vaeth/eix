@@ -11,7 +11,7 @@
 // #include <config.h>
 
 #include "main/main.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <csignal>  /* signal handlers */
 #include <cstdlib>

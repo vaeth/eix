@@ -8,7 +8,7 @@
 //   Martin Väth <martin@mvath.de>
 
 #include "portage/overlay.h"
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #include <algorithm>
 #include <string>

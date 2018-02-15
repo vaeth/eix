@@ -5,7 +5,7 @@
 // Copyright (c)
 //   Martin Väth <martin@mvath.de>
 
-#include <config.h>
+#include <config.h>  // IWYU pragma: keep
 
 #define MASKED_BINARY 1
 #include "main/main.cc"  // NOLINT(build/include)
