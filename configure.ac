@@ -939,7 +939,7 @@ AS_IF([$bi_expect_works],
 # The __attribute__ tests are special: They should even break on warnings:
 AS_VAR_COPY([CXXFLAGS], [oricxxflags])
 AS_VAR_COPY([LDFLAGS], [orildflags])
-MV_APPEND([CXXFLAGS], [$my_cxxdialect])
+MV_PREPEND([CXXFLAGS], [$my_cxxdialect])
 MV_APPEND([CXXFLAGS], [$my_cxxfatal])
 MV_APPEND([LDFLAGS], [$my_ldfatal])
 
