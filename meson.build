@@ -853,6 +853,31 @@ message('_Pragma GCC diagnostic: ' + pragma_diagnostic.to_string())
 conf.set('FULL_GCC_DIAG_PRAGMA', pragma_diagnostic,
 	description : 'Define if _Pragma GCC diagnostic can be used everywhere')
 
+suggest_final_methods = cxx.links('''
+#define GCC_DIAG_STR(s) #s
+#define GCC_DIAG_JOINSTR(x, y) GCC_DIAG_STR(x ## y)
+#define GCC_DIAG_DO_PRAGMA(x) _Pragma (#x)
+#define GCC_DIAG_PRAGMA(x) GCC_DIAG_DO_PRAGMA(GCC diagnostic x)
+#define GCC_DIAG_OFF(x) GCC_DIAG_PRAGMA(push) \
+	GCC_DIAG_PRAGMA(ignored GCC_DIAG_JOINSTR(-W, x))
+#define GCC_DIAG_ON(x) GCC_DIAG_PRAGMA(pop)
+class TestClass {
+	public:
+		int a;
+GCC_DIAG_OFF(suggest-final-methods)
+		virtual ~TestClass() { }
+GCC_DIAG_ON(suggest-final-methods)
+};
+int main() {
+TestClass a;
+a.a = 0;
+return a.a;
+}
+''', args : flags_fatal)
+message('suggest-final-methods: ' + suggest_final_methods.to_string())
+conf.set('SUGGEST_FINAL_METHODS', suggest_final_methods,
+	description : 'Define if GCC diagnostic suggest-final-methods can be used')
+
 c11attr_noreturn = cxx.links('''
 #include <cstdlib>
 [[noreturn]] static void dummy();

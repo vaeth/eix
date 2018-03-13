@@ -977,6 +977,37 @@ AS_IF([$gcc_diag_pragma],
 		[1],
 		[Define if _Pragma GCC diagnostic can be used everywhere])])
 
+# Check if _Pragma("GCC diagnostic suggest-final-methods") can be used
+AC_MSG_CHECKING([whether pragma GCC diagnostic suggest-final-methods can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+#define GCC_DIAG_STR(s) #s
+#define GCC_DIAG_JOINSTR(x, y) GCC_DIAG_STR(x ## y)
+#define GCC_DIAG_DO_PRAGMA(x) _Pragma (#x)
+#define GCC_DIAG_PRAGMA(x) GCC_DIAG_DO_PRAGMA(GCC diagnostic x)
+#define GCC_DIAG_OFF(x) GCC_DIAG_PRAGMA(push) \
+	GCC_DIAG_PRAGMA(ignored GCC_DIAG_JOINSTR(-W, x))
+#define GCC_DIAG_ON(x) GCC_DIAG_PRAGMA(pop)
+class TestClass {
+	public:
+		int a;
+GCC_DIAG_OFF(suggest-final-methods)
+		virtual ~TestClass() { }
+GCC_DIAG_ON(suggest-final-methods)
+};
+		]], [[
+TestClass a;
+a.a = 0;
+return a.a;
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([suggest_final_methods], [:])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([suggest_final_methods], [false])])
+AS_IF([$suggest_final_methods],
+	[AC_DEFINE([SUGGEST_FINAL_METHODS],
+		[1],
+		[Define if GCC diagnostic suggest-final-methods can be used])])
+
 # Check if [[noreturn]] works
 AC_MSG_CHECKING([[whether [[noreturn]] can be used]])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[

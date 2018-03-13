@@ -93,9 +93,9 @@ class BasicVersion {
 			parsedGarbage
 		};
 
-GCC_DIAG_OFF(suggest-final-methods)
+SUGGEST_FINAL_METHODS_OFF
 		virtual ~BasicVersion() { }
-GCC_DIAG_ON(suggest-final-methods)
+SUGGEST_FINAL_METHODS_ON
 
 		/**
 		Parse the version-string pointed to by str

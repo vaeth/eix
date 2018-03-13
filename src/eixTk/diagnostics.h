@@ -29,4 +29,12 @@
 
 #endif
 
+#ifdef SUGGEST_FINAL_METHODS
+#define SUGGEST_FINAL_METHODS_OFF GCC_DIAG_OFF(suggest-final-methods)
+#define SUGGEST_FINAL_METHODS_ON GCC_DIAG_ON(suggest-final-methods)
+#else
+#define SUGGEST_FINAL_METHODS_OFF
+#define SUGGEST_FINAL_METHODS_ON
+#endif
+
 #endif  // SRC_EIXTK_DIAGNOSTICS_H_

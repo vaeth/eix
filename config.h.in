@@ -394,6 +394,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* Define if GCC diagnostic suggest-final-methods can be used */
+#undef SUGGEST_FINAL_METHODS
+
 /* Define if __attribute__ ((const)) can be used for const virtuals */
 #undef USE_PURE_FOR_CONST_VIRTUALS
 
