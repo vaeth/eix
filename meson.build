@@ -512,7 +512,7 @@ if security
 		]
 	]
 	cxxflags_opt += [
-		'-fno-plt',
+#		'-fno-plt', # breaks with clang; no proper check known
 		'-mretpoline',
 		'-mindirect-branch=thunk',
 		'-mfunction-return=thunk',

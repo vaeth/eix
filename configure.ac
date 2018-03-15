@@ -607,12 +607,12 @@ AS_IF([$security],
 			$my_stackprotector \
 			], [$my_ldfatal], [], [break])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
-			-fno-plt \
 			-mretpoline \
 			-mindirect-branch=thunk \
 			-mfunction-return=thunk \
 			-D_FORTIFY_SOURCE=2 \
 		], [$my_cxxfatal], [$CPPFLAGS], [:])
+#			-fno-plt # breaks with clang; no proper check known
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			$my_stackprotector \
 			], [$my_cxxfatal], [$CPPFLAGS], [break])])
