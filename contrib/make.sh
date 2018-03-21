@@ -34,7 +34,7 @@ Available options are
   -c OPT Add OPT to ./configure
   -M OPT Add OPT to meson
   -m  Use meson instead of autotools
-  -d  As -c --enable-debugging -M -Ddebugging=true
+  -d  Use --enable-debugging -Ddebugging=true and no --buildtype=release
   -O  As -c --enable-strong-optimization -c --enable-security (and -M ...)
   -o  Do not pass --enable-nopie-security
   -R  Remove builddir (for meson)
@@ -188,7 +188,7 @@ then	meson_extra=$meson_extra' -Dseparate-binaries=true -Dseparate-tools=true'
 	configure_extra=$configure_extra' --enable-separate-binaries --enable-separate-tools'
 fi
 if $optimization
-then	meson_extra=$meson_extra' -Dstrong-optimization=true -Denable-security=true'
+then	meson_extra=$meson_extra' -Dstrong-optimization=true -Dsecurity=true'
 	configure_extra=$configure_extra' --enable-strong-optimization --enable-security'
 fi
 if $nopie_security
@@ -198,6 +198,7 @@ fi
 if $debugging
 then	meson_extra=$meson_extra' -Ddebugging=true'
 	configure_extra=$configure_extra' --enable-debugging'
+else	meson_extra=$meson_extra' --buildtype=release'
 fi
 if $quiet
 then	quietredirect='>/dev/null'
