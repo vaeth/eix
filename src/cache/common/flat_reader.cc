@@ -51,7 +51,7 @@ void FlatReader::get_keywords_slot_iuse_restrict(const string& filename, string 
 		m_cache->m_error_callback(eix::format(_("cannot open %s: %s"))
 			% filename % std::strerror(errno));
 	}
-	string depend, rdepend, pdepend;
+	string depend, rdepend;
 	bool use_dep(Depend::use_depend);
 	if(use_dep) {
 		getline(is, depend);
@@ -74,19 +74,15 @@ void FlatReader::get_keywords_slot_iuse_restrict(const string& filename, string 
 		if(!use_required_use) {
 			skip_lines(1, &is, filename);
 		}
+		string pdepend, bdepend;
 		getline(is, pdepend);
-		skip_lines(1, &is, filename);
+		getline(is, bdepend);
+		dep->set(depend, rdepend, pdepend, bdepend, false);
 	} else {
 		skip_lines((use_required_use ? 2 : 3), &is, filename);
 	}
 	getline(is, *eapi);
 	getline(is, *props);
-	if(use_dep) {
-		string bdepend;
-		skip_lines(1, &is, filename);
-		getline(is, bdepend);
-		dep->set(depend, rdepend, pdepend, bdepend, false);
-	}
 	is.close();
 }
 

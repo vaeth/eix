@@ -122,11 +122,11 @@ class TrueIndex : public TrueIndexMapper {
 		TrueIndex() : default_trueindex(LAST, -1) {
 			//  0 "internal_db_package_id"
 			mapinit( 1, NAME,         "portage_package_key");
-			//  2 "DEFINED_PHASES"
-			mapinit( 3, DEPEND,       "DEPEND");
-			mapinit( 4, DESCRIPTION,  "DESCRIPTION");
-			mapinit( 5, EAPI,         "EAPI");
-			mapinit( 6, BDEPEND,      "BDEPEND");
+			mapinit( 2, BDEPEND,      "BDEPEND");
+			//  3 "DEFINED_PHASES"
+			mapinit( 4, DEPEND,       "DEPEND");
+			mapinit( 5, DESCRIPTION,  "DESCRIPTION");
+			mapinit( 6, EAPI,         "EAPI");
 			mapinit( 7, HOMEPAGE,     "HOMEPAGE");
 			//  8 "INHERITED"
 			mapinit( 9, IUSE,         "IUSE");
