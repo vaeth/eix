@@ -373,7 +373,7 @@ class PrintFormat {
 		ATTRIBUTE_NONNULL_ void VER_HAVEDEPEND(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_HAVERDEPEND(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_HAVEPDEPEND(OutputString *s, Package *package) const;
-		ATTRIBUTE_NONNULL_ void VER_HAVEHDEPEND(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_HAVEBDEPEND(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_HAVEDEPS(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_DEPENDS(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_DEPEND(OutputString *s, Package *package) const;
@@ -381,8 +381,8 @@ class PrintFormat {
 		ATTRIBUTE_NONNULL_ void VER_RDEPEND(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_PDEPENDS(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_PDEPEND(OutputString *s, Package *package) const;
-		ATTRIBUTE_NONNULL_ void VER_HDEPENDS(OutputString *s, Package *package) const;
-		ATTRIBUTE_NONNULL_ void VER_HDEPEND(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_BDEPENDS(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_BDEPEND(OutputString *s, Package *package) const;
 		ATTRIBUTE_PURE const MaskFlags *ver_maskflags() const;
 		ATTRIBUTE_NONNULL_ void VER_ISHARDMASKED(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_ISPROFILEMASKED(OutputString *s, Package *package) const;

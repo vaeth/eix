@@ -221,12 +221,12 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 				set_checking(&required_use, "REQUIRED_USE", ebuild);
 			}
 			if(Depend::use_depend) {
-				string depend, rdepend, pdepend, hdepend;
+				string depend, rdepend, pdepend, bdepend;
 				set_checking(&depend, "DEPEND", ebuild);
 				set_checking(&rdepend, "RDEPEND", ebuild);
 				set_checking(&pdepend, "PDEPEND", ebuild);
-				set_checking(&hdepend, "HDEPEND", ebuild);
-				version->depend.set(depend, rdepend, pdepend, hdepend, true);
+				set_checking(&bdepend, "BDEPEND", ebuild);
+				version->depend.set(depend, rdepend, pdepend, bdepend, true);
 			}
 			if(read_onetime_info) {
 				set_checking(&(pkg->homepage), "HOMEPAGE",    ebuild, &ok);

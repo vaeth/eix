@@ -1896,10 +1896,10 @@ AddOption(STRING, "FORMAT_PDEPEND",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the PDEPEND output."));
 
-AddOption(STRING, "FORMAT_HDEPEND",
-	"(%{COLOR_DEPEND})<hdepend*>(%{COLOR_DEPEND_END})", P_("FORMAT_HDEPEND",
+AddOption(STRING, "FORMAT_BDEPEND",
+	"(%{COLOR_DEPEND})<bdepend*>(%{COLOR_DEPEND_END})", P_("FORMAT_BDEPEND",
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format of the HDEPEND output."));
+	"It defines the format of the BDEPEND output."));
 
 AddOption(STRING, "FORMAT_DEPEND_VERBOSE",
 	"%{FORMAT_DEPEND}", P_("FORMAT_DEPEND_VERBOSE",
@@ -1916,10 +1916,10 @@ AddOption(STRING, "FORMAT_PDEPEND_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the PDEPEND output with --verbose."));
 
-AddOption(STRING, "FORMAT_HDEPEND_VERBOSE",
-	"%{FORMAT_HDEPEND}", P_("FORMAT_HDEPEND_VERBOSE",
+AddOption(STRING, "FORMAT_BDEPEND_VERBOSE",
+	"%{FORMAT_BDEPEND}", P_("FORMAT_BDEPEND_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format of the HDEPEND output with --verbose."));
+	"It defines the format of the BDEPEND output with --verbose."));
 
 AddOption(STRING, "FORMAT_VERSION_IUSE",
 	"(%{COLOR_VERSION_IUSE})"
@@ -2421,11 +2421,11 @@ AddOption(STRING, "FORMAT_DEPS_NORMAL",
 				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_PDEPEND}"
 			"{}"
-			"{havehdepend}"
+			"{havebdepend}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})%{I18N_HDEPEND}(%{COLOR_RESET})"
+				"(%{COLOR_AVAILABLE_TITLE})%{I18N_BDEPEND}(%{COLOR_RESET})"
 				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
-				"%{FORMAT_HDEPEND}"
+				"%{FORMAT_BDEPEND}"
 			"{}"
 		"%{}"
 	"%{}", P_("FORMAT_DEPS_NORMAL",
@@ -2525,12 +2525,12 @@ AddOption(STRING, "FORMAT_DEPS_VERBOSE",
 				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_PDEPEND_VERBOSE}"
 			"{}"
-			"%{!PRINT_ALWAYS}{havehdepend}%{}"
+			"%{!PRINT_ALWAYS}{havebdepend}%{}"
 				"%{FORMAT_VER_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})%{I18N_HDEPEND}(%{COLOR_RESET})"
-				"%{?PRINT_ALWAYS}{havehdepend}%{}"
+				"(%{COLOR_AVAILABLE_TITLE})%{I18N_BDEPEND}(%{COLOR_RESET})"
+				"%{?PRINT_ALWAYS}{havebdepend}%{}"
 				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
-				"%{FORMAT_HDEPEND_VERBOSE}"
+				"%{FORMAT_BDEPEND_VERBOSE}"
 			"{}"
 		"%{}"
 	"%{}", P_("FORMAT_DEPS_VERBOSE",
@@ -2755,11 +2755,11 @@ AddOption(STRING, "IVERBOSE",
 			"\\C<%{I18N_COLUMN_INST_CONTENT}>"
 			"%{FORMAT_PDEPEND_VERBOSE}"
 		"{}"
-		"{havehdepend}"
+		"{havebdepend}"
 			"%{FORMAT_INST_LINESKIP}"
-			"(%{COLOR_INST_TITLE})%{I18N_HDEPEND}(%{COLOR_RESET})"
+			"(%{COLOR_INST_TITLE})%{I18N_BDEPEND}(%{COLOR_RESET})"
 			"\\C<%{I18N_COLUMN_INST_CONTENT}>"
-			"%{FORMAT_HDEPEND_VERBOSE}"
+			"%{FORMAT_BDEPEND_VERBOSE}"
 		"{}"
 	"%{}"
 	"%{?PRINT_EAPI}"

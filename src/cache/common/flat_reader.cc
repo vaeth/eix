@@ -82,10 +82,10 @@ void FlatReader::get_keywords_slot_iuse_restrict(const string& filename, string 
 	getline(is, *eapi);
 	getline(is, *props);
 	if(use_dep) {
-		string hdepend;
+		string bdepend;
 		skip_lines(1, &is, filename);
-		getline(is, hdepend);
-		dep->set(depend, rdepend, pdepend, hdepend, false);
+		getline(is, bdepend);
+		dep->set(depend, rdepend, pdepend, bdepend, false);
 	}
 	is.close();
 }

@@ -438,10 +438,10 @@ void PrintXml::package(Package *pkg) {
 				eix::say("\t\t\t\t<pdepend>%s</pdepend>")
 					% escape_xmlstring(false, pdepend);
 			}
-			const string& hdepend = ver->depend.get_hdepend();
-			if(!hdepend.empty()) {
-				eix::say("\t\t\t\t<hdepend>%s</hdepend>")
-					% escape_xmlstring(false, hdepend);
+			const string& bdepend = ver->depend.get_bdepend();
+			if(!bdepend.empty()) {
+				eix::say("\t\t\t\t<bdepend>%s</bdepend>")
+					% escape_xmlstring(false, bdepend);
 			}
 		}
 		eix::say("\t\t\t</version>");

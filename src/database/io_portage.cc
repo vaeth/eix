@@ -244,8 +244,8 @@ bool Database::read_depend(Depend *dep, const DBHeader& hdr, string *errtext) {
 			return false;
 		}
 		if(hdr.version == 31) {
-			dep->m_hdepend.clear();
-		} else if(unlikely(!read_hash_words(hdr.depend_hash, &(dep->m_hdepend), errtext))) {
+			dep->m_bdepend.clear();
+		} else if(unlikely(!read_hash_words(hdr.depend_hash, &(dep->m_bdepend), errtext))) {
 			return false;
 		}
 		dep->obsolete = (hdr.version <= 32);
@@ -264,7 +264,7 @@ bool Database::write_depend(const Depend& dep, const DBHeader& hdr, string *errt
 	return (likely(write_hash_words(hdr.depend_hash, dep.m_depend, errtext)) &&
 		likely(write_hash_words(hdr.depend_hash, dep.m_rdepend, errtext)) &&
 		likely(write_hash_words(hdr.depend_hash, dep.m_pdepend, errtext)) &&
-		likely(write_hash_words(hdr.depend_hash, dep.m_hdepend, errtext)));
+		likely(write_hash_words(hdr.depend_hash, dep.m_bdepend, errtext)));
 }
 
 bool Database::read_category_header(string *name, eix::Treesize *h, string *errtext) {
@@ -352,7 +352,7 @@ void Database::prep_header_hashs(DBHeader *hdr, const PackageTree& tree) {
 					hdr->depend_hash.hash_words(dep.m_depend);
 					hdr->depend_hash.hash_words(dep.m_rdepend);
 					hdr->depend_hash.hash_words(dep.m_pdepend);
-					hdr->depend_hash.hash_words(dep.m_hdepend);
+					hdr->depend_hash.hash_words(dep.m_bdepend);
 				}
 			}
 		}

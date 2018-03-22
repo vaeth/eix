@@ -60,7 +60,7 @@ const PackageTest::MatchField
 		PackageTest::DEPEND,
 		PackageTest::RDEPEND,
 		PackageTest::PDEPEND,
-		PackageTest::HDEPEND,
+		PackageTest::BDEPEND,
 		PackageTest::DEPS,
 		PackageTest::ANY;
 
@@ -229,14 +229,14 @@ bool PackageTest::stringMatch(Package *pkg) const {
 		bool depend((field & DEPEND) != NONE);
 		bool rdepend((field & RDEPEND) != NONE);
 		bool pdepend((field & PDEPEND) != NONE);
-		bool hdepend((field & HDEPEND) != NONE);
+		bool bdepend((field & BDEPEND) != NONE);
 		for(Package::iterator it(pkg->begin());
 			likely(it != pkg->end()); ++it) {
 			const Depend &dep(it->depend);
 			if((depend && (*algorithm)(dep.get_depend().c_str(), pkg))
 			|| (rdepend && (*algorithm)(dep.get_rdepend().c_str(), pkg))
 			|| (pdepend && (*algorithm)(dep.get_pdepend().c_str(), pkg))
-			|| (hdepend && (*algorithm)(dep.get_hdepend().c_str(), pkg))) {
+			|| (bdepend && (*algorithm)(dep.get_bdepend().c_str(), pkg))) {
 				return true;
 			}
 		}
@@ -324,7 +324,7 @@ bool PackageTest::stringMatch(Package *pkg) const {
 		bool depend((field & DEPEND) != NONE);
 		bool rdepend((field & RDEPEND) != NONE);
 		bool pdepend((field & PDEPEND) != NONE);
-		bool hdepend((field & HDEPEND) != NONE);
+		bool bdepend((field & BDEPEND) != NONE);
 		for(InstVec::iterator it(installed_versions->begin());
 			it != installed_versions->end(); ++it) {
 			vardbpkg->readDepend(*pkg, &(*it), *header);
@@ -341,8 +341,8 @@ bool PackageTest::stringMatch(Package *pkg) const {
 				if((*algorithm)(dep.get_pdepend().c_str(), pkg))
 				return true;
 			}
-			if(hdepend) {
-				if((*algorithm)(dep.get_hdepend().c_str(), pkg))
+			if(bdepend) {
+				if((*algorithm)(dep.get_bdepend().c_str(), pkg))
 				return true;
 			}
 		}

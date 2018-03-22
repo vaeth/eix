@@ -64,10 +64,10 @@ AddOption(STRING, "I18N_PDEPEND", P_("I18N_PDEPEND",
 	"This variable is only used for delayed substitution.\n"
 	"It translates \"PDEPEND:\""));
 
-AddOption(STRING, "I18N_HDEPEND", P_("I18N_HDEPEND",
-	"HDEPEND:"), P_("I18N_HDEPEND",
+AddOption(STRING, "I18N_BDEPEND", P_("I18N_BDEPEND",
+	"BDEPEND:"), P_("I18N_BDEPEND",
 	"This variable is only used for delayed substitution.\n"
-	"It translates \"HDEPEND:\""));
+	"It translates \"BDEPEND:\""));
 
 AddOption(STRING, "I18N_KEYWORDS", P_("I18N_KEYWORDS",
 	"KEYWORDS:"), P_("I18N_KEYWORDS",

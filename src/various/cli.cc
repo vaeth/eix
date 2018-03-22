@@ -429,8 +429,8 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 			case O_PDEPEND: USE_TEST;
 				*test |= PackageTest::PDEPEND;
 				break;
-			case O_HDEPEND: USE_TEST;
-				*test |= PackageTest::HDEPEND;
+			case O_BDEPEND: USE_TEST;
+				*test |= PackageTest::BDEPEND;
 				break;
 			case O_DEPS: USE_TEST;
 				*test |= PackageTest::DEPS;

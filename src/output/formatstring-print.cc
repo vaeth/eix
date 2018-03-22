@@ -488,7 +488,7 @@ class Scanner {
 			prop_ver("havedepend", &PrintFormat::VER_HAVEDEPEND);
 			prop_ver("haverdepend", &PrintFormat::VER_HAVERDEPEND);
 			prop_ver("havepdepend", &PrintFormat::VER_HAVEPDEPEND);
-			prop_ver("havehdepend", &PrintFormat::VER_HAVEHDEPEND);
+			prop_ver("havebdepend", &PrintFormat::VER_HAVEBDEPEND);
 			prop_ver("havedeps", &PrintFormat::VER_HAVEDEPS);
 			prop_ver("depend*", &PrintFormat::VER_DEPENDS);
 			prop_ver("depend", &PrintFormat::VER_DEPEND);
@@ -496,8 +496,8 @@ class Scanner {
 			prop_ver("rdepend", &PrintFormat::VER_RDEPEND);
 			prop_ver("pdepend*", &PrintFormat::VER_PDEPENDS);
 			prop_ver("pdepend", &PrintFormat::VER_PDEPEND);
-			prop_ver("hdepend*", &PrintFormat::VER_HDEPENDS);
-			prop_ver("hdepend", &PrintFormat::VER_HDEPEND);
+			prop_ver("bdepend*", &PrintFormat::VER_BDEPENDS);
+			prop_ver("bdepend", &PrintFormat::VER_BDEPEND);
 			prop_ver("ishardmasked", &PrintFormat::VER_ISHARDMASKED);
 			prop_ver("isprofilemasked", &PrintFormat::VER_ISPROFILEMASKED);
 			prop_ver("ismasked", &PrintFormat::VER_ISMASKED);
@@ -1458,12 +1458,12 @@ void PrintFormat::VER_HAVEPDEPEND(OutputString *s, Package *package) const {
 	}
 }
 
-void PrintFormat::VER_HAVEHDEPEND(OutputString *s, Package *package) const {
+void PrintFormat::VER_HAVEBDEPEND(OutputString *s, Package *package) const {
 	if(version_variables->isinst) {
 		eix_assert_paranoic(header != NULLPTR);
 		vardb->readDepend(*package, version_variables->instver(), *header);
 	}
-	if(!ver_version()->depend.hdepend_empty()) {
+	if(!ver_version()->depend.bdepend_empty()) {
 		s->set_one();
 	}
 }
@@ -1526,20 +1526,20 @@ void PrintFormat::VER_PDEPEND(OutputString *s, Package *package) const {
 	s->assign_smart(ver_version()->depend.get_pdepend());
 }
 
-void PrintFormat::VER_HDEPENDS(OutputString *s, Package *package) const {
+void PrintFormat::VER_BDEPENDS(OutputString *s, Package *package) const {
 	if(version_variables->isinst) {
 		eix_assert_paranoic(header != NULLPTR);
 		vardb->readDepend(*package, version_variables->instver(), *header);
 	}
-	s->assign_smart(ver_version()->depend.get_hdepend_brief());
+	s->assign_smart(ver_version()->depend.get_bdepend_brief());
 }
 
-void PrintFormat::VER_HDEPEND(OutputString *s, Package *package) const {
+void PrintFormat::VER_BDEPEND(OutputString *s, Package *package) const {
 	if(version_variables->isinst) {
 		eix_assert_paranoic(header != NULLPTR);
 		vardb->readDepend(*package, version_variables->instver(), *header);
 	}
-	s->assign_smart(ver_version()->depend.get_hdepend());
+	s->assign_smart(ver_version()->depend.get_bdepend());
 }
 
 const MaskFlags *PrintFormat::ver_maskflags() const {

@@ -224,7 +224,7 @@ depending on the configuration and the version data.
 
   The PDEPEND string
 
-- **<hdepend>** [..] **</hdepend>**
+- **<bdepend>** [..] **</bdepend>**
 
-  The HDEPEND string
+  The BDEPEND string
 

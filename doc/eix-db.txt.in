@@ -265,7 +265,7 @@ HashedWords  DEPEND of this version; the quotation symbol means
 HashedWords  RDEPEND of this version; the quotation symbol means
              the content of DEPEND (it occurs only as separate word)
 HashedWords  PDEPEND of this version
-HashedWords  HDEPEND of this version
+HashedWords  BDEPEND of this version
 ============ ========================================================
 
 

@@ -2,10 +2,11 @@
 
 *eix-0.33.3
 	Martin Väth <martin at mvath.de>:
+	- Rename hdepend->bdepend (EAPI=7)
 	- Add configure options --with-eix-{user,group,uid,gid}
 	- Add contrib/iwyu.sh experimentally
 	- Include README.md, eix.png into distribution
-	- ./configure test for diagnostics suggest-final-methods
+	- Add configure test for diagnostics suggest-final-methods
 	- Until a good test is known, do not add -fno-plt: it breaks with clang
 	- Prepend (not append) dialect flags when testing, for consistency with
 	  later usage, see https://bugs.gentoo.org/show_bug.cgi?id=649558

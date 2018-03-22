@@ -355,12 +355,12 @@ void VarDbPkg::readDepend(const Package& p, InstVersion *v, const DBHeader& head
 	depend[0] = v->depend.get_depend();
 	depend[1] = v->depend.get_rdepend();
 	depend[2] = v->depend.get_pdepend();
-	depend[3] = v->depend.get_hdepend();
+	depend[3] = v->depend.get_bdepend();
 	static CONSTEXPR const char *filenames[4] = {
 		"/DEPEND",
 		"/RDEPEND",
 		"/PDEPEND",
-		"/HDEPEND"
+		"/BDEPEND"
 	};
 	for(eix::TinyUnsigned i(0); likely(i < 4); ++i) {
 		LineVec lines;

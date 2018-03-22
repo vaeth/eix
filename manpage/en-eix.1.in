@@ -340,7 +340,7 @@ Only in this mode some additional information for each version is output.
 More precisely, depending on whether you have chosen B<--verbose> and
 depending on the state of the configuration variables
 B<VERSION_{IUSE,KEYWORDS,DEPS}_{NORMAL,VERBOSE}>,
-this can be the B<KEYWORDS>, B<IUSE>, B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<HDEPEND> data.
+this can be the B<KEYWORDS>, B<IUSE>, B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND> data.
 Note that if B<IUSE> is not printed per version then it is only collected
 for the whole package which can give the wrong impression, since often
 B<IUSE> changes dramatically with versions.
@@ -836,13 +836,13 @@ e.g. "@PACKAGE_URL@"
 .BR -L ", " --license
 e.g. "GPL-2"
 .TP
-.BR --deps ", " --depend ", " --rdepend ", " --pdepend ", " --hdepend
+.BR --deps ", " --depend ", " --rdepend ", " --pdepend ", " --bdepend
 This test can only be successful if B<DEP=true> is used
 (and if B<DEP=true> was used when the cachefile was created).
-It matches against B<DEPEND>, B<RDEPEND>, B<PDEPEND>, or B<HDEPEND>
+It matches against B<DEPEND>, B<RDEPEND>, B<PDEPEND>, or B<BDEPEND>
 (or with B<--deps> any of those) of some version of the package.
 B<--deps> is the same as specifying all of
-B<--depend> B<--rdepend> B<--pdepend> B<--hdepend>.
+B<--depend> B<--rdepend> B<--pdepend> B<--bdepend>.
 Note that it is matched against the string without any interpretation or
 modification of the latter; only word separators become single spaces.
 In particular, the string to match against can look like
@@ -1355,13 +1355,13 @@ It returns 1 or empty depending on whether some or the corresponding B<RESTRICT>
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or empty depending on whether some or the corresponding B<PROPERTIES> attribute is set for the version.
 .TP
-.BR depend ", " rdepend ", " pdepend ", " hdepend ", " depend* ", " rdepend* ", " pdepend* ", " hdepend*
+.BR depend ", " rdepend ", " pdepend ", " bdepend ", " depend* ", " rdepend* ", " pdepend* ", " bdepend*
 This must occur only in I<VARIABLE> in the context of version printing.
-It returns the respective B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<HDEPEND> string of an available package
+It returns the respective B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND> string of an available package
 (the string is shortened if possible if the variant with B<*> is used).
 This is empty unless B<DEP=true> is set (and was set when the cachefile was created).
 .TP
-.BR havedepend ", " haverdepend ", " havepdepend ", " havehdepend ", " havedeps
+.BR havedepend ", " haverdepend ", " havepdepend ", " havebdepend ", " havedeps
 This is like the above with the difference that only 1 is returned if the
 value of the corresponding string (resp. of at least one of these) is nonempty.
 .TP
@@ -2408,7 +2408,7 @@ The option B<--deps-installed> does the same.
 
 .TP
 .BR DEP " " (true / false)
-If true, store/use B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<HDEPEND> (e.g. shown with eix -lv).
+If true, store/use B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND> (e.g. shown with eix -lv).
 Usage of B<DEP> roughly doubles disk resp. memory requirements.
 
 .TP
@@ -3141,7 +3141,7 @@ The possible values for I<match_field> are B<name>, B<category>, B<category/name
 (or B<category-name>), B<description>, B<license>, B<homepage>, B<set>, B<eapi>, B<installed-eapi>,
 B<slot>, B<installed-slot>, B<use> (or B<iuse>), B<with-use> (or B<installed-with-use>),
 B<without-use> (or B<installed-without-use>),
-B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<hdepend>, or B<error>,
+B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<bdepend>, or B<error>,
 corresponding to the analogous command line option for the match field.
 The special value B<error> means that eix stops with an error message claiming
 that a match field is not autodetected and must be specified explicitly.
@@ -3183,19 +3183,19 @@ Now I<match_field_specification> matches if all of the following holds:
 
 3. If the third family (B<!>) is nonempty, at most match fields from that family are selected (think of a logical "not (... or ... or ...)").
 
-Thus, for instance, to specify that exactly all of B<depend>, B<rdepend>, B<pdepend>, B<hdepend> are
+Thus, for instance, to specify that exactly all of B<depend>, B<rdepend>, B<pdepend>, B<bdepend> are
 selected (i.e. B<--deps>) and no other field is selected, you can use either of
 
 .B (&deps!deps)
 
-.B (&depend&rdepend&pdepend&hdepend!depend!rdepend!pdepend!hdepend)
+.B (&depend&rdepend&pdepend&bdepend!depend!rdepend!pdepend!bdepend)
 
-On the other hand, if you want to specify that at least one of B<depend>, B<rdepend>, B<pdepend>, B<hdepend> are selected
+On the other hand, if you want to specify that at least one of B<depend>, B<rdepend>, B<pdepend>, B<bdepend> are selected
 and no other than these fields are selected, you can use either of
 
 .B (|deps!deps)
 
-.B (|depend|rdepend|pdepend|hdepend!depend!rdepend!pdepend!hdepend)
+.B (|depend|rdepend|pdepend|bdepend!depend!rdepend!pdepend!bdepend)
 
 For testing scripts, it is recommended to use B<DEFAULT_MATCH_ALGORIRTHM=error>
 so that scripts do not rely on particular defaults of that variable: This default

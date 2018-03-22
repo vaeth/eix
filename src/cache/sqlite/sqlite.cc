@@ -107,7 +107,7 @@ class TrueIndex : public TrueIndexMapper {
 			DEPEND,
 			RDEPEND,
 			PDEPEND,
-			HDEPEND,
+			BDEPEND,
 			LAST
 		} Names;
 		SqliteCache::TrueIndexMap default_trueindex;
@@ -126,7 +126,7 @@ class TrueIndex : public TrueIndexMapper {
 			mapinit( 3, DEPEND,       "DEPEND");
 			mapinit( 4, DESCRIPTION,  "DESCRIPTION");
 			mapinit( 5, EAPI,         "EAPI");
-			mapinit( 6, HDEPEND,      "HDEPEND");
+			mapinit( 6, BDEPEND,      "BDEPEND");
 			mapinit( 7, HOMEPAGE,     "HOMEPAGE");
 			//  8 "INHERITED"
 			mapinit( 9, IUSE,         "IUSE");
@@ -265,7 +265,7 @@ void SqliteCache::sqlite_callback_cpp(int argc, const char *const *argv, const c
 		version->depend.set(TrueIndex::c_str(argv, &trueindex, TrueIndex::DEPEND),
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::RDEPEND),
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::PDEPEND),
-			TrueIndex::c_str(argv, &trueindex, TrueIndex::HDEPEND),
+			TrueIndex::c_str(argv, &trueindex, TrueIndex::BDEPEND),
 			false);
 		version->overlay_key = m_overlay_key;
 		pkg->addVersion(version);
