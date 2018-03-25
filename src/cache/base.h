@@ -32,7 +32,7 @@ class Version;
 /**
 Parent class of every cache that eix can use
 **/
-SUGGEST_FINAL_METHODS_OFF
+WSUGGEST_FINAL_METHODS_OFF
 class BasicCache {
 		friend class AssignReader;
 		friend class FlatReader;
@@ -203,6 +203,6 @@ class BasicCache {
 	public:
 		PortageSettings *portagesettings;
 };
-SUGGEST_FINAL_METHODS_ON
+WSUGGEST_FINAL_METHODS_ON
 
 #endif  // SRC_CACHE_BASE_H_

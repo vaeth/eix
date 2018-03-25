@@ -6,7 +6,7 @@
 	- Add configure options --with-eix-{user,group,uid,gid}
 	- Add contrib/iwyu.sh experimentally
 	- Include README.md, eix.png into distribution
-	- Add configure test for diagnostics suggest-final-methods
+	- Configure diag for -Wsuggest-final-methods -Wgnu-statement-expression
 	- Until a good test is known, do not add -fno-plt: it breaks with clang
 	- Prepend (not append) dialect flags when testing, for consistency with
 	  later usage, see https://bugs.gentoo.org/show_bug.cgi?id=649558

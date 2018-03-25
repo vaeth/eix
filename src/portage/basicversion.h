@@ -93,9 +93,9 @@ class BasicVersion {
 			parsedGarbage
 		};
 
-SUGGEST_FINAL_METHODS_OFF
+WSUGGEST_FINAL_METHODS_OFF
 		virtual ~BasicVersion() { }
-SUGGEST_FINAL_METHODS_ON
+WSUGGEST_FINAL_METHODS_ON
 
 		/**
 		Parse the version-string pointed to by str

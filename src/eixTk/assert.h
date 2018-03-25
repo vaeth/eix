@@ -18,6 +18,8 @@
 
 #if defined(EIX_STATIC_ASSERT) || defined(EIX_PARANOIC_ASSERT)
 #include <cassert>  // IWYU pragma: export
+
+#include "eixTk/diagnostics.h"
 #endif
 
 /**
@@ -26,14 +28,20 @@ are called exactly once
 **/
 
 #ifdef EIX_STATIC_ASSERT
-#define eix_assert_static(a) assert(a)
+#define eix_assert_static(a) \
+	WGNU_STATEMENT_EXPRESSION_OFF \
+	assert(a) \
+	WGNU_STATEMENT_EXPRESSION_ON
 #else
 #define eix_assert_static(a)
 #endif
 
 
 #ifdef EIX_PARANOIC_ASSERT
-#define eix_assert_paranoic(a) assert(a)
+#define eix_assert_paranoic(a) \
+	WGNU_STATEMENT_EXPRESSION_OFF \
+	assert(a) \
+	WGNU_STATEMENT_EXPRESSION_ON
 #else
 #define eix_assert_paranoic(a)
 #endif

@@ -29,12 +29,20 @@
 
 #endif
 
-#ifdef SUGGEST_FINAL_METHODS
-#define SUGGEST_FINAL_METHODS_OFF GCC_DIAG_OFF(suggest-final-methods)
-#define SUGGEST_FINAL_METHODS_ON GCC_DIAG_ON(suggest-final-methods)
+#ifdef WSUGGEST_FINAL_METHODS
+#define WSUGGEST_FINAL_METHODS_OFF GCC_DIAG_OFF(suggest-final-methods)
+#define WSUGGEST_FINAL_METHODS_ON GCC_DIAG_ON(suggest-final-methods)
 #else
-#define SUGGEST_FINAL_METHODS_OFF
-#define SUGGEST_FINAL_METHODS_ON
+#define WSUGGEST_FINAL_METHODS_OFF
+#define WSUGGEST_FINAL_METHODS_ON
+#endif
+
+#ifdef WGNU_STATEMENT_EXPRESSION
+#define WGNU_STATEMENT_EXPRESSION_OFF GCC_DIAG_OFF(gnu-statement-expression)
+#define WGNU_STATEMENT_EXPRESSION_ON GCC_DIAG_OFF(gnu-statement-expression)
+#else
+#define WGNU_STATEMENT_EXPRESSION_OFF
+#define WGNU_STATEMENT_EXPRESSION_ON
 #endif
 
 #endif  // SRC_EIXTK_DIAGNOSTICS_H_

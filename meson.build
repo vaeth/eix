@@ -853,7 +853,7 @@ message('_Pragma GCC diagnostic: ' + pragma_diagnostic.to_string())
 conf.set('FULL_GCC_DIAG_PRAGMA', pragma_diagnostic,
 	description : 'Define if _Pragma GCC diagnostic can be used everywhere')
 
-suggest_final_methods = cxx.links('''
+wsuggest_final_methods = cxx.links('''
 #define GCC_DIAG_STR(s) #s
 #define GCC_DIAG_JOINSTR(x, y) GCC_DIAG_STR(x ## y)
 #define GCC_DIAG_DO_PRAGMA(x) _Pragma (#x)
@@ -874,9 +874,28 @@ a.a = 0;
 return a.a;
 }
 ''', args : flags_fatal)
-message('suggest-final-methods: ' + suggest_final_methods.to_string())
-conf.set('SUGGEST_FINAL_METHODS', suggest_final_methods,
-	description : 'Define if GCC diagnostic suggest-final-methods can be used')
+message('Wsuggest-final-methods: ' + wsuggest_final_methods.to_string())
+conf.set('WSUGGEST_FINAL_METHODS', wsuggest_final_methods,
+	description : 'Define if GCC diagnostic -Wsuggest-final-methods can be used')
+
+wgnu_statement_expression = cxx.links('''
+#define GCC_DIAG_STR(s) #s
+#define GCC_DIAG_JOINSTR(x, y) GCC_DIAG_STR(x ## y)
+#define GCC_DIAG_DO_PRAGMA(x) _Pragma (#x)
+#define GCC_DIAG_PRAGMA(x) GCC_DIAG_DO_PRAGMA(GCC diagnostic x)
+#define GCC_DIAG_OFF(x) GCC_DIAG_PRAGMA(push) \
+	GCC_DIAG_PRAGMA(ignored GCC_DIAG_JOINSTR(-W, x))
+#define GCC_DIAG_ON(x) GCC_DIAG_PRAGMA(pop)
+#include <cassert>
+#define my_assert(a) GCC_DIAG_OFF(gnu-statement-expression) assert(a) GCC_DIAG_ON(gnu-statement-expression)
+int main() {
+my_assert(1);
+return 0;
+}
+''', args : flags_fatal)
+message('Wgnu-statement-expression: ' + wgnu_statement_expression.to_string())
+conf.set('WGNU_STATEMENT_EXPRESSION', wgnu_statement_expression,
+	description : 'Define if GCC diagnostic -Wgnu-statement-expression can be used in macro')
 
 c11attr_noreturn = cxx.links('''
 #include <cstdlib>

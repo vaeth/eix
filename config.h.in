@@ -394,8 +394,8 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
-/* Define if GCC diagnostic suggest-final-methods can be used */
-#undef SUGGEST_FINAL_METHODS
+/* Define if GCC diagnostic -Wsuggest-final-methods can be used */
+#undef WSUGGEST_FINAL_METHODS
 
 /* Define if __attribute__ ((const)) can be used for const virtuals */
 #undef USE_PURE_FOR_CONST_VIRTUALS
@@ -424,6 +424,9 @@
 
 /* Version number of package */
 #undef VERSION
+
+/* Define if GCC diagnostic -Wgnu-statement-expression can be used in macro */
+#undef WGNU_STATEMENT_EXPRESSION
 
 /* Define if cache method sqlite is wanted */
 #undef WITH_SQLITE
