@@ -1500,7 +1500,10 @@ typedef std::pair<int, int> mypair;
 std::vector<mypair> a;
 a.push_back(mypair(4, 4));
 a.emplace_back(5, 5);
-return (a.size() == 2) ? 0 : 1;
+std::vector<bool> b;
+b.push_back(true);
+b.emplace_back(true);
+return ((a.size() == 2) && (b.size() == 2)) ? 0 : 1;
 		]])],
 		[MV_MSG_RESULT([yes])
 		AC_DEFINE([HAVE_EMPLACE_BACK], [1],

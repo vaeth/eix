@@ -394,9 +394,6 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
-/* Define if GCC diagnostic -Wsuggest-final-methods can be used */
-#undef WSUGGEST_FINAL_METHODS
-
 /* Define if __attribute__ ((const)) can be used for const virtuals */
 #undef USE_PURE_FOR_CONST_VIRTUALS
 
@@ -430,6 +427,9 @@
 
 /* Define if cache method sqlite is wanted */
 #undef WITH_SQLITE
+
+/* Define if GCC diagnostic -Wsuggest-final-methods can be used */
+#undef WSUGGEST_FINAL_METHODS
 
 /* Enable large inode numbers on Mac OS X 10.5.  */
 #ifndef _DARWIN_USE_64_BIT_INODE

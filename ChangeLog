@@ -4,12 +4,13 @@
 	Martin Väth <martin at mvath.de>:
 	- Rename hdepend->bdepend (EAPI=7)
 	- Add configure options --with-eix-{user,group,uid,gid}
+	- Fix configure test for emplace_back test to include vector<bool>
+	  and prepend (not append) dialect flags when testing for consistency
+	  with later usage, see https://bugs.gentoo.org/show_bug.cgi?id=649558
 	- Add contrib/iwyu.sh experimentally
 	- Include README.md, eix.png into distribution
 	- Configure diag for -Wsuggest-final-methods -Wgnu-statement-expression
 	- Until a good test is known, do not add -fno-plt: it breaks with clang
-	- Prepend (not append) dialect flags when testing, for consistency with
-	  later usage, see https://bugs.gentoo.org/show_bug.cgi?id=649558
 
 *eix-0.33.2
 	Martin Väth <martin at mvath.de>:
