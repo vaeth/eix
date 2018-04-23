@@ -11,6 +11,8 @@
 	- Include README.md, eix.png into distribution
 	- Configure diag for -Wsuggest-final-methods -Wgnu-statement-expression
 	- Until a good test is known, do not add -fno-plt: it breaks with clang
+	- eix-functions.sh: Fix npgettext lookup test.
+	- eix-functions.sh: Fix {eval_,}ngettext fallback: 0 has plural form
 
 *eix-0.33.2
 	Martin Väth <martin at mvath.de>:
