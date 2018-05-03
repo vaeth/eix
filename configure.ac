@@ -481,8 +481,6 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wshadow \
 			-Wpointer-arith \
 			-Wcast-qual \
-			-Wcast-align \
-			-Wcast-align=strict \
 			-Wwrite-strings \
 			-Wsign-compare \
 			-Wmissing-field-initializers \
@@ -535,6 +533,10 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wstringop-truncation \
 			-Wno-c++1z-extensions \
 		], [$my_cxxfatal], [], [:])
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
+			-Wcast-align=strict \
+			-Wcast-align \
+			], [$my_cxxfatal], [$CPPFLAGS], [break])
 dnl We do not use:
 dnl Not needed anymore with current clang:
 dnl			-Wno-unknown-warning-option \
@@ -580,14 +582,11 @@ AS_IF([$strong_security],
 		-fstack-protector-all
 		-fstack-protector-strong
 		-fstack-protector
-		-fstack-check
-		-fstack-check=specific
 	"])],
 	[AS_VAR_SET([my_stackprotector], ["
 		-fstack-protector-strong
 		-fstack-protector
-		-fstack-check
-		-fstack-check=specific
+		-fstack-protector-all
 	"])])
 AS_IF([$security],
 	# We try to add -fstack-protector to LDFLAGS before adding to CXXFLAGS
@@ -614,6 +613,17 @@ AS_IF([$security],
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			$my_stackprotector \
 			], [$my_ldfatal], [], [break])
+	AS_VAR_SET([my_stackclash], ["
+		-fstack-clash-protection
+		-fstack-check=specific
+		-fstack-check
+	"])
+	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
+			$my_stackclash \
+			], [$my_ldfatal], [], [break])
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+			$my_stackclash \
+			], [$my_cxxfatal], [$CPPFLAGS], [break])])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-mretpoline \
 			-mindirect-branch=thunk \
@@ -624,9 +634,6 @@ AS_IF([$security],
 			-D_FORTIFY_SOURCE=2 \
 		], [$my_cxxfatal], [$CPPFLAGS], [:])
 #			-fno-plt # breaks with clang; no proper check known
-	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
-			$my_stackprotector \
-			], [$my_cxxfatal], [$CPPFLAGS], [break])])
 AS_IF([$strong_security],
 	# We try to add -fsanitize=... to LDFLAGS before adding to CXXFLAGS
 	# since on some systems it requires also linking with a library.

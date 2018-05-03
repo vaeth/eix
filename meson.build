@@ -515,6 +515,7 @@ if security
 	endif
 	ldcxxflags_opt += [
 		[
+			'-fstack-clash-protection',
 			'-fstack-check=specific',
 			'-fstack-check',
 		]
@@ -526,7 +527,6 @@ if security
 		[ '-mfunction-return=thunk' ],
 		[ '-mcet' ],
 		[ '-fcf-protection=full' ],
-		[ '-fstack-clash-protection' ],
 		[ '-D_FORTIFY_SOURCE=2' ],
 	]
 	ldflags_opt += [
