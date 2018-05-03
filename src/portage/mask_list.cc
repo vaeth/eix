@@ -30,7 +30,7 @@ class Version;
 
 using std::string;
 
-template<> bool MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines, const ParseError *parse_error) {
+template<> ATTRIBUTE_NONNULL_ bool MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines, const ParseError *parse_error) {
 	LineVec lines;
 	if(!pushback_lines(file, &lines, recursive, true, (keep_commentlines ? (-1) : 0))) {
 		return false;
@@ -87,7 +87,7 @@ template<> bool MaskList<Mask>::add_file(const char *file, Mask::Type mask_type,
 }
 
 // return true if some mask matches
-template<> bool MaskList<Mask>::MaskMatches(Package *p) const {
+template<> ATTRIBUTE_NONNULL_ bool MaskList<Mask>::MaskMatches(Package *p) const {
 	Get *masks(get(p));
 	if(likely(masks == NULLPTR)) {
 		return false;
@@ -105,7 +105,7 @@ template<> bool MaskList<Mask>::MaskMatches(Package *p) const {
 }
 
 // return true if some mask potentially applied
-template<> bool MaskList<Mask>::applyMasks(Package *p, Keywords::Redundant check) const {
+template<> ATTRIBUTE_NONNULL_ bool MaskList<Mask>::applyMasks(Package *p, Keywords::Redundant check) const {
 	Get *masks(get(p));
 	if(masks == NULLPTR) {
 		return false;
@@ -149,7 +149,7 @@ template<> bool MaskList<Mask>::applyMasks(Package *p, Keywords::Redundant check
 	return true;
 }
 
-template<> void MaskList<Mask>::applySetMasks(Version *v, const string& set_name) const {
+template<> ATTRIBUTE_NONNULL_ void MaskList<Mask>::applySetMasks(Version *v, const string& set_name) const {
 	Get *masks(get_setname(set_name));
 	if(masks == NULLPTR) {
 		return;

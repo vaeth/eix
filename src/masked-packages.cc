@@ -152,7 +152,7 @@ static const char *opt_arg(ArgumentReader::const_iterator *arg, const ArgumentRe
 static void read_args(MaskList<Mask> *mask_list, WordVec *args, const ArgumentReader& ar, const ParseError *parse_error) {
 	PreList::LineNumber linenr(0);
 	PreList pre_list;
-	PreListEntry::FilenameIndex argindex;
+	PreListEntry::FilenameIndex argindex(0);  // Dummy initialization
 	bool need_argindex(true);
 	for(ArgumentReader::const_iterator arg(ar.begin());
 		likely(arg != ar.end()); ++arg) {
@@ -163,7 +163,7 @@ static void read_args(MaskList<Mask> *mask_list, WordVec *args, const ArgumentRe
 			case 'm':
 				if(need_argindex) {
 					need_argindex = false;
-					argindex =  pre_list.push_name("(arg)", NULLPTR, false);
+					argindex = pre_list.push_name("(arg)", NULLPTR, false);
 				}
 				pre_list.handle_line(opt_arg(&arg, ar), argindex, ++linenr, false, false);
 				break;

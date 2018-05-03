@@ -15,6 +15,8 @@
 	- eix-functions.sh: Fix {eval_,}ngettext fallback: 0 has plural form
 	- Update compiler-flags (e.g. include gcc-8)
 	- meson.buid: Unify flag adding
+	- Add dummy initialization to avoid gcc-8 false positive warning
+	- Add ATTRIBUTE_NONNULL_ to template specialications
 
 *eix-0.33.2
 	Martin Väth <martin at mvath.de>:
