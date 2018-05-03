@@ -214,7 +214,7 @@ if strong_optimization
 	endforeach
 	if flto
 		foreach o : flto_flags
-			message('FLAGS: ' + o)
+			message('CXXLDFLAGS: ' + o)
 			cxxflags_add += [ o ]
 			add_global_arguments(o, language : 'cpp')
 			ldflags_add += [ o ]
@@ -227,6 +227,8 @@ flags_dialect = []
 dialect = 'false'
 if new_dialect
 	foreach d : [
+		'gnu++2a',
+		'c++2a',
 		'gnu++17',
 		'c++17',
 		'gnu++1z',
@@ -244,14 +246,16 @@ if new_dialect
 			t += [ o ]
 			if cxx.links(stresstest, args : t)
 				dialect = d
-				message('FLAGS: ' + o)
 				flags_dialect += [ o ]
 				flags_fatal += [ o ]
 				cxxflags_add += [ o ]
 				add_global_arguments(o, language : 'cpp')
 				if flto
+					message('CXXLDFLAGS: ' + o)
 					ldflags_add += [ o ]
 					add_global_link_arguments(o, language : 'cpp')
+				else
+					message('CXXFLAGS: ' + o)
 				endif
 				continue = false
 			endif
@@ -266,230 +270,234 @@ ldflags_force = []
 ldflags_opt = []
 cxxflags_opt = []
 ldcxxflags_opt = []
-ldcxxflags_oneof = []
 
 if dead_code
 	o = '-Wl,--gc-sections'
 	t = flags_fatal
 	t += [ o ]
 	if cxx.links(stresstest, args : t)
-		r = true
 		ldflags_force += [ o ]
 		cxxflags_opt += [
-			'-fdata-sections',
-			'-ffunction-sections',
+			[ '-fdata-sections' ],
+			[ '-ffunction-sections' ],
 		]
 	else
-		r = false
 		dead_code = false
 		dead_code_msg = ' (not supported)'
 	endif
-	message('FLAGS: ' + o + (r ? '' : ' NO'))
 endif
 result += [ 'dead-code=' + dead_code.to_string() + dead_code_msg ]
 
 if debugging
 	ldcxxflags_opt += [
-		'-g',
-		'-ggdb3',
+		[ '-g' ],
+		[ '-ggdb3' ],
 	]
 endif
 if optimization
 	cxxflags_opt += [
-		'-O2',
-		'-fomit-frame-pointer',
-		'-fno-common',
-		'-fstrict-aliasing',
-		'-fstrict-enums',
-		'-fmerge-all-constants',
-		'-finline-functions',
-		'-fvisibility=hidden',
-		'-fvisibility-inlines-hidden',
-		'-ftree-pre',
-		'-ftree-partial-pre',
-		'-fnothrow-opt',
-		'-fno-unwind-tables',
-		'-fno-asynchronous-unwind-tables',
-		'-ffast-math',
-		'-fno-math-errno',
-		'-frename-registers',
-		'-funsafe-loop-optimizations',
-		'-fgcse-sm',
-		'-fgcse-las',
-		'-fgcse-after-reload',
-		'-fpredictive-commoning',
-		'-ftree-switch-conversion',
-		'-fno-ident',
-		'-freorder-functions',
-		'-fdevirtualize-speculatively',
-		'-fdevirtualize-at-ltrans',
-		'-fno-semantic-interposition',
-		'-fira-loop-pressure',
-		'-ftree-loop-distribution',
-		'-ftree-loop-distribute-patterns',
-		'-ftree-loop-im',
-		'-fivopts',
-		'-fdelete-null-pointer-checks',
+		[ '-O2' ],
+		[ '-fomit-frame-pointer' ],
+		[ '-fno-common' ],
+		[ '-fstrict-aliasing' ],
+		[ '-fstrict-enums' ],
+		[ '-fmerge-all-constants' ],
+		[ '-finline-functions' ],
+		[ '-fvisibility=hidden' ],
+		[ '-fvisibility-inlines-hidden' ],
+		[ '-ftree-pre' ],
+		[ '-ftree-partial-pre' ],
+		[ '-fnothrow-opt' ],
+		[ '-fno-unwind-tables' ],
+		[ '-fno-asynchronous-unwind-tables' ],
+		[ '-ffast-math' ],
+		[ '-fno-math-errno' ],
+		[ '-frename-registers' ],
+		[ '-funsafe-loop-optimizations' ],
+		[ '-fgcse-sm' ],
+		[ '-fgcse-las' ],
+		[ '-fgcse-after-reload' ],
+		[ '-fpredictive-commoning' ],
+		[ '-ftree-switch-conversion' ],
+		[ '-fno-ident' ],
+		[ '-freorder-functions' ],
+		[ '-fdevirtualize-speculatively' ],
+		[ '-fdevirtualize-at-ltrans' ],
+		[ '-fno-semantic-interposition' ],
+		[ '-fira-loop-pressure' ],
+		[ '-ftree-loop-distribution' ],
+		[ '-ftree-loop-distribute-patterns' ],
+		[ '-ftree-loop-im' ],
+		[ '-fivopts' ],
+		[ '-fdelete-null-pointer-checks' ],
 	]
 	ldflags_opt += [
-		'-Wl,-O1',
-		'-Wl,--relax',
-		'-Wl,--as-needed',
-		'-Wl,--sort-common',
-		'-Wl,-z,combreloc',
-		'-Wl,--build-id=none',
+		[ '-Wl,-O1' ],
+		[ '-Wl,--relax' ],
+		[ '-Wl,--as-needed' ],
+		[ '-Wl,--sort-common' ],
+		[ '-Wl,-z,combreloc' ],
+		[ '-Wl,--build-id=none' ],
 	]
 endif
 if strong_optimization
 	cxxflags_opt += [
-		'-fweb',
-		# '-fgraphite',
-		# '-fgraphite-identity',
-		# '-floop-interchange',
-		# '-floop-strip-mine',
-		# '-floop-block',
-		'-fno-enforce-eh-specs',
-		'-ftree-vectorize',
-		'-fvect-cost-model',
-		'-fno-rtti',
-		'-fno-threadsafe-statics',
+		[ '-fweb' ],
+		# [ '-fgraphite' ],
+		# [ '-fgraphite-identity' ],
+		# [ '-floop-interchange' ],
+		# [ '-floop-strip-mine' ],
+		# [ '-floop-block' ],
+		# [ '-floop-next-optimize' ],
+		# [ '-floop-unroll-and-jam' ],
+		[ '-fno-enforce-eh-specs' ],
+		[ '-ftree-vectorize' ],
+		[ '-fvect-cost-model' ],
+		[ '-fno-rtti' ],
+		[ '-fno-threadsafe-statics' ],
 	]
 	ldflags_opt += [
-		'-Wl,-O9',
-		'-Wl,-z,noexecstack',
-		# '-Wl,--hash-style=gnu',
-		# '-Wl,--enable-new-dtags',
+		[ '-Wl,-O9' ],
+		[ '-Wl,-z,noexecstack' ],
+		# [ '-Wl,--hash-style=gnu' ],
+		# [ '-Wl,--enable-new-dtags' ],
 	]
 	if not strong_security
 		cxxflags_opt += [
-			'-DNDEBUG',
-			'-DNO_DEBUG',
-			'-DG_DISABLE_ASSERT',
+			[ '-DNDEBUG' ],
+			[ '-DNO_DEBUG' ],
+			[ '-DG_DISABLE_ASSERT' ],
 		]
 	endif
 endif
 if strong_warnings
 	ldflags_opt += [
-		'-Wl,--warn-common',
+		[ '-Wl,--warn-common' ],
 	]
 endif
 if warnings
 	if dialect != ''
 		ldcxxflags_opt += [
-			'-Wzero-as-null-pointer-constant',
+			[ '-Wzero-as-null-pointer-constant' ],
 		]
 	endif
 	cxxflags_opt += [
-		'-fno-common',
-		'-funsigned-char',
-		'-fdirectives-only',
-		'-ftracer',
-		'-fconcepts',
-		'-Wpedantic',
-		'-pedantic',
-		'-Wall',
-		'-Wextra',
-		'-Wformat=2',
-		'-Wunused',
-		'-Wunused-variable',
-		'-Wunused-parameter',
-		'-Winit-self',
-		'-Wmissing-include-dirs',
-		'-Wswitch-default',
-		'-Wstrict-aliasing=1',
-		'-Wstrict-overflow=5',
-		'-Wfloat-equal',
-		'-Wundef',
-		'-Wshadow',
-		'-Wpointer-arith',
-		'-Wcast-qual',
-		'-Wcast-align',
-		'-Wwrite-strings',
-		'-Wsign-compare',
-		'-Wmissing-field-initializers',
-		'-Wnormalized=nfkc',
-		'-Wpacked',
-		'-Wredundant-decls',
-		'-Winvalid-pch',
-		'-Wvolatile-register-var',
-		'-Wdisabled-optimization',
-		'-Wlogical-op',
-		'-Wvla',
-		'-Wabi',
-		'-Wctor-dtor-privacy',
-		'-Wstrict-null-sentinel',
-		'-Wstring-plus-int',
-		'-Woverloaded-virtual',
-		'-Wsign-promo',
-		'-Wnoexcept',
-		'-Wmissing-declarations',
-		'-Wmissing-format-attribute',
-		'-Wunused-but-set-variable',
-		'-Wunused-but-set-parameter',
-		'-Wsuggest-attribute=pure',
-		'-Wsuggest-attribute=const',
-		'-Wsuggest-attribute=noreturn',
-		'-Wsuggest-final-type',
-		'-Wsuggest-final-methods',
-		'-Wsuggest-override',
-		'-Wdelete-non-virtual-dtor',
-		'-Wint-to-pointer-cast',
-		'-Wcomment',
-		'-WNSObject-attribute',
-		'-fdiagnostic-color=always',
-		'-Wswitch-bool',
-		'-Wlogical-not-parantheses',
-		'-Wsizeof-array-argument',
-		'-Walloc-zero',
-		'-Wbool-compare',
-		'-Wbool-operation',
-		'-Wodr-type-mismatch',
-		'-Wshift-negative-value',
-		'-Wshift-overflow',
-		'-Wshift-overflow=2',
-		'-Wnull-dereference',
-		'-Wduplicated-branches',
-		'-Wduplicated-cond',
-		'-Wno-c++1z-extensions',
-		# '-Weverything',
-		# '-Wno-unknown-warning-option',
-		# '-fmem-report',
-		# '-Wtraditional',
-		# '-Wc++-compat',
-		# '-Wstrict-prototypes',
-		# '-Wold-style-definition',
-		# '-Wmissing-prototypes',
-		# '-Wnested-externs',
-		# '-Wpointer-sign',
-		# '-Wtautological-compare',
-		# '-Wmisleading-indentation',
+		[ '-fno-common' ],
+		[ '-funsigned-char' ],
+		[ '-fdirectives-only' ],
+		[ '-ftracer' ],
+		[ '-fconcepts' ],
+		[ '-Wpedantic' ],
+		[ '-pedantic' ],
+		[ '-Wall' ],
+		[ '-Wextra' ],
+		[ '-Wformat=2' ],
+		[ '-Wunused' ],
+		[ '-Wunused-variable' ],
+		[ '-Wunused-parameter' ],
+		[ '-Winit-self' ],
+		[ '-Wmissing-include-dirs' ],
+		[ '-Wswitch-default' ],
+		[ '-Wstrict-aliasing=1' ],
+		[ '-Wstrict-overflow=5' ],
+		[ '-Wfloat-equal' ],
+		[ '-Wundef' ],
+		[ '-Wshadow' ],
+		[ '-Wpointer-arith' ],
+		[ '-Wcast-qual' ],
+		[
+			'-Wcast-align=strict',
+			'-Wcast-align',
+		],
+		[ '-Wwrite-strings' ],
+		[ '-Wsign-compare' ],
+		[ '-Wmissing-field-initializers' ],
+		[ '-Wnormalized=nfkc' ],
+		[ '-Wpacked' ],
+		[ '-Wredundant-decls' ],
+		[ '-Winvalid-pch' ],
+		[ '-Wvolatile-register-var' ],
+		[ '-Wdisabled-optimization' ],
+		[ '-Wlogical-op' ],
+		[ '-Wvla' ],
+		[ '-Wabi' ],
+		[ '-Wctor-dtor-privacy' ],
+		[ '-Wstrict-null-sentinel' ],
+		[ '-Wstring-plus-int' ],
+		[ '-Woverloaded-virtual' ],
+		[ '-Wsign-promo' ],
+		[ '-Wnoexcept' ],
+		[ '-Wmissing-declarations' ],
+		[ '-Wmissing-format-attribute' ],
+		[ '-Wunused-but-set-variable' ],
+		[ '-Wunused-but-set-parameter' ],
+		[ '-Wsuggest-attribute=pure' ],
+		[ '-Wsuggest-attribute=const' ],
+		[ '-Wsuggest-attribute=noreturn' ],
+		[ '-Wsuggest-attribute=malloc' ],
+		[ '-Wsuggest-attribute=cold' ],
+		[ '-Wsuggest-final-type' ],
+		[ '-Wsuggest-final-methods' ],
+		[ '-Wsuggest-override' ],
+		[ '-Wdelete-non-virtual-dtor' ],
+		[ '-Wint-to-pointer-cast' ],
+		[ '-Wcomment' ],
+		[ '-WNSObject-attribute' ],
+		[ '-fdiagnostic-color=always' ],
+		[ '-Wswitch-bool' ],
+		[ '-Wlogical-not-parantheses' ],
+		[ '-Wsizeof-array-argument' ],
+		[ '-Walloc-zero' ],
+		[ '-Wbool-compare' ],
+		[ '-Wbool-operation' ],
+		[ '-Wodr-type-mismatch' ],
+		[ '-Wshift-negative-value' ],
+		[ '-Wshift-overflow' ],
+		[ '-Wshift-overflow=2' ],
+		[ '-Wnull-dereference' ],
+		[ '-Wduplicated-branches' ],
+		[ '-Wduplicated-cond' ],
+		[ '-Wstringop-truncation' ],
+		[ '-Wno-c++1z-extensions' ],
+		# [ '-Weverything' ],
+		# [ '-Wno-unknown-warning-option' ],
+		# [ '-fmem-report' ],
+		# [ '-Wtraditional' ],
+		# [ '-Wc++-compat' ],
+		# [ '-Wstrict-prototypes' ],
+		# [ '-Wold-style-definition' ],
+		# [ '-Wmissing-prototypes' ],
+		# [ '-Wnested-externs' ],
+		# [ '-Wpointer-sign' ],
+		# [ '-Wtautological-compare' ],
+		# [ '-Wmisleading-indentation' ],
 	]
 	ldflags_opt += [
-		'-Wl,-z,defs',
-		'-Wl,--no-undefined',
-		'-Wl,--no-allow-shlib-undefined',
-		'-Wl,--no-undefined-version',
+		[ '-Wl,-z,defs' ],
+		[ '-Wl,--no-undefined' ],
+		[ '-Wl,--no-allow-shlib-undefined' ],
+		[ '-Wl,--no-undefined-version' ],
 	]
 endif
 if strong_warnings
 	cxxflags_opt += [
-		# '-Wconversion',
-		# '-Wswitch-enum',
-		# '-Wunsafe-loop-optimizations',
-		# '-Wpadded',
-		# '-Wunreachable-code',
-		# '-Waggregate-return',
-		# '-Winline',
-		# '-Weffc++',
-		'-Wsign-conversion',
-		'-Wold-style-cast',
-		'-Wmissing-noreturn',
+		# [ '-Wconversion' ],
+		# [ '-Wswitch-enum' ],
+		# [ '-Wunsafe-loop-optimizations' ],
+		# [ '-Wpadded' ],
+		# [ '-Wunreachable-code' ],
+		# [ '-Waggregate-return' ],
+		# [ '-Winline' ],
+		# [ '-Weffc++' ],
+		[ '-Wsign-conversion' ],
+		[ '-Wold-style-cast' ],
+		[ '-Wmissing-noreturn' ],
 	]
 endif
 
 if security
 	if strong_security
-		ldcxxflags_oneof += [
+		ldcxxflags_opt += [
 			[
 				'-fstack-protector-strong',
 				'-fstack-protector-all',
@@ -497,7 +505,7 @@ if security
 			]
 		]
 	else
-		ldcxxflags_oneof += [
+		ldcxxflags_opt += [
 			[
 				'-fstack-protector-all',
 				'-fstack-protector-strong',
@@ -505,55 +513,61 @@ if security
 			]
 		]
 	endif
-	ldcxxflags_oneof += [
+	ldcxxflags_opt += [
 		[
 			'-fstack-check=specific',
 			'-fstack-check',
 		]
 	]
 	cxxflags_opt += [
-#		'-fno-plt', # breaks with clang; no proper check known
-		'-mretpoline',
-		'-mindirect-branch=thunk',
-		'-mfunction-return=thunk',
-		'-D_FORTIFY_SOURCE=2',
+		# [ '-fno-plt' ], # breaks with clang; no proper check known
+		[ '-mretpoline' ],
+		[ '-mindirect-branch=thunk' ],
+		[ '-mfunction-return=thunk' ],
+		[ '-mcet' ],
+		[ '-fcf-protection=full' ],
+		[ '-fstack-clash-protection' ],
+		[ '-D_FORTIFY_SOURCE=2' ],
 	]
 	ldflags_opt += [
-		'-Wl,-z,retpolineplt',
-		'-Wl,-z,now',
-		'-Wl,-z,relro',
-		'-Wl,-z,noexecstack',
+		[ '-Wl,-z,retpolineplt' ],
+		[ '-Wl,-z,now' ],
+		[ '-Wl,-z,relro' ],
+		[ '-Wl,-z,noexecstack' ],
 	]
 	if not nopie_security
 		ldcxxflags_opt += [
-			'-fPIE',
-			'-pie',
+			[ '-fPIE' ],
+			[ '-pie' ],
 		]
 	endif
 endif
 if strong_security
 	ldcxxflags_opt += [
-		'-faddress-sanitizer',
-		'-fsanitize=address',
-		'-fsanitize=leak',
-		'-fsanitize=undefined',
-		'-fsanitize=vla-bound',
-		'-fsanitize=shift',
-		'-fsanitize=signed-integer-overflow',
-		'-fsanitize=integer-divide-by-zero',
-		'-fsanitize=unreachable',
-		'-fsanitize=null',
-		'-fsanitize=return',
-		'-fsanitize=float-divide-by-zero',
-		'-fsanitize=float-cast-overflow',
-		'-fsanitize=bounds',
-		'-fsanitize=bounds-strict',
-		'-fsanitize=alignment',
-		'-fsanitize=object-size',
-		# '-fsanitize=vptr',
-		'-mmpx',
-		'-fcheck-pointer-bounds',
-		'-Wchkp',
+		[ '-faddress-sanitizer' ],
+		[ '-fsanitize=address' ],
+		[ '-fsanitize=leak' ],
+		[ '-fsanitize=undefined' ],
+		[ '-fsanitize=vla-bound' ],
+		[ '-fsanitize=shift' ],
+		[ '-fsanitize=signed-integer-overflow' ],
+		[ '-fsanitize=integer-divide-by-zero' ],
+		[ '-fsanitize=unreachable' ],
+		[ '-fsanitize=null' ],
+		[ '-fsanitize=return' ],
+		[ '-fsanitize=float-divide-by-zero' ],
+		[ '-fsanitize=float-cast-overflow' ],
+		[ '-fsanitize=bounds' ],
+		[ '-fsanitize=bounds-strict' ],
+		[ '-fsanitize=alignment' ],
+		[ '-fsanitize=object-size' ],
+		[ '-fsanitize=pointer-compare' ],
+		[ '-fsanitize=pointer-subtract' ],
+		# [ '-fsanitize=threads' ],
+		# [ '-fsanitize=vptr' ],
+		[ '-mmpx' ],
+		[ '-fcheck-pointer-bounds' ],
+		[ '-Wchkp' ],
 	]
 endif
 
@@ -562,40 +576,35 @@ foreach o : ldflags_force
 	add_global_link_arguments(o, language : 'cpp')
 endforeach
 
-foreach o : ldflags_opt
-	r = false
-	t = flags_fatal
-	t += [ o ]
-	if cxx.links(stresstest, args : t)
-		r = true
-		ldflags_add += [ o ]
-		add_global_link_arguments(o, language : 'cpp')
+foreach c : ldcxxflags_opt
+	continue = true
+	foreach o : c
+		t = flags_fatal
+		t += [ o ]
+		if cxx.links(stresstest, args : t)
+			message('LDFLAGS: ' + o)
+			ldflags_add += [ o ]
+			add_global_link_arguments(o, language : 'cpp')
+			continue = false
+		endif
+	endforeach
+	if continue
+		t = 'NO:'
+		foreach o : c
+			t += ' ' + o
+		endforeach
+		message(t)
 	endif
-	message('FLAGS: ' + o + (r ? '' : ' NO'))
 endforeach
 
-foreach o : ldcxxflags_opt
-	r = false
-	t = flags_fatal
-	t += [ o ]
-	if cxx.links(stresstest, args : t)
-		r = true
-		cxxflags_add += [ o ]
-		add_global_arguments(o, language : 'cpp')
-		ldflags_add += [ o ]
-		add_global_link_arguments(o, language : 'cpp')
-	endif
-	message('FLAGS: ' + o + (r ? '' : ' NO'))
-endforeach
-
-foreach c : ldcxxflags_oneof
+foreach c : ldcxxflags_opt
 	continue = true
 	foreach o : c
 		if continue
 			t = flags_fatal
 			t += [ o ]
 			if cxx.links(stresstest, args : t)
-				message('FLAGS: ' + o)
+				message('CXXLDFLAGS: ' + o)
 				cxxflags_add += [ o ]
 				add_global_arguments(o, language : 'cpp')
 				ldflags_add += [ o ]
@@ -604,22 +613,42 @@ foreach c : ldcxxflags_oneof
 			endif
 		endif
 	endforeach
+	if continue
+		t = 'NO:'
+		foreach o : c
+			t += ' ' + o
+		endforeach
+		message(t)
+	endif
 endforeach
 
-foreach o : cxxflags_opt
-	r = false
-	t = flags_fatal
-	t += [ o ]
-	if cxx.links(stresstest, args : t)
-		r = true
-		cxxflags_add += [ o ]
-		add_global_arguments(o, language : 'cpp')
-		if flto
-			ldflags_add += [ o ]
-			add_global_link_arguments(o, language : 'cpp')
+foreach c : cxxflags_opt
+	continue = true
+	foreach o : c
+		if continue
+			t = flags_fatal
+			t += [ o ]
+			if cxx.links(stresstest, args : t)
+				cxxflags_add += [ o ]
+				add_global_arguments(o, language : 'cpp')
+				if flto
+					message('CXXLDFLAGS: ' + o)
+					ldflags_add += [ o ]
+					add_global_link_arguments(o, language : 'cpp')
+				else
+					message('CXXFLAGS: ' + o)
+				endif
+				continue = false
+			endif
 		endif
+	endforeach
+	if continue
+		t = 'NO:'
+		foreach o : c
+			t += ' ' + o
+		endforeach
+		message(t)
 	endif
-	message('FLAGS: ' + o + (r ? '' : ' NO'))
 endforeach
 
 vers = configuration_data()

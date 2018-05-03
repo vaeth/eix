@@ -13,6 +13,8 @@
 	- Until a good test is known, do not add -fno-plt: it breaks with clang
 	- eix-functions.sh: Fix npgettext lookup test.
 	- eix-functions.sh: Fix {eval_,}ngettext fallback: 0 has plural form
+	- Update compiler-flags (e.g. include gcc-8)
+	- meson.buid: Unify flag adding
 
 *eix-0.33.2
 	Martin Väth <martin at mvath.de>:

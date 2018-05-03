@@ -280,6 +280,8 @@ AS_IF([$new_dialect],
 	[AS_CASE([" $CXXFLAGS $my_cxxadd"],
 		[*" -std="*], [],
 		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+				-std=gnu++2a \
+				-std=c++2a \
 				-std=gnu++17 \
 				-std=c++17 \
 				-std=gnu++1z \
@@ -431,6 +433,8 @@ dnl			-fgraphite-identity \
 dnl			-floop-interchange \
 dnl			-floop-strip-mine \
 dnl			-floop-block \
+dnl			-floop-next-optimize \
+dnl			-floop-unroll-and-jam \
 	AS_IF([$strong_security],
 		[],
 		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
@@ -478,6 +482,7 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wpointer-arith \
 			-Wcast-qual \
 			-Wcast-align \
+			-Wcast-align=strict \
 			-Wwrite-strings \
 			-Wsign-compare \
 			-Wmissing-field-initializers \
@@ -503,6 +508,8 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wsuggest-attribute=pure \
 			-Wsuggest-attribute=const \
 			-Wsuggest-attribute=noreturn \
+			-Wsuggest-attribute=malloc \
+			-Wsuggest-attribute=cold \
 			-Wsuggest-final-type \
 			-Wsuggest-final-methods \
 			-Wsuggest-override \
@@ -525,6 +532,7 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wnull-dereference \
 			-Wduplicated-branches \
 			-Wduplicated-cond \
+			-Wstringop-truncation \
 			-Wno-c++1z-extensions \
 		], [$my_cxxfatal], [], [:])
 dnl We do not use:
@@ -610,6 +618,9 @@ AS_IF([$security],
 			-mretpoline \
 			-mindirect-branch=thunk \
 			-mfunction-return=thunk \
+			-mcet \
+			-fcf-protection=full \
+			-fstack-clash-protection \
 			-D_FORTIFY_SOURCE=2 \
 		], [$my_cxxfatal], [$CPPFLAGS], [:])
 #			-fno-plt # breaks with clang; no proper check known
@@ -637,6 +648,8 @@ AS_IF([$strong_security],
 			-fsanitize=bounds-strict
 			-fsanitize=alignment
 			-fsanitize=object-size
+			-fsanitize=pointer-compare
+			-fsanitize=pointer-subtract
 			-mmpx
 			-fcheck-pointer-bounds
 			-Wchkp
