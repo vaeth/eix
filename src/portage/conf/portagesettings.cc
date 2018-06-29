@@ -352,11 +352,10 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 			delete local_profile;
 			local_profile = NULLPTR;
 		}
-		profile->readremoveFiles();
 	} else {
 		profile->readMakeDefaults();
-		profile->readremoveFiles();
 	} {
+		profile->readremoveFiles();
 		const char *useflags(cstr("USE"));
 		if(likely(useflags != NULLPTR)) {
 			(*this)["USE.profile"] = useflags;

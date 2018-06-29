@@ -27,7 +27,6 @@
 #include "portage/package.h"
 
 class Version;
-
 using std::string;
 
 template<> ATTRIBUTE_NONNULL_ bool MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive, bool keep_commentlines, const ParseError *parse_error) {
@@ -391,7 +390,11 @@ void PreList::initialize(MaskList<Mask> *l, Mask::Type t, bool keep_commentlines
 		finishcomment = true;
 		Mask m(t);
 		string errtext;
-		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(),
+		const char *name(it->name.c_str());
+		if(t == Mask::maskInSystem) {
+			++name;  // system entries start with *
+		}
+		BasicVersion::ParseResult r(m.parseMask(name,
 			&errtext, 1, repo_if_only(it->filename_index)));
 		if(unlikely(r != BasicVersion::parsedOK)) {
 			parse_error->output(file_name(it->filename_index),

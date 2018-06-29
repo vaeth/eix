@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.33.4
+	Martin Väth <martin at mvath.de>:
+	- Bugfix: do not treat leading * in system entries as part of pattern
+	- Minor code simplification
+
 *eix-0.33.3
 	Martin Väth <martin at mvath.de>:
 	- Rename hdepend->bdepend (EAPI=7)
