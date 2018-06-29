@@ -669,6 +669,11 @@ static bool update(const char *outputfile, CacheTable *cache_table, PortageSetti
 		Category *ci = c->second;
 		for(Category::iterator p(ci->begin());
 			likely(p != ci->end()); ++p) {
+			// We must set the reponame for proper masking in overlays
+			for(Package::iterator it(p->begin()); it != p->end(); ++it) {
+				const OverlayIdent& overlay(dbheader.getOverlay(it->overlay_key));
+				it->reponame = overlay.label;
+			}
 			portage_settings->setMasks(*p);
 			p->save_maskflags(Version::SAVEMASK_FILE);
 		}
