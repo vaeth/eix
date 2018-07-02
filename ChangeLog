@@ -3,8 +3,9 @@
 *eix-0.33.4
 	Martin Väth <martin at mvath.de>:
 	- Bugfix: eix-update: set reponame in version to correctly apply
-	  package.mask https://bugs.gentoo.org/658658
+	  package.mask from overlays https://bugs.gentoo.org/658658
 	- Bugfix: do not treat leading * in system entries as part of pattern
+	- zsh completion: Use standard style; use eix --format; simplify
 	- Minor code simplification
 
 *eix-0.33.3

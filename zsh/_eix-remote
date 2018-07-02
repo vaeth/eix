@@ -1,7 +1,15 @@
 #compdef eix-remote
-local curcontext="$curcontext" state state_descr line
-typeset -A opt_args
-_arguments -C -s -S -A '-*' : \
+local a
+a=(
+  'update'{,1}'\:"Fetch eix-caches1 and add them to the eix database"'
+  'update2\:"Fetch eix-caches2 and add them to the eix database"'
+  'add'{,1}'\:"Add fetched eix-caches1 to the eix database"'
+  'add2\:"Add fetched eix-caches2 to the eix database"'
+  'fetch'{,1}'\:"Fetch eix-caches1"'
+  'fetch2\:"Fetch eix-caches2"'
+  'remove\:"remove temporarily added virtual overlays from eix database"'
+)
+_arguments -s -S -A '-*' : \
 '(1 -)'{'-h','-\\?'}'[help]' \
 '(1 -)-L[print LOCAL_LAYMAN and exit]' \
 '-k[keep permissions]' \
@@ -14,20 +22,4 @@ _arguments -C -s -S -A '-*' : \
 '-v[verbose (default)]' \
 '-H[no status line update]' \
 '-q[quiet]' \
-'1:commands:->cmds'
-local ret=$?
-case $state in
-(cmds)
-	local cmds
-	cmds=(
-	'update'{,1}':Fetch eix-caches1 and add them to the eix database'
-	'update2:Fetch eix-caches2 and add them to the eix database'
-	'add'{,1}':Add fetched eix-caches1 to the eix database'
-	'add2:Add fetched eix-caches2 to the eix database'
-	'fetch'{,1}':Fetch eix-caches1'
-	'fetch2:Fetch eix-caches2'
-	'remove:remove temporarily added virtual overlays from eix database'
-	)
-	_describe -t commands 'command' cmds && ret=0;;
-esac
-return ret
+"1:command:(($a))"

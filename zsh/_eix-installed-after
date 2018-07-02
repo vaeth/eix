@@ -25,21 +25,20 @@ _arguments -C -s -S -A '-*' : \
 local ret=$?
 case $state in
 (package)
-	_tags packages
-	_tags && {
-		local d
-		local -x NEWLINE=false CAREMODE=false QUICKMODE=true \
-			FORCE_COLORS=false RESTRICT_INSTALLED=false \
-			USE_BUILD_TIME=false DEFAULT_FORMAT=normal \
-			FORMAT='<installedversions:I>' I
-		if [[ -n ${opt_args[-l]++} || -n ${opt_args[-L]++} || -n ${opt_args[-V]++} ]]
-		then	_description packages expl 'category/package-version'
-			I='-<version>'
-		else	_description packages expl 'category/package[:slot]'
-			I='{slots}:<slot>{}'
-		fi
-		I='<category>/<name>'"$I"'\n'
-		compadd "$expl[@]" - $(_call_program packages-installed 'eix --pure-packages -I 2>/dev/null')
-	} && ret=0;;
+  _tags packages
+  _tags && {
+    local -x NEWLINE=false CAREMODE=false QUICKMODE=true \
+        FORCE_COLORS=false RESTRICT_INSTALLED=false USE_BUILD_TIME=false I
+    if [[ -n ${opt_args[-l]++} || -n ${opt_args[-L]++} || -n ${opt_args[-V]++} ]]; then
+      _description packages expl 'category/package-version'
+      I='-<version>'
+    else
+      _description packages expl 'category/package[:slot]'
+      I='{slots}:<slot>{}'
+    fi
+    I='<category>/<name>'"$I"'\n'
+    compadd "$expl[@]" - $(_call_program packages-installed \
+        'eix --pure-packages -I --format "<installedversions:I>" 2>/dev/null')
+  } && ret=0;;
 esac
 return ret

@@ -1,23 +1,15 @@
 #compdef eix-installed
-local curcontext="$curcontext" state state_descr line
-typeset -A opt_args
-_arguments -C -s -S -A '-*' : \
+local a
+a=(
+  'all\:"output all installed packages"'
+  'repo\:"output packages installed with repository information"'
+  'no-repo\:"output packages installed without repository information"'
+  'buildtime\:"output packages installed with buildtime information"'
+  'no-buildtime\:"output packages installed without buildtime information"'
+)
+_arguments -s -S -A '-*' : \
 '(* -)'{'-h','-\\?'}'[help]' \
 '(* -q)-a[same as -q all]' \
 '-q[quiet\: output only packages, no text]' \
 '-\=[output packages prefixed with "="]' \
-'*:packages:->packages'
-local ret=$?
-case $state in
-(packages)
-	local packages
-	packages=(
-	'all:output all installed packages'
-	'repo:output packages installed with repository information'
-	'no-repo:output packages installed without repository information'
-	'buildtime:output packages installed with buildtime information'
-	'no-buildtime:output packages installed without buildtime information'
-	)
-	_describe -t packages 'packages' packages && ret=0;;
-esac
-return ret
+"*:mode:(($a))"
