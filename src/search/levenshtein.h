@@ -13,14 +13,16 @@
 
 #include "eixTk/attribute.h"
 
-typedef unsigned int Levenshtein;
+#include <sys/types.h>
+
+typedef size_t Levenshtein;
 
 /**
 Calculates the Levenshtein distance of two strings.
 Reference: http://www.merriampark.com/ld.htm
 @param str_a string a
 @param str_b string b
-@return unsigned int Levenshtein distance of str_a <> str_b
+@return Levenshtein distance of strings a and b
 **/
 ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE Levenshtein get_levenshtein_distance(const char *str_a, const char *str_b);
 
