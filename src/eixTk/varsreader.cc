@@ -169,14 +169,13 @@ void VarsReader::ASSIGN_KEY_VALUE() {
 			STOP;
 		}
 	} else if(unlikely( (parse_flags & ONLY_KEYWORDS_SLOT) )) {
+		(*vars)[string(key_begin, key_len)] = value;
 		if(unlikely(std::strncmp("KEYWORDS=", key_begin, 9) == 0)) {
-			(*vars)[string(key_begin, key_len)] = value;
 			parse_flags |= KEYWORDS_READ;
 			if(parse_flags & SLOT_READ) {
 				STOP;
 			}
 		} else if(unlikely(std::strncmp("SLOT=", key_begin, 5) == 0)) {
-			(*vars)[string(key_begin, key_len)] = value;
 			parse_flags |= SLOT_READ;
 			if(parse_flags & KEYWORDS_READ) {
 				STOP;
