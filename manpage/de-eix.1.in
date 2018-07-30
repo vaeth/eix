@@ -856,11 +856,11 @@ z.B. "@PACKAGE_URL@"
 .BR -L ", " --license
 z.B. "GPL-2"
 .TP
-.BR --deps ", " --depend ", " --rdepend ", " --pdepend ", " --bdepend
+.BR --available-deps ", " --available-depend ", " --available-rdepend ", " --available-pdepend ", " --available-bdepend
 Dieser Test kann nur dann etwas finden, wenn B<DEP=true> benutzt wird
 (und B<DEP=true> bei der Erzeugung des Cachedatei benutzt wurde).
 Er tested gegen B<DEPEND>, B<RDEPEND>, B<PDEPEND> bzw. B<BDEPEND>
-(oder mit B<--deps> gegen irgendeines davon) für irgendeine Version des Pakets.
+(oder mit B<--deps> gegen irgendeines davon) für irgendeine verfügbare Version des Pakets.
 B<--deps> ist das gleiche wie B<--depend> B<--rdepend> B<--pdepend> B<--bdepend>.
 Beachten Sie, dass gegen den String ohne irgendwelche Interpretatino oder
 Modifikation getestet wird; nur Wort-Trenner werden einzelne Leerzeichen.
@@ -871,6 +871,18 @@ app-admin/fam nls? ( sys-devel/gettext ) =dev-libs/apr-1* !!dev-db/libpq
 Daher ist der Test tatsächlich nicht nur gegen abhängige Pakete, sondern
 auch gegen Blocker und/oder Konditionale und gegen verschiedene Möglichkeiten,
 Versionen zu spezifizieren.
+.TP
+.BR --installed-deps ", " --installed-depend ", " --installed-rdepend ", " --installed-pdepend ", " --installed-bdepend
+Diese Optionen sind ähnlich zur entsprechenden --available-* Option, aber mit dem Unterschied,
+dass der entsprechende Abhängigkeitsstring aus den installierten Versionen des Pakets genommen wird.
+Im Gegensatz zu --available-* wird dieser Test nicht von B<DEP> beeinflusst.
+Diese Option wird üblicherweise mit B<--deps-installed> kombiniert um sicherzustellen,
+dass tatsächlich der Inhalt der installierten Version gelesen wird.
+
+Man beachte, dass Abhängigkeiten installierter Versionen i.d.R. viel einfacher sind und z.B. keine Konditionale enthalten.
+.TP
+.BR --deps ", " --depend ", " --rdepend ", " --pdepend ", " --bdepend
+Dies sind Abkürzungen für die gleichzeitige Angabe der entsprechenden --avilable-* und --installed-* Optionen.
 .TP
 .BR --set
 Name eine lokalen Paket-Sets oder Version in der Datenbank

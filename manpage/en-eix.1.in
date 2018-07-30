@@ -836,13 +836,13 @@ e.g. "@PACKAGE_URL@"
 .BR -L ", " --license
 e.g. "GPL-2"
 .TP
-.BR --deps ", " --depend ", " --rdepend ", " --pdepend ", " --bdepend
+.BR --available-deps ", " --available-depend ", " --available-rdepend ", " --available-pdepend ", " --available-bdepend
 This test can only be successful if B<DEP=true> is used
 (and if B<DEP=true> was used when the cachefile was created).
 It matches against B<DEPEND>, B<RDEPEND>, B<PDEPEND>, or B<BDEPEND>
-(or with B<--deps> any of those) of some version of the package.
-B<--deps> is the same as specifying all of
-B<--depend> B<--rdepend> B<--pdepend> B<--bdepend>.
+(or with B<--available-deps> any of those) of any available version of the package.
+B<--available-deps> is the same as specifying all of
+B<--available-depend> B<--available-rdepend> B<--available-pdepend> B<--available-bdepend>.
 Note that it is matched against the string without any interpretation or
 modification of the latter; only word separators become single spaces.
 In particular, the string to match against can look like
@@ -851,6 +851,18 @@ app-admin/fam nls? ( sys-devel/gettext ) =dev-libs/apr-1* !!dev-db/libpq
 
 Therefore, the match is not only against dependent packages but also against
 blockers and/or conditionals and various ways of specifying versions.
+.TP
+.BR --installed-deps ", " --installed-depend ", " --installed-rdepend ", " --installed-pdepend ", " --installed-bdepend
+This is similar to the corresponding option --available-* but with the difference
+that the corresponding dependency string of any installed versions of the package is matched.
+In contrast to --available-* this check does not involve the setting of B<DEP>.
+You might probably want to combine these options with B<--deps-installed> to make sure that indeed
+the content of the installed version is read.
+
+Note that dependencies of installed versions are usually much simpler, e.g. not containing conditionals.
+.TP
+.BR --deps ", " --depend ", " --rdepend ", " --pdepend ", " --bdepend
+These are shortcuts for specifying the corresponding --avilable-* and --installed-* options simultaneously.
 .TP
 .BR --set
 Name of a local package set of a version in the database
