@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.33.5
+	Martin Väth <martin at mvath.de>:
+	- manpage: add a missing occurrence of BDEPEND
+
 *eix-0.33.4
 	Martin Väth <martin at mvath.de>:
 	- Bugfix: eix-update: set reponame in version to correctly apply

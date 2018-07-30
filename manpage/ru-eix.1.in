@@ -307,7 +307,7 @@ print all SLOT strings used in some version.
 print all LICENSE strings used in some package.
 .TP
 .B --print-all-depends
-print all words occurring in some B<{,R,P}DEPEND>.
+print all words occurring in some B<{,R,P,B}DEPEND>.
 This only works if B<DEP=true> is active (and was so when the cachefile was created).
 .TP
 .B --print-world-sets

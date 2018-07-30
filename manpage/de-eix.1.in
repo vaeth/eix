@@ -320,7 +320,7 @@ Gibt alle SLOT-Strings aus, die in irgendeiner Version benutzt werden.
 Gibt alle LICENSE-Strings aus, die in irgendeiner Version benutzt werden.
 .TP
 .B --print-all-depends
-Gibt alle Worte aus, die in einem B<{,R,P}DEPEND> auftauchen.
+Gibt alle Worte aus, die in einem B<{,R,P,B}DEPEND> auftauchen.
 Dies geht nur, falls B<DEP=true> aktiv ist (und bei der Erzeugung der Cachedatei aktiv war).
 .TP
 .B --print-world-sets
