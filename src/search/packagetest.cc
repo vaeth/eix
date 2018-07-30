@@ -153,7 +153,7 @@ void PackageTest::calculateNeeds() {
 	if((field & (NAME | CATEGORY_NAME)) != NONE) {
 		setNeeds(PackageReader::NAME);
 	}
-	if((field & (USE_ENABLED | USE_DISABLED | INST_EAPI | INST_SLOT | INST_FULLSLOT)) != NONE) {
+	if((field & (USE_ENABLED | USE_DISABLED | INST_EAPI | INST_SLOT | INST_FULLSLOT | DEPSI)) != NONE) {
 		setNeeds(PackageReader::NAME);
 	}
 	if(installed) {
