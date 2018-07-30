@@ -51,9 +51,6 @@ static bool subst_the_same(string *in, const string& from) {
 }
 
 void Depend::set(const string& depend, const string& rdepend, const string& pdepend, const string& bdepend, bool normspace) {
-	if(!use_depend) {
-		return;
-	}
 	m_depend = depend;
 	m_rdepend = rdepend;
 	m_pdepend = pdepend;

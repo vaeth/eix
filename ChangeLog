@@ -2,6 +2,8 @@
 
 *eix-0.33.5
 	Martin Väth <martin at mvath.de>:
+	- handle installed deps even without DEP
+	- do not let installed deps default to available deps if DEPS_INSTALLED
 	- manpage: add a missing occurrence of BDEPEND
 
 *eix-0.33.4

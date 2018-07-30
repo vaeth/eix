@@ -57,10 +57,20 @@ const PackageTest::MatchField
 		PackageTest::INST_SLOT,
 		PackageTest::INST_FULLSLOT,
 		PackageTest::SET,
+		PackageTest::DEPENDA,
+		PackageTest::RDEPENDA,
+		PackageTest::PDEPENDA,
+		PackageTest::BDEPENDA,
+		PackageTest::DEPENDI,
+		PackageTest::RDEPENDI,
+		PackageTest::PDEPENI,
+		PackageTest::BDEPENI,
 		PackageTest::DEPEND,
 		PackageTest::RDEPEND,
 		PackageTest::PDEPEND,
 		PackageTest::BDEPEND,
+		PackageTest::DEPSA,
+		PackageTest::DEPSI,
 		PackageTest::DEPS,
 		PackageTest::ANY;
 
@@ -150,9 +160,9 @@ void PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::NAME);
 	}
 	if(!Depend::use_depend) {
-		field &= ~DEPS;
+		field &= ~DEPSA;
 	}
-	if(((field & (IUSE | DEPS)) != NONE)  ||
+	if(((field & (IUSE | DEPSA)) != NONE) ||
 		dup_packages || dup_versions || slotted ||
 		upgrade || overlay || obsolete ||
 		world || worldset ||
@@ -225,11 +235,11 @@ bool PackageTest::stringMatch(Package *pkg) const {
 		}
 	}
 
-	if((field & DEPS) != NONE) {
-		bool depend((field & DEPEND) != NONE);
-		bool rdepend((field & RDEPEND) != NONE);
-		bool pdepend((field & PDEPEND) != NONE);
-		bool bdepend((field & BDEPEND) != NONE);
+	if((field & DEPSA) != NONE) {
+		bool depend((field & DEPENDA) != NONE);
+		bool rdepend((field & RDEPENDA) != NONE);
+		bool pdepend((field & PDEPENDA) != NONE);
+		bool bdepend((field & BDEPENDA) != NONE);
 		for(Package::iterator it(pkg->begin());
 			likely(it != pkg->end()); ++it) {
 			const Depend &dep(it->depend);
@@ -254,7 +264,7 @@ bool PackageTest::stringMatch(Package *pkg) const {
 		}
 	}
 
-	if((field & (USE_ENABLED | USE_DISABLED | INST_EAPI | INST_SLOT | INST_FULLSLOT | DEPS)) == NONE) {
+	if((field & (USE_ENABLED | USE_DISABLED | INST_EAPI | INST_SLOT | INST_FULLSLOT | DEPSI)) == NONE) {
 		return false;
 	}
 
@@ -320,11 +330,11 @@ bool PackageTest::stringMatch(Package *pkg) const {
 		}
 	}
 
-	if((field & DEPS) != NONE) {
-		bool depend((field & DEPEND) != NONE);
-		bool rdepend((field & RDEPEND) != NONE);
-		bool pdepend((field & PDEPEND) != NONE);
-		bool bdepend((field & BDEPEND) != NONE);
+	if((field & DEPSI) != NONE) {
+		bool depend((field & DEPENDI) != NONE);
+		bool rdepend((field & RDEPENDI) != NONE);
+		bool pdepend((field & PDEPENDI) != NONE);
+		bool bdepend((field & BDEPENDI) != NONE);
 		for(InstVec::iterator it(installed_versions->begin());
 			it != installed_versions->end(); ++it) {
 			vardbpkg->readDepend(*pkg, &(*it), *header);

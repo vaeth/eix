@@ -334,22 +334,18 @@ void VarDbPkg::readInstDate(const Package& p, InstVersion *v) const {
 }
 
 void VarDbPkg::readDepend(const Package& p, InstVersion *v, const DBHeader& header) const {
-	if(unlikely(!Depend::use_depend)) {
-		return;
-	}
 	if(likely(v->know_deps)) {
 		return;
 	}
 	v->know_deps = true;
-	Version *av(getAvailable(p, v, header));
-	if(av == NULLPTR) {
-		v->depend.clear();
-	} else {
-		v->depend = av->depend;
-		if(!care_of_deps) {
+	if(Depend::use_depend && !care_of_deps) {
+		Version *av(getAvailable(p, v, header));
+		if(likely(av != NULLPTR)) {
+			v->depend = av->depend;
 			return;
 		}
 	}
+	v->depend.clear();
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
 	WordVec depend(4);
 	depend[0] = v->depend.get_depend();

@@ -49,29 +49,39 @@ class PackageTest {
 	public:
 		typedef uint32_t MatchField;
 		static CONSTEXPR const MatchField
-			NONE          = 0x00000U,  ///< Search in name
-			NAME          = 0x00001U,  ///< Search in name
-			DESCRIPTION   = 0x00002U,  ///< Search in description
-			LICENSE       = 0x00004U,  ///< Search in license
-			CATEGORY      = 0x00008U,  ///< Search in category
-			CATEGORY_NAME = 0x00010U,  ///< Search in category/name
-			HOMEPAGE      = 0x00020U,  ///< Search in homepage
-			IUSE          = 0x00040U,  ///< Search in iuse
-			USE_ENABLED   = 0x00080U,  ///< Search in enabled  useflags of installed packages
-			USE_DISABLED  = 0x00100U,  ///< Search in disabled useflags of installed packages
-			EAPI          = 0x00200U,  ///< Search in EAPI
-			INST_EAPI     = 0x00400U,  ///< Search in installed EAPI
-			SLOT          = 0x00800U,  ///< Search in slots
-			FULLSLOT      = 0x01000U,  ///< Search in full slots
-			INST_SLOT     = 0x02000U,  ///< Search in installed slots
-			INST_FULLSLOT = 0x04000U,  ///< Search in installed full slots
-			SET           = 0x08000U,  ///< Search in sets
-			DEPEND        = 0x10000U,  ///< Search in DEPEND
-			RDEPEND       = 0x20000U,  ///< Search in RDEPEND
-			PDEPEND       = 0x40000U,  ///< Search in PDEPEND
-			BDEPEND       = 0x80000U,  ///< Search in BDEPEND
-			DEPS          = (DEPEND|RDEPEND|PDEPEND|BDEPEND),
-			ANY           = (NAME|DESCRIPTION|LICENSE|CATEGORY|CATEGORY_NAME|HOMEPAGE|IUSE|USE_ENABLED|USE_DISABLED|EAPI|INST_EAPI|SLOT|FULLSLOT|INST_SLOT|INST_FULLSLOT|SET|DEPS);
+			NONE          = 0x000000U,  ///< Search in name
+			NAME          = 0x000001U,  ///< Search in name
+			DESCRIPTION   = 0x000002U,  ///< Search in description
+			LICENSE       = 0x000004U,  ///< Search in license
+			CATEGORY      = 0x000008U,  ///< Search in category
+			CATEGORY_NAME = 0x000010U,  ///< Search in category/name
+			HOMEPAGE      = 0x000020U,  ///< Search in homepage
+			IUSE          = 0x000040U,  ///< Search in iuse
+			USE_ENABLED   = 0x000080U,  ///< Search in enabled  useflags of installed packages
+			USE_DISABLED  = 0x000100U,  ///< Search in disabled useflags of installed packages
+			EAPI          = 0x000200U,  ///< Search in EAPI
+			INST_EAPI     = 0x000400U,  ///< Search in installed EAPI
+			SLOT          = 0x000800U,  ///< Search in slots
+			FULLSLOT      = 0x001000U,  ///< Search in full slots
+			INST_SLOT     = 0x002000U,  ///< Search in installed slots
+			INST_FULLSLOT = 0x004000U,  ///< Search in installed full slots
+			SET           = 0x008000U,  ///< Search in sets
+			DEPENDA       = 0x010000U,  ///< Search in DEPEND (available)
+			RDEPENDA      = 0x020000U,  ///< Search in RDEPEND (available)
+			PDEPENDA      = 0x040000U,  ///< Search in PDEPEND (available)
+			BDEPENDA      = 0x080000U,  ///< Search in BDEPEND (available)
+			DEPENDI       = 0x100000U,  ///< Search in DEPEND (installed)
+			RDEPENDI      = 0x200000U,  ///< Search in RDEPEND (installed)
+			PDEPENDI      = 0x400000U,  ///< Search in PDEPEND (installed)
+			BDEPENDI      = 0x800000U,  ///< Search in BDEPEND (installed)
+			DEPEND        = DEPENDA | DEPENDI,
+			RDEPEND       = RDEPENDA | RDEPENDI,
+			PDEPEND       = PDEPENDA | PDEPENDI,
+			BDEPEND       = BDEPENDA | BDEPENDI,
+			DEPSA         = DEPENDA | RDEPENDA | PDEPENDA | BDEPENDA,
+			DEPSI         = DEPENDI | RDEPENDI | PDEPENDI | BDEPENDI,
+			DEPS          = DEPSA | DEPSI,
+			ANY           = NAME | DESCRIPTION | LICENSE | CATEGORY | CATEGORY_NAME | HOMEPAGE | IUSE | USE_ENABLED | USE_DISABLED | EAPI | INST_EAPI | SLOT | FULLSLOT | INST_SLOT | INST_FULLSLOT | SET | DEPS;
 
 		enum MatchAlgorithm {
 			ALGO_REGEX,
@@ -90,7 +100,7 @@ class PackageTest {
 			INS_NONEXISTENT = 0x01U,  ///< Test for nonexistent installed packages
 			INS_OVERLAY     = 0x02U,  ///< Test for nonexistent overlays of installed packages
 			INS_MASKED      = 0x04U,  ///< Test for masked installed packages
-			INS_SOME        = INS_NONEXISTENT|INS_OVERLAY|INS_MASKED;
+			INS_SOME        = INS_NONEXISTENT | INS_OVERLAY | INS_MASKED;
 
 		typedef uint8_t TestStability;
 		static CONSTEXPR const TestStability
@@ -100,7 +110,7 @@ class PackageTest {
 			STABLE_NONMASKED    = 0x04U,  ///< Test for non-masked packages
 			STABLE_SYSTEM       = 0x08U,  ///< Test for system packages
 			STABLE_PROFILE      = 0x10U,  ///< Test for stable packages
-			STABLE_SYSTEMPROFILE = (STABLE_SYSTEM|STABLE_PROFILE);
+			STABLE_SYSTEMPROFILE = STABLE_SYSTEM | STABLE_PROFILE;
 
 		/**
 		Set default values.
