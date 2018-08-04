@@ -5,7 +5,10 @@
 	- New search options --{available,installed}-{deps,{,r,p,b}depend}
 	- handle installed deps even without DEP
 	- do not let installed deps default to available deps if DEPS_INSTALLED
+	- add yet another ATTRIBUTE_PURE
+	- warn about not re-adding the ATTRIBUTE_PURE removed in 0.33.1
 	- manpage: add a missing occurrence of BDEPEND
+	- Makefile, meson.build: avoid non-ascii symbols
 
 *eix-0.33.4
 	Martin Väth <martin at mvath.de>:

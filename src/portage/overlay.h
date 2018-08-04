@@ -61,7 +61,7 @@ class OverlayIdent {
 			know_label = true;
 		}
 
-		static eix::SignedBool compare(const OverlayIdent& left, const OverlayIdent& right);
+		ATTRIBUTE_PURE static eix::SignedBool compare(const OverlayIdent& left, const OverlayIdent& right);
 
 		std::string human_readable() const;
 

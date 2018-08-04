@@ -2040,13 +2040,13 @@ endif
 sed_manpage = '''test -d "$3" || mkdir -- "$3" && sed \
 -e 's/$Date:[^,]*, *\([^)]*\)[^\$]*\$/\1/' \
 -e 's,\([BI]\)<\([^>]\+\)>,\\f\1\2\\fR,g' \
--e 's/Ä/\\(:A/g' \
--e 's/Ö/\\(:O/g' \
--e 's/Ü/\\(:U/g' \
--e 's/ä/\\(:a/g' \
--e 's/ö/\\(:o/g' \
--e 's/ü/\\(:u/g' \
--e 's/ß/\\(ss/g' \
+-e 's/\xc3\x84/\\(:A/g' \
+-e 's/\xc3\x96/\\(:O/g' \
+-e 's/\xc3\x9c/\\(:U/g' \
+-e 's/\xc3\xa4/\\(:a/g' \
+-e 's/\xc3\xb6/\\(:o/g' \
+-e 's/\xc3\xbc/\\(:u/g' \
+-e 's/\xc3\x9f/\\(ss/g' \
 -- "$1" >|"$2"
 '''
 foreach l : manpages
