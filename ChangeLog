@@ -4,6 +4,7 @@
 	Martin Väth <martin at mvath.de>:
 	- New search options --{available,installed}-{deps,{,r,p,b}depend}
 	- handle installed deps even without DEP
+	- bugfix: empty LINGUAS w/ meson https://github.com/vaeth/eix/issues/54
 	- do not let installed deps default to available deps if DEPS_INSTALLED
 	- add yet another ATTRIBUTE_PURE
 	- warn about not re-adding the ATTRIBUTE_PURE removed in 0.33.1

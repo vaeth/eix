@@ -33,7 +33,9 @@ xgettext_options = [
 	'--check=space-ellipsis',
 ]
 i18n = import('i18n')
-i18n.gettext(package,
-	languages : langs,
-	args : xgettext_options,
-)
+if langs.length() != 0
+	i18n.gettext(package,
+		languages : langs,
+		args : xgettext_options,
+	)
+endif
