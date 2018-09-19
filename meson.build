@@ -1419,6 +1419,11 @@ result += [ 'dep-default=' + dep_default.to_string() ]
 conf.set_quoted('DEP_DEFAULT', dep_default.to_string(),
 	description : 'Default DEP')
 
+src_uri_default = get_option('src-uri-default')
+result += [ 'src-uri-default=' + src_uri_default.to_string() ]
+conf.set_quoted('SRC_URI_DEFAULT', src_uri_default.to_string(),
+	description : 'Default SRC_URI')
+
 required_use_default = get_option('required-use-default')
 result += [ 'required-use-default=' + required_use_default.to_string() ]
 conf.set_quoted('REQUIRED_USE_DEFAULT', required_use_default.to_string(),

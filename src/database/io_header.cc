@@ -119,8 +119,9 @@ GCC_DIAG_ON(sign-conversion)
 	if(unlikely(!read_num(&save_bitmask, errtext))) {
 		return false;
 	}
-	hdr->use_required_use = ((save_bitmask & DBHeader::SAVE_BITMASK_REQUIRED_USE) != 0);
-	if((hdr->use_depend = ((save_bitmask & DBHeader::SAVE_BITMASK_DEP) != 0))) {
+	hdr->use_required_use = ((save_bitmask & DBHeader::SAVE_BITMASK_REQUIRED_USE) != DBHeader::SAVE_BITMASK_NONE);
+	hdr->use_src_uri = ((save_bitmask & DBHeader::SAVE_BITMASK_SRC_URI) != DBHeader::SAVE_BITMASK_NONE);
+	if((hdr->use_depend = ((save_bitmask & DBHeader::SAVE_BITMASK_DEP) != DBHeader::SAVE_BITMASK_NONE))) {
 		eix::OffsetType len;
 		if(unlikely(!read_num(&len, errtext))) {
 			return false;

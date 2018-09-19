@@ -109,6 +109,10 @@ Except for id, all of them are optional.
 
   The slot name is only output if it is nonempty and different from 0.
 
+- **srcURI="** [..] **"**
+
+  The SRC_URI is only output if it is nonempty.
+
 - **installed="1"**
 
   This is only output if the version is installed.

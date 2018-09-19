@@ -29,6 +29,7 @@
 #include "eixTk/stringutils.h"
 #include "eixTk/unordered_map.h"
 #include "portage/basicversion.h"
+#include "portage/extendedversion.h"
 #include "portage/depend.h"
 #include "portage/package.h"
 #include "portage/packagetree.h"
@@ -108,6 +109,7 @@ class TrueIndex : public TrueIndexMapper {
 			RDEPEND,
 			PDEPEND,
 			BDEPEND,
+			SRC_URI,
 			LAST
 		} Names;
 		SqliteCache::TrueIndexMap default_trueindex;
@@ -139,7 +141,7 @@ class TrueIndex : public TrueIndexMapper {
 			mapinit(16, REQUIRED_USE, "REQUIRED_USE");
 			mapinit(17, RESTRICT,     "RESTRICT");
 			mapinit(18, SLOT,         "SLOT");
-			// 19 "SRC_URI"
+			mapinit(19, SRC_URI,      "SRC_URI");
 			// 20 "_eclasses_"
 			// 21 "_mtime_"
 		}
@@ -267,6 +269,9 @@ void SqliteCache::sqlite_callback_cpp(int argc, const char *const *argv, const c
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::PDEPEND),
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::BDEPEND),
 			false);
+		if(ExtendedVersion::use_src_uri) {
+			version->src_uri = TrueIndex::c_str(argv, &trueindex, TrueIndex::SRC_URI);
+		}
 		version->overlay_key = m_overlay_key;
 		pkg->addVersion(version);
 

@@ -269,6 +269,13 @@
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:attribute>
+	<xsd:attribute name="srcURI" type="xsd:string">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+				The SRC_URI; is only output if it is nonempty.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:attribute>
 	<xsd:attribute name="installed" type="xsd:string" fixed="1">
 		<xsd:annotation>
 			<xsd:documentation xml:lang="en">

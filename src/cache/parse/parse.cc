@@ -228,6 +228,11 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 				set_checking(&bdepend, "BDEPEND", ebuild);
 				version->depend.set(depend, rdepend, pdepend, bdepend, true);
 			}
+			if(ExtendedVersion::use_src_uri) {
+				string src_uri;
+				set_checking(&src_uri, "SRC_URI", ebuild);
+				version->src_uri = src_uri;
+			}
 			if(read_onetime_info) {
 				set_checking(&(pkg->homepage), "HOMEPAGE",    ebuild, &ok);
 				set_checking(&(pkg->licenses), "LICENSE",     ebuild, &ok);
@@ -257,7 +262,7 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 		string *cachefile(ebuild_exec->make_cachefile(fullpath, dirpath, *pkg, *version, eapi));
 		if(likely(cachefile != NULLPTR)) {
 			FlatReader reader(this);
-			reader.get_keywords_slot_iuse_restrict(*cachefile, &eapi, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend));
+			reader.get_keywords_slot_iuse_restrict(*cachefile, &eapi, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend), &(version->src_uri));
 			reader.read_file(*cachefile, pkg);
 			ebuild_exec->delete_cachefile();
 		} else {

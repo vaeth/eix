@@ -3,7 +3,12 @@
 *eix-0.33.5
 	Martin Väth <martin at mvath.de>:
 	- New search options --{available,installed}-{deps,{,r,p,b}depend}
+	- Support SRC_URI, https://bugs.gentoo.org/show_bug.cgi?id=666546
+	  In detail: Add SRC_URI, <srcuri> {havesrcuri}, --src-uri,
+	  extend DEFAULT_MATCH_FIELD by src-uri, output by default with -vl,
+	  output in xml, new xml version 15, new eix database version 38
 	- handle installed deps even without DEP
+	- default to --with-deps-default --with-required-use-default
 	- bugfix: empty LINGUAS w/ meson https://github.com/vaeth/eix/issues/54
 	- do not let installed deps default to available deps if DEPS_INSTALLED
 	- add yet another ATTRIBUTE_PURE

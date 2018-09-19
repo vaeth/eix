@@ -1782,26 +1782,40 @@ AC_SUBST([ALWAYS_ACCEPT_KEYWORDS_DEFAULT])
 
 AC_MSG_CHECKING([DEP default])
 AC_ARG_WITH([dep-default],
-	[AS_HELP_STRING([--with-dep-default],
-		[default to DEP=true])],
+	[AS_HELP_STRING([--without-dep-default],
+		[default to DEP=false])],
 	[AS_CASE(["$withval"],
 		[no], [AS_VAR_SET([DEP_DEFAULT], ["false"])],
 		[AS_VAR_SET([DEP_DEFAULT], ["true"])])],
-	[AS_VAR_SET([DEP_DEFAULT], ["false"])])
+	[AS_VAR_SET([DEP_DEFAULT], ["true"])])
 MV_MSG_RESULT_VAR([DEP_DEFAULT])
 AC_DEFINE_UNQUOTED([DEP_DEFAULT],
 	["$DEP_DEFAULT"],
 	[Default DEP])
 AC_SUBST([DEP_DEFAULT])
 
+AC_MSG_CHECKING([SRC_URI default])
+AC_ARG_WITH([src-uri-default],
+	[AS_HELP_STRING([--without-src-uri-default],
+		[default to SRC_URI=false])],
+	[AS_CASE(["$withval"],
+		[no], [AS_VAR_SET([SRC_URI_DEFAULT], ["false"])],
+		[AS_VAR_SET([SRC_URI_DEFAULT], ["true"])])],
+	[AS_VAR_SET([SRC_URI_DEFAULT], ["true"])])
+MV_MSG_RESULT_VAR([SRC_URI_DEFAULT])
+AC_DEFINE_UNQUOTED([SRC_URI_DEFAULT],
+	["$SRC_URI_DEFAULT"],
+	[Default SRC_URI])
+AC_SUBST([SRC_URI_DEFAULT])
+
 AC_MSG_CHECKING([REQUIRED_USE default])
 AC_ARG_WITH([required-use-default],
-	[AS_HELP_STRING([--with-required-use-default],
-		[default to REQUIRED_USE=true])],
+	[AS_HELP_STRING([--without-required-use-default],
+		[default to REQUIRED_USE=false])],
 	[AS_CASE(["$withval"],
 		[no], [AS_VAR_SET([REQUIRED_USE_DEFAULT], ["false"])],
 		[AS_VAR_SET([REQUIRED_USE_DEFAULT], ["true"])])],
-	[AS_VAR_SET([REQUIRED_USE_DEFAULT], ["false"])])
+	[AS_VAR_SET([REQUIRED_USE_DEFAULT], ["true"])])
 MV_MSG_RESULT_VAR([REQUIRED_USE_DEFAULT])
 AC_DEFINE_UNQUOTED([REQUIRED_USE_DEFAULT],
 	["$REQUIRED_USE_DEFAULT"],

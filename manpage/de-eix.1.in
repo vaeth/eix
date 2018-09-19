@@ -891,11 +891,14 @@ oder eines anderen Verzeichnisses ausB<EIX_LOCAL_SETS_ADD>; siehe die Kommentare
 Die "profile", "system" und "world" sets sind hier bewusst ausgenommen, da diese mit
 B<--profile[+-]>, B<--system[+-]>, B<--world>, B<--world-all> oder B<--world-sets> getestet werden sollten.
 .TP
+.B --src-uri
+SRC_URI einer Version in der Datenbank.
+.TP
 .B --eapi
-EAPI of a version in the database, e.g. "6"
+EAPI einer Version in der Datenbank, z.B. "6"
 .TP
 .B --installed-eapi
-EAPI of an installed version
+EAPI einer installierten Version
 .TP
 .B --slot
 Slotname einer Version in der Datenbank, z.B. "kde-4"
@@ -1318,6 +1321,10 @@ Alle diese Eigenschaften sind leer, wenn die Bedingung nicht erfüllt ist, sonst
 Um die Wiederbenutzung von Code zu erleichtern gilt:
 Wenn die Durckausgabe nicht Slot-sortiert ist, dann sind
 B<slotfirst>/B<slotlast> äquivalent zu B<first>/B<last>, und B<oneslot> ist 1.
+.TP
+.BR srcuri, havesrcuri
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Sie gibt die B<SRC_URI> einer verfügbaren Version aus bzw. 1, wenn B<SRC_URI> nicht leer ist.
 .TP
 .BR eapi
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
@@ -2456,6 +2463,13 @@ tatsächlich benutzt und gespeichert werden sollen.
 Im positiven Fall verdoppelt sich ungefähr der Disk- und Speicherbedarf von eix.
 
 .TP
+.BR SRC_URI " " (true / false)
+Dieser Wert entscheidet, ob die Variable
+B<SRC_URI> (die z.B. mit eix -lv gezeigt werden könnten)
+tatsächlich benutzt und gespeichert werden sollen.
+Im positiven Fall verdoppelt sich ungefähr der Disk- und Speicherbedarf von eix.
+
+.TP
 .BR REQUIRED_USE " " (true / false)
 Dieser Wert entscheidet, ob die Variable B<REQUIRED_USE> (die z.B. mit eix -l gezeigt werden könnte)
 tatsächlich benutzt und gespeichert werden sollen.
@@ -3220,7 +3234,7 @@ praktisch sein, da man sich so das händische Escapen spart.
 Die möglichen Werte für I<Operandenfeld> sind: B<name>, B<category>, B<category/name>
 (oder B<category-name>), B<description>, B<license>, B<homepage>, B<set>, B<eapi>, B<installed-eapi>,
 B<slot>, B<installed-slot>, B<use> (oder B<iuse>), B<with-use> (oder B<installed-with-use>),
-B<without-use> (oder B<installed-without-use>),
+B<without-use> (oder B<installed-without-use>), B<src-uri> (oder B<srcuri>),
 B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<bdepend> und B<error>.
 Sie entsprechen den analogen Kommandozeilenoptionen für die Operandenwahl.
 Der spezielle Wert B<error> bedeutet, dass eix mit der Fehlermeldung abbricht,
@@ -4029,6 +4043,8 @@ Sicherheit erhöhen, allerdings auf merkliche Kosten der Ausführungsgeschwindig
 Wenn Sie für Systeme mit wenig Speicher kompilieren, kann es auch ratsam sein,
 
 .B --without-dep-default
+
+.B --without-src-uri-default
 
 und/oder
 

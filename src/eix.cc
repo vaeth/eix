@@ -243,6 +243,7 @@ static void dump_help() {
 "    --installed-pdepend     pdepend (of installed version)\n"
 "    --installed-bdepend     bdepend (of installed version)\n"
 "    --set                   local package set name\n"
+"    --src-uri               SRC_URI\n"
 "    --eapi                  EAPI\n"
 "    --installed-eapi        EAPI of installed version\n"
 "    --slot                  slot\n"
@@ -480,6 +481,7 @@ EixOptionList::EixOptionList() {
 	// What to match in this criterion
 	push_back(Option("any",           'y'));
 	push_back(Option("name",          's'));
+	push_back(Option("src-uri",       O_SEARCH_SRC_URI));
 	push_back(Option("eapi",          O_SEARCH_EAPI));
 	push_back(Option("installed-eapi", O_SEARCH_INST_EAPI));
 	push_back(Option("slot",          O_SEARCH_SLOT));
@@ -526,8 +528,9 @@ static void setup_defaults(EixRc *rc, bool is_tty) {
 	// Setup defaults
 	std::memset(&rc_options, 0, sizeof(rc_options));
 
-	Depend::use_depend         = rc->getBool("DEP");
-	Version::use_required_use  = rc->getBool("REQUIRED_USE");
+	Depend::use_depend           = rc->getBool("DEP");
+	Version::use_required_use    = rc->getBool("REQUIRED_USE");
+	ExtendedVersion::use_src_uri = rc->getBool("SRC_URI");
 
 	rc_options.quick           = rc->getBool("QUICKMODE");
 	rc_options.be_quiet        = rc->getBool("QUIETMODE");

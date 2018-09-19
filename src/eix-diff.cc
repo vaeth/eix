@@ -368,8 +368,9 @@ int run_eix_diff(int argc, char *argv[]) {
 		}
 	}
 
-	Depend::use_depend = rc.getBool("DEP");
-	Version::use_required_use = rc.getBool("REQUIRED_USE");
+	Depend::use_depend           = rc.getBool("DEP");
+	Version::use_required_use    = rc.getBool("REQUIRED_USE");
+	ExtendedVersion::use_src_uri = rc.getBool("SRC_URI");
 
 	cli_quick = rc.getBool("QUICKMODE");
 	cli_care  = rc.getBool("CAREMODE");

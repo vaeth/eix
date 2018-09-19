@@ -89,7 +89,7 @@ Read stability and other data from an "assign type" cache file
 **/
 void AssignReader::get_keywords_slot_iuse_restrict(const string& filename, string *eapi, string *keywords,
 	string *slotname, string *iuse, string *required_use, string *restr,
-	string *props, Depend *dep) {
+	string *props, Depend *dep, string *src_uri) {
 	if(unlikely(!get_map(filename))) {
 		m_cache->m_error_callback(eix::format(_("cannot read cache file %s: %s"))
 			% filename % std::strerror(errno));
@@ -106,6 +106,9 @@ void AssignReader::get_keywords_slot_iuse_restrict(const string& filename, strin
 	}
 	if(Depend::use_depend) {
 		dep->set((*cf)["DEPEND"], (*cf)["RDEPEND"], (*cf)["PDEPEND"], (*cf)["BDEPEND"], false);
+	}
+	if(ExtendedVersion::use_src_uri) {
+		(*src_uri) = (*cf)["SRC_URI"];
 	}
 }
 

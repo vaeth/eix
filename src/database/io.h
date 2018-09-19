@@ -129,6 +129,7 @@ class Database : public File {
 		template<typename m_Tp> bool write_num(m_Tp t, std::string *errtext);
 
 		ATTRIBUTE_NONNULL((2)) bool read_string(std::string *s, std::string *errtext);
+		bool skip_string(std::string *errtext);
 		bool write_string(const std::string& str, std::string *errtext);
 
 		bool write_hash_string(const StringHash& hash, const std::string& s, std::string *errtext) {

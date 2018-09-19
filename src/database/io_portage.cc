@@ -153,6 +153,18 @@ bool Database::read_version(Version *v, const DBHeader& hdr, string *errtext) {
 			return false;
 		}
 	}
+	if(hdr.use_src_uri) {
+		if(ExtendedVersion::use_src_uri) {
+			if(unlikely(!read_string(&(v->src_uri), errtext))) {
+				return false;
+			}
+		} else {
+			v->src_uri.clear();
+			if(unlikely(!skip_string(errtext))) {
+				return false;
+			}
+		}
+	}
 
 	// v->save_maskflags(Version::SAVEMASK_FILE);  // This is done in package_reader
 	return true;
@@ -222,6 +234,11 @@ bool Database::write_version(const Version *v, const DBHeader& hdr, string *errt
 	if(hdr.use_depend) {
 		WRITE_COUNTER(write_depend(v->depend, hdr, NULLPTR));
 		if(unlikely(!write_depend(v->depend, hdr, errtext))) {
+			return false;
+		}
+	}
+	if(hdr.use_src_uri) {
+		if(unlikely(!write_string(v->src_uri, errtext))) {
 			return false;
 		}
 	}
@@ -333,6 +350,7 @@ void Database::prep_header_hashs(DBHeader *hdr, const PackageTree& tree) {
 	if(use_dep) {
 		hdr->depend_hash.init(true);
 	}
+	hdr->use_src_uri = ExtendedVersion::use_src_uri;
 	bool use_required_use(Version::use_required_use);
 	hdr->use_required_use = use_required_use;
 	for(PackageTree::const_iterator c(tree.begin()); likely(c != tree.end()); ++c) {
@@ -419,6 +437,9 @@ bool Database::write_header(const DBHeader& hdr, string *errtext) {
 	DBHeader::SaveBitmask save_bitmask(DBHeader::SAVE_BITMASK_NONE);
 	if(hdr.use_depend) {
 		save_bitmask |= DBHeader::SAVE_BITMASK_DEP;
+	}
+	if(hdr.use_src_uri) {
+		save_bitmask |= DBHeader::SAVE_BITMASK_SRC_URI;
 	}
 	if(hdr.use_required_use) {
 		save_bitmask |= DBHeader::SAVE_BITMASK_REQUIRED_USE;

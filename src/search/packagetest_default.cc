@@ -84,6 +84,12 @@ static void init_match_field_map() {
 	match_field_map["installed-without-use"] = PackageTest::USE_DISABLED;
 	match_field_map["SET"]            = PackageTest::SET;
 	match_field_map["set"]            = PackageTest::SET;
+	match_field_map["SRC_URI"]        = PackageTest::SRC_URI;
+	match_field_map["SRC-URI"]        = PackageTest::SRC_URI;
+	match_field_map["SRCURI"]         = PackageTest::SRC_URI;
+	match_field_map["src_uri"]        = PackageTest::SRC_URI;
+	match_field_map["src-uri"]        = PackageTest::SRC_URI;
+	match_field_map["srcuri"]         = PackageTest::SRC_URI;
 	match_field_map["EAPI"]           = PackageTest::EAPI;
 	match_field_map["eapi"]           = PackageTest::EAPI;
 	match_field_map["INSTALLED_EAPI"] = PackageTest::INST_EAPI;

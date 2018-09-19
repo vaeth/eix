@@ -163,6 +163,21 @@ bool Database::read_string(string *s, string *errtext) {
 	return false;
 }
 
+bool Database::skip_string(string *errtext) {
+	string::size_type len;
+	if(unlikely(!read_num(&len, errtext))) {
+		return false;
+	}
+	if(len != 0) {
+GCC_DIAG_OFF(sign-conversion)
+		if(unlikely(!seekrel(len, errtext))) {
+			return false;
+		}
+GCC_DIAG_ON(sign-conversion)
+	}
+	return true;
+}
+
 bool Database::write_string(const string& str, string *errtext) {
 	return (likely(write_num(str.size(), errtext)) &&
 		likely(write_string_plain(str, errtext)));

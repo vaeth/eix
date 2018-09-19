@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2018-02-15 16:48+0100\n"
-"PO-Revision-Date: 2018-07-30 05:30+0200\n"
+"POT-Creation-Date: 2018-09-19 18:43+0200\n"
+"PO-Revision-Date: 2018-09-19 18:52+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: ru\n"
@@ -1778,6 +1778,7 @@ msgid ""
 "    --installed-pdepend     pdepend (of installed version)\n"
 "    --installed-bdepend     bdepend (of installed version)\n"
 "    --set                   local package set name\n"
+"    --src-uri               SRC_URI\n"
 "    --eapi                  EAPI\n"
 "    --installed-eapi        EAPI of installed version\n"
 "    --slot                  slot\n"
@@ -1971,6 +1972,7 @@ msgstr ""
 "    --installed-pdepend     pdepend (of installed version)\n"
 "    --installed-bdepend     bdepend (of installed version)\n"
 "    --set                   имя местного набора пакетов\n"
+"    --src-uri               SRC_URI\n"
 "    --eapi                  EAPI\n"
 "    --installed-eapi        EAPI установленной версии\n"
 "    --slot                  слот\n"
@@ -3302,8 +3304,15 @@ msgstr ""
 #: src/eixrc/defaults.cc
 msgctxt "DEP"
 msgid ""
-"If true, store/use {R,P,H,}DEPEND (e.g. shown with eix -lv).\n"
+"If true, store/use {R,P,B,}DEPEND (e.g. shown with eix -lv).\n"
 "Usage of DEP roughly doubles disk resp. memory requirements."
+msgstr ""
+
+#: src/eixrc/defaults.cc
+msgctxt "SRC_URI"
+msgid ""
+"If true, store/use SRC_URI (e.g. shown with eix -lv).\n"
+"Usage of SRC_URI roughly doubles disk resp. memory requirements."
 msgstr ""
 
 #: src/eixrc/defaults.cc
@@ -3658,6 +3667,13 @@ msgid ""
 msgstr ""
 
 #: src/eixrc/defaults.cc
+msgctxt "PRINT_SRC_URI"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"If false, SRC_URI is never output."
+msgstr ""
+
+#: src/eixrc/defaults.cc
 msgctxt "PRINT_EAPI"
 msgid ""
 "This variable is only used for delayed substitution.\n"
@@ -3984,6 +4000,15 @@ msgid ""
 msgstr ""
 
 #: src/eixrc/defaults.cc
+msgctxt "MATCH_FIELD_SRC_URI"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It is a regular expression used in DEFAULT_MATCH_FIELD for src-uri.\n"
+"If it is identical to MATCH_FIELD_HOMEPAGE, it is de facto disabled,\n"
+"because the latter takes precedence."
+msgstr ""
+
+#: src/eixrc/defaults.cc
 msgctxt "MATCH_FIELD_EAPI"
 msgid ""
 "This variable is only used for delayed substitution.\n"
@@ -3999,8 +4024,9 @@ msgid ""
 "If regexp matches the search pattern, use match_field as the default.\n"
 "A fallback match_field may be specified as the last entry in the list.\n"
 "Admissible values for match_field are: name, category, category/name,\n"
-"description, license, homepage, set, slot, installed-slot, use\n"
-"with-use, without-use, error."
+"description, license, homepage, set, eapi, slot, installed-slot, use,\n"
+"with-use, without-use, src-uri, deps, depend, rdepend, pdepend, bdepend,\n"
+"error."
 msgstr ""
 
 #: src/eixrc/defaults.cc
@@ -4564,6 +4590,13 @@ msgctxt "COLOR_DATE"
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color used for printing the date."
+msgstr ""
+
+#: src/eixrc/defaults.cc
+msgctxt "COLOR_SRC_URI"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It defines the color of the SRC_URI output."
 msgstr ""
 
 #: src/eixrc/defaults.cc
@@ -5301,6 +5334,13 @@ msgid ""
 msgstr ""
 
 #: src/eixrc/defaults.cc
+msgctxt "FORMAT_SRC_URI"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It defines the format of the SRC_URI output."
+msgstr ""
+
+#: src/eixrc/defaults.cc
 msgctxt "FORMAT_EAPI"
 msgid ""
 "This variable is only used for delayed substitution.\n"
@@ -5822,6 +5862,13 @@ msgctxt "FORMAT_DEPS_VERBOSE"
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the verbose format for DEPs for an available version."
+msgstr ""
+
+#: src/eixrc/defaults.cc
+msgctxt "FORMAT_SRC_URI_VERBOSE"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It defines the verbose format for the SRC_URI of an available version."
 msgstr ""
 
 #: src/eixrc/defaults.cc
@@ -6636,6 +6683,18 @@ msgctxt "I18N_DATE"
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It translates \"Date:\""
+msgstr ""
+
+#: src/eixrc/def_i18n.cc
+msgctxt "I18N_SRC_URI"
+msgid "SRC_URI:"
+msgstr ""
+
+#: src/eixrc/def_i18n.cc
+msgctxt "I18N_SRC_URI"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It translates \"SRC_URI:\""
 msgstr ""
 
 #: src/eixrc/def_i18n.cc

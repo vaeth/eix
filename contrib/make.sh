@@ -17,7 +17,6 @@ Available options are
   -1/2/3 Generate 1/2/3 binaries for eix-{,diff,update} but no separate tools
       (unless combined with -4)
   -4  Enable separate tools but no separate binaries (unless combined with 2/3)
-  -D  Do not use dep-default, required-use-default
   -w  Use -werror
   -W  Do not use --enable-strong-warnings
   -g  Use clang++, setting CXX, filtering some flags (default if available)
@@ -104,7 +103,6 @@ clang_cxx=`PATH=${PATH-}${PATH:+:}/usr/lib/llvm/*/bin command -v clang++ 2>/dev/
 meson=false
 remove_builddir=false
 quiet=false
-dep_default=:
 earlystop=false
 keepenv=false
 warnings=:
@@ -123,7 +121,7 @@ debugging=false
 dialect=:
 nopie_security=:
 OPTIND=1
-while getopts 'mJRq1234gGDnewWsSrOoCxXyYdM:c:j:hH' opt
+while getopts 'mJRq1234gGnewWsSrOoCxXyYdM:c:j:hH' opt
 do	case $opt in
 	m)	meson=:;;
 	J)	meson_extra=$meson_extra' -Djumbo-build=false'
@@ -142,7 +140,6 @@ do	case $opt in
 		configure_extra=$configure_extra' --enable-separate-tools';;
 	g)	clang=:;;
 	G)	clang=false;;
-	D)	dep_default=false;;
 	n)	earlystop=:;;
 	e)	keepenv=:;;
 	w)	werror=:;;
@@ -178,10 +175,6 @@ then	meson_extra=$meson_extra' -Dnew-dialect=true'
 	configure_extra=$configure_extra' --enable-new-dialect'
 else	meson_extra=$meson_extra' -Dnew-dialect=false'
 	configure_extra=$configure_extra' --disable-new-dialect'
-fi
-if $dep_default
-then	meson_extra=$meson_extra' -Ddep-default=true -Drequired-use-default=true'
-	configure_extra=$configure_extra' --with-dep-default --with-required-use-default'
 fi
 if $separate_all
 then	meson_extra=$meson_extra' -Dseparate-binaries=true -Dseparate-tools=true'

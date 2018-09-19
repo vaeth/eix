@@ -26,7 +26,8 @@ using std::string;
 const DBHeader::SaveBitmask
 	DBHeader::SAVE_BITMASK_NONE,
 	DBHeader::SAVE_BITMASK_DEP,
-	DBHeader::SAVE_BITMASK_REQUIRED_USE;
+	DBHeader::SAVE_BITMASK_REQUIRED_USE,
+	DBHeader::SAVE_BITMASK_SRC_URI;
 
 const DBHeader::OverlayTest
 	DBHeader::OVTEST_NONE,
@@ -47,7 +48,7 @@ practically sure the first match should be it; if not, the second.
 The remainder is meant for museum systems.)
 **/
 const DBHeader::DBVersion DBHeader::accept[] = {
-	DBHeader::current, 36, 35, 34, 33, 32, 31,
+	DBHeader::current, 37, 36, 35, 34, 33, 32, 31,
 	0
 };
 

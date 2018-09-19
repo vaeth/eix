@@ -88,6 +88,9 @@ class ExtendedVersion : public BasicVersion {
 		**/
 		Depend depend;
 
+		static bool use_src_uri;
+		std::string src_uri;
+
 		typedef eix::UNumber Overlay;
 		/**
 		Key for Portagedb.overlays/overlaylist from header.

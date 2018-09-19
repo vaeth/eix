@@ -872,6 +872,9 @@ see the comments to B<EIX_LOCAL_SETS>).
 The "profile", "system" and "world" sets are intentionally excluded here, since these
 should be tested with B<--profile[+-]>, B<--system[+-]>, B<--world>, B<--world-all>, or B<--world-sets>.
 .TP
+.B --src-uri
+SRC_URI of a version in the database
+.TP
 .B --eapi
 EAPI of a version in the database, e.g. "6"
 .TP
@@ -1292,6 +1295,11 @@ only one slot at all.
 All these properties are empty if the condition is not satisfied, otherwise 1.
 To ease reusing code, when printing is not sorted according to slots, then
 B<slotfirst>/B<slotlast> is equivalent to B<first>/B<last> and B<oneslot> is 1.
+.TP
+.BR srcuri, havesrcuri
+This must occur only in I<VARIABLE> in the context of version printing.
+It outputs the B<SRC_URI> of an available version or 1, if B<SRC_URI> is nonempty,
+respectively.
 .TP
 .BR eapi
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -2424,6 +2432,11 @@ If true, store/use B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND> (e.g. shown wit
 Usage of B<DEP> roughly doubles disk resp. memory requirements.
 
 .TP
+.BR SRC_URI " " (true / false)
+If true, store/use B<SRC_URI>.
+Usage of B<SRC_URI> roughly doubles disk resp. memory requirements.
+
+.TP
 .BR REQUIRED_USE " " (true / false)
 If true, store/use B<REQUIRED_USE> (e.g. shown with eix -l).
 Usage of B<REQUIRED_USE> increases disk and memory requirements.
@@ -3152,7 +3165,7 @@ to avoid manually inserting additional escapes.
 The possible values for I<match_field> are B<name>, B<category>, B<category/name>
 (or B<category-name>), B<description>, B<license>, B<homepage>, B<set>, B<eapi>, B<installed-eapi>,
 B<slot>, B<installed-slot>, B<use> (or B<iuse>), B<with-use> (or B<installed-with-use>),
-B<without-use> (or B<installed-without-use>),
+B<without-use> (or B<installed-without-use>), B<src-uri> (or B<srcuri>),
 B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<bdepend>, or B<error>,
 corresponding to the analogous command line option for the match field.
 The special value B<error> means that eix stops with an error message claiming
@@ -3933,6 +3946,8 @@ the security at the cost of a considerable loss of speed.
 If you compile for a low-memory system, it might also be advisable to add
 
 .B --without-dep-default
+
+.B --without-src-uri-default
 
 and/or
 

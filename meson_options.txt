@@ -68,9 +68,11 @@ option('eix-gid', type : 'string', value : '%{EIX_UID}',
 	description : 'default EIX_GID')
 option('always-accept-keywords', type : 'boolean', value : false,
 	description : 'default ALWAYS_ACCEPT_KEYWORDS')
-option('dep-default', type : 'boolean', value : false,
+option('dep-default', type : 'boolean', value : true,
 	description : 'default DEP')
-option('required-use-default', type : 'boolean', value : false,
+option('src-uri-default', type : 'boolean', value : true,
+	description : 'default SRC_URI')
+option('required-use-default', type : 'boolean', value : true,
 	description : 'default REQUIRED_USE')
 option('zsh-completion', type : 'string', value : 'share/zsh/site-functions',
 	description : 'Where to install zsh-completion. Empty string means no installation')

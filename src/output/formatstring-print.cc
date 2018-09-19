@@ -438,6 +438,8 @@ class Scanner {
 			prop_ver("isslot", &PrintFormat::VER_ISSLOT);
 			prop_ver("subslot", &PrintFormat::VER_SUBSLOT);
 			prop_ver("issubslot", &PrintFormat::VER_ISSUBSLOT);
+			prop_ver("srcuri", &PrintFormat::VER_SRCURI);
+			prop_ver("havesrcuri", &PrintFormat::VER_HAVESRCURI);
 			prop_ver("eapi", &PrintFormat::VER_EAPI);
 			prop_ver("version", &PrintFormat::VER_VERSION);
 			prop_ver("plainversion", &PrintFormat::VER_PLAINVERSION);
@@ -1061,6 +1063,22 @@ void PrintFormat::VER_ISSUBSLOT(OutputString *s, Package *package) const {
 	if(!(ver_versionslot(package)->subslotname.empty())) {
 		s->set_one();
 	}
+}
+
+void PrintFormat::VER_HAVESRCURI(OutputString *s, Package * /* package */) const {
+	if(unlikely(version_variables->isinst)) {
+		return;
+	}
+	if(!version_variables->version()->src_uri.empty()) {
+		s->set_one();
+	}
+}
+
+void PrintFormat::VER_SRCURI(OutputString *s, Package * /* package */) const {
+	if(unlikely(version_variables->isinst)) {
+		return;
+	}
+	s->assign_smart(version_variables->version()->src_uri);
 }
 
 void PrintFormat::VER_EAPI(OutputString *s, Package *package) const {

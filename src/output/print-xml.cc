@@ -199,10 +199,14 @@ void PrintXml::package(Package *pkg) {
 			eix::print(" slot=\"%s\"")
 				% escape_xmlstring(true, ver->get_longfullslot());
 		}
+		if(!ver->src_uri.empty()) {
+			eix::print(" srcURI=\"%s\"")
+				% escape_xmlstring(true, ver->src_uri);
+		}
 		if(versionInstalled) {
 			eix::print(" installed=\"1\" installDate=\"%s\" installEAPI=\"%s\"")
 				% escape_xmlstring(true, date_conv(dateformat.c_str(), installedVersion->instDate))
-				% escape_xmlstring(false, installedVersion->eapi.get());
+				% escape_xmlstring(true, installedVersion->eapi.get());
 		}
 		eix::say('>');
 

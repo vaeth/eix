@@ -355,8 +355,13 @@ AddOption(BOOLEAN, "DEPS_INSTALLED",
 
 AddOption(BOOLEAN, "DEP",
 	DEP_DEFAULT, P_("DEP",
-	"If true, store/use {R,P,H,}DEPEND (e.g. shown with eix -lv).\n"
+	"If true, store/use {R,P,B,}DEPEND (e.g. shown with eix -lv).\n"
 	"Usage of DEP roughly doubles disk resp. memory requirements."));
+
+AddOption(BOOLEAN, "SRC_URI",
+	SRC_URI_DEFAULT, P_("SRC_URI",
+	"If true, store/use SRC_URI (e.g. shown with eix -lv).\n"
+	"Usage of SRC_URI roughly doubles disk resp. memory requirements."));
 
 AddOption(BOOLEAN, "REQUIRED_USE",
 	REQUIRED_USE_DEFAULT, P_("REQUIRED_USE",
@@ -623,6 +628,11 @@ AddOption(BOOLEAN, "VERSION_KEYWORDS_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
 	"If true, eix --versionlines --verbose outputs KEYWORDS."));
 
+AddOption(BOOLEAN, "PRINT_SRC_URI",
+	"true", P_("PRINT_SRC_URI",
+	"This variable is only used for delayed substitution.\n"
+	"If false, SRC_URI is never output."));
+
 AddOption(BOOLEAN, "PRINT_EAPI",
 	"true", P_("PRINT_EAPI",
 	"This variable is only used for delayed substitution.\n"
@@ -866,6 +876,13 @@ AddOption(STRING, "MATCH_FIELD_DEPS",
 	"This variable is only used for delayed substitution.\n"
 	"It is a regular expression used in DEFAULT_MATCH_FIELD for deps."));
 
+AddOption(STRING, "MATCH_FIELD_SRC_URI",
+	"%{MATCH_FIELD_HOMEPAGE}", P_("MATCH_FIELD_SRC_URI",
+	"This variable is only used for delayed substitution.\n"
+	"It is a regular expression used in DEFAULT_MATCH_FIELD for src-uri.\n"
+	"If it is identical to MATCH_FIELD_HOMEPAGE, it is de facto disabled,\n"
+	"because the latter takes precedence."));
+
 AddOption(STRING, "MATCH_FIELD_EAPI",
 	"%{MATCH_FIELD_CATEGORY_NAME}", P_("MATCH_FIELD_EAPI",
 	"This variable is only used for delayed substitution.\n"
@@ -880,14 +897,16 @@ AddOption(STRING, "DEFAULT_MATCH_FIELD",
 	"%{\\MATCH_FIELD_CATEGORY_NAME} category/name "
 	"%{\\MATCH_FIELD_LICENSE} license "
 	"%{\\MATCH_FIELD_DEPS} deps "
+	"%{\\MATCH_FIELD_SRC_URI} src-uri "
 	"%{\\MATCH_FIELD_EAPI} eapi "
 	"name", P_("DEFAULT_MATCH_FIELD",
 	"This is a list of strings of the form regexp[ ]match_field.\n"
 	"If regexp matches the search pattern, use match_field as the default.\n"
 	"A fallback match_field may be specified as the last entry in the list.\n"
 	"Admissible values for match_field are: name, category, category/name,\n"
-	"description, license, homepage, set, slot, installed-slot, use\n"
-	"with-use, without-use, error."));
+	"description, license, homepage, set, eapi, slot, installed-slot, use,\n"
+	"with-use, without-use, src-uri, deps, depend, rdepend, pdepend, bdepend,\n"
+	"error."));
 
 AddOption(STRING, "MATCH_ALGORITHM_REGEX",
 	"[][^$|()]|[.][*+?]", P_("MATCH_ALGORITHM_REGEX",
@@ -1333,6 +1352,11 @@ AddOption(STRING, "COLOR_DATE",
 	"purple,1;%{BG0S}|166;%{BG1}|purple,1;%{BG2}|130,1;%{BG3}", P_("COLOR_DATE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the date."));
+
+AddOption(STRING, "COLOR_SRC_URI",
+	"%{COLOR_NORMAL}", P_("COLOR_SRC_URI",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color of the SRC_URI output."));
 
 AddOption(STRING, "COLOR_EAPI",
 	"green,1;%{BG0S}|80;%{BG1}|green;%{BG2}|80;%{BG3}", P_("COLOR_EAPI",
@@ -1875,6 +1899,11 @@ AddOption(STRING, "DATESORT",
 	"This variable is used as a version formatter.\n"
 	"It is an example for usage as <installedversions:DATESORT>. Typical usage:\n"
 	"eix -'*I' --format '<installedversions:DATESORT>' | sort | cut -f2-3"));
+
+AddOption(STRING, "FORMAT_SRC_URI",
+	"(%{COLOR_SRC_URI})<srcuri>(%{COLOR_RESET})", P_("FORMAT_SRC_URI",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the SRC_URI output."));
 
 AddOption(STRING, "FORMAT_EAPI",
 	"(%{COLOR_EAPI})<eapi>(%{COLOR_RESET})", P_("FORMAT_EAPI",
@@ -2537,6 +2566,19 @@ AddOption(STRING, "FORMAT_DEPS_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the verbose format for DEPs for an available version."));
 
+AddOption(STRING, "FORMAT_SRC_URI_VERBOSE",
+	"%{?PRINT_SRC_URI}"
+		"%{!PRINT_ALWAYS}{havesrcuri}%{}"
+			"%{FORMAT_VER_LINESKIP}"
+			"(%{COLOR_AVAILABLE_TITLE})%{I18N_SRC_URI}(%{COLOR_RESET})"
+			"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
+			"%{?PRINT_ALWAYS}{havesrcuri}%{}"
+			"%{FORMAT_SRC_URI}"
+		"{}"
+	"%{}", P_("FORMAT_SRC_URI_VERBOSE",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the verbose format for the SRC_URI of an available version."));
+
 AddOption(STRING, "FORMAT_EAPI_VERBOSE",
 	"%{?PRINT_EAPI}"
 		"%{FORMAT_VER_LINESKIP}"
@@ -2580,6 +2622,7 @@ AddOption(STRING, "FORMAT_VERSION_APPENDIX_VERBOSE",
 	"%{FORMAT_IUSE_VERBOSE}"
 	"%{FORMAT_REQUIRED_USE_VERBOSE}"
 	"%{FORMAT_DEPS_VERBOSE}"
+	"%{FORMAT_SRC_URI_VERBOSE}"
 	"%{FORMAT_EAPI_VERBOSE}"
 	"%{FORMAT_MASKREASONS_VERBOSE}", P_("FORMAT_VERSION_APPENDIX_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
@@ -2761,6 +2804,12 @@ AddOption(STRING, "IVERBOSE",
 			"\\C<%{I18N_COLUMN_INST_CONTENT}>"
 			"%{FORMAT_BDEPEND_VERBOSE}"
 		"{}"
+	"%{}"
+	"%{?PRINT_SRC_URI}"
+		"%{FORMAT_INST_LINESKIP}"
+		"(%{COLOR_INST_TITLE})%{I18N_SRC_URI}(%{COLOR_RESET})"
+		"\\C<%{I18N_COLUMN_INST_CONTENT}>"
+		"%{FORMAT_SRC_URI}"
 	"%{}"
 	"%{?PRINT_EAPI}"
 		"%{FORMAT_INST_LINESKIP}"

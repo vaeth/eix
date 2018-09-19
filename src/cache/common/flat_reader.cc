@@ -45,7 +45,7 @@ bool FlatReader::skip_lines(const eix::TinyUnsigned nr, ifstream *is, const stri
 /**
 Read the keywords and slot from a flat cache file
 **/
-void FlatReader::get_keywords_slot_iuse_restrict(const string& filename, string *eapi, string *keywords, string *slotname, string *iuse, string *required_use, string *restr, string *props, Depend *dep) {
+void FlatReader::get_keywords_slot_iuse_restrict(const string& filename, string *eapi, string *keywords, string *slotname, string *iuse, string *required_use, string *restr, string *props, Depend *dep, string *src_uri) {
 	ifstream is(filename.c_str());
 	if(!is.is_open()) {
 		m_cache->m_error_callback(eix::format(_("cannot open %s: %s"))
@@ -60,7 +60,11 @@ void FlatReader::get_keywords_slot_iuse_restrict(const string& filename, string 
 		skip_lines(2, &is, filename);
 	}
 	getline(is, *slotname);
-	skip_lines(1, &is, filename);
+	if(ExtendedVersion::use_src_uri) {
+		getline(is, *src_uri);
+	} else {
+		skip_lines(1, &is, filename);
+	}
 	getline(is, *restr);
 	skip_lines(3, &is, filename);
 	getline(is, *keywords);

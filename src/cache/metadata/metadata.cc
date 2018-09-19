@@ -275,7 +275,7 @@ void MetadataCache::get_version_info(const string &pkg_name, const string &ver_n
 	path.append(pkg_name);
 	path.append(1, '-');
 	path.append(ver_name);
-	(reader->get_keywords_slot_iuse_restrict)(path, &eapi, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend));
+	(reader->get_keywords_slot_iuse_restrict)(path, &eapi, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend), &(version->src_uri));
 	version->eapi.assign(eapi);
 	version->set_slotname(slot);
 	version->set_full_keywords(keywords);

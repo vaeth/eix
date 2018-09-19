@@ -318,6 +318,8 @@ class PrintFormat {
 		ATTRIBUTE_NONNULL_ void VER_ISSLOT(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_SUBSLOT(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_ISSUBSLOT(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_HAVESRCURI(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_SRCURI(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_EAPI(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_VERSION(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_PLAINVERSION(OutputString *s, Package *package) const;

@@ -172,6 +172,7 @@ Vector names of world sets
 Number This is a bitmask:
        0x01: dependencies are stored
        0x02: REQUIRED_USE is stored
+       0x04: SRC_URI is stored
 
        The rest occurs only if dependencies are stored
 Number Length of the subsequent hash in bytes
@@ -258,7 +259,7 @@ HashedWords  Useflags of this version
              The following occurs only if REQUIRED_USE is stored
 HashedWords  REQUIRED_USE of this version
 
-             The rest occurs only if dependencies are stored
+             The following occurs only if dependencies are stored
 Number       Length of the next four entries in bytes
 HashedWords  DEPEND of this version; the quotation symbol means
              the content of RDEPEND (it occurs only as separate word)
@@ -266,6 +267,9 @@ HashedWords  RDEPEND of this version; the quotation symbol means
              the content of DEPEND (it occurs only as separate word)
 HashedWords  PDEPEND of this version
 HashedWords  BDEPEND of this version
+
+             The following occurs only if SRC_URI is stored
+String       SRC_URI
 ============ ========================================================
 
 

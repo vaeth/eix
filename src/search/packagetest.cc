@@ -51,7 +51,9 @@ const PackageTest::MatchField
 		PackageTest::IUSE,
 		PackageTest::USE_ENABLED,
 		PackageTest::USE_DISABLED,
+		PackageTest::SRC_URI,
 		PackageTest::EAPI,
+		PackageTest::INST_EAPI,
 		PackageTest::SLOT,
 		PackageTest::FULLSLOT,
 		PackageTest::INST_SLOT,
@@ -135,7 +137,7 @@ PackageTest::~PackageTest() {
 
 void PackageTest::calculateNeeds() {
 	need = PackageReader::NONE;
-	if((field & (EAPI | SLOT | FULLSLOT | SET)) != NONE) {
+	if((field & (SRC_URI | EAPI | SLOT | FULLSLOT | SET)) != NONE) {
 		setNeeds(PackageReader::VERSIONS);
 	}
 	if((field & HOMEPAGE) != NONE) {
@@ -200,6 +202,14 @@ bool PackageTest::stringMatch(Package *pkg) const {
 	|| (((field & CATEGORY_NAME) != NONE) && (*algorithm)((pkg->category + "/" + pkg->name).c_str(), pkg, true))
 	|| (((field & HOMEPAGE) != NONE) && (*algorithm)(pkg->homepage.c_str(), pkg))) {
 		return true;
+	}
+
+	if((field & SRC_URI) != NONE) {
+		for(Package::iterator it(pkg->begin());
+			likely(it != pkg->end()); ++it) {
+			if((*algorithm)(it->src_uri.c_str(), pkg))
+				return true;
+		}
 	}
 
 	if((field & EAPI) != NONE) {

@@ -48,6 +48,8 @@ const ExtendedVersion::HaveBinPkg
 	ExtendedVersion::HAVEBINPKG_TBZ,
 	ExtendedVersion::HAVEBINPKG_PAK;
 
+bool ExtendedVersion::use_src_uri;
+
 string ExtendedVersion::get_longfullslot() const {
 	return (subslotname.empty() ? (slotname.empty() ? "0" : slotname) :
 		(slotname.empty() ? (string("0/") + subslotname) : (slotname + "/" + subslotname)));

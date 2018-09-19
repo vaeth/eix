@@ -49,31 +49,32 @@ class PackageTest {
 	public:
 		typedef uint32_t MatchField;
 		static CONSTEXPR const MatchField
-			NONE          = 0x000000U,  ///< Search in name
-			NAME          = 0x000001U,  ///< Search in name
-			DESCRIPTION   = 0x000002U,  ///< Search in description
-			LICENSE       = 0x000004U,  ///< Search in license
-			CATEGORY      = 0x000008U,  ///< Search in category
-			CATEGORY_NAME = 0x000010U,  ///< Search in category/name
-			HOMEPAGE      = 0x000020U,  ///< Search in homepage
-			IUSE          = 0x000040U,  ///< Search in iuse
-			USE_ENABLED   = 0x000080U,  ///< Search in enabled  useflags of installed packages
-			USE_DISABLED  = 0x000100U,  ///< Search in disabled useflags of installed packages
-			EAPI          = 0x000200U,  ///< Search in EAPI
-			INST_EAPI     = 0x000400U,  ///< Search in installed EAPI
-			SLOT          = 0x000800U,  ///< Search in slots
-			FULLSLOT      = 0x001000U,  ///< Search in full slots
-			INST_SLOT     = 0x002000U,  ///< Search in installed slots
-			INST_FULLSLOT = 0x004000U,  ///< Search in installed full slots
-			SET           = 0x008000U,  ///< Search in sets
-			DEPENDA       = 0x010000U,  ///< Search in DEPEND (available)
-			RDEPENDA      = 0x020000U,  ///< Search in RDEPEND (available)
-			PDEPENDA      = 0x040000U,  ///< Search in PDEPEND (available)
-			BDEPENDA      = 0x080000U,  ///< Search in BDEPEND (available)
-			DEPENDI       = 0x100000U,  ///< Search in DEPEND (installed)
-			RDEPENDI      = 0x200000U,  ///< Search in RDEPEND (installed)
-			PDEPENDI      = 0x400000U,  ///< Search in PDEPEND (installed)
-			BDEPENDI      = 0x800000U,  ///< Search in BDEPEND (installed)
+			NONE          = 0x0000000U,  ///< Search in name
+			NAME          = 0x0000001U,  ///< Search in name
+			DESCRIPTION   = 0x0000002U,  ///< Search in description
+			LICENSE       = 0x0000004U,  ///< Search in license
+			CATEGORY      = 0x0000008U,  ///< Search in category
+			CATEGORY_NAME = 0x0000010U,  ///< Search in category/name
+			HOMEPAGE      = 0x0000020U,  ///< Search in homepage
+			IUSE          = 0x0000040U,  ///< Search in iuse
+			USE_ENABLED   = 0x0000080U,  ///< Search in enabled  useflags of installed packages
+			USE_DISABLED  = 0x0000100U,  ///< Search in disabled useflags of installed packages
+			SRC_URI       = 0x0000200U,  ///< Search in SRC_URI
+			EAPI          = 0x0000400U,  ///< Search in EAPI
+			INST_EAPI     = 0x0000800U,  ///< Search in installed EAPI
+			SLOT          = 0x0001000U,  ///< Search in slots
+			FULLSLOT      = 0x0002000U,  ///< Search in full slots
+			INST_SLOT     = 0x0004000U,  ///< Search in installed slots
+			INST_FULLSLOT = 0x0008000U,  ///< Search in installed full slots
+			SET           = 0x0010000U,  ///< Search in sets
+			DEPENDA       = 0x0020000U,  ///< Search in DEPEND (available)
+			RDEPENDA      = 0x0040000U,  ///< Search in RDEPEND (available)
+			PDEPENDA      = 0x0080000U,  ///< Search in PDEPEND (available)
+			BDEPENDA      = 0x0100000U,  ///< Search in BDEPEND (available)
+			DEPENDI       = 0x0200000U,  ///< Search in DEPEND (installed)
+			RDEPENDI      = 0x0400000U,  ///< Search in RDEPEND (installed)
+			PDEPENDI      = 0x0800000U,  ///< Search in PDEPEND (installed)
+			BDEPENDI      = 0x1000000U,  ///< Search in BDEPEND (installed)
 			DEPEND        = DEPENDA | DEPENDI,
 			RDEPEND       = RDEPENDA | RDEPENDI,
 			PDEPEND       = PDEPENDA | PDEPENDI,
@@ -81,7 +82,7 @@ class PackageTest {
 			DEPSA         = DEPENDA | RDEPENDA | PDEPENDA | BDEPENDA,
 			DEPSI         = DEPENDI | RDEPENDI | PDEPENDI | BDEPENDI,
 			DEPS          = DEPSA | DEPSI,
-			ANY           = NAME | DESCRIPTION | LICENSE | CATEGORY | CATEGORY_NAME | HOMEPAGE | IUSE | USE_ENABLED | USE_DISABLED | EAPI | INST_EAPI | SLOT | FULLSLOT | INST_SLOT | INST_FULLSLOT | SET | DEPS;
+			ANY           = NAME | DESCRIPTION | LICENSE | CATEGORY | CATEGORY_NAME | HOMEPAGE | IUSE | USE_ENABLED | USE_DISABLED | SRC_URI | EAPI | INST_EAPI | SLOT | FULLSLOT | INST_SLOT | INST_FULLSLOT | SET | DEPS;
 
 		enum MatchAlgorithm {
 			ALGO_REGEX,

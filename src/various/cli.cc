@@ -468,6 +468,9 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 			case O_SEARCH_SET: USE_TEST;
 				*test |= PackageTest::SET;
 				break;
+			case O_SEARCH_SRC_URI: USE_TEST;
+				*test |= PackageTest::SRC_URI;
+				break;
 			case O_SEARCH_EAPI: USE_TEST;
 				*test |= PackageTest::EAPI;
 				break;

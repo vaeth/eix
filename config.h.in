@@ -391,6 +391,9 @@
 /* Default ROOT */
 #undef ROOT_DEFAULT
 
+/* Default SRC_URI */
+#undef SRC_URI_DEFAULT
+
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 

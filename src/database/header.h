@@ -50,9 +50,10 @@ class DBHeader {
 		static CONSTEXPR const SaveBitmask
 			SAVE_BITMASK_NONE         = 0x00U,
 			SAVE_BITMASK_DEP          = 0x01U,
-			SAVE_BITMASK_REQUIRED_USE = 0x02U;
+			SAVE_BITMASK_REQUIRED_USE = 0x02U,
+			SAVE_BITMASK_SRC_URI      = 0x04U;
 
-		bool use_depend, use_required_use;
+		bool use_depend, use_required_use, use_src_uri;
 
 		WordVec world_sets;
 
@@ -74,7 +75,7 @@ class DBHeader {
 		/**
 		Current version of database-format and what we accept
 		**/
-		static CONSTEXPR const DBVersion current = 37;
+		static CONSTEXPR const DBVersion current = 38;
 		static const DBHeader::DBVersion accept[];
 
 		/**
