@@ -18,7 +18,7 @@ option('strong-security', type : 'boolean', value : false,
 	description : 'append paranoic security options to flags; slowdown')
 option('nopie-security', type : 'boolean', value : false,
 	description : 'as strong-security but avoid pie to make sanitizer work')
-option('optimization', type : 'boolean', value : false,
+option('normal-optimization', type : 'boolean', value : false,
 	description : 'append optimization flags')
 option('strong-optimization', type : 'boolean', value : false,
 	description : 'use also optimization flags which might not work on broken compilers')

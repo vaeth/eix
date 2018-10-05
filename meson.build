@@ -1,5 +1,5 @@
 project('eix', 'cpp',
-	version : '0.33.5',
+	version : '0.33.6',
 	license : 'GPLv2',
 	default_options : [
 		'prefix=/usr',
@@ -17,13 +17,13 @@ paranoic_asserts = get_option('paranoic-asserts')
 security = get_option('security')
 strong_security = get_option('strong-security')
 nopie_security = get_option('nopie-security')
-optimization = get_option('optimization')
+normal_optimization = get_option('normal-optimization')
 strong_optimization = get_option('strong-optimization')
 warnings = get_option('warnings')
 strong_warnings = get_option('strong-warnings')
 
 dead_code_msg = ''
-optimization_msg = ''
+normal_optimization_msg = ''
 strong_optimization_msg = ''
 paranoic_asserts_msg = ''
 warnings_msg = ''
@@ -42,13 +42,13 @@ if debugging and strong_optimization
 	strong_optimization = false
 	strong_optimization_msg = ' (disabled by debugging)'
 endif
-if debugging and optimization
-	optimization = false
-	optimization_msg = ' (disabled by debugging)'
+if debugging and normal_optimization
+	normal_optimization = false
+	normal_optimization_msg = ' (disabled by debugging)'
 endif
-if strong_optimization and not optimization
-	optimization = true
-	optimization_msg = ' (disabled by strong-optimization)'
+if strong_optimization and not normal_optimization
+	normal_optimization = true
+	normal_optimization_msg = ' (forced by strong-optimization)'
 endif
 if paranoic_asserts and strong_optimization
 	strong_optimization = false
@@ -75,7 +75,7 @@ result += [ 'paranoic-asserts=' + paranoic_asserts.to_string() + paranoic_assert
 result += [ 'security=' + security.to_string() + security_msg ]
 result += [ 'strong_security=' + strong_security.to_string() + strong_security_msg ]
 result += [ 'nopie_security=' + nopie_security.to_string() ]
-result += [ 'optimization=' + optimization.to_string() + optimization_msg ]
+result += [ 'normal-optimization=' + normal_optimization.to_string() + normal_optimization_msg ]
 result += [ 'strong-optimization=' + strong_optimization.to_string() + strong_optimization_msg ]
 result += [ 'warnings=' + warnings.to_string() + warnings_msg ]
 result += [ 'strong-warnings=' + strong_warnings.to_string() ]
@@ -257,7 +257,6 @@ if new_dialect
 				else
 					message('CXXFLAGS: ' + o)
 				endif
-				continue = false
 			endif
 		endif
 	endforeach
@@ -294,7 +293,7 @@ if debugging
 		[ '-ggdb3' ],
 	]
 endif
-if optimization
+if normal_optimization
 	cxxflags_opt += [
 		[ '-O2' ],
 		[ '-fomit-frame-pointer' ],
@@ -577,7 +576,7 @@ foreach o : ldflags_force
 endforeach
 
 foreach c : ldcxxflags_opt
-	continue = true
+	check_rest = true
 	foreach o : c
 		t = flags_fatal
 		t += [ o ]
@@ -585,10 +584,10 @@ foreach c : ldcxxflags_opt
 			message('LDFLAGS: ' + o)
 			ldflags_add += [ o ]
 			add_global_link_arguments(o, language : 'cpp')
-			continue = false
+			check_rest = false
 		endif
 	endforeach
-	if continue
+	if check_rest
 		t = 'NO:'
 		foreach o : c
 			t += ' ' + o
@@ -598,9 +597,9 @@ foreach c : ldcxxflags_opt
 endforeach
 
 foreach c : ldcxxflags_opt
-	continue = true
+	check_rest = true
 	foreach o : c
-		if continue
+		if check_rest
 			t = flags_fatal
 			t += [ o ]
 			if cxx.links(stresstest, args : t)
@@ -609,11 +608,11 @@ foreach c : ldcxxflags_opt
 				add_global_arguments(o, language : 'cpp')
 				ldflags_add += [ o ]
 				add_global_link_arguments(o, language : 'cpp')
-				continue = false
+				check_rest = false
 			endif
 		endif
 	endforeach
-	if continue
+	if check_rest
 		t = 'NO:'
 		foreach o : c
 			t += ' ' + o
@@ -623,9 +622,9 @@ foreach c : ldcxxflags_opt
 endforeach
 
 foreach c : cxxflags_opt
-	continue = true
+	check_rest = true
 	foreach o : c
-		if continue
+		if check_rest
 			t = flags_fatal
 			t += [ o ]
 			if cxx.links(stresstest, args : t)
@@ -638,11 +637,11 @@ foreach c : cxxflags_opt
 				else
 					message('CXXFLAGS: ' + o)
 				endif
-				continue = false
+				check_rest = false
 			endif
 		endif
 	endforeach
-	if continue
+	if check_rest
 		t = 'NO:'
 		foreach o : c
 			t += ' ' + o

@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.33.6
+	Martin Väth <martin at mvath.de>:
+	- meson: rename optimization -> normal-optimization to avoid clash
+	- meson: fix message for forced optimization
+	- meson: internal: avoid clashing variable name continue, cosmetics
+
 *eix-0.33.5
 	Martin Väth <martin at mvath.de>:
 	- New search options --{available,installed}-{deps,{,r,p,b}depend}
