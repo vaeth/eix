@@ -45,6 +45,7 @@ static CONSTEXPR const ColorType
 	acNone       = 0,
 	amNone       = 50,
 	amBold       = 1,
+	amItalic     = 3,
 	amUnderlined = 4,
 	amBlink      = 5,
 	amInverse    = 7,
@@ -68,6 +69,7 @@ void AnsiColor::init_static() {
 	color_map["none"]       = amNone;
 	color_map["default"]    = acNone;
 	color_map["bold"]       = amBold;
+	color_map["italic"]     = amItalic;
 	color_map["underline"]  = amUnderlined;
 	color_map["underlined"] = amUnderlined;
 	color_map["blink"]      = amBlink;
