@@ -1583,7 +1583,7 @@ B<MARKER_ODER_COLOR> ist entweder ein Markername oder ein Farbname,
 optional gefolgt von B<,1> (oder B<,0>) für (nicht-)helle Farbwahl.
 
 Verfügbare Markernamen:
-I<none bold underline blink inverse>
+I<none bold italic underline blink inverse>
 
 Verfügbare Farbnamen:
 I<default black red green yellow blue purple cyan gray 0 ... 255>

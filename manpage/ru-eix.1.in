@@ -1560,7 +1560,7 @@ B<MARKER_OR_COLOR> is either a marker attribute or a color name, optionally
 followed by B<,1> (or B<,0>) to specify that bright color should (not) be used.
 
 Available marker attributes are:
-I<none bold underline blink inverse>
+I<none bold italic underline blink inverse>
 
 Available colors are:
 I<default black red green yellow blue purple cyan gray 0 ... 255>
