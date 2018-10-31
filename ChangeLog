@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.33.7
+	Wolfgang Müller (https://github.com/vehk):
+	- Add support for italics in COLORSTRING
+
 *eix-0.33.6
 	Martin Väth <martin at mvath.de>:
 	- meson: rename optimization -> normal-optimization to avoid clash
