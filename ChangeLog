@@ -1,6 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.33.7
+	Martin Väth <mvath at google.com>:
+	- Support relative pathnames in make.conf, see
+	  https://github.com/vaeth/eix/issues/57
+
 	Wolfgang Müller (https://github.com/vehk):
 	- Add support for italics in COLORSTRING
 

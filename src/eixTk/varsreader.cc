@@ -1172,6 +1172,9 @@ settings (except for APPEND_VALUES),
 adding variables and changed HAVE_READ to current instance.
 **/
 bool VarsReader::source(const string& filename, string *errtext) {
+	if(filename.empty()) {
+		return false;
+	}
 	VarsReader includefile((parse_flags & (~APPEND_VALUES)) | INTO_MAP);
 	includefile.accumulatingKeys(incremental_keys);
 	includefile.useMap(vars);
@@ -1183,6 +1186,18 @@ bool VarsReader::source(const string& filename, string *errtext) {
 			iterator it(vars->find(source_prefix));
 			if(it != vars->end())
 				currprefix = it->second;
+		}
+	}
+	if(filename[0] != '/') {
+		const char *last_slash = std::strrchr(file_name, '/');
+		if(last_slash == NULLPTR) {
+			if(currprefix.empty() || (currprefix[currprefix.size() - 1] != '/')) {
+				currprefix.append(1, '/');
+			}
+		} else {
+GCC_DIAG_OFF(sign-conversion)
+			currprefix.assign(file_name, (last_slash - file_name) + 1);
+GCC_DIAG_ON(sign-conversion)
 		}
 	}
 	bool rvalue(includefile.read((currprefix + filename).c_str(), errtext, false, sourced_files));
