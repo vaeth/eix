@@ -4,6 +4,7 @@
 	Martin Väth <mvath at google.com>:
 	- Support relative pathnames in make.conf, see
 	  https://github.com/vaeth/eix/issues/57
+	- Update sqlite links, see https://github.com/vaeth/eix/issues/58
 
 	Wolfgang Müller (https://github.com/vehk):
 	- Add support for italics in COLORSTRING

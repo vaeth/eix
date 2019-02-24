@@ -2851,11 +2851,18 @@ If I<PATH> is specified, this method is equivalent to B<metadata-md5>:I<PATH>.
 .TP
 .B sqlite
 This is an extremely fast cache method if you are using portage with the
-sqlite backend, see I<http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache>
-(originally this was described in
+sqlite backend, see
+http://wikigentoo.ksiezyc.pl/TIP_speed_up_portage_with_sqlite.htm
+or
+https://wiki.gentoo.org/wiki//etc/portage/modules
+(older links to this topic were
 I<http://gentoo-wiki.com/TIP_speed_up_portage_with_sqlite>
-which might be still accessible at
-I<http://gentoo-wiki.info/TIP_speed_up_portage_with_sqlite>).
+or
+I<http://gentoo-wiki.info/TIP_speed_up_portage_with_sqlite>
+or
+I<http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache>
+though apparently none of these do work anymore).
+
 Note that in contrast to the default B<metadata> cache method you must
 use B<emerge --metadata> before you call B<eix-update> with this method.
 

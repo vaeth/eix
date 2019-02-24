@@ -2902,12 +2902,17 @@ Falls der I<PFAD> angegeben ist, ist diese Methode äquivalent zu B<metadata-md5
 .B sqlite
 Dies ist eine extrem schnelle Cachemethode, falls Portage mit dem
 sqlite-Backend benutzt wird, siehe
-I<http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache>
-(dies wurde ursprünglich in
+http://wikigentoo.ksiezyc.pl/TIP_speed_up_portage_with_sqlite.htm
+or
+https://wiki.gentoo.org/wiki//etc/portage/modules
+(ältere Links zu diesem Thema waren
 I<http://gentoo-wiki.com/TIP_speed_up_portage_with_sqlite>
-beschrieben, was möglicherweise noch über
+oder
 I<http://gentoo-wiki.info/TIP_speed_up_portage_with_sqlite>
-erreichbar ist).
+oder
+I<http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache>
+obwohl anscheinend keiner davon mehr erreichbar ist).
+
 Beachten Sie, dass im Gegensatz zur Vorgabe-Cachemethode B<metadata>
 zunächst B<emerge --metadata> ausgeführt werden muss, bevor
 B<eix-update> diese Methode benutzen kann.
