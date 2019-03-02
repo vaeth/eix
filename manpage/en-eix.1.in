@@ -862,7 +862,7 @@ the content of the installed version is read.
 Note that dependencies of installed versions are usually much simpler, e.g. not containing conditionals.
 .TP
 .BR --deps ", " --depend ", " --rdepend ", " --pdepend ", " --bdepend
-These are shortcuts for specifying the corresponding --avilable-* and --installed-* options simultaneously.
+These are shortcuts for specifying the corresponding --available-* and --installed-* options simultaneously.
 .TP
 .BR --set
 Name of a local package set of a version in the database

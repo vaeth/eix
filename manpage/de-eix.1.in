@@ -882,7 +882,7 @@ dass tatsächlich der Inhalt der installierten Version gelesen wird.
 Man beachte, dass Abhängigkeiten installierter Versionen i.d.R. viel einfacher sind und z.B. keine Konditionale enthalten.
 .TP
 .BR --deps ", " --depend ", " --rdepend ", " --pdepend ", " --bdepend
-Dies sind Abkürzungen für die gleichzeitige Angabe der entsprechenden --avilable-* und --installed-* Optionen.
+Dies sind Abkürzungen für die gleichzeitige Angabe der entsprechenden --available-* und --installed-* Optionen.
 .TP
 .BR --set
 Name eine lokalen Paket-Sets oder Version in der Datenbank
