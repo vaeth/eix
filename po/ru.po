@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2018-09-19 18:43+0200\n"
-"PO-Revision-Date: 2018-09-19 18:52+0200\n"
+"POT-Creation-Date: 2019-03-25 17:15+0100\n"
+"PO-Revision-Date: 2019-03-25 17:20+0100\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: ru\n"
@@ -7334,6 +7334,12 @@ msgstr "Превышен уровень рекурсии для каскадны
 #, c-format
 msgid "warning: ignoring parent %s of file %s"
 msgstr "внимание: игнорирую родителя %s файла %s"
+
+# fuzzy
+#: src/portage/conf/portagesettings.cc
+#, c-format
+msgid "error: %s"
+msgstr "Ошибка: %s"
 
 #: src/portage/conf/portagesettings.cc
 msgid "bad category name"

@@ -1,6 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.33.8
+	Martin Väth <mvath at google.com>:
+	- Output errors produced when reading repos.conf, see
+	  https://github.com/vaeth/eix/issues/60
+
 	Marco Leogrande <dark.knight.ita at gmail.com>:
 	- Manpage typo fix
 

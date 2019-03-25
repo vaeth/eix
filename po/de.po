@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2018-09-19 18:43+0200\n"
-"PO-Revision-Date: 2018-09-19 18:52+0200\n"
+"POT-Creation-Date: 2019-03-25 17:15+0100\n"
+"PO-Revision-Date: 2019-03-25 17:19+0100\n"
 "Last-Translator: Martin Väth <martin@mvath.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -8466,6 +8466,11 @@ msgstr "Rekursion in kaskadierendem Profile"
 #, c-format
 msgid "warning: ignoring parent %s of file %s"
 msgstr "Warnung: Ignoriere Elternteil %s der Datei %s"
+
+#: src/portage/conf/portagesettings.cc
+#, c-format
+msgid "error: %s"
+msgstr "Fehler: %s"
 
 #: src/portage/conf/portagesettings.cc
 msgid "bad category name"
