@@ -8,6 +8,9 @@
 	Marco Leogrande <dark.knight.ita at gmail.com>:
 	- Manpage typo fix
 
+	Dmitriy Demura <dmitriy at demura.info>:
+	- Russian translation fix
+
 *eix-0.33.7
 	Martin Väth <mvath at google.com>:
 	- Support relative pathnames in make.conf, see
