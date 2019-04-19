@@ -49,7 +49,6 @@ using std::string;
 using std::vector;
 
 static string *emptystring = NULLPTR;
-static CONSTEXPR const char *error_reading_repos_conf = "error: %s";
 
 typedef char ArchUsed;
 
@@ -237,12 +236,12 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 			string errtext;
 			have_repos = reposfile.read((*eixrc)["PORTAGE_REPOS_CONF"].c_str(), &errtext, true);
 			if(!have_repos) {
-				eix::say_error(_(error_reading_repos_conf)) % errtext;
+				eix::say_error(_("error: %s")) % errtext;
 			}
 			if(reposfile.read((m_eprefixconf + USER_REPOS_CONF).c_str(), &errtext, true)) {
 				have_repos = true;
 			} else {
-				eix::say_error(_(error_reading_repos_conf)) % errtext;
+				eix::say_error(_("error: %s")) % errtext;
 			}
 		}
 		const string *main_repo(NULLPTR);
