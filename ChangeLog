@@ -5,7 +5,7 @@
 	- Output errors produced when reading repos.conf, see
 	  https://github.com/vaeth/eix/issues/60
 
-	Jan Ziak:
+	Jan Ziak <0xe2.0x9a.0x9b at gmail.com>:
 	- Improve performance of StringHash by using an unordered map
 
 	Marco Leogrande <dark.knight.ita at gmail.com>:
