@@ -626,11 +626,11 @@ AS_IF([$security],
 			], [$my_cxxfatal], [$CPPFLAGS], [break])])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-mretpoline \
-			-mindirect-branch=thunk \
-			-mfunction-return=thunk \
 			-mcet \
 			-fcf-protection=full \
 			-fstack-clash-protection \
+			-mindirect-branch=thunk \
+			-mfunction-return=thunk \
 			-D_FORTIFY_SOURCE=2 \
 		], [$my_cxxfatal], [$CPPFLAGS], [:])
 #			-fno-plt # breaks with clang; no proper check known
@@ -657,13 +657,14 @@ AS_IF([$strong_security],
 			-fsanitize=object-size
 			-fsanitize=pointer-compare
 			-fsanitize=pointer-subtract
-			-mmpx
-			-fcheck-pointer-bounds
-			-Wchkp
 		"])
 	# The following -fsanitize do not work properly
 	# -fsanitize=threads
 	# -fsanitize=vptr
+	# The following are no longer supported with gcc-9.0
+	# -mmpx
+	# -fcheck-pointer-bounds
+	# -Wchkp
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			$my_sanitize \
 		], [$my_ldfatal], [], [:])

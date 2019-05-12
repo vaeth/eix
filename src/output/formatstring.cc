@@ -184,7 +184,7 @@ class Darkmode {
 		Darkmode() {
 		}
 
-		Darkmode(bool is_dark, bool is_check) : dark(is_dark), check(is_check) {
+		Darkmode(bool is_dark, bool is_check) NOEXCEPT : dark(is_dark), check(is_check) {
 		}
 };
 

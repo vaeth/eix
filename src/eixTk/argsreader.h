@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "eixTk/attribute.h"
+#include "eixTk/dialect.h"
 #include "eixTk/eixint.h"
 
 typedef std::pair<const char *, const char *> ArgPair;
@@ -45,38 +46,38 @@ class Option {
 		KEEP_PAIR_OPTIONAL     ///< Do not remove. Pair of strings arg.
 	} type;
 
-	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, int *i)
+	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, int *i) NOEXCEPT
 		: type(t), longopt(l), shortopt(s) {
 		u.integer = i;
 	}
 
-	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, bool *b)
+	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, bool *b) NOEXCEPT
 		: type(t), longopt(l), shortopt(s) {
 		u.boolean = b;
 	}
 
-	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, const char *c[])
+	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, const char *c[]) NOEXCEPT
 		: type(t), longopt(l), shortopt(s) {
 		u.str = c;
 	}
 
-	ATTRIBUTE_NONNULL((2, 5, 6)) Option(const char *l, int s, enum Type t, const char *c1[], const char *c2[])
+	ATTRIBUTE_NONNULL((2, 5, 6)) Option(const char *l, int s, enum Type t, const char *c1[], const char *c2[]) NOEXCEPT
 		: type(t), longopt(l), shortopt(s) {
 		u.pr.first = c1;
 		u.pr.second = c2;
 	}
 
-	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, std::vector<const char*> *c)
+	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, std::vector<const char*> *c) NOEXCEPT
 		: type(t), longopt(l), shortopt(s) {
 		u.strlist = c;
 	}
 
-	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, std::vector<ArgPair> *c)
+	ATTRIBUTE_NONNULL((2, 5)) Option(const char *l, int s, enum Type t, std::vector<ArgPair> *c) NOEXCEPT
 		: type(t), longopt(l), shortopt(s) {
 		u.prlist = c;
 	}
 
-	ATTRIBUTE_NONNULL((2)) Option(const char *l, int s, enum Type t = KEEP)
+	ATTRIBUTE_NONNULL((2)) Option(const char *l, int s, enum Type t = KEEP) NOEXCEPT
 		: type(t), longopt(l), shortopt(s) {
 	}
 
@@ -122,10 +123,10 @@ class Parameter {
 		**/
 		int m_option;
 
-		explicit Parameter(int option) : type(Parameter::OPTION), m_option(option) {
+		explicit Parameter(int option) NOEXCEPT : type(Parameter::OPTION), m_option(option) {
 		}
 
-		ATTRIBUTE_NONNULL((2)) explicit Parameter(const char *argument)
+		ATTRIBUTE_NONNULL((2)) explicit Parameter(const char *argument) NOEXCEPT
 			: type(Parameter::ARGUMENT), m_argument(argument) {
 		}
 

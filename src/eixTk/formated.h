@@ -105,7 +105,7 @@ class FormatManip {
 		ManipType m_type;  // true if string desired
 
 	public:
-		FormatManip(std::string::size_type ind, ArgCount anum, ArgType typ) :
+		FormatManip(std::string::size_type ind, ArgCount anum, ArgType typ) NOEXCEPT :
 			m_index(ind), argnum(anum), m_type((typ & DIGIT) == NONE) {  // NOLINT(runtime/references)
 		}
 };

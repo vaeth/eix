@@ -522,10 +522,10 @@ if security
 	cxxflags_opt += [
 		# [ '-fno-plt' ], # breaks with clang; no proper check known
 		[ '-mretpoline' ],
-		[ '-mindirect-branch=thunk' ],
-		[ '-mfunction-return=thunk' ],
 		[ '-mcet' ],
 		[ '-fcf-protection=full' ],
+		[ '-mindirect-branch=thunk' ],
+		[ '-mfunction-return=thunk' ],
 		[ '-D_FORTIFY_SOURCE=2' ],
 	]
 	ldflags_opt += [
@@ -564,9 +564,9 @@ if strong_security
 		[ '-fsanitize=pointer-subtract' ],
 		# [ '-fsanitize=threads' ],
 		# [ '-fsanitize=vptr' ],
-		[ '-mmpx' ],
-		[ '-fcheck-pointer-bounds' ],
-		[ '-Wchkp' ],
+		# [ '-mmpx' ],
+		# [ '-fcheck-pointer-bounds' ],
+		# [ '-Wchkp' ],
 	]
 endif
 
@@ -579,6 +579,7 @@ foreach c : ldcxxflags_opt
 	check_rest = true
 	foreach o : c
 		t = flags_fatal
+		t += ldflags_add
 		t += [ o ]
 		if cxx.links(stresstest, args : t)
 			message('LDFLAGS: ' + o)
@@ -601,6 +602,8 @@ foreach c : ldcxxflags_opt
 	foreach o : c
 		if check_rest
 			t = flags_fatal
+			t += cxxflags_add
+			t += ldflags_add
 			t += [ o ]
 			if cxx.links(stresstest, args : t)
 				message('CXXLDFLAGS: ' + o)
@@ -626,6 +629,10 @@ foreach c : cxxflags_opt
 	foreach o : c
 		if check_rest
 			t = flags_fatal
+			if flto
+				t += ldflags_add
+			endif
+			t += cxxflags_add
 			t += [ o ]
 			if cxx.links(stresstest, args : t)
 				cxxflags_add += [ o ]

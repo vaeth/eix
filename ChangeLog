@@ -4,6 +4,11 @@
 	Martin Väth <mvath at google.com>:
 	- Output errors produced when reading repos.conf, see
 	  https://github.com/vaeth/eix/issues/60
+	- Add some missing NOEXCEPT
+	- meson: add flags immediately to detect collisions
+	- Adapt to gcc-9: Remove obsolete -mmpx -fcheck-pointer-bounds -Wchkp
+	- Adapt to gcc-9: Prefer -fcf-protection=full over
+	  colliding -mindirect-branch=thunk -mfunction-return=thunk
 
 	Jan Ziak <0xe2.0x9a.0x9b at gmail.com>:
 	- Improve performance of StringHash by using an unordered map

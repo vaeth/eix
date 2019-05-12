@@ -78,10 +78,10 @@ class OverlayOption {
 		char opt;
 		const char *arg;
 
-		explicit OverlayOption(char option) : opt(option) {
+		explicit OverlayOption(char option) NOEXCEPT : opt(option) {
 		}
 
-		OverlayOption(char option, const char *argument) :
+		OverlayOption(char option, const char *argument) NOEXCEPT :
 			opt(option), arg(argument) {
 		}
 };
