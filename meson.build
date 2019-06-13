@@ -524,8 +524,8 @@ if security
 		[ '-mretpoline' ],
 		[ '-mcet' ],
 		[ '-fcf-protection=full' ],
-		[ '-mindirect-branch=thunk' ],
-		[ '-mfunction-return=thunk' ],
+		# [ '-mindirect-branch=thunk' ], # breaks with cygwin; no proper check known
+		# [ '-mfunction-return=thunk' ],
 		[ '-D_FORTIFY_SOURCE=2' ],
 	]
 	ldflags_opt += [

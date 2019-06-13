@@ -629,11 +629,11 @@ AS_IF([$security],
 			-mcet \
 			-fcf-protection=full \
 			-fstack-clash-protection \
-			-mindirect-branch=thunk \
-			-mfunction-return=thunk \
 			-D_FORTIFY_SOURCE=2 \
 		], [$my_cxxfatal], [$CPPFLAGS], [:])
 #			-fno-plt # breaks with clang; no proper check known
+#			-mindirect-branch=thunk # breaks with cygwin; no proper check known
+#			-mfunction-return=thunk # breaks with cygwin; no proper check known
 AS_IF([$strong_security],
 	# We try to add -fsanitize=... to LDFLAGS before adding to CXXFLAGS
 	# since on some systems it requires also linking with a library.
