@@ -11,9 +11,9 @@
 
 #include <config.h>  // IWYU pragma: keep
 
-#include "eixTk/attribute.h"
-
 #include <sys/types.h>
+
+#include "eixTk/attribute.h"
 
 typedef size_t Levenshtein;
 

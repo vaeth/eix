@@ -459,7 +459,7 @@ GCC_DIAG_ON(sign-conversion)
 	}
 	// Now finally read the local sets:
 	read_local_sets(sets_dirs);
-}
+}  // NOLINT(readability/fn_size)
 
 PortageSettings::~PortageSettings() {
 	delete profile;
