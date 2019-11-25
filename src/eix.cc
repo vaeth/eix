@@ -145,6 +145,7 @@ static void dump_help() {
 "         --ansi             reset the ansi 256 color palette\n"
 "     -n, --nocolor          do not use ANSI color codes\n"
 "     -F, --force-color      force colorful output\n"
+"         --color            color always/never/auto\n"
 "     -*, --pure-packages    Omit printing of overlay names and package number\n"
 "     -#, --only-names       --pure-packages with format <category>/<name>\n"
 "     -0  --brief (toggle)   Print at most one package then stop. See -q\n"
@@ -274,6 +275,7 @@ static void dump_help() {
 static const char *formatstring;
 static const char *eix_cachefile(NULLPTR);
 static const char *var_to_print(NULLPTR);
+static const char *color(NULLPTR);
 
 enum OverlayMode {
 	mode_list_used_renumbered  = 0,
@@ -368,6 +370,7 @@ EixOptionList::EixOptionList() {
 
 	push_back(Option("nocolor",       'n',     Option::BOOLEAN_T,     &format->no_color));
 	push_back(Option("force-color",   'F',     Option::BOOLEAN_F,     &format->no_color));
+	push_back(Option("color",         O_COLOR, Option::STRING,        &color));
 	push_back(Option("versionlines",  'l',     Option::BOOLEAN,       &format->style_version_lines));
 	push_back(Option("versionsort",   'x',     Option::BOOLEAN,       &format->slot_sorted));
 	push_back(Option("pure-packages", '*',     Option::BOOLEAN,       &rc_options.pure_packages));
@@ -660,6 +663,14 @@ int run_eix(int argc, char** argv) {
 
 	// Read our options from the commandline.
 	ArgumentReader argreader(argc, argv, EixOptionList());
+
+	if(unlikely(color != NULLPTR)) {
+		if(unlikely(strncasecmp("au", color, 2) == 0)) {
+			format->no_color = !is_tty;
+		} else {
+			format->no_color = !EixRc::istrue(color);
+		}
+	}
 
 	if(unlikely(rc_options.ansi)) {
 		AnsiColor::AnsiPalette();

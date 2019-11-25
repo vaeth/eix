@@ -289,6 +289,10 @@ Das Gegenteil von --nocolor.
 Die folgenden speziellen Informations-Optionen versteht nur das eigentliche B<eix>-Programm.
 Sie sind einmalig und ausschließend, d.h. eix gibt nur die entsprechenden Daten aus und beendet sich dann.
 .TP
+.BR --color " " (always / never / auto)
+Überschreibt alle anderen Farboptionen und Variablen:
+Gibt Farben immer, nie, bzw. nur bei Ausgabe auf ein Terminal aus.
+.TP
 .BR --ansi " (auch für eix-diff)"
 Legt die 256-Farbpalette von Todd Larason fest (dem Author des 256-Farbsupports für xterm).
 Benutzen Sie diese Option, wenn ein Tool die normalerweise eingestellte Palette umdefiniert hat.

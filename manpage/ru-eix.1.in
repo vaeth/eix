@@ -281,6 +281,9 @@ The opposite of --nocolor.
 The following special information options are only provided by the B<eix> binary.
 They are one-shot exclusive options, i.e. eix outputs only the required data and then exits.
 .TP
+.BR --color " " (always / never / auto)
+Override all other color options and variables: Colorize always, never, or only if the output goes to some terminal
+.TP
 .BR --ansi " (also for eix-diff)"
 Define the 256 color palette suggested by Todd Larason (the author of the 256 color support for xterm).
 Use this if something some tool has redefined the default palette.

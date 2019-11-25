@@ -93,6 +93,7 @@ class EixRc {
 
 		const std::string& operator[](const std::string& key);
 
+		ATTRIBUTE_PURE static bool istrue(const char *s);
 	private:
 		std::string varprefix;
 		WordUnorderedMap main_map;
@@ -102,7 +103,6 @@ class EixRc {
 
 		enum DelayedType { DelayedNotFound, DelayedVariable, DelayedIfTrue, DelayedIfFalse, DelayedIfNonempty, DelayedIfEmpty, DelayedElse, DelayedFi, DelayedQuote };
 
-		ATTRIBUTE_PURE static bool istrue(const char *s);
 		ATTRIBUTE_NONNULL((3)) static bool getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom *r);
 
 		void modify_value(std::string *value, const std::string& key);

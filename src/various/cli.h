@@ -50,6 +50,7 @@ enum cli_options {
 	O_P256L0,
 	O_P256L1,
 	O_P256B,
+	O_COLOR,
 	O_DUMP,
 	O_DUMP_DEFAULTS,
 	O_KNOWN_VARS,
