@@ -152,15 +152,14 @@ class ArgumentReader : public std::vector<Parameter> {
 
 	private:
 		/**
-		@return shortopt for longopt stored in opt
+		Return shortopt for longopt stored in opt.
 		**/
-		ATTRIBUTE_NONNULL_ static int lookup_longopt(const char *long_opt, const OptionList& opt_table);
+		ATTRIBUTE_NONNULL_ static int lookup_longopt(const char **arg, eix::TinyUnsigned *paramarg_remain, const char *long_opt, const OptionList& opt_table);
 
 		/**
 		Check if short_opt is a known option.
-		@return shortopt
 		**/
-		static int lookup_shortopt(const char short_opt, const OptionList& opt_table);
+		static const Option *lookup_shortopt(const char short_opt, const OptionList& opt_table);
 
 		/**
 		@return option from internal table
@@ -171,6 +170,11 @@ class ArgumentReader : public std::vector<Parameter> {
 		@return number of args for opt
 		**/
 		ATTRIBUTE_PURE static eix::TinyUnsigned numargs(const int opt, const OptionList& opt_table);
+
+		/**
+		@return number of args for opt
+		**/
+		ATTRIBUTE_PURE static eix::TinyUnsigned numargs(Option::Type opt_type);
 
 		/**
 		Fold parameter-list so that a option with an arguments has its argument set

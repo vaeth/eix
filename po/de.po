@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2019-11-25 20:09+0100\n"
-"PO-Revision-Date: 2019-11-25 20:11+0100\n"
+"POT-Creation-Date: 2019-11-27 19:27+0100\n"
+"PO-Revision-Date: 2019-11-27 19:52+0100\n"
 "Last-Translator: Martin Väth <martin@mvath.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -2658,6 +2658,11 @@ msgstr "dunkel, fett"
 #: src/eixTk/ansicolor_print.cc
 msgid "background"
 msgstr "Hintergrund"
+
+#: src/eixTk/argsreader.cc
+#, c-format
+msgid "Option --%s must not have argument but has %s"
+msgstr "Option --%s darf kein Argument haben, hat aber %s"
 
 #: src/eixTk/argsreader.cc
 #, c-format

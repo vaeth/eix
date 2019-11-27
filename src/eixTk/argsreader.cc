@@ -43,7 +43,6 @@ GCC_DIAG_ON(sign-conversion)
 			EMPLACE_BACK(Parameter, (ptr));
 			continue;
 		}
-		int opt;
 		switch(*++ptr) {
 			case '\0':
 				EMPLACE_BACK(Parameter, ("-"));
@@ -61,45 +60,38 @@ GCC_DIAG_ON(sign-conversion)
 						continue;
 					default:
 						/* some longopt */
-						opt = lookup_longopt(ptr, opt_table);
-						EMPLACE_BACK(Parameter, (opt));
-						paramarg_remain = numargs(opt, opt_table);
+						{
+							const char *param;
+							int opt(lookup_longopt(&param, &paramarg_remain, ptr, opt_table));
+							EMPLACE_BACK(Parameter, (opt));
+							if (param != NULLPTR) {
+								EMPLACE_BACK(Parameter, (param));
+							}
+						}
+						break;
 				}
 				break;
 			default:
 				/* some shortopts */
 				for(char c(*ptr); likely(c != '\0'); c = *++ptr) {
-					if(paramarg_remain) {
+					if(paramarg_remain != 0) {
 						EMPLACE_BACK(Parameter, (ptr));
 						--paramarg_remain;
 						break;
 					}
-					opt = lookup_shortopt(c, opt_table);
-					EMPLACE_BACK(Parameter, (opt));
-					paramarg_remain = numargs(opt, opt_table);
+					const Option *option(lookup_shortopt(c, opt_table));
+					EMPLACE_BACK(Parameter, (option->shortopt));
+					paramarg_remain = numargs(option->type);
 				}
+				break;
 		}
 	}
 
 	foldAndRemove(opt_table);
 }
 
-const Option *ArgumentReader::lookup_option(const int opt, const OptionList& opt_table) {
-	for(OptionList::const_iterator it(opt_table.begin());
-		likely(it != opt_table.end()); ++it) {
-		if(unlikely(it->shortopt == opt)) {
-			return &(*it);
-		}
-	}
-	return NULLPTR;
-}
-
-eix::TinyUnsigned ArgumentReader::numargs(const int opt, const OptionList& opt_table) {
-	const Option *c(lookup_option(opt, opt_table));
-	if(c == NULLPTR) {
-		return 0;
-	}
-	switch(c->type) {
+eix::TinyUnsigned ArgumentReader::numargs(const Option::Type opt_type) {
+	switch(opt_type) {
 		case Option::STRING:
 		case Option::STRING_OPTIONAL:
 		case Option::STRINGLIST:
@@ -120,16 +112,50 @@ eix::TinyUnsigned ArgumentReader::numargs(const int opt, const OptionList& opt_t
 	return 0;
 }
 
+const Option *ArgumentReader::lookup_option(const int opt, const OptionList& opt_table) {
+	for(OptionList::const_iterator it(opt_table.begin());
+		likely(it != opt_table.end()); ++it) {
+		if(unlikely(it->shortopt == opt)) {
+			return &(*it);
+		}
+	}
+	return NULLPTR;
+}
+
 /**
 Return shortopt for longopt stored in opt.
+@param arg is set to start of =-separated argument or NULLPTR.
+@param paramargs_remain is set to the number of args remaining for this option after arg.
 @param long_opt longopt that should be resolved.
 @return shortopt for given longopt
 **/
-int ArgumentReader::lookup_longopt(const char *long_opt, const OptionList& opt_table) {
+int ArgumentReader::lookup_longopt(const char **arg, eix::TinyUnsigned *paramargs_remain, const char *long_opt, const OptionList& opt_table) {
 	for(OptionList::const_iterator it(opt_table.begin());
 		likely(it != opt_table.end()); ++it) {
-		if(unlikely((it->longopt != NULLPTR) && (std::strcmp(it->longopt, long_opt) == 0))) {
-			return it->shortopt;
+		const char *optname = it->longopt;
+		if(unlikely(optname == NULLPTR)) {
+			continue;
+		}
+		size_t len = strlen(optname);
+		if(unlikely(std::strncmp(optname, long_opt, len) == 0)) {
+			const char *next = long_opt + len;
+			eix::TinyUnsigned num_args = numargs(it->type);
+			switch(*next) {
+				case '\0':
+					*arg = NULLPTR;
+					*paramargs_remain = num_args;
+					return it->shortopt;
+				case '=':
+					*arg = ++next;
+					if(num_args == 0) {
+						eix::say_error(_("Option --%s must not have argument but has %s")) % optname % next;
+						std::exit(EXIT_FAILURE);
+					}
+					*paramargs_remain = num_args - 1;
+					return it->shortopt;
+				default:
+					break;
+			}
 		}
 	}
 	eix::say_error(_("unknown option --%s")) % long_opt;
@@ -139,18 +165,16 @@ int ArgumentReader::lookup_longopt(const char *long_opt, const OptionList& opt_t
 
 /**
 Check if short_opt is a known option.
-@param long_opt longopt that should be resolved.
-@return shortopt for given longopt
+@param short_opt short_opt that should be resolved.
+@return Option
 **/
-int ArgumentReader::lookup_shortopt(const char short_opt, const OptionList& opt_table) {
-	for(OptionList::const_iterator it(opt_table.begin());
-		likely(it != opt_table.end()); ++it) {
-		if(unlikely(it->shortopt == short_opt))
-			return short_opt;
+const Option *ArgumentReader::lookup_shortopt(const char short_opt, const OptionList& opt_table) {
+	const Option *option = lookup_option(short_opt, opt_table);
+	if (unlikely(option == NULLPTR)) {
+		eix::say_error(_("unknown option -%s")) % short_opt;
+		std::exit(EXIT_FAILURE);
 	}
-	eix::say_error(_("unknown option -%s")) % short_opt;
-	std::exit(EXIT_FAILURE);
-	return 0;  // never reached, but might avoid compiler warning
+	return option;
 }
 
 void ArgumentReader::foldAndRemove(const OptionList& opt_table) {

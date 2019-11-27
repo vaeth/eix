@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2019-11-25 20:09+0100\n"
-"PO-Revision-Date: 2019-11-25 20:10+0100\n"
+"POT-Creation-Date: 2019-11-27 19:27+0100\n"
+"PO-Revision-Date: 2019-11-27 19:52+0100\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: ru\n"
@@ -2709,6 +2709,11 @@ msgstr "тёмный, яркий"
 #: src/eixTk/ansicolor_print.cc
 msgid "background"
 msgstr "фон"
+
+#: src/eixTk/argsreader.cc
+#, c-format
+msgid "Option --%s must not have argument but has %s"
+msgstr ""
 
 #: src/eixTk/argsreader.cc
 #, c-format
