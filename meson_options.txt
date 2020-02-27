@@ -48,6 +48,8 @@ option('sh-shebang', type : 'string', value : 'auto',
 	description : 'use argument as sh script shebang. Pass auto for autodetection')
 option('portdir-cache-method', type : 'string', value : 'metadata-md5-or-flat',
 	description : 'default PORTDIR_CACHE_METHOD')
+option('portdir-default', type : 'string', value : '/var/db/repos/gentoo',
+	description : 'default PORTDIR')
 option('eprefix-default', type : 'string', value : 'auto',
 	description : 'default EPREFIX. Pass auto for autodetection')
 option('eix-prefix-default', type : 'string', value : '',

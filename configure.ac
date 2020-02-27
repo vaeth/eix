@@ -41,7 +41,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.33.9], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
+AC_INIT([eix], [0.33.10], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
 AC_PREREQ([2.64])
 
 m4_ifdef([AC_CONFIG_MACRO_DIR],
@@ -1603,6 +1603,19 @@ AC_DEFINE_UNQUOTED([PORTDIR_CACHE_METHOD],
 	["$PORTDIR_CACHE_METHOD"],
 	[Default PORTDIR_CACHE_METHOD])
 AC_SUBST([PORTDIR_CACHE_METHOD])
+
+AC_MSG_CHECKING([PORTDIR default])
+AC_ARG_WITH([eprefix-default],
+	[AS_HELP_STRING([--with-eprefix-default=STR],
+		[default PORTDIR])],
+	[AS_VAR_COPY([PORTDIR_DEFAULT], [withval])],
+	[AS_VAR_SET([PORTDIR_DEFAULT], ["/var/db/repos/gentoo"])])
+MV_PREFIX(PORTDIR_DEFAULT)
+MV_MSG_RESULT_VAR([PORTDIR_DEFAULT])
+AC_DEFINE_UNQUOTED([PORTDIR_DEFAULT],
+	["$PORTDIR_DEFAULT"],
+	[Default PORTDIR])
+AC_SUBST([PORTDIR_DEFAULT])
 
 AC_MSG_CHECKING([EPREFIX default])
 AC_ARG_WITH([eprefix-default],

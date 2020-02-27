@@ -1,7 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.33.10
+	Martin Väth <martin at mvath.de>:
+	- Add --portdir-default with default /var/db/repos/gentoo, replacing
+	  fallback /usr/portage, see https://github.com/vaeth/eix/issues/69
+
 *eix-0.33.9
-	Martin Väth <mvath at google.com>:
+	Martin Väth <martin at mvath.de>:
 	- Support --longopt=parameter options
 	- Introduce --color {never,always,auto} for overriding, see
 	  https://github.com/vaeth/eix/issues/67
@@ -9,7 +14,7 @@
 	  In gcc-9, this collides with -fcf-protection=full anyway.
 
 *eix-0.33.8
-	Martin Väth <mvath at google.com>:
+	Martin Väth <martin at mvath.de>:
 	- Output errors produced when reading repos.conf, see
 	  https://github.com/vaeth/eix/issues/60
 	- Add some missing NOEXCEPT
@@ -28,7 +33,7 @@
 	- Russian translation fix
 
 *eix-0.33.7
-	Martin Väth <mvath at google.com>:
+	Martin Väth <martin at mvath.de>:
 	- Support relative pathnames in make.conf, see
 	  https://github.com/vaeth/eix/issues/57
 	- Update sqlite links, see https://github.com/vaeth/eix/issues/58

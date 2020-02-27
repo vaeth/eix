@@ -1332,6 +1332,11 @@ subst.set('PORTDIR_CACHE_METHOD', portdir_cache_method)
 conf.set_quoted('PORTDIR_CACHE_METHOD', portdir_cache_method,
 	description : 'Default PORTDIR_CACHE_METHOD')
 
+portdir_default = get_option('portdir-default')
+result += [ 'portdir-default=' + portdir_default ]
+conf.set_quoted('PORTDIR_DEFAULT', portdir_default,
+	description : 'Default PORTDIR')
+
 eprefix_default = get_option('eprefix-default')
 eprefix_default_msg = ''
 if eprefix_default == 'auto'

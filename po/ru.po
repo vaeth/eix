@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2019-11-27 19:27+0100\n"
+"POT-Creation-Date: 2020-02-27 06:08+0100\n"
 "PO-Revision-Date: 2019-11-27 19:52+0100\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -383,18 +383,21 @@ msgstr "Невозможно скопировать базу данных в ${e
 
 # fuzzy
 #: src/eix-postsync.sh.in
+#, sh-format
 msgctxt "eix-sync"
 msgid "Running eix-update"
 msgstr "Запуск eix-update"
 
 # fuzzy
 #: src/eix-postsync.sh.in
+#, sh-format
 msgctxt "Statusline eix-sync"
 msgid "Running eix-update"
 msgstr "Запуск eix-update"
 
 # fuzzy
 #: src/eix-postsync.sh.in
+#, sh-format
 msgctxt "eix-sync"
 msgid "eix-update failed"
 msgstr "ошибка eix-update"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2019-11-27 19:27+0100\n"
+"POT-Creation-Date: 2020-02-27 06:08+0100\n"
 "PO-Revision-Date: 2019-11-27 19:52+0100\n"
 "Last-Translator: Martin Väth <martin@mvath.de>\n"
 "Language-Team: German\n"
@@ -365,16 +365,19 @@ msgid "Could not copy database to ${eixprevious}"
 msgstr "Konnte die Datenbank nicht nach ${eixprevious} kopieren"
 
 #: src/eix-postsync.sh.in
+#, sh-format
 msgctxt "eix-sync"
 msgid "Running eix-update"
 msgstr "Starte eix-update"
 
 #: src/eix-postsync.sh.in
+#, sh-format
 msgctxt "Statusline eix-sync"
 msgid "Running eix-update"
 msgstr "Starte eix-update"
 
 #: src/eix-postsync.sh.in
+#, sh-format
 msgctxt "eix-sync"
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"

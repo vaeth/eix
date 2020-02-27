@@ -131,6 +131,10 @@
    CoreFoundation framework. */
 #undef HAVE_CFLOCALECOPYCURRENT
 
+/* Define to 1 if you have the Mac OS X function
+   CFLocaleCopyPreferredLanguages in the CoreFoundation framework. */
+#undef HAVE_CFLOCALECOPYPREFERREDLANGUAGES
+
 /* Define to 1 if you have the Mac OS X function CFPreferencesCopyAppValue in
    the CoreFoundation framework. */
 #undef HAVE_CFPREFERENCESCOPYAPPVALUE
@@ -384,6 +388,9 @@
 
 /* Default PORTDIR_CACHE_METHOD */
 #undef PORTDIR_CACHE_METHOD
+
+/* Default PORTDIR */
+#undef PORTDIR_DEFAULT
 
 /* Default REQUIRED_USE */
 #undef REQUIRED_USE_DEFAULT

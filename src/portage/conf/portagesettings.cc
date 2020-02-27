@@ -268,7 +268,7 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 			}
 		}
 		if(portdirref.empty()) {
-			portdirref = "/usr/portage";
+			portdirref = PORTDIR_DEFAULT;
 		}
 		/* Normalize "PORTDIR": */
 		portdirref = normalize_path((m_eprefixportdir + portdirref).c_str(), true, true);
