@@ -41,7 +41,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.33.10], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
+AC_INIT([eix], [0.33.11], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
 AC_PREREQ([2.64])
 
 m4_ifdef([AC_CONFIG_MACRO_DIR],
@@ -280,6 +280,8 @@ AS_IF([$new_dialect],
 	[AS_CASE([" $CXXFLAGS $my_cxxadd"],
 		[*" -std="*], [],
 		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+				-std=gnu++20 \
+				-std=c++20 \
 				-std=gnu++2a \
 				-std=c++2a \
 				-std=gnu++17 \
@@ -639,26 +641,26 @@ AS_IF([$strong_security],
 	# since on some systems it requires also linking with a library.
 	[AS_VAR_SET([my_sanitize], ["
 			-faddress-sanitizer
-			-fsanitize=address
-			-fsanitize=leak
 			-fsanitize=undefined
 			-fsanitize=vla-bound
-			-fsanitize=shift
-			-fsanitize=signed-integer-overflow
-			-fsanitize=integer-divide-by-zero
 			-fsanitize=unreachable
 			-fsanitize=null
 			-fsanitize=return
 			-fsanitize=float-divide-by-zero
-			-fsanitize=float-cast-overflow
 			-fsanitize=bounds
 			-fsanitize=bounds-strict
 			-fsanitize=alignment
-			-fsanitize=object-size
 			-fsanitize=pointer-compare
 			-fsanitize=pointer-subtract
 		"])
 	# The following -fsanitize do not work properly
+	# -fsanitize=address
+	# -fsanitize=leak
+	# -fsanitize=shift
+	# -fsanitize=signed-integer-overflow
+	# -fsanitize=integer-divide-by-zero
+	# -fsanitize=float-cast-overflow
+	# -fsanitize=object-size
 	# -fsanitize=threads
 	# -fsanitize=vptr
 	# The following are no longer supported with gcc-9.0
@@ -1605,8 +1607,8 @@ AC_DEFINE_UNQUOTED([PORTDIR_CACHE_METHOD],
 AC_SUBST([PORTDIR_CACHE_METHOD])
 
 AC_MSG_CHECKING([PORTDIR default])
-AC_ARG_WITH([eprefix-default],
-	[AS_HELP_STRING([--with-eprefix-default=STR],
+AC_ARG_WITH([portdir-default],
+	[AS_HELP_STRING([--with-portdir-default=STR],
 		[default PORTDIR])],
 	[AS_VAR_COPY([PORTDIR_DEFAULT], [withval])],
 	[AS_VAR_SET([PORTDIR_DEFAULT], ["/var/db/repos/gentoo"])])

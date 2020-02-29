@@ -60,6 +60,8 @@ test -f "contrib/$name" || {
 test -f "contrib/$name" || Die 'must be run from the main directory'
 
 ver=`sed -ne 's/^[[:space:]]*AC_INIT[[:space:]]*([^,]*,[[:space:][]*\([^],[:space:]]*\).*$/\1/p' configure.ac`
+meson_ver=`sed -ne 's/^[[:space:]]*version[[:space:]]*:[[:space:]]*["'\'']\([^"'\'']*\).*$/\1/p' meson.build`
+[ "$ver" = "$meson_ver" ] || Die "Version $ver and meson version $meson_ver do not match"
 v=v$ver
 
 check=`git tag -l "$v"` || Die "git tag -l $v failed"

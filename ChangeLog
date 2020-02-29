@@ -1,9 +1,16 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.33.11
+	Martin Väth <martin at mvath.de>:
+	- Bugfix: Fix typo in --with-portdir-default
+	- Bugfix: Fix version for meson
+	- Remove those sanitizers which cause linking problems on my systems
+
 *eix-0.33.10
 	Martin Väth <martin at mvath.de>:
-	- Add --portdir-default with default /var/db/repos/gentoo, replacing
-	  fallback /usr/portage, see https://github.com/vaeth/eix/issues/69
+	- Add --with-portdir-default with default /var/db/repos/gentoo,
+	  replacing the previously hardcoded fallback /usr/portage,
+	  see https://github.com/vaeth/eix/issues/69
 
 *eix-0.33.9
 	Martin Väth <martin at mvath.de>:

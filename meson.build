@@ -1,5 +1,5 @@
 project('eix', 'cpp',
-	version : '0.33.8',
+	version : '0.33.11',
 	license : 'GPLv2',
 	default_options : [
 		'prefix=/usr',
@@ -227,6 +227,8 @@ flags_dialect = []
 dialect = 'false'
 if new_dialect
 	foreach d : [
+		'gnu++20',
+		'c++20',
 		'gnu++2a',
 		'c++2a',
 		'gnu++17',
@@ -544,24 +546,24 @@ endif
 if strong_security
 	ldcxxflags_opt += [
 		[ '-faddress-sanitizer' ],
-		[ '-fsanitize=address' ],
-		[ '-fsanitize=leak' ],
 		[ '-fsanitize=undefined' ],
 		[ '-fsanitize=vla-bound' ],
-		[ '-fsanitize=shift' ],
-		[ '-fsanitize=signed-integer-overflow' ],
-		[ '-fsanitize=integer-divide-by-zero' ],
 		[ '-fsanitize=unreachable' ],
 		[ '-fsanitize=null' ],
 		[ '-fsanitize=return' ],
 		[ '-fsanitize=float-divide-by-zero' ],
-		[ '-fsanitize=float-cast-overflow' ],
 		[ '-fsanitize=bounds' ],
 		[ '-fsanitize=bounds-strict' ],
 		[ '-fsanitize=alignment' ],
-		[ '-fsanitize=object-size' ],
 		[ '-fsanitize=pointer-compare' ],
 		[ '-fsanitize=pointer-subtract' ],
+		# [ '-fsanitize=address' ],
+		# [ '-fsanitize=leak' ],
+		# [ '-fsanitize=shift' ],
+		# [ '-fsanitize=signed-integer-overflow' ],
+		# [ '-fsanitize=integer-divide-by-zero' ],
+		# [ '-fsanitize=float-cast-overflow' ],
+		# [ '-fsanitize=object-size' ],
 		# [ '-fsanitize=threads' ],
 		# [ '-fsanitize=vptr' ],
 		# [ '-mmpx' ],
