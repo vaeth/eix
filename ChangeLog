@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.33.12
+	Martin Väth <martin at mvath.de>:
+	- Interpret /0 as no subslot. https://github.com/vaeth/eix/issues/70
+
 *eix-0.33.11
 	Martin Väth <martin at mvath.de>:
 	- Bugfix: Fix typo in --with-portdir-default

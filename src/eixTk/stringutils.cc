@@ -134,23 +134,27 @@ void trimall(string *str, const char *delims, char c) {
 
 /**
 Check if slot contains a subslot and if yes, split it away.
-Also turn slot "0" into nothing
+Also turn slot "0" or subslot "0" into nothing
 **/
 bool slot_subslot(string *slot, string *subslot) {
+	bool ret;
 	string::size_type sep(slot->find('/'));
 	if(sep == string::npos) {
 		subslot->clear();
-		if((*slot) == "0") {
-			slot->clear();
-		}
-		return false;
+		ret = false;
+	} else if ((slot->size() == sep + 2) && (*slot)[sep + 1] == '0') {
+		subslot->clear();
+		slot->resize(sep);
+		ret = false;
+	} else {
+		subslot->assign(*slot, sep + 1, string::npos);
+		slot->resize(sep);
+		ret = true;
 	}
-	subslot->assign(*slot, sep + 1, string::npos);
-	slot->resize(sep);
 	if(*slot == "0") {
 		slot->clear();
 	}
-	return true;
+	return ret;
 }
 
 /**
