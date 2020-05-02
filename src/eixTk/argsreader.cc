@@ -10,6 +10,8 @@
 #include "eixTk/argsreader.h"
 #include <config.h>  // IWYU pragma: keep
 
+#include <sys/types.h>
+
 #include <cstdlib>
 #include <cstring>
 
@@ -60,7 +62,7 @@ GCC_DIAG_ON(sign-conversion)
 						continue;
 					default:
 						/* some longopt */
-						{
+						{  // NOLINT(whitespace/braces)
 							const char *param;
 							int opt(lookup_longopt(&param, &paramarg_remain, ptr, opt_table));
 							EMPLACE_BACK(Parameter, (opt));
@@ -136,7 +138,7 @@ int ArgumentReader::lookup_longopt(const char **arg, eix::TinyUnsigned *paramarg
 		if(unlikely(optname == NULLPTR)) {
 			continue;
 		}
-		size_t len = strlen(optname);
+		size_t len = std::strlen(optname);
 		if(unlikely(std::strncmp(optname, long_opt, len) == 0)) {
 			const char *next = long_opt + len;
 			eix::TinyUnsigned num_args = numargs(it->type);

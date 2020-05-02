@@ -18,7 +18,6 @@
 #include <vector>
 
 #include "eixTk/likely.h"
-#include "eixTk/stringutils.h"
 
 using std::vector;
 

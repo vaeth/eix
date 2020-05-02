@@ -42,6 +42,8 @@ option('extra-doc', type : 'boolean', value : false,
 	description : 'install developer documentation. Might need rst2html.py from docutils')
 option('sqlite', type : 'combo', choices : [ 'auto', 'true', 'false' ],
 	description : 'Compile in support for cache method sqlite')
+option('protobuf', type : 'combo', choices : [ 'auto', 'true', 'false' ],
+	description : 'Compile in support for protobuf output')
 option('dev-null', type : 'string', value : '/dev/null',
 	description : 'null device of the system, usually /dev/null')
 option('sh-shebang', type : 'string', value : 'auto',

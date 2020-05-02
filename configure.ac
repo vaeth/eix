@@ -1592,6 +1592,44 @@ AS_IF([$support_sqlite],
 AC_SUBST([SQLITE_LIBS])
 AC_SUBST([SQLITE_CFLAGS])
 
+# And protobuf?
+AC_MSG_CHECKING([whether protobuf should be used])
+AS_VAR_SET([support_protobuf], [false])
+AS_VAR_SET([manual_protobuf], [false])
+AS_VAR_SET([pkgcfg_check_protobuf], [false])
+AC_ARG_WITH([protobuf],
+	[AS_HELP_STRING([--with-protobuf],
+		[Compile in support for protobuf output])],
+	[AS_CASE(["$withval"],
+		[no], [MV_MSG_RESULT([no], [on request])],
+		[yes], [MV_MSG_RESULT([yes], [on request])
+			AS_VAR_SET([support_protobuf], [:])
+			m4_ifdef([PKG_CHECK_MODULES],
+				[AS_VAR_SET([pkgcfg_check_protobuf], [:])],
+				[AS_VAR_SET([manual_protobuf], [:])])])],
+	[m4_ifdef([PKG_CHECK_MODULES],
+		[MV_MSG_RESULT([trying autodetect])
+		AS_VAR_SET([pkgcfg_check_protobuf], [:])],
+		[MV_MSG_RESULT([no], [autodetection needs pkg-config])])])
+AS_IF([$pkgcfg_check_protobuf],
+	[PKG_CHECK_MODULES([PROTOBUF], [protobuf],
+		[AS_VAR_SET([support_protobuf], [:])],
+		[AS_IF([$support_protobuf],
+			[MV_MSG_RESULT([yes], [although pkg-config failed])
+			AS_VAR_SET([manual_protobuf], [:])],
+			[MV_MSG_RESULT([no], [autodetected])])])])
+AS_IF([$manual_protobuf],
+	[AS_VAR_SET([PROTOBUF_LIBS], ["-lprotobuf"])
+	AS_VAR_SET([PROTOBUF_CFLAGS], [])])
+AS_IF([$support_protobuf],
+	[AC_DEFINE([WITH_PROTOBUF],
+		[1],
+		[Define if support for protobuf is wanted])],
+	[AS_VAR_SET([PROTOBUF_LIBS], [])
+	AS_VAR_SET([PROTOBUF_CFLAGS], [])])
+AC_SUBST([PROTOBUF_LIBS])
+AC_SUBST([PROTOBUF_CFLAGS])
+
 AC_MSG_CHECKING([PORTDIR_CACHE_METHOD default])
 AC_ARG_WITH([portdir-cache-method],
 	[AS_HELP_STRING([--with-portdir-cache-method=STR],

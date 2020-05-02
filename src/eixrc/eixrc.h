@@ -94,6 +94,7 @@ class EixRc {
 		const std::string& operator[](const std::string& key);
 
 		ATTRIBUTE_PURE static bool istrue(const char *s);
+
 	private:
 		std::string varprefix;
 		WordUnorderedMap main_map;

@@ -132,6 +132,10 @@ src/output/formatstring-print.cc
 src/output/formatstring-print.h
 src/output/formatstring.cc
 src/output/formatstring.h
+src/output/eix-proto.cc
+src/output/print-formats.h
+src/output/print-proto.cc
+src/output/print-proto.h
 src/output/print-xml.cc
 src/output/print-xml.h
 src/portage/basicversion.cc

@@ -435,6 +435,9 @@
 /* Define if GCC diagnostic -Wgnu-statement-expression can be used in macro */
 #undef WGNU_STATEMENT_EXPRESSION
 
+/* Define if support for protobuf is wanted */
+#undef WITH_PROTOBUF
+
 /* Define if cache method sqlite is wanted */
 #undef WITH_SQLITE
 

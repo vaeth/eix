@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2020-02-27 06:08+0100\n"
-"PO-Revision-Date: 2019-11-27 19:52+0100\n"
+"POT-Creation-Date: 2020-05-02 19:18+0200\n"
+"PO-Revision-Date: 2020-05-02 19:28+0200\n"
 "Last-Translator: Martin Väth <martin@mvath.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -1667,6 +1667,7 @@ msgid ""
 "                            Usually faster with COUNT_ONLY_PRINTED=false\n"
 "         --brief2 (toggle)  Print at most two packages then stop\n"
 "     --xml (toggle)         output results in XML format\n"
+"     --proto (toggle)       output results in protobuf format\n"
 "     -c, --compact          compact search results\n"
 "     -v, --verbose          verbose search results\n"
 "     -N, --normal           ignores -c, -v, and DEFAULT_FORMAT\n"
@@ -1846,6 +1847,7 @@ msgstr ""
 "                           Dies ist schneller mit COUNT_ONLY_PRINTED=false\n"
 "         --brief2 (toggle) Stop nach Ausgabe höchstens zweiter Pakete\n"
 "     --xml (toggle)        Ausgabe in XML-Format\n"
+"     --proto (toggle)      Ausgabe in protobuf-Format\n"
 "     -c, --compact         Kompakte Ausgabe\n"
 "     -v, --verbose         Ausführliche Ausgabe\n"
 "     -N, --normal          ignoriert -c, -v und DEFAULT_FORMAT\n"
@@ -1979,9 +1981,13 @@ msgid ""
 "It uses database format %s (current is %s).\n"
 "Please run \"%s\" and try again."
 msgstr ""
-"%s wurd mit inkompatiblem eix-update erzeugt:\n"
+"%s wurde mit inkompatiblem eix-update erzeugt:\n"
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte „%s“ ausführen und erneut probieren!"
+
+#: src/eix.cc
+msgid "--xml and --proto must not be specified simultaneously"
+msgstr "--xml und --proto dürfen nicht gleichzeitig gewählt werden"
 
 #: src/eix.cc
 #, c-format
@@ -8433,6 +8439,10 @@ msgstr "Unerlaubter Status: undefiniert"
 #, c-format
 msgid "line %s, column %s: %s"
 msgstr "Zeile %s, Spalte %s: %s"
+
+#: src/output/print-proto.cc
+msgid "protobuf format is not compiled in"
+msgstr "protobuf-Format ist nicht einkompiliert"
 
 #: src/portage/basicversion.cc
 #, c-format

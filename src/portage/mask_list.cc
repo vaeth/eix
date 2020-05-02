@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"

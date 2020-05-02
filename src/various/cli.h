@@ -39,6 +39,7 @@ ATTRIBUTE_NONNULL_ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *
 enum cli_options {
 	O_FMT = 256,
 	O_XML,
+	O_PROTO,
 	O_PRINT_VAR,
 	O_PIPE_MASK,
 	O_ANSI,

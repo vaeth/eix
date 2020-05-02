@@ -14,6 +14,7 @@ eixdatadir = $(datadir)/eix
 AM_CXXFLAGS = \
 -DSYSCONFDIR=\"$(sysconfdir)\" \
 -DLOCALEDIR=\"$(localedir)\" \
+$(PROTOBUF_CFLAGS) \
 $(SQLITE_CFLAGS)
 
 nobase_nodist_sysconf_DATA = \
@@ -225,11 +226,22 @@ eixTk/statusline.h
 
 nodist_percentage_src =
 
-printxml_src = \
+protobuf_src = \
+output/eix.proto
+
+protobuf_generated = \
+output/eix.pb.cc \
+output/eix.pb.h
+
+printformats_src = \
+output/eix-proto.cc \
+output/print-formats.h \
+output/print-proto.cc \
+output/print-proto.h \
 output/print-xml.cc \
 output/print-xml.h
 
-nodist_printxml_src =
+nodist_printformats_src =
 
 outputstring_src = \
 eixTk/outputstring.cc \
@@ -306,9 +318,9 @@ main/main_drop_permissions.cc
 nodist_extra_common_src =
 
 # The search-tool for our database
-eix_only_ldadd =
-eix_only_src = eix.cc $(cli_src) $(printxml_src) $(search_src) eixTk/ansicolor_print.cc
-nodist_eix_only_src = $(nodist_cli_src) $(nodist_printxml_src) $(nodist_search_src)
+eix_only_ldadd = $(PROTOBUF_LIBS)
+eix_only_src = eix.cc $(cli_src) $(printformats_src) $(search_src) eixTk/ansicolor_print.cc
+nodist_eix_only_src = $(nodist_cli_src) $(nodist_printformats_src) $(nodist_search_src)
 extra_eix_only_src =
 nodist_extra_eix_only_src =
 
@@ -345,6 +357,9 @@ eix-remote \
 eix-sync \
 eix-test-obsolete
 
+generate_cachemap = \
+cache/generate_cachemap.sh
+
 # Remove files we don't want ..
 CLEANFILES = \
 cppcomplete.tags \
@@ -363,6 +378,7 @@ $(nodist_update_only_src) \
 $(nodist_extra_update_only_src) \
 $(nodist_common_src) \
 $(nodist_extra_common_src) \
+$(protobuf_generated) \
 eix-diff$(EXEEXT) \
 eix-update$(EXEEXT) \
 eix-header$(EXEEXT) \
@@ -382,7 +398,8 @@ eix-remote.sh.in \
 eix-sync.sh.in \
 eix-test-obsolete.sh.in \
 eixrc/00-eixrc.in \
-cache/generate_cachemap.sh
+$(protobuf_src) \
+$(generate_cachemap)
 
 if SEPARATE_TOOLS
 # Generate separate tools binaries
@@ -639,8 +656,13 @@ install-exec-hook:
 	$(AM_V_at)$(use_separate_diff) || \
 		$(LN_S) "eix$(EXEEXT)" "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)"
 
-cache/cache_map.cc: $(srcdir)/cache/generate_cachemap.sh
-	$(AM_V_GEN)"$(srcdir)/cache/generate_cachemap.sh" > "$@"
+$(nodist_cache_src): $(generate_cachemap)
+	$(AM_V_GEN)$(SHELL) "$(srcdir)"/$(generate_cachemap) > "$@"
+
+$(protobuf_generated): $(protobuf_src)
+	$(AM_V_GEN)/usr/bin/env protoc --cpp_out=. "$<"
+
+output/eix-proto.cc: $(protobuf_generated)
 
 SED_IN = \
 		-e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \

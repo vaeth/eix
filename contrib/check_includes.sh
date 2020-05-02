@@ -154,7 +154,7 @@ Check '<map>' -e '[^_]map<' -e '^map<'
 Check '<set>' -e '[^_]set<' -e '^set<'
 Check '<string>' -e '[^_]string[^>".,;a-z ]' -e 'std::string' -e '[^_]string [a-zA-Z_0-9]* *[;=(]' -e '[a-z]<string[,>]' -e 'const string '
 Check '<vector>' -e '[^_]vector<' -e '^vector<'
-Check '<utility>' -e '[^_]pair<' -e '^pair<'
+Check '<utility>' -e '[^_]pair<' -e '^pair<' -e 'std::swap'
 
 #Check : 'list' -e '[^:_]list<' -e '^list<'
 Check : 'map' -e '[^:_i]map<' -e '^map<'

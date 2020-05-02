@@ -44,6 +44,8 @@
 #include "main/main.h"
 #include "output/formatstring-print.h"
 #include "output/formatstring.h"
+#include "output/print-formats.h"
+#include "output/print-proto.h"
 #include "output/print-xml.h"
 #include "portage/basicversion.h"
 #include "portage/conf/portagesettings.h"
@@ -152,6 +154,7 @@ static void dump_help() {
 "                            Usually faster with COUNT_ONLY_PRINTED=false\n"
 "         --brief2 (toggle)  Print at most two packages then stop\n"
 "     --xml (toggle)         output results in XML format\n"
+"     --proto (toggle)       output results in protobuf format\n"
 "     -c, --compact          compact search results\n"
 "     -v, --verbose          verbose search results\n"
 "     -N, --normal           ignores -c, -v, and DEFAULT_FORMAT\n"
@@ -325,6 +328,7 @@ static struct LocalOptions {
 		dump_defaults,
 		known_vars,
 		xml,
+		proto,
 		test_unused,
 		do_debug,
 		ignore_etc_portage,
@@ -382,6 +386,7 @@ EixOptionList::EixOptionList() {
 	push_back(Option("compact",       'c',     Option::BOOLEAN_T,     &rc_options.compact_output));
 	push_back(Option("normal",        'N',     Option::BOOLEAN_T,     &rc_options.normal_output));
 	push_back(Option("xml",           O_XML,   Option::BOOLEAN,       &rc_options.xml));
+	push_back(Option("proto",         O_PROTO, Option::BOOLEAN,       &rc_options.proto));
 	push_back(Option("help",          'h',     Option::BOOLEAN_T,     &rc_options.show_help));
 	push_back(Option("version",       'V',     Option::BOOLEAN_T,     &rc_options.show_version));
 	push_back(Option("dump",          O_DUMP,  Option::BOOLEAN_T,     &rc_options.dump_eixrc));
@@ -773,7 +778,7 @@ int run_eix(int argc, char** argv) {
 
 	bool only_printed;
 
-	if(unlikely(rc_options.xml)) {
+	if(unlikely(rc_options.xml || rc_options.proto)) {
 		rc_options.pure_packages = format->no_color = true;
 		only_printed = false;
 	} else {
@@ -996,15 +1001,26 @@ int run_eix(int argc, char** argv) {
 	PrintFormat::OverlayUsed overlay_used(header.countOverlays(), false);
 	format->set_overlay_used(&overlay_used, &need_overlay_table);
 	PackageList::size_type count(0);
-	PrintXml *print_xml(NULLPTR);
-	if(rc_options.xml || rc_options.be_quiet) {
+	PrintFormats *print_formats(NULLPTR);
+	if(rc_options.xml || rc_options.proto || rc_options.be_quiet) {
 		overlay_mode = mode_list_none;
 		rc_options.pure_packages = true;
 	}
-	if(rc_options.xml && !matches.empty()) {
-		print_xml = new PrintXml(&header, &varpkg_db, format, &stability, &eixrc,
-			portagesettings["PORTDIR"]);
-		print_xml->start();
+	if (!matches.empty()) {
+		if(rc_options.xml) {
+			if (unlikely(rc_options.proto)) {
+				eix::say_error(_("--xml and --proto must not be specified simultaneously"));
+				std::exit(EXIT_FAILURE);
+			}
+			print_formats = new PrintXml(&header, &varpkg_db, format, &stability, &eixrc,
+				portagesettings["PORTDIR"]);
+		} else if (rc_options.proto) {
+			print_formats = new PrintProto(&header, &varpkg_db, format, &stability,
+				portagesettings["PORTDIR"]);
+		}
+		if (print_formats != NULLPTR) {
+			print_formats->start();
+		}
 	}
 	bool have_printed(false);
 	bool reached_limit(false), over_limit(false);
@@ -1014,8 +1030,8 @@ int run_eix(int argc, char** argv) {
 		likely(it != matches.end()); ++it) {
 		stability.set_stability(*it);
 
-		if(unlikely(rc_options.xml)) {
-			print_xml->package(*it);
+		if(unlikely(print_formats != NULLPTR)) {
+			print_formats->package(*it);
 			continue;
 		}
 
@@ -1090,9 +1106,9 @@ int run_eix(int argc, char** argv) {
 			printed_overlay = have_printed = true;
 		}
 	}
-	if(unlikely(print_xml != NULLPTR)) {
-		print_xml->finish();
-		delete print_xml;
+	if(unlikely(print_formats != NULLPTR)) {
+		print_formats->finish();
+		delete print_formats;
 	}
 
 	if(!only_printed) {

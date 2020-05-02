@@ -19,16 +19,16 @@
 #include "eixTk/eixint.h"
 #include "eixTk/null.h"
 #include "eixTk/ptr_container.h"
+#include "output/print-formats.h"
 #include "portage/package.h"
 
 class EixRc;
 class DBHeader;
 class VarDbPkg;
-class FormbPkg;
 class PrintFormat;
 class SetStability;
 
-class PrintXml {
+class PrintXml : public PrintFormats {
 	protected:
 		bool started;
 		bool print_overlay;
@@ -69,9 +69,9 @@ class PrintXml {
 			clear(NULLPTR);
 		}
 
-		void start();
-		ATTRIBUTE_NONNULL_ void package(Package *pkg);
-		void finish();
+		void start() OVERRIDE;
+		ATTRIBUTE_NONNULL_ void package(Package *pkg) OVERRIDE;
+		void finish() OVERRIDE;
 		static std::string escape_xmlstring(bool quoted, const std::string& s);
 		static void say_xml_element(const std::string& prefix, const std::string& name, const std::string& content);
 

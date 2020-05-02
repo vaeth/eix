@@ -1326,7 +1326,41 @@ endif
 result += [ 'sqlite=' + want_sqlite + sqlite_msg ]
 conf.set('WITH_SQLITE', with_sqlite,
 	description: 'Define if cache method sqlite is wanted')
-eix_update_deps = sqlite_dep
+
+protobuf_dep = []
+with_protobuf = false
+want_protobuf = get_option('protobuf')
+protobuf_msg = ''
+if want_protobuf == 'auto'
+	protobuf_msg = ' (auto)'
+endif
+if want_protobuf != 'false'
+	protobuf_dep = dependency('protobuf', required : false)
+	if protobuf_dep.found()
+		with_protobuf = true
+		want_protobuf = 'true'
+	elif want_protobuf == true
+		error('protobuf required by option but not found')
+	else
+		want_protobuf = 'false'
+	endif
+endif
+result += [ 'protobuf=' + want_protobuf + protobuf_msg ]
+conf.set('WITH_PROTOBUF', with_protobuf,
+	description: 'Define if cache method protobuf is wanted')
+
+proto_src = []
+if with_protobuf
+	proto_src = custom_target('proto',
+		input : files(join_paths('src', 'output', 'eix.proto')),
+		output : ['protobuf-generated.h'], # ['eix.pb.cc', 'eix.pb.h'],
+		command : [sh, '-c', '''
+		p=${1%?eix.proto}
+		d=$2/output
+		test -d "$d" || mkdir "$d"
+		protoc --cpp_out="$d" --proto_path="$p" eix.proto && : >"$3"
+		''', 'sh', '@INPUT@', '@OUTDIR@', '@OUTPUT@'])
+endif
 
 portdir_cache_method = get_option('portdir-cache-method')
 result += [ 'portdir-cache-method=' + portdir_cache_method ]
@@ -1357,7 +1391,7 @@ sh_shebang = get_option('sh-shebang')
 sh_shebang_msg = ''
 if sh_shebang == 'auto'
 	sh_shebang = ''
-	r = run_command('sh', '-c', 'command', '-v', 'sh')
+	r = run_command(sh, '-c', 'command', '-v', 'sh')
 	if r.returncode() == 0
 		sh_shebang = r.stdout().strip()
 		sh_shebang_msg = ' (auto)'
@@ -1711,8 +1745,11 @@ percentage_lib = [ static_library('percentage',
 	include_directories : incdir,
 ) ]
 
-printxml_lib = [ static_library('printxml',
+printformats_lib = [ static_library('printformats',
+	join_paths('src', 'output', 'eix-proto.cc'),
+	join_paths('src', 'output', 'print-proto.cc'),
 	join_paths('src', 'output', 'print-xml.cc'),
+	proto_src,
 	include_directories : incdir,
 ) ]
 
@@ -1756,7 +1793,7 @@ eix_only_lib = [ static_library('eix',
 	include_directories : incdir,
 ) ]
 eix_only_lib += cli_lib
-eix_only_lib += printxml_lib
+eix_only_lib += printformats_lib
 eix_only_lib += search_lib
 
 diff_only_lib = [ static_library('diff',
@@ -1945,6 +1982,7 @@ else
 endif
 eix_link_with += output_lib
 eix_link_with += common_lib
+eix_dep += protobuf_dep
 executable('eix', eix_src,
 	dependencies : eix_dep,
 	link_with : eix_link_with,

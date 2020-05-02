@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2020-02-27 06:08+0100\n"
-"PO-Revision-Date: 2019-11-27 19:52+0100\n"
+"POT-Creation-Date: 2020-05-02 19:18+0200\n"
+"PO-Revision-Date: 2020-05-02 18:53+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: ru\n"
@@ -1690,6 +1690,7 @@ msgid ""
 "                            Usually faster with COUNT_ONLY_PRINTED=false\n"
 "         --brief2 (toggle)  Print at most two packages then stop\n"
 "     --xml (toggle)         output results in XML format\n"
+"     --proto (toggle)       output results in protobuf format\n"
 "     -c, --compact          compact search results\n"
 "     -v, --verbose          verbose search results\n"
 "     -N, --normal           ignores -c, -v, and DEFAULT_FORMAT\n"
@@ -1875,6 +1876,7 @@ msgstr ""
 "                           Обычно быстрее с COUNT_ONLY_PRINTED=false\n"
 "         --brief2 (вкл.)   Показать не более двух пакетов и выйти.\n"
 "     --xml (вкл.)          вывод в формате XML\n"
+"     --proto (вкл.)          вывод в формате protobuf\n"
 "     -c, --compact         компактные результаты поиска\n"
 "     -v, --verbose         подробные результаты поиска\n"
 "     -N, --normal          ignores -c, -v, and DEFAULT_FORMAT\n"
@@ -2022,6 +2024,10 @@ msgstr ""
 "%s был создан несовместимым eix-update:\n"
 "Используется формат базы данных %s (текущий ― %s).\n"
 "Запустите «%s» и попробуйте ещё раз."
+
+#: src/eix.cc
+msgid "--xml and --proto must not be specified simultaneously"
+msgstr ""
 
 # fuzzy (punctation changed; correct plural forms required)
 #: src/eix.cc
@@ -7294,6 +7300,10 @@ msgstr "Плохое состояние: не определено"
 #, c-format
 msgid "line %s, column %s: %s"
 msgstr "Строка %s, столбец %s: %s"
+
+#: src/output/print-proto.cc
+msgid "protobuf format is not compiled in"
+msgstr ""
 
 # fuzzy (only punctation changed)
 #: src/portage/basicversion.cc

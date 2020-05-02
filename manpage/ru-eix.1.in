@@ -357,8 +357,8 @@ of a package.
 .BR -N ", " --normal
 Use the normal layout which is the default if B<DEFAULT_FORMAT> was not explicitly changed.
 .TP
-.BR --xml "   (toggle)"
-Output in XML format.
+.BR --xml ", " --proto, "   (toggle)"
+Output in XML or protobuf format.
 If you use this option from an external program you will probably want to
 combine this with B<--care> and export some variables like B<LOCAL_PORTAGE_CONFIG>
 to make sure that the preferred user output settings do not influence your output.
@@ -366,7 +366,8 @@ If this option is active, B<OVERLAYS_LIST=none> and B<--pure-packages> are
 automatically active.
 The output format can be slightly influenced by the B<XML_*> variables.
 The XML format used is documented in human-readable form in the files eix-xml.html or eix-xml.txt
-and in less human-readable form (namely as an xml-schema) in the file eix-xml.xsd
+and in less human-readable form (namely as an xml-schema) in the file eix-xml.xsd.
+The protobuf format is in the file eix.proto.
 .TP
 .BR -* ", " --pure-packages "   (toggle)"
 (do not forget quoting if you use the short form from within a shell.)
