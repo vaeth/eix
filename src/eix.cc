@@ -1015,8 +1015,7 @@ int run_eix(int argc, char** argv) {
 			print_formats = new PrintXml(&header, &varpkg_db, format, &stability, &eixrc,
 				portagesettings["PORTDIR"]);
 		} else if (rc_options.proto) {
-			print_formats = new PrintProto(&header, &varpkg_db, format, &stability,
-				portagesettings["PORTDIR"]);
+			print_formats = new PrintProto(&header, &varpkg_db, format, &stability);
 		}
 		if (print_formats != NULLPTR) {
 			print_formats->start();

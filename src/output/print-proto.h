@@ -15,6 +15,7 @@
 #include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
 #include "eixTk/null.h"
+#include "eixTk/unordered_map.h"
 #include "output/print-formats.h"
 #include "portage/package.h"
 
@@ -30,12 +31,13 @@ class PrintProto : public PrintFormats {
 		VarDbPkg *var_db_pkg;
 		const PrintFormat *print_format;
 		const SetStability *stability;
-		std::string portdir;
 		EixOutput *eix_output;
+		typedef UNORDERED_MAP<std::string, int> CategoryIndex;
+		CategoryIndex category_index;
 
 	public:
-		ATTRIBUTE_NONNULL_ PrintProto(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, const std::string& port_dir) :
-			hdr(header), var_db_pkg(vardb), print_format(printformat), stability(set_stability), portdir(port_dir), eix_output(NULLPTR) {}
+		ATTRIBUTE_NONNULL_ PrintProto(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability) :
+			hdr(header), var_db_pkg(vardb), print_format(printformat), stability(set_stability), eix_output(NULLPTR) {}
 
 		PrintProto() : hdr(NULLPTR), var_db_pkg(NULLPTR), print_format(NULLPTR), stability(NULLPTR), eix_output(NULLPTR) {}
 

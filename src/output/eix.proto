@@ -2,7 +2,8 @@ syntax = "proto3";
 
 message EixOutput {
   message Category {
-    repeated Package package = 1;
+    string category = 1;
+    repeated Package package = 2;
   }
 
   message Package {
@@ -18,22 +19,23 @@ message EixOutput {
     Repository repository = 2;
     string eapi = 3;
     string slot = 4;
-    Installed installed = 5;
-    repeated string iuse = 6;
-    repeated string iuse_plus = 7;
-    repeated string iuse_minus = 8;
-    string required_use = 9;
-    repeated Property property = 10;
-    repeated Restrict restrict = 11;
-    repeated string keyword = 12;
-    repeated string effective_keyword = 13;
-    repeated MaskType mask_type = 14;
-    repeated UnmaskType unmask_type = 15;
-    string mask_reason = 16;
-    string depend = 17;
-    string rdepend = 18;
-    string pdepend = 19;
-    string bdepend = 20;
+    string src_uri = 5;
+    Installed installed = 6;
+    repeated string iuse = 7;
+    repeated string iuse_plus = 8;
+    repeated string iuse_minus = 9;
+    string required_use = 10;
+    repeated Property property = 11;
+    repeated Restrict restrict = 12;
+    repeated MaskType mask_type = 13;
+    repeated UnmaskType unmask_type = 14;
+    repeated Lines mask_reason = 15;
+    string keywords = 16;
+    string effective_keywords = 17; // if different from keywords
+    string depend = 18;
+    string rdepend = 19;
+    string pdepend = 20;
+    string bdepend = 21;
   }
 
   message Repository {
@@ -50,9 +52,12 @@ message EixOutput {
   message Installed {
     int64 date = 1;
     string eapi = 2;
-    string src_uri = 3;
     repeated string use_enabled = 4;
     repeated string use_disabled = 5;
+  }
+
+  message Lines {
+    repeated string line = 1;
   }
 
   enum MaskType {
@@ -62,7 +67,7 @@ message EixOutput {
     HARD = 3;
     PACKAGE_MASK = 4;
     KEYWORD = 5;
-    MINUS_KEYWORDS = 6;
+    MINUS_KEYWORD = 6;
     ALIEN_STABLE = 7;
     ALIEN_UNSTABLE = 8;
     MINUS_UNSTABLE = 9;
@@ -79,26 +84,24 @@ message EixOutput {
 
   enum Property {
     UNKNOwN_PROPERTY = 0;
-    NO_PROPERTY = 1;
-    INTERACTIVE = 2;
-    LIVE = 3;
-    VIRTUAL = 4;
-    SET = 5;
+    INTERACTIVE = 1;
+    LIVE = 2;
+    VIRTUAL = 3;
+    SET = 4;
   }
 
   enum Restrict {
     UNKNOwN_RESTRICT = 0;
-    NO_RESTRICT = 1;
-    BINCHECKS = 2;
-    STRIP = 3;
-    TEST = 4;
-    USERPRIV = 5;
-    INSTALLSOURCES = 6;
-    FETCH = 7;
-    MIRROR = 8;
-    PRIMARYURI = 9;
-    BINDIST = 10;
-    PARALLEL = 11;
+    BINCHECKS = 1;
+    STRIP = 2;
+    TEST = 3;
+    USERPRIV = 4;
+    INSTALLSOURCES = 5;
+    FETCH = 6;
+    MIRROR = 7;
+    PRIMARYURI = 8;
+    BINDIST = 9;
+    PARALLEL = 10;
   }
 
   repeated Category category = 1;

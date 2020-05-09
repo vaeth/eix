@@ -41,7 +41,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.33.12], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
+AC_INIT([eix], [0.34.0], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
 AC_PREREQ([2.64])
 
 m4_ifdef([AC_CONFIG_MACRO_DIR],
@@ -426,7 +426,6 @@ AS_IF([$strong_optimization],
 			$fwhole_program \
 			-ftree-vectorize \
 			-fvect-cost-model \
-			-fno-rtti \
 			-fno-threadsafe-statics \
 		], [$my_cxxfatal], [$CPPFLAGS], [:])
 dnl We do not use graphite flags since they breaks in too many compilers:
@@ -437,6 +436,8 @@ dnl			-floop-strip-mine \
 dnl			-floop-block \
 dnl			-floop-next-optimize \
 dnl			-floop-unroll-and-jam \
+dnl -fno-rtti is incompatible with protobuf:
+dnl			-fno-rtti \
 	AS_IF([$strong_security],
 		[],
 		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \

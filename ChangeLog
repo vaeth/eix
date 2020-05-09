@@ -1,9 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.33.12
+*eix-0.34.0
 	Martin Väth <martin at mvath.de>:
+	- Support Google's protobuf output with --proto, currently untested.
+	  Please report a bug if you have a use case for a modification or
+	  (preferrably) extension of the proto, or it does not work.
 	- Interpret /0 as no subslot. https://github.com/vaeth/eix/issues/70
-	- Add infrastructure for --proto output (not working yet)
 
 *eix-0.33.11
 	Martin Väth <martin at mvath.de>:

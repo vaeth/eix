@@ -1,5 +1,5 @@
 project('eix', 'cpp',
-	version : '0.33.12',
+	version : '0.34.0',
 	license : 'GPLv2',
 	default_options : [
 		'prefix=/usr',
@@ -351,10 +351,10 @@ if strong_optimization
 		# [ '-floop-block' ],
 		# [ '-floop-next-optimize' ],
 		# [ '-floop-unroll-and-jam' ],
+		# [ '-fno-rtti' ],
 		[ '-fno-enforce-eh-specs' ],
 		[ '-ftree-vectorize' ],
 		[ '-fvect-cost-model' ],
-		[ '-fno-rtti' ],
 		[ '-fno-threadsafe-statics' ],
 	]
 	ldflags_opt += [

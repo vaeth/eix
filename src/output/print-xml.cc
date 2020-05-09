@@ -101,7 +101,7 @@ void PrintXml::finish() {
 static void print_iuse(const IUseSet::IUseStd& s, IUse::Flags wanted, const char *dflt) {
 	bool have_found(false);
 	for(IUseSet::IUseStd::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
-		if(!((it->flags) & wanted)) {
+		if(((it->flags) & wanted) == 0) {
 			continue;
 		}
 		if(likely(have_found)) {
@@ -352,49 +352,49 @@ void PrintXml::package(Package *pkg) {
 
 		ExtendedVersion::Restrict restrict(ver->restrictFlags);
 		if(unlikely(restrict != ExtendedVersion::RESTRICT_NONE)) {
-			if(unlikely(restrict & ExtendedVersion::RESTRICT_BINCHECKS)) {
+			if(unlikely((restrict & ExtendedVersion::RESTRICT_BINCHECKS) != 0)) {
 				eix::say("\t\t\t\t<restrict flag=\"binchecks\"/>");
 			}
-			if(unlikely(restrict & ExtendedVersion::RESTRICT_STRIP)) {
+			if(unlikely((restrict & ExtendedVersion::RESTRICT_STRIP) != 0)) {
 				eix::say("\t\t\t\t<restrict flag=\"strip\"/>");
 			}
-			if(unlikely(restrict & ExtendedVersion::RESTRICT_TEST)) {
+			if(unlikely((restrict & ExtendedVersion::RESTRICT_TEST) != 0)) {
 				eix::say("\t\t\t\t<restrict flag=\"test\"/>");
 			}
-			if(unlikely(restrict & ExtendedVersion::RESTRICT_USERPRIV)) {
+			if(unlikely((restrict & ExtendedVersion::RESTRICT_USERPRIV) != 0)) {
 				eix::say("\t\t\t\t<restrict flag=\"userpriv\"/>");
 			}
-			if(unlikely(restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES)) {
+			if(unlikely((restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES) != 0)) {
 				eix::say("\t\t\t\t<restrict flag=\"installsources\"/>");
 			}
-			if(unlikely(restrict & ExtendedVersion::RESTRICT_FETCH)) {
+			if(unlikely((restrict & ExtendedVersion::RESTRICT_FETCH) != 0)) {
 				eix::say("\t\t\t\t<restrict flag=\"fetch\"/>");
 			}
-			if(unlikely(restrict & ExtendedVersion::RESTRICT_MIRROR)) {
+			if(unlikely((restrict & ExtendedVersion::RESTRICT_MIRROR) != 0)) {
 				eix::say("\t\t\t\t<restrict flag=\"mirror\"/>");
 			}
-			if(unlikely(restrict & ExtendedVersion::RESTRICT_PRIMARYURI)) {
+			if(unlikely((restrict & ExtendedVersion::RESTRICT_PRIMARYURI) != 0)) {
 				eix::say("\t\t\t\t<restrict flag=\"primaryuri\"/>");
 			}
-			if(unlikely(restrict & ExtendedVersion::RESTRICT_BINDIST)) {
+			if(unlikely((restrict & ExtendedVersion::RESTRICT_BINDIST) != 0)) {
 				eix::say("\t\t\t\t<restrict flag=\"bindist\"/>");
 			}
-			if(unlikely(restrict & ExtendedVersion::RESTRICT_PARALLEL)) {
+			if(unlikely((restrict & ExtendedVersion::RESTRICT_PARALLEL) != 0)) {
 				eix::say("\t\t\t\t<restrict flag=\"parallel\"/>");
 			}
 		}
 		ExtendedVersion::Restrict properties(ver->propertiesFlags);
 		if(unlikely(properties != ExtendedVersion::PROPERTIES_NONE)) {
-			if(unlikely(properties & ExtendedVersion::PROPERTIES_INTERACTIVE)) {
+			if(unlikely((properties & ExtendedVersion::PROPERTIES_INTERACTIVE) != 0)) {
 				eix::say("\t\t\t\t<properties flag=\"interactive\"/>");
 			}
-			if(unlikely(properties & ExtendedVersion::PROPERTIES_LIVE)) {
+			if(unlikely((properties & ExtendedVersion::PROPERTIES_LIVE) != 0)) {
 				eix::say("\t\t\t\t<properties flag=\"live\"/>");
 			}
-			if(unlikely(properties & ExtendedVersion::PROPERTIES_VIRTUAL)) {
+			if(unlikely((properties & ExtendedVersion::PROPERTIES_VIRTUAL) != 0)) {
 				eix::say("\t\t\t\t<properties flag=\"virtual\"/>");
 			}
-			if(unlikely(properties & ExtendedVersion::PROPERTIES_SET)) {
+			if(unlikely((properties & ExtendedVersion::PROPERTIES_SET) != 0)) {
 				eix::say("\t\t\t\t<properties flag=\"set\"/>");
 			}
 		}
