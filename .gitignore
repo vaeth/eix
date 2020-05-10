@@ -33,6 +33,9 @@
 /doc/eix-*.txt
 /doc/eix-*.xsd
 
+*.pb.cc
+*.pb.h
+
 /manpage/*-eix.1
 
 /po/*

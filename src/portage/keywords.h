@@ -49,11 +49,15 @@ class MaskFlags {
 		}
 
 		MaskType getall(MaskType t) const {
-			return (m_mask & t);
+			return ((m_mask & t) != MaskFlags::MASK_NONE);
+		}
+
+		bool empty() const {
+			return m_mask == MaskFlags::MASK_NONE;
 		}
 
 		bool havesome(MaskType t) const {
-			return (m_mask & t);
+			return ((m_mask & t) != MaskFlags::MASK_NONE);
 		}
 
 		bool haveall(MaskType t) const {
@@ -170,6 +174,10 @@ class KeywordsFlags {
 			return (m_keyword & t);
 		}
 
+		bool empty() const {
+			return m_keyword == KEY_EMPTY;
+		}
+
 		bool havesome(KeyType t) const {
 			return (m_keyword & t);
 		}
@@ -191,6 +199,13 @@ class KeywordsFlags {
 		**/
 		bool isStable() const {
 			return havesome(KEY_STABLE);
+		}
+
+		/**
+		@return true if version is arch stable
+		**/
+		bool isArchStable() const {
+			return havesome(KEY_ARCHSTABLE);
 		}
 
 		/**

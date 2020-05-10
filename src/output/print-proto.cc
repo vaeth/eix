@@ -44,6 +44,11 @@
 using std::set;
 using std::string;
 
+static void set_mask_flags(EixOutput::MaskFlags *mask_flags, MaskFlags mask);
+static void set_key_flags(EixOutput::KeyFlags *key_flags, KeywordsFlags key);
+static void add_restrictions(EixOutput::Restrictions *restrictions, ExtendedVersion::Restrict restrict);
+static void add_properties(EixOutput::Properties *properties, ExtendedVersion::Restrict props);
+
 void PrintProto::start() {
 	eix_output = new EixOutput();
 	category_index.clear();
@@ -125,66 +130,23 @@ void PrintProto::package(Package *pkg) {
 			version->set_src_uri(ver->src_uri);
 		}
 
-		MaskFlags currmask(ver->maskflags);
-		KeywordsFlags currkey(ver->keyflags);
-		MaskFlags wasmask;
-		KeywordsFlags waskey;
-		stability->calc_version_flags(false, &wasmask, &waskey, *ver, pkg);
-		if(wasmask.isHardMasked()) {
-			if(currmask.isProfileMask()) {
-				version->add_mask_type(EixOutput::PROFILE);
-			} else if(currmask.isPackageMask()) {
-				version->add_mask_type(EixOutput::PROFILE);
-			} else if(wasmask.isProfileMask()) {
-				version->add_mask_type(EixOutput::PROFILE);
-				version->add_unmask_type(EixOutput::PACKAGE_UNMASK);
-			} else {
-				version->add_mask_type(EixOutput::HARD);
-				version->add_unmask_type(EixOutput::PACKAGE_UNMASK);
-			}
-		} else if(currmask.isHardMasked()) {
-			version->add_mask_type(EixOutput::PACKAGE_MASK);
+		MaskFlags local_mask_flags;
+		KeywordsFlags local_key_flags;
+		stability->calc_version_flags(true, &local_mask_flags, &local_key_flags, *ver, pkg);
+		if (!local_mask_flags.empty()) {
+			set_mask_flags(version->mutable_local_mask_flags(), local_mask_flags);
 		}
-
-		if(currkey.isStable()) {
-			if(waskey.isStable()) {
-				//
-			} else if(waskey.isUnstable()) {
-				version->add_mask_type(EixOutput::KEYWORD);
-				version->add_unmask_type(EixOutput::PACKAGE_KEYWORDS);
-			} else if(waskey.isMinusKeyword()) {
-				version->add_mask_type(EixOutput::MINUS_KEYWORD);
-				version->add_unmask_type(EixOutput::PACKAGE_KEYWORDS);
-			} else if(waskey.isAlienStable()) {
-				version->add_mask_type(EixOutput::ALIEN_STABLE);
-				version->add_unmask_type(EixOutput::PACKAGE_KEYWORDS);
-			} else if(waskey.isAlienUnstable()) {
-				version->add_mask_type(EixOutput::ALIEN_UNSTABLE);
-				version->add_unmask_type(EixOutput::PACKAGE_KEYWORDS);
-			} else if(waskey.isMinusUnstable()) {
-				version->add_mask_type(EixOutput::MINUS_UNSTABLE);
-				version->add_unmask_type(EixOutput::PACKAGE_KEYWORDS);
-			} else if(waskey.isMinusAsterisk()) {
-				version->add_mask_type(EixOutput::MINUS_ASTERISK);
-				version->add_unmask_type(EixOutput::PACKAGE_KEYWORDS);
-			} else {
-				version->add_mask_type(EixOutput::MISSING_KEYWORDS);
-				version->add_unmask_type(EixOutput::PACKAGE_KEYWORDS);
-			}
-		} else if(currkey.isUnstable()) {
-			version->add_mask_type(EixOutput::KEYWORD);
-		} else if(currkey.isMinusKeyword()) {
-			version->add_mask_type(EixOutput::MINUS_KEYWORD);
-		} else if(currkey.isAlienStable()) {
-			version->add_mask_type(EixOutput::ALIEN_STABLE);
-		} else if(currkey.isAlienUnstable()) {
-			version->add_mask_type(EixOutput::ALIEN_UNSTABLE);
-		} else if(currkey.isMinusUnstable()) {
-			version->add_mask_type(EixOutput::MINUS_UNSTABLE);
-		} else if(currkey.isMinusAsterisk()) {
-			version->add_mask_type(EixOutput::MINUS_ASTERISK);
-		} else {
-			version->add_mask_type(EixOutput::MISSING_KEYWORDS);
+		if (!local_key_flags.empty()) {
+			set_key_flags(version->mutable_local_key_flags(), local_key_flags);
+		}
+		MaskFlags system_mask_flags;
+		KeywordsFlags system_key_flags;
+		stability->calc_version_flags(false, &system_mask_flags, &system_key_flags, *ver, pkg);
+		if (!system_mask_flags.empty()) {
+			set_mask_flags(version->mutable_system_mask_flags(), system_mask_flags);
+		}
+		if (!system_key_flags.empty()) {
+			set_key_flags(version->mutable_system_key_flags(), system_key_flags);
 		}
 
 		if(unlikely(ver->have_reasons())) {
@@ -224,8 +186,8 @@ void PrintProto::package(Package *pkg) {
 				version->set_required_use(required_use);
 			}
 		}
-		EixOutput_Installed *installed = NULLPTR;
 
+		EixOutput_Installed *installed = NULLPTR;
 		InstVersion *installedVersion(NULLPTR);
 		if(have_inst.count(*ver) != 0) {
 			if(var_db_pkg->isInstalled(*pkg, *ver, &installedVersion)) {
@@ -252,51 +214,11 @@ void PrintProto::package(Package *pkg) {
 
 		ExtendedVersion::Restrict restrict(ver->restrictFlags);
 		if(unlikely(restrict != ExtendedVersion::RESTRICT_NONE)) {
-			if(unlikely((restrict & ExtendedVersion::RESTRICT_BINCHECKS) != 0)) {
-				version->add_restrict(EixOutput::BINCHECKS);
-			}
-			if(unlikely((restrict & ExtendedVersion::RESTRICT_STRIP) != 0)) {
-				version->add_restrict(EixOutput::STRIP);
-			}
-			if(unlikely((restrict & ExtendedVersion::RESTRICT_TEST) != 0)) {
-				version->add_restrict(EixOutput::TEST);
-			}
-			if(unlikely((restrict & ExtendedVersion::RESTRICT_USERPRIV) != 0)) {
-				version->add_restrict(EixOutput::USERPRIV);
-			}
-			if(unlikely((restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES) != 0)) {
-				version->add_restrict(EixOutput::INSTALLSOURCES);
-			}
-			if(unlikely((restrict & ExtendedVersion::RESTRICT_FETCH) != 0)) {
-				version->add_restrict(EixOutput::FETCH);
-			}
-			if(unlikely((restrict & ExtendedVersion::RESTRICT_MIRROR) != 0)) {
-				version->add_restrict(EixOutput::MIRROR);
-			}
-			if(unlikely((restrict & ExtendedVersion::RESTRICT_PRIMARYURI) != 0)) {
-				version->add_restrict(EixOutput::PRIMARYURI);
-			}
-			if(unlikely((restrict & ExtendedVersion::RESTRICT_BINDIST) != 0)) {
-				version->add_restrict(EixOutput::BINDIST);
-			}
-			if(unlikely((restrict & ExtendedVersion::RESTRICT_PARALLEL) != 0)) {
-				version->add_restrict(EixOutput::PARALLEL);
-			}
+			add_restrictions(version->mutable_restrictions(), restrict);
 		}
-		ExtendedVersion::Restrict properties(ver->propertiesFlags);
-		if(unlikely(properties != ExtendedVersion::PROPERTIES_NONE)) {
-			if(unlikely((properties & ExtendedVersion::PROPERTIES_INTERACTIVE) != 0)) {
-				version->add_property(EixOutput::INTERACTIVE);
-			}
-			if(unlikely((properties & ExtendedVersion::PROPERTIES_LIVE) != 0)) {
-				version->add_property(EixOutput::LIVE);
-			}
-			if(unlikely((properties & ExtendedVersion::PROPERTIES_VIRTUAL) != 0)) {
-				version->add_property(EixOutput::VIRTUAL);
-			}
-			if(unlikely((properties & ExtendedVersion::PROPERTIES_SET) != 0)) {
-				version->add_property(EixOutput::SET);
-			}
+		ExtendedVersion::Restrict props(ver->propertiesFlags);
+		if(unlikely(props != ExtendedVersion::PROPERTIES_NONE)) {
+			add_properties(version->mutable_properties(), props);
 		}
 
 		string full_kw = ver->get_full_keywords();
@@ -328,6 +250,105 @@ void PrintProto::package(Package *pkg) {
 		}
 	}
 }  // NOLINT(readability/fn_size)
+
+static void set_mask_flags(EixOutput::MaskFlags *mask_flags, MaskFlags mask) {
+	if(mask.isPackageMask()) {
+		mask_flags->add_mask_flag(EixOutput::MaskFlags::MASK_PACKAGE);
+	}
+	if(mask.isSystem()) {
+		mask_flags->add_mask_flag(EixOutput::MaskFlags::MASK_SYSTEM);
+	}
+	if(mask.isProfileMask()) {
+		mask_flags->add_mask_flag(EixOutput::MaskFlags::MASK_PROFILE);
+	}
+	if(mask.isProfile()) {
+		mask_flags->add_mask_flag(EixOutput::MaskFlags::IN_PROFILE);
+	}
+	if(mask.isWorld()) {
+		mask_flags->add_mask_flag(EixOutput::MaskFlags::WORLD);
+	}
+	if(mask.isWorldSets()) {
+		mask_flags->add_mask_flag(EixOutput::MaskFlags::WORLD_SETS);
+	}
+	if(mask.isMarked()) {
+		mask_flags->add_mask_flag(EixOutput::MaskFlags::MARKED);
+	}
+}
+
+static void set_key_flags(EixOutput::KeyFlags *key_flags, KeywordsFlags key) {
+	if(key.isStable()) {
+		key_flags->add_key_flag(EixOutput::KeyFlags::STABLE);
+	}
+	if(key.isArchStable()) {
+		key_flags->add_key_flag(EixOutput::KeyFlags::ARCHSTABLE);
+	}
+	if(key.isUnstable()) {
+		key_flags->add_key_flag(EixOutput::KeyFlags::ARCHUNSTABLE);
+	}
+	if(key.isAlienStable()) {
+		key_flags->add_key_flag(EixOutput::KeyFlags::ALIENSTABLE);
+	}
+	if(key.isAlienUnstable()) {
+		key_flags->add_key_flag(EixOutput::KeyFlags::ALIENUNSTABLE);
+	}
+	if(key.isMinusKeyword()) {
+		key_flags->add_key_flag(EixOutput::KeyFlags::MINUSKEYWORD);
+	}
+	if(key.isMinusUnstable()) {
+		key_flags->add_key_flag(EixOutput::KeyFlags::MINUSUNSTABLE);
+	}
+	if(key.isMinusAsterisk()) {
+		key_flags->add_key_flag(EixOutput::KeyFlags::MINUSASTERISK);
+	}
+}
+
+static void add_restrictions(EixOutput::Restrictions *restrictions, ExtendedVersion::Restrict restrict) {
+	if(unlikely((restrict & ExtendedVersion::RESTRICT_BINCHECKS) != 0)) {
+		restrictions->add_restrict(EixOutput::Restrictions::BINCHECKS);
+	}
+	if(unlikely((restrict & ExtendedVersion::RESTRICT_STRIP) != 0)) {
+		restrictions->add_restrict(EixOutput::Restrictions::STRIP);
+	}
+	if(unlikely((restrict & ExtendedVersion::RESTRICT_TEST) != 0)) {
+		restrictions->add_restrict(EixOutput::Restrictions::TEST);
+	}
+	if(unlikely((restrict & ExtendedVersion::RESTRICT_USERPRIV) != 0)) {
+		restrictions->add_restrict(EixOutput::Restrictions::USERPRIV);
+	}
+	if(unlikely((restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES) != 0)) {
+		restrictions->add_restrict(EixOutput::Restrictions::INSTALLSOURCES);
+	}
+	if(unlikely((restrict & ExtendedVersion::RESTRICT_FETCH) != 0)) {
+		restrictions->add_restrict(EixOutput::Restrictions::FETCH);
+	}
+	if(unlikely((restrict & ExtendedVersion::RESTRICT_MIRROR) != 0)) {
+		restrictions->add_restrict(EixOutput::Restrictions::MIRROR);
+	}
+	if(unlikely((restrict & ExtendedVersion::RESTRICT_PRIMARYURI) != 0)) {
+		restrictions->add_restrict(EixOutput::Restrictions::PRIMARYURI);
+	}
+	if(unlikely((restrict & ExtendedVersion::RESTRICT_BINDIST) != 0)) {
+		restrictions->add_restrict(EixOutput::Restrictions::BINDIST);
+	}
+	if(unlikely((restrict & ExtendedVersion::RESTRICT_PARALLEL) != 0)) {
+		restrictions->add_restrict(EixOutput::Restrictions::PARALLEL);
+	}
+}
+
+static void add_properties(EixOutput::Properties *properties, ExtendedVersion::Restrict props) {
+	if(unlikely((props & ExtendedVersion::PROPERTIES_INTERACTIVE) != 0)) {
+		properties->add_property(EixOutput::Properties::INTERACTIVE);
+	}
+	if(unlikely((props & ExtendedVersion::PROPERTIES_LIVE) != 0)) {
+		properties->add_property(EixOutput::Properties::LIVE);
+	}
+	if(unlikely((props & ExtendedVersion::PROPERTIES_VIRTUAL) != 0)) {
+		properties->add_property(EixOutput::Properties::VIRTUAL);
+	}
+	if(unlikely((props & ExtendedVersion::PROPERTIES_SET) != 0)) {
+		properties->add_property(EixOutput::Properties::SET);
+	}
+}
 
 void PrintProto::finish() {
 	if(eix_output == NULLPTR) {

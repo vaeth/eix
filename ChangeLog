@@ -1,5 +1,13 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.34.1
+	Martin Väth <martin at mvath.de>:
+	- Rework protobuf output: Expose the actual eix-internal storage for
+	  masks and stability instead of the simplification for xml. This is
+	  an exceptional change since I suppose that the proto from eix-0.34.0
+	  was not used yet. In future, presumably only predicates will be added
+	  to the output without changing the tag numbers.
+
 *eix-0.34.0
 	Martin Väth <martin at mvath.de>:
 	- Support Google's protobuf output with --proto, currently untested.
