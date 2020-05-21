@@ -229,9 +229,13 @@ nodist_percentage_src =
 protobuf_src = \
 output/eix.proto
 
+if SUPPORT_PROTOBUF
 protobuf_generated = \
 output/eix.pb.cc \
 output/eix.pb.h
+else
+protobuf_generated =
+endif
 
 printformats_src = \
 output/eix-proto.cc \

@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.34.2
+	Martin Väth <martin at mvath.de>:
+	- Do not require protoc for autotools --without-protobuf
+
 *eix-0.34.1
 	Martin Väth <martin at mvath.de>:
 	- Rework protobuf output: Expose the actual eix-internal storage for
