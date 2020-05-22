@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.34.3
+	Martin Väth <martin at mvath.de>:
+	- Fix meson build problem with sqlite + protobuf
+
 *eix-0.34.2
 	Martin Väth <martin at mvath.de>:
 	- Do not require protoc for autotools --without-protobuf

@@ -1,5 +1,5 @@
 project('eix', 'cpp',
-	version : '0.34.2',
+	version : '0.34.3',
 	license : 'GPLv2',
 	default_options : [
 		'prefix=/usr',
@@ -1313,7 +1313,7 @@ if want_sqlite == 'auto'
 	sqlite_msg = ' (auto)'
 endif
 if want_sqlite != 'false'
-	sqlite_dep = dependency('sqlite3', required : false)
+	sqlite_dep = [dependency('sqlite3', required : false)]
 	if sqlite_dep.found()
 		with_sqlite = true
 		want_sqlite = 'true'
@@ -1335,7 +1335,7 @@ if want_protobuf == 'auto'
 	protobuf_msg = ' (auto)'
 endif
 if want_protobuf != 'false'
-	protobuf_dep = dependency('protobuf', required : false)
+	protobuf_dep = [dependency('protobuf', required : false)]
 	if protobuf_dep.found()
 		with_protobuf = true
 		want_protobuf = 'true'
