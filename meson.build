@@ -1313,8 +1313,9 @@ if want_sqlite == 'auto'
 	sqlite_msg = ' (auto)'
 endif
 if want_sqlite != 'false'
-	sqlite_dep = [dependency('sqlite3', required : false)]
-	if sqlite_dep.found()
+	sqlite_only_dep = dependency('sqlite3', required : false)
+	if sqlite_only_dep.found()
+		sqlite_dep = [sqlite_only_dep]
 		with_sqlite = true
 		want_sqlite = 'true'
 	elif want_sqlite == true
@@ -1335,8 +1336,9 @@ if want_protobuf == 'auto'
 	protobuf_msg = ' (auto)'
 endif
 if want_protobuf != 'false'
-	protobuf_dep = [dependency('protobuf', required : false)]
-	if protobuf_dep.found()
+	protobuf_only_dep = dependency('protobuf', required : false)
+	if protobuf_only_dep.found()
+		protobuf_dep = [protobuf_only_dep]
 		with_protobuf = true
 		want_protobuf = 'true'
 	elif want_protobuf == true

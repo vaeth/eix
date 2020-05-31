@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.34.4
+	Martin Väth <martin at mvath.de>:
+	- Somehow the second part of the eix-0.34.3 patch was lost...
+
 *eix-0.34.3
 	Martin Väth <martin at mvath.de>:
 	- Fix meson build problem with sqlite + protobuf
