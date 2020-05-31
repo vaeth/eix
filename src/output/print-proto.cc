@@ -44,34 +44,34 @@
 using std::set;
 using std::string;
 
-static void set_mask_flags(EixOutput::MaskFlags *mask_flags, MaskFlags mask);
-static void set_key_flags(EixOutput::KeyFlags *key_flags, KeywordsFlags key);
-static void add_restrictions(EixOutput::Restrictions *restrictions, ExtendedVersion::Restrict restrict);
-static void add_properties(EixOutput::Properties *properties, ExtendedVersion::Restrict props);
+static void set_mask_flags(eix_proto::MaskFlags *mask_flags, MaskFlags mask);
+static void set_key_flags(eix_proto::KeyFlags *key_flags, KeywordsFlags key);
+static void add_restrictions(eix_proto::Restrictions *restrictions, ExtendedVersion::Restrict restrict);
+static void add_properties(eix_proto::Properties *properties, ExtendedVersion::Restrict props);
 
 void PrintProto::start() {
-	eix_output = new EixOutput();
+	collection = new eix_proto::Collection();
 	category_index.clear();
 }
 
 void PrintProto::package(Package *pkg) {
-	if(eix_output == NULLPTR) {
+	if(collection == NULLPTR) {
 		start();
 	}
-	EixOutput_Category *category;
-	if(eix_output->category_size() != 0) {
+	eix_proto::Category *category;
+	if(collection->category_size() != 0) {
 		// Re-use existing category if possible
 		int& index = category_index[pkg->category];
-		category = eix_output->mutable_category(index);
+		category = collection->mutable_category(index);
 		if(index != 0 || category->category() != pkg->category) {
 			// category is actually new
-			index = eix_output->category_size();
-			category = eix_output->add_category();
+			index = collection->category_size();
+			category = collection->add_category();
 		}
 	} else {
-		category = eix_output->add_category();
+		category = collection->add_category();
 	}
-	EixOutput_Package *package = category->add_package();
+	eix_proto::Package *package = category->add_package();
 	package->set_name(pkg->name);
 	package->set_description(pkg->desc);
 	package->set_homepage(pkg->homepage);
@@ -105,11 +105,11 @@ void PrintProto::package(Package *pkg) {
 	}
 
 	for(Package::const_iterator ver(pkg->begin()); likely(ver != pkg->end()); ++ver) {
-		EixOutput_Version *version = package->add_version();
+		eix_proto::Version *version = package->add_version();
 		version->set_id(ver->getFull());
 		version->set_eapi(ver->eapi.get());
 
-		EixOutput_Repository *repository = version->mutable_repository();
+		eix_proto::Repository *repository = version->mutable_repository();
 		ExtendedVersion::Overlay overlay_key(ver->overlay_key);
 		if(unlikely(overlay_key != 0)) {
 			if(print_format->is_virtual(overlay_key)) {
@@ -157,7 +157,7 @@ void PrintProto::package(Package *pkg) {
 				if((vec == NULLPTR) || (vec->empty())) {
 					continue;
 				}
-				EixOutput::Lines *lines = version->add_mask_reason();
+				eix_proto::Lines *lines = version->add_mask_reason();
 				for(WordVec::const_iterator wit(vec->begin());
 					likely(wit != vec->end()); ++wit) {
 					lines->add_line(*wit);
@@ -187,7 +187,7 @@ void PrintProto::package(Package *pkg) {
 			}
 		}
 
-		EixOutput_Installed *installed = NULLPTR;
+		eix_proto::Installed *installed = NULLPTR;
 		InstVersion *installedVersion(NULLPTR);
 		if(have_inst.count(*ver) != 0) {
 			if(var_db_pkg->isInstalled(*pkg, *ver, &installedVersion)) {
@@ -227,7 +227,7 @@ void PrintProto::package(Package *pkg) {
 		}
 		string eff_kw = ver->get_effective_keywords();
 		if(unlikely(full_kw != eff_kw)) {
-			version->set_effective_keywords(eff_kw);
+			version->mutable_keywords_effective()->set_value(eff_kw);
 		}
 
 		if(Depend::use_depend) {
@@ -251,112 +251,112 @@ void PrintProto::package(Package *pkg) {
 	}
 }  // NOLINT(readability/fn_size)
 
-static void set_mask_flags(EixOutput::MaskFlags *mask_flags, MaskFlags mask) {
+static void set_mask_flags(eix_proto::MaskFlags *mask_flags, MaskFlags mask) {
 	if(mask.isPackageMask()) {
-		mask_flags->add_mask_flag(EixOutput::MaskFlags::MASK_PACKAGE);
+		mask_flags->add_mask_flag(eix_proto::MaskFlags::MASK_PACKAGE);
 	}
 	if(mask.isSystem()) {
-		mask_flags->add_mask_flag(EixOutput::MaskFlags::MASK_SYSTEM);
+		mask_flags->add_mask_flag(eix_proto::MaskFlags::MASK_SYSTEM);
 	}
 	if(mask.isProfileMask()) {
-		mask_flags->add_mask_flag(EixOutput::MaskFlags::MASK_PROFILE);
+		mask_flags->add_mask_flag(eix_proto::MaskFlags::MASK_PROFILE);
 	}
 	if(mask.isProfile()) {
-		mask_flags->add_mask_flag(EixOutput::MaskFlags::IN_PROFILE);
+		mask_flags->add_mask_flag(eix_proto::MaskFlags::IN_PROFILE);
 	}
 	if(mask.isWorld()) {
-		mask_flags->add_mask_flag(EixOutput::MaskFlags::WORLD);
+		mask_flags->add_mask_flag(eix_proto::MaskFlags::WORLD);
 	}
 	if(mask.isWorldSets()) {
-		mask_flags->add_mask_flag(EixOutput::MaskFlags::WORLD_SETS);
+		mask_flags->add_mask_flag(eix_proto::MaskFlags::WORLD_SETS);
 	}
 	if(mask.isMarked()) {
-		mask_flags->add_mask_flag(EixOutput::MaskFlags::MARKED);
+		mask_flags->add_mask_flag(eix_proto::MaskFlags::MARKED);
 	}
 }
 
-static void set_key_flags(EixOutput::KeyFlags *key_flags, KeywordsFlags key) {
+static void set_key_flags(eix_proto::KeyFlags *key_flags, KeywordsFlags key) {
 	if(key.isStable()) {
-		key_flags->add_key_flag(EixOutput::KeyFlags::STABLE);
+		key_flags->add_key_flag(eix_proto::KeyFlags::STABLE);
 	}
 	if(key.isArchStable()) {
-		key_flags->add_key_flag(EixOutput::KeyFlags::ARCHSTABLE);
+		key_flags->add_key_flag(eix_proto::KeyFlags::ARCHSTABLE);
 	}
 	if(key.isUnstable()) {
-		key_flags->add_key_flag(EixOutput::KeyFlags::ARCHUNSTABLE);
+		key_flags->add_key_flag(eix_proto::KeyFlags::ARCHUNSTABLE);
 	}
 	if(key.isAlienStable()) {
-		key_flags->add_key_flag(EixOutput::KeyFlags::ALIENSTABLE);
+		key_flags->add_key_flag(eix_proto::KeyFlags::ALIENSTABLE);
 	}
 	if(key.isAlienUnstable()) {
-		key_flags->add_key_flag(EixOutput::KeyFlags::ALIENUNSTABLE);
+		key_flags->add_key_flag(eix_proto::KeyFlags::ALIENUNSTABLE);
 	}
 	if(key.isMinusKeyword()) {
-		key_flags->add_key_flag(EixOutput::KeyFlags::MINUSKEYWORD);
+		key_flags->add_key_flag(eix_proto::KeyFlags::MINUSKEYWORD);
 	}
 	if(key.isMinusUnstable()) {
-		key_flags->add_key_flag(EixOutput::KeyFlags::MINUSUNSTABLE);
+		key_flags->add_key_flag(eix_proto::KeyFlags::MINUSUNSTABLE);
 	}
 	if(key.isMinusAsterisk()) {
-		key_flags->add_key_flag(EixOutput::KeyFlags::MINUSASTERISK);
+		key_flags->add_key_flag(eix_proto::KeyFlags::MINUSASTERISK);
 	}
 }
 
-static void add_restrictions(EixOutput::Restrictions *restrictions, ExtendedVersion::Restrict restrict) {
+static void add_restrictions(eix_proto::Restrictions *restrictions, ExtendedVersion::Restrict restrict) {
 	if(unlikely((restrict & ExtendedVersion::RESTRICT_BINCHECKS) != 0)) {
-		restrictions->add_restrict(EixOutput::Restrictions::BINCHECKS);
+		restrictions->add_restrict(eix_proto::Restrictions::BINCHECKS);
 	}
 	if(unlikely((restrict & ExtendedVersion::RESTRICT_STRIP) != 0)) {
-		restrictions->add_restrict(EixOutput::Restrictions::STRIP);
+		restrictions->add_restrict(eix_proto::Restrictions::STRIP);
 	}
 	if(unlikely((restrict & ExtendedVersion::RESTRICT_TEST) != 0)) {
-		restrictions->add_restrict(EixOutput::Restrictions::TEST);
+		restrictions->add_restrict(eix_proto::Restrictions::TEST);
 	}
 	if(unlikely((restrict & ExtendedVersion::RESTRICT_USERPRIV) != 0)) {
-		restrictions->add_restrict(EixOutput::Restrictions::USERPRIV);
+		restrictions->add_restrict(eix_proto::Restrictions::USERPRIV);
 	}
 	if(unlikely((restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES) != 0)) {
-		restrictions->add_restrict(EixOutput::Restrictions::INSTALLSOURCES);
+		restrictions->add_restrict(eix_proto::Restrictions::INSTALLSOURCES);
 	}
 	if(unlikely((restrict & ExtendedVersion::RESTRICT_FETCH) != 0)) {
-		restrictions->add_restrict(EixOutput::Restrictions::FETCH);
+		restrictions->add_restrict(eix_proto::Restrictions::FETCH);
 	}
 	if(unlikely((restrict & ExtendedVersion::RESTRICT_MIRROR) != 0)) {
-		restrictions->add_restrict(EixOutput::Restrictions::MIRROR);
+		restrictions->add_restrict(eix_proto::Restrictions::MIRROR);
 	}
 	if(unlikely((restrict & ExtendedVersion::RESTRICT_PRIMARYURI) != 0)) {
-		restrictions->add_restrict(EixOutput::Restrictions::PRIMARYURI);
+		restrictions->add_restrict(eix_proto::Restrictions::PRIMARYURI);
 	}
 	if(unlikely((restrict & ExtendedVersion::RESTRICT_BINDIST) != 0)) {
-		restrictions->add_restrict(EixOutput::Restrictions::BINDIST);
+		restrictions->add_restrict(eix_proto::Restrictions::BINDIST);
 	}
 	if(unlikely((restrict & ExtendedVersion::RESTRICT_PARALLEL) != 0)) {
-		restrictions->add_restrict(EixOutput::Restrictions::PARALLEL);
+		restrictions->add_restrict(eix_proto::Restrictions::PARALLEL);
 	}
 }
 
-static void add_properties(EixOutput::Properties *properties, ExtendedVersion::Restrict props) {
+static void add_properties(eix_proto::Properties *properties, ExtendedVersion::Restrict props) {
 	if(unlikely((props & ExtendedVersion::PROPERTIES_INTERACTIVE) != 0)) {
-		properties->add_property(EixOutput::Properties::INTERACTIVE);
+		properties->add_property(eix_proto::Properties::INTERACTIVE);
 	}
 	if(unlikely((props & ExtendedVersion::PROPERTIES_LIVE) != 0)) {
-		properties->add_property(EixOutput::Properties::LIVE);
+		properties->add_property(eix_proto::Properties::LIVE);
 	}
 	if(unlikely((props & ExtendedVersion::PROPERTIES_VIRTUAL) != 0)) {
-		properties->add_property(EixOutput::Properties::VIRTUAL);
+		properties->add_property(eix_proto::Properties::VIRTUAL);
 	}
 	if(unlikely((props & ExtendedVersion::PROPERTIES_SET) != 0)) {
-		properties->add_property(EixOutput::Properties::SET);
+		properties->add_property(eix_proto::Properties::SET);
 	}
 }
 
 void PrintProto::finish() {
-	if(eix_output == NULLPTR) {
+	if(collection == NULLPTR) {
 		return;
 	}
-	eix_output->SerializeToOstream(&std::cout);
-	delete eix_output;
-	eix_output = NULLPTR;
+	collection->SerializeToOstream(&std::cout);
+	delete collection;
+	collection = NULLPTR;
 }
 
 #else

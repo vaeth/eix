@@ -23,7 +23,10 @@ class DBHeader;
 class VarDbPkg;
 class PrintFormat;
 class SetStability;
-class EixOutput;
+
+namespace eix_proto {
+	class Collection;
+}
 
 class PrintProto : public PrintFormats {
 	protected:
@@ -31,15 +34,15 @@ class PrintProto : public PrintFormats {
 		VarDbPkg *var_db_pkg;
 		const PrintFormat *print_format;
 		const SetStability *stability;
-		EixOutput *eix_output;
+		eix_proto::Collection *collection;
 		typedef UNORDERED_MAP<std::string, int> CategoryIndex;
 		CategoryIndex category_index;
 
 	public:
 		ATTRIBUTE_NONNULL_ PrintProto(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability) :
-			hdr(header), var_db_pkg(vardb), print_format(printformat), stability(set_stability), eix_output(NULLPTR) {}
+			hdr(header), var_db_pkg(vardb), print_format(printformat), stability(set_stability), collection(NULLPTR) {}
 
-		PrintProto() : hdr(NULLPTR), var_db_pkg(NULLPTR), print_format(NULLPTR), stability(NULLPTR), eix_output(NULLPTR) {}
+		PrintProto() : hdr(NULLPTR), var_db_pkg(NULLPTR), print_format(NULLPTR), stability(NULLPTR), collection(NULLPTR) {}
 
 		void start() OVERRIDE;
 

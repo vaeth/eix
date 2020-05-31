@@ -664,7 +664,7 @@ $(nodist_cache_src): $(generate_cachemap)
 	$(AM_V_GEN)$(SHELL) "$(srcdir)"/$(generate_cachemap) > "$@"
 
 $(protobuf_generated): $(protobuf_src)
-	$(AM_V_GEN)/usr/bin/env protoc --cpp_out=. "$<"
+	$(AM_V_GEN)protoc --cpp_out=. "$<"
 
 output/eix-proto.cc: $(protobuf_generated)
 

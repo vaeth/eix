@@ -1,127 +1,147 @@
 syntax = "proto3";
 
-message EixOutput {
-  message Category {
-    string category = 1;
-    repeated Package package = 2;
-  }
+package eix_proto;
 
-  message Package {
-    string name = 1;
-    string description = 2;
-    string homepage = 3;
-    string licenses = 4;
-    repeated Version version = 5;
-  }
+import "google/protobuf/wrappers.proto";
 
-  message Version {
-    string id = 1;
-    Repository repository = 2;
-    string eapi = 3;
-    string slot = 4;
-    string src_uri = 5;
-    Installed installed = 6;
-    repeated string iuse = 7;
-    repeated string iuse_plus = 8;
-    repeated string iuse_minus = 9;
-    string required_use = 10;
-    Properties properties = 11;
-    Restrictions restrictions = 12;
-    MaskFlags local_mask_flags = 13;
-    KeyFlags local_key_flags = 14;
-    MaskFlags system_mask_flags = 15;
-    KeyFlags system_key_flags = 16;
-    repeated Lines mask_reason = 17;
-    string keywords = 18;
-    string effective_keywords = 19; // if different from keywords
-    string depend = 20;
-    string rdepend = 21;
-    string pdepend = 22;
-    string bdepend = 23;
-  }
-
-  message Repository {
-    // overlay label
-    string repository = 1;
-
-    // overlay path
-    string overlay = 2;
-
-    // whether the overlay is only virtual
-    bool virtual = 3;
-  }
-
-  message Installed {
-    int64 date = 1;
-    string eapi = 2;
-    repeated string use_enabled = 4;
-    repeated string use_disabled = 5;
-  }
-
-  message Lines {
-    repeated string line = 1;
-  }
-
-  message MaskFlags {
-    enum MaskFlag {
-      UNKNOWN = 0;
-      MASK_PACKAGE = 1;
-      MASK_SYSTEM = 2;
-      MASK_PROFILE = 3;
-      IN_PROFILE = 4;
-      WORLD = 5;
-      WORLD_SETS = 6;
-      MARKED = 7;
-    }
-
-    repeated MaskFlag mask_flag = 1;
-  }
-
-  message KeyFlags {
-    enum KeyFlag {
-      UNKNOWN = 0;
-      STABLE = 1;
-      ARCHSTABLE = 2;
-      ARCHUNSTABLE = 3;
-      ALIENSTABLE = 4;
-      ALIENUNSTABLE = 5;
-      MINUSKEYWORD = 6;
-      MINUSUNSTABLE = 7;
-      MINUSASTERISK = 8;
-    }
-
-    repeated KeyFlag key_flag = 1;
-  }
-
-  message Properties {
-    enum Property {
-      UNKNOwN = 0;
-      INTERACTIVE = 1;
-      LIVE = 2;
-      VIRTUAL = 3;
-      SET = 4;
-    }
-
-    repeated Property property = 1;
-  }
-
-  message Restrictions {
-    enum Restrict {
-      UNKNOwN = 0;
-      BINCHECKS = 1;
-      STRIP = 2;
-      TEST = 3;
-      USERPRIV = 4;
-      INSTALLSOURCES = 5;
-      FETCH = 6;
-      MIRROR = 7;
-      PRIMARYURI = 8;
-      BINDIST = 9;
-      PARALLEL = 10;
-    }
-
-    repeated Restrict restrict = 1;
-  }
-
+message Collection {
   repeated Category category = 1;
+}
+
+message Category {
+  string category = 1;
+  repeated Package package = 2;
+}
+
+message Package {
+  string name = 1;
+  string description = 2;
+  string homepage = 3;
+  string licenses = 4;
+  repeated Version version = 5;
+}
+
+message Version {
+  reserved 19;
+  reserved "effective_keywords";
+
+  string id = 1;
+  Repository repository = 2;
+
+  string eapi = 3;
+  string slot = 4;
+  string src_uri = 5;
+
+  Installed installed = 6;
+
+  repeated string iuse = 7;
+  repeated string iuse_plus = 8;
+  repeated string iuse_minus = 9;
+
+  string required_use = 10;
+
+  Properties properties = 11;
+  Restrictions restrictions = 12;
+  MaskFlags local_mask_flags = 13;
+  KeyFlags local_key_flags = 14;
+  MaskFlags system_mask_flags = 15;
+  KeyFlags system_key_flags = 16;
+
+  repeated Lines mask_reason = 17;
+
+  string keywords = 18;
+  // Only set if different from keywords:
+  google.protobuf.StringValue keywords_effective = 24;
+
+  string depend = 20;
+  string rdepend = 21;
+  string pdepend = 22;
+  string bdepend = 23;
+}
+
+message Repository {
+  // overlay label
+  string repository = 1;
+
+  // overlay path
+  string overlay = 2;
+
+  // whether the overlay is only virtual
+  bool virtual = 3;
+}
+
+message Installed {
+  int64 date = 1;
+  string eapi = 2;
+  repeated string use_enabled = 4;
+  repeated string use_disabled = 5;
+}
+
+message Lines {
+  repeated string line = 1;
+}
+
+message MaskFlags {
+  enum MaskFlag {
+    UNKNOWN = 0;
+    MASK_PACKAGE = 1;
+    MASK_SYSTEM = 2;
+    MASK_PROFILE = 3;
+    IN_PROFILE = 4;
+    WORLD = 5;
+    WORLD_SETS = 6;
+    MARKED = 7;
+  }
+
+  // This is a set: do not rely on the order!
+  repeated MaskFlag mask_flag = 1;
+}
+
+message KeyFlags {
+  enum KeyFlag {
+    UNKNOWN = 0;
+    STABLE = 1;
+    ARCHSTABLE = 2;
+    ARCHUNSTABLE = 3;
+    ALIENSTABLE = 4;
+    ALIENUNSTABLE = 5;
+    MINUSKEYWORD = 6;
+    MINUSUNSTABLE = 7;
+    MINUSASTERISK = 8;
+  }
+
+  // This is a set: do not rely on the order!
+  repeated KeyFlag key_flag = 1;
+}
+
+message Properties {
+  enum Property {
+    UNKNOwN = 0;
+    INTERACTIVE = 1;
+    LIVE = 2;
+    VIRTUAL = 3;
+    SET = 4;
+  }
+
+  // This is a set: do not rely on the order!
+  repeated Property property = 1;
+}
+
+message Restrictions {
+  enum Restrict {
+    UNKNOwN = 0;
+    BINCHECKS = 1;
+    STRIP = 2;
+    TEST = 3;
+    USERPRIV = 4;
+    INSTALLSOURCES = 5;
+    FETCH = 6;
+    MIRROR = 7;
+    PRIMARYURI = 8;
+    BINDIST = 9;
+    PARALLEL = 10;
+  }
+
+  // This is a set: do not rely on the order!
+  repeated Restrict restrict = 1;
 }

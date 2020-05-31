@@ -362,14 +362,22 @@ Use the normal layout which is the default if B<DEFAULT_FORMAT> was not explicit
 .TP
 .BR --xml ", " --proto, "   (toggle)"
 Output in XML or protobuf format.
-If you use this option from an external program you will probably want to
-combine this with B<--care> and export some variables like B<LOCAL_PORTAGE_CONFIG>
-to make sure that the preferred user output settings do not influence your output.
-If this option is active, B<OVERLAYS_LIST=none> and B<--pure-packages> are
-automatically active.
-The output format can be slightly influenced by the B<XML_*> variables.
+
+For usage from an external program you will probably want to combine this
+with B<--care>.
+
+For B<--xml>, you probably additionally want to export B<LOCAL_PORTAGE_CONFIG>
+to make sure that the preferred user output setting do not influence your output.
+
+The B<--proto> format is independent of this variables: local and system settings are separate.
+
+If some of these options is active, B<OVERLAYS_LIST=none> and B<--pure-packages> are
+automatically active so that your output is not clobbered with normal eix output.
+
+The XML output format can be slightly influenced by the B<XML_*> variables.
 The XML format used is documented in human-readable form in the files eix-xml.html or eix-xml.txt
 and in less human-readable form (namely as an xml-schema) in the file eix-xml.xsd.
+
 The protobuf format is in the file eix.proto.
 .TP
 .BR -* ", " --pure-packages "   (toggle)"
@@ -1300,7 +1308,7 @@ All these properties are empty if the condition is not satisfied, otherwise 1.
 To ease reusing code, when printing is not sorted according to slots, then
 B<slotfirst>/B<slotlast> is equivalent to B<first>/B<last> and B<oneslot> is 1.
 .TP
-.BR srcuri, havesrcuri
+.BR srcuri ", " havesrcuri
 This must occur only in I<VARIABLE> in the context of version printing.
 It outputs the B<SRC_URI> of an available version or 1, if B<SRC_URI> is nonempty,
 respectively.

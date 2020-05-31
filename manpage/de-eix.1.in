@@ -374,15 +374,24 @@ ausdrücklich anders gesetzt wurde.
 .TP
 .BR --xml ", " --proto "   (toggle)"
 Ausgabe im XML- oder Protobuf-Format.
-Falls dies für ein externes Programm geschieht, empfiehlt sich zusätzlich
-die Benutzung von B<--care> und das Exportieren einiger Variablen wie B<LOCAL_PORTAGE_CONFIG>,
-so dass Benutzereinstellungen die Ausgabe nicht beeinflussen.
-Mit dieser option werden B<OVERLAYS_LIST=none> und B<--pure-packages>
+
+Für Benutzung druch ein externes Programm empfiehlt sich zusätzlich
+die Benutzung von B<--care>.
+
+Für B<--xml> empfiehlt sich zusätzlich das Exportieren von
+B<LOCAL_PORTAGE_CONFIG> um sicherzustellen, dass die Benutzereinstellung die
+Ausgabe nicht beeinflusst
+
+Das Format von B<--proto> hängt nicht von dieser Variablen ab: Lokale und System-Einstellungen sind getrennt.
+
+Mit diesen Optionen werden B<OVERLAYS_LIST=none> und B<--pure-packages>
 automatisch aktiviert.
-Das Ausgabeformat kann minimal mit den B<XML_*>-Variablen beeinflusst werden.
+
+Das Ausgabeformat für B<--xml> kann minimal mit den B<XML_*>-Variablen beeinflusst werden.
 Das benutzte XML-Format ist auf menschenlesbare Art in den Dateien eix-xml.html oder eix-xml.txt
 dokumentiert und auf weniger menschenlesbare Art (nämlich als XML-Schema) in der Datei eix-xml.xsd.
-Das Protobuf-Format ist in der Datei eix.proto.
+
+Das Protobuf-Format ist durch die Datei eix.proto festgelegt.
 .TP
 .BR -* ", " --pure-packages "   (toggle)"
 (bei der Benutzung der Kurzform in einer Shell bitte das Quoten nicht vergessen!)
@@ -1326,7 +1335,7 @@ Um die Wiederbenutzung von Code zu erleichtern gilt:
 Wenn die Durckausgabe nicht Slot-sortiert ist, dann sind
 B<slotfirst>/B<slotlast> äquivalent zu B<first>/B<last>, und B<oneslot> ist 1.
 .TP
-.BR srcuri, havesrcuri
+.BR srcuri ", " havesrcuri
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 Sie gibt die B<SRC_URI> einer verfügbaren Version aus bzw. 1, wenn B<SRC_URI> nicht leer ist.
 .TP

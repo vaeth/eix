@@ -2,7 +2,13 @@
 
 *eix-0.34.4
 	Martin Väth <martin at mvath.de>:
-	- Somehow the second part of the eix-0.34.3 patch was lost...
+	- Simplify eix.proto:
+	  - Use eix_proto namespace, avoid nesting messages unnecessarily
+	  - Rename the main proto to not misleadingly indicate the source
+	- Minor change of the proto wire format (extension w/ deprecation) to
+	  allow distinction between empty and unset/equal effective keywords
+	- Manpage typo fixes, and clarify that --proto is setting independent
+	- The second part of the eix-0.34.3 patch was not in the repo.
 
 *eix-0.34.3
 	Martin Väth <martin at mvath.de>:
