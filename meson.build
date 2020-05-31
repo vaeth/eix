@@ -385,7 +385,6 @@ if warnings
 	cxxflags_opt += [
 		[ '-fno-common' ],
 		[ '-funsigned-char' ],
-		[ '-fdirectives-only' ],
 		[ '-ftracer' ],
 		[ '-fconcepts' ],
 		[ '-Wpedantic' ],
@@ -400,7 +399,7 @@ if warnings
 		[ '-Wmissing-include-dirs' ],
 		[ '-Wswitch-default' ],
 		[ '-Wstrict-aliasing=1' ],
-		[ '-Wstrict-overflow=5' ],
+		[ '-Wstrict-overflow' ],
 		[ '-Wfloat-equal' ],
 		[ '-Wundef' ],
 		[ '-Wshadow' ],
@@ -459,7 +458,6 @@ if warnings
 		[ '-Wduplicated-branches' ],
 		[ '-Wduplicated-cond' ],
 		[ '-Wstringop-truncation' ],
-		[ '-Wno-c++1z-extensions' ],
 		# [ '-Weverything' ],
 		# [ '-Wno-unknown-warning-option' ],
 		# [ '-fmem-report' ],
@@ -914,6 +912,73 @@ return a.a;
 message('Wsuggest-final-methods: ' + wsuggest_final_methods.to_string())
 conf.set('WSUGGEST_FINAL_METHODS', wsuggest_final_methods,
 	description : 'Define if GCC diagnostic -Wsuggest-final-methods can be used')
+
+wzero_as_null_pointer_constant = cxx.links('''
+#define GCC_DIAG_STR(s) #s
+#define GCC_DIAG_JOINSTR(x, y) GCC_DIAG_STR(x ## y)
+#define GCC_DIAG_DO_PRAGMA(x) _Pragma (#x)
+#define GCC_DIAG_PRAGMA(x) GCC_DIAG_DO_PRAGMA(GCC diagnostic x)
+#define GCC_DIAG_OFF(x) GCC_DIAG_PRAGMA(push) \
+	GCC_DIAG_PRAGMA(ignored GCC_DIAG_JOINSTR(-W, x))
+#define GCC_DIAG_ON(x) GCC_DIAG_PRAGMA(pop)
+static const char *f(const char *a) {
+	return a;
+}
+int main() {
+GCC_DIAG_OFF(zero-as-null-pointer-constant)
+	return (f(0) == 0) ? 0 : 1;
+GCC_DIAG_ON(zero-as-null-pointer-constant)
+}
+''', args : flags_fatal)
+message('Wzero-as-null-pointer-constant: ' + wzero_as_null_pointer_constant.to_string())
+conf.set('WZERO_AS_NULL_POINTER_CONSTANT', wzero_as_null_pointer_constant,
+	description : 'Define if GCC diagnostic -Wzero-as-null-pointer-constant can be used')
+
+wsuggest_attribute_const = cxx.links('''
+#define GCC_DIAG_STR(s) #s
+#define GCC_DIAG_JOINSTR(x, y) GCC_DIAG_STR(x ## y)
+#define GCC_DIAG_DO_PRAGMA(x) _Pragma (#x)
+#define GCC_DIAG_PRAGMA(x) GCC_DIAG_DO_PRAGMA(GCC diagnostic x)
+#define GCC_DIAG_OFF(x) GCC_DIAG_PRAGMA(push) \
+	GCC_DIAG_PRAGMA(ignored GCC_DIAG_JOINSTR(-W, x))
+#define GCC_DIAG_ON(x) GCC_DIAG_PRAGMA(pop)
+GCC_DIAG_OFF(suggest-attribute=const)
+int f();
+int f() {
+	return 0;
+}
+int main() {
+GCC_DIAG_OFF(suggest-attribute=const)
+	return f();
+GCC_DIAG_ON(suggest-attribute=const)
+}
+''', args : flags_fatal)
+message('Wsuggest-attribute=const: ' + wzero_as_null_pointer_constant.to_string())
+conf.set('WSUGGEST_ATTRIBUTE_CONST', wsuggest_attribute_const,
+	description : 'Define if GCC diagnostic -Wsuggest-attribute=const can be used')
+
+wsuggest_attribute_pure = cxx.links('''
+#define GCC_DIAG_STR(s) #s
+#define GCC_DIAG_JOINSTR(x, y) GCC_DIAG_STR(x ## y)
+#define GCC_DIAG_DO_PRAGMA(x) _Pragma (#x)
+#define GCC_DIAG_PRAGMA(x) GCC_DIAG_DO_PRAGMA(GCC diagnostic x)
+#define GCC_DIAG_OFF(x) GCC_DIAG_PRAGMA(push) \
+	GCC_DIAG_PRAGMA(ignored GCC_DIAG_JOINSTR(-W, x))
+#define GCC_DIAG_ON(x) GCC_DIAG_PRAGMA(pop)
+GCC_DIAG_OFF(suggest-attribute=pure)
+int f();
+int f() {
+	return 0;
+}
+int main() {
+GCC_DIAG_OFF(suggest-attribute=pure)
+	return f();
+GCC_DIAG_ON(suggest-attribute=pure)
+}
+''', args : flags_fatal)
+message('Wsuggest-attribute=pure: ' + wzero_as_null_pointer_constant.to_string())
+conf.set('WSUGGEST_ATTRIBUTE_PURE', wsuggest_attribute_pure,
+	description : 'Define if GCC diagnostic -Wsuggest-attribute=pure can be used')
 
 wgnu_statement_expression = cxx.links('''
 #define GCC_DIAG_STR(s) #s

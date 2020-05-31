@@ -24,11 +24,14 @@
 #endif
 
 #ifdef WITH_PROTOBUF
+#include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 #include "eixTk/unordered_set.h"
+WSUGGEST_FINAL_METHODS_OFF
 #include "output/eix.pb.h"
+WSUGGEST_FINAL_METHODS_ON
 #include "output/formatstring.h"
 #include "portage/basicversion.h"
 #include "portage/depend.h"

@@ -28,7 +28,7 @@ class VarDbPkg;
 class PrintFormat;
 class SetStability;
 
-class PrintXml : public PrintFormats {
+class PrintXml FINAL : public PrintFormats {
 	protected:
 		bool started;
 		bool print_overlay;

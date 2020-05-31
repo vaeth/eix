@@ -23,6 +23,7 @@
 #include "eixTk/dialect.h"
 #endif
 #endif
+#include "eixTk/diagnostics.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 
@@ -76,19 +77,27 @@ class StringListContent {
 };
 
 inline static bool operator<(const StringListContent& a, const StringListContent& b) {
+WZERO_AS_NULL_POINTER_CONSTANT_OFF
 	return (a.m_list < b.m_list);
+WZERO_AS_NULL_POINTER_CONSTANT_ON
 }
 
 inline static bool operator>(const StringListContent& a, const StringListContent& b) {
+WZERO_AS_NULL_POINTER_CONSTANT_OFF
 	return (a.m_list > b.m_list);
+WZERO_AS_NULL_POINTER_CONSTANT_ON
 }
 
 inline static bool operator<=(const StringListContent& a, const StringListContent& b) {
+WZERO_AS_NULL_POINTER_CONSTANT_OFF
 	return (a.m_list <= b.m_list);
+WZERO_AS_NULL_POINTER_CONSTANT_ON
 }
 
 inline static bool operator>=(const StringListContent& a, const StringListContent& b) {
+WZERO_AS_NULL_POINTER_CONSTANT_OFF
 	return (a.m_list >= b.m_list);
+WZERO_AS_NULL_POINTER_CONSTANT_ON
 }
 
 inline static bool operator==(const StringListContent& a, const StringListContent& b) {

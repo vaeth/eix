@@ -437,8 +437,17 @@
 /* Define if cache method sqlite is wanted */
 #undef WITH_SQLITE
 
+/* Define if GCC diagnostic -Wsuggest-attribute=const can be used */
+#undef WSUGGEST_ATTRIBUTE_CONST
+
+/* Define if GCC diagnostic -Wsuggest-attribute=pure can be used */
+#undef WSUGGEST_ATTRIBUTE_PURE
+
 /* Define if GCC diagnostic -Wsuggest-final-methods can be used */
 #undef WSUGGEST_FINAL_METHODS
+
+/* Define if GCC diagnostic -Wzero-as-null-pointer-constant can be used */
+#undef WZERO_AS_NULL_POINTER_CONSTANT
 
 /* Enable large inode numbers on Mac OS X 10.5.  */
 #ifndef _DARWIN_USE_64_BIT_INODE

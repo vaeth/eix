@@ -14,6 +14,7 @@
 #include <string>
 
 #include "eixTk/assert.h"
+#include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/filenames.h"
 #include "eixTk/likely.h"
@@ -32,6 +33,7 @@ void OverlayIdent::init_static() {
 }
 
 eix::SignedBool OverlayIdent::compare(const OverlayIdent& left, const OverlayIdent& right) {
+WZERO_AS_NULL_POINTER_CONSTANT_OFF
 	if(left.priority < right.priority) {
 		return -1;
 	}
@@ -50,6 +52,7 @@ eix::SignedBool OverlayIdent::compare(const OverlayIdent& left, const OverlayIde
 	if(left.path > right.path) {
 		return 1;
 	}
+WZERO_AS_NULL_POINTER_CONSTANT_ON
 	return 0;
 }
 

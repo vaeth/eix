@@ -25,10 +25,10 @@ class PrintFormat;
 class SetStability;
 
 namespace eix_proto {
-	class Collection;
+class Collection;
 }
 
-class PrintProto : public PrintFormats {
+class PrintProto FINAL : public PrintFormats {
 	protected:
 		const DBHeader *hdr;
 		VarDbPkg *var_db_pkg;

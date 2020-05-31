@@ -9,7 +9,15 @@
 
 #ifdef WITH_PROTOBUF
 #include "eixTk/diagnostics.h"
+WSUGGEST_ATTRIBUTE_PURE_OFF
+WSUGGEST_ATTRIBUTE_CONST_OFF
+WSUGGEST_FINAL_METHODS_OFF
 GCC_DIAG_OFF(sign-conversion)
+
 #include "output/eix.pb.cc"  // NOLINT(build/include)
+
 GCC_DIAG_ON(sign-conversion)
+WSUGGEST_FINAL_METHODS_ON
+WSUGGEST_ATTRIBUTE_CONST_ON
+WSUGGEST_ATTRIBUTE_PURE_ON
 #endif

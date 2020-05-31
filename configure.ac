@@ -461,7 +461,6 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
 			-fno-common \
 			-funsigned-char \
-			-fdirectives-only \
 			-ftracer \
 			-fconcepts \
 		], [$my_cxxfatal], [$CPPFLAGS], [:])
@@ -478,7 +477,7 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wmissing-include-dirs \
 			-Wswitch-default \
 			-Wstrict-aliasing=1 \
-			-Wstrict-overflow=5 \
+			-Wstrict-overflow \
 			-Wfloat-equal \
 			-Wundef \
 			-Wshadow \
@@ -534,7 +533,6 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wduplicated-branches \
 			-Wduplicated-cond \
 			-Wstringop-truncation \
-			-Wno-c++1z-extensions \
 		], [$my_cxxfatal], [], [:])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
 			-Wcast-align=strict \
@@ -1031,6 +1029,89 @@ AS_IF([$wsuggest_final_methods],
 	[AC_DEFINE([WSUGGEST_FINAL_METHODS],
 		[1],
 		[Define if GCC diagnostic -Wsuggest-final-methods can be used])])
+
+# Check if _Pragma("GCC diagnostic \"-Wzero-as-null-pointer-constant\"") can be used
+AC_MSG_CHECKING([whether pragma GCC diagnostic -Wzero-as-null-pointer-constant can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+#define GCC_DIAG_STR(s) #s
+#define GCC_DIAG_JOINSTR(x, y) GCC_DIAG_STR(x ## y)
+#define GCC_DIAG_DO_PRAGMA(x) _Pragma (#x)
+#define GCC_DIAG_PRAGMA(x) GCC_DIAG_DO_PRAGMA(GCC diagnostic x)
+#define GCC_DIAG_OFF(x) GCC_DIAG_PRAGMA(push) \
+	GCC_DIAG_PRAGMA(ignored GCC_DIAG_JOINSTR(-W, x))
+#define GCC_DIAG_ON(x) GCC_DIAG_PRAGMA(pop)
+static const char *f(const char *a) {
+	return a;
+}
+		]], [[
+GCC_DIAG_OFF(zero-as-null-pointer-constant)
+	return (f(0) == 0) ? 0 : 1;
+GCC_DIAG_ON(zero-as-null-pointer-constant)
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([wzero_as_null_pointer_constant], [:])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([wzero_as_null_pointer_constant], [false])])
+AS_IF([$wzero_as_null_pointer_constant],
+	[AC_DEFINE([WZERO_AS_NULL_POINTER_CONSTANT],
+		[1],
+		[Define if GCC diagnostic -Wzero-as-null-pointer-constant can be used])])
+
+# Check if _Pragma("GCC diagnostic \"-Wsuggest-attribute=const\"") can be used
+AC_MSG_CHECKING([whether pragma GCC diagnostic -Wsuggest-attribute=const can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+#define GCC_DIAG_STR(s) #s
+#define GCC_DIAG_JOINSTR(x, y) GCC_DIAG_STR(x ## y)
+#define GCC_DIAG_DO_PRAGMA(x) _Pragma (#x)
+#define GCC_DIAG_PRAGMA(x) GCC_DIAG_DO_PRAGMA(GCC diagnostic x)
+#define GCC_DIAG_OFF(x) GCC_DIAG_PRAGMA(push) \
+	GCC_DIAG_PRAGMA(ignored GCC_DIAG_JOINSTR(-W, x))
+#define GCC_DIAG_ON(x) GCC_DIAG_PRAGMA(pop)
+GCC_DIAG_OFF(suggest-attribute=const)
+int f();
+int f() {
+	return 0;
+}
+GCC_DIAG_ON(suggest-attribute=const)
+		]], [[
+	return f();
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([wsuggest_attribute_const], [:])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([wsuggest_attribute_const], [false])])
+AS_IF([$wsuggest_attribute_const],
+	[AC_DEFINE([WSUGGEST_ATTRIBUTE_CONST],
+		[1],
+		[Define if GCC diagnostic -Wsuggest-attribute=const can be used])])
+
+# Check if _Pragma("GCC diagnostic \"-Wsuggest-attribute=pure\"") can be used
+AC_MSG_CHECKING([whether pragma GCC diagnostic -Wsuggest-attribute=pure can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+#define GCC_DIAG_STR(s) #s
+#define GCC_DIAG_JOINSTR(x, y) GCC_DIAG_STR(x ## y)
+#define GCC_DIAG_DO_PRAGMA(x) _Pragma (#x)
+#define GCC_DIAG_PRAGMA(x) GCC_DIAG_DO_PRAGMA(GCC diagnostic x)
+#define GCC_DIAG_OFF(x) GCC_DIAG_PRAGMA(push) \
+	GCC_DIAG_PRAGMA(ignored GCC_DIAG_JOINSTR(-W, x))
+#define GCC_DIAG_ON(x) GCC_DIAG_PRAGMA(pop)
+GCC_DIAG_OFF(suggest-attribute=pure)
+int f();
+int f() {
+	return 0;
+}
+GCC_DIAG_ON(suggest-attribute=pure)
+		]], [[
+	return f();
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([wsuggest_attribute_pure], [:])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([wsuggest_attribute_pure], [false])])
+AS_IF([$wsuggest_attribute_pure],
+	[AC_DEFINE([WSUGGEST_ATTRIBUTE_PURE],
+		[1],
+		[Define if GCC diagnostic -Wsuggest-attribute=pure can be used])])
 
 # Check if _Pragma("GCC diagnostic \"-Wgnu-statement-expression\"") can be used in macro
 AC_MSG_CHECKING([whether pragma GCC diagnostic -Wgnu-statement-expression can be used in macro])

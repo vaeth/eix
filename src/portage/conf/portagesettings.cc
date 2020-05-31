@@ -76,7 +76,7 @@ bool PortageSettings::grab_setmasks(const char *file, SetsIndex i, WordVec *cont
 	if(!pushback_lines(file, &lines, recursive)) {
 		return false;
 	}
-	for(LineVec::iterator it(lines.begin()); likely(it < lines.end()); ++it) {
+	for(LineVec::iterator it(lines.begin()); likely(it != lines.end()); ++it) {
 		if(it->empty()) {
 			continue;
 		}

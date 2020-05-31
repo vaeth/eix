@@ -18,6 +18,7 @@
 
 #include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
+#include "eixTk/diagnostics.h"
 #include "eixTk/eixarray.h"
 #include "eixTk/eixint.h"
 #include "eixTk/inttypes.h"
@@ -559,23 +560,35 @@ class PackagePtr {
 // Comparison is assumed to happen only in PackageTree where we know
 // that categories do match
 inline static bool operator<(const PackagePtr& a, const PackagePtr& b) {
+WZERO_AS_NULL_POINTER_CONSTANT_OFF
 	return (a->name < b->name);
+WZERO_AS_NULL_POINTER_CONSTANT_ON
+}
+
+inline static bool operator>(const PackagePtr& a, const PackagePtr& b) {
+WZERO_AS_NULL_POINTER_CONSTANT_OFF
+	return (a->name > b->name);
+WZERO_AS_NULL_POINTER_CONSTANT_ON
+}
+
+inline static bool operator<=(const PackagePtr& a, const PackagePtr& b) {
+WZERO_AS_NULL_POINTER_CONSTANT_OFF
+	return (a->name <= b->name);
+WZERO_AS_NULL_POINTER_CONSTANT_ON
+}
+
+inline static bool operator>=(const PackagePtr& a, const PackagePtr& b) {
+WZERO_AS_NULL_POINTER_CONSTANT_OFF
+	return (a->name >= b->name);
+WZERO_AS_NULL_POINTER_CONSTANT_ON
 }
 
 inline static bool operator==(const PackagePtr& a, const PackagePtr& b) {
 	return (a->name == b->name);
 }
 
-inline static bool operator>(const PackagePtr& a, const PackagePtr& b) {
-	return (a->name > b->name);
-}
-
-inline static bool operator<=(const PackagePtr& a, const PackagePtr& b) {
-	return (a->name <= b->name);
-}
-
-inline static bool operator>=(const PackagePtr& a, const PackagePtr& b) {
-	return (a->name >= b->name);
+inline static bool operator!=(const PackagePtr& a, const PackagePtr& b) {
+	return (a->name != b->name);
 }
 
 #endif  // SRC_PORTAGE_PACKAGE_H_

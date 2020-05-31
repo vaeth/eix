@@ -139,6 +139,8 @@ void DBHeader::get_overlay_vector(set<ExtendedVersion::Overlay> *overlayset, con
 	}
 }
 
+WSUGGEST_ATTRIBUTE_PURE_OFF
+// Attribute pure can cause subtle errors here
 bool DBHeader::isCurrent() const {
 	for(const DBVersion *acc(accept); *acc != 0; ++acc) {
 		if(version == *acc) {
@@ -147,3 +149,4 @@ bool DBHeader::isCurrent() const {
 	}
 	return false;
 }
+WSUGGEST_ATTRIBUTE_PURE_ON

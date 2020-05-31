@@ -174,7 +174,7 @@ class ArgumentReader : public std::vector<Parameter> {
 		/**
 		@return number of args for opt
 		**/
-		ATTRIBUTE_PURE static eix::TinyUnsigned numargs(Option::Type opt_type);
+		ATTRIBUTE_CONST static eix::TinyUnsigned numargs(Option::Type opt_type);
 
 		/**
 		Fold parameter-list so that a option with an arguments has its argument set

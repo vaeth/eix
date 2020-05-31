@@ -92,7 +92,7 @@ GCC_DIAG_ON(sign-conversion)
 	foldAndRemove(opt_table);
 }
 
-eix::TinyUnsigned ArgumentReader::numargs(const Option::Type opt_type) {
+eix::TinyUnsigned ArgumentReader::numargs(Option::Type opt_type) {
 	switch(opt_type) {
 		case Option::STRING:
 		case Option::STRING_OPTIONAL:
