@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.34.5
+	Martin Väth <martin at mvath.de>:
+	- Read make.conf after profiles https://github.com/vaeth/eix/issues/76
+
 *eix-0.34.4
 	Martin Väth <martin at mvath.de>:
 	- Simplify eix.proto:

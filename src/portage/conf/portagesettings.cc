@@ -211,17 +211,6 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 	} else {
 		read_config(m_eprefixconf + MAKE_GLOBALS_FILE, eprefixsource);
 	}
-	read_config(m_eprefixconf + MAKE_CONF_FILE, eprefixsource);
-	read_config(m_eprefixconf + MAKE_CONF_FILE_NEW, eprefixsource);
-	string *use_make_conf; {
-		iterator it(find("USE"));
-		if(likely(it != end())) {
-			use_make_conf = new string(it->second);
-			erase(it);
-		} else {
-			use_make_conf = NULLPTR;
-		}
-	}
 
 	override_by_env(test_in_env_early); {
 		/* Read repos.conf */
@@ -366,13 +355,9 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 		if(likely(useflags != NULLPTR)) {
 			(*this)["USE.profile"] = useflags;
 		}
-		if(likely(use_make_conf != NULLPTR)) {
-			(*this)["USE"] = *use_make_conf;
-			delete use_make_conf;
-		} else if(likely(useflags != NULLPTR)) {
-			erase("USE");
-		}
 	}
+	read_config(m_eprefixconf + MAKE_CONF_FILE, eprefixsource);
+	read_config(m_eprefixconf + MAKE_CONF_FILE_NEW, eprefixsource);
 
 	override_by_env(test_in_env_late);
 
