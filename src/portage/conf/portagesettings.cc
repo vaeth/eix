@@ -136,28 +136,54 @@ static CONSTEXPR const char *test_in_env_late[] = {
 	NULLPTR
 };
 
-void PortageSettings::override_by_env(const char *const *vars) {
+void PortageSettings::override_by_map(const char *const *vars, const WordIterateMap& varmap) {
 	for(const char *var(*vars); likely(var != NULLPTR); var = *(++vars)) {
-		const char *e(std::getenv(var));
-		if(e == NULLPTR)
-			continue;
-		if(!match_list(default_accumulating_keys, var)) {
-			(*this)[var] = e;
-			continue;
+		WordIterateMap::const_iterator it(varmap.find(var));
+		if(it == varmap.end()) {
+			return;
 		}
-		string& ref((*this)[var]);
-		if(ref.empty())
-			ref = e;
-		else
-			ref.append(string("\n") + e);
+		override_by_value(var, it->second);
 	}
 }
 
-void PortageSettings::read_config(const string& name, const string& prefix) {
+void PortageSettings::override_by_map(const WordIterateMap& varmap) {
+	for(WordIterateMap::const_iterator it(varmap.begin()); likely(it != varmap.end()); ++it) {
+		override_by_value(it->first.c_str(), it->second);
+	}
+}
+
+void PortageSettings::override_by_env(const char *const *vars) {
+	for(const char *var(*vars); likely(var != NULLPTR); var = *(++vars)) {
+		override_by_value(var, std::getenv(var));
+	}
+}
+
+void PortageSettings::override_by_value(const char *var, const string& value) {
+	string& ref((*this)[var]);
+	if(ref.empty() || !match_list(default_accumulating_keys, var)) {
+		ref = value;
+	} else {
+		ref.append(string("\n") + value);
+	}
+}
+
+void PortageSettings::override_by_value(const char *var, const char *value) {
+	if(value == NULLPTR) {
+		return;
+	}
+	string& ref((*this)[var]);
+	if(ref.empty() || !match_list(default_accumulating_keys, var)) {
+		ref.assign(value);
+	} else {
+		ref.append(string("\n") + value);
+	}
+}
+
+void PortageSettings::read_config(const string& name, const string& prefix, WordIterateMap *vars) {
 	(*this)["EPREFIX"] = m_eprefix;
 	VarsReader configfile(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE|VarsReader::PORTAGE_ESCAPES|VarsReader::RECURSE);
 	configfile.accumulatingKeys(default_accumulating_keys);
-	configfile.useMap(this);
+	configfile.useMap(vars);
 	configfile.setPrefix(prefix);
 	string errtext;
 	if(unlikely(!configfile.read(name.c_str(), &errtext, true))) {
@@ -211,8 +237,13 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 	} else {
 		read_config(m_eprefixconf + MAKE_GLOBALS_FILE, eprefixsource);
 	}
+	WordIterateMap make_conf;
+	read_config(m_eprefixconf + MAKE_CONF_FILE, eprefixsource, &make_conf);
+	read_config(m_eprefixconf + MAKE_CONF_FILE_NEW, eprefixsource, &make_conf);
 
-	override_by_env(test_in_env_early); {
+	override_by_map(test_in_env_early, make_conf);
+	override_by_env(test_in_env_early);
+	{
 		/* Read repos.conf */
 		bool have_repos;
 		VarsReader reposfile(VarsReader::SUBST_VARS|VarsReader::PORTAGE_SECTIONS|VarsReader::RECURSE);
@@ -349,16 +380,15 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 		}
 	} else {
 		profile->readMakeDefaults();
-	} {
-		profile->readremoveFiles();
+	}
+	profile->readremoveFiles();
+	{
 		const char *useflags(cstr("USE"));
 		if(likely(useflags != NULLPTR)) {
 			(*this)["USE.profile"] = useflags;
 		}
 	}
-	read_config(m_eprefixconf + MAKE_CONF_FILE, eprefixsource);
-	read_config(m_eprefixconf + MAKE_CONF_FILE_NEW, eprefixsource);
-
+	override_by_map(make_conf);
 	override_by_env(test_in_env_late);
 
 	m_accepted_keywords.clear();
