@@ -2,13 +2,11 @@
 
 *eix-0.34.6
 	Martin Väth <martin at mvath.de>:
-	- Read make.conf again before profiles, but first pick early variables,
-	  and pick all variables after reading profiles. This hopefully solves
-	  a regression from 0.34.5 when early variables like PORTDIR_OVERLAY
-	  are needed to find profiles.
-	  For simplicity, make.conf is read with an empty environment (in
-	  particular without make.globals vars); this seems to match portage's
-	  current behavior. See https://github.com/vaeth/eix/issues/76
+	- Read make.conf twice: A first reading is needed to find the profile
+	  paths (e.g. PORTDIR_OVERLAY). But the "main" reading must happen
+	  after reading the profiles since profile variables like ARCH can be
+	  used in make.conf; this seems to match portage's current behavior.
+	  See the comments in https://github.com/vaeth/eix/issues/76
 
 *eix-0.34.5
 	Martin Väth <martin at mvath.de>:

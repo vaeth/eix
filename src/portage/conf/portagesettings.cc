@@ -191,6 +191,112 @@ void PortageSettings::read_config(const string& name, const string& prefix, Word
 	}
 }
 
+void PortageSettings::read_make_conf(const string& eprefixsource, WordIterateMap *vars) {
+	read_config(m_eprefixconf + MAKE_CONF_FILE, eprefixsource, vars);
+	read_config(m_eprefixconf + MAKE_CONF_FILE_NEW, eprefixsource, vars);
+}
+
+void PortageSettings::read_make_conf_early(const string& eprefixsource) {
+	WordIterateMap make_conf(*this);
+	read_make_conf(eprefixsource, &make_conf);
+	override_by_map(test_in_env_early, make_conf);
+}
+
+void PortageSettings::read_make_globals(const string& eprefixsource) {
+	const string& make_globals((*settings_rc)["MAKE_GLOBALS"]);
+	if(is_file(make_globals.c_str())) {
+		read_config(make_globals, eprefixsource);
+	} else {
+		read_config(m_eprefixconf + MAKE_GLOBALS_FILE, eprefixsource);
+	}
+}
+
+void PortageSettings::read_repos_conf(const string& eprefixsource) {
+	bool have_repos;
+	VarsReader reposfile(VarsReader::SUBST_VARS|VarsReader::PORTAGE_SECTIONS|VarsReader::RECURSE);
+	reposfile.setPrefix(eprefixsource);
+	string &repositories = (*this)["PORTAGE_REPOSITORIES"];
+	if(!repositories.empty()) {
+		const char *s = repositories.c_str();
+		have_repos = reposfile.readmem(s, s + repositories.size(), NULLPTR);
+	} else {
+		string errtext;
+		have_repos = reposfile.read((*settings_rc)["PORTAGE_REPOS_CONF"].c_str(), &errtext, true);
+		if(!have_repos) {
+			eix::say_error(_("error: %s")) % errtext;
+		}
+		if(reposfile.read((m_eprefixconf + USER_REPOS_CONF).c_str(), &errtext, true)) {
+			have_repos = true;
+		} else {
+			eix::say_error(_("error: %s")) % errtext;
+		}
+	}
+	const string *main_repo(NULLPTR);
+	OverlayIdent::Priority priority(-1000);
+	string& portdirref((*this)["PORTDIR"]);
+	if(likely(have_repos)) {
+		if(portdirref.empty()) {
+			main_repo = reposfile.find("main-repo");
+			const string *p(NULLPTR);
+			const string *prio(NULLPTR);
+			if(main_repo == NULLPTR) {
+				p = reposfile.find("location");
+				prio = reposfile.find("priority");
+			} else {
+				p = reposfile.find(string("location:") + *main_repo);
+				prio = reposfile.find(string("priority:") + *main_repo);
+			}
+			if(prio != NULLPTR) {
+				priority = my_atos(prio->c_str());
+			}
+			if(p != NULLPTR) {
+				portdirref = *p;
+			}
+		}
+	}
+	if(portdirref.empty()) {
+		portdirref = PORTDIR_DEFAULT;
+	}
+	/* Normalize "PORTDIR": */
+	portdirref = normalize_path((m_eprefixportdir + portdirref).c_str(), true, true);
+	add_repo(portdirref, false, (main_repo == NULLPTR) ? NULLPTR : main_repo->c_str(), priority, true);
+	/* Normalize overlays and erase duplicates */
+	string& ref((*this)["PORTDIR_OVERLAY"]);
+	WordVec overlayvec;
+	split_string(&overlayvec, ref, true);
+	add_repo_vector(overlayvec, true);
+	overlayvec.clear();
+	if(likely(have_repos)) {
+		string main_repo_check;
+		if(main_repo != NULLPTR) {
+			main_repo_check.assign(*main_repo);
+		}
+		for(VarsReader::const_iterator it(reposfile.begin());
+			likely(it != reposfile.end()); ++it) {
+			if(std::strncmp(it->first.c_str(), "location:", 9)) {
+				continue;
+			}
+			string label(it->first.substr(9));
+			if(unlikely(label == main_repo_check)) {
+				continue;
+			}
+			priority = 0;
+			const string *prio(reposfile.find(string("priority:") + label));
+			if(prio != NULLPTR) {
+				priority = my_atos(prio->c_str());
+			}
+			add_repo(it->second, true, label.c_str(), priority, false);
+		}
+	}
+	repos.sort();
+	for(RepoList::const_iterator it(repos.second());
+		likely(it != repos.end()); ++it) {
+		overlayvec.PUSH_BACK(it->path);
+	}
+	ref.clear();
+	join_to_string(&ref, overlayvec, "\n");
+}
+
 string PortageSettings::resolve_overlay_name(const string& path, bool resolve) {
 	if(resolve) {
 		string full(m_eprefixoverlays);
@@ -231,104 +337,10 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 	(*this)["ARCH"]   = (*eixrc)["DEFAULT_ARCH"];
 
 	const string& eprefixsource((*eixrc)["EPREFIX_SOURCE"]);
-	const string& make_globals((*eixrc)["MAKE_GLOBALS"]);
-	if(is_file(make_globals.c_str())) {
-		read_config(make_globals, eprefixsource);
-	} else {
-		read_config(m_eprefixconf + MAKE_GLOBALS_FILE, eprefixsource);
-	}
-	WordIterateMap make_conf;
-	read_config(m_eprefixconf + MAKE_CONF_FILE, eprefixsource, &make_conf);
-	read_config(m_eprefixconf + MAKE_CONF_FILE_NEW, eprefixsource, &make_conf);
-
-	override_by_map(test_in_env_early, make_conf);
+	read_make_globals(eprefixsource);
+	read_make_conf_early(eprefixsource);
 	override_by_env(test_in_env_early);
-	{
-		/* Read repos.conf */
-		bool have_repos;
-		VarsReader reposfile(VarsReader::SUBST_VARS|VarsReader::PORTAGE_SECTIONS|VarsReader::RECURSE);
-		reposfile.setPrefix(eprefixsource);
-		string &repositories = (*this)["PORTAGE_REPOSITORIES"];
-		if(!repositories.empty()) {
-			const char *s = repositories.c_str();
-			have_repos = reposfile.readmem(s, s + repositories.size(), NULLPTR);
-		} else {
-			string errtext;
-			have_repos = reposfile.read((*eixrc)["PORTAGE_REPOS_CONF"].c_str(), &errtext, true);
-			if(!have_repos) {
-				eix::say_error(_("error: %s")) % errtext;
-			}
-			if(reposfile.read((m_eprefixconf + USER_REPOS_CONF).c_str(), &errtext, true)) {
-				have_repos = true;
-			} else {
-				eix::say_error(_("error: %s")) % errtext;
-			}
-		}
-		const string *main_repo(NULLPTR);
-		OverlayIdent::Priority priority(-1000);
-		string& portdirref((*this)["PORTDIR"]);
-		if(likely(have_repos)) {
-			if(portdirref.empty()) {
-				main_repo = reposfile.find("main-repo");
-				const string *p(NULLPTR);
-				const string *prio(NULLPTR);
-				if(main_repo == NULLPTR) {
-					p = reposfile.find("location");
-					prio = reposfile.find("priority");
-				} else {
-					p = reposfile.find(string("location:") + *main_repo);
-					prio = reposfile.find(string("priority:") + *main_repo);
-				}
-				if(prio != NULLPTR) {
-					priority = my_atos(prio->c_str());
-				}
-				if(p != NULLPTR) {
-					portdirref = *p;
-				}
-			}
-		}
-		if(portdirref.empty()) {
-			portdirref = PORTDIR_DEFAULT;
-		}
-		/* Normalize "PORTDIR": */
-		portdirref = normalize_path((m_eprefixportdir + portdirref).c_str(), true, true);
-		add_repo(portdirref, false, (main_repo == NULLPTR) ? NULLPTR : main_repo->c_str(), priority, true);
-		/* Normalize overlays and erase duplicates */
-		string& ref((*this)["PORTDIR_OVERLAY"]);
-		WordVec overlayvec;
-		split_string(&overlayvec, ref, true);
-		add_repo_vector(overlayvec, true);
-		overlayvec.clear();
-		if(likely(have_repos)) {
-			string main_repo_check;
-			if(main_repo != NULLPTR) {
-				main_repo_check.assign(*main_repo);
-			}
-			for(VarsReader::const_iterator it(reposfile.begin());
-				likely(it != reposfile.end()); ++it) {
-				if(std::strncmp(it->first.c_str(), "location:", 9)) {
-					continue;
-				}
-				string label(it->first.substr(9));
-				if(unlikely(label == main_repo_check)) {
-					continue;
-				}
-				priority = 0;
-				const string *prio(reposfile.find(string("priority:") + label));
-				if(prio != NULLPTR) {
-					priority = my_atos(prio->c_str());
-				}
-				add_repo(it->second, true, label.c_str(), priority, false);
-			}
-		}
-		repos.sort();
-		for(RepoList::const_iterator it(repos.second());
-			likely(it != repos.end()); ++it) {
-			overlayvec.PUSH_BACK(it->path);
-		}
-		ref.clear();
-		join_to_string(&ref, overlayvec, "\n");
-	}
+	read_repos_conf(eprefixsource);
 
 	user_config = NULLPTR;
 	profile = new CascadingProfile(this, init_world);
@@ -388,7 +400,7 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 			(*this)["USE.profile"] = useflags;
 		}
 	}
-	override_by_map(make_conf);
+	read_make_conf(eprefixsource, this);
 	override_by_env(test_in_env_late);
 
 	m_accepted_keywords.clear();

@@ -207,6 +207,10 @@ class PortageSettings : public WordIterateMap {
 		void read_config(const std::string& name, const std::string& prefix) {
 			read_config(name, prefix, this);
 		}
+		ATTRIBUTE_NONNULL_ void read_make_conf(const std::string& eprefixsource, WordIterateMap *vars);
+		void read_make_conf_early(const std::string& eprefixsource);
+		void read_make_globals(const std::string& eprefixsource);
+		void read_repos_conf(const std::string& eprefixsource);
 
 		ATTRIBUTE_NONNULL_ void addOverlayProfiles(CascadingProfile *p) const;
 
