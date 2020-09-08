@@ -199,7 +199,6 @@ class PortageSettings : public WordIterateMap {
 		CascadingProfile  *profile;
 
 		ATTRIBUTE_NONNULL_ void override_by_map(const char *const *vars, const WordIterateMap& varmap);
-		ATTRIBUTE_NONNULL_ void override_by_map(const WordIterateMap& varmap);
 		ATTRIBUTE_NONNULL_ void override_by_env(const char *const *vars);
 		ATTRIBUTE_NONNULL_ void override_by_value(const char *var, const std::string& value);
 		ATTRIBUTE_NONNULL((2)) void override_by_value(const char *var, const char *value);

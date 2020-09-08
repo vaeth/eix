@@ -1160,7 +1160,7 @@ bool VarsReader::parse() {
 		if(f->second.empty()) {
 			f->second = it->second;
 		} else {
-			f->second = (it->second) + ' ' + (f->second);
+			f->second = (it->second) + '\n' + (f->second);
 		}
 	}
 	return ret;

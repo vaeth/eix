@@ -146,12 +146,6 @@ void PortageSettings::override_by_map(const char *const *vars, const WordIterate
 	}
 }
 
-void PortageSettings::override_by_map(const WordIterateMap& varmap) {
-	for(WordIterateMap::const_iterator it(varmap.begin()); likely(it != varmap.end()); ++it) {
-		override_by_value(it->first.c_str(), it->second);
-	}
-}
-
 void PortageSettings::override_by_env(const char *const *vars) {
 	for(const char *var(*vars); likely(var != NULLPTR); var = *(++vars)) {
 		override_by_value(var, std::getenv(var));
