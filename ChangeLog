@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.34.8
+	Martin Väth <martin at mvath.de>:
+	- Fix regression of 0.34.6 (and 0.34.5): Fix override_by_map. Thanks to
+	  Grzegorz Kulewski <grzegorz at kulewski.pl> for debugging help.
+
 *eix-0.34.7
 	Martin Väth <martin at mvath.de>:
 	- Due to the previous 2 releases, eix --print USE is now correct.

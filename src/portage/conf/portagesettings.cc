@@ -139,10 +139,9 @@ static CONSTEXPR const char *test_in_env_late[] = {
 void PortageSettings::override_by_map(const char *const *vars, const WordIterateMap& varmap) {
 	for(const char *var(*vars); likely(var != NULLPTR); var = *(++vars)) {
 		WordIterateMap::const_iterator it(varmap.find(var));
-		if(it == varmap.end()) {
-			return;
+		if(it != varmap.end()) {
+			override_by_value(var, it->second);
 		}
-		override_by_value(var, it->second);
 	}
 }
 
@@ -282,10 +281,11 @@ void PortageSettings::read_repos_conf(const string& eprefixsource) {
 	add_repo(portdirref, false, (main_repo == NULLPTR) ? NULLPTR : main_repo->c_str(), priority, true);
 	/* Normalize overlays and erase duplicates */
 	string& ref((*this)["PORTDIR_OVERLAY"]);
-	WordVec overlayvec;
-	split_string(&overlayvec, ref, true);
-	add_repo_vector(overlayvec, true);
-	overlayvec.clear();
+	{
+		WordVec portdir_overlayvec;
+		split_string(&portdir_overlayvec, ref, true);
+		add_repo_vector(portdir_overlayvec, true);
+	}
 	if(likely(have_repos)) {
 		string main_repo_check;
 		if(main_repo != NULLPTR) {
@@ -309,6 +309,7 @@ void PortageSettings::read_repos_conf(const string& eprefixsource) {
 		}
 	}
 	repos.sort();
+	WordVec overlayvec;
 	for(RepoList::const_iterator it(repos.second());
 		likely(it != repos.end()); ++it) {
 		overlayvec.PUSH_BACK(it->path);
