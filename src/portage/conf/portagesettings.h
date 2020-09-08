@@ -208,6 +208,7 @@ class PortageSettings : public WordIterateMap {
 		}
 		ATTRIBUTE_NONNULL_ void read_make_conf(const std::string& eprefixsource, WordIterateMap *vars);
 		void read_make_conf_early(const std::string& eprefixsource);
+		void read_make_conf_late(const std::string& eprefixsource);
 		void read_make_globals(const std::string& eprefixsource);
 		void read_repos_conf(const std::string& eprefixsource);
 

@@ -262,7 +262,9 @@ The exit status is nonzero if I<VAR> is not known to eix (see B<--known-vars>)
 This is mainly intended for usage in scripts or for debugging purposes.
 If you use it in scripts you might want to specify B<PRINT_APPEND> to
 get trailing spaces (see description of B<PRINT_APPEND>).
-A special I<VAR> which can be accessed only in this way is B<USE.profile> which contains the profile's USE string.
+Two special I<VAR> values which can be accessed only in this way are
+B<USE.profile> and B<USE.make_conf> which contain the USE string of the profile
+or make.conf before the concatenation, respectively.
 .TP
 .B --known-vars
 Print an alphabetical list of variables known to eix with B<--print>.

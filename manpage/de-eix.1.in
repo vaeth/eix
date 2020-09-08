@@ -266,7 +266,9 @@ Der Exit-Status ist positiv, falls I<VAR> eix unbekannt ist (siehe B<--known-var
 Diese Option ist hauptsächlich für Skripte nützlich oder zum Debuggen.
 Zur Benutzung in Skripten empfiehlt sich die Benutzung von B<PRINT_APPEND>.
 um das Abschneiden von Leerzeichen am Ende zu verhinden (siehe die Beschreibung zu B<PRINT_APPEND>).
-Ein spezieller I<VAR>-Wert, der nur auf diese Weise erhalten werden kann, ist B<USE.profile> was den USE-String des Profiles enthält.
+Zwei spezielle I<VAR>-Werte, die man nur auf diese Weise erhalten kann,
+sind B<USE.profile> und B<USE.make_conf>, die den USE-String des Profiles
+bzw. von make.conf vor dem Aneinanderhängen enthalten.
 .TP
 .B --known-vars
 Ausgabe eine alphabetischen Liste aller Variablen, die eix für B<--print> bekannt sind.

@@ -196,6 +196,32 @@ void PortageSettings::read_make_conf_early(const string& eprefixsource) {
 	override_by_map(test_in_env_early, make_conf);
 }
 
+void PortageSettings::read_make_conf_late(const string& eprefixsource) {
+	string *useflags_profile(NULLPTR);
+	{
+		const_iterator it(find("USE"));
+		if(it != end()) {
+			useflags_profile = new string(it->second);
+			erase("USE");
+		}
+	}
+	read_make_conf(eprefixsource, this);
+	const char *useflags_make_conf = cstr("USE");
+	if(likely(useflags_make_conf != NULLPTR)) {
+		(*this)["USE.make_conf"] = useflags_make_conf;
+	}
+	if(unlikely(useflags_profile == NULLPTR)) {
+		return;
+	}
+	if(likely(useflags_make_conf != NULLPTR)) {
+		(*this)["USE"] = *useflags_profile + "\n" + useflags_make_conf;
+	} else {
+		(*this)["USE"] = *useflags_profile;
+	}
+	(*this)["USE.profile"] = *useflags_profile;
+	delete useflags_profile;
+}
+
 void PortageSettings::read_make_globals(const string& eprefixsource) {
 	const string& make_globals((*settings_rc)["MAKE_GLOBALS"]);
 	if(is_file(make_globals.c_str())) {
@@ -388,13 +414,7 @@ void PortageSettings::init(EixRc *eixrc, const ParseError *e, bool getlocal, boo
 		profile->readMakeDefaults();
 	}
 	profile->readremoveFiles();
-	{
-		const char *useflags(cstr("USE"));
-		if(likely(useflags != NULLPTR)) {
-			(*this)["USE.profile"] = useflags;
-		}
-	}
-	read_make_conf(eprefixsource, this);
+	read_make_conf_late(eprefixsource);
 	override_by_env(test_in_env_late);
 
 	m_accepted_keywords.clear();

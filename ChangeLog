@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.34.7
+	Martin Väth <martin at mvath.de>:
+	- Due to the previous 2 releases, eix --print USE is now correct.
+	  Use the special variable USE.make_conf to get the previous value.
+
 *eix-0.34.6
 	Martin Väth <martin at mvath.de>:
 	- Read make.conf twice: A first reading is needed to find the profile
