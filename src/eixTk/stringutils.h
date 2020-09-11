@@ -484,7 +484,7 @@ template<typename T> inline static void push_back(std::vector<T> *v, const T& e)
 }
 #ifdef HAVE_MOVE
 template<typename T> inline static void push_back(std::vector<T> *v, T&& e) {
-	v->PUSH_BACK(e);
+	v->PUSH_BACK(std::move(e));
 }
 #endif
 
@@ -496,7 +496,7 @@ template<typename T> inline static void push_back(std::set<T> *s, const T& e) {
 }
 #ifdef HAVE_MOVE
 template<typename T> inline static void push_back(std::set<T> *s, T&& e) {
-	s->INSERT(e);
+	s->INSERT(std::move(e));
 }
 #endif
 
@@ -509,7 +509,7 @@ template<typename T> inline static void push_back(UNORDERED_SET<T> *s, const T& 
 }
 #ifdef HAVE_MOVE
 template<typename T> inline static void push_back(UNORDERED_SET<T> *s, T&& e) {
-	s->INSERT(e);
+	s->INSERT(std::move(e));
 }
 #endif
 #endif  // HAVE_UNORDERED_SET

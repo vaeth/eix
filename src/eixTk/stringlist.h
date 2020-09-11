@@ -65,7 +65,7 @@ class StringListContent {
 
 #ifdef HAVE_MOVE
 		void push_back(std::string&& s) {
-			m_list.PUSH_BACK(s);
+			m_list.PUSH_BACK(std::move(s));
 		}
 #endif
 
