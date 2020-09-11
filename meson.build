@@ -1,5 +1,5 @@
 project('eix', 'cpp',
-	version : '0.34.8',
+	version : '0.34.9',
 	license : 'GPLv2',
 	default_options : [
 		'prefix=/usr',
@@ -1370,6 +1370,24 @@ message('emplace: ' + have_emplace.to_string())
 conf.set('HAVE_EMPLACE', have_emplace,
 	description : 'Define if STL has emplace')
 
+sse2 = get_option('sse2')
+support_sse2 = false
+sse2_msg = ''
+if sse2 == 'auto'
+	sse2_msg = ' (auto)'
+	support_sse2 = cxx.compiles('''
+#include <emmintrin.h>
+#ifndef __SSE2__
+#error "SSE2 not available"
+#endif
+''', args : flags_dialect)
+elif sse2 == 'true'
+	support_sse2 = true
+endif
+message('sse2: ' + support_sse2.to_string() + sse2_msg)
+conf.set('SUPPORT_SSE2', support_sse2,
+	description : 'Define if support for sse2 is wanted')
+
 sqlite_dep = []
 with_sqlite = false
 want_sqlite = get_option('sqlite')
@@ -1383,7 +1401,7 @@ if want_sqlite != 'false'
 		sqlite_dep = [sqlite_only_dep]
 		with_sqlite = true
 		want_sqlite = 'true'
-	elif want_sqlite == true
+	elif want_sqlite == 'true'
 		error('sqlite required by option but not found')
 	else
 		want_sqlite = 'false'

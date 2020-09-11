@@ -41,7 +41,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.34.8], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
+AC_INIT([eix], [0.34.9], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
 AC_PREREQ([2.64])
 
 m4_ifdef([AC_CONFIG_MACRO_DIR],
@@ -919,6 +919,8 @@ AC_ARG_WITH([extra-doc],
 	[AS_VAR_SET([extra_doc], [false])])
 AM_CONDITIONAL([EXTRA_DOC], [$extra_doc])
 
+
+
 # Use paranoic asserts?
 AC_MSG_CHECKING([whether paranoic asserts are used])
 AS_IF([$paranoicassert],
@@ -1620,7 +1622,7 @@ AC_MSG_CHECKING([whether emplace can be used])
 MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
 #include <set>
 #include <utility>
-	]], [[
+		]], [[
 typedef std::pair<int, int> mypair;
 std::set<mypair> a;
 a.insert(mypair(4, 4));
@@ -1631,6 +1633,31 @@ return (a.size() == 2) ? 0 : 1;
 		AC_DEFINE([HAVE_EMPLACE], [1],
 			[Define if STL has emplace])],
 		[MV_MSG_RESULT([no])])
+
+# Check if sse2 can be used
+AC_MSG_CHECKING([whether sse2 should be used])
+AS_VAR_SET([support_sse2], [false])
+AC_ARG_WITH([sse2],
+	[AS_HELP_STRING([--with-sse2],
+		[Use sse2 instruction set])],
+	[AS_CASE(["$withval"],
+		[no], [MV_MSG_RESULT([no], [on request])],
+		[MV_MSG_RESULT([yes], [on request])
+			AS_VAR_SET([support_sse2], [:])])],
+	[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#include <emmintrin.h>
+]], [[
+#ifndef __SSE2__
+#error "SSE2 not available"
+#endif
+		]])],
+		[MV_MSG_RESULT([yes], [autodetected])
+		AS_VAR_SET([support_sse2], [:])],
+		[MV_MSG_RESULT([no], [autodetected])])])
+AS_IF([$support_sse2],
+	[AC_DEFINE([SUPPORT_SSE2],
+		[1],
+		[Define if support for sse2 is wanted])])
 
 # reset the CXXFLAGS, LDFLAGS for the normal tests
 AS_VAR_COPY([CXXFLAGS], [my_cxxflags])

@@ -101,6 +101,6 @@ void StringList::push_back(std::string&& s) {
 		ptr->usage = 1;
 #endif
 	}
-	ptr->push_back(std::move(s));
+	ptr->push_back(MOVE(s));
 }
 #endif

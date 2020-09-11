@@ -19,9 +19,7 @@
 #include "eixTk/attribute.h"
 #ifdef STRINGLIST_FREE
 #include "eixTk/inttypes.h"
-#ifdef HAVE_MOVE
 #include "eixTk/dialect.h"
-#endif
 #endif
 #include "eixTk/diagnostics.h"
 #include "eixTk/null.h"
@@ -65,7 +63,7 @@ class StringListContent {
 
 #ifdef HAVE_MOVE
 		void push_back(std::string&& s) {
-			m_list.PUSH_BACK(std::move(s));
+			m_list.PUSH_BACK(MOVE(s));
 		}
 #endif
 

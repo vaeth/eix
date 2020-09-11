@@ -12,6 +12,10 @@
 
 #include <fnmatch.h>
 
+#ifdef SUPPORT_SSE2
+#include <emmintrin.h>
+#endif
+
 #include <locale>
 
 #include <cstdlib>
@@ -30,9 +34,6 @@
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 
-#ifdef __SSE2__
-#include <emmintrin.h>
-#endif
 
 using std::string;
 using std::vector;
@@ -292,7 +293,7 @@ static void erase_escapes(string *s, const char *at) {
 }
 
 static string::size_type find_first_of(const string& str, const char *at, string::size_type pos, size_t at_len) {
-#ifdef __SSE2__
+#ifdef SUPPORT_SSE2
 	const char *s = str.c_str();
 	const string::size_type str_size = str.size();
 

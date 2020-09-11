@@ -40,6 +40,8 @@ option('swap-remote', type : 'boolean', value : false,
 	description : 'swap the remote paths')
 option('extra-doc', type : 'boolean', value : false,
 	description : 'install developer documentation. Might need rst2html.py from docutils')
+option('sse2', type : 'combo', choices : [ 'auto', 'true', 'false' ],
+	description : 'Compile in support for sse2')
 option('sqlite', type : 'combo', choices : [ 'auto', 'true', 'false' ],
 	description : 'Compile in support for cache method sqlite')
 option('protobuf', type : 'combo', choices : [ 'auto', 'true', 'false' ],
