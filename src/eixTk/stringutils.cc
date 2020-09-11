@@ -30,6 +30,10 @@
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
 
+#ifdef __SSE2__
+#include <emmintrin.h>
+#endif
+
 using std::string;
 using std::vector;
 
@@ -287,9 +291,41 @@ static void erase_escapes(string *s, const char *at) {
 	}
 }
 
+static string::size_type find_first_of(const string& str, const char *at, string::size_type pos, size_t at_len) {
+#ifdef __SSE2__
+	const char *s = str.c_str();
+	const string::size_type str_size = str.size();
+
+	__v16qi at16 = {};
+	for(size_t i = 0; i < at_len; i++) {
+		at16[i] = at[i];
+	}
+
+	for(; pos < str_size; pos++) {
+		const char c = s[pos];
+
+		// Vectorized compare of 'c' with the leading 16 characters of 'at'
+		__v16qi c16 = {c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c};
+		if(_mm_movemask_epi8(c16 == at16) != 0) {
+			return pos;
+		}
+
+		for(size_t i = 16; i < at_len; i++) {
+			if(c == at[i]) {
+				return pos;
+			}
+		}
+	}
+	return string::npos;
+#else
+	return str.find_first_of(at, pos, at_len);
+#endif
+}
+
 template<typename T> inline static void split_string_template(T *vec, const string& str, bool handle_escape, const char *at, bool ignore_empty) {
+	const size_t at_len = std::strlen(at);
 	string::size_type last_pos(0), pos(0);
-	while((pos = str.find_first_of(at, pos)) != string::npos) {
+	while((pos = find_first_of(str, at, pos, at_len)) != string::npos) {
 		if(unlikely(handle_escape)) {
 			bool escaped(false);
 			string::size_type s(pos);
