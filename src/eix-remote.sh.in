@@ -334,10 +334,7 @@ AddArchive() {
 		$excluderemote && \
 			test -r "$local_layman/$name" && continue
 		virtual=layman/$name
-		if $verbose
-		then
-			printf '%s -> %s\n' "$virtual" "${l:-no repo-name}"
-		fi
+		! $verbose || printf '%s -> %s\n' "$virtual" "${l:-no repo-name}"
 		AddMethod "$virtual" "$i"
 		AddOverlays "$virtual"
 		[ -n "${l:++}" ] && AddRepoName "$virtual" "$l"
@@ -369,7 +366,7 @@ AddArchive() {
 	) || {
 		exitcode=$?
 		msg=`gettext 'eix-update failed'; \
-			[ -n "${msg:++}" ] && printf '\n%s' "$msg"`
+			[ -z "${msg:++}" ] || printf '\n%s' "$msg"`
 	}
 	[ -z "${msg:++}" ] && return
 	msg=$msg`BugReport`
