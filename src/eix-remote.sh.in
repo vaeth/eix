@@ -334,7 +334,10 @@ AddArchive() {
 		$excluderemote && \
 			test -r "$local_layman/$name" && continue
 		virtual=layman/$name
-		printf '%s -> %s\n' "$virtual" "${l:-no repo-name}"
+		if $verbose
+		then
+			printf '%s -> %s\n' "$virtual" "${l:-no repo-name}"
+		fi
 		AddMethod "$virtual" "$i"
 		AddOverlays "$virtual"
 		[ -n "${l:++}" ] && AddRepoName "$virtual" "$l"
