@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.34.11
+	wwjjbb (https://github.com/wwjjbb):
+	- Fix --proto category output: https://github.com/vaeth/eix/issues/80
+
 *eix-0.34.10
 	Andrew Kravchuk (https://github.com/lockie):
 	- Make eix-remote more silent

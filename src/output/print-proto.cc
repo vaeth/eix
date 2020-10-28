@@ -62,17 +62,15 @@ void PrintProto::package(Package *pkg) {
 		start();
 	}
 	eix_proto::Category *category;
-	if(collection->category_size() != 0) {
-		// Re-use existing category if possible
-		int& index = category_index[pkg->category];
-		category = collection->mutable_category(index);
-		if(index != 0 || category->category() != pkg->category) {
-			// category is actually new
-			index = collection->category_size();
-			category = collection->add_category();
-		}
+	int& index = category_index[pkg->category];
+	if (index != 0) {
+		// Re-use existing category
+		category = collection->mutable_category(index - 1);
 	} else {
+		// category is actually new
 		category = collection->add_category();
+		category->set_category(pkg->category);
+		index = collection->category_size();
 	}
 	eix_proto::Package *package = category->add_package();
 	package->set_name(pkg->name);
