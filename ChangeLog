@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.34.12
+	Martin Väth <martin at mvath.de>:
+	- Fix wrong braces configure.ac. Thanks to Ionen Wolkens for spotting.
+
 *eix-0.34.11
 	wwjjbb (https://github.com/wwjjbb):
 	- Fix --proto category output: https://github.com/vaeth/eix/issues/80

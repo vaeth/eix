@@ -41,7 +41,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.34.11], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
+AC_INIT([eix], [0.34.12], [https://github.com/vaeth/eix/issues/], [eix], [https://github.com/vaeth/eix/])
 AC_PREREQ([2.64])
 
 m4_ifdef([AC_CONFIG_MACRO_DIR],
@@ -624,14 +624,14 @@ AS_IF([$security],
 			], [$my_ldfatal], [], [break])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			$my_stackclash \
-			], [$my_cxxfatal], [$CPPFLAGS], [break])])
+			], [$my_cxxfatal], [$CPPFLAGS], [break])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-mretpoline \
 			-mcet \
 			-fcf-protection=full \
 			-fstack-clash-protection \
 			-D_FORTIFY_SOURCE=2 \
-		], [$my_cxxfatal], [$CPPFLAGS], [:])
+		], [$my_cxxfatal], [$CPPFLAGS], [:])])
 #			-fno-plt # breaks with clang; no proper check known
 #			-mindirect-branch=thunk # breaks with cygwin; no proper check known
 #			-mfunction-return=thunk # breaks with cygwin; no proper check known
