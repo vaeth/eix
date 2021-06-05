@@ -5,6 +5,7 @@
 	- Support IDEPEND (EAPI=8). Output is not optimized yet: only DEPEND
 	  and RDEPEND have a shortcut if one is a substring of the other.
 	- Use natural order for USE, see https://github.com/vaeth/eix/issues/86
+	- Add some gcc-11 flags
 
 *eix-0.34.12
 	Martin Väth <martin at mvath.de>:

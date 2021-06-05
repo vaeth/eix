@@ -227,6 +227,10 @@ flags_dialect = []
 dialect = 'false'
 if new_dialect
 	foreach d : [
+		'gnu++23',
+		'c++23',
+		'gnu++2b',
+		'c++2b',
 		'gnu++20',
 		'c++20',
 		'gnu++2a',
@@ -458,6 +462,7 @@ if warnings
 		[ '-Wduplicated-branches' ],
 		[ '-Wduplicated-cond' ],
 		[ '-Wstringop-truncation' ],
+		[ '-Wctad-maybe-unsupported' ],
 		# [ '-Weverything' ],
 		# [ '-Wno-unknown-warning-option' ],
 		# [ '-fmem-report' ],

@@ -280,6 +280,10 @@ AS_IF([$new_dialect],
 	[AS_CASE([" $CXXFLAGS $my_cxxadd"],
 		[*" -std="*], [],
 		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
+				-std=gnu++23 \
+				-std=c++23 \
+				-std=gnu++2b \
+				-std=c++2b \
 				-std=gnu++20 \
 				-std=c++20 \
 				-std=gnu++2a \
@@ -533,6 +537,7 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wduplicated-branches \
 			-Wduplicated-cond \
 			-Wstringop-truncation \
+			-Wctad-maybe-unsupported \
 		], [$my_cxxfatal], [], [:])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
 			-Wcast-align=strict \
