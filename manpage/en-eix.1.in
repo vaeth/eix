@@ -345,7 +345,7 @@ Only in this mode some additional information for each version is output.
 More precisely, depending on whether you have chosen B<--verbose> and
 depending on the state of the configuration variables
 B<VERSION_{IUSE,KEYWORDS,DEPS}_{NORMAL,VERBOSE}>,
-this can be the B<KEYWORDS>, B<IUSE>, B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND> data.
+this can be the B<KEYWORDS>, B<IUSE>, B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND>, B<IDEPEND> data.
 Note that if B<IUSE> is not printed per version then it is only collected
 for the whole package which can give the wrong impression, since often
 B<IUSE> changes dramatically with versions.
@@ -850,13 +850,13 @@ e.g. "@PACKAGE_URL@"
 .BR -L ", " --license
 e.g. "GPL-2"
 .TP
-.BR --available-deps ", " --available-depend ", " --available-rdepend ", " --available-pdepend ", " --available-bdepend
+.BR --available-deps ", " --available-depend ", " --available-rdepend ", " --available-pdepend ", " --available-bdepend ", " --available-idepend
 This test can only be successful if B<DEP=true> is used
 (and if B<DEP=true> was used when the cachefile was created).
-It matches against B<DEPEND>, B<RDEPEND>, B<PDEPEND>, or B<BDEPEND>
+It matches against B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND>, or B<IDEPEND>
 (or with B<--available-deps> any of those) of any available version of the package.
 B<--available-deps> is the same as specifying all of
-B<--available-depend> B<--available-rdepend> B<--available-pdepend> B<--available-bdepend>.
+B<--available-depend> B<--available-rdepend> B<--available-pdepend> B<--available-bdepend> B<--available-idepend>.
 Note that it is matched against the string without any interpretation or
 modification of the latter; only word separators become single spaces.
 In particular, the string to match against can look like
@@ -866,7 +866,7 @@ app-admin/fam nls? ( sys-devel/gettext ) =dev-libs/apr-1* !!dev-db/libpq
 Therefore, the match is not only against dependent packages but also against
 blockers and/or conditionals and various ways of specifying versions.
 .TP
-.BR --installed-deps ", " --installed-depend ", " --installed-rdepend ", " --installed-pdepend ", " --installed-bdepend
+.BR --installed-deps ", " --installed-depend ", " --installed-rdepend ", " --installed-pdepend ", " --installed-bdepend ", " --installed-idepend
 This is similar to the corresponding option --available-* but with the difference
 that the corresponding dependency string of any installed versions of the package is matched.
 In contrast to --available-* this check does not involve the setting of B<DEP>.
@@ -875,7 +875,7 @@ the content of the installed version is read.
 
 Note that dependencies of installed versions are usually much simpler, e.g. not containing conditionals.
 .TP
-.BR --deps ", " --depend ", " --rdepend ", " --pdepend ", " --bdepend
+.BR --deps ", " --depend ", " --rdepend ", " --pdepend ", " --bdepend ", " --idepend
 These are shortcuts for specifying the corresponding --available-* and --installed-* options simultaneously.
 .TP
 .BR --set
@@ -1389,13 +1389,13 @@ It returns 1 or empty depending on whether some or the corresponding B<RESTRICT>
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or empty depending on whether some or the corresponding B<PROPERTIES> attribute is set for the version.
 .TP
-.BR depend ", " rdepend ", " pdepend ", " bdepend ", " depend* ", " rdepend* ", " pdepend* ", " bdepend*
+.BR depend ", " rdepend ", " pdepend ", " bdepend ", " depend* ", " rdepend* ", " pdepend* ", " bdepend* ", " idepend*
 This must occur only in I<VARIABLE> in the context of version printing.
-It returns the respective B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND> string of an available package
+It returns the respective B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND>, B<IDEPEND> string of an available package
 (the string is shortened if possible if the variant with B<*> is used).
 This is empty unless B<DEP=true> is set (and was set when the cachefile was created).
 .TP
-.BR havedepend ", " haverdepend ", " havepdepend ", " havebdepend ", " havedeps
+.BR havedepend ", " haverdepend ", " havepdepend ", " havebdepend ", " haveidepend ", " havedeps
 This is like the above with the difference that only 1 is returned if the
 value of the corresponding string (resp. of at least one of these) is nonempty.
 .TP
@@ -2442,7 +2442,7 @@ The option B<--deps-installed> does the same.
 
 .TP
 .BR DEP " " (true / false)
-If true, store/use B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND> (e.g. shown with eix -lv).
+If true, store/use B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND>, B<IDEPEND> (e.g. shown with eix -lv).
 Usage of B<DEP> roughly doubles disk resp. memory requirements.
 
 .TP
@@ -3187,7 +3187,7 @@ The possible values for I<match_field> are B<name>, B<category>, B<category/name
 (or B<category-name>), B<description>, B<license>, B<homepage>, B<set>, B<eapi>, B<installed-eapi>,
 B<slot>, B<installed-slot>, B<use> (or B<iuse>), B<with-use> (or B<installed-with-use>),
 B<without-use> (or B<installed-without-use>), B<src-uri> (or B<srcuri>),
-B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<bdepend>, or B<error>,
+B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<bdepend>, B<idepend>, or B<error>,
 corresponding to the analogous command line option for the match field.
 The special value B<error> means that eix stops with an error message claiming
 that a match field is not autodetected and must be specified explicitly.
@@ -3229,19 +3229,19 @@ Now I<match_field_specification> matches if all of the following holds:
 
 3. If the third family (B<!>) is nonempty, at most match fields from that family are selected (think of a logical "not (... or ... or ...)").
 
-Thus, for instance, to specify that exactly all of B<depend>, B<rdepend>, B<pdepend>, B<bdepend> are
+Thus, for instance, to specify that exactly all of B<depend>, B<rdepend>, B<pdepend>, B<bdepend>, B<idepend> are
 selected (i.e. B<--deps>) and no other field is selected, you can use either of
 
 .B (&deps!deps)
 
-.B (&depend&rdepend&pdepend&bdepend!depend!rdepend!pdepend!bdepend)
+.B (&depend&rdepend&pdepend&bdepend&idepend!depend!rdepend!pdepend!bdepend!idepend)
 
-On the other hand, if you want to specify that at least one of B<depend>, B<rdepend>, B<pdepend>, B<bdepend> are selected
+On the other hand, if you want to specify that at least one of B<depend>, B<rdepend>, B<pdepend>, B<bdepend>, B<idepend> are selected
 and no other than these fields are selected, you can use either of
 
 .B (|deps!deps)
 
-.B (|depend|rdepend|pdepend|bdepend!depend!rdepend!pdepend!bdepend)
+.B (|depend|rdepend|pdepend|bdepend|idepend!depend!rdepend!pdepend!bdepend!idepend)
 
 For testing scripts, it is recommended to use B<DEFAULT_MATCH_ALGORIRTHM=error>
 so that scripts do not rely on particular defaults of that variable: This default

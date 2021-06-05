@@ -50,16 +50,18 @@ static bool subst_the_same(string *in, const string& from) {
 	return true;
 }
 
-void Depend::set(const string& depend, const string& rdepend, const string& pdepend, const string& bdepend, bool normspace) {
+void Depend::set(const string& depend, const string& rdepend, const string& pdepend, const string& bdepend, const string& idepend, bool normspace) {
 	m_depend = depend;
 	m_rdepend = rdepend;
 	m_pdepend = pdepend;
 	m_bdepend = bdepend;
+	m_idepend = idepend;
 	if(normspace) {
 		trimall(&m_depend);
 		trimall(&m_rdepend);
 		trimall(&m_pdepend);
 		trimall(&m_bdepend);
+		trimall(&m_idepend);
 	}
 	subst_the_same(&m_depend, m_rdepend) || \
 		subst_the_same(&m_rdepend, m_depend);
@@ -90,5 +92,6 @@ bool Depend::operator==(const Depend& d) const {
 	return ((get_depend() == d.get_depend()) &&
 		(get_rdepend() == d.get_rdepend()) &&
 		(get_pdepend() == d.get_pdepend()) &&
-		(get_bdepend() == d.get_bdepend()));
+		(get_bdepend() == d.get_bdepend()) &&
+		(get_idepend() == d.get_idepend()));
 }

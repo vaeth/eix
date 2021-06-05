@@ -21,7 +21,7 @@ class Depend {
 	friend class Database;
 
 	private:
-		std::string m_depend, m_rdepend, m_pdepend, m_bdepend;
+		std::string m_depend, m_rdepend, m_pdepend, m_bdepend, m_idepend;
 		bool obsolete;
 
 		static const char c_depend[];
@@ -35,7 +35,7 @@ class Depend {
 		Depend() : obsolete(false) {
 		}
 
-		void set(const std::string& depend, const std::string& rdepend, const std::string& pdepend, const std::string& bdepend, bool normspace);
+		void set(const std::string& depend, const std::string& rdepend, const std::string& pdepend, const std::string& bdepend, const std::string& idepend, bool normspace);
 
 		std::string get_depend() const {
 			return subst(m_depend, m_rdepend, obsolete);
@@ -69,6 +69,14 @@ class Depend {
 			return m_bdepend;
 		}
 
+		std::string get_idepend() const {
+			return m_idepend;
+		}
+
+		std::string get_idepend_brief() const {
+			return m_idepend;
+		}
+
 		bool depend_empty() const {
 			return m_depend.empty();
 		}
@@ -85,8 +93,12 @@ class Depend {
 			return m_bdepend.empty();
 		}
 
+		bool idepend_empty() const {
+			return m_idepend.empty();
+		}
+
 		bool empty() const {
-			return (m_depend.empty() && m_rdepend.empty() && m_pdepend.empty() && m_bdepend.empty());
+			return (m_depend.empty() && m_rdepend.empty() && m_pdepend.empty() && m_bdepend.empty() && m_idepend.empty());
 		}
 
 		void clear() {
@@ -94,6 +106,7 @@ class Depend {
 			m_rdepend.clear();
 			m_pdepend.clear();
 			m_bdepend.clear();
+			m_idepend.clear();
 			obsolete = false;
 		}
 

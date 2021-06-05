@@ -3,15 +3,15 @@
 # Copyright (C)
 # This file is distributed under the same license as the eix package.
 #
-# Martin Vaeth <martin@mvath.de>, 2013.
-# Artem Vorotnikov <skybon@gmail.com>, 2012-2013, 2013.
+# Martin Vaeth <martin@mvath.de>, 2013-2021.
+# Artem Vorotnikov <skybon@gmail.com>, 2012-2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
 "POT-Creation-Date: 2020-05-02 19:18+0200\n"
-"PO-Revision-Date: 2020-05-02 18:53+0200\n"
+"PO-Revision-Date: 2021-06-05 16:49+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: ru\n"
@@ -1770,18 +1770,23 @@ msgid ""
 "    --rdepend               same as --available-rdepend --installed-rdepend\n"
 "    --pdepend               same as --available-pdepend --installed-pdepend\n"
 "    --bdepend               same as --available-bdepend --installed-bdepend\n"
+"    --idepend               same as --available-idepend --installed-idepend\n"
 "    --available-deps        same as --available-depend --available-rdepend\n"
 "                            --available-pdepend --available-bdepend\n"
+"                            --available-idepend\n"
 "    --available-depend      depend (of available version; only if DEP=true)\n"
 "    --available-rdepend     rdepend (of available version; only if DEP=true)\n"
 "    --available-pdepend     pdepend (of available version; only if DEP=true)\n"
 "    --available-bdepend     bdepend (of available version; only if DEP=true)\n"
+"    --available-idepend     idepend (of available version; only if DEP=true)\n"
 "    --installed-deps        same as --installed-depend --installed-rdepend\n"
 "                            --installed-pdepend --installed-bdepend\n"
+"                            --installed-idepend\n"
 "    --installed-depend      depend (of installed version)\n"
 "    --installed-rdepend     rdepend (of installed version)\n"
 "    --installed-pdepend     pdepend (of installed version)\n"
 "    --installed-bdepend     bdepend (of installed version)\n"
+"    --installed-idepend     idepend (of installed version)\n"
 "    --set                   local package set name\n"
 "    --src-uri               SRC_URI\n"
 "    --eapi                  EAPI\n"
@@ -1964,20 +1969,26 @@ msgstr ""
 "                            --available-pdepend --installed-pdepend\n"
 "    --bdepend               то же самое что\n"
 "                            --available-bdepend --installed-bdepend\n"
+"    --idepend               то же самое что\n"
+"                            --available-idepend --installed-idepend\n"
 "    --available-deps        то же самое что\n"
 "                            --available-depend --available-rdepend\n"
 "                            --available-pdepend --available-bdepend\n"
+"                            --available-idepend\n"
 "    --available-depend      depend (of available version; требует DEP=true)\n"
 "    --available-rdepend     rdepend (of available version; требует DEP=true)\n"
 "    --available-pdepend     pdepend (of available version; требует DEP=true)\n"
 "    --available-bdepend     bdepend (of available version; требует DEP=true)\n"
+"    --available-idepend     idepend (of available version; требует DEP=true)\n"
 "    --installed-deps        то же самое что\n"
 "                            --installed-depend --installed-rdepend\n"
 "                            --installed-pdepend --installed-bdepend\n"
+"                            --installed-idepend\n"
 "    --installed-depend      depend (of installed version)\n"
 "    --installed-rdepend     rdepend (of installed version)\n"
 "    --installed-pdepend     pdepend (of installed version)\n"
 "    --installed-bdepend     bdepend (of installed version)\n"
+"    --installed-idepend     idepend (of installed version)\n"
 "    --set                   имя местного набора пакетов\n"
 "    --src-uri               SRC_URI\n"
 "    --eapi                  EAPI\n"
@@ -4042,7 +4053,7 @@ msgid ""
 "Admissible values for match_field are: name, category, category/name,\n"
 "description, license, homepage, set, eapi, slot, installed-slot, use,\n"
 "with-use, without-use, src-uri, deps, depend, rdepend, pdepend, bdepend,\n"
-"error."
+"idepend, error."
 msgstr ""
 
 #: src/eixrc/defaults.cc
@@ -5392,6 +5403,13 @@ msgid ""
 msgstr ""
 
 #: src/eixrc/defaults.cc
+msgctxt "FORMAT_IDEPEND"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It defines the format of the IDEPEND output."
+msgstr ""
+
+#: src/eixrc/defaults.cc
 msgctxt "FORMAT_DEPEND_VERBOSE"
 msgid ""
 "This variable is only used for delayed substitution.\n"
@@ -5417,6 +5435,13 @@ msgctxt "FORMAT_BDEPEND_VERBOSE"
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format of the BDEPEND output with --verbose."
+msgstr ""
+
+#: src/eixrc/defaults.cc
+msgctxt "FORMAT_IDEPEND_VERBOSE"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It defines the format of the IDEPEND output with --verbose."
 msgstr ""
 
 #: src/eixrc/defaults.cc
@@ -6820,6 +6845,18 @@ msgctxt "I18N_BDEPEND"
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It translates \"BDEPEND:\""
+msgstr ""
+
+#: src/eixrc/def_i18n.cc
+msgctxt "I18N_IDEPEND"
+msgid "IDEPEND:"
+msgstr ""
+
+#: src/eixrc/def_i18n.cc
+msgctxt "I18N_IDEPEND"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It translates \"IDEPEND:\""
 msgstr ""
 
 #: src/eixrc/def_i18n.cc

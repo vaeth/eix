@@ -260,9 +260,14 @@ bool Database::read_depend(Depend *dep, const DBHeader& hdr, string *errtext) {
 		if(unlikely(!read_hash_words(hdr.depend_hash, &(dep->m_pdepend), errtext))) {
 			return false;
 		}
-		if(hdr.version == 31) {
+		if(hdr.version <= 31) {
 			dep->m_bdepend.clear();
 		} else if(unlikely(!read_hash_words(hdr.depend_hash, &(dep->m_bdepend), errtext))) {
+			return false;
+		}
+		if(hdr.version <= 38) {
+			dep->m_idepend.clear();
+		} else if(unlikely(!read_hash_words(hdr.depend_hash, &(dep->m_idepend), errtext))) {
 			return false;
 		}
 		dep->obsolete = (hdr.version <= 32);
@@ -281,7 +286,8 @@ bool Database::write_depend(const Depend& dep, const DBHeader& hdr, string *errt
 	return (likely(write_hash_words(hdr.depend_hash, dep.m_depend, errtext)) &&
 		likely(write_hash_words(hdr.depend_hash, dep.m_rdepend, errtext)) &&
 		likely(write_hash_words(hdr.depend_hash, dep.m_pdepend, errtext)) &&
-		likely(write_hash_words(hdr.depend_hash, dep.m_bdepend, errtext)));
+		likely(write_hash_words(hdr.depend_hash, dep.m_bdepend, errtext)) &&
+		likely(write_hash_words(hdr.depend_hash, dep.m_idepend, errtext)));
 }
 
 bool Database::read_category_header(string *name, eix::Treesize *h, string *errtext) {

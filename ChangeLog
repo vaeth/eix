@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.35.0
+	Martin Väth <martin at mvath.de>:
+	- Support IDEPEND (EAPI=8). Output is not optimized yet: only DEPEND
+	  and RDEPEND have a shortcut if one is a substring of the other.
+
 *eix-0.34.12
 	Martin Väth <martin at mvath.de>:
 	- Fix wrong braces configure.ac. Thanks to Ionen Wolkens for spotting.

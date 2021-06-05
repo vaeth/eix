@@ -447,6 +447,11 @@ void PrintXml::package(Package *pkg) {
 				eix::say("\t\t\t\t<bdepend>%s</bdepend>")
 					% escape_xmlstring(false, bdepend);
 			}
+			const string& idepend = ver->depend.get_idepend();
+			if(!idepend.empty()) {
+				eix::say("\t\t\t\t<idepend>%s</idepend>")
+					% escape_xmlstring(false, idepend);
+			}
 		}
 		eix::say("\t\t\t</version>");
 	}

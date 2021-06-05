@@ -57,6 +57,7 @@ message Version {
   string rdepend = 21;
   string pdepend = 22;
   string bdepend = 23;
+  string idepend = 25;
 }
 
 message Repository {

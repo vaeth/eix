@@ -71,16 +71,19 @@ class PackageTest {
 			RDEPENDA      = 0x0040000U,  ///< Search in RDEPEND (available)
 			PDEPENDA      = 0x0080000U,  ///< Search in PDEPEND (available)
 			BDEPENDA      = 0x0100000U,  ///< Search in BDEPEND (available)
-			DEPENDI       = 0x0200000U,  ///< Search in DEPEND (installed)
-			RDEPENDI      = 0x0400000U,  ///< Search in RDEPEND (installed)
-			PDEPENDI      = 0x0800000U,  ///< Search in PDEPEND (installed)
-			BDEPENDI      = 0x1000000U,  ///< Search in BDEPEND (installed)
+			IDEPENDA      = 0x0200000U,  ///< Search in IDEPEND (available)
+			DEPENDI       = 0x0400000U,  ///< Search in DEPEND (installed)
+			RDEPENDI      = 0x0800000U,  ///< Search in RDEPEND (installed)
+			PDEPENDI      = 0x1000000U,  ///< Search in PDEPEND (installed)
+			BDEPENDI      = 0x2000000U,  ///< Search in BDEPEND (installed)
+			IDEPENDI      = 0x2000000U,  ///< Search in IDEPEND (installed)
 			DEPEND        = DEPENDA | DEPENDI,
 			RDEPEND       = RDEPENDA | RDEPENDI,
 			PDEPEND       = PDEPENDA | PDEPENDI,
 			BDEPEND       = BDEPENDA | BDEPENDI,
-			DEPSA         = DEPENDA | RDEPENDA | PDEPENDA | BDEPENDA,
-			DEPSI         = DEPENDI | RDEPENDI | PDEPENDI | BDEPENDI,
+			IDEPEND       = IDEPENDA | IDEPENDI,
+			DEPSA         = DEPENDA | RDEPENDA | PDEPENDA | BDEPENDA | IDEPENDA,
+			DEPSI         = DEPENDI | RDEPENDI | PDEPENDI | BDEPENDI | IDEPENDI,
 			DEPS          = DEPSA | DEPSI,
 			ANY           = NAME | DESCRIPTION | LICENSE | CATEGORY | CATEGORY_NAME | HOMEPAGE | IUSE | USE_ENABLED | USE_DISABLED | SRC_URI | EAPI | INST_EAPI | SLOT | FULLSLOT | INST_SLOT | INST_FULLSLOT | SET | DEPS;
 

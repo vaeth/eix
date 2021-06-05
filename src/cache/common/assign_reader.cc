@@ -105,7 +105,7 @@ void AssignReader::get_keywords_slot_iuse_restrict(const string& filename, strin
 		(*required_use) = (*cf)["REQUIRED_USE"];
 	}
 	if(Depend::use_depend) {
-		dep->set((*cf)["DEPEND"], (*cf)["RDEPEND"], (*cf)["PDEPEND"], (*cf)["BDEPEND"], false);
+		dep->set((*cf)["DEPEND"], (*cf)["RDEPEND"], (*cf)["PDEPEND"], (*cf)["BDEPEND"], (*cf)["IDEPEND"], false);
 	}
 	if(ExtendedVersion::use_src_uri) {
 		(*src_uri) = (*cf)["SRC_URI"];

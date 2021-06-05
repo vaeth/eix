@@ -220,6 +220,13 @@
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:element>
+		<xsd:element name="idepend" type="StringList" minOccurs="0" maxOccurs="1">
+			<xsd:annotation>
+				<xsd:documentation xml:lang="en">
+					The IDEPEND data of the ebuild.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:element>
 	</xsd:sequence>
 	<xsd:attribute name="id" type="xsd:string" use="required">
 		<xsd:annotation>

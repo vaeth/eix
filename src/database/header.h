@@ -75,7 +75,7 @@ class DBHeader {
 		/**
 		Current version of database-format and what we accept
 		**/
-		static CONSTEXPR const DBVersion current = 38;
+		static CONSTEXPR const DBVersion current = 39;
 		static const DBHeader::DBVersion accept[];
 
 		/**

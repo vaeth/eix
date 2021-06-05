@@ -234,18 +234,23 @@ static void dump_help() {
 "    --rdepend               same as --available-rdepend --installed-rdepend\n"
 "    --pdepend               same as --available-pdepend --installed-pdepend\n"
 "    --bdepend               same as --available-bdepend --installed-bdepend\n"
+"    --idepend               same as --available-idepend --installed-idepend\n"
 "    --available-deps        same as --available-depend --available-rdepend\n"
 "                            --available-pdepend --available-bdepend\n"
+"                            --available-idepend\n"
 "    --available-depend      depend (of available version; only if DEP=true)\n"
 "    --available-rdepend     rdepend (of available version; only if DEP=true)\n"
 "    --available-pdepend     pdepend (of available version; only if DEP=true)\n"
 "    --available-bdepend     bdepend (of available version; only if DEP=true)\n"
+"    --available-idepend     idepend (of available version; only if DEP=true)\n"
 "    --installed-deps        same as --installed-depend --installed-rdepend\n"
 "                            --installed-pdepend --installed-bdepend\n"
+"                            --installed-idepend\n"
 "    --installed-depend      depend (of installed version)\n"
 "    --installed-rdepend     rdepend (of installed version)\n"
 "    --installed-pdepend     pdepend (of installed version)\n"
 "    --installed-bdepend     bdepend (of installed version)\n"
+"    --installed-idepend     idepend (of installed version)\n"
 "    --set                   local package set name\n"
 "    --src-uri               SRC_URI\n"
 "    --eapi                  EAPI\n"
@@ -506,16 +511,19 @@ EixOptionList::EixOptionList() {
 	push_back(Option("rdepend",       O_RDEPEND));
 	push_back(Option("pdepend",       O_PDEPEND));
 	push_back(Option("bdepend",       O_BDEPEND));
+	push_back(Option("idepend",       O_IDEPEND));
 	push_back(Option("available-deps",    O_AVAILABLE_DEPS));
 	push_back(Option("available-depend",  O_AVAILABLE_DEPEND));
 	push_back(Option("available-rdepend", O_AVAILABLE_RDEPEND));
 	push_back(Option("available-pdepend", O_AVAILABLE_PDEPEND));
 	push_back(Option("available-bdepend", O_AVAILABLE_BDEPEND));
+	push_back(Option("available-idepend", O_AVAILABLE_IDEPEND));
 	push_back(Option("installed-deps",    O_INSTALLED_DEPS));
 	push_back(Option("installed-depend",  O_INSTALLED_DEPEND));
 	push_back(Option("installed-rdepend", O_INSTALLED_RDEPEND));
 	push_back(Option("installed-pdepend", O_INSTALLED_PDEPEND));
 	push_back(Option("installed-bdepend", O_INSTALLED_BDEPEND));
+	push_back(Option("installed-idepend", O_INSTALLED_IDEPEND));
 	push_back(Option("set",           O_SEARCH_SET));
 	push_back(Option("use",           'U'));
 	push_back(Option("installed-with-use",    O_INSTALLED_WITH_USE));

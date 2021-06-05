@@ -48,7 +48,7 @@ practically sure the first match should be it; if not, the second.
 The remainder is meant for museum systems.)
 **/
 const DBHeader::DBVersion DBHeader::accept[] = {
-	DBHeader::current, 37, 36, 35, 34, 33, 32, 31,
+	DBHeader::current, 38, 37, 36, 35, 34, 33, 32, 31,
 	0
 };
 

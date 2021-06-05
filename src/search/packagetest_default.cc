@@ -128,6 +128,8 @@ static void init_match_field_map() {
 	match_field_map["pdepend"]        = PackageTest::PDEPEND;
 	match_field_map["BDEPEND"]        = PackageTest::BDEPEND;
 	match_field_map["bdepend"]        = PackageTest::BDEPEND;
+	match_field_map["IDEPEND"]        = PackageTest::IDEPEND;
+	match_field_map["idepend"]        = PackageTest::IDEPEND;
 	match_field_map["ERROR"]          = PackageTest::NONE;
 	match_field_map["error"]          = PackageTest::NONE;
 }

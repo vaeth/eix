@@ -1,4 +1,9 @@
 
+- Introduce better shortcuts for the various *DEPEND strings; currently, only
+  DEPEND and RDEPEND are recognized if one is a substring of the other.
+  Only depend.{cc,h} needs to be modified to improve this - all other logic is
+  already there.
+
 - Finish Russian translation of manpage
 
 - Russian translation of --dump (src/eixrc/defaults.cc in ru.po)

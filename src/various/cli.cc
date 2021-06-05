@@ -432,6 +432,9 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 			case O_BDEPEND: USE_TEST;
 				*test |= PackageTest::BDEPEND;
 				break;
+			case O_IDEPEND: USE_TEST;
+				*test |= PackageTest::IDEPEND;
+				break;
 			case O_DEPS: USE_TEST;
 				*test |= PackageTest::DEPS;
 				break;
@@ -447,6 +450,9 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 			case O_AVAILABLE_BDEPEND: USE_TEST;
 				*test |= PackageTest::BDEPENDA;
 				break;
+			case O_AVAILABLE_IDEPEND: USE_TEST;
+				*test |= PackageTest::IDEPENDA;
+				break;
 			case O_AVAILABLE_DEPS: USE_TEST;
 				*test |= PackageTest::DEPSA;
 				break;
@@ -461,6 +467,9 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 				break;
 			case O_INSTALLED_BDEPEND: USE_TEST;
 				*test |= PackageTest::BDEPENDI;
+				break;
+			case O_INSTALLED_IDEPEND: USE_TEST;
+				*test |= PackageTest::IDEPENDI;
 				break;
 			case O_INSTALLED_DEPS: USE_TEST;
 				*test |= PackageTest::DEPSI;

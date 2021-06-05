@@ -248,6 +248,10 @@ void PrintProto::package(Package *pkg) {
 			if(!bdepend.empty()) {
 				version->set_bdepend(bdepend);
 			}
+			const string& idepend = ver->depend.get_idepend();
+			if(!idepend.empty()) {
+				version->set_idepend(idepend);
+			}
 		}
 	}
 }  // NOLINT(readability/fn_size)

@@ -355,7 +355,7 @@ Gibt die vorhandenen Versionen in einer (vertikalen) Liste aus.
 Nur in diesem Modus werden gewisse Zusatzinformationen für jede Version ausgegeben.
 Genauer, je nachdem ob B<--verbose> benutzt wird und abhängig vom Status der
 Konfigurationsvariablen B<VERSION_{IUSE,KEYWORDS,DEPS}_{NORMAL,VERBOSE}>
-kann dies B<KEYWORDS>, B<IUSE>, B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND> sein.
+kann dies B<KEYWORDS>, B<IUSE>, B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND>, B<IDEPEND> sein.
 Beachten Sie: Falls B<IUSE> nicht für jede Version ausgegeben wird, so wird es
 nur gesammelt für das gesamte Paket ausgegeben, was einen falschen Eindruck geben kann,
 da sich B<IUSE> von Version zu Version zuweilen dramatisch ändert.
@@ -871,12 +871,12 @@ z.B. "@PACKAGE_URL@"
 .BR -L ", " --license
 z.B. "GPL-2"
 .TP
-.BR --available-deps ", " --available-depend ", " --available-rdepend ", " --available-pdepend ", " --available-bdepend
+.BR --available-deps ", " --available-depend ", " --available-rdepend ", " --available-pdepend ", " --available-bdepend ", " --available-idepend
 Dieser Test kann nur dann etwas finden, wenn B<DEP=true> benutzt wird
 (und B<DEP=true> bei der Erzeugung des Cachedatei benutzt wurde).
-Er tested gegen B<DEPEND>, B<RDEPEND>, B<PDEPEND> bzw. B<BDEPEND>
+Er tested gegen B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND> bzw. B<IDEPEND>
 (oder mit B<--deps> gegen irgendeines davon) für irgendeine verfügbare Version des Pakets.
-B<--deps> ist das gleiche wie B<--depend> B<--rdepend> B<--pdepend> B<--bdepend>.
+B<--deps> ist das gleiche wie B<--depend> B<--rdepend> B<--pdepend> B<--bdepend> B<--idepend>.
 Beachten Sie, dass gegen den String ohne irgendwelche Interpretatino oder
 Modifikation getestet wird; nur Wort-Trenner werden einzelne Leerzeichen.
 Insbesondere kann der String, gegen den getestet wird, so aussehen:
@@ -887,7 +887,7 @@ Daher ist der Test tatsächlich nicht nur gegen abhängige Pakete, sondern
 auch gegen Blocker und/oder Konditionale und gegen verschiedene Möglichkeiten,
 Versionen zu spezifizieren.
 .TP
-.BR --installed-deps ", " --installed-depend ", " --installed-rdepend ", " --installed-pdepend ", " --installed-bdepend
+.BR --installed-deps ", " --installed-depend ", " --installed-rdepend ", " --installed-pdepend ", " --installed-bdepend ", " --installed-idepend
 Diese Optionen sind ähnlich zur entsprechenden --available-* Option, aber mit dem Unterschied,
 dass der entsprechende Abhängigkeitsstring aus den installierten Versionen des Pakets genommen wird.
 Im Gegensatz zu --available-* wird dieser Test nicht von B<DEP> beeinflusst.
@@ -896,7 +896,7 @@ dass tatsächlich der Inhalt der installierten Version gelesen wird.
 
 Man beachte, dass Abhängigkeiten installierter Versionen i.d.R. viel einfacher sind und z.B. keine Konditionale enthalten.
 .TP
-.BR --deps ", " --depend ", " --rdepend ", " --pdepend ", " --bdepend
+.BR --deps ", " --depend ", " --rdepend ", " --pdepend ", " --bdepend ", " --idepend
 Dies sind Abkürzungen für die gleichzeitige Angabe der entsprechenden --available-* und --installed-* Optionen.
 .TP
 .BR --set
@@ -1416,13 +1416,13 @@ Dies ist 1 oder leer, je nachdem ob eine entsprechendes B<RESTRICT>-Attribut fü
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 Dies ist 1 oder leer, je nachdem ob eine entsprechendes B<PROPERTIES>-Attribut für die Version gesetzt ist.
 .TP
-.BR depend ", " rdepend ", " pdepend ", " bdepend ", " depend* ", " rdepend* ", " pdepend* ", " bdepend*
+.BR depend ", " rdepend ", " pdepend ", " bdepend ", " idepend ", " depend* ", " rdepend* ", " pdepend* ", " bdepend* ", " idepend*
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
-Es expandiert zum B<DEPEND>, B<RDEPEND>, B<PDEPEND> bzw. B<BDEPEND> einer vorhandenen Version
+Es expandiert zum B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND> bzw. B<IDEPEND> einer vorhandenen Version
 (der String wird nach Möglichkeit abgekürzt, falls die Variante mit B<*> benutzt wird).
 Die Expansion ist leer, falls B<DEP=true> nicht gesetzt ist (oder bei der Erzeugung der Datenbank nicht gesetzt war).
 .TP
-.BR havedepend ", " haverdepend ", " havepdepend ", " havebdepend ", " havedeps
+.BR havedepend ", " haverdepend ", " havepdepend ", " havebdepend ", " haveidepend ", " havedeps
 Wie oben mit dem Unterschied, dass nur 1 ausgegeben wird, wenn der
 Wert des entsprechenden String bzw. mindestens eines davon nichtleer ist.
 .TP
@@ -2473,7 +2473,7 @@ Die Option B<--deps-installed> tut dasselbe.
 .TP
 .BR DEP " " (true / false)
 Dieser Wert entscheidet, ob die Werte der Variablen
-B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND> (die z.B. mit eix -lv gezeigt werden könnten)
+B<DEPEND>, B<RDEPEND>, B<PDEPEND>, B<BDEPEND>, B<IDEPEND> (die z.B. mit eix -lv gezeigt werden könnten)
 tatsächlich benutzt und gespeichert werden sollen.
 Im positiven Fall verdoppelt sich ungefähr der Disk- und Speicherbedarf von eix.
 
@@ -3255,7 +3255,7 @@ Die möglichen Werte für I<Operandenfeld> sind: B<name>, B<category>, B<categor
 (oder B<category-name>), B<description>, B<license>, B<homepage>, B<set>, B<eapi>, B<installed-eapi>,
 B<slot>, B<installed-slot>, B<use> (oder B<iuse>), B<with-use> (oder B<installed-with-use>),
 B<without-use> (oder B<installed-without-use>), B<src-uri> (oder B<srcuri>),
-B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<bdepend> und B<error>.
+B<deps>, B<depend>, B<rdepend>, B<pdepend>, B<bdepend>, B<idepend> und B<error>.
 Sie entsprechen den analogen Kommandozeilenoptionen für die Operandenwahl.
 Der spezielle Wert B<error> bedeutet, dass eix mit der Fehlermeldung abbricht,
 dass das Operandenfeld nicht automatisch erkannt werden kann und explizit
@@ -3301,20 +3301,20 @@ Die I<Operandenfeld_Spezifikation> passt, wenn die folgenden Bedingungen alle er
 
 3. Wenn die dritte Familie (B<!>) nicht leer ist, so sind höchststens Operandenfelder dieser Familie selektiert (man denke an ein logisches "nicht (... oder ... oder ...)").
 
-Um beispielsweise anzugeben, dass genau alle der Felder B<depend>, B<rdepend>, B<pdepend>, B<bdepend> selektiert sind
+Um beispielsweise anzugeben, dass genau alle der Felder B<depend>, B<rdepend>, B<pdepend>, B<bdepend>, B<idepend> selektiert sind
 (also B<--deps>) und kein weiteres, kann man einen der Spezifikationen
 
 .B (&deps!deps)
 
-.B (&depend&rdepend&pdepend&bdepend!depend!rdepend!pdepend!bdepend)
+.B (&depend&rdepend&pdepend&bdepend&idepend!depend!rdepend!pdepend!bdepend!idepend)
 
 benutzen.
-Will man andererseits spezifieren, dass mindestens eines von B<depend>, B<rdepend>, B<pdepend>, B<bdepend>
+Will man andererseits spezifieren, dass mindestens eines von B<depend>, B<rdepend>, B<pdepend>, B<bdepend>, B<idepend>
 selektiert ist aber ansonsten nichts, kann man das wie folgt tun:
 
 .B (|deps!deps)
 
-.B (|depend|rdepend|pdepend|bdepend!depend!rdepend!pdepend!bdepend)
+.B (|depend|rdepend|pdepend|bdepend|idepend!depend!rdepend!pdepend!bdepend!idepend)
 
 Zum Testen von Skripten empfiehlt es sich, B<DEFAULT_MATCH_ALGORITHM=error> zu
 setzen, so dass sich Skripte nicht auf spezielle Vorgaben von

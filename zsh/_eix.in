@@ -140,6 +140,7 @@ case $service in
 '*--rdepend[match RDEPEND]'
 '*--pdepend[match PDEPEND]'
 '*--bdepend[match BDEPEND]'
+'*--idepend[match IDEPEND]'
 '*--set[match setname]'
 '*--eapi[match EAPI]'
 '*--installed-eapi[match installed EAPI]'
@@ -190,6 +191,8 @@ case $service in
         field='pdepend';;
       (--bdepend)
         field='bdepend';;
+      (--idepend)
+        field='idepend';;
       (--deps)
         field='deps';;
       (--set)

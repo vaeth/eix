@@ -232,3 +232,7 @@ depending on the configuration and the version data.
 
   The BDEPEND string
 
+- **<idepend>** [..] **</idepend>**
+
+  The IDEPEND string
+

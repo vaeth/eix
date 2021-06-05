@@ -352,13 +352,15 @@ void VarDbPkg::readDepend(const Package& p, InstVersion *v, const DBHeader& head
 	depend[1] = v->depend.get_rdepend();
 	depend[2] = v->depend.get_pdepend();
 	depend[3] = v->depend.get_bdepend();
-	static CONSTEXPR const char *filenames[4] = {
+	depend[4] = v->depend.get_idepend();
+	static CONSTEXPR const char *filenames[5] = {
 		"/DEPEND",
 		"/RDEPEND",
 		"/PDEPEND",
-		"/BDEPEND"
+		"/BDEPEND",
+		"/IDEPEND"
 	};
-	for(eix::TinyUnsigned i(0); likely(i < 4); ++i) {
+	for(eix::TinyUnsigned i(0); likely(i < 5); ++i) {
 		LineVec lines;
 		if(likely(pushback_lines((dirname + filenames[i]).c_str(),
 			&lines, false, false, 1))) {
@@ -370,7 +372,7 @@ void VarDbPkg::readDepend(const Package& p, InstVersion *v, const DBHeader& head
 			}
 		}
 	}
-	v->depend.set(depend[0], depend[1], depend[2], depend[3], true);
+	v->depend.set(depend[0], depend[1], depend[2], depend[3], depend[4], true);
 }
 
 /**

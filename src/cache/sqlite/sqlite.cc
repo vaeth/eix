@@ -109,6 +109,7 @@ class TrueIndex : public TrueIndexMapper {
 			RDEPEND,
 			PDEPEND,
 			BDEPEND,
+			IDEPEND,
 			SRC_URI,
 			LAST
 		} Names;
@@ -130,20 +131,21 @@ class TrueIndex : public TrueIndexMapper {
 			mapinit( 5, DESCRIPTION,  "DESCRIPTION");
 			mapinit( 6, EAPI,         "EAPI");
 			mapinit( 7, HOMEPAGE,     "HOMEPAGE");
-			//  8 "INHERITED"
-			mapinit( 9, IUSE,         "IUSE");
-			mapinit(10, KEYWORDS,     "KEYWORDS");
-			mapinit(11, LICENSE,      "LICENSE");
-			mapinit(12, PDEPEND,      "PDEPEND");
-			mapinit(13, PROPERTIES,   "PROPERTIES");
-			// 14 "PROVIDE"
-			mapinit(15, RDEPEND,      "RDEPEND");
-			mapinit(16, REQUIRED_USE, "REQUIRED_USE");
-			mapinit(17, RESTRICT,     "RESTRICT");
-			mapinit(18, SLOT,         "SLOT");
-			mapinit(19, SRC_URI,      "SRC_URI");
-			// 20 "_eclasses_"
-			// 21 "_mtime_"
+			mapinit( 8, IDEPEND,      "IDEPEND");
+			//  9 "INHERITED"
+			mapinit(10, IUSE,         "IUSE");
+			mapinit(11, KEYWORDS,     "KEYWORDS");
+			mapinit(12, LICENSE,      "LICENSE");
+			mapinit(13, PDEPEND,      "PDEPEND");
+			mapinit(14, PROPERTIES,   "PROPERTIES");
+			// 15 "PROVIDE"
+			mapinit(16, RDEPEND,      "RDEPEND");
+			mapinit(17, REQUIRED_USE, "REQUIRED_USE");
+			mapinit(18, RESTRICT,     "RESTRICT");
+			mapinit(19, SLOT,         "SLOT");
+			mapinit(20, SRC_URI,      "SRC_URI");
+			// 21 "_eclasses_"
+			// 22 "_mtime_"
 		}
 
 		ATTRIBUTE_NONNULL_ int calc(int argc, const char *const *azColName, SqliteCache::TrueIndexMap *trueindex) const {
@@ -268,6 +270,7 @@ void SqliteCache::sqlite_callback_cpp(int argc, const char *const *argv, const c
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::RDEPEND),
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::PDEPEND),
 			TrueIndex::c_str(argv, &trueindex, TrueIndex::BDEPEND),
+			TrueIndex::c_str(argv, &trueindex, TrueIndex::IDEPEND),
 			false);
 		if(ExtendedVersion::use_src_uri) {
 			version->src_uri = TrueIndex::c_str(argv, &trueindex, TrueIndex::SRC_URI);

@@ -491,6 +491,7 @@ class Scanner {
 			prop_ver("haverdepend", &PrintFormat::VER_HAVERDEPEND);
 			prop_ver("havepdepend", &PrintFormat::VER_HAVEPDEPEND);
 			prop_ver("havebdepend", &PrintFormat::VER_HAVEBDEPEND);
+			prop_ver("haveidepend", &PrintFormat::VER_HAVEIDEPEND);
 			prop_ver("havedeps", &PrintFormat::VER_HAVEDEPS);
 			prop_ver("depend*", &PrintFormat::VER_DEPENDS);
 			prop_ver("depend", &PrintFormat::VER_DEPEND);
@@ -500,6 +501,8 @@ class Scanner {
 			prop_ver("pdepend", &PrintFormat::VER_PDEPEND);
 			prop_ver("bdepend*", &PrintFormat::VER_BDEPENDS);
 			prop_ver("bdepend", &PrintFormat::VER_BDEPEND);
+			prop_ver("idepend*", &PrintFormat::VER_IDEPENDS);
+			prop_ver("idepend", &PrintFormat::VER_IDEPEND);
 			prop_ver("ishardmasked", &PrintFormat::VER_ISHARDMASKED);
 			prop_ver("isprofilemasked", &PrintFormat::VER_ISPROFILEMASKED);
 			prop_ver("ismasked", &PrintFormat::VER_ISMASKED);
@@ -1486,6 +1489,16 @@ void PrintFormat::VER_HAVEBDEPEND(OutputString *s, Package *package) const {
 	}
 }
 
+void PrintFormat::VER_HAVEIDEPEND(OutputString *s, Package *package) const {
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
+	}
+	if(!ver_version()->depend.idepend_empty()) {
+		s->set_one();
+	}
+}
+
 void PrintFormat::VER_HAVEDEPS(OutputString *s, Package *package) const {
 	if(version_variables->isinst) {
 		eix_assert_paranoic(header != NULLPTR);
@@ -1558,6 +1571,22 @@ void PrintFormat::VER_BDEPEND(OutputString *s, Package *package) const {
 		vardb->readDepend(*package, version_variables->instver(), *header);
 	}
 	s->assign_smart(ver_version()->depend.get_bdepend());
+}
+
+void PrintFormat::VER_IDEPENDS(OutputString *s, Package *package) const {
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
+	}
+	s->assign_smart(ver_version()->depend.get_idepend_brief());
+}
+
+void PrintFormat::VER_IDEPEND(OutputString *s, Package *package) const {
+	if(version_variables->isinst) {
+		eix_assert_paranoic(header != NULLPTR);
+		vardb->readDepend(*package, version_variables->instver(), *header);
+	}
+	s->assign_smart(ver_version()->depend.get_idepend());
 }
 
 const MaskFlags *PrintFormat::ver_maskflags() const {

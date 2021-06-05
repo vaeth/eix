@@ -906,7 +906,7 @@ AddOption(STRING, "DEFAULT_MATCH_FIELD",
 	"Admissible values for match_field are: name, category, category/name,\n"
 	"description, license, homepage, set, eapi, slot, installed-slot, use,\n"
 	"with-use, without-use, src-uri, deps, depend, rdepend, pdepend, bdepend,\n"
-	"error."));
+	"idepend, error."));
 
 AddOption(STRING, "MATCH_ALGORITHM_REGEX",
 	"[][^$|()]|[.][*+?]", P_("MATCH_ALGORITHM_REGEX",
@@ -1930,6 +1930,11 @@ AddOption(STRING, "FORMAT_BDEPEND",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the BDEPEND output."));
 
+AddOption(STRING, "FORMAT_IDEPEND",
+	"(%{COLOR_DEPEND})<idepend*>(%{COLOR_DEPEND_END})", P_("FORMAT_IDEPEND",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the IDEPEND output."));
+
 AddOption(STRING, "FORMAT_DEPEND_VERBOSE",
 	"%{FORMAT_DEPEND}", P_("FORMAT_DEPEND_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
@@ -1949,6 +1954,11 @@ AddOption(STRING, "FORMAT_BDEPEND_VERBOSE",
 	"%{FORMAT_BDEPEND}", P_("FORMAT_BDEPEND_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the BDEPEND output with --verbose."));
+
+AddOption(STRING, "FORMAT_IDEPEND_VERBOSE",
+	"%{FORMAT_IDEPEND}", P_("FORMAT_IDEPEND_VERBOSE",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the IDEPEND output with --verbose."));
 
 AddOption(STRING, "FORMAT_VERSION_IUSE",
 	"(%{COLOR_VERSION_IUSE})"
@@ -2456,6 +2466,12 @@ AddOption(STRING, "FORMAT_DEPS_NORMAL",
 				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_BDEPEND}"
 			"{}"
+			"{haveidepend}"
+				"%{FORMAT_VER_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})%{I18N_IDEPEND}(%{COLOR_RESET})"
+				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
+				"%{FORMAT_IDEPEND}"
+			"{}"
 		"%{}"
 	"%{}", P_("FORMAT_DEPS_NORMAL",
 	"This variable is only used for delayed substitution.\n"
@@ -2560,6 +2576,13 @@ AddOption(STRING, "FORMAT_DEPS_VERBOSE",
 				"%{?PRINT_ALWAYS}{havebdepend}%{}"
 				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
 				"%{FORMAT_BDEPEND_VERBOSE}"
+			"{}"
+			"%{!PRINT_ALWAYS}{haveidepend}%{}"
+				"%{FORMAT_VER_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})%{I18N_IDEPEND}(%{COLOR_RESET})"
+				"%{?PRINT_ALWAYS}{haveidepend}%{}"
+				"\\C<%{I18N_COLUMN_AVAILABLE_CONTENT}>"
+				"%{FORMAT_IDEPEND_VERBOSE}"
 			"{}"
 		"%{}"
 	"%{}", P_("FORMAT_DEPS_VERBOSE",
@@ -2803,6 +2826,12 @@ AddOption(STRING, "IVERBOSE",
 			"(%{COLOR_INST_TITLE})%{I18N_BDEPEND}(%{COLOR_RESET})"
 			"\\C<%{I18N_COLUMN_INST_CONTENT}>"
 			"%{FORMAT_BDEPEND_VERBOSE}"
+		"{}"
+		"{haveidepend}"
+			"%{FORMAT_INST_LINESKIP}"
+			"(%{COLOR_INST_TITLE})%{I18N_IDEPEND}(%{COLOR_RESET})"
+			"\\C<%{I18N_COLUMN_INST_CONTENT}>"
+			"%{FORMAT_IDEPEND_VERBOSE}"
 		"{}"
 	"%{}"
 	"%{?PRINT_SRC_URI}"
