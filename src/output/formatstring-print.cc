@@ -18,6 +18,7 @@
 #include <map>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "eixTk/ansicolor.h"
 #include "eixTk/assert.h"
@@ -43,6 +44,7 @@
 using std::map;
 using std::pair;
 using std::string;
+using std::vector;
 
 ATTRIBUTE_NONNULL_ static Package *old_or_new(string *new_name, Package *older, Package *newer, const string& name);
 
@@ -85,11 +87,12 @@ PrintFormat::iuse_expand(OutputString *s, const IUseSet& iuse, bool coll, Handle
 		s->assign_smart(iuse.asString());
 		return;
 	}
-	typedef map<string, OutputString> ExpVars;
-	ExpVars expvars;
-	const IUseSet::IUseStd& iuse_std(iuse.asStd());
-	for(IUseSet::IUseStd::const_iterator it(iuse_std.begin());
-		it != iuse_std.end(); ++it) {
+	UNORDERED_MAP<string, OutputString> expvars;
+	typedef vector<string> ExpVarNames;
+	ExpVarNames expvarnames;
+	const IUseSet::IUseNaturalOrder iuse_ordered(iuse.asNaturalOrder());
+	for(IUseSet::IUseNaturalOrder::const_iterator it(iuse_ordered.begin());
+		it != iuse_ordered.end(); ++it) {
 		string var, expval;
 		const string& name(it->name());
 		if(portagesettings->use_expand(&var, &expval, name)) {
@@ -97,10 +100,12 @@ PrintFormat::iuse_expand(OutputString *s, const IUseSet& iuse, bool coll, Handle
 				continue;
 			}
 			OutputString& r(expvars[var]);
-			if(!r.empty()) {
+			if(r.empty()) {
+				expvarnames.push_back(var);
+			} else {
 				r.append_fast(' ');
 			}
-			const char *p(it->prefix());
+			const char *p(it->iuse().prefix());
 			if(p != NULLPTR) {
 				r.append_smart(p);
 			}
@@ -112,14 +117,14 @@ PrintFormat::iuse_expand(OutputString *s, const IUseSet& iuse, bool coll, Handle
 			s->append_smart(it->asString());
 		}
 	}
-	for(ExpVars::const_iterator it(expvars.begin()); it != expvars.end(); ++it) {
+	for(ExpVarNames::const_iterator it(expvarnames.begin()); it != expvarnames.end(); ++it) {
 		if(!s->empty()) {
 			s->append_fast(' ');
 		}
 		s->append(coll ? before_coll_start : before_iuse_start);
-		s->append_smart(it->first);
+		s->append_smart(*it);
 		s->append(coll ? before_coll_end : before_iuse_end);
-		s->append(it->second);
+		s->append(expvars[*it]);
 		s->append(coll ? after_coll : after_iuse);
 	}
 }
@@ -130,8 +135,9 @@ void PrintFormat::get_inst_use(OutputString *s, const Package& package, InstVers
 	}
 	OutputString add;
 	string expval;
-	typedef map<string, pair<OutputString, OutputString> > ExpVars;
-	ExpVars expvars;
+	map<string, pair<OutputString, OutputString> > expvars;
+	typedef vector<string> ExpVarNames;
+	ExpVarNames expvarnames;
 	for(WordVec::iterator it(i->inst_iuse.begin());
 		likely(it != i->inst_iuse.end()); ++it) {
 		string *value(&(*it));
@@ -150,6 +156,9 @@ void PrintFormat::get_inst_use(OutputString *s, const Package& package, InstVers
 				}
 				value = &expval;
 				pair<OutputString, OutputString>& r(expvars[var]);
+				if(r.first.empty() && r.second.empty()) {
+					expvarnames.push_back(var);
+				}
 				curr = (unset_list ? &(r.second) : &(r.first));
 			}
 		}
@@ -174,16 +183,17 @@ void PrintFormat::get_inst_use(OutputString *s, const Package& package, InstVers
 		}
 		s->append(add);
 	}
-	for(ExpVars::const_iterator it(expvars.begin()); it != expvars.end(); ++it) {
+	for(ExpVarNames::const_iterator it(expvarnames.begin()); it != expvarnames.end(); ++it) {
 		if(!s->empty()) {
 			s->append_fast(' ');
 		}
 		s->append(before_use_start);
-		s->append_smart(it->first);
+		s->append_smart(*it);
 		s->append(before_use_end);
-		const OutputString& f(it->second.first);
+		pair<OutputString, OutputString> &r(expvars[*it]);
+		const OutputString& f(r.first);
 		s->append(f);
-		const OutputString& t(it->second.second);
+		const OutputString& t(r.second);
 		if(!t.empty()) {
 			if(!f.empty()) {
 				s->append_fast(' ');

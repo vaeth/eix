@@ -102,10 +102,20 @@ string IUse::asString() const {
 	return ret;
 }
 
-string IUseSet::asString() const {
-	string ret;
+IUseSet::IUseNaturalOrder IUseSet::asNaturalOrder() const {
+	IUseNaturalOrder ret;
 	for(IUseStd::const_iterator it(m_iuse.begin());
 		likely(it != m_iuse.end()); ++it) {
+		ret.insert(&(*it));
+	}
+	return ret;
+}
+
+string IUseSet::asString() const {
+	IUseNaturalOrder iuse(asNaturalOrder());
+	string ret;
+	for(IUseNaturalOrder::const_iterator it(iuse.begin());
+		likely(it != iuse.end()); ++it) {
 		if(!ret.empty())
 			ret.append(1, ' ');
 		ret.append(it->asString());
@@ -114,10 +124,11 @@ string IUseSet::asString() const {
 }
 
 WordVec IUseSet::asVector() const {
-	WordVec ret(m_iuse.size());
+	IUseNaturalOrder iuse(asNaturalOrder());
+	WordVec ret(iuse.size());
 	WordVec::size_type i(0);
-	for(IUseStd::const_iterator it(m_iuse.begin());
-		likely(it != m_iuse.end()); ++i, ++it) {
+	for(IUseNaturalOrder::const_iterator it(iuse.begin());
+		likely(it != iuse.end()); ++i, ++it) {
 		ret[i] = it->asString();
 	}
 	return ret;

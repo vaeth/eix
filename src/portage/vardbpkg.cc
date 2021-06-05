@@ -28,6 +28,7 @@
 #include "portage/basicversion.h"
 #include "portage/extendedversion.h"
 #include "portage/instversion.h"
+#include "portage/version.h"
 
 using std::string;
 
@@ -250,15 +251,21 @@ bool VarDbPkg::readUse(const Package& p, InstVersion *v) const {
 		}
 		join_and_split(&alluse, lines);
 	}
+
+	IUseSet iuse_set;
 	for(WordVec::iterator it(inst_iuse.begin());
 		it != inst_iuse.end(); ++it) {
 		while(((*it)[0] == '+') || ((*it)[0] == '-')) {
 			it->erase(0, 1);
 		}
+		iuse_set.insert_fast(*it);
 	}
-	// Sort words and provide hash
-	WordSet iuse_set(inst_iuse.begin(), inst_iuse.end());
-	inst_iuse = WordVec(iuse_set.begin(), iuse_set.end());
+	IUseSet::IUseNaturalOrder ordered(iuse_set.asNaturalOrder());
+	WordVec::size_type i(0);
+	for(IUseSet::IUseNaturalOrder::const_iterator it(ordered.begin());
+		it != ordered.end(); ++i, ++it) {
+		inst_iuse[i] = it->name();
+	}
 
 	for(WordVec::iterator it(alluse.begin());
 		it != alluse.end(); ++it) {
@@ -267,9 +274,10 @@ bool VarDbPkg::readUse(const Package& p, InstVersion *v) const {
 		}
 	}
 
+	IUseSet::IUseStd iuse_std(iuse_set.asStd());
 	for(WordVec::iterator it(alluse.begin());
 		likely(it != alluse.end()); ++it) {
-		if(iuse_set.count(*it) != 0) {
+		if(iuse_std.count(IUse(*it)) != 0) {
 			v->usedUse.INSERT(MOVE(*it));
 		}
 	}

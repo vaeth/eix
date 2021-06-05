@@ -23,6 +23,7 @@
 
 #include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
+#include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
@@ -185,6 +186,14 @@ ATTRIBUTE_NONNULL_ inline static void escape_string(std::string *str);
 inline static void escape_string(std::string *str) {
 	escape_string(str, spaces);
 }
+
+/**
+Returns -1, 0, 1, depending on whether a is < = > than b in natural order.
+Natural order means: ascii-order except for digits; sequences of digits are
+compared as numbers. Leading zeroes are ignored, but if numbers differ only
+by leading zeroes, the one with more leading zeroes is considered to be larger.
+**/
+eix::SignedBool natcmp(const std::string& a, const std::string& b);
 
 /**
 Split a string into multiple strings.

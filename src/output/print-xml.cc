@@ -38,7 +38,7 @@ using std::string;
 
 const PrintXml::XmlVersion PrintXml::current;
 
-static void print_iuse(const IUseSet::IUseStd& s, IUse::Flags wanted, const char *dflt);
+static void print_iuse(const IUseSet::IUseNaturalOrder& s, IUse::Flags wanted, const char *dflt);
 
 void PrintXml::runclear() {
 	started = false;
@@ -98,10 +98,10 @@ void PrintXml::finish() {
 	runclear();
 }
 
-static void print_iuse(const IUseSet::IUseStd& s, IUse::Flags wanted, const char *dflt) {
+static void print_iuse(const IUseSet::IUseNaturalOrder& s, IUse::Flags wanted, const char *dflt) {
 	bool have_found(false);
-	for(IUseSet::IUseStd::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
-		if(((it->flags) & wanted) == 0) {
+	for(IUseSet::IUseNaturalOrder::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
+		if(((it->iuse().flags) & wanted) == 0) {
 			continue;
 		}
 		if(likely(have_found)) {
@@ -310,7 +310,7 @@ void PrintXml::package(Package *pkg) {
 		}
 
 		if(!(ver->iuse.empty())) {
-			const IUseSet::IUseStd& s(ver->iuse.asStd());
+			const IUseSet::IUseNaturalOrder& s(ver->iuse.asNaturalOrder());
 			print_iuse(s, IUse::USEFLAGS_NORMAL, NULLPTR);
 			print_iuse(s, IUse::USEFLAGS_PLUS, "1");
 			print_iuse(s, IUse::USEFLAGS_MINUS, "-1");

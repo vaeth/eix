@@ -23,6 +23,7 @@
 #include "eixTk/eixint.h"
 #include "eixTk/stringlist.h"
 #include "eixTk/stringtypes.h"
+#include "eixTk/stringutils.h"
 #include "portage/basicversion.h"
 #include "portage/extendedversion.h"
 #include "portage/keywords.h"
@@ -66,11 +67,68 @@ class IUse : public std::string {
 		bool operator==(const IUse& c) const {
 			return (name() == c.name());
 		}
+		bool operator!=(const IUse& c) const {
+			return (name() != c.name());
+		}
+		bool operator<(const IUse& c) const {
+			return (name() < c.name());
+		}
+		bool operator>(const IUse& c) const {
+			return (name() > c.name());
+		}
+		bool operator<=(const IUse& c) const {
+			return (name() <= c.name());
+		}
+		bool operator>=(const IUse& c) const {
+			return (name() >= c.name());
+		}
+};
+
+class IUseNatural {
+	public:
+		IUseNatural(const IUse *use) {
+			m_iuse = use;
+		}
+
+		const IUse& iuse() const {
+			return *m_iuse;
+		}
+
+		const std::string& name() const {
+			return m_iuse->name();
+		}
+
+		std::string asString() const {
+			return m_iuse->asString();
+		}
+
+		bool operator==(const IUseNatural& c) const {
+			return (name() == c.name());
+		}
+		bool operator!=(const IUseNatural& c) const {
+			return (name() != c.name());
+		}
+		bool operator<(const IUseNatural& c) const {
+			return (natcmp(name(), c.name()) < 0);
+		}
+		bool operator>(const IUseNatural& c) const {
+			return (natcmp(name(), c.name()) > 0);
+		}
+		bool operator<=(const IUseNatural& c) const {
+			return (natcmp(name(), c.name()) <= 0);
+		}
+		bool operator>=(const IUseNatural& c) const {
+			return (natcmp(name(), c.name()) >= 0);
+		}
+
+	private:
+		const IUse *m_iuse;
 };
 
 class IUseSet {
 	public:
 		typedef std::set<IUse> IUseStd;
+		typedef std::set<IUseNatural> IUseNaturalOrder;
 
 		bool empty() const {
 			return m_iuse.empty();
@@ -83,6 +141,8 @@ class IUseSet {
 		const IUseStd& asStd() const {
 			return m_iuse;
 		}
+
+		IUseNaturalOrder asNaturalOrder() const;
 
 		void insert(const IUseStd& iuse);
 

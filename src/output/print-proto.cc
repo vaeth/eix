@@ -167,9 +167,9 @@ void PrintProto::package(Package *pkg) {
 		}
 
 		if(!(ver->iuse.empty())) {
-			const IUseSet::IUseStd& s(ver->iuse.asStd());
-			for(IUseSet::IUseStd::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
-				IUse::Flags flags = it->flags;
+			const IUseSet::IUseNaturalOrder& s(ver->iuse.asNaturalOrder());
+			for(IUseSet::IUseNaturalOrder::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
+				IUse::Flags flags = it->iuse().flags;
 				if((flags & IUse::USEFLAGS_NORMAL) != 0) {
 					version->add_iuse(it->name());
 				}

@@ -292,6 +292,125 @@ static void erase_escapes(string *s, const char *at) {
 	}
 }
 
+eix::SignedBool natcmp(const string& a, const string& b) {
+	string::size_type i(0);
+	string::size_type j(0);
+	eix::SignedBool numerical(0);
+	eix::SignedBool zeroes(0);
+	bool number(false);
+	for(;; ++i, ++j) {
+		if(i == a.size()) {
+			if(j==b.size()) {
+				return (numerical == 0) ? zeroes : numerical;
+			} else {
+				return -1;
+			}
+		}
+		if(j == b.size()) {
+			return 1;
+		}
+		char c(a[i]);
+		char d(b[j]);
+		if(c == d) {
+			if(c == '0') {
+				continue;
+			}
+			if(my_isdigit(c)) {
+				if(!number) {
+					number = true;
+					numerical = zeroes = 0;
+				}
+				continue;
+			}
+			eix::SignedBool result((numerical == 0) ? zeroes : numerical);
+			if(result != 0) {
+				return result;
+			}
+			number = false;
+			numerical = zeroes = 0;
+			continue;
+		}
+		if(number) {
+			if(my_isdigit(c)) {
+				if(my_isdigit(d)) {
+					if(numerical == 0) {
+						numerical = ((c > d) ? 1 : -1);
+					}
+					continue;
+				}
+				return 1;
+			}
+			if(my_isdigit(d)) {
+				return -1;
+			}
+			eix::SignedBool result((numerical == 0) ? zeroes : numerical);
+			if(result != 0) {
+				return result;
+			}
+			return (c > d) ? 1 : -1;
+		}
+		if(c == '0') {
+			if(!my_isdigit(d)) {
+				return (c > d) ? 1 : -1;
+			}
+			for(;;) {
+				if(++i == a.size()) {
+					return -1;
+				}
+				c = a[i];
+				if(c == '0') {
+					continue;
+				}
+				if(c == d) {
+					numerical = 0;
+					zeroes = 1;
+					break;
+				}
+				if(isdigit(c)) {
+					numerical = (c > d) ? 1 : 0;
+					break;
+				}
+				return -1;
+			}
+			number = true;
+			continue;
+		}
+		if(d == '0') {
+			if(!my_isdigit(c)) {
+				return (c > d) ? 1 : -1;
+			}
+			for(;;) {
+				if(++j == b.size()) {
+					return 1;
+				}
+				d = b[j];
+				if(d == '0') {
+					continue;
+				}
+				if(c == d) {
+					numerical = 0;
+					zeroes = -1;
+					break;
+				}
+				if(isdigit(d)) {
+					numerical = (c > d) ? 1 : 0;
+					break;
+				}
+				return 1;
+			}
+			number = true;
+			continue;
+		}
+		if(my_isdigit(c) && my_isdigit(d)) {
+			zeroes = 0;
+			numerical = (c > d) ? 1 : -1;
+			number = true;
+			continue;
+		}
+		return (c > d) ? 1 : -1;
+	}
+}
+
 static string::size_type find_first_of(const string& str, const char *at, string::size_type pos, size_t at_len) {
 #ifdef SUPPORT_SSE2
 	const char *s = str.c_str();
