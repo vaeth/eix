@@ -377,6 +377,7 @@ void Database::prep_header_hashs(DBHeader *hdr, const PackageTree& tree) {
 					hdr->depend_hash.hash_words(dep.m_rdepend);
 					hdr->depend_hash.hash_words(dep.m_pdepend);
 					hdr->depend_hash.hash_words(dep.m_bdepend);
+					hdr->depend_hash.hash_words(dep.m_idepend);
 				}
 			}
 		}

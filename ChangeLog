@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+
+*eix-0.35.1
+	Martin Väth <martin at mvath.de>:
+	- Add idepend to hashing, fixing https://github.com/vaeth/eix/issues/87
+
 *eix-0.35.0
 	Martin Väth <martin at mvath.de>:
 	- Support IDEPEND (EAPI=8). Output is not optimized yet: only DEPEND
