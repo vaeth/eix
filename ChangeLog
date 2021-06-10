@@ -1,6 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 
+*eix-0.35.2
+	Martin Väth <martin at mvath.de>:
+	- Fix segfault when reading dependencies of installed versions
+
 *eix-0.35.1
 	Martin Väth <martin at mvath.de>:
 	- Add idepend to hashing, fixing https://github.com/vaeth/eix/issues/87

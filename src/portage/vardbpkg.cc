@@ -355,7 +355,7 @@ void VarDbPkg::readDepend(const Package& p, InstVersion *v, const DBHeader& head
 	}
 	v->depend.clear();
 	string dirname(m_directory + p.category + "/" + p.name + "-" + v->getFull());
-	WordVec depend(4);
+	WordVec depend(5);
 	depend[0] = v->depend.get_depend();
 	depend[1] = v->depend.get_rdepend();
 	depend[2] = v->depend.get_pdepend();
