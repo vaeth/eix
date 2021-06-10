@@ -6,6 +6,7 @@
 	- Fix segfault when reading dependencies of installed versions
 	- Deal with duplicate entries in /var/db/pkg/*/*/IUSE, see
 	  https://github.com/vaeth/eix/issues/88
+	- Make contrib/check_includes.sh happy again
 
 *eix-0.35.1
 	Martin Väth <martin at mvath.de>:

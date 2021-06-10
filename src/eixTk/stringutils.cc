@@ -10,24 +10,24 @@
 #include "eixTk/stringutils.h"
 #include <config.h>  // IWYU pragma: keep
 
-#include <fnmatch.h>
-
 #ifdef SUPPORT_SSE2
 #include <emmintrin.h>
 #endif
-
-#include <locale>
+#include <fnmatch.h>
+#include <sys/types.h>
 
 #include <cstdlib>
 #include <cstring>
 
 #include <algorithm>
+#include <locale>
 #include <string>
 #include <vector>
 
 #include "eixTk/attribute.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/dialect.h"
+#include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"

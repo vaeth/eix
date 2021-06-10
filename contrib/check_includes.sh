@@ -128,7 +128,7 @@ GrepCCWithout '#include <config\.h>'
 Check '"eixTk/assert\.h"' -e 'eix_assert'
 Check '"eixTk/stringtypes\.h"' -e 'WordVec' -e 'WordSet' -e 'WordUnorderedSet' -e 'WordUnorderedMap' -e 'WordIterateSet' -e 'WordIterateMap' -e 'WordList' -e 'LineVec' -e 'WordSize'
 Check '"eixTk/dialect\.h"' -e 'CONSTEXPR' -e 'ASSIGN_DELETE' -e 'OVERRIDE[^_A-Z]' -e 'FINAL[^_]' -e 'NOEXCEPT' -e 'EMPLACE_BACK' -e 'PUSH_BACK' -e 'INSERT' -e 'PUSH' -e 'MOVE'
-Check '"eixTk/diagnostics\.h"' -e DIAG_OFF -e DIAG_ON -e WSUGGEST_FINAL_METHODS -e WGNU_STATEMENT_EXPRESSION
+Check '"eixTk/diagnostics\.h"' -e DIAG_OFF -e DIAG_ON -e WSUGGEST_FINAL_METHODS -e WGNU_STATEMENT_EXPRESSION -e WZERO_AS_NULL_POINTER_CONSTANT
 Check '"eixTk/eixarray\.h"' -e 'eix::array'
 Check '"eixTk/eixint\.h"' -e OffsetType -e UChar -e UNumber -e Treesize -e Catsize -e Versize -e SignedBool -e TinySigned -e TinyUnsigned
 Check '"eixTk/formated\.h"' -e 'eix::format' -e 'eix::print' -e 'eix::say'
@@ -143,8 +143,8 @@ Check '"eixTk/iterate_set\.h"' -e 'ITERATE_SET'
 Check '"eixTk/unordered_map\.h"' -e 'UNORDERED_MAP'
 Check '"eixTk/unordered_set\.h"' -e 'UNORDERED_SET'
 Check '"eixTk/ptr_container\.h"' -e 'ptr_container' -e 'ptr_forward_container'
-Check '"eixTk/stringutils\.h"' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e isdigit -e isalpha -e isalnum -e is_numeric -e tolower -e toupper -e to_lower -e trim -e StringHash -e escape_string -e localeC -e match_list -e slot_subslot -e casecontains -e caseequal -e my_atou -e my_atos
-Check '"eixTk/attribute\.h"' -e 'ATTRIBUTE_'
+Check '"eixTk/stringutils\.h"' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e isdigit -e isalpha -e isalnum -e is_numeric -e tolower -e toupper -e to_lower -e trim -e StringHash -e escape_string -e localeC -e match_list -e slot_subslot -e casecontains -e caseequal -e my_atou -e my_atos -e natcmp
+Check '"eixTk/attribute\.h"' -e '^ATTRIBUTE_' -e '[^_]ATTRIBUTE_'
 Check '"portage/basicversion\.h"' -e 'BasicVersion' -e 'BasicPart'
 CheckWithout '"search/packagetest\.h"' -e 'PackageTest::'
 

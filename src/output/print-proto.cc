@@ -24,6 +24,7 @@
 #endif
 
 #ifdef WITH_PROTOBUF
+#include "eixTk/diagnostics.h"
 #include "eixTk/dialect.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
