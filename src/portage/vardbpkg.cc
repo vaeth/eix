@@ -261,10 +261,10 @@ bool VarDbPkg::readUse(const Package& p, InstVersion *v) const {
 		iuse_set.insert_fast(*it);
 	}
 	IUseSet::IUseNaturalOrder ordered(iuse_set.asNaturalOrder());
-	WordVec::size_type i(0);
+	inst_iuse.clear();
 	for(IUseSet::IUseNaturalOrder::const_iterator it(ordered.begin());
-		it != ordered.end(); ++i, ++it) {
-		inst_iuse[i] = it->name();
+		it != ordered.end(); ++it) {
+		inst_iuse.PUSH_BACK(MOVE(it->name()));
 	}
 
 	for(WordVec::iterator it(alluse.begin());
