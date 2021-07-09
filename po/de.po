@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
 "POT-Creation-Date: 2020-05-02 19:18+0200\n"
-"PO-Revision-Date: 2021-06-05 16:53+0200\n"
+"PO-Revision-Date: 2021-07-09 12:18+0200\n"
 "Last-Translator: Martin Väth <martin@mvath.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -8367,10 +8367,6 @@ msgstr "doppeltes ELSE"
 #: src/eixrc/eixrc.cc
 msgid "IF without FI"
 msgstr "IF ohne FI"
-
-#: src/eixrc/eixrc.cc
-msgid "no $HOME found in environment."
-msgstr "Kein $HOME in der Umgebung."
 
 #: src/eixrc/eixrc.cc
 #, c-format
