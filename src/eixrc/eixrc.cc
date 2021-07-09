@@ -422,9 +422,7 @@ void EixRc::read_undelayed(WordUnorderedSet *has_delayed) {
 
 		// override with EIX_USERRC
 		char *home(std::getenv("HOME"));
-		if(unlikely(home == NULLPTR)) {
-			eix::say_error(_("no $HOME found in environment."));
-		} else {
+		if(home) {
 			string eixrc(home);
 			eixrc.append(EIX_USERRC);
 			if(unlikely(!rc.read(eixrc.c_str(), &errtext, true))) {
