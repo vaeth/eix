@@ -222,9 +222,6 @@ class PortageSettings : public WordIterateMap {
 		void update_world_setslist();
 
 		bool grab_setmasks(const char *file, SetsIndex i, WordVec *contains_set, bool recursive);
-		bool grab_setmasks(const char *file, SetsIndex i, WordVec *contains_set) {
-			return grab_setmasks(file, i, contains_set, false);
-		}
 
 		const MaskList<SetMask> *getPackageSets() const {
 			return &m_package_sets;

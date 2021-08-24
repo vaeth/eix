@@ -660,7 +660,7 @@ void PortageSettings::read_local_sets(const WordVec& dir_list) {
 		string dir_slash(dir_list[i]);
 		optional_append(&dir_slash, '/');
 		for(WordVec::size_type j(0); likely(j != dir_size[i]); ++j) {
-			grab_setmasks((dir_slash + set_names[c]).c_str(), c, &(child_names[c]));
+			grab_setmasks((dir_slash + set_names[c]).c_str(), c, &(child_names[c]), true);
 			++c;
 		}
 	}
