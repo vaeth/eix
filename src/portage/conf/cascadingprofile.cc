@@ -115,7 +115,7 @@ bool CascadingProfile::addProfile(const char *profile, WordUnorderedSet *sourced
 		sourced_files->erase(truename);
 	}
 	WordVec filenames;
-	bool r(pushback_files(truename, &filenames, profile_exclude, 3));
+	bool r(pushback_files(truename, &filenames, profile_exclude, 3, true, true));
 	for(WordVec::const_iterator it(filenames.begin());
 		likely(it != filenames.end()); ++it) {
 		listaddFile(*it, 0, false);

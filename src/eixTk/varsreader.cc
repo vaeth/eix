@@ -1053,7 +1053,7 @@ bool VarsReader::read(const char *filename, string *errtext, bool noexist_ok, Wo
 		string dir(filename);
 		dir.append(1, '/');
 		WordVec files;
-		if(pushback_files(dir, &files, pushback_lines_exclude, 3)) {
+		if(pushback_files(dir, &files, pushback_files_recurse_exclude, 3, true, true)) {
 			for(WordVec::const_iterator file(files.begin());
 				likely(file != files.end()); ++file) {
 				if(!read(file->c_str(), errtext, false, sourced, false)) {

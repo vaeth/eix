@@ -57,11 +57,6 @@ inline static bool pushback_lines(const char *file, LineVec *v) {
 }
 
 /**
-Files excluded for pushback_lines in recursive mode
-**/
-extern const char *pushback_lines_exclude[];
-
-/**
 List of files in directory.
 Pushed names of file in directory into string-vector if they don't match any
 char * in given exlude list.
@@ -74,9 +69,19 @@ char * in given exlude list.
 @return true if everything is ok. Nonexisting directory is not ok.
 **/
 ATTRIBUTE_NONNULL((2)) bool pushback_files(const std::string& dir_path, WordVec *into, const char *const exclude[], unsigned char only_files, bool no_hidden, bool full_path);
-ATTRIBUTE_NONNULL((2)) inline static bool pushback_files(const std::string& dir_path, WordVec *into, const char *const exclude[], unsigned char only_files);
-inline static bool pushback_files(const std::string& dir_path, WordVec *into, const char *const exclude[], unsigned char only_files) {
-	return pushback_files(dir_path, into, exclude, only_files, true, true);
+
+/**
+Files excluded for pushback_lines in recursive mode
+**/
+extern const char *pushback_files_recurse_exclude[];
+
+/**
+Recursive list of files in directory
+*/
+ATTRIBUTE_NONNULL((4)) bool pushback_files_recurse(const std::string& dir_path, const std::string& subpath, int depth, WordVec *into, bool full_path, std::string *errtext);
+ATTRIBUTE_NONNULL((2)) inline static bool pushback_files_recurse(const std::string& dir_path, WordVec *into, bool full_path, std::string *errtext);
+ATTRIBUTE_NONNULL((2)) inline static bool pushback_files_recurse(const std::string& dir_path, WordVec *into, bool full_path, std::string *errtext) {
+	return pushback_files_recurse(dir_path, "", 0, into, full_path, errtext);
 }
 
 /**

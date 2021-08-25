@@ -162,7 +162,7 @@ ExtendedVersion::CountBinPkg ExtendedVersion::num_pak_pkg(const PortageSettings 
 	}
 	const string pkgs = s + "/" + pkg->category + "/" + pkg->name + "/";
 	WordVec bin_packages;
-	if(unlikely(!pushback_files(pkgs, &bin_packages, NULLPTR, 1))) {
+	if(unlikely(!pushback_files(pkgs, &bin_packages, NULLPTR, 1, true, true))) {
 		return 0;
 	}
 	const string pkg_search = pkgs + pkg->name + "-" + getFull() + "-";

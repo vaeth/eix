@@ -2,7 +2,7 @@
 
 *eix-0.35.3
 	Martin Väth <martin at mvath.de>:
-	- Sets can also be directories which are read recursively
+	- Sets can also be in subdirectories: The name is the full subpath
 
 	Florian Schmaus <flo at geekplace.eu>:
 	- Work if there is no $HOME variable

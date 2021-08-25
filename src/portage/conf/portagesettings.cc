@@ -626,9 +626,6 @@ string PortageSettings::get_setnames(const Package *p, bool also_nonlocal) const
 	return join_to_string(names);
 }
 
-
-static CONSTEXPR const char *sets_exclude[] = { "..", "." , "system", "world", NULLPTR };
-
 void PortageSettings::read_local_sets(const WordVec& dir_list) {
 	world_setslist_up_to_date = false;
 	set_names.clear();
@@ -639,9 +636,12 @@ void PortageSettings::read_local_sets(const WordVec& dir_list) {
 	all_set_names is used as a cache to find duplicate set names faster
 	**/
 	WordUnorderedSet all_set_names;
+	// We ignore these sets, as they are filled differently:
+	all_set_names.INSERT("system");
+	all_set_names.INSERT("world");
 	for(WordVec::size_type i(0); likely(i != dir_list.size()); ++i) {
 		WordVec temporary_set_names;
-		pushback_files(dir_list[i], &temporary_set_names, sets_exclude, 0, true, false);
+		pushback_files_recurse(dir_list[i], &temporary_set_names, false, NULLPTR);
 		WordVec::size_type s(set_names.size());
 		// Avoid duplicate sets
 		for(WordVec::const_iterator it(temporary_set_names.begin());
@@ -660,7 +660,7 @@ void PortageSettings::read_local_sets(const WordVec& dir_list) {
 		string dir_slash(dir_list[i]);
 		optional_append(&dir_slash, '/');
 		for(WordVec::size_type j(0); likely(j != dir_size[i]); ++j) {
-			grab_setmasks((dir_slash + set_names[c]).c_str(), c, &(child_names[c]), true);
+			grab_setmasks((dir_slash + set_names[c]).c_str(), c, &(child_names[c]), false);
 			++c;
 		}
 	}
