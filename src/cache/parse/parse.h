@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "cache/base.h"
+#include "cache/common/reader.h"
 #include "eixTk/attribute.h"
 #include "eixTk/dialect.h"
 #include "eixTk/null.h"
@@ -34,7 +35,8 @@ class ParseCache FINAL : public BasicCache {
 		FurtherCaches further;
 		typedef std::vector<bool> FurtherWorks;
 		FurtherWorks further_works;
-		bool try_parse, nosubst, ebuild_sh;
+		bool try_parse, nosubst, ebuild_sh, portage3_0_24;
+		const char *ebuild_type;
 		EbuildExec *ebuild_exec;
 		WordVec m_packages;
 		std::string m_catpath;
@@ -46,6 +48,7 @@ class ParseCache FINAL : public BasicCache {
 
 		ATTRIBUTE_NONNULL_ void parse_exec(const char *fullpath, const std::string& dirpath, bool read_onetime_info, bool *have_onetime_info, Package *pkg, Version *version);
 		ATTRIBUTE_NONNULL_ void readPackage(Category *cat, const std::string& pkg_name, const std::string& directory_path, const WordVec& files);
+		BasicReader *newReader();
 
 	public:
 		ParseCache() : BasicCache(), verbose(false), ebuild_exec(NULLPTR) {

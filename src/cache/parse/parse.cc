@@ -15,10 +15,14 @@
 #include <string>
 
 #include "cache/base.h"
+#include "cache/common/assign_reader.h"
 #include "cache/common/ebuild_exec.h"
 #include "cache/common/flat_reader.h"
+#include "cache/common/reader.h"
 #include "cache/common/selectors.h"
 #include "cache/metadata/metadata.h"
+#include "eixrc/eixrc.h"
+#include "eixrc/global.h"
 #include "eixTk/dialect.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -50,6 +54,9 @@ bool ParseCache::initialize(const string& name) {
 	if(unlikely(s.empty())) {
 		return false;
 	}
+	EixRc& eixrc(get_eixrc());
+	portage3_0_24 = eixrc.getBool("EBUILD_PORTAGE3_0_24");
+	ebuild_type = NULLPTR;
 	try_parse = ebuild_sh = nosubst = false;
 	bool try_ebuild(false), use_sh(false);
 	for(WordVec::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
@@ -70,8 +77,14 @@ bool ParseCache::initialize(const string& name) {
 		}
 	}
 	if(try_ebuild) {
-		ebuild_sh = use_sh;
-		ebuild_exec = new EbuildExec(use_sh, this);
+		if(use_sh) {
+			ebuild_sh = true;
+			ebuild_type = (portage3_0_24 ? "ebuild*3.0.24" : "ebuild*legacy");
+		} else {
+			ebuild_sh = portage3_0_24;
+			ebuild_type = (portage3_0_24 ? "ebuild-3.0.24" : "ebuild-legacy");
+		}
+		ebuild_exec = new EbuildExec(ebuild_sh, this);
 	}
 	while(++it_name != names.end()) {
 		MetadataCache *p(new MetadataCache);
@@ -100,17 +113,11 @@ const char *ParseCache::getType() const {
 		}
 	}
 	if(ebuild_exec != NULLPTR) {
-		const char *t;
-		if(ebuild_sh) {
-			t = "ebuild*";
-		} else {
-			t = "ebuild";
-		}
 		if(s->empty()) {
-			s->assign(t);
+			s->assign(ebuild_type);
 		} else {
 			s->append(1, '|');
-			s->append(t);
+			s->append(ebuild_type);
 		}
 	}
 	for(FurtherCaches::const_iterator it(further.begin());
@@ -253,7 +260,7 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 		if(ok) {
 			used_type = (nosubst ? "parse*" : "parse");
 		} else {
-			used_type = (ebuild_sh ? "ebuild*" : "ebuild");
+			used_type = ebuild_type;
 		}
 		m_error_callback(eix::format("%s/%s-%s: %s") %
 			m_catname % pkg->name % version->getFull() %
@@ -262,9 +269,10 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 	if(!ok) {
 		string *cachefile(ebuild_exec->make_cachefile(fullpath, dirpath, *pkg, *version, eapi));
 		if(likely(cachefile != NULLPTR)) {
-			FlatReader reader(this);
-			reader.get_keywords_slot_iuse_restrict(*cachefile, &eapi, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend), &(version->src_uri));
-			reader.read_file(*cachefile, pkg);
+			BasicReader *reader(newReader());
+			reader->get_keywords_slot_iuse_restrict(*cachefile, &eapi, &keywords, &slot, &iuse, &required_use, &restr, &props, &(version->depend), &(version->src_uri));
+			reader->read_file(*cachefile, pkg);
+			delete reader;
 			ebuild_exec->delete_cachefile();
 		} else {
 			m_error_callback(eix::format(_("cannot properly execute %s")) % fullpath);
@@ -278,6 +286,14 @@ void ParseCache::parse_exec(const char *fullpath, const string& dirpath, bool re
 	version->set_iuse(iuse);
 	version->set_required_use(required_use);
 	pkg->addVersionFinalize(version);
+}
+
+BasicReader *ParseCache::newReader() {
+	if(portage3_0_24) {
+		return new AssignReader(this);
+	} else {
+		return new FlatReader(this);
+	}
 }
 
 void ParseCache::readPackage(Category *cat, const string& pkg_name, const string& directory_path, const WordVec& files) {

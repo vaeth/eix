@@ -1,5 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.36.0
+	Martin Väth <martin at mvath.de>:
+	- New EBUILD_PORTAGE3_0_24 with default true.
+	  If true, cache method ebuild* will assume >=sys-apps/portage-3.0.24,
+	  and cache method ebuild will actually be equivalent to ebuild*.
+	  See https://bugs.gentoo.org/815216
+
 *eix-0.35.3
 	Martin Väth <martin at mvath.de>:
 	- Sets can also be in subdirectories: The name is the full subpath

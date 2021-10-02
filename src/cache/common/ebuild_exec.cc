@@ -139,7 +139,7 @@ void EbuildExec::remove_handler() {
 }
 
 // You should have called add_handler() in advance
-bool EbuildExec::make_tempfile() {
+int EbuildExec::make_tempfile() {
 	const string &tmpdir = settings->tmpdir;
 	string::size_type l(tmpdir.size());
 	char *temp = new char[256 + l];
@@ -152,13 +152,12 @@ bool EbuildExec::make_tempfile() {
 	int fd(mkstemp(temp));
 	if(fd == -1) {
 		delete[] temp;
-		return false;
+		return fd;
 	}
 	cachefile.assign(temp);
 	cache_defined = true;
-	close(fd);
 	delete[] temp;
-	return true;
+	return fd;
 }
 
 void EbuildExec::delete_cachefile() {
@@ -184,7 +183,7 @@ void EbuildExec::delete_cachefile() {
 This is a subfunction of make_cachefile() to ensure that make_cachefile()
 has no local variable when vfork() is called.
 **/
-void EbuildExec::calc_environment(const char *name, const string& dir, const Package& package, const Version& version, const string& eapi) {
+void EbuildExec::calc_environment(const char *name, const string& dir, const Package& package, const Version& version, const string& eapi, int fd) {
 	c_env = NULLPTR;
 	envstrings = NULLPTR;
 	// non-sh: environment is kept except for possibly new PORTDIR_OVERLAY
@@ -218,6 +217,9 @@ void EbuildExec::calc_environment(const char *name, const string& dir, const Pac
 		env["PORTAGE_BIN_PATH"] = settings->portage_bin_path;
 		env["PORTAGE_PYM_PATH"] = settings->portage_pym_path;
 		env["PORTAGE_REPO_NAME"] = base->getOverlayName();
+		if(fd != -1) {
+			env["PORTAGE_PIPE_FD"] = eix::format("%d") % fd;
+		}
 		WordVec eclasses;
 		eclasses.PUSH_BACK(base->getPrefixedPath());
 		RepoList& repos(base->portagesettings->repos);
@@ -270,9 +272,11 @@ string *EbuildExec::make_cachefile(const char *name, const string& dir, const Pa
 	// Make cachefile and calculate exec_name
 
 	add_handler();
+	int fd = -1;
 	if(use_ebuild_sh) {
 		exec_name = settings->exec_ebuild_sh.c_str();
-		if(!make_tempfile()) {
+		fd = make_tempfile();
+		if(fd == -1) {
 			base->m_error_callback(_("creation of tempfile failed"));
 			remove_handler();
 			return NULLPTR;
@@ -282,7 +286,7 @@ string *EbuildExec::make_cachefile(const char *name, const string& dir, const Pa
 		cachefile = settings->ebuild_depend_temp;
 		cache_defined = true;
 	}
-	calc_environment(name, dir, package, version, eapi);
+	calc_environment(name, dir, package, version, eapi, fd);
 #ifndef HAVE_SETENV
 	if((!use_ebuild_sh) && (c_env != NULLPTR)) {
 		exec_name = settings->exec_ebuild.c_str();
@@ -312,6 +316,9 @@ string *EbuildExec::make_cachefile(const char *name, const string& dir, const Pa
 		_exit(EXECLE_FAILED);
 	}
 	while(waitpid(child, &exec_status, 0) != child ) { }
+	if(fd != -1) {
+		close(fd);
+	}
 
 	// Free memory needed only for the child process:
 	delete[] c_env;

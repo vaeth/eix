@@ -493,6 +493,11 @@ AddOption(STRING, "OVERRIDE_CACHE_METHOD",
 	"This variable can override the choices of CACHE_METHOD,\n"
 	"and in addition it can override the choices made by KEEP_VIRTUALS."));
 
+AddOption(STRING, "EBUILD_PORTAGE3_0_24",
+	"true", P_("EBUILD_PORTAGE3_0_24",
+	"Must be true if and only if cache methods ebuild and ebuild* are to be used\n"
+	"with >=portage-3.0.24."));
+
 AddOption(STRING, "REPO_NAMES",
 	"", P_("REPO_NAMES",
 	"This is a list of pairs DIR-PATTERN OVERLAY_LABEL.\n"

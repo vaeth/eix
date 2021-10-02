@@ -51,13 +51,13 @@ class EbuildExec {
 		const char **c_env;
 		int exec_status;
 		WordVec *envstrings;
-		ATTRIBUTE_NONNULL_ void calc_environment(const char *name, const std::string& dir, const Package& package, const Version& version, const std::string& eapi);
+		ATTRIBUTE_NONNULL_ void calc_environment(const char *name, const std::string& dir, const Package& package, const Version& version, const std::string& eapi, int fd);
 
 		static EbuildExecSettings *settings;
 
 		void add_handler();
 		void remove_handler();
-		bool make_tempfile();
+		int make_tempfile();
 		bool portageq(std::string *result, const char *var) const;
 		bool calc_settings();
 
