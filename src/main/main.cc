@@ -116,7 +116,7 @@ The name under which we have been called.
 **/
 const char *program_name;
 
-ATTRIBUTE_SIGNAL ATTRIBUTE_NORETURN static void sig_handler(int sig);
+ATTRIBUTE_NORETURN static void sig_handler(int sig);
 ATTRIBUTE_NONNULL_ static void sanitize_filename(string *s);
 
 /**
