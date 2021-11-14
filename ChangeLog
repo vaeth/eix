@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.36.1
+	Jannik Glückert <https://github.com/Jannik2099>:
+	- Remove unsupported ATTRIBUTE_SIGNAL
+
 *eix-0.36.0
 	Martin Väth <martin at mvath.de>:
 	- New EBUILD_PORTAGE3_0_24 with default true.
