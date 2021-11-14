@@ -1082,26 +1082,6 @@ message('__attribute__ ((fallthrough)) ' + attr_afallthrough.to_string())
 conf.set('HAVE_ATTRIBUTE_AFALLTHROUGH', attr_afallthrough,
 	description : 'Define if __attribute__ ((fallthrough)) can be used')
 
-attr_signal = cxx.links('''
-#include <csignal>
-__attribute__ ((signal)) void my_sig_handler(int sig);
-class my_int {
-friend __attribute__ ((signal)) void my_sig_handler(int sig);
-private:	static int i;
-		static void set(int s) { i=s; }
-};
-int my_int::i;
-void my_sig_handler(int sig)
-{ my_int::set(sig); }
-int main() {
-	signal(SIGTERM, my_sig_handler);
-	return 0;
-}
-''', args : flags_fatal)
-message('__attribute__ ((signal)) ' + attr_signal.to_string())
-conf.set('HAVE_ATTRIBUTE_SIGNAL', attr_signal,
-	description : 'Define if __attribute__ ((signal)) can be used')
-
 attr_const = cxx.links('''
 class b {
 public:

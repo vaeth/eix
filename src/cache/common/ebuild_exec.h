@@ -24,10 +24,10 @@ class BasicCache;
 class Package;
 class Version;
 
-ATTRIBUTE_SIGNAL void ebuild_sig_handler(int sig);
+void ebuild_sig_handler(int sig);
 
 class EbuildExec {
-		ATTRIBUTE_SIGNAL friend void ebuild_sig_handler(int sig);
+		friend void ebuild_sig_handler(int sig);
 		friend class EbuildExecSettings;
 
 	private:

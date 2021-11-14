@@ -1246,31 +1246,6 @@ AS_IF([$attr_afallthrough],
 		[1],
 		[Define if __attribute__ ((fallthrough)) can be used])])
 
-# Check if __attribute__ ((signal)) works
-AC_MSG_CHECKING([whether __attribute__ ((signal)) can be used])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-#include <csignal>
-__attribute__ ((signal)) void my_sig_handler(int sig);
-class my_int {
-friend __attribute__ ((signal)) void my_sig_handler(int sig);
-private:	static int i;
-		static void set(int s) { i=s; }
-};
-int my_int::i;
-void my_sig_handler(int sig)
-{ my_int::set(sig); }
-		]], [[
-	signal(SIGTERM, my_sig_handler);
-		]])],
-		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attr_signal], [:])],
-		[MV_MSG_RESULT([no])
-		AS_VAR_SET([attr_signal], [false])])
-AS_IF([$attr_signal],
-	[AC_DEFINE([HAVE_ATTRIBUTE_SIGNAL],
-		[1],
-		[Define if __attribute__ ((signal)) can be used])])
-
 # Check if __attribute__ ((const)) works
 AC_MSG_CHECKING([whether __attribute__ ((const)) can be used])
 MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[

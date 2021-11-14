@@ -118,9 +118,6 @@
 /* Define if __attribute__ ((pure)) can be used */
 #undef HAVE_ATTRIBUTE_PURE
 
-/* Define if __attribute__ ((signal)) can be used */
-#undef HAVE_ATTRIBUTE_SIGNAL
-
 /* Define if [[noreturn]] can be used */
 #undef HAVE_C11ATTRIBUTE_NORETURN
 

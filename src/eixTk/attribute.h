@@ -22,12 +22,6 @@
 #endif  // HAVE_ATTRIBUTE_NORETURN
 #endif  // HAVE_C11ATTRIBUTE_NORETURN
 
-#ifdef HAVE_ATTRIBUTE_SIGNAL
-#define ATTRIBUTE_SIGNAL __attribute__ ((signal))
-#else
-#define ATTRIBUTE_SIGNAL
-#endif
-
 #ifdef HAVE_ATTRIBUTE_CONST
 #define ATTRIBUTE_CONST __attribute__ ((const))
 #else
