@@ -207,44 +207,46 @@ Split a string into multiple strings.
                      removing escapes for \\ or "at" symbols from result.
 **/
 ATTRIBUTE_NONNULL_ void split_string(WordVec *vec, const std::string& str, bool handle_escape, const char *at, bool ignore_empty);
-ATTRIBUTE_NONNULL_ void split_string(WordSet *vec, const std::string& str, bool handle_escape, const char *at, bool ignore_empty);
-ATTRIBUTE_NONNULL_ void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape, const char *at, bool ignore_empty);
 ATTRIBUTE_NONNULL_ inline static void split_string(WordVec *vec, const std::string& str, bool handle_escape, const char *at);
 inline static void split_string(WordVec *vec, const std::string& str, bool handle_escape, const char *at) {
-	split_string(vec, str, handle_escape, at, true);
-}
-ATTRIBUTE_NONNULL_ inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape, const char *at);
-inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape, const char *at) {
-	split_string(vec, str, handle_escape, at, true);
-}
-ATTRIBUTE_NONNULL_ inline static void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape, const char *at);
-inline static void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape, const char *at) {
 	split_string(vec, str, handle_escape, at, true);
 }
 ATTRIBUTE_NONNULL_ inline static void split_string(WordVec *vec, const std::string& str, bool handle_escape);
 inline static void split_string(WordVec *vec, const std::string& str, bool handle_escape) {
 	split_string(vec, str, handle_escape, spaces);
 }
-ATTRIBUTE_NONNULL_ inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape);
-inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape) {
-	split_string(vec, str, handle_escape, spaces);
-}
-ATTRIBUTE_NONNULL_ inline static void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape);
-inline static void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape) {
-	split_string(vec, str, handle_escape, spaces);
-}
 ATTRIBUTE_NONNULL_ inline static void split_string(WordVec *vec, const std::string& str);
 inline static void split_string(WordVec *vec, const std::string& str) {
 	split_string(vec, str, false);
+}
+ATTRIBUTE_NONNULL_ void split_string(WordSet *vec, const std::string& str, bool handle_escape, const char *at, bool ignore_empty);
+ATTRIBUTE_NONNULL_ inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape, const char *at);
+inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape, const char *at) {
+	split_string(vec, str, handle_escape, at, true);
+}
+ATTRIBUTE_NONNULL_ inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape);
+inline static void split_string(WordSet *vec, const std::string& str, bool handle_escape) {
+	split_string(vec, str, handle_escape, spaces);
 }
 ATTRIBUTE_NONNULL_ inline static void split_string(WordSet *vec, const std::string& str);
 inline static void split_string(WordSet *vec, const std::string& str) {
 	split_string(vec, str, false);
 }
+#ifdef HAVE_UNORDERED_SET
+ATTRIBUTE_NONNULL_ void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape, const char *at, bool ignore_empty);
+ATTRIBUTE_NONNULL_ inline static void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape, const char *at);
+inline static void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape, const char *at) {
+	split_string(vec, str, handle_escape, at, true);
+}
+ATTRIBUTE_NONNULL_ inline static void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape);
+inline static void split_string(WordUnorderedSet *vec, const std::string& str, bool handle_escape) {
+	split_string(vec, str, handle_escape, spaces);
+}
 ATTRIBUTE_NONNULL_ inline static void split_string(WordUnorderedSet *vec, const std::string& str);
 inline static void split_string(WordUnorderedSet *vec, const std::string& str) {
 	split_string(vec, str, false);
 }
+#endif
 
 /**
 Check if slot contains a subslot and if yes, split it away.

@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.36.2
+	Martin Väth <martin at mvath.de>:
+	- Fix compile errors in the absence of std::unordered_set, see
+	  https://bugs.gentoo.org/838358
+
 *eix-0.36.1
 	Jannik Glückert <https://github.com/Jannik2099>:
 	- Remove unsupported ATTRIBUTE_SIGNAL

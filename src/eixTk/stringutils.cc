@@ -487,9 +487,11 @@ void split_string(WordSet *vec, const string& str, bool handle_escape, const cha
 	split_string_template<WordSet>(vec, str, handle_escape, at, ignore_empty);
 }
 
+#ifdef HAVE_UNORDERED_SET
 void split_string(WordUnorderedSet *vec, const string& str, bool handle_escape, const char *at, bool ignore_empty) {
 	split_string_template<WordUnorderedSet>(vec, str, handle_escape, at, ignore_empty);
 }
+#endif
 
 WordVec split_string(const string& str, bool handle_escape, const char *at, bool ignore_empty) {
 	WordVec vec;
