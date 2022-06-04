@@ -866,14 +866,14 @@ bool PackageTest::match(PackageReader *pkg) const {
 				}
 			}
 		}
-		if(test_ins == INS_NONE) {
+		if((test_ins & INS_NONEXISTENT) == INS_NONE) {
 			return false;
 		}
 		InstVec *installed_versions(vardbpkg->getInstalledVector(*p));
 		if(installed_versions == NULLPTR) {
 			return false;
 		}
-		if(test_ins & INS_MASKED) {
+		if((test_ins & INS_MASKED) != INS_NONE) {
 			portagesettings->user_config->setMasks(p);
 			portagesettings->user_config->setKeyflags(p);
 		}
@@ -886,12 +886,12 @@ bool PackageTest::match(PackageReader *pkg) const {
 				if(*version != *current) {
 					continue;
 				}
-				if(test_ins & INS_MASKED) {
+				if((test_ins & INS_MASKED) != INS_NONE) {
 					if(version->maskflags.isHardMasked() || !version->keyflags.isStable()) {
 						continue;
 					}
 				}
-				if(test_ins & INS_OVERLAY) {
+				if((test_ins & INS_OVERLAY) != INS_NONE) {
 					if(!vardbpkg->readOverlay(*p, &(*current), *header)) {
 						continue;
 					}

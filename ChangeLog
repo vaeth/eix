@@ -1,5 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.36.3
+	Martin Väth <martin at mvath.de>:
+	- Bugfix: Make nonexistent in package.nowarn work as documented.
+	  Previously, it worked only work if
+	  NONEXISTENT_IF_{MASKED,OTHER_OVERLAY} are both false or disabled in
+	  package.nowarn for the package as well.
+
 *eix-0.36.2
 	Martin Väth <martin at mvath.de>:
 	- Fix compile errors in the absence of std::unordered_set, see
