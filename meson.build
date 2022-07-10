@@ -4,6 +4,8 @@ project('eix', 'cpp',
 	default_options : [
 		'prefix=/usr',
 		'sysconfdir=/etc',
+		'cpp_eh=none',
+		'cpp_rtti=false',
 	],
 	meson_version : '>= 0.47',
 	# 0.47: support run_command(check : true)

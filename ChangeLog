@@ -3,6 +3,8 @@
 *eix-0.36.4
 	Martin Väth <martin at mvath.de>:
 	- meson: All occurrences of run_command get a check argument
+	- meson: Add default cpp_eh=none cpp_rtti=false
+	- meson: Ignore en@quot and en@boldquot unless po files do exist
 
 *eix-0.36.3
 	Martin Väth <martin at mvath.de>:
