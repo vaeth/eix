@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.36.4
+	Martin Väth <martin at mvath.de>:
+	- meson: All occurrences of run_command get a check argument
+
 *eix-0.36.3
 	Martin Väth <martin at mvath.de>:
 	- Bugfix: Make nonexistent in package.nowarn work as documented.

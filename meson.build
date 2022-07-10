@@ -1,11 +1,13 @@
 project('eix', 'cpp',
-	version : '0.36.3',
+	version : '0.36.4',
 	license : 'GPLv2',
 	default_options : [
 		'prefix=/usr',
 		'sysconfdir=/etc',
 	],
-	meson_version : '>= 0.41', # support configure_file(capture : true)
+	meson_version : '>= 0.47',
+	# 0.47: support run_command(check : true)
+	# 0.41: support configure_file(capture : true)
 )
 
 jumbo_build = get_option('jumbo-build')
@@ -120,7 +122,7 @@ flto = false
 r = run_command(sh, '-c', '''case " ${CXXFLAGS} ${LDFLAGS} " in
 '-flto '*|'flto='*) exit 1;;
 esac
-''')
+''', check : false)
 if r.returncode() != 0
 	flto = true
 endif
@@ -1447,7 +1449,7 @@ eprefix_default = get_option('eprefix-default')
 eprefix_default_msg = ''
 if eprefix_default == 'auto'
 	eprefix_default = ''
-	r = run_command('portageq', 'envvar', 'EPREFIX')
+	r = run_command('portageq', 'envvar', 'EPREFIX', check : false)
 	if r.returncode() == 0
 		eprefix_default = r.stdout().strip()
 		eprefix_default_msg = ' (auto)'
@@ -1461,7 +1463,7 @@ sh_shebang = get_option('sh-shebang')
 sh_shebang_msg = ''
 if sh_shebang == 'auto'
 	sh_shebang = ''
-	r = run_command(sh, '-c', 'command', '-v', 'sh')
+	r = run_command(sh, '-c', 'command', '-v', 'sh', check : false)
 	if r.returncode() == 0
 		sh_shebang = r.stdout().strip()
 		sh_shebang_msg = ' (auto)'
@@ -1575,22 +1577,16 @@ sed_get = [ '-n', '-e',
 	'--',
 ]
 f = join_paths('src', 'database', 'header.h')
-database_version = ''
-r = run_command(sed, sed_get, files(f))
-if r.returncode() == 0
-	database_version = r.stdout().strip()
-endif
+r = run_command(sed, sed_get, files(f), check : true)
+database_version = r.stdout().strip()
 if database_version == ''
 	error('failed to get current database version from ' + f)
 endif
 subst.set('CURRENT', database_version)
 
 f = join_paths('src', 'output', 'print-xml.h')
-xml_version = ''
-r = run_command(sed, sed_get, files(f))
-if r.returncode() == 0
-	xml_version = r.stdout().strip()
-endif
+r = run_command(sed, sed_get, files(f), check : true)
+xml_version = r.stdout().strip()
 if xml_version == ''
 	error('failed to get currrent xml version from ' + f)
 endif
@@ -2155,10 +2151,8 @@ if extra_doc
 		htmldest = join_paths(builddir, htmlfile)
 		fallback = join_paths(sourcedir, 'doc', htmlfile)
 		r = run_command(sh, rst2html,
-			txtfile, htmldest, fallback, docinput, dev_null)
-		if r.returncode() != 0
-			error('call_rst2html.sh failed for ' + htmlfile)
-		endif
+			txtfile, htmldest, fallback, docinput, dev_null,
+			check : true)
 		install_data(htmldest, install_dir : htmldir)
 	endforeach
 endif
@@ -2188,10 +2182,8 @@ foreach l : manpages
 	r = run_command(sh, '-c', sed_manpage, 'sh',
 		join_paths(builddir, file_subst),
 		manpagefile,
-		manpagedir)
-	if r.returncode() != 0
-		error('sed failed: ' + file)
-	endif
+		manpagedir,
+		check : true)
 	mansubdir = mandir
 	if l != 'en'
 		mansubdir = join_paths(mandir, l)
