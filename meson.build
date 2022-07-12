@@ -1,5 +1,5 @@
 project('eix', 'cpp',
-	version : '0.36.4',
+	version : '0.36.5',
 	license : 'GPLv2',
 	default_options : [
 		'prefix=/usr',
