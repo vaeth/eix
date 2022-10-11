@@ -163,7 +163,7 @@ Remove() {
 	CallUpdate
 }
 
-main_command=$1
+main_command=${1-help}
 [ $# -gt 0 ] && shift
 
 case $main_command in

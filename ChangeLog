@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.36.6
+	Martin Väth <martin at mvath.de>:
+	- Let eix-layman without arguments display the help text
+
 *eix-0.36.5
 	Martin Väth <martin at mvath.de>:
 	- Do not print SRC_URI of installed versions - this is always empty
