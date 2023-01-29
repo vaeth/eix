@@ -478,8 +478,11 @@ class Scanner {
 			prop_ver("virtual", &PrintFormat::VER_VIRTUAL);
 			prop_ver("isbinary", &PrintFormat::VER_ISBINARY);
 			prop_ver("istbz", &PrintFormat::VER_ISTBZ);
+			prop_ver("isgpkg", &PrintFormat::VER_ISGPKG);
 			prop_ver("ispak", &PrintFormat::VER_ISPAK);
+			prop_ver("ismultigpkg", &PrintFormat::VER_ISMULTIGPKG);
 			prop_ver("ismultipak", &PrintFormat::VER_ISMULTIPAK);
+			prop_ver("gpkgcount", &PrintFormat::VER_GPKGCOUNT);
 			prop_ver("pakcount", &PrintFormat::VER_PAKCOUNT);
 			prop_ver("restrict", &PrintFormat::VER_RESTRICT);
 			prop_ver("restrictfetch", &PrintFormat::VER_RESTRICTFETCH);
@@ -1352,8 +1355,20 @@ void PrintFormat::VER_ISTBZ(OutputString *s, Package *package) const {
 	}
 }
 
+void PrintFormat::VER_ISGPKG(OutputString *s, Package *package) const {
+	if(ver_version()->num_gpkg_pkg(portagesettings, package) != 0) {
+		s->set_one();
+	}
+}
+
 void PrintFormat::VER_ISPAK(OutputString *s, Package *package) const {
 	if(ver_version()->num_pak_pkg(portagesettings, package) != 0) {
+		s->set_one();
+	}
+}
+
+void PrintFormat::VER_ISMULTIGPKG(OutputString *s, Package *package) const {
+	if(ver_version()->num_gpkg_pkg(portagesettings, package) > 1) {
 		s->set_one();
 	}
 }
@@ -1361,6 +1376,13 @@ void PrintFormat::VER_ISPAK(OutputString *s, Package *package) const {
 void PrintFormat::VER_ISMULTIPAK(OutputString *s, Package *package) const {
 	if(ver_version()->num_pak_pkg(portagesettings, package) > 1) {
 		s->set_one();
+	}
+}
+
+void PrintFormat::VER_GPKGCOUNT(OutputString *s, Package *package) const {
+	ExtendedVersion::CountBinPkg count(ver_version()->num_gpkg_pkg(portagesettings, package));
+	if(count != 0) {
+		s->assign_fast(eix::format() % count);
 	}
 }
 

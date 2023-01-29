@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2021-10-02 10:23+0200\n"
-"PO-Revision-Date: 2021-10-02 10:25+0200\n"
+"POT-Creation-Date: 2023-01-29 14:08+0100\n"
+"PO-Revision-Date: 2023-01-29 14:30+0100\n"
 "Last-Translator: Martin Väth <martin@mvath.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -1701,8 +1701,8 @@ msgid ""
 "    --selected-file       Match packages of world file\n"
 "    --selected-set        Match packages of a world set\n"
 "    --selected            Match packages of @selected (world file or set)\n"
-"    --binary              Match packages with *.tbz2 or *.xpak files\n"
-"    --multi-binary NR     Match packages with at least NR *.tbz2 or *.xpak\n"
+"    --binary              Match packages with *.tbz2, *.gpkg.tar, or *.xpak\n"
+"    --multi-binary NR     Match packages with at least NR --binary files\n"
 "    --nonvirtual                     Match packages from nonvirtual overlays\n"
 "    --virtual                        Match packages from virtual overlays\n"
 "    -O, --overlay                    Match packages from overlays\n"
@@ -1887,8 +1887,8 @@ msgstr ""
 "    --selected-file       Pakete aus world-Datei\n"
 "    --selected-set        Pakete aus world_sets\n"
 "    --selected            Pakete aus @selected (world-Datei oder world_sets)\n"
-"    --binary              Pakete mit *.tbz2 oder *.xpak\n"
-"    --multi-binary NR     Pakate mit mindestens NR *.tbz2 oder *.xpak\n"
+"    --binary              Pakete mit *.tbz2, *.gpkg.tar oder *.xpak\n"
+"    --multi-binary NR     Pakate mit mindestens NR --binary Dateien\n"
 "    --nonvirtual                     Pakete aus nicht-virtuellen Overlays\n"
 "    --virtual                        Pakete aus virtuellen Overlays\n"
 "    -O, --overlay                    Pakete aus Overlays\n"
@@ -3607,9 +3607,6 @@ msgstr ""
 "die von KEEP_VIRTUALS gesetzten Vorgaben überschreiben."
 
 #: src/eixrc/defaults.cc
-#, fuzzy
-#| msgctxt "EBUILD_PORTAGE3_0_24"
-#| msgid "Whether cache methods ebuild and ebuild* assume >=portage-3.0.24."
 msgctxt "EBUILD_PORTAGE3_0_24"
 msgid ""
 "Must be true if and only if cache methods ebuild and ebuild* are to be used\n"
@@ -5343,9 +5340,19 @@ msgid "Color for tag for *.tbz2. This is only used for delayed substitution."
 msgstr "Farbe für Tags für *.tbz2. Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc
+msgctxt "COLOR_GPKG"
+msgid "Color for tag for *.gpkg.tar. This is only used for delayed substitution."
+msgstr "Farbe für Tags für *.gpkg.tar. Dies wird nur zur verzögerten Ersetzung benutzt."
+
+#: src/eixrc/defaults.cc
 msgctxt "COLOR_PAK"
 msgid "Color for tag for *.xpak. This is only used for delayed substitution."
 msgstr "Farbe für Tags für *.xpak. Dies wird nur zur verzögerten Ersetzung benutzt."
+
+#: src/eixrc/defaults.cc
+msgctxt "COLOR_GPKGCOUNT"
+msgid "Color for number of *.gpkg.tar. This is only used for delayed substitution."
+msgstr "Farbe für Zahl der *.gpkg.tar. Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc
 msgctxt "COLOR_PAKCOUNT"
@@ -5655,9 +5662,19 @@ msgid "Tag for *.tbz2. This is only used for delayed substitution."
 msgstr "Das Tag für *.tbz2. Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc
+msgctxt "TAG_GPKG"
+msgid "Tag for *.gpkg.tar. This is only used for delayed substitution."
+msgstr "Tag für *.gpkg.tar. Dies wird nur zur verzögerten Ersetzung benutzt."
+
+#: src/eixrc/defaults.cc
 msgctxt "TAG_PAK"
 msgid "Tag for *.xpak. This is only used for delayed substitution."
-msgstr "Tage für *.xpak. Dies wird nur zur verzögerten Ersetzung benutzt."
+msgstr "Tag für *.xpak. Dies wird nur zur verzögerten Ersetzung benutzt."
+
+#: src/eixrc/defaults.cc
+msgctxt "TAG_MULTIGPKG"
+msgid "Tag for multiple *.gpkg.tar. This is only used for delayed substitution."
+msgstr "Tag für mehrfache *.gpkg.tar. Dies wird nur zur verzögerten Ersetzung benutzt."
 
 #: src/eixrc/defaults.cc
 msgctxt "TAG_MULTIPAK"
@@ -6290,12 +6307,12 @@ msgstr ""
 msgctxt "FORMAT_BINARY"
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the format of the PROPERTIES and RESTRICT of a version\n"
-"and resets the color."
+"It defines the format of the binary packages of a version and\n"
+"resets the color."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie definiert das Format für PROPERTIES und RESTRICT einer Version\n"
-"und setzt die Farben zurück."
+"Sie definiert das Format für Binärpakete einer Version und setzt\n"
+"die Farben zurück."
 
 #: src/eixrc/defaults.cc
 msgctxt "FORMAT_TBZ"
@@ -6305,6 +6322,15 @@ msgid ""
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie legt das Format für Versionen mit *.tbz2 fest."
+
+#: src/eixrc/defaults.cc
+msgctxt "FORMAT_GPKG"
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It defines the format for versions with *.gpkg.tar."
+msgstr ""
+"Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
+"Sie legt das Format für Versionen mit *.gpkg.tar fest."
 
 #: src/eixrc/defaults.cc
 msgctxt "FORMAT_PAK"

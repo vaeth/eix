@@ -34,13 +34,16 @@ class ExtendedVersion : public BasicVersion {
 	private:
 		typedef eix::UChar HaveBinPkg;
 		static CONSTEXPR const HaveBinPkg
-			HAVEBINPKG_UNKNOWN = 0x00U,
-			HAVEBINPKG_TBZ_NO  = 0x01U,
-			HAVEBINPKG_TBZ_YES = 0x02U,
-			HAVEBINPKG_TBZ     = HAVEBINPKG_TBZ_NO|HAVEBINPKG_TBZ_YES,
-			HAVEBINPKG_PAK     = 0x04U;
+			HAVEBINPKG_UNKNOWN   = 0x00U,
+			HAVEBINPKG_TBZ_NO    = 0x01U,
+			HAVEBINPKG_TBZ_YES   = 0x02U,
+			HAVEBINPKG_TBZ       = HAVEBINPKG_TBZ_NO|HAVEBINPKG_TBZ_YES,
+			HAVEBINPKG_GPKG      = 0x04U,
+			HAVEBINPKG_MULTI     = 0x08U;
 		mutable HaveBinPkg have_bin_pkg_m;  // mutable: it is just a cache
-		mutable CountBinPkg count_pak_m;
+		mutable CountBinPkg count_gpkg_m, count_pak_m;
+
+		void count_multiversions(const PortageSettings *ps, const Package *pkg) const;
 
 	public:
 		typedef uint16_t Restrict;
@@ -145,6 +148,7 @@ class ExtendedVersion : public BasicVersion {
 		bool have_bin_pkg(const PortageSettings *ps, const Package *pkg, CountBinPkg minimal) const;
 		bool have_bin_pkg(const PortageSettings *ps, const Package *pkg) const;
 		bool have_tbz_pkg(const PortageSettings *ps, const Package *pkg) const;
+		CountBinPkg num_gpkg_pkg(const PortageSettings *ps, const Package *pkg) const;
 		CountBinPkg num_pak_pkg(const PortageSettings *ps, const Package *pkg) const;
 
 		ATTRIBUTE_PURE static eix::SignedBool compare(const ExtendedVersion& left, const ExtendedVersion& right);

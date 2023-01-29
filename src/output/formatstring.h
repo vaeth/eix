@@ -350,8 +350,11 @@ class PrintFormat {
 		ATTRIBUTE_NONNULL_ void VER_VIRTUAL(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_ISBINARY(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_ISTBZ(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISGPKG(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_ISPAK(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_ISMULTIGPKG(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_ISMULTIPAK(OutputString *s, Package *package) const;
+		ATTRIBUTE_NONNULL_ void VER_GPKGCOUNT(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ void VER_PAKCOUNT(OutputString *s, Package *package) const;
 		ATTRIBUTE_NONNULL_ const ExtendedVersion *ver_restrict(Package *package) const;
 		ATTRIBUTE_NONNULL_ void ver_restrict(OutputString *s, Package *package, ExtendedVersion::Restrict r) const;

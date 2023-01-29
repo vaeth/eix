@@ -616,11 +616,14 @@ This only matches packages from the world file.
 This only matches packages from world_set.
 .TP
 .BR --binary
-Only match packages with a binary file (*.tbz2 or *.xpak) in PKGDIR.
+Only match packages with a binary file (*.tbz2, *.gpkg.tar, or *.xpak) in PKGDIR.
 The version of the binary file must either match the version of an available version or of an installed version.
 (However, note that if no version is available, the package cannot be found either).
-Just the existence of the corresponding *.tbz2 or *.xpak file is checked:
+Just the existence of the corresponding *.tbz2, *.gpkg.tar, or *.xpak file is checked:
 Whether portage can actually use the file depends also on metadata within that file (like USE settings) which is not considered by eix.
+.TP
+.BI --multi-binary NR
+Only match packages with a version with at least I<NR> files matching B<--binary>.
 .TP
 .B --nonvirtual
 Only match packages with at least one version from the main tree or a non-virtual overlay.
@@ -1078,12 +1081,12 @@ This is version 3.14p which will be installed into the slot "GNAT-3.14p".
 .B 2.0.0_rc1-r6
 This is version 2.0.0_rc1-r6, and SLOT is either empty or "0".
 .TP
-.B 1.0*ilvs^fmpbstuidP{tbz2,pak:2}
+.B 1.0*ilvs^fmpbstuidP{tbz2,gpkg:3,pak:2}
 This is version 1.0 which is subject to
 PROPERTIES="interactive live virtual set" as well as
 RESTRICT="fetch mirror primaryuri binchecks strip test userpriv installsources bindist parallel"
-Moreover, a *.tbz2 and two *.xpak files (binary packages without or with
-FEATURES=binpkg-multi-instance, respectively) exist for that version
+Moreover, a *.tbz2, three *.gpkg.tar, and two *.xpak files (binary packages without or with
+FEATURES=binpkg-multi-instance or BINPKG_FORMAT=gpkg, respectively) exist for that version
 in B<PKGDIR>.
 .TP
 .B 5.0-r3(5.0R3)^f "    or    " 5.0-r3:5.0R3^f
@@ -1363,19 +1366,31 @@ property according to the local or default configuration, respectively.
 .TP
 .B isbinary
 This must occur only in I<VARIABLE> in the context of version printing.
-It returns 1 or empty depending on whether there is a corresponding *.tbz2 or *.xpak file for the version.
+It returns 1 or empty depending on whether there is a corresponding *.tbz2, *gpkg.tar, or *.xpak file for the version.
 .TP
 .B istbz
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or empty depending on whether there is a corresponding *.tbz2 file for the version.
 .TP
+.B isgpkg
+This must occur only in I<VARIABLE> in the context of version printing.
+It returns 1 or empty depending on whether there is at least one corresponding *.gpkg.tar file for the version.
+.TP
 .B ispak
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or empty depending on whether there is at least one corresponding *.xpak file for the version.
 .TP
+.B isgpkgmulti
+This must occur only in I<VARIABLE> in the context of version printing.
+It returns 1 or empty depending on whether there are at least two corresponding *.gpkg.tar files for the version.
+.TP
 .B ismultipak
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or empty depending on whether there are at least two corresponding *.xpak files for the version.
+.TP
+.B gpkgcount
+This must occur only in I<VARIABLE> in the context of version printing.
+It returns the number of *.gpkg.tar files for the version or empty if there are none.
 .TP
 .B pakcount
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -1458,7 +1473,7 @@ The name of all local sets to which the package belongs, separated by spaces.
 With B<allsetnames> also the "system" and "profile" set names are included.
 .TP
 .B binary
-Is 1 or empty, depending on whether at least one version (available or installed) has a corresponding *.tbz2 file.
+Is 1 or empty, depending on whether at least one version (available or installed) has a corresponding *.tbz2, *.gpkg.tar, or *.xpak file.
 See the remarks for B<--binary>.
 .TP
 .B mainrepo
@@ -2369,8 +2384,8 @@ If true, eix and eix-diff will use B<--care>.
 .BR USE_BUILD_TIME " " (true / false)
 Whether to use the BUILD_TIME entry (if it exists) of the portage database
 instead of the directory timestamp (which usually is the installation time).
-The difference is usually only important for packages installed from *.tbz2
-or *.xpak files, but in most cases the build time is more relevant
+The difference is usually only important for packages installed from *.tbz2,
+*.gpkg.tar, or *.xpak files, but in most cases the build time is more relevant
 (it is also more reliable).
 Unfortunately, the build time is available only for packages built and emerged
 with >=portage-2.2_rc63; you can use B<eix-installed [no-]buildtime> to check

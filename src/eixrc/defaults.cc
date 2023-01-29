@@ -1508,9 +1508,17 @@ AddOption(STRING, "COLOR_TBZ",
 	"%{COLOR_BINARY}", P_("COLOR_TBZ",
 	"Color for tag for *.tbz2. This is only used for delayed substitution."));
 
+AddOption(STRING, "COLOR_GPKG",
+	"%{COLOR_BINARY}", P_("COLOR_GPKG",
+	"Color for tag for *.gpkg.tar. This is only used for delayed substitution."));
+
 AddOption(STRING, "COLOR_PAK",
 	"blue,1;%{BG0S}|59,1;%{BG1}|blue,1;%{BG2}|59,1;%{BG3}|59,1", P_("COLOR_PAK",
 	"Color for tag for *.xpak. This is only used for delayed substitution."));
+
+AddOption(STRING, "COLOR_GPKGCOUNT",
+	"%{COLOR_PAKCOUNT}", P_("COLOR_GPKGCOUNT",
+	"Color for number of *.gpkg.tar. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_PAKCOUNT",
 	"purple,1;%{BG0S}|97,1;%{BG1}|blue,1;%{BG2}|97,1;%{BG3}|97,1", P_("COLOR_PAKCOUNT",
@@ -1689,9 +1697,17 @@ AddOption(STRING, "TAG_TBZ",
 	"tbz2", P_("TAG_TBZ",
 	"Tag for *.tbz2. This is only used for delayed substitution."));
 
+AddOption(STRING, "TAG_GPKG",
+	"gpkg", P_("TAG_GPKG",
+	"Tag for *.gpkg.tar. This is only used for delayed substitution."));
+
 AddOption(STRING, "TAG_PAK",
 	"xpak", P_("TAG_PAK",
 	"Tag for *.xpak. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_MULTIGPKG",
+	"%{TAG_MULTIPAK}", P_("TAG_MULTIGPKG",
+	"Tag for multiple *.gpkg.tar. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_MULTIPAK",
 	":", P_("TAG_MULTIPAK",
@@ -2142,22 +2158,38 @@ AddOption(STRING, "FORMAT_BINARY",
 		"<$sep>{!*sep}(%{COLOR_BINARY})\\{"
 		"{istbz}"
 			"%{FORMAT_TBZ}"
-			"{ispak}(%{COLOR_BINARY}),{}"
+			"{*binsep}"
 		"{}"
-		"(%{COLOR_RESET})"
+		"{isgpkg}"
+			"{$binsep}(%{COLOR_BINARY}),{}"
+			"%{FORMAT_GPKG}"
+			"{*binsep}"
+		"{}"
 		"{ispak}"
+			"{$binsep}(%{COLOR_BINARY}),{}"
 			"%{FORMAT_PAK}"
 		"{}"
+		"{!*binsep}"
 		"(%{COLOR_BINARY})}(%{COLOR_RESET})"
 	"{}%{}", P_("FORMAT_BINARY",
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format of the PROPERTIES and RESTRICT of a version\n"
-	"and resets the color."));
+	"It defines the format of the binary packages of a version and\n"
+	"resets the color."));
 
 AddOption(STRING, "FORMAT_TBZ",
 	"(%{COLOR_TBZ})%{TAG_TBZ}(%{COLOR_RESET})", P_("FORMAT_TBZ",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for versions with *.tbz2."));
+
+AddOption(STRING, "FORMAT_GPKG",
+	"(%{COLOR_GPKG})%{TAG_GPKG}"
+	"{ismultigpkg}"
+		"%{TAG_MULTIGPKG}"
+		"(%{COLOR_GPKGCOUNT})<gpkgcount>"
+	"{}"
+	"(%{COLOR_RESET})", P_("FORMAT_GPKG",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for versions with *.gpkg.tar."));
 
 AddOption(STRING, "FORMAT_PAK",
 	"(%{COLOR_PAK})%{TAG_PAK}"

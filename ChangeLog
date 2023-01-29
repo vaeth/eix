@@ -2,6 +2,8 @@
 
 *eix-0.36.6
 	Martin Väth <martin at mvath.de>:
+	- Support *.gpkg.tar (BINPKG_FORMAT=gpkg), see
+	  https://github.com/vaeth/eix/issues/104
 	- Let eix-layman without arguments display the help text
 
 *eix-0.36.5

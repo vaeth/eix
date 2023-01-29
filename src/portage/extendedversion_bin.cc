@@ -115,7 +115,7 @@ ExtendedVersion::Properties ExtendedVersion::calcProperties(const string& str) {
 }
 
 bool ExtendedVersion::have_bin_pkg(const PortageSettings *ps, const Package *pkg) const {
-	return (have_tbz_pkg(ps, pkg) || (num_pak_pkg(ps, pkg) != 0));
+	return (have_tbz_pkg(ps, pkg) || (num_gpkg_pkg(ps, pkg) != 0) || (num_pak_pkg(ps, pkg) != 0));
 }
 
 bool ExtendedVersion::have_bin_pkg(const PortageSettings *ps, const Package *pkg, CountBinPkg minimal) const {
@@ -126,7 +126,11 @@ bool ExtendedVersion::have_bin_pkg(const PortageSettings *ps, const Package *pkg
 	if(minimal == 1) {
 		return have_bin_pkg(ps, pkg);
 	}
-	CountBinPkg have(num_pak_pkg(ps, pkg));
+	CountBinPkg have(num_gpkg_pkg(ps, pkg));
+	if (have >= minimal) {
+		return true;
+	}
+	have += num_pak_pkg(ps, pkg);
 	return ((have >= minimal) || ((have + 1 == minimal) && have_tbz_pkg(ps, pkg)));
 }
 
@@ -150,20 +154,39 @@ bool ExtendedVersion::have_tbz_pkg(const PortageSettings *ps, const Package *pkg
 	return true;
 }
 
-ExtendedVersion::CountBinPkg ExtendedVersion::num_pak_pkg(const PortageSettings *ps, const Package *pkg) const {
-	if(likely((have_bin_pkg_m & HAVEBINPKG_PAK) != HAVEBINPKG_UNKNOWN)) {
-		return count_pak_m;
+ExtendedVersion::CountBinPkg ExtendedVersion::num_gpkg_pkg(const PortageSettings *ps, const Package *pkg) const {
+	if(likely((have_bin_pkg_m & HAVEBINPKG_GPKG) != HAVEBINPKG_UNKNOWN)) {
+		return count_gpkg_m;
 	}
-	have_bin_pkg_m |= HAVEBINPKG_PAK;
+	have_bin_pkg_m |= HAVEBINPKG_GPKG;
+	count_multiversions(ps, pkg);
+	const string& s((*ps)["PKGDIR"]);
+	if((!s.empty()) && is_file((s + "/" + pkg ->category + "/" + pkg->name + "-" + getFull() + ".gpkg.tar").c_str())) {
+		++count_gpkg_m;
+	}
+	return count_gpkg_m;
+}
+
+ExtendedVersion::CountBinPkg ExtendedVersion::num_pak_pkg(const PortageSettings *ps, const Package *pkg) const {
+	count_multiversions(ps, pkg);
+	return count_pak_m;
+}
+
+void ExtendedVersion::count_multiversions(const PortageSettings *ps, const Package *pkg) const {
+	if(likely((have_bin_pkg_m & HAVEBINPKG_MULTI) != HAVEBINPKG_UNKNOWN)) {
+		return;
+	}
+	have_bin_pkg_m |= HAVEBINPKG_MULTI;
+	count_gpkg_m = 0;
 	count_pak_m = 0;
 	const string& s((*ps)["PKGDIR"]);
 	if(unlikely(s.empty())) {
-		return 0;
+		return;
 	}
 	const string pkgs = s + "/" + pkg->category + "/" + pkg->name + "/";
 	WordVec bin_packages;
 	if(unlikely(!pushback_files(pkgs, &bin_packages, NULLPTR, 1, true, true))) {
-		return 0;
+		return;
 	}
 	const string pkg_search = pkgs + pkg->name + "-" + getFull() + "-";
 	for(WordVec::const_iterator it(bin_packages.begin());
@@ -175,9 +198,11 @@ ExtendedVersion::CountBinPkg ExtendedVersion::num_pak_pkg(const PortageSettings 
 		}
 		for(; (i != name.size()) && my_isdigit(name[i]); ++i) {
 		}
+		if((i + 9 == name.size()) && (strncasecmp(".gpkg.tar", name.c_str() + i, 5) == 0)) {
+			++count_gpkg_m;
+		}
 		if((i + 5 == name.size()) && (strncasecmp(".xpak", name.c_str() + i, 5) == 0)) {
 			++count_pak_m;
 		}
 	}
-	return count_pak_m;
 }

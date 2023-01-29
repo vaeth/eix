@@ -46,7 +46,8 @@ const ExtendedVersion::HaveBinPkg
 	ExtendedVersion::HAVEBINPKG_TBZ_NO,
 	ExtendedVersion::HAVEBINPKG_TBZ_YES,
 	ExtendedVersion::HAVEBINPKG_TBZ,
-	ExtendedVersion::HAVEBINPKG_PAK;
+	ExtendedVersion::HAVEBINPKG_GPKG,
+	ExtendedVersion::HAVEBINPKG_MULTI;
 
 bool ExtendedVersion::use_src_uri;
 
