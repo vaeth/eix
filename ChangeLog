@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.36.7
+	Martin Väth <martin at mvath.de>:
+	- Support --regex-case and prefer it over --regex if the pattern has
+	  uppercase characters, see https://github.com/vaeth/eix/issues/110
+
 *eix-0.36.6
 	Martin Väth <martin at mvath.de>:
 	- Support *.gpkg.tar (BINPKG_FORMAT=gpkg), see

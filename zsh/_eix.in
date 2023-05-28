@@ -154,7 +154,8 @@ case $service in
 {'*--substring','*-z'}'[pattern is substring]'
 {'*--fuzzy','*-f+'}'[N (pattern is fuzzy, Levenshtein N)]::number (Levenshtein distance):(1 2 3 4 5 6 7 8 9)'
 {'*--pattern','*-p'}'[pattern is wildcard pattern]'
-{'*--regex','*-r'}'[pattern is regular expression]'
+{'*--regex','*-r'}'[pattern is regular expression, ignoring case]'
+'*--regex-case[pattern is regular expression, using case]'
 )
 # find out search field and whether to check only installed packages
   local c w is_or local field= installed=

@@ -211,6 +211,10 @@ static void init_match_algorithm_map() {
 	match_algorithm_map["REGEXP"]     = PackageTest::ALGO_REGEX;
 	match_algorithm_map["regex"]      = PackageTest::ALGO_REGEX;
 	match_algorithm_map["regexp"]     = PackageTest::ALGO_REGEX;
+	match_algorithm_map["REGEXCASE"]  = PackageTest::ALGO_REGEXCASE;
+	match_algorithm_map["REGEXPCASE"] = PackageTest::ALGO_REGEXCASE;
+	match_algorithm_map["regexcase"]  = PackageTest::ALGO_REGEXCASE;
+	match_algorithm_map["regexpcase"] = PackageTest::ALGO_REGEXCASE;
 	match_algorithm_map["EXACT"]      = PackageTest::ALGO_EXACT;
 	match_algorithm_map["exact"]      = PackageTest::ALGO_EXACT;
 	match_algorithm_map["BEGIN"]      = PackageTest::ALGO_BEGIN;
@@ -364,6 +368,9 @@ void PackageTest::setAlgorithm(MatchAlgorithm a) {
 	switch(a) {
 		case ALGO_REGEX:
 			setAlgorithm(new RegexAlgorithm());
+			break;
+		case ALGO_REGEXCASE:
+			setAlgorithm(new RegexCaseAlgorithm());
 			break;
 		case ALGO_EXACT:
 			setAlgorithm(new ExactAlgorithm());

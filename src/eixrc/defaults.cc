@@ -913,6 +913,13 @@ AddOption(STRING, "DEFAULT_MATCH_FIELD",
 	"with-use, without-use, src-uri, deps, depend, rdepend, pdepend, bdepend,\n"
 	"idepend, error."));
 
+AddOption(STRING, "MATCH_ALGORITHM_REGEX_CASE",
+	"[][^$|()].*[[:upper:]]|[.][*+?].*[[:upper:]]|"
+	"[[:upper:]].*[][^$|()]|[[:upper:]].*[.][*+?]",
+	P_("MATCH_ALGORITHM_REGEX_CASE",
+	"This variable is only used for delayed substitution.\n"
+	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for regexcase."));
+
 AddOption(STRING, "MATCH_ALGORITHM_REGEX",
 	"[][^$|()]|[.][*+?]", P_("MATCH_ALGORITHM_REGEX",
 	"This variable is only used for delayed substitution.\n"
@@ -938,19 +945,27 @@ AddOption(STRING, "MATCH_ALGORITHM_BEGIN",
 	"This variable is only used for delayed substitution.\n"
 	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for begin."));
 
+AddOption(STRING, "MATCH_ALGORITHM_REGEX_CASE_FALLBACK",
+	"[[:upper:]]",
+	P_("MATCH_ALGORITHM_REGEX_CASE_FALLBACK",
+	"This variable is only used for delayed substitution.\n"
+	"It is the criterion used in DEFAULT_MATCH_ALGORITHM for regexcase fallback."));
+
 AddOption(STRING, "DEFAULT_MATCH_ALGORITHM",
+	"%{\\MATCH_ALGORITHM_REGEX_CASE} regexcase "
 	"%{\\MATCH_ALGORITHM_REGEX} regex "
 	"%{\\MATCH_ALGORITHM_PATTERN} pattern "
 	"%{\\MATCH_ALGORITHM_SUBSTRING} substring "
 	"%{\\MATCH_ALGORITHM_EXACT} exact "
 	"%{\\MATCH_ALGORITHM_BEGIN} begin "
+	"%{\\MATCH_ALGORITHM_REGEX_CASE_FALLBACK} regexcase "
 	"regex", P_("DEFAULT_MATCH_ALGORITHM",
 	"This is a list of strings of the form (spec)regexp[ ]match_algorithm.\n"
 	"If spec matches the match field(s) and regexp matches the search pattern,\n"
 	"use match_algorithm as the default.\n"
 	"A fallback match_algorithm may be specified as the last entry in the list.\n"
-	"Admissible values for match_algorithm are: regex, pattern, substring,\n"
-	"begin, end, exact, fuzzy, error."));
+	"Admissible values for match_algorithm are: regex, regexcase, pattern,\n"
+	"substring, begin, end, exact, fuzzy, error."));
 
 AddOption(BOOLEAN, "TEST_FOR_EMPTY",
 	"true", P_("TEST_FOR_EMPTY",

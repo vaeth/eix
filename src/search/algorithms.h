@@ -74,6 +74,28 @@ class RegexAlgorithm FINAL : public BaseAlgorithm {
 };
 
 /**
+Use case sensitive regex to test strings for a match.
+**/
+class RegexCaseAlgorithm FINAL : public BaseAlgorithm {
+	protected:
+		Regex re;
+
+		bool can_simplify() const OVERRIDE {
+			return false;
+		}
+
+	public:
+		void setString(const std::string& s) OVERRIDE {
+			search_string = s;
+			re.compile(search_string.c_str(), 0);
+		}
+
+		ATTRIBUTE_NONNULL((2)) bool operator()(const char *s, Package * /* p */) const OVERRIDE {
+			return re.match(s);
+		}
+};
+
+/**
 exact string matching
 **/
 class ExactAlgorithm FINAL : public BaseAlgorithm {

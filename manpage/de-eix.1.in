@@ -957,12 +957,13 @@ Nur ein Algorithmus kann pro AUSDRUCK gewählt werden.
 Falls keine dieser Optionen benutzt wird, wird die Vorgabe anhand einer
 Heuristik ausgewählt, die von der Gestelt des Suchmusters und vom ausgewählten
 Operandenfeld abhängt.
-In den meisten Fällen wird diese Vorgabe B<--regex> sein, außer wenn das
-Suchmuster aussieht wie "typischerweise" ein glob-Muster or ein Teilstring
-(in diesem Fall wird der entsprechende Algorithmus die Vorgabe), oder falls
-das ausgewählte Operandenfeld sich nur auf USE-flags, sets, EAPI oder SLOT
-bezieht, so dass die meisten Benutzer vermutlich erwarten, dass auch tatsächlich
-gegen den gesamten String getestet werden soll.
+In den meisten Fällen wird diese Vorgabe B<--regex> sein (oder B<--regex-case>,
+falls der Ausdruck Großbuchstaben enthält), außer wenn das Suchmuster aussieht
+wie "typischerweise" ein glob-Muster or ein Teilstring (in diesem Fall wird der
+entsprechende Algorithmus die Vorgabe), oder falls das ausgewählte
+Operandenfeld sich nur auf USE-flags, sets, EAPI oder SLOT bezieht, so dass
+die meisten Benutzer vermutlich erwarten, dass auch tatsächlich gegen den
+gesamten String getestet werden soll.
 Details der Heuristik werden in der später erklärten B<DEFAULT_MATCH_ALGORITHM>-Konfigurationsvariable festgelegt.
 Je nach Wert dieser Variablen kann es auch passieren, dass eine der folgenden
 Optionen explizit für jede Suche angegeben werden muss.
@@ -995,12 +996,15 @@ für weitere Details.
 Vorsicht bei der Übergabe des Suchmusters in einer Shell (Quoting!).
 .TP
 .BR -r ", " --regex
-Das Suchmuster ist ein regulärer Ausdruck.
+Das Suchmuster ist ein regulärer Ausdruck (ohne Beachtung der Großschreibung).
 Nur ein Teilstring muss passen (außer wenn ^ oder $ benutzt werden).
 Das leere Suchmuster passt auf alles.
 Weitere Informationen finden sich in
 .BR regex (7).
 Vorsicht bei der Übergabe des Suchmusters in einer Shell (Quoting!).
+.TP
+.BR --regex-case
+Wie B<--regex>, aber mit Beachtung der Groß-/Kleinschreibung.
 .\" }}}
 .\" {{{ -------- Layouts festlegen
 .SS Layouts festlegen \fP(siehe B<FORMATSTRING> weiter unten)
@@ -3288,9 +3292,9 @@ die benutzt wird, um die Vorgabe für den Matchalgorithmus
 Dies ist analog wie bei B<DEFAULT_MATCH_FIELD>, haupstächlichr mit dem Unterschied,
 dass natürlich I<Matchalgorithmus> den Vorgabe-Matchalgorithmus angibt.
 
-Die möglichen Werte für I<Matchalgorithmus> sind:
-B<regex>, B<pattern>, B<substring>, B<begin>, B<end>, B<exact>, B<fuzzy>.
-Sie entsprechen den analogen Kommandozeilenoptionen für die Wahl des Matchalgorithmus.
+Die möglichen Werte für I<Matchalgorithmus> sind: B<regex>, B<regexcase>,
+B<pattern>, B<substring>, B<begin>, B<end>, B<exact>, B<fuzzy>. Sie entsprechen
+den analogen Kommandozeilenoptionen für die Wahl des Matchalgorithmus.
 Der spezielle Wert B<error> bedeutet, dass eix mit der Fehlermeldung abbricht,
 dass der Matchalgorithmus nicht automatisch erkannt werden kann und explizit
 angegeben werden muss.

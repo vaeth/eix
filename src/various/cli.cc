@@ -520,6 +520,9 @@ void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageS
 			case 'r': USE_TEST;
 				test->setAlgorithm(new RegexAlgorithm());
 				break;
+			case O_REGEX_CASE: USE_TEST;
+				test->setAlgorithm(new RegexCaseAlgorithm());
+				break;
 			case 'e': USE_TEST;
 				test->setAlgorithm(new ExactAlgorithm());
 				break;

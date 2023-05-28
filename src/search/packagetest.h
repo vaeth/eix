@@ -89,6 +89,7 @@ class PackageTest {
 
 		enum MatchAlgorithm {
 			ALGO_REGEX,
+			ALGO_REGEXCASE,
 			ALGO_EXACT,
 			ALGO_BEGIN,
 			ALGO_END,

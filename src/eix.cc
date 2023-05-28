@@ -264,7 +264,8 @@ static void dump_help() {
 "    --installed-without-use disabled useflag (of installed package)\n"
 "\n"
 "  Type of Pattern:\n"
-"    -r, --regex           Pattern is a regexp (default)\n"
+"    -r, --regex           Pattern is a regexp, ignoring case (default)\n"
+"        --regex-case      Pattern is a regexp, taking case into account\n"
 "    -e, --exact           Pattern is the exact string\n"
 "    -z, --substring       Pattern is a substring\n"
 "    -b, --begin           Pattern is the beginning of the string\n"
@@ -485,6 +486,7 @@ EixOptionList::EixOptionList() {
 	// Algorithms for a criterion
 	push_back(Option("fuzzy",         'f'));
 	push_back(Option("regex",         'r'));
+	push_back(Option("regex-case",    O_REGEX_CASE));
 	push_back(Option("exact",         'e'));
 	push_back(Option("pattern",       'p'));
 	push_back(Option("begin",         'b'));

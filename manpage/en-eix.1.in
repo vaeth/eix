@@ -937,11 +937,11 @@ Only one algorithm can be chosen for an expression.
 If you do not specify some of these options, the default is chosen according
 to some heuristic depending on the form of your search pattern and according
 to the selected match field.
-In most cases, the default will be B<--regex> unless your expression
-"looks" like a glob pattern or a substring (in which case the corresponding
-algorithm will be the default), or if the selected match field refers only
-to USE-flags, sets, EAPI, or SLOT which perhaps most people would expect to
-match the whole string.
+In most cases, the default will be B<--regex> (or B<--regex-case> if your
+expression contains capital letters) unless your expression "looks" like a glob
+pattern or a substring (in which case the corresponding algorithm will be the
+default), or if the selected match field refers only to USE-flags, sets, EAPI,
+or SLOT which perhaps most people would expect to match the whole string.
 Details of the heuristic are specified by the B<DEFAULT_MATCH_ALGORITHM>
 configuration variable explained later.
 Depending on the configuration of that variable, it might even be non-optional
@@ -975,12 +975,15 @@ for further information. Be sure to use single quotes around patterns (to preven
 shell from intercepting any wildcards).
 .TP
 .BR -r ", " --regex
-pattern is a regexp.
+pattern is a regexp, ignoring case.
 Only a substring must be matched (unless ^ or $ are used);
 the empty pattern matches everything.
 For further information, please read
 .BR regex (7).
 Again, be sure to use single quotes around patterns.
+.TP
+.BR --regex-case
+As B<--regex>, but does not ignore case.
 .\" }}}
 .\" {{{ -------- Defining layouts
 .SS Defining layouts \fP(see B<FORMATSTRING> below)
@@ -3218,8 +3221,9 @@ which is used to determine the default match algorithm.
 
 The interpretation is essentially analogous to B<DEFAULT_MATCH_FIELD> with the main difference that I<match_algorithm>
 specifies the default match algorithm chosen.
-The possible values for I<match_algorithm> are B<regex>, B<pattern>, B<substring>, B<begin>, B<end>, B<exact>, B<fuzzy>,
-or B<error> which correspond to the analogous command line option for the match algorithm.
+The possible values for I<match_algorithm> are B<regex>, B<regexcase>,
+B<pattern>, B<substring>, B<begin>, B<end>, B<exact>, B<fuzzy>, or B<error>
+which correspond to the analogous command line option for the match algorithm.
 The special value B<error> means that eix stops with an error message claiming
 that a match algorithm is not autodetected and must be specified explicitly.
 If no other default match algorithm default is specified, then B<regex> is used.
