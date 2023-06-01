@@ -1526,7 +1526,7 @@ Expands to 1 if the package has a best stable/unstable version.
 .TP
 .BR upgrade ", " upgradeorinstall ", " downgrade ", " recommend ", " recommendorinstall
 B<upgrade> expands to 1 if the package is installed and at least one slot can be upgraded
-(or the best stable version is a new slot and B<UPDATE_TO_HIGHEST_SLOT> is true).
+(or the best stable version is a new slot and B<UPGRADE_TO_HIGHEST_SLOT> is true).
 The other variables test similarly whether the package can be upgraded or newly installed,
 should be downgraded, can/should be upgraded/downgraded,
 or can/should be upgraded/downgraded/installed, respectively.

@@ -1550,7 +1550,7 @@ havecolliuse ist 1, falls colliuse nichtleer ist; dies ist schneller als collius
 .TP
 .BR upgrade ", " upgradeorinstall ", " downgrade ", " recommend ", " recommendorinstall
 B<upgrade> ist 1, falls das Paket installiert ist und mindestens ein Slot ein Upgrade ermöglicht
-(oder die beste stabile Version ist eine neuer Slot und B<UPDATE_TO_HIGHEST_SLOT> ist gesetzt).
+(oder die beste stabile Version ist eine neuer Slot und B<UPGRADE_TO_HIGHEST_SLOT> ist gesetzt).
 Die anderen Variablen testen analog, ob für das Paket ein Upgrade oder frische Installation möglich ist,
 ob ein Downgrade nötig ist, ob ein Up- oder Downgrade möglich/nötig ist,
 bzw. ob ein Up- oder Downgrade oder Frischinstallation nötig/mölich ist.

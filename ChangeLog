@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.36.8
+	Martin Väth <martin at mvath.de>:
+	- manpage: fix typo UPDATE_TO_HIGHEST_SLOT -> UPGRADE_TO_HIGHEST_SLOT
+
 *eix-0.36.7
 	Martin Väth <martin at mvath.de>:
 	- Support --regex-case and prefer it over --regex if the pattern has
