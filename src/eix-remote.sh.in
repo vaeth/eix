@@ -16,7 +16,7 @@ else	echo "${0##*/}: cannot find eix-functions.sh" >&2
 fi
 ReadFunctions
 
-my_getopts='KvqxXLl:a:kiHh'
+my_getopts='KvqxXLl:a:fkiHh'
 
 set -f
 eval "Push -c opt `eix-update --print EIX_REMOTE_OPTS`"
@@ -106,6 +106,7 @@ The following options are available:
         ${addr1}
         ${addr2}
 -i      Ignore all previous options (e.g. ignore EIX_REMOTE_OPTS).
+-f      Force operation
 -v      Verbose (default)
 -H      Suppress status line update
 -q      Quiet'
@@ -122,12 +123,14 @@ DefaultOpts() {
 	excludelocal=false
 	excluderemote=false
 	excludedebug=false
+	force=false
 }
 
 DefaultOpts
 OPTIND=1
 while getopts "$my_getopts" opt
 do	case $opt in
+	f)	force=true;;
 	i)	DefaultOpts;;
 	[kK])	:;;
 	v)	verbose=:;;
@@ -414,6 +417,13 @@ Remove() {
 
 Update() {
 	CheckQuoter
+
+	if ! $force && ! [ "$(find "$archive" -mtime +1 -print)" ]
+	then
+		echo "Skipping update, $archive is less than a day old. Use -f to force update."
+		return
+	fi
+
 	FetchFile
 	if [ -z "${tmpdir:++}" ]
 	then	MakeTempDir
