@@ -80,7 +80,10 @@ B<eix-test-obsolete> is a script which calls B<eix> several times to display
 the output of B<eix -tTc> in a more organized manner.
 
 B<eix-remote> can sync an eix database from an external server and
-add/remove it to the current database. By default it uses a separate cachefile.
+add/remove it to the current database. This can be used to create a
+local database of packages in all registered repositories/overlays,
+not just those in overlays installed locally.
+By default it uses a separate cachefile.
 With this default you should regularly call B<eix-remote add1> and/or B<eix-remote add2> after B<eix-update>
 so that the separate cachefile is synchronized with your main database.
 (If you use B<eix-sync> this is done by default.)
@@ -428,13 +431,15 @@ These files (and how to modify their filenames) are described later.
 .TP
 .BR -R ", " --remote
 Uses the value of B<EIX_REMOTE1> as cache file name.
-Use this option if you want to see what B<eix-remote> produced.
+Use this option if you want to see packages in the cache created
+and synchronized by B<eix-remote>.
 You can make this option the default by setting B<REMOTE_DEFAULT=1>.
 
 .TP
 .BR -Z ", " --remote2
 Uses the value of B<EIX_REMOTE2> as cache file name.
-Use this option if you want to see what B<eix-remote> produced.
+Use this option if you want to see packages in the cache created
+and synchronized by B<eix-remote>.
 You can make this option the default by setting B<REMOTE_DEFAULT=2>.
 
 .TP
