@@ -33,6 +33,7 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringtypes.h"
+#include "eixTk/unordered_set.h"
 
 
 using std::string;
