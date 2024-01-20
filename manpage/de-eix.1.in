@@ -78,6 +78,7 @@ B<eix-test-obsolete> ist ein Skript, das B<eix> mehrmals aufruft, um die Ausgabe
 
 B<eix-remote> kann eine Eix-Datenbank von einem externen Server syncen und ihn zum
 lokalen Cache hinzufügen und wieder entfernen.
+Dies kann verwendet werden, um eine lokale Datenbank mit Paketen in allen registrierten Repositorys/Overlays zu erstellen, nicht nur denen in lokal installierten Overlays.
 Falls nicht anders konfiguriert, benutzt es ein separates Datenbankfile.
 Bei dieser Vorgabe sollten Sie regelmäig B<eix-remote add1> und/oder <eix-remote add2> nach <eix-update>
 aufrufen, so dass das separate Cachefile mit der Hauptdatenbank synchron ist.
@@ -442,13 +443,13 @@ Diese Dateien (und wie ihre Namen geändert werden können) wird später beschri
 .TP
 .BR -R ", " --remote
 Benutzt den Wert von EIX_REMOTE1 als Namen für das Cachefile.
-Diese Option sollten Sie benutzen, wenn Sie das Ergebnis von <eix-remote> sehen wollen.
+Diese Option sollten Sie benutzen, wenn Sie Pakete im Cache sehen möchten, die von B<eix-remote> erstellt und synchronisiert wurden.
 Sie können diese Option als Standardeinstellung aktivieren, indem Sie B<REMOTE_DEFAULT=1> setzen.
 
 .TP
 .BR -Z ", " --remote2
 Benutzt den Wert von EIX_REMOTE2 als Namen für das Cachefile.
-Diese Option sollten Sie benutzen, wenn Sie das Ergebnis von <eix-remote> sehen wollen.
+Diese Option sollten Sie benutzen, wenn Sie Pakete im Cache sehen möchten, die von B<eix-remote> erstellt und synchronisiert wurden.
 Sie können diese Option als Standardeinstellung aktivieren, indem Sie B<REMOTE_DEFAULT=2> setzen.
 
 .TP
