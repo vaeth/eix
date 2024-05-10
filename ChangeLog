@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.36.9
+	Denis Pronin <dannftk at yandex.ru>:
+	- Remove several references to layman
+
 *eix-0.36.8
 	Martin Väth <martin at mvath.de>:
 	- manpage: fix typo UPDATE_TO_HIGHEST_SLOT -> UPGRADE_TO_HIGHEST_SLOT
