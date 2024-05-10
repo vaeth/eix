@@ -355,7 +355,6 @@ eix-etcat \
 eix-functions.sh \
 eix-installed \
 eix-installed-after \
-eix-layman \
 eix-postsync \
 eix-remote \
 eix-sync \
@@ -396,7 +395,6 @@ eix-etcat.sh.in \
 eix-functions.sh.in \
 eix-installed-after.sh.in \
 eix-installed.sh.in \
-eix-layman.sh.in \
 eix-postsync.sh.in \
 eix-remote.sh.in \
 eix-sync.sh.in \
@@ -704,9 +702,6 @@ eix-installed-after: eix-installed-after.sh.in
 	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
 
 eix-installed: eix-installed.sh.in
-	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
-
-eix-layman: eix-layman.sh.in
 	$(AM_V_GEN)$(SED) $(SED_IN) "$<" > "$@"
 
 eix-postsync: eix-postsync.sh.in

@@ -50,7 +50,7 @@ exec git tag -s "$1" -m "Release $1"
 
 A more luxury variant (with semi-automatic changing between -s and -a) is in
 	https://github.com/vaeth/git-wrappers-mv/
-(this is dev-vcs/git-wrappers-mv in the mv overlay, available over layman)'
+(this is dev-vcs/git-wrappers-mv in the mv overlay, available as an overlay)'
 
 [ $# -eq 0 ] || Usage
 

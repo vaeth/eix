@@ -2,7 +2,6 @@
 completionnogenerate = \
 _eix-installed \
 _eix-installed-after \
-_eix-layman \
 _eix-header \
 _eix-remote \
 _eix-sync \

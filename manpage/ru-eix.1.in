@@ -24,8 +24,6 @@
 
 .B eix-remote
 
-.B eix-layman
-
 .B eix-installed-after
 
 .B eix-installed
@@ -93,13 +91,7 @@ possibilities how a custom eix output format can be used.
 It outputs packages installed after (or before) the last (or first) emerge of a specific package/version.
 To get more help on this script call B<eix-installed-after -h>.
 
-B<eix-layman> может добавлять или убирать местные оверлеи layman к/из текущей базы данных.
-You might want to use this if you want to avoid adding layman overlays to
-the regular portage repositories.
-Для полученья дополнительной информации по B<eix-layman> вызовите B<eix-layman -h>.
-B<eix-layman> также является примером использованья B<eix-functions.sh>:
-
-B<eix-functions.sh> outputs helper functions used by B<eix-sync>, B<eix-remote>, and B<eix-layman>.
+B<eix-functions.sh> outputs helper functions used by B<eix-sync> and B<eix-remote>.
 You might want to use them for your own similar scripts.
 You can either "eval" the output of this program.
 Note that after this, you should usually call B<ReadFunctions> for
