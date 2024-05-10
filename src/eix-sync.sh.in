@@ -31,7 +31,7 @@ Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
 	eval_pgettext 'eix-sync' 'Usage: ${n} [options]
-Call layman/emerge --sync/--metadata and show updates. (${p})
+Call emerge --sync/--metadata and show updates. (${p})
 
 Unless the -t option is used, the old database will be saved to
     ${eixprevious}.

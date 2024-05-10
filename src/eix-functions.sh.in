@@ -5,8 +5,8 @@
 # Author and Copyright (c):
 #   Martin V\"ath <martin@mvath.de>
 #
-# Evaluating the output of this script defines helper functions for eix-remote,
-# eix-layman, and perhaps similar local scripts. (@PACKAGE_STRING@).
+# Evaluating the output of this script defines helper functions for eix-remote
+# and perhaps similar local scripts. (@PACKAGE_STRING@).
 
 ReadFunctions() {
 	InitTmpdir

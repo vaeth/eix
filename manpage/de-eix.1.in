@@ -24,8 +24,6 @@
 
 .B eix-remote
 
-.B eix-layman
-
 .B eix-installed-after
 
 .B eix-installed
@@ -94,14 +92,7 @@ Das Skript gibt diejenigen Pakete aus, die nach (oder vor) dem letzten (oder ers
 spezifizierten Pakets/Version installiert wurden.
 Mehr zur Benutzung erfahren Sie durch den Aufruf B<eix-installed-after -h>.
 
-B<eix-layman> kann lokale Layman-Overlays zur aktuellen Datenbank hinzufügen.
-Dies kann hilfreich sein, wenn man es vermeiden will, Layman-Overlays zu den
-regulären portage-Repositories hinzuzufügen.
-Mehr zu B<eix-lamyan> erfahren Sie durch den Aufruf B<eix-layman -h>.
-B<eix-layman> versteht sich auch als Beispielskript, wie B<eix-functions.sh>
-genutzt werden kann:
-
-B<eix-functions.sh> gibt Hilfsfunktionen aus, die von B<eix-sync>, B<eix-remote>, und B<eix-layman>
+B<eix-functions.sh> gibt Hilfsfunktionen aus, die von B<eix-sync> und B<eix-remote>
 benutzt werden und die in ähnlichen Skripten benutzt werden können.
 Man sollte die Ausgabe des Programms mit "eval" verarbeiten.
 Beachten Sie, dass unmittelbar danach normalerweise zur Initialisierung
