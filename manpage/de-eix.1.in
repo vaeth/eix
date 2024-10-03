@@ -989,7 +989,7 @@ Vorsicht bei der Übergabe des Suchmusters in einer Shell (Quoting!).
 .TP
 .BR -r ", " --regex
 Das Suchmuster ist ein regulärer Ausdruck (ohne Beachtung der Großschreibung).
-Nur ein Teilstring muss passen (außer wenn ^ oder $ benutzt werden).
+Nur ein Teilstring muss passen (außer wenn \(ha oder $ benutzt werden).
 Das leere Suchmuster passt auf alles.
 Weitere Informationen finden sich in
 .BR regex (7).
@@ -1102,7 +1102,7 @@ Dies ist Version 3.14p, die in den Slot "GNAT-3.14p" installiert wird.
 .B 2.0.0_rc1-r6
 Dies ist Version 2.0.0_rc1-r6, und der SLOT ist leer oder "0".
 .TP
-.B 1.0*ilvs^fmpbstuidP{tbz2,gpkg:3,pak:2}
+.B 1.0*ilvs\(hafmpbstuidP{tbz2,gpkg:3,pak:2}
 Dies ist Version 1.0, und gesetzt sind
 PROPERTIES="interactive live virtual set" sowie
 RESTRICT="fetch mirror primaryuri binchecks strip test userpriv installsources bindist parallel".
@@ -1110,7 +1110,7 @@ Darüberhinaus existiert eine *.tbz2, drei *.gpkg.tar und zwei *.xpak-Dateien
 (Binärpakete ohne bzw. mit FEATURES=binpkg-multi-instance bzw, FEATURES=gpkg)
 für diese Version in B<PKGDIR>.
 .TP
-.B 5.0-r3(5.0R3)^f "   oder   " 5.0-r3:5.0R3^f
+.B 5.0-r3(5.0R3)\(haf "   oder   " 5.0-r3:5.0R3\(haf
 Dies ist Version 5.0-r3, die in Slot 5.0R3 installiert wird, und die RESTRICT=fetch hat.
 
 .SS Maskierung
