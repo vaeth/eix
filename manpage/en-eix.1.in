@@ -973,7 +973,7 @@ shell from intercepting any wildcards).
 .TP
 .BR -r ", " --regex
 pattern is a regexp, ignoring case.
-Only a substring must be matched (unless ^ or $ are used);
+Only a substring must be matched (unless \(ha or $ are used);
 the empty pattern matches everything.
 For further information, please read
 .BR regex (7).
@@ -1081,7 +1081,7 @@ This is version 3.14p which will be installed into the slot "GNAT-3.14p".
 .B 2.0.0_rc1-r6
 This is version 2.0.0_rc1-r6, and SLOT is either empty or "0".
 .TP
-.B 1.0*ilvs^fmpbstuidP{tbz2,gpkg:3,pak:2}
+.B 1.0*ilvs\(hafmpbstuidP{tbz2,gpkg:3,pak:2}
 This is version 1.0 which is subject to
 PROPERTIES="interactive live virtual set" as well as
 RESTRICT="fetch mirror primaryuri binchecks strip test userpriv installsources bindist parallel"
@@ -1089,7 +1089,7 @@ Moreover, a *.tbz2, three *.gpkg.tar, and two *.xpak files (binary packages with
 FEATURES=binpkg-multi-instance or BINPKG_FORMAT=gpkg, respectively) exist for that version
 in B<PKGDIR>.
 .TP
-.B 5.0-r3(5.0R3)^f "    or    " 5.0-r3:5.0R3^f
+.B 5.0-r3(5.0R3)\(haf "    or    " 5.0-r3:5.0R3\(haf
 This is version 5.0-r3 which will be installed into SLOT 5.0R3 and has
 fetch restrictions.
 
