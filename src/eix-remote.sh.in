@@ -60,7 +60,7 @@ Get data from a remote database for ${p}.
 The following commands are provided:
 
 update1 (=update) or update2:
-        Fetch the eix-caches of some layman overlays, store them locally in
+        Fetch the eix-caches of some overlays, store them locally in
         EIX_REMOTEARCHIVE1 (${f1}) or
         EIX_REMOTEARCHIVE2 (${f2}),
         respectively and add them to the eix database.
@@ -96,9 +96,9 @@ The following options are available:
 -k      Keep permissions: Without this option, eix-drop-permissions is used to
         drop permissions immediately to that of EIX_USER
 -K      As -k, but cannot be reset with -i
--X      Exclude remote overlays which are also locally layman. See -L/-l
--x      Exclude local layman overlays which are available remotely. See -L/-l
--L      For -x/-X the "storage" path of layman is found heuristically.
+-X      Exclude remote overlays which are also local. See -L/-l
+-x      Exclude local overlays which are available remotely. See -L/-l
+-L      For -x/-X the "storage" path is found heuristically.
         With -L the path actually used is printed (and eix-remote exits).
         Set LOCAL_LAYMAN or use option -l to override the heuristics.
 -l PATH Use PATH as LOCAL_LAYMAN

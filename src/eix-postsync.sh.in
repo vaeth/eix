@@ -23,7 +23,7 @@ ReadFunctions
 ReadVar eixcache EIX_CACHEFILE
 ReadVar eixprevious EIX_PREVIOUS
 CopyToPrevious() {
-	[ -e "$eixcache" ] || return
+	test -e "$eixcache" || return 0
 	StatusInfo "`eval_pgettext 'eix-sync' \
 			'Copying old database to ${eixprevious}'`" \
 		"`eval_pgettext 'Statusline eix-sync' \

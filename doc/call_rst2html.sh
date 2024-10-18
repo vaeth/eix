@@ -1,6 +1,12 @@
 #!/usr/bin/env sh
-if command -v rst2html.py >"$5" 2>&1
-then	rst2html.py \
+if command -v rst2html >"$5" 2>&1
+then	rst2html_cmd=rst2html
+elif command -v rst2html.py >"$5" 2>&1
+then	rst2html_cmd=rst2html.py
+else	rst2html_cmd=
+fi
+if [ -n "$rst2html_cmd" ]
+then	"$rst2html_cmd" \
 		'--input-encoding=UTF-8:strict' \
 		'--embed-stylesheet' \
 		"--stylesheet-path=$4/stylesheet.css" \

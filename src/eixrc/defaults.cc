@@ -50,11 +50,6 @@ AddOption(STRING, "EIX_REMOTE_OPTS",
 	"Note that its content is evaluated, so quote correctly. Typical example:\n"
 	"EIX_REMOTE_OPTS='-f /var/lib/layman/eix-caches.tar.bz2'"));
 
-AddOption(STRING, "EIX_LAYMAN_OPTS",
-	"", P_("EIX_LAYMAN_OPTS",
-	"This variable contains default options for the eix-layman script.\n"
-	"Note that its content is evaluated, so quote correctly."));
-
 AddOption(STRING, "EIX_TEST_OBSOLETE_OPTS",
 	"-d", P_("EIX_TEST_OBSOLETE_OPTS",
 	"This variable contains default options for the eix-test-obsolete script."));

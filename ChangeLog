@@ -4,6 +4,12 @@
 	Denis Pronin <dannftk at yandex.ru>:
 	- Remove several references to layman
 
+	kamikadoYukio <https://github.com/kamikadoYukio>:
+	- Fix ^ symbol in manpages
+
+	konsolebox <konsolebox at gmail.com>:
+	- Let eix-postsync.sh not fail if there is no old database
+
 *eix-0.36.8
 	Martin Väth <martin at mvath.de>:
 	- manpage: fix typo UPDATE_TO_HIGHEST_SLOT -> UPGRADE_TO_HIGHEST_SLOT

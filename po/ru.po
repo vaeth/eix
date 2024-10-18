@@ -3,15 +3,15 @@
 # Copyright (C)
 # This file is distributed under the same license as the eix package.
 #
-# Martin Vaeth <martin@mvath.de>, 2013-2021.
+# Martin Vaeth <martin@mvath.de>, 2013-2024.
 # Artem Vorotnikov <skybon@gmail.com>, 2012-2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: https://github.com/vaeth/eix/issues/\n"
-"POT-Creation-Date: 2023-05-28 20:45+0200\n"
-"PO-Revision-Date: 2024-05-10 18:34+0200\n"
+"POT-Creation-Date: 2024-10-18 22:00+0200\n"
+"PO-Revision-Date: 2024-10-18 21:25+0200\n"
 "Last-Translator: Artem Vorotnikov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: ru\n"
@@ -383,9 +383,9 @@ msgid ""
 "-k      Keep permissions: Without this option, eix-drop-permissions is used to\n"
 "        drop permissions immediately to that of EIX_USER\n"
 "-K      As -k, but cannot be reset with -i\n"
-"-X      Exclude remote overlays which are also locally layman. See -L/-l\n"
-"-x      Exclude local layman overlays which are available remotely. See -L/-l\n"
-"-L      For -x/-X the \"storage\" path of layman is found heuristically.\n"
+"-X      Exclude remote overlays which are also local. See -L/-l\n"
+"-x      Exclude local overlays which are available remotely. See -L/-l\n"
+"-L      For -x/-X the \"storage\" path is found heuristically.\n"
 "        With -L the path actually used is printed (and eix-remote exits).\n"
 "        Set LOCAL_LAYMAN or use option -l to override the heuristics.\n"
 "-l PATH Use PATH as LOCAL_LAYMAN\n"
@@ -442,9 +442,9 @@ msgstr ""
 "         eix-drop-permissions to drop permissions immediately to\n"
 "         that of EIX_USER\n"
 "-K       То же, что и -k, но без возможности сброса с помощью -i\n"
-"-X       Exclude remote overlays which are also locally layman. See -L/-l\n"
-"-x       Exclude local layman overlays which are available remotely. See -L/-l\n"
-"-L       For -x/-X the «storage» path of layman is found heuristically.\n"
+"-X       Exclude remote overlays which are also local. See -L/-l\n"
+"-x       Exclude local overlays which are available remotely. See -L/-l\n"
+"-L       For -x/-X the «storage» path is found heuristically.\n"
 "         With -L the path actually used is printed (and eix-remote exits).\n"
 "         Set LOCAL_LAYMAN or use option -l to override the heuristics.\n"
 "-l ПУТЬ  Использовать ПУТЬ как LOCAL_LAYMAN\n"
@@ -2853,13 +2853,6 @@ msgid ""
 "This variable contains default options for the eix-remote script.\n"
 "Note that its content is evaluated, so quote correctly. Typical example:\n"
 "EIX_REMOTE_OPTS='-f /var/lib/layman/eix-caches.tar.bz2'"
-msgstr ""
-
-#: src/eixrc/defaults.cc
-msgctxt "EIX_LAYMAN_OPTS"
-msgid ""
-"This variable contains default options for the eix-layman script.\n"
-"Note that its content is evaluated, so quote correctly."
 msgstr ""
 
 #: src/eixrc/defaults.cc
