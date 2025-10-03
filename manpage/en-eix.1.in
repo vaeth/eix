@@ -2240,7 +2240,7 @@ usually B<%{EPREFIX}@EIX_PREVIOUS@>
 The eix cache used when B<-R> or B<-Z> is in effect.
 If the string is nonempty, eix-remote uses this file for the output.
 The default value is B<%{EPREFIX}@EIX_REMOTECACHEFILE1@>
-or B<%{EPREFIX}@EIX_REMOTECACHEFILE1@>, respectively.
+or B<%{EPREFIX}@EIX_REMOTECACHEFILE2@>, respectively.
 
 .TP
 .BR REMOTE_DEFAULT " " (integer)
